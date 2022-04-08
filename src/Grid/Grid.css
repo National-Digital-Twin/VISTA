@@ -1,0 +1,106 @@
+.main-grid{
+    display: grid;
+    position: absolute;
+    grid-template-columns: 50px 15px 15px 120px 22px;
+}
+
+.main-grid > div {
+    display: inline-block;
+}
+
+.asset-id {
+    font-family: monospace;
+    border-width: 1px;
+    padding-left: 3px;
+    height: 22px;
+    font-size: 13px;
+    font-weight: 400;
+    border-style: solid;
+    border-color: gray;
+  }
+  
+  .asset-id button {
+    text-decoration: none;
+    color: white;
+  }
+
+  .col-header {
+    font-family: monospace;
+    border-width: 1px;
+    padding-top: 5px;
+    width: 22px;
+    height: 80px;
+    font-size: 13px;
+    font-weight: 400;
+    border-style: solid;
+    border-color: gray;
+    writing-mode: vertical-rl;
+    text-orientation: upright;
+  }
+  .col-header:first-child{
+    border-left: 1px;
+  }
+  
+  .col-header button {
+    text-decoration: none;
+    color: white;
+  }
+
+  .blank-entry {
+    font-family: monospace;
+    border-width: 1px;
+    height: 22px;
+    border-style: solid;
+    border-color: gray;
+    background-color: rgb(70, 70, 70);
+    text-align: center;
+  }
+
+  .grid-entry {
+    font-family: monospace;
+    border-width: 1px;
+    height: 22px;
+    border-style: solid;
+    border-color: gray;
+    text-align: center;
+  }
+  
+  .grid-entry-1 {
+    background-color: yellow;
+    color: black;
+  }
+  
+  .grid-entry-1 a {
+    text-decoration: none;
+    color: black;
+  }
+
+  .grid-entry-2 {
+    background-color: orange;
+    color: rgb(17, 17, 17);
+  }
+  
+  .grid-entry-2 a {
+    text-decoration: none;
+    color: black;
+  }
+  
+  .grid-entry-3 {
+    background-color: red;
+    color: rgb(17, 17, 17);
+  }
+  
+  .grid-entry-3 a {
+    text-decoration: none;
+    color: black;
+  }
+  
+  .grid-entry-nil {
+    background-color: rgb(17, 17, 17);
+    color: gray;
+  }
+  
+  
+  .grid-entry-nil:after {
+    content: "X";
+  }
