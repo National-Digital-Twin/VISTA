@@ -1,26 +1,117 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useCallback } from "react";
 import Filters from "../Filters";
 import TelicentGrid from "../Grid";
 import Network from "../Network";
 import useFetch from "use-http";
 import config from "../config/app-config";
 import { Tabs, Tab, TabList, TabPanel } from "react-tabs";
-import 'react-tabs/style/react-tabs.css';
+import Asset from "./Asset";
+import ConnectionAssessment from "./ConnectionAssessment";
+import "react-tabs/style/react-tabs.css";
 
-import "./DataFigures.css"
+import "./DataFigures.css";
 import { ElementsContext } from "../ElementsContext";
-function getColor(value) {
-  let hue = ((1 - value) * 120).toString(10);
-  return `hsl(${hue},100%, 50%)`;
-}
+
+const processAssets = (acc, curr, idx) => {
+  const uri = curr.uri;
+  if (!acc[uri]) {
+    acc[uri] = new Asset(curr, idx);
+  }
+  if (curr.hasOwnProperty("desc")) {
+    acc[uri].setDescription(curr.desc);
+  }
+  if (curr.hasOwnProperty("lat")) {
+    acc[uri].setLatitude(curr.lat);
+  }
+  if (curr.hasOwnProperty("lon")) {
+    acc[uri].setLongitude(curr.lon);
+  }
+  return acc;
+};
+
+const processConnectionAssessments = (acc, curr) => {
+  const criticality = parseInt(curr.criticality);
+  const asset1 = acc.processedAssets[curr.asset1Uri];
+  const asset2 = acc.processedAssets[curr.asset2Uri];
+  asset1.incrementCount();
+  asset2.incrementCount();
+  asset1.incrementCriticalityBy(criticality);
+  asset2.incrementCriticalityBy(criticality);
+
+  if (asset1.isCountGreaterThan(acc.maxCount)) {
+    acc.maxCount = asset1.getCount();
+  }
+
+  if (asset2.isCountGreaterThan(acc.maxCount)) {
+    acc.maxCount = asset2.getCount();
+  }
+
+  if (asset1.isCriticalityGreaterThan(acc.maxScore)) {
+    acc.maxScore = asset1.getCriticality();
+  }
+
+  if (asset2.isCriticalityGreaterThan(acc.maxScore)) {
+    acc.maxScore = asset2.getCriticality();
+  }
+
+  const connectionAssessment = new ConnectionAssessment(
+    curr,
+    asset1,
+    asset2,
+    criticality
+  );
+
+  acc.reports[curr.connUri] = connectionAssessment;
+
+  return acc;
+};
+
+const generateColours = (asset, { maxScore, maxCount }) => {
+  asset.calculateScoreColour(maxScore);
+  asset.calculateCountColour(maxCount);
+};
+
 const DataFigures = () => {
-  const {updateElements} = useContext(ElementsContext)
+  const { updateElements } = useContext(ElementsContext);
   const [selected, setSelected] = useState([]);
   const [assets, setAssets] = useState([]);
   const [connections, setConnections] = useState([]);
   const { get } = useFetch(config.api.url);
+
+  const processAssessmentCategories = useCallback(
+    (assessmentsAllCategories = []) => {
+      const processedAssets = assessmentsAllCategories
+        .slice(0, selected.length)
+        .flat()
+        .reduce(processAssets, {});
+
+      const connectionAssessments = assessmentsAllCategories
+        .slice(selected.length, assessmentsAllCategories.length)
+        .flat()
+        .reduce(processConnectionAssessments, {
+          processedAssets,
+          maxCount: 1,
+          maxScore: 1,
+          reports: {},
+        });
+
+      Object.values(processedAssets).forEach((asset) => {
+        const { maxScore, maxCount } = connectionAssessments;
+        generateColours(asset, { maxScore, maxCount });
+      });
+
+      setAssets(Object.values(processedAssets));
+      setConnections(Object.values(connectionAssessments.reports));
+
+      updateElements({
+        assets: Object.values(processedAssets),
+        connections: Object.values(connectionAssessments),
+      });
+    },
+    [selected, get, updateElements]
+  );
+
   useEffect(() => {
-    console.log(selected);
     Promise.all([
       ...selected.map((uri) =>
         get(`/assessments/assets?assessments=${encodeURIComponent(uri)}`)
@@ -28,100 +119,13 @@ const DataFigures = () => {
       ...selected.map((uri) =>
         get(`/assessments/connections?assessments=${encodeURIComponent(uri)}`)
       ),
-    ]).then((values) => {
-      let maxCount = 1;
-      let maxScore = 1;
+    ]).then(processAssessmentCategories);
+  }, [selected, processAssessmentCategories]);
 
-      const assetsObj = values
-        .slice(0, selected.length)
-        .flat()
-        .reduce((acc, curr, idx) => {
-          if (!acc[curr.uri]) {
-            acc[curr.uri] = {
-              category: "asset",
-              gridIndex: idx + 1,
-              id: curr.id,
-              name: curr.name,
-              uri: curr.uri,
-              count: 0,
-              criticality: 0,
-            };
-          }
-          if (curr.hasOwnProperty("desc")) {
-            acc[curr.uri].desc = curr.desc;
-          }
-          if (curr.hasOwnProperty("lat")) {
-            acc[curr.uri].lat = parseFloat(curr.lat);
-          }
-          if (curr.hasOwnProperty("lon")) {
-            acc[curr.uri].lon = parseFloat(curr.lon);
-          }
-          return acc;
-        }, {});
+  const renderCytoscape = () => (
+    <Network assets={assets} connections={connections} />
+  );
 
-      const connectionsObj = values
-        .slice(selected.length, values.length)
-        .flat()
-        .reduce((acc, curr, idx) => {
-          const asset1Obj = assetsObj[curr.asset1Uri];
-          const asset2Obj = assetsObj[curr.asset2Uri];
-          const criticality = parseInt(curr.criticality);
-          asset1Obj.count = asset1Obj.count + 1;
-          if (asset1Obj.count > maxCount) {
-            maxCount = asset1Obj.count;
-          }
-          asset2Obj.count = asset2Obj.count + 1;
-          if (asset2Obj.count > maxCount) {
-            maxCount = asset2Obj.count;
-          }
-          asset1Obj.criticality = asset1Obj.criticality + criticality;
-          if (asset1Obj.criticality > maxScore) {
-            maxScore = asset1Obj.criticality;
-          }
-          asset2Obj.criticality = asset2Obj.criticality + criticality;
-          if (asset2Obj.criticality > maxScore) {
-            maxScore = asset2Obj.criticality;
-          }
-          const connObj = {
-            category: "connection",
-            uri: curr.connUri,
-            source: curr.asset1Uri,
-            sourceName: asset1Obj.name,
-            sourceScoreColour: asset1Obj.scoreColour,
-            target: curr.asset2Uri,
-            targetName: asset2Obj.name,
-            targetScoreColour: asset2Obj.scoreColour,
-            criticality: criticality,
-            label: `${asset1Obj.id}-${asset2Obj.id}`,
-          };
-          if (
-            asset1Obj.hasOwnProperty("lat") &&
-            asset1Obj.hasOwnProperty("lon")
-          ) {
-            connObj.sourceLat = asset1Obj.lat;
-            connObj.sourceLon = asset1Obj.lon;
-          }
-          if (
-            asset2Obj.hasOwnProperty("lat") &&
-            asset2Obj.hasOwnProperty("lon")
-          ) {
-            connObj.targetLat = asset2Obj.lat;
-            connObj.targetLon = asset2Obj.lon;
-          }
-          acc[curr.connUri] = connObj;
-
-          return acc;
-        }, {});
-      Object.values(assetsObj).forEach((element) => {
-        element.scoreColour = getColor(element.criticality / maxScore);
-        element.countColour = getColor(element.count / maxCount);
-      });
-      setAssets(Object.values(assetsObj));
-      setConnections(Object.values(connectionsObj));
-      updateElements({assets:Object.values(assetsObj), connections: Object.values(connectionsObj) })
-    });
-  }, [selected, get, updateElements]);
-  const renderCytoscape = () => <Network assets={assets} connections={connections} />
   return (
     <section
       style={{
@@ -132,17 +136,26 @@ const DataFigures = () => {
       }}
     >
       <Filters selected={selected} setSelected={setSelected} />
-      <Tabs style={{height: "calc(100% - 24px)"}} forceRenderTabPanel={true}>
-        <TabList style={{display: "flex"}}>
-          <Tab className="telicent-tab" selectedClassName="telicent-tab_selected">Grid</Tab>
-          <Tab className="telicent-tab" selectedClassName="telicent-tab_selected">Network</Tab>
+      <Tabs style={{ height: "calc(100% - 24px)" }} forceRenderTabPanel={true}>
+        <TabList style={{ display: "flex" }}>
+          <Tab
+            className="telicent-tab"
+            selectedClassName="telicent-tab_selected"
+          >
+            Grid
+          </Tab>
+          <Tab
+            className="telicent-tab"
+            selectedClassName="telicent-tab_selected"
+          >
+            Network
+          </Tab>
         </TabList>
-        <TabPanel style={{height: "calc(100% - 54px)"}}>
+        <TabPanel style={{ height: "calc(100% - 54px)" }}>
           <TelicentGrid assets={assets} connections={connections} />
         </TabPanel>
-        <TabPanel style={{height: "calc(100% - 54px)"}}>
+        <TabPanel style={{ height: "calc(100% - 54px)" }}>
           {renderCytoscape()}
-          
         </TabPanel>
       </Tabs>
     </section>
