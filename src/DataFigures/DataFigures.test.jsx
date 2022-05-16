@@ -8,7 +8,7 @@ import CytoscapeComponent from "react-cytoscapejs";
 jest.mock("react-cytoscapejs");
 const mockCytoscapeComponent = CytoscapeComponent;
 
-const response = [
+const response = JSON.stringify([
   {
     uri: "http://telicent.io/test-data/iow#Water_Assessment",
     name: "Water",
@@ -44,7 +44,7 @@ const response = [
     name: "Communications",
     assCount: "28",
   },
-];
+]);
 
 describe("DataFigures should", () => {
   beforeEach(() => {
@@ -64,9 +64,6 @@ describe("DataFigures should", () => {
       );
     });
 
-    console.log(fetchMock.mock.calls);
     expect(fetchMock).toHaveBeenCalled();
-
-    screen.debug();
   });
 });

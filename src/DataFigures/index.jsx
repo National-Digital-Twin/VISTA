@@ -112,7 +112,6 @@ const DataFigures = () => {
   );
 
   useEffect(() => {
-    console.log(selected);
     Promise.all([
       ...selected.map((uri) =>
         get(`/assessments/assets?assessments=${encodeURIComponent(uri)}`)
