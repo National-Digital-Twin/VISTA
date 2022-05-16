@@ -3,6 +3,20 @@
 // expect(element).toHaveTextContent(/react/i)
 // learn more: https://github.com/testing-library/jest-dom
 import "@testing-library/jest-dom";
+import "jest-canvas-mock";
 import { configure } from "@testing-library/react";
+import fm, { enableFetchMocks } from "jest-fetch-mock";
+
+enableFetchMocks();
+fm.enableMocks();
+
+global.window._env_ = {
+  API_URL: "http://localhost:5051",
+  MAPBOX_TOKEN: "test_key",
+  MAP_URL: "http://map.com",
+};
 
 configure({ testIdAttribute: "id" });
+global.sleep = (milliseconds) => {
+  return new Promise((resolve) => setTimeout(resolve, milliseconds));
+};

@@ -108,10 +108,11 @@ const DataFigures = () => {
         connections: Object.values(connectionAssessments),
       });
     },
-    [selected, get, updateElements]
+    [selected, updateElements]
   );
 
   useEffect(() => {
+    console.log(selected);
     Promise.all([
       ...selected.map((uri) =>
         get(`/assessments/assets?assessments=${encodeURIComponent(uri)}`)
@@ -120,11 +121,12 @@ const DataFigures = () => {
         get(`/assessments/connections?assessments=${encodeURIComponent(uri)}`)
       ),
     ]).then(processAssessmentCategories);
-  }, [selected, processAssessmentCategories]);
+  }, [selected, get, processAssessmentCategories]);
 
-  const renderCytoscape = () => (
-    <Network assets={assets} connections={connections} />
-  );
+  const renderCytoscape = () => {
+    console.log("assets", assets, "connections", connections);
+    return <Network assets={assets} connections={connections} />;
+  };
 
   return (
     <section

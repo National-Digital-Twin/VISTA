@@ -1,4 +1,3 @@
-import mapboxgl from "mapbox-gl";
 import React, { useEffect, useRef } from "react";
 import ReactMapGL, { Marker } from "react-map-gl";
 import config from "../config/app-config";
