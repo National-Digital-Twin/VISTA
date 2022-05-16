@@ -1,10 +1,7 @@
 import { screen, render } from "@testing-library/react";
-import ConnectionAssessment from "../DataFigures/ConnectionAssessment";
-import Asset from "../DataFigures/Asset";
 import { act } from "react-dom/test-utils";
 import Network from ".";
 import CytoscapeComponent from "react-cytoscapejs";
-import Component from "react";
 
 jest.mock("react-cytoscapejs");
 
@@ -58,14 +55,12 @@ describe("Network should", () => {
   beforeEach(() => {
     mockCytoscapeComponent.mockImplementation().mockReturnValue(null);
   });
-  it("render a warning message when no assets or connections arrays are passed in", async () => {
+  it("render successfully when no props are passed in", async () => {
     await act(async () => {
       await render(<Network />);
     });
 
-    expect(
-      screen.getByText(/please pass in valid assets and connections arrays/i)
-    ).toBeInTheDocument();
+    expect(mockCytoscapeComponent).toHaveBeenCalled();
   });
 
   it("call cytoscape component when valid assets and connections are passed in", async () => {

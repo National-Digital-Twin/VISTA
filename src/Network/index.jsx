@@ -1,17 +1,16 @@
 import React, { useEffect, useState, useRef } from "react";
 import CytoscapeComponent from "react-cytoscapejs";
 
-const Network = ({ assets, connections }) => {
+const emptyAssets = [];
+const emptyConnections = [];
+
+const Network = ({ assets = emptyAssets, connections = emptyConnections }) => {
   const layout = "concentric";
   const cyRef = useRef();
   const [elements, setElements] = useState([]);
   // useEffect(()=>{
   //     cyRef.current.resize()
   // },[])
-
-  if (!Array.isArray(assets) || !Array.isArray(connections)) {
-    return <p>Please pass in valid assets and connections arrays</p>;
-  }
 
   useEffect(() => {
     const nodes = assets.map((asset) => ({

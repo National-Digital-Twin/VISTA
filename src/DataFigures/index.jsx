@@ -124,7 +124,6 @@ const DataFigures = () => {
   }, [selected, get, processAssessmentCategories]);
 
   const renderCytoscape = () => {
-    console.log("assets", assets, "connections", connections);
     return <Network assets={assets} connections={connections} />;
   };
 
