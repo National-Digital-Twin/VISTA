@@ -5,6 +5,7 @@ import config from "../config/app-config";
 const Filters = ({ selected, setSelected }) => {
   const [filters, setFilters] = useState([]);
 
+  console.log("filters", filters);
   const { get, error, loading, response } = useFetch(config.api.url);
   const onChange = (event) => {
     const {
@@ -18,6 +19,7 @@ const Filters = ({ selected, setSelected }) => {
   };
   const getFilters = useCallback(async () => {
     const assessments = await get("/assessments");
+    console.log("assemessmesm", assessments);
     let filters = [];
     if (response.ok) {
       filters = assessments
