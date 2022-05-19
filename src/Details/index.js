@@ -1,9 +1,9 @@
-import React, {  useEffect,useState } from "react";
-import "./Details.css"
+import React, { useEffect, useState } from "react";
+import "./Details.css";
 const Details = ({ element, type }) => {
   const [item, setItem] = useState({});
   useEffect(() => {
-    if(!element) return
+    if (!element) return;
     setItem(mapToItem(element));
   }, [setItem, element, type]);
 
@@ -21,20 +21,33 @@ const Details = ({ element, type }) => {
     asset: element,
     connPrefix: element.category === "connection" ? "connects " : undefined,
     connSourceName:
-      element.category === "connection" ? element.source ? element.source.name :undefined : undefined,
+      element.category === "connection"
+        ? element.source
+          ? element.source.name
+          : undefined
+        : undefined,
     connSourceStyle:
       element.category === "connection"
-        ? element.source ? { color: element.source.scoreColour } : undefined
+        ? element.source
+          ? { color: element.source.scoreColour }
+          : undefined
         : undefined,
     connLink: element.category === "connection" ? " and " : undefined,
     connTargetName:
-      element.category === "connection" ? element.target ?  element.target.name  : undefined : undefined,
+      element.category === "connection"
+        ? element.target
+          ? element.target.name
+          : undefined
+        : undefined,
     connTargetStyle:
       element.category === "connection"
-        ?  element.target ? { color: element.target.scoreColour } : undefined
+        ? element.target
+          ? { color: element.target.scoreColour }
+          : undefined
         : undefined,
     desc: element.desc,
   });
+
   const {
     title,
     titleStyle,
@@ -50,6 +63,7 @@ const Details = ({ element, type }) => {
     connTargetStyle,
     desc,
   } = item;
+
   return (
     <div>
       {title && (

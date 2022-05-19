@@ -2,7 +2,10 @@ import React, { useEffect, useRef } from "react";
 import ReactMapGL, { Marker } from "react-map-gl";
 import config from "../config/app-config";
 
+const isNumber = (value) => typeof value === "number";
+
 const TelicentMap = ({ element }) => {
+  // console.log("el", element);
   const mapRef = useRef();
 
   const viewState = {
@@ -10,17 +13,18 @@ const TelicentMap = ({ element }) => {
     longitude: -0.118092,
     zoom: 10,
   };
+
   useEffect(() => {
     if (!mapRef.current || !element.lat || !element.lon) return;
-    console.log(element);
 
     mapRef.current.setCenter([element.lon, element.lat]);
   }, [element]);
 
   const renderMarker = () => {
-    if (!element.lat && !element.lon) {
+    if (!isNumber(element.lat) && !isNumber(element.lon)) {
       return null;
     }
+
     return (
       <Marker
         latitude={element.lat}
@@ -39,7 +43,6 @@ const TelicentMap = ({ element }) => {
       mapboxAccessToken={config.mb.token}
       mapStyle="mapbox://styles/mapbox/dark-v10"
     >
-      {/* {console.log(asset)} */}
       {element && renderMarker()}
     </ReactMapGL>
   );

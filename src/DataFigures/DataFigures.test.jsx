@@ -83,6 +83,6 @@ describe("DataFigures should", () => {
       await userEvent.click(cbx);
     });
 
-    expect(screen.getAllByRole("cell")).toBeTruthy();
+    expect(screen.getAllByRole("cell")).toMatchSnapshot();
   });
 });

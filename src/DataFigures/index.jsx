@@ -89,7 +89,6 @@ const DataFigures = () => {
         });
       }
       if (assessmentsAllCategories.length < 1) return;
-
       const processedAssets = assessmentsAllCategories
         .slice(0, selected.length)
         .flat()
