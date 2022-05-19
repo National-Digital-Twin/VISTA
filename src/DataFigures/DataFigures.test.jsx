@@ -4,11 +4,13 @@ import DataFigures from ".";
 import AssetProvider from "../AssetContext";
 import ElementsProvider from "../ElementsContext";
 import CytoscapeComponent from "react-cytoscapejs";
+import userEvent from "@testing-library/user-event";
 
 jest.mock("react-cytoscapejs");
+
 const mockCytoscapeComponent = CytoscapeComponent;
 
-const response = JSON.stringify([
+const assessmentResponse = JSON.stringify([
   {
     uri: "http://telicent.io/test-data/iow#Water_Assessment",
     name: "Water",
@@ -19,41 +21,42 @@ const response = JSON.stringify([
     name: "Energy",
     assCount: "25",
   },
-  {
-    uri: "http://telicent.io/test-data/iow#Transport_Assessment",
-    name: "Transport",
-    assCount: "44",
-  },
-  {
-    uri: "http://telicent.io/test-data/iow#Fuel_Assessment",
-    name: "Fuel",
-    assCount: "19",
-  },
-  {
-    uri: "http://telicent.io/test-data/iow#Medical_Assessment",
-    name: "Medical",
-    assCount: "32",
-  },
-  {
-    uri: "http://telicent.io/test-data/iow#IoW_CARVER_Assessment",
-    name: "IoW CARVER Assessment",
-    assCount: "0",
-  },
-  {
-    uri: "http://telicent.io/test-data/iow#Communications_Assessment",
-    name: "Communications",
-    assCount: "28",
-  },
 ]);
 
-describe("DataFigures should", () => {
-  beforeEach(() => {
-    fetchMock.resetMocks();
-    fetchMock.mockResponse(response);
-    mockCytoscapeComponent.mockImplementation().mockReturnValue(null);
-  });
+const assetResponse = [
+  {
+    uri: "http://telicent.io/test-data/iow#E004",
+    id: "E004",
+    name: "Wooton Common 132/33kV Substation",
+    type: "http://ies.data.gov.uk/ontology/ies4#Facility",
+    lat: "50.71042665150134",
+    lon: "-1.2539149080275813",
+  },
+  {
+    id: "E018",
+    lat: "50.72382490492339",
+    lon: "-1.157351952291377",
+    name: "Ryde St John rail 33kV Substation",
+    type: "http://ies.data.gov.uk/ontology/ies4#Facility",
+    uri: "http://telicent.io/test-data/iow#E018",
+  },
+];
 
-  it("call api for assessments of selected criteria", async () => {
+const connectionResponse = [
+  {
+    connUri: "http://telicent.io/test-data/iow#connector_E004_E018",
+    asset1Uri: "http://telicent.io/test-data/iow#E004",
+    asset2Uri: "http://telicent.io/test-data/iow#E018",
+    criticality: "1.0",
+  },
+];
+
+describe("DataFigures should", () => {
+  beforeEach(async () => {
+    fetchMock.resetMocks();
+    fetchMock.mockResponses([assessmentResponse, { status: 200 }]);
+    mockCytoscapeComponent.mockImplementation().mockReturnValue(null);
+
     await act(async () => {
       await render(
         <ElementsProvider>
@@ -63,7 +66,23 @@ describe("DataFigures should", () => {
         </ElementsProvider>
       );
     });
+  });
 
-    expect(fetchMock).toHaveBeenCalled();
+  it("call api for assessments of selected criteria", async () => {
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("populate assets and connections on checkbox select", async () => {
+    const promise = jest
+      .spyOn(Promise, "all")
+      .mockReturnValue(Promise.resolve([assetResponse, connectionResponse]));
+
+    const cbx = screen.queryAllByRole("checkbox")[0];
+
+    await act(async () => {
+      await userEvent.click(cbx);
+    });
+
+    expect(screen.getAllByRole("cell")).toBeTruthy();
   });
 });

@@ -80,6 +80,16 @@ const DataFigures = () => {
 
   const processAssessmentCategories = useCallback(
     (assessmentsAllCategories = []) => {
+      if (selected.length < 1) {
+        setAssets([]);
+        setConnections([]);
+        updateElements({
+          assets: [],
+          connections: [],
+        });
+      }
+      if (assessmentsAllCategories.length < 1) return;
+
       const processedAssets = assessmentsAllCategories
         .slice(0, selected.length)
         .flat()
@@ -105,13 +115,23 @@ const DataFigures = () => {
 
       updateElements({
         assets: Object.values(processedAssets),
-        connections: Object.values(connectionAssessments),
+        connections: Object.values(connectionAssessments.reports),
       });
     },
     [selected, updateElements]
   );
 
   useEffect(() => {
+    if (selected.length < 1) {
+      setAssets([]);
+      setConnections([]);
+
+      updateElements({
+        assets: [],
+        connections: [],
+      });
+    }
+
     Promise.all([
       ...selected.map((uri) =>
         get(`/assessments/assets?assessments=${encodeURIComponent(uri)}`)
@@ -120,7 +140,7 @@ const DataFigures = () => {
         get(`/assessments/connections?assessments=${encodeURIComponent(uri)}`)
       ),
     ]).then(processAssessmentCategories);
-  }, [selected, get, processAssessmentCategories]);
+  }, [selected, get, processAssessmentCategories, updateElements]);
 
   const renderCytoscape = () => {
     return <Network assets={assets} connections={connections} />;
