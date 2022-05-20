@@ -1555,6 +1555,13 @@
     "@babel/runtime" "^7.0.0"
     "@math.gl/core" "^3.5.0"
 
+"@luma.gl/test-utils@^8.5.12":
+  version "8.5.12"
+  resolved "https://registry.yarnpkg.com/@luma.gl/test-utils/-/test-utils-8.5.12.tgz#252f34f9c14b9a6354e9ef4b70d4837f43481504"
+  integrity sha512-CpfeHPoJS6CNK+DlADvkPEKeNLXYP3M5YloqMjnVnXst+VdWbNUx/A/xEQeZPtyPheZUQV2sda0cNx73V+weBA==
+  dependencies:
+    probe.gl "^3.4.0"
+
 "@luma.gl/webgl@8.5.12":
   version "8.5.12"
   resolved "https://registry.yarnpkg.com/@luma.gl/webgl/-/webgl-8.5.12.tgz#4d17bf69dd4b3076fb3b5593594ff373d9dda8b1"
