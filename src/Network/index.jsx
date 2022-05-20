@@ -5,13 +5,6 @@ const emptyAssets = [];
 const emptyConnections = [];
 
 const Network = ({ assets = emptyAssets, connections = emptyConnections }) => {
-  if (!Array.isArray(assets) || !Array.isArray(connections)) {
-    console.warn(
-      "Network -> Assets and connections must be passed in as an array."
-    );
-    return;
-  }
-
   const layout = "concentric";
   const cyRef = useRef();
   const [elements, setElements] = useState([]);
@@ -45,6 +38,13 @@ const Network = ({ assets = emptyAssets, connections = emptyConnections }) => {
     cyRef.current.center();
     cyRef.current.fit();
   }, [elements]);
+
+  if (!Array.isArray(assets) || !Array.isArray(connections)) {
+    console.warn(
+      "Network -> Assets and connections must be passed in as an array."
+    );
+    return;
+  }
 
   return (
     <CytoscapeComponent

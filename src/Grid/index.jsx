@@ -3,13 +3,6 @@ import { AssetContext } from "../AssetContext";
 import "./Grid.css";
 
 const TelicentGrid = ({ assets = [], connections = [] }) => {
-  if (!Array.isArray(assets) || !Array.isArray(connections)) {
-    console.warn(
-      "TelicentGrid -> Assets and connections must be passed in as an array."
-    );
-    return;
-  }
-
   const { onSelectedNode } = useContext(AssetContext);
   const onClick = (type) => (e) => {
     const { target } = e;
@@ -46,7 +39,12 @@ const TelicentGrid = ({ assets = [], connections = [] }) => {
     ));
     return [...assetGrid, ...connectionsGrid];
   };
-
+  if (!Array.isArray(assets) || !Array.isArray(connections)) {
+    console.warn(
+      "TelicentGrid -> Assets and connections must be passed in as an array."
+    );
+    return;
+  }
   return (
     <div
       className="h-full w-full"
