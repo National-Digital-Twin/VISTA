@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@deck.gl/core": "^8.7.10",
+    "@deck.gl/layers": "^8.7.10",
+    "@deck.gl/react": "^8.7.10",
     "@telicent-io/ds": "^0.2.11",
     "@testing-library/jest-dom": "^5.16.3",
     "@testing-library/react": "^12.1.4",

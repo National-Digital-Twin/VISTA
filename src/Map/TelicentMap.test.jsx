@@ -21,6 +21,15 @@ jest.mock("react-map-gl", () => {
   };
 });
 
+jest.mock("@deck.gl/react", () => {
+  return {
+    __esmodule: true,
+    default: ({ children }) => {
+      return <div id="deck-gl">{children}</div>;
+    },
+  };
+});
+
 describe("map ", () => {
   describe(" no element", () => {
     beforeEach(async () => {

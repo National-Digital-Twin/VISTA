@@ -1,11 +1,12 @@
 import React, { useEffect, useRef } from "react";
-import ReactMapGL, { Marker } from "react-map-gl";
+import DeckGL from "@deck.gl/react";
+import { LineLayer } from "@deck.gl/layers";
+import ReactMapGL, { Marker, Source, Layer } from "react-map-gl";
 import config from "../config/app-config";
 
 const isNumber = (value) => typeof value === "number";
 
 const TelicentMap = ({ element }) => {
-  // console.log("el", element);
   const mapRef = useRef();
 
   const viewState = {
@@ -15,6 +16,7 @@ const TelicentMap = ({ element }) => {
   };
 
   useEffect(() => {
+    console.log(element);
     if (!mapRef.current || !element.lat || !element.lon) return;
 
     mapRef.current.setCenter([element.lon, element.lat]);
@@ -36,15 +38,30 @@ const TelicentMap = ({ element }) => {
     );
   };
 
+  const data = [
+    {
+      sourcePosition: [-122.41669, 37.7853],
+      targetPosition: [-122.41669, 37.781],
+    },
+  ];
+
+  const layers = [new LineLayer({ id: "line-layer", data })];
+
   return (
-    <ReactMapGL
+    <DeckGL
       initialViewState={viewState}
-      ref={mapRef}
-      mapboxAccessToken={config.mb.token}
-      mapStyle="mapbox://styles/mapbox/dark-v10"
+      controller={true}
+      layers={layers}
+      style={{ position: "relative" }}
     >
-      {element && renderMarker()}
-    </ReactMapGL>
+      <ReactMapGL
+        ref={mapRef}
+        mapboxAccessToken={config.mb.token}
+        mapStyle="mapbox://styles/mapbox/dark-v10"
+      >
+        {element && renderMarker()}
+      </ReactMapGL>
+    </DeckGL>
   );
 };
 
