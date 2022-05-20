@@ -5,6 +5,13 @@ const emptyAssets = [];
 const emptyConnections = [];
 
 const Network = ({ assets = emptyAssets, connections = emptyConnections }) => {
+  if (!Array.isArray(assets) || !Array.isArray(connections)) {
+    console.warn(
+      "Network -> Assets and connections must be passed in as an array."
+    );
+    return;
+  }
+
   const layout = "concentric";
   const cyRef = useRef();
   const [elements, setElements] = useState([]);
