@@ -6,6 +6,7 @@ import "@testing-library/jest-dom";
 import "jest-canvas-mock";
 import { configure } from "@testing-library/react";
 import fm, { enableFetchMocks } from "jest-fetch-mock";
+import { createHeadlessContext } from "@luma.gl/test-utils";
 
 enableFetchMocks();
 fm.enableMocks();

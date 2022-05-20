@@ -40,12 +40,21 @@ const TelicentMap = ({ element }) => {
 
   const data = [
     {
-      sourcePosition: [-122.41669, 37.7853],
-      targetPosition: [-122.41669, 37.781],
+      sourcePosition: [-1.3081862860360411, 50.62329638787436],
+      targetPosition: [-1.3014637905107862, 50.766791029053294],
     },
   ];
 
-  const layers = [new LineLayer({ id: "line-layer", data })];
+  const layers = [
+    new LineLayer({
+      id: "line-layer",
+      data,
+      getColor: (d) => {
+        console.log(d);
+        return [255, 0, 0];
+      },
+    }),
+  ];
 
   return (
     <DeckGL
