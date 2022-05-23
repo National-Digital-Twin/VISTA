@@ -32,7 +32,6 @@ describe("map ", () => {
 
     it("should not show marker", () => {
       expect(screen.queryByTestId("deckgl-wrapper")).toBeInTheDocument();
-      expect(screen.queryByTestId("marker")).not.toBeInTheDocument();
     });
   });
 
@@ -48,13 +47,7 @@ describe("map ", () => {
     });
 
     it("should render map based on element input", () => {
-      // const marker = screen.getByTestId("marker");
       expect(screen.getByTestId("deckgl-wrapper")).toBeInTheDocument();
-      // screen.debug();
-      // expect(marker).toBeInTheDocument();
-      // expect(screen.getByTestId("lon")).toHaveTextContent(/longitude\: 0/i);
-      // expect(screen.getByTestId("lat")).toHaveTextContent(/latitude\: 0/i);
-      // expect(screen.getByTestId("color")).toHaveTextContent(/color: green/i);
     });
   });
 });

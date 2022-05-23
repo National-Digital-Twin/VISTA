@@ -12,10 +12,13 @@
     "@testing-library/user-event": "^13.5.0",
     "cytoscape": "^3.19.1",
     "mapbox-gl": "^2.7.1",
+    "plotly.js": "^2.12.1",
+    "plotly.js-gl2d-dist-min": "^2.12.1",
     "react": "^17.0.2",
     "react-cytoscapejs": "^1.2.1",
     "react-dom": "^17.0.2",
     "react-map-gl": "^7.0.10",
+    "react-plotly.js": "^2.5.1",
     "react-scripts": "^5.0.0",
     "react-tabs": "^4.2.0",
     "use-http": "^1.0.26",
@@ -47,9 +50,9 @@
     ]
   },
   "devDependencies": {
+    "@luma.gl/test-utils": "^8.5.12",
     "husky": "^8.0.0",
     "jest-canvas-mock": "^2.4.0",
-    "jest-fetch-mock": "^3.0.3",
-    "@luma.gl/test-utils": "^8.5.12"
+    "jest-fetch-mock": "^3.0.3"
   }
 }

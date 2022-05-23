@@ -6,7 +6,7 @@ const TelicentGrid = ({ assets = [], connections = [] }) => {
   const { onSelectedNode } = useContext(AssetContext);
   const onClick = (type) => (e) => {
     const { target } = e;
-    console.log(target.id, type);
+    // console.log(target.id, type);
     onSelectedNode(target.id, type);
   };
   // const [zoom, setZoom] = React.useState(100);
@@ -27,16 +27,22 @@ const TelicentGrid = ({ assets = [], connections = [] }) => {
         onClick={onClick("asset")}
       />
     ));
-    const connectionsGrid = connections.map((connection) => (
-      <ConnectionGrid
-        uri={connection.uri}
-        key={`connection-${connection.uri}`}
-        criticality={connection.criticality}
-        source={assets.find((asset) => asset.uri === connection.source)}
-        target={assets.find((asset) => asset.uri === connection.target)}
-        onClick={onClick("connection")}
-      />
-    ));
+
+    const connectionsGrid = connections.map((connection, idx) => {
+      // if (!assets.find((asset) => asset.uri === connection.source)) {
+      // console.log(connections, connection.source, idx);
+      // }
+      return (
+        <ConnectionGrid
+          uri={connection.uri}
+          key={`connection-${connection.uri}`}
+          criticality={connection.criticality}
+          source={assets.find((asset) => asset.uri === connection.source)}
+          target={assets.find((asset) => asset.uri === connection.target)}
+          onClick={onClick("connection")}
+        />
+      );
+    });
     return [...assetGrid, ...connectionsGrid];
   };
 
@@ -183,7 +189,9 @@ const AssetGrid = ({
 };
 
 const ConnectionGrid = ({ uri, criticality, source, target, onClick }) => {
+  // why is previous element becoming undefined?
   if (!source || !target) {
+    // console.log({ uri, criticality, source, target, onClick });
     return null;
   }
   const x = source.gridIndex;
@@ -192,19 +200,23 @@ const ConnectionGrid = ({ uri, criticality, source, target, onClick }) => {
   const colsInColumnHeader = 4;
   const colsInRowHeader = 1;
 
-  const calculateSourceGridPosition = (x, y) => ({
-    gridColumnStart: colsInColumnHeader + x,
-    gridColumnEnd: colsInColumnHeader + x,
-    gridRowStart: colsInRowHeader + y,
-    gridRowEnd: colsInRowHeader + y,
-  });
+  const calculateSourceGridPosition = (x, y) => {
+    return {
+      gridColumnStart: colsInColumnHeader + x,
+      gridColumnEnd: colsInColumnHeader + x,
+      gridRowStart: colsInRowHeader + y,
+      gridRowEnd: colsInRowHeader + y,
+    };
+  };
 
-  const calculateTargetGridPosition = (x, y) => ({
-    gridColumnStart: colsInColumnHeader + y,
-    gridColumnEnd: colsInColumnHeader + y,
-    gridRowStart: colsInRowHeader + x,
-    gridRowEnd: colsInRowHeader + x,
-  });
+  const calculateTargetGridPosition = (x, y) => {
+    return {
+      gridColumnStart: colsInColumnHeader + y,
+      gridColumnEnd: colsInColumnHeader + y,
+      gridRowStart: colsInRowHeader + x,
+      gridRowEnd: colsInRowHeader + x,
+    };
+  };
 
   return (
     <>
