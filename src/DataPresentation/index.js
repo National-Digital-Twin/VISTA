@@ -19,10 +19,10 @@ const DataPresentation = () => {
       );
       element.source = assetsRef.current.find(
         (asset) => asset.uri === element.source
-      );
+      ).uri;
       element.target = assetsRef.current.find(
         (asset) => asset.uri === element.target
-      );
+      ).uri;
     }
     setElement(element);
   }, [selected, type, assetsRef, connectionsRef, setElement]);
