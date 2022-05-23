@@ -13,14 +13,14 @@ const TelicentMap = ({ element }) => {
   };
   useEffect(() => {
     if (!mapRef.current || !element.lat || !element.lon) return;
-    console.log(element)
+    console.log(element);
 
     mapRef.current.setCenter([element.lon, element.lat]);
   }, [element]);
 
   const renderMarker = () => {
-    if(!element.lat && !element.lon){
-        return null
+    if (!element.lat && !element.lon) {
+      return null;
     }
     return (
       <Marker
@@ -32,6 +32,7 @@ const TelicentMap = ({ element }) => {
       />
     );
   };
+
   return (
     <ReactMapGL
       initialViewState={viewState}
@@ -39,7 +40,7 @@ const TelicentMap = ({ element }) => {
       mapboxAccessToken={config.mb.token}
       mapStyle="mapbox://styles/mapbox/dark-v10"
     >
-        {/* {console.log(asset)} */}
+      {/* {console.log(asset)} */}
       {element && renderMarker()}
     </ReactMapGL>
   );
