@@ -8,26 +8,38 @@ const ConnectionMarkup = (connection) => ({
   type: "scattermapbox",
   marker: { size: 14, cmin: 1, cmax: 5, color: ["#0f0", "#0f0"] },
   line: { color: "#f00" },
-  mode: "lines+markers",
+  mode: "markers+text+lines",
   lon: connection ? [connection.sourceLon, connection.targetLon] : [],
   lat: connection ? [connection.sourceLat, connection.targetLat] : [],
 });
 
-const AssetMarkup = (asset) => ({
-  type: "scattermapbox",
-  marker: { size: 14, cmin: 1, cmax: 5, color: ["#0f0", "#0f0"] },
-  mode: "markers",
-  lon: asset ? [asset.lon] : [],
-  lat: asset ? [asset.lat] : [],
-});
+const AssetMarkup = (asset, idx) => {
+  console.log(asset);
+  return {
+    type: "scattermapbox",
+    marker: {
+      size: 7,
+      cmin: 1,
+      cmax: 5,
+      color: ["#f00", "#0f0"],
+    },
+    line: { color: "#f00", text: asset.label },
+    mode: "markers+text+lines",
+    lon: [asset.sourceLon, asset.targetLon],
+    lat: [asset.sourceLat, asset.targetLat],
+  };
+};
 
-const TelicentMap = ({ element }) => {
+const TelicentMap = ({ element, connections }) => {
   const mapRef = useRef(null);
   const [center, setCenter] = useState({ lat: 50.6742, lon: -1.284 });
   const [data, setData] = useState([ConnectionMarkup()]);
 
-  const drawAsset = (element) => {
-    setData([AssetMarkup(element)]);
+  const drawAsset = (element, connections) => {
+    const connectedAssets = connections
+      .filter((connection) => connection.source === element.uri)
+      .map(AssetMarkup);
+    setData(connectedAssets);
     setCenter({ lat: element.lat, lon: element.lon });
   };
 
@@ -36,9 +48,9 @@ const TelicentMap = ({ element }) => {
     setCenter({ lat: element.sourceLat, lon: element.sourceLon });
   };
 
-  const drawMarkup = (element) => {
+  const drawMarkup = (element, connections = []) => {
     if (element.category === "asset") {
-      drawAsset(element);
+      drawAsset(element, connections);
     } else if (element.category === "connection") {
       drawConnection(element);
     }
@@ -47,8 +59,8 @@ const TelicentMap = ({ element }) => {
   useEffect(() => {
     if (!element || !element.category) return;
 
-    drawMarkup(element);
-  }, [element, mapRef]);
+    drawMarkup(element, connections);
+  }, [element, mapRef, connections]);
 
   return (
     <Plot
