@@ -1,71 +1,94 @@
 import React, { useEffect, useRef, useState } from "react";
 import Plot from "react-plotly.js";
-import config from "../config/app-config";
 
-const isNumber = (value) => typeof value === "number";
+const AssetMarkup = (asset) => {
+  if (!asset) {
+    return {
+      type: "scattermapbox",
+      marker: {
+        size: 14,
+        cmin: 1,
+        cmax: 5,
+      },
+      line: { color: "#f00", text: "" },
+    };
+  }
+  let name, text, lon, lat, color, size;
 
-const ConnectionMarkup = (connection) => ({
-  type: "scattermapbox",
-  marker: { size: 14, cmin: 1, cmax: 5, color: ["#0f0", "#0f0"] },
-  line: { color: "#f00" },
-  mode: "markers+text+lines",
-  lon: connection ? [connection.sourceLon, connection.targetLon] : [],
-  lat: connection ? [connection.sourceLat, connection.targetLat] : [],
-});
+  if (asset.targetName) {
+    name = `${asset.targetName} (${asset.label})`;
+    text = [asset.sourceName, asset.targetName];
+    lon = [asset.sourceLon, asset.targetLon];
+    lat = [asset.sourceLat, asset.targetLat];
+    color = ["#f00", "#0f0"];
+    size = 7;
+  } else {
+    name = `${asset.sourceName} (${asset.label})`;
+    text = asset.sourceName;
+    lon = [asset.sourceLon];
+    lat = [asset.sourceLat];
+    size = 14;
+    color = ["#0f0"];
+  }
 
-const AssetMarkup = (asset, idx) => {
-  console.log(asset);
   return {
     type: "scattermapbox",
     marker: {
-      size: 7,
+      size,
       cmin: 1,
       cmax: 5,
-      color: ["#f00", "#0f0"],
+      color,
     },
     line: { color: "#f00", text: asset.label },
+    text,
+    name,
     mode: "markers+text+lines",
-    lon: [asset.sourceLon, asset.targetLon],
-    lat: [asset.sourceLat, asset.targetLat],
+    lon,
+    lat,
   };
 };
 
 const TelicentMap = ({ element, connections }) => {
-  const mapRef = useRef(null);
   const [center, setCenter] = useState({ lat: 50.6742, lon: -1.284 });
-  const [data, setData] = useState([ConnectionMarkup()]);
+  const [data, setData] = useState([AssetMarkup()]);
 
   const drawAsset = (element, connections) => {
-    const connectedAssets = connections
-      .filter((connection) => connection.source === element.uri)
+    let connectedAssets = connections
+      .filter((connection) => {
+        return (
+          connection.source === element.uri || connection.target === element.uri
+        );
+      })
       .map(AssetMarkup);
+
+    if (connectedAssets.length < 1) {
+      connectedAssets = [
+        AssetMarkup({
+          sourceLon: element.lon,
+          sourceLat: element.lat,
+          label: element.name,
+          sourceName: element.name,
+        }),
+      ];
+    }
+
     setData(connectedAssets);
     setCenter({ lat: element.lat, lon: element.lon });
   };
 
-  const drawConnection = (element) => {
-    setData([ConnectionMarkup(element)]);
-    setCenter({ lat: element.sourceLat, lon: element.sourceLon });
-  };
-
   const drawMarkup = (element, connections = []) => {
-    if (element.category === "asset") {
-      drawAsset(element, connections);
-    } else if (element.category === "connection") {
-      drawConnection(element);
-    }
+    drawAsset(element, connections);
   };
 
   useEffect(() => {
     if (!element || !element.category) return;
 
     drawMarkup(element, connections);
-  }, [element, mapRef, connections]);
+  }, [element, connections]);
 
   return (
     <Plot
       divId="plotly"
-      ref={mapRef}
       className="graph"
       style={{ width: "100%", height: "100%" }}
       data={data}
@@ -88,6 +111,9 @@ const TelicentMap = ({ element, connections }) => {
             "pk.eyJ1IjoibXJkNTA0IiwiYSI6ImNrcXkwaDY0dDA2NXkycXM2ZHY1b3VkbjcifQ.WSLCm8FHh9xj8lnZiRjdZg",
         },
         margin: { r: 0, t: 0, b: 0, l: 0 },
+        font: {
+          color: "white",
+        },
       }}
     />
   );
