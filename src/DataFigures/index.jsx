@@ -88,7 +88,9 @@ const DataFigures = () => {
           connections: [],
         });
       }
+
       if (assessmentsAllCategories.length < 1) return;
+
       const processedAssets = assessmentsAllCategories
         .slice(0, selected.length)
         .flat()
@@ -104,9 +106,14 @@ const DataFigures = () => {
           reports: {},
         });
 
+      const { maxScore, maxCount } = connectionAssessments;
       Object.values(processedAssets).forEach((asset) => {
-        const { maxScore, maxCount } = connectionAssessments;
-        generateColours(asset, { maxScore, maxCount });
+        asset.calculateScoreColour(maxScore);
+        asset.calculateCountColour(maxCount);
+      });
+
+      Object.values(connectionAssessments.reports).forEach((connection) => {
+        connection.calculateScoreColour(maxScore);
       });
 
       setAssets(Object.values(processedAssets));
