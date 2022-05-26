@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Plot from "react-plotly.js";
 
 const colourMap = {
@@ -153,7 +153,7 @@ const TelicentMap = ({ element, connections }) => {
           title: "Traces",
           xanchor: "left",
           x: 0.01,
-          bgcolor: "rgba(17,17,17,0.3",
+          bgcolor: "rgba(17,17,17,0.3)",
         },
         autosize: true,
         mapbox: {

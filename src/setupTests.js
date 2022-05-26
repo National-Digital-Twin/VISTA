@@ -6,10 +6,13 @@ import "@testing-library/jest-dom";
 import "jest-canvas-mock";
 import { configure } from "@testing-library/react";
 import fm, { enableFetchMocks } from "jest-fetch-mock";
-import { createHeadlessContext } from "@luma.gl/test-utils";
+import { toMatchImageSnapshot } from "jest-image-snapshot";
 
+expect.extend({ toMatchImageSnapshot });
 enableFetchMocks();
 fm.enableMocks();
+
+window.URL.createObjectURL = function () {};
 
 global.window._env_ = {
   API_URL: "http://localhost:5051",

@@ -27,7 +27,6 @@ const DataPresentation = () => {
     setElement(element);
   }, [selected, type, assetsRef, connectionsRef, setElement]);
 
-  console.log(connectionsRef.current);
   return (
     <section style={{ width: "45%", height: "100%", padding: "4px" }}>
       <PresentationSplit>

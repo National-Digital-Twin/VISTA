@@ -1,53 +1,41 @@
-import { screen, render } from "@testing-library/react";
-import { act } from "react-dom/test-utils";
-import TelicentMemoMap from "./TelicentMap";
-import { createHeadlessContext } from "@luma.gl/test-utils";
-
-jest.mock("react-map-gl", () => {
-  return {
-    __esModule: true,
-    default: ({ children }) => {
-      return <div id="map">{children}</div>;
-    },
-    Marker: ({ latitude, longitude, color, name }) => {
-      return (
-        <div id="marker">
-          <span id="lon">Longitude: {longitude}</span>
-          <span id="lat">Latitude: {latitude}</span>
-          <span id="color">Color: {color}</span>
-          <span id="name">Name: {name}</span>
-        </div>
-      );
-    },
-  };
-});
+import puppeteer from "puppeteer";
 
 describe("map ", () => {
-  describe(" no element", () => {
-    beforeEach(async () => {
-      await act(async () => {
-        await render(<TelicentMemoMap />);
-      });
-    });
+  jest.setTimeout(8000);
+  let browser, page;
 
-    it("should not show marker", () => {
-      expect(screen.queryByTestId("deckgl-wrapper")).toBeInTheDocument();
-    });
+  beforeAll(async () => {
+    browser = await puppeteer.launch();
+    page = await browser.newPage();
   });
 
-  describe(" valid element", () => {
-    beforeEach(async () => {
-      await act(async () => {
-        await render(
-          <TelicentMemoMap
-            element={{ lat: 0, lon: 0, scoreColour: "green", name: "test" }}
-          />
-        );
-      });
+  it("should load filters", async () => {
+    await page.goto("http://localhost:3001", {
+      waitUntil: "networkidle2",
     });
 
-    it("should render map based on element input", () => {
-      expect(screen.getByTestId("deckgl-wrapper")).toBeInTheDocument();
-    });
+    const image = await page.screenshot();
+    expect(image).toMatchImageSnapshot();
+  });
+
+  it("should load a grid when filter checkbox selected", async () => {
+    await page.click(
+      '[id="http://telicent.io/test-data/iow#Water_Assessment"]'
+    );
+
+    await sleep(2000);
+    const image = await page.screenshot();
+    expect(image).toMatchImageSnapshot();
+  });
+
+  it("should draw connections on map", async () => {
+    await page.click('[id="http://telicent.io/test-data/iow#W007"]');
+    await sleep(2000);
+    const image = await page.screenshot();
+    expect(image).toMatchImageSnapshot();
+  });
+
+  afterAll(async () => {
+    await browser.close();
   });
 });
