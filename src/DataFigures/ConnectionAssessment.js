@@ -24,7 +24,6 @@ export default class ConnectionAssessment {
 
   getColor = (value) => {
     let hue = ((1 - +value.toFixed(2)) * 120).toString(10);
-    console.log(hue);
     return `hsl(${hue},100%, 50%)`;
   };
 
@@ -57,7 +56,5 @@ export default class ConnectionAssessment {
   calculateScoreColour = (maxScore) => {
     this.sourceScoreColour = this.getColor(this.sourceCriticality / maxScore);
     this.targetScoreColour = this.getColor(this.targetCriticality / maxScore);
-    console.log(" link", this.criticality);
-    this.linkScoreColour = this.getColor(this.criticality / maxScore);
   };
 }

@@ -50,9 +50,10 @@
     ]
   },
   "devDependencies": {
-    "@luma.gl/test-utils": "^8.5.12",
     "husky": "^8.0.0",
     "jest-canvas-mock": "^2.4.0",
-    "jest-fetch-mock": "^3.0.3"
+    "jest-fetch-mock": "^3.0.3",
+    "jest-image-snapshot": "^4.5.1",
+    "puppeteer": "^14.1.1"
   }
 }

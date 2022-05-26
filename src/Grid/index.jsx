@@ -6,10 +6,8 @@ const TelicentGrid = ({ assets = [], connections = [] }) => {
   const { onSelectedNode } = useContext(AssetContext);
   const onClick = (type) => (e) => {
     const { target } = e;
-    // console.log(target.id, type);
     onSelectedNode(target.id, type);
   };
-  // const [zoom, setZoom] = React.useState(100);
   const zoom = 100;
   const grid = `50px 22px 22px 106px repeat(${assets.length}, 22px)`;
   const renderAssets = () => {
@@ -29,9 +27,6 @@ const TelicentGrid = ({ assets = [], connections = [] }) => {
     ));
 
     const connectionsGrid = connections.map((connection, idx) => {
-      // if (!assets.find((asset) => asset.uri === connection.source)) {
-      // console.log(connections, connection.source, idx);
-      // }
       return (
         <ConnectionGrid
           uri={connection.uri}
@@ -191,7 +186,6 @@ const AssetGrid = ({
 const ConnectionGrid = ({ uri, criticality, source, target, onClick }) => {
   // why is previous element becoming undefined?
   if (!source || !target) {
-    // console.log({ uri, criticality, source, target, onClick });
     return null;
   }
   const x = source.gridIndex;
