@@ -5,7 +5,7 @@ const emptyAssets = [];
 const emptyConnections = [];
 
 const Network = ({ assets = emptyAssets, connections = emptyConnections }) => {
-  const layout = "concentric";
+  const [layout, setLayout] = useState("cose");
   const cyRef = useRef();
   const [elements, setElements] = useState([]);
   // useEffect(()=>{
