@@ -11,13 +11,11 @@ export default class ConnectionAssessment {
     this.uri = item.connUri;
     this.source = item.asset1Uri;
     this.sourceAsset = source;
-    this.sourceCriticality = source.criticality;
-    this.targetCriticality = target.criticality;
     this.sourceName = source.name;
     this.target = item.asset2Uri;
     this.targetAsset = target;
     this.targetName = target.name;
-    this.criticality = criticality;
+    this.criticality = parseInt(criticality);
     this.label = `${source.id}-${target.id}`;
 
     if (source.hasLatLon()) {
