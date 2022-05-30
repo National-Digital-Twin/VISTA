@@ -39,8 +39,8 @@ const processConnectionAssessments = (acc, curr) => {
   return acc;
 };
 
-export const generateConnectionAssessments = (result, assets, startIndex) =>
-  R.pipe(
+export const generateConnectionAssessments = (result, assets, startIndex) => {
+  return R.pipe(
     R.slice(startIndex, result.length),
     R.flatten,
     R.reduce(processConnectionAssessments, {
@@ -50,9 +50,7 @@ export const generateConnectionAssessments = (result, assets, startIndex) =>
       reports: {},
     })
   )(result);
-
-export const isEmptyArray = R.propSatisfies(R.equals(0), "length");
-
+};
 const generateAssets = (acc, curr, idx) => {
   const uri = curr.uri;
   if (!acc[uri]) {
@@ -68,8 +66,8 @@ const generateAssets = (acc, curr, idx) => {
 const reduceIndexed = R.addIndex(R.reduce);
 
 export const processAssets = (rawAssets, endIndex) =>
-  R.pipe(
-    R.slice(0, endIndex),
-    R.flatten,
-    reduceIndexed(generateAssets, {})
+  R.ifElse(
+    R.anyPass([R.isEmpty, R.isNil]),
+    R.always(undefined),
+    R.pipe(R.slice(0, endIndex), R.flatten, reduceIndexed(generateAssets, {}))
   )(rawAssets);

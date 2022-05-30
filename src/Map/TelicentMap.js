@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Plot from "react-plotly.js";
-import { isEmptyArray } from "../DataFigures/utils";
+import * as R from "ramda";
 
 const colourMap = {
   1: "green",
@@ -98,7 +98,7 @@ const TelicentMap = ({ element, connections }) => {
       })
       .map(AssetMarkup);
 
-    if (isEmptyArray(connectedAssets)) {
+    if (R.isEmpty(connectedAssets)) {
       connectedAssets = [
         AssetMarkup({
           sourceLon: element.lon,

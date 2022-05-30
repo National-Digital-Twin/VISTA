@@ -7,11 +7,7 @@ import config from "../config/app-config";
 import { Tabs, Tab, TabList, TabPanel } from "react-tabs";
 import * as R from "ramda";
 import "react-tabs/style/react-tabs.css";
-import {
-  isEmptyArray,
-  generateConnectionAssessments,
-  processAssets,
-} from "./utils";
+import { generateConnectionAssessments, processAssets } from "./utils";
 
 import "./DataFigures.css";
 import { ElementsContext } from "../ElementsContext";
@@ -54,7 +50,7 @@ const DataFigures = () => {
 
   const processAssessmentCategories = useCallback(
     (assessmentsAllCategories = []) => {
-      if (isEmptyArray(state.selected)) {
+      if (R.isEmpty(state.selected)) {
         dispatch({ type: RESET_CONNECTIONS_AND_ASSETS });
         updateElements({
           assets: [],
@@ -62,8 +58,7 @@ const DataFigures = () => {
         });
       }
 
-      if (isEmptyArray(assessmentsAllCategories)) return;
-
+      if (R.isEmpty(assessmentsAllCategories)) return;
       const processedAssets = processAssets(
         assessmentsAllCategories,
         state.selected.length
@@ -102,7 +97,7 @@ const DataFigures = () => {
   );
 
   useEffect(() => {
-    if (isEmptyArray(state.selected)) {
+    if (R.isEmpty(state.selected)) {
       dispatch({ type: RESET_CONNECTIONS_AND_ASSETS });
 
       updateElements({
