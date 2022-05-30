@@ -10,10 +10,10 @@ const Filters = ({ selected, setSelected }) => {
     const {
       target: { value },
     } = event;
-    setSelected((prevSelected) =>
-      prevSelected.some((filter) => filter === value)
-        ? prevSelected.filter((filter) => filter !== value)
-        : [...prevSelected, value]
+    setSelected(
+      selected.some((filter) => filter === value)
+        ? selected.filter((filter) => filter !== value)
+        : [...selected, value]
     );
   };
   const getFilters = useCallback(async () => {

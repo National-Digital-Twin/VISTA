@@ -1,16 +1,30 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useContext, useEffect, useState, useRef } from "react";
 import CytoscapeComponent from "react-cytoscapejs";
+import { AssetContext } from "../AssetContext";
 
 const emptyAssets = [];
 const emptyConnections = [];
 
-const Network = ({ assets = emptyAssets, connections = emptyConnections }) => {
+const Network = ({
+  assets = emptyAssets,
+  connections = emptyConnections,
+  inFocus = false, // just need to toggle re-paint.
+}) => {
+  const { onSelectedNode } = useContext(AssetContext);
   const [layout, setLayout] = useState("cose");
   const cyRef = useRef();
   const [elements, setElements] = useState([]);
-  // useEffect(()=>{
-  //     cyRef.current.resize()
-  // },[])
+
+  const listener = (e) => {
+    e.preventDefault();
+    const { target } = e;
+
+    if (target[0]._private.group === "nodes") {
+      onSelectedNode(target[0]._private.data.id, "asset");
+    } else if (target[0]._private.group === "edges") {
+      onSelectedNode(target[0]._private.data.uri, "connection");
+    }
+  };
 
   useEffect(() => {
     const nodes = assets.map((asset) => ({
@@ -32,19 +46,28 @@ const Network = ({ assets = emptyAssets, connections = emptyConnections }) => {
     setElements([...nodes, ...links]);
   }, [assets, connections]);
 
-  useEffect(() => {
-    if (!cyRef.current) return;
+  const focusCytoScapeContent = () => {
+    cyRef.current.resize();
     cyRef.current.layout({ name: layout }).run();
     cyRef.current.center();
     cyRef.current.fit();
+  };
+
+  useEffect(() => {
+    if (!cyRef.current) return;
+    focusCytoScapeContent();
+    if (!cyRef.current.emitter().listeners.find((li) => li.event === "tap")) {
+      cyRef.current.on("tap", listener);
+    }
+    window.cyRef = cyRef;
   }, [elements]);
 
-  if (!Array.isArray(assets) || !Array.isArray(connections)) {
-    console.warn(
-      "Network -> Assets and connections must be passed in as an array."
-    );
-    return;
-  }
+  useEffect(() => {
+    return () => {
+      if (!cyRef.current) return;
+      cyRef.current.removeAllListeners();
+    };
+  }, []);
 
   return (
     <CytoscapeComponent

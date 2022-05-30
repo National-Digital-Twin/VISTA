@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Plot from "react-plotly.js";
+import { isEmptyArray } from "../DataFigures/utils";
 
 const colourMap = {
   1: "green",
@@ -7,45 +8,31 @@ const colourMap = {
   3: "red",
 };
 
-const ScatterMarker = ({
-  sourceLon,
-  targetLon,
-  sourceLat,
-  targetLat,
-  size,
-  label,
-  name,
-  text,
-  color,
-}) => ({
-  type: "scattermapbox",
-  line: { color: "#f00" },
-  marker: {
-    size,
-    cmin: 1,
-    cmax: 5,
-  },
-  mode: "markers+text+lines",
-  name,
-  text,
-  color,
-  lon: [sourceLon, targetLon],
-  lat: [sourceLat, targetLat],
-});
-
-const ConnectionMarkup = (connection) => ({
-  type: "scattermapbox",
-  marker: {
-    size: 14,
-    cmin: 1,
-    cmax: 5,
-    color: [connection.sourceScoreColour, connection.targetScoreColour],
-  }, // colours should be based on criticality
-  line: { color: "#f00" },
-  mode: "markers+text+lines",
-  lon: connection ? [connection.sourceLon, connection.targetLon] : [],
-  lat: connection ? [connection.sourceLat, connection.targetLat] : [],
-});
+const ConnectionMarkup = (connection) => {
+  return {
+    type: "scattermapbox",
+    marker: {
+      size: 14,
+      cmin: 1,
+      cmax: 5,
+      color: [connection.sourceScoreColour, connection.targetScoreColour],
+    }, // colours should be based on criticality
+    line: { color: "#f00" },
+    mode: "markers+text+lines",
+    lon: connection
+      ? [
+          connection.sourceAsset.getLongitude(),
+          connection.targetAsset.getLongitude(),
+        ]
+      : [],
+    lat: connection
+      ? [
+          connection.sourceAsset.getLatitude(),
+          connection.targetAsset.getLatitude(),
+        ]
+      : [],
+  };
+};
 
 const AssetMarkup = (asset) => {
   if (!asset) {
@@ -61,16 +48,19 @@ const AssetMarkup = (asset) => {
   }
   let name, text, lon, lat, color, size;
 
-  if (asset.targetName) {
-    name = `${asset.targetName} (${asset.label})`;
-    text = [asset.sourceName, asset.targetName];
+  const targetName = asset.targetAsset.name;
+  const sourceName = asset.sourceAsset.name;
+
+  if (targetName) {
+    name = `${targetName} (${asset.label})`;
+    text = [sourceName, targetName];
     lon = [asset.sourceLon, asset.targetLon];
     lat = [asset.sourceLat, asset.targetLat];
     color = [asset.sourceScoreColour, asset.targetScoreColour];
     size = 7;
   } else {
-    name = `${asset.sourceName} (${asset.label})`;
-    text = asset.sourceName;
+    name = `${sourceName} (${asset.label})`;
+    text = sourceName;
     lon = [asset.sourceLon];
     lat = [asset.sourceLat];
     size = 14;
@@ -102,12 +92,13 @@ const TelicentMap = ({ element, connections }) => {
     let connectedAssets = connections
       .filter((connection) => {
         return (
-          connection.source === element.uri || connection.target === element.uri
+          connection.sourceAsset.uri === element.uri ||
+          connection.targetAsset.uri === element.uri
         );
       })
       .map(AssetMarkup);
 
-    if (connectedAssets.length < 1) {
+    if (isEmptyArray(connectedAssets)) {
       connectedAssets = [
         AssetMarkup({
           sourceLon: element.lon,
