@@ -1,12 +1,15 @@
 import React, { useState, useEffect, useCallback } from "react";
 import useFetch from "use-http";
 import config from "../config/app-config";
+
 const Filters = ({ selected, setSelected }) => {
   const [filters, setFilters] = useState([]);
 
   const { get, error, loading, response } = useFetch(config.api.url);
   const onChange = (event) => {
-      const {target: {value}} = event
+    const {
+      target: { value },
+    } = event;
     setSelected((prevSelected) =>
       prevSelected.some((filter) => filter === value)
         ? prevSelected.filter((filter) => filter !== value)
@@ -26,6 +29,7 @@ const Filters = ({ selected, setSelected }) => {
     }
     setFilters(filters);
   }, [setFilters, get, response]);
+
   useEffect(() => {
     getFilters();
   }, [getFilters]);
@@ -65,7 +69,7 @@ const CheckListItem = ({ value, label, onChange, selected }) => (
       marginRight: "0.5rem",
       position: "relative",
       fontSize: "0.8em",
-      textTransform:"uppercase"
+      textTransform: "uppercase",
     }}
   >
     <input
@@ -77,7 +81,12 @@ const CheckListItem = ({ value, label, onChange, selected }) => (
     />
     <label
       htmlFor={value}
-      style={{ display: "inline-block", marginBottom: "0", marginLeft:"4px", letterSpacing:"0.5px"}}
+      style={{
+        display: "inline-block",
+        marginBottom: "0",
+        marginLeft: "4px",
+        letterSpacing: "0.5px",
+      }}
     >
       {label}
     </label>

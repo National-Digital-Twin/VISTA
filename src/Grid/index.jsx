@@ -6,9 +6,11 @@ const TelicentGrid = ({ assets = [], connections = [] }) => {
   const { onSelectedNode } = useContext(AssetContext);
   const onClick = (type) => (e) => {
     const { target } = e;
+    console.log(target.id, type);
     onSelectedNode(target.id, type);
   };
-  const [zoom, setZoom] = React.useState(100);
+  // const [zoom, setZoom] = React.useState(100);
+  const zoom = 100;
   const grid = `50px 22px 22px 106px repeat(${assets.length}, 22px)`;
   const renderAssets = () => {
     const assetGrid = assets.map((asset) => (
@@ -37,7 +39,12 @@ const TelicentGrid = ({ assets = [], connections = [] }) => {
     ));
     return [...assetGrid, ...connectionsGrid];
   };
-
+  if (!Array.isArray(assets) || !Array.isArray(connections)) {
+    console.warn(
+      "TelicentGrid -> Assets and connections must be passed in as an array."
+    );
+    return;
+  }
   return (
     <div
       className="h-full w-full"
