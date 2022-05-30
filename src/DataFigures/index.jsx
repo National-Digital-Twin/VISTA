@@ -1,110 +1,79 @@
-import React, { useState, useEffect, useContext, useCallback } from "react";
+import React, { useEffect, useContext, useCallback, useReducer } from "react";
 import Filters from "../Filters";
 import TelicentGrid from "../Grid";
 import Network from "../Network";
 import useFetch from "use-http";
 import config from "../config/app-config";
 import { Tabs, Tab, TabList, TabPanel } from "react-tabs";
-import Asset from "./Asset";
-import ConnectionAssessment from "./ConnectionAssessment";
+import * as R from "ramda";
 import "react-tabs/style/react-tabs.css";
+import {
+  isEmptyArray,
+  generateConnectionAssessments,
+  processAssets,
+} from "./utils";
 
 import "./DataFigures.css";
 import { ElementsContext } from "../ElementsContext";
 
-const processAssets = (acc, curr, idx) => {
-  const uri = curr.uri;
-  if (!acc[uri]) {
-    acc[uri] = new Asset(curr, idx);
-  }
-  if (curr.hasOwnProperty("desc")) {
-    acc[uri].setDescription(curr.desc);
-  }
-  if (curr.hasOwnProperty("lat")) {
-    acc[uri].setLatitude(curr.lat);
-  }
-  if (curr.hasOwnProperty("lon")) {
-    acc[uri].setLongitude(curr.lon);
-  }
-  return acc;
+const RESET_CONNECTIONS_AND_ASSETS = "RESET_CONNECTIONS_AND_ASSETS";
+const SET_CONNECTIONS_AND_ASSETS = "SET_CONNECTIONS_AND_ASSETS";
+const SET_SELECTED = "SET_SELECTED";
+const initialState = {
+  selected: [],
+  assets: [],
+  connections: [],
 };
 
-const processConnectionAssessments = (acc, curr) => {
-  const criticality = parseInt(curr.criticality);
-  const asset1 = acc.processedAssets[curr.asset1Uri];
-  const asset2 = acc.processedAssets[curr.asset2Uri];
-  asset1.incrementCount();
-  asset2.incrementCount();
-  asset1.incrementCriticalityBy(criticality);
-  asset2.incrementCriticalityBy(criticality);
-
-  if (asset1.isCountGreaterThan(acc.maxCount)) {
-    acc.maxCount = asset1.getCount();
+const reducer = (state, action) => {
+  switch (action.type) {
+    case RESET_CONNECTIONS_AND_ASSETS:
+      return {
+        ...state,
+        assets: [],
+        connections: [],
+      };
+    case SET_CONNECTIONS_AND_ASSETS:
+      return {
+        ...state,
+        assets: action.data.assets,
+        connections: action.data.connections,
+      };
+    case SET_SELECTED:
+      return {
+        ...state,
+        selected: action.data,
+      };
   }
-
-  if (asset2.isCountGreaterThan(acc.maxCount)) {
-    acc.maxCount = asset2.getCount();
-  }
-
-  if (asset1.isCriticalityGreaterThan(acc.maxScore)) {
-    acc.maxScore = asset1.getCriticality();
-  }
-
-  if (asset2.isCriticalityGreaterThan(acc.maxScore)) {
-    acc.maxScore = asset2.getCriticality();
-  }
-
-  const connectionAssessment = new ConnectionAssessment(
-    curr,
-    asset1,
-    asset2,
-    criticality
-  );
-
-  acc.reports[curr.connUri] = connectionAssessment;
-
-  return acc;
-};
-
-const generateColours = (asset, { maxScore, maxCount }) => {
-  asset.calculateScoreColour(maxScore);
-  asset.calculateCountColour(maxCount);
 };
 
 const DataFigures = () => {
+  const [state, dispatch] = useReducer(reducer, initialState);
   const { updateElements } = useContext(ElementsContext);
-  const [selected, setSelected] = useState([]);
-  const [assets, setAssets] = useState([]);
-  const [connections, setConnections] = useState([]);
   const { get } = useFetch(config.api.url);
 
   const processAssessmentCategories = useCallback(
     (assessmentsAllCategories = []) => {
-      if (selected.length < 1) {
-        setAssets([]);
-        setConnections([]);
+      if (isEmptyArray(state.selected)) {
+        dispatch({ type: RESET_CONNECTIONS_AND_ASSETS });
         updateElements({
           assets: [],
           connections: [],
         });
       }
 
-      if (assessmentsAllCategories.length < 1) return;
+      if (isEmptyArray(assessmentsAllCategories)) return;
 
-      const processedAssets = assessmentsAllCategories
-        .slice(0, selected.length)
-        .flat()
-        .reduce(processAssets, {});
+      const processedAssets = processAssets(
+        assessmentsAllCategories,
+        state.selected.length
+      );
 
-      const connectionAssessments = assessmentsAllCategories
-        .slice(selected.length, assessmentsAllCategories.length)
-        .flat()
-        .reduce(processConnectionAssessments, {
-          processedAssets,
-          maxCount: 1,
-          maxScore: 1,
-          reports: {},
-        });
+      const connectionAssessments = generateConnectionAssessments(
+        assessmentsAllCategories,
+        processedAssets,
+        state.selected.length
+      );
 
       const { maxScore, maxCount } = connectionAssessments;
       Object.values(processedAssets).forEach((asset) => {
@@ -116,21 +85,25 @@ const DataFigures = () => {
         connection.calculateScoreColour(maxScore);
       });
 
-      setAssets(Object.values(processedAssets));
-      setConnections(Object.values(connectionAssessments.reports));
+      dispatch({
+        type: SET_CONNECTIONS_AND_ASSETS,
+        data: {
+          assets: Object.values(processedAssets),
+          connections: Object.values(connectionAssessments.reports),
+        },
+      });
 
       updateElements({
         assets: Object.values(processedAssets),
         connections: Object.values(connectionAssessments.reports),
       });
     },
-    [selected, updateElements]
+    [state.selected, updateElements]
   );
 
   useEffect(() => {
-    if (selected.length < 1) {
-      setAssets([]);
-      setConnections([]);
+    if (isEmptyArray(state.selected)) {
+      dispatch({ type: RESET_CONNECTIONS_AND_ASSETS });
 
       updateElements({
         assets: [],
@@ -139,17 +112,21 @@ const DataFigures = () => {
     }
 
     Promise.all([
-      ...selected.map((uri) =>
+      ...state.selected.map((uri) =>
         get(`/assessments/assets?assessments=${encodeURIComponent(uri)}`)
       ),
-      ...selected.map((uri) =>
+      ...state.selected.map((uri) =>
         get(`/assessments/connections?assessments=${encodeURIComponent(uri)}`)
       ),
     ]).then(processAssessmentCategories);
-  }, [selected, get, processAssessmentCategories, updateElements]);
+  }, [state.selected, get, processAssessmentCategories, updateElements]);
 
   const renderCytoscape = () => {
-    return <Network assets={assets} connections={connections} />;
+    return <Network assets={state.assets} connections={state.connections} />;
+  };
+
+  const setSelected = (selected) => {
+    dispatch({ type: SET_SELECTED, data: selected });
   };
 
   return (
@@ -161,7 +138,7 @@ const DataFigures = () => {
         borderRight: "solid 1px gold",
       }}
     >
-      <Filters selected={selected} setSelected={setSelected} />
+      <Filters selected={state.selected} setSelected={setSelected} />
       <Tabs style={{ height: "calc(100% - 24px)" }} forceRenderTabPanel={true}>
         <TabList style={{ display: "flex" }}>
           <Tab
@@ -178,7 +155,7 @@ const DataFigures = () => {
           </Tab>
         </TabList>
         <TabPanel style={{ height: "calc(100% - 54px)" }}>
-          <TelicentGrid assets={assets} connections={connections} />
+          <TelicentGrid assets={state.assets} connections={state.connections} />
         </TabPanel>
         <TabPanel style={{ height: "calc(100% - 54px)" }}>
           {renderCytoscape()}

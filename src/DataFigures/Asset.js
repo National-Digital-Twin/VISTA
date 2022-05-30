@@ -15,16 +15,19 @@ export default class Asset {
   };
 
   setDescription = (description) => {
+    if (!description) return;
     this.desc = description;
   };
 
   getLatitude = () => this.lat;
   setLatitude = (latitude) => {
+    if (!latitude) return;
     this.lat = parseFloat(latitude);
   };
 
   getLongitude = () => this.lon;
   setLongitude = (longitude) => {
+    if (!longitude) return;
     this.lon = parseFloat(longitude);
   };
 
