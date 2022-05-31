@@ -56,9 +56,9 @@ const Network = ({
   useEffect(() => {
     if (!cyRef.current) return;
     focusCytoScapeContent();
-    if (!cyRef.current.emitter().listeners.find((li) => li.event === "tap")) {
-      cyRef.current.on("tap", listener);
-    }
+    // if (!cyRef.current.emitter().listeners.find((li) => li.event === "tap")) {
+    // cyRef.current.on("tap", listener);
+    // }
     window.cyRef = cyRef;
   }, [elements]);
 
@@ -74,6 +74,11 @@ const Network = ({
       layout={{ name: layout }}
       cy={(cy) => {
         cyRef.current = cy;
+        if (
+          !cyRef.current.emitter().listeners.find((li) => li.event === "tap")
+        ) {
+          cyRef.current.on("tap", listener);
+        }
       }}
       className="w-full h-full"
       elements={elements}

@@ -11,6 +11,9 @@ const elementConnection = {
   target: {
     name: "element-target-name",
   },
+  targetAsset: {
+    name: "element-target-name",
+  },
   desc: "element-description",
   name: "element-name",
 };
@@ -21,6 +24,9 @@ const assetConnection = {
   criticality: 1,
   scoreColour: "red",
   target: {
+    name: "element-target-name",
+  },
+  targetAsset: {
     name: "element-target-name",
   },
   desc: "element-description",
@@ -51,10 +57,10 @@ describe("Details", () => {
 
     it("should show element information", () => {
       expect(
-        screen.getByRole("heading", { name: /elementLabel/ })
+        screen.getByRole("heading", { level: 2, name: /elementLabel/ })
       ).toBeInTheDocument();
       expect(screen.getByRole("heading", { level: 5 })).toHaveTextContent(
-        /element-name/i
+        /elementLabel/i
       );
       expect(screen.queryByText(clickMsg)).not.toBeInTheDocument();
     });

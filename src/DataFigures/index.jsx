@@ -5,7 +5,7 @@ import Network from "../Network";
 import useFetch from "use-http";
 import config from "../config/app-config";
 import { Tabs, Tab, TabList, TabPanel } from "react-tabs";
-import * as R from "ramda";
+import { IsEmpty } from "../utils";
 import "react-tabs/style/react-tabs.css";
 import { generateConnectionAssessments, processAssets } from "./utils";
 
@@ -40,6 +40,9 @@ const reducer = (state, action) => {
         ...state,
         selected: action.data,
       };
+
+    default:
+      return state;
   }
 };
 
@@ -50,7 +53,7 @@ const DataFigures = () => {
 
   const processAssessmentCategories = useCallback(
     (assessmentsAllCategories = []) => {
-      if (R.isEmpty(state.selected)) {
+      if (IsEmpty(state.selected)) {
         dispatch({ type: RESET_CONNECTIONS_AND_ASSETS });
         updateElements({
           assets: [],
@@ -58,7 +61,7 @@ const DataFigures = () => {
         });
       }
 
-      if (R.isEmpty(assessmentsAllCategories)) return;
+      if (IsEmpty(assessmentsAllCategories)) return;
       const processedAssets = processAssets(
         assessmentsAllCategories,
         state.selected.length
@@ -97,7 +100,7 @@ const DataFigures = () => {
   );
 
   useEffect(() => {
-    if (R.isEmpty(state.selected)) {
+    if (IsEmpty(state.selected)) {
       dispatch({ type: RESET_CONNECTIONS_AND_ASSETS });
 
       updateElements({

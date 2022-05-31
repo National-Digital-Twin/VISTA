@@ -1,4 +1,3 @@
-import * as R from "ramda";
 import ConnectionAssessment from "./ConnectionAssessment";
 import Asset from "./Asset";
 
@@ -40,17 +39,17 @@ const processConnectionAssessments = (acc, curr) => {
 };
 
 export const generateConnectionAssessments = (result, assets, startIndex) => {
-  return R.pipe(
-    R.slice(startIndex, result.length),
-    R.flatten,
-    R.reduce(processConnectionAssessments, {
+  return result
+    .slice(startIndex, result.length)
+    .flat()
+    .reduce(processConnectionAssessments, {
       processedAssets: assets,
       maxCount: 1,
       maxScore: 1,
       reports: {},
-    })
-  )(result);
+    });
 };
+
 const generateAssets = (acc, curr, idx) => {
   const uri = curr.uri;
   if (!acc[uri]) {
@@ -63,11 +62,10 @@ const generateAssets = (acc, curr, idx) => {
   return acc;
 };
 
-const reduceIndexed = R.addIndex(R.reduce);
+export const processAssets = (rawAssets, endIndex) => {
+  if (!rawAssets || rawAssets.length === 0) {
+    return undefined;
+  }
 
-export const processAssets = (rawAssets, endIndex) =>
-  R.ifElse(
-    R.anyPass([R.isEmpty, R.isNil]),
-    R.always(undefined),
-    R.pipe(R.slice(0, endIndex), R.flatten, reduceIndexed(generateAssets, {}))
-  )(rawAssets);
+  return rawAssets.slice(0, endIndex).flat().reduce(generateAssets, {});
+};

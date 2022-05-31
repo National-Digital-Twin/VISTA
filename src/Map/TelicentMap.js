@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Plot from "react-plotly.js";
-import * as R from "ramda";
+import { IsEmpty } from "../utils";
 
 const colourMap = {
   1: "green",
@@ -42,14 +42,17 @@ const AssetMarkup = (asset) => {
         size: 14,
         cmin: 1,
         cmax: 5,
+        color: ["#f00"],
       },
+      mode: "markers+text+lines",
       line: { color: "#f00", text: "" }, // line colour should be based on severity
     };
   }
+
   let name, text, lon, lat, color, size;
 
-  const targetName = asset.targetAsset.name;
-  const sourceName = asset.sourceAsset.name;
+  const targetName = asset.targetAsset && asset.targetAsset.name;
+  const sourceName = asset.sourceAsset && asset.sourceAsset.name;
 
   if (targetName) {
     name = `${targetName} (${asset.label})`;
@@ -59,8 +62,8 @@ const AssetMarkup = (asset) => {
     color = [asset.sourceScoreColour, asset.targetScoreColour];
     size = 7;
   } else {
-    name = `${sourceName} (${asset.label})`;
-    text = sourceName;
+    name = asset.label;
+    text = asset.label;
     lon = [asset.sourceLon];
     lat = [asset.sourceLat];
     size = 14;
@@ -75,7 +78,7 @@ const AssetMarkup = (asset) => {
       cmax: 5,
       color,
     },
-    line: { color: colourMap[asset.criticality], text: asset.label },
+    line: { color: colourMap[asset.criticality] || "red", text: asset.label },
     text,
     name,
     mode: "markers+text+lines",
@@ -88,6 +91,7 @@ const TelicentMap = ({ element, connections }) => {
   const [center, setCenter] = useState({ lat: 50.6742, lon: -1.284 });
   const [data, setData] = useState([AssetMarkup()]);
 
+  console.log(data);
   const drawAsset = (element, connections) => {
     let connectedAssets = connections
       .filter((connection) => {
@@ -98,11 +102,12 @@ const TelicentMap = ({ element, connections }) => {
       })
       .map(AssetMarkup);
 
-    if (R.isEmpty(connectedAssets)) {
+    if (IsEmpty(connectedAssets)) {
       connectedAssets = [
         AssetMarkup({
-          sourceLon: element.lon,
-          sourceLat: element.lat,
+          sourceLat: element.getLatitude(),
+          sourceLon: element.getLongitude(),
+          sourceScoreColour: element.scoreColour,
           label: element.name,
           sourceName: element.name,
         }),
