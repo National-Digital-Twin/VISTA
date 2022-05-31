@@ -6,6 +6,7 @@ const TelicentGrid = ({ assets = [], connections = [] }) => {
   const { onSelectedNode } = useContext(AssetContext);
   const onClick = (type) => (e) => {
     const { target } = e;
+    console.log(target.id, type);
     onSelectedNode(target.id, type);
   };
   const zoom = 100;

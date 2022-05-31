@@ -1,6 +1,12 @@
 import React, { useContext, useEffect, useState, useRef } from "react";
 import CytoscapeComponent from "react-cytoscapejs";
 import { AssetContext } from "../AssetContext";
+import Fuel from "./assets/gas-station-fill-green.svg";
+import Medical from "./assets/medical_services_green_24dp.svg";
+import Phone from "./assets/phone-fill-coral.svg";
+import Drop from "./assets/drop-fill-blue.svg";
+import Battery from "./assets/battery-charge-fill-teal.svg";
+import Car from "./assets/car-fill-aqua.svg";
 
 const emptyAssets = [];
 const emptyConnections = [];
@@ -27,6 +33,11 @@ const Network = ({
   };
 
   useEffect(() => {
+    if (!cyRef.current) return;
+    focusCytoScapeContent();
+  }, [inFocus]);
+
+  useEffect(() => {
     const nodes = assets.map((asset) => ({
       data: {
         id: asset.uri,
@@ -37,7 +48,7 @@ const Network = ({
           width: `${asset.count + 40}`,
         },
       },
-      classes: asset.id.charAt(0),
+      classes: asset.id.charAt(0), // set class on cytospace node to add image
     }));
     const links = connections.map((connection) => ({
       data: connection,
@@ -56,9 +67,6 @@ const Network = ({
   useEffect(() => {
     if (!cyRef.current) return;
     focusCytoScapeContent();
-    // if (!cyRef.current.emitter().listeners.find((li) => li.event === "tap")) {
-    // cyRef.current.on("tap", listener);
-    // }
     window.cyRef = cyRef;
   }, [elements]);
 
@@ -90,21 +98,21 @@ const Network = ({
             height: "60px",
             borderWidth: "4px",
             borderColor: "gray",
-            "background-color": "black",
+            backgroundColor: "black",
             label: "data(label)",
             color: "white",
             fontSize: "0.6em",
-            "text-valign": "center",
-            "text-halign": "center",
-            "text-margin-y": "10px",
-            "background-position-y": "5px",
+            textValign: "center",
+            textHalign: "center",
+            textMarginY: "10px",
+            backgroundPositionY: "5px",
           },
         },
         {
           selector: "edge",
           style: {
-            "curve-style": "haystack",
-            color: "aqua",
+            curveStyle: "haystack",
+            color: "cyan",
             fontSize: "0.6em",
             label: "data(label)",
           },
@@ -112,43 +120,43 @@ const Network = ({
         {
           selector: ".F",
           style: {
-            "background-image": "./assets/gas-station-fill-green.svg",
-            "background-color": "black",
+            backgroundImage: `url(${Fuel})`,
+            backgroundColor: "black",
           },
         },
         {
           selector: ".M",
           style: {
-            "background-image": "./assets/medical_services_green_24dp.svg",
-            "background-color": "black",
+            backgroundImage: `url(${Medical})`,
+            backgroundColor: "black",
           },
         },
         {
           selector: ".C",
           style: {
-            "background-image": "./assets/phone-fill-coral.svg",
-            "background-color": "black",
+            backgroundImage: `url(${Phone})`,
+            backgroundColor: "black",
           },
         },
         {
           selector: ".W",
           style: {
-            "background-color": "black",
-            "background-image": "./assets/drop-fill-blue.svg",
+            backgroundColor: "black",
+            backgroundImage: `url(${Drop})`,
           },
         },
         {
           selector: ".T",
           style: {
-            "background-image": "./assets/car-fill-aqua.svg",
-            "background-color": "black",
+            backgroundImage: `url(${Car})`,
+            backgroundColor: "black",
           },
         },
         {
           selector: ".E",
           style: {
-            "background-image": "./assets/battery-charge-fill-teal.svg",
-            "background-color": "black",
+            backgroundImage: `url(${Battery})`,
+            backgroundColor: "black",
           },
         },
         {
@@ -172,7 +180,7 @@ const Network = ({
         {
           selector: ":selected",
           style: {
-            "background-color": "white",
+            backgroundColor: "white",
             borderWidth: "4px",
             borderColor: "white",
             color: "black",
