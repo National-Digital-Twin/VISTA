@@ -1,5 +1,9 @@
 import puppeteer from "puppeteer";
-
+const snapshotConfig = {
+  failureThreshold: 0.01,
+  failureThresholdType: "percent",
+  customDiffConfig: { threshold: 0.5 },
+};
 describe("map ", () => {
   jest.setTimeout(8000);
   let browser, page;
@@ -15,7 +19,7 @@ describe("map ", () => {
     });
 
     const image = await page.screenshot();
-    expect(image).toMatchImageSnapshot();
+    expect(image).toMatchImageSnapshot(snapshotConfig);
   });
 
   it("should load a grid when filter checkbox selected", async () => {
@@ -25,14 +29,14 @@ describe("map ", () => {
 
     await sleep(2000);
     const image = await page.screenshot();
-    expect(image).toMatchImageSnapshot();
+    expect(image).toMatchImageSnapshot(snapshotConfig);
   });
 
   it("should draw connections on map", async () => {
     await page.click('[id="http://telicent.io/test-data/iow#W007"]');
     await sleep(2000);
     const image = await page.screenshot();
-    expect(image).toMatchImageSnapshot();
+    expect(image).toMatchImageSnapshot(snapshotConfig);
   });
 
   afterAll(async () => {
