@@ -1,3 +1,9 @@
+const colourMap = {
+  1: "green",
+  2: "yellow",
+  3: "red",
+};
+
 export default class ConnectionAssessment {
   /*
     source and target uri's are duplicated in both (sourceAsset and targetAsset)
@@ -17,16 +23,6 @@ export default class ConnectionAssessment {
     this.targetName = target.name;
     this.criticality = parseInt(criticality);
     this.label = `${source.id}-${target.id}`;
-
-    if (source.hasLatLon()) {
-      this.sourceLat = source.getLatitude();
-      this.sourceLon = source.getLongitude();
-    }
-
-    if (target.hasLatLon()) {
-      this.targetLat = target.getLatitude();
-      this.targetLon = target.getLongitude();
-    }
   }
 
   getColor = (value) => {
@@ -67,5 +63,37 @@ export default class ConnectionAssessment {
     this.targetScoreColour = this.getColor(
       this.targetAsset.criticality / maxScore
     );
+  };
+  getMapboxMarkup = () => {
+    const lon = this.sourceAsset
+      .getLongitude()
+      .concat(this.targetAsset.getLongitude());
+    const lat = this.sourceAsset
+      .getLatitude()
+      .concat(this.targetAsset.getLatitude());
+    const sparseArray = new Array(lon.length);
+
+    const color = sparseArray
+      .fill()
+      .map(() => [this.sourceAsset.scoreColour, this.targetAsset.scoreColour])
+      .flat();
+
+    return [
+      {
+        line: { color: colourMap[this.criticality || 1], text: this.label },
+        lat,
+        lon,
+        marker: {
+          size: 7,
+          cmin: 1,
+          cmax: 5,
+          color,
+        },
+        mode: "markers+text+lines",
+        name: this.label,
+        text: this.label,
+        type: "scattermapbox",
+      },
+    ];
   };
 }

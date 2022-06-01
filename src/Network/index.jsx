@@ -7,6 +7,7 @@ import Phone from "./assets/phone-fill-coral.svg";
 import Drop from "./assets/drop-fill-blue.svg";
 import Battery from "./assets/battery-charge-fill-teal.svg";
 import Car from "./assets/car-fill-aqua.svg";
+import useSelectNode from "../hooks/useSelectNode";
 
 const emptyAssets = [];
 const emptyConnections = [];
@@ -16,7 +17,7 @@ const Network = ({
   connections = emptyConnections,
   inFocus = false, // just need to toggle re-paint.
 }) => {
-  const { onSelectedNode } = useContext(AssetContext);
+  const [setSelectedNode] = useSelectNode(assets, connections);
   const [layout, setLayout] = useState("cose");
   const cyRef = useRef();
   const [elements, setElements] = useState([]);
@@ -26,9 +27,9 @@ const Network = ({
     const { target } = e;
 
     if (target[0]._private.group === "nodes") {
-      onSelectedNode(target[0]._private.data.id, "asset");
+      setSelectedNode(target[0]._private.data.id, "asset");
     } else if (target[0]._private.group === "edges") {
-      onSelectedNode(target[0]._private.data.uri, "connection");
+      setSelectedNode(target[0]._private.data.uri, "connection");
     }
   };
 

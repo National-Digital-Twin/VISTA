@@ -1,28 +1,26 @@
-import React, { useContext } from "react";
-import { AssetContext } from "../AssetContext";
+import React from "react";
+import classNames from "classnames";
 import "./Grid.css";
+import useSelectNode from "../hooks/useSelectNode";
 
-const TelicentGrid = ({ assets = [], connections = [] }) => {
-  const { onSelectedNode } = useContext(AssetContext);
+const emptyAssets = [];
+const emptyConnections = [];
+const TelicentGrid = ({
+  assets = emptyAssets,
+  connections = emptyConnections,
+}) => {
+  const [setSelectedNode] = useSelectNode(assets, connections);
   const onClick = (type) => (e) => {
     const { target } = e;
-    console.log(target.id, type);
-    onSelectedNode(target.id, type);
+    setSelectedNode(target.id, type);
   };
   const zoom = 100;
   const grid = `50px 22px 22px 106px repeat(${assets.length}, 22px)`;
   const renderAssets = () => {
     const assetGrid = assets.map((asset) => (
       <AssetGrid
-        id={asset.id}
-        uri={asset.uri}
-        name={asset.name}
+        asset={asset}
         key={`asset-grid-${asset.uri}`}
-        gridIndex={asset.gridIndex}
-        scoreColour={asset.scoreColour}
-        countColour={asset.countColour}
-        count={asset.count}
-        criticality={asset.criticality}
         onClick={onClick("asset")}
       />
     ));
@@ -77,21 +75,23 @@ const TelicentGrid = ({ assets = [], connections = [] }) => {
   );
 };
 
-const AssetGrid = ({
-  id,
-  uri,
-  name,
-  count,
-  criticality,
-  countColour,
-  scoreColour,
-  gridIndex,
-  onClick,
-}) => {
+const AssetGrid = ({ asset, onClick }) => {
+  const {
+    id,
+    uri,
+    name,
+    count,
+    lon,
+    lat,
+    criticality,
+    countColour,
+    scoreColour,
+    gridIndex,
+  } = asset;
+
   return (
     <>
       <div
-        className="asset-id"
         title={name}
         style={{
           position: "sticky",
@@ -103,6 +103,9 @@ const AssetGrid = ({
           gridColumnEnd: 1,
           gridRowEnd: gridIndex + 1,
         }}
+        className={classNames("asset-id", {
+          "border-2 border-red-500": !lat || !lon,
+        })}
         onClick={onClick}
         id={`${uri}`}
         role="button"
@@ -111,9 +114,9 @@ const AssetGrid = ({
       </div>
       <div
         title={name}
+        className="asset-id"
         id={id}
         role="cell"
-        className="asset-id"
         style={{
           position: "sticky",
           left: "94px",
@@ -139,7 +142,9 @@ const AssetGrid = ({
           gridColumnEnd: gridIndex + 4,
           gridRowEnd: 1,
         }}
-        className="col-header"
+        className={classNames("col-header", {
+          "border-2 border-red-500": !lat || !lon,
+        })}
         onClick={onClick}
         id={`${uri}`}
         role="button"

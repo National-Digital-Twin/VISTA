@@ -10,6 +10,7 @@
     "@testing-library/jest-dom": "^5.16.3",
     "@testing-library/react": "^12.1.4",
     "@testing-library/user-event": "^13.5.0",
+    "classnames": "^2.3.1",
     "cytoscape": "^3.19.1",
     "mapbox-gl": "^2.7.1",
     "plotly.js": "^2.12.1",

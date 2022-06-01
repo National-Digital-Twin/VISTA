@@ -1,4 +1,4 @@
-import React, { createContext, useReducer, useState } from "react";
+import React, { createContext, useReducer } from "react";
 
 export const AssetContext = createContext();
 
@@ -24,8 +24,7 @@ const reducer = (state = initial_state, action) => {
 
 const AssetProvider = ({ children }) => {
   const [nodeState, dispatch] = useReducer(reducer, initial_state);
-
-  const onSelectedNode = (node, type) => {
+  const onSelectedNode = async (node, type) => {
     dispatch({ type: SET_SELECTED_NODE, data: { type, selected: node } });
   };
 

@@ -2,97 +2,19 @@ import React, { useEffect, useState } from "react";
 import Plot from "react-plotly.js";
 import { IsEmpty } from "../utils";
 
-const colourMap = {
-  1: "green",
-  2: "yellow",
-  3: "red",
-};
-
-const ConnectionMarkup = (connection) => {
-  return {
-    type: "scattermapbox",
-    marker: {
-      size: 14,
-      cmin: 1,
-      cmax: 5,
-      color: [connection.sourceScoreColour, connection.targetScoreColour],
-    }, // colours should be based on criticality
-    line: { color: "#f00" },
-    mode: "markers+text+lines",
-    lon: connection
-      ? [
-          connection.sourceAsset.getLongitude(),
-          connection.targetAsset.getLongitude(),
-        ]
-      : [],
-    lat: connection
-      ? [
-          connection.sourceAsset.getLatitude(),
-          connection.targetAsset.getLatitude(),
-        ]
-      : [],
-  };
-};
-
-const AssetMarkup = (asset) => {
-  if (!asset) {
-    return {
-      type: "scattermapbox",
-      marker: {
-        size: 14,
-        cmin: 1,
-        cmax: 5,
-        color: ["#f00"],
-      },
-      mode: "markers+text+lines",
-      line: { color: "#f00", text: "" }, // line colour should be based on severity
-    };
-  }
-
-  let name, text, lon, lat, color, size;
-
-  const targetName = asset.targetAsset && asset.targetAsset.name;
-  const sourceName = asset.sourceAsset && asset.sourceAsset.name;
-
-  if (targetName) {
-    name = `${targetName} (${asset.label})`;
-    text = [sourceName, targetName];
-    lon = [asset.sourceLon, asset.targetLon];
-    lat = [asset.sourceLat, asset.targetLat];
-    color = [asset.sourceScoreColour, asset.targetScoreColour];
-    size = 7;
-  } else {
-    name = asset.label;
-    text = asset.label;
-    lon = [asset.sourceLon];
-    lat = [asset.sourceLat];
-    size = 14;
-    color = [asset.sourceScoreColour];
-  }
-
-  return {
-    type: "scattermapbox",
-    marker: {
-      size,
-      cmin: 1,
-      cmax: 5,
-      color,
-    },
-    line: { color: colourMap[asset.criticality] || "red", text: asset.label },
-    text,
-    name,
-    mode: "markers+text+lines",
-    lon,
-    lat,
-  };
-};
-
 const TelicentMap = ({ element, connections }) => {
-  const [center, setCenter] = useState({ lat: 50.6742, lon: -1.284 });
-  const [data, setData] = useState([AssetMarkup()]);
+  const center = { lat: 50.66206632912732, lon: -1.3480234953335598 };
+  const [data, setData] = useState([{ type: "scattermapbox" }]);
 
-  console.log(data);
-  const drawAsset = (element, connections) => {
+  const drawMarkup = (element, connections = []) => {
+    const connection = connections.find(
+      (connection) => connection.uri === element.uri
+    );
+    if (connection) {
+      setData(connection.getMapboxMarkup());
+      return;
+    }
+
     let connectedAssets = connections
       .filter((connection) => {
         return (
@@ -100,35 +22,15 @@ const TelicentMap = ({ element, connections }) => {
           connection.targetAsset.uri === element.uri
         );
       })
-      .map(AssetMarkup);
+      .map((asset) => asset.getMapboxMarkup())
+      .flat();
 
     if (IsEmpty(connectedAssets)) {
-      connectedAssets = [
-        AssetMarkup({
-          sourceLat: element.getLatitude(),
-          sourceLon: element.getLongitude(),
-          sourceScoreColour: element.scoreColour,
-          label: element.name,
-          sourceName: element.name,
-        }),
-      ];
+      setData([element.getMapboxMarkup()]);
+      return;
     }
 
     setData(connectedAssets);
-    setCenter({ lat: element.lat, lon: element.lon });
-  };
-
-  const drawConnection = (element) => {
-    setData([ConnectionMarkup(element)]);
-    setCenter({ lat: element.sourceLat, lon: element.sourceLon });
-  };
-
-  const drawMarkup = (element, connections = []) => {
-    if (element.category === "asset") {
-      drawAsset(element, connections);
-    } else if (element.category === "connection") {
-      drawConnection(element);
-    }
   };
 
   useEffect(() => {
