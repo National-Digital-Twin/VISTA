@@ -33,10 +33,17 @@ const Network = ({
     }
   };
 
+  const focusCytoScapeContent = () => {
+    cyRef.current.resize();
+    cyRef.current.layout({ name: layout }).run();
+    cyRef.current.center();
+    cyRef.current.fit();
+  };
+
   useEffect(() => {
     if (!cyRef.current) return;
     focusCytoScapeContent();
-  }, [inFocus]);
+  }, [inFocus, focusCytoScapeContent]);
 
   useEffect(() => {
     const nodes = assets.map((asset) => ({
@@ -57,13 +64,6 @@ const Network = ({
     }));
     setElements([...nodes, ...links]);
   }, [assets, connections]);
-
-  const focusCytoScapeContent = () => {
-    cyRef.current.resize();
-    cyRef.current.layout({ name: layout }).run();
-    cyRef.current.center();
-    cyRef.current.fit();
-  };
 
   useEffect(() => {
     if (!cyRef.current) return;

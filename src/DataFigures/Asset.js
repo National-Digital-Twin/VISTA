@@ -9,15 +9,15 @@ const colourMap = {
 export default class Asset {
   constructor(item, idx) {
     this.category = "asset";
-    this.gridIndex = idx + 1;
-    this.id = item.id;
-    this.name = item.name;
-    this.uri = item.uri;
-    this.type = item.type;
     this.count = 0;
     this.criticality = 0;
+    this.gridIndex = idx + 1;
+    this.id = item.id;
     this.lat = [];
     this.lon = [];
+    this.name = item.name;
+    this.type = item.type;
+    this.uri = item.uri;
   }
 
   getColor = (value) => {
@@ -90,10 +90,12 @@ export default class Asset {
 
     const color = sparseArray.fill().map(() => this.scoreColour);
 
+    // If road or assets with segments shrink marker size
+    const size = this.lat.length > 2 || this.lon > 2 ? 1 : 7;
     return {
       type: "scattermapbox",
       marker: {
-        size: 7,
+        size,
         cmin: 1,
         cmax: 5,
         color,

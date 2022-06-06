@@ -14,15 +14,15 @@ export default class ConnectionAssessment {
   */
   constructor(item, source, target, criticality) {
     this.category = "connection";
-    this.uri = item.connUri;
+    this.criticality = parseInt(criticality);
+    this.label = `${source.id}-${target.id}`;
     this.source = item.asset1Uri;
     this.sourceAsset = source;
     this.sourceName = source.name;
     this.target = item.asset2Uri;
     this.targetAsset = target;
     this.targetName = target.name;
-    this.criticality = parseInt(criticality);
-    this.label = `${source.id}-${target.id}`;
+    this.uri = item.connUri;
   }
 
   getColor = (value) => {
@@ -78,13 +78,19 @@ export default class ConnectionAssessment {
       .map(() => [this.sourceAsset.scoreColour, this.targetAsset.scoreColour])
       .flat();
 
+    console.log("eee", this.sourceAsset, this.targetAsset);
+    // If road or assets with segments shrink marker size
+    const size =
+      this.sourceAsset.lat.length > 2 || this.targetAsset.lat.length > 2
+        ? 1
+        : 7;
     return [
       {
         line: { color: colourMap[this.criticality || 1], text: this.label },
         lat,
         lon,
         marker: {
-          size: 7,
+          size,
           cmin: 1,
           cmax: 5,
           color,
