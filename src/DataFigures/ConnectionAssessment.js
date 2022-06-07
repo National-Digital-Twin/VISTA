@@ -82,7 +82,7 @@ export default class ConnectionAssessment {
     // If road or assets with segments shrink marker size
     const size =
       this.sourceAsset.lat.length > 2 || this.targetAsset.lat.length > 2
-        ? 1
+        ? 0
         : 7;
     return [
       {

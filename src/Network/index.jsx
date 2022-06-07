@@ -1,6 +1,5 @@
-import React, { useContext, useEffect, useState, useRef } from "react";
+import React, { useCallback, useEffect, useState, useRef } from "react";
 import CytoscapeComponent from "react-cytoscapejs";
-import { AssetContext } from "../AssetContext";
 import Fuel from "./assets/gas-station-fill-green.svg";
 import Medical from "./assets/medical_services_green_24dp.svg";
 import Phone from "./assets/phone-fill-coral.svg";
@@ -22,28 +21,34 @@ const Network = ({
   const cyRef = useRef();
   const [elements, setElements] = useState([]);
 
-  const listener = (e) => {
-    e.preventDefault();
-    const { target } = e;
+  const listener = useCallback(
+    (e) => {
+      e.preventDefault();
+      const { target } = e;
 
-    if (target[0]._private.group === "nodes") {
-      setSelectedNode(target[0]._private.data.id, "asset");
-    } else if (target[0]._private.group === "edges") {
-      setSelectedNode(target[0]._private.data.uri, "connection");
-    }
-  };
+      const {
+        group,
+        data: { id: targetId, uri: targetUri },
+      } = target[0]._private;
+      const type = group === "nodes" ? "asset" : "connection";
+      const uri = group === "nodes" ? targetId : targetUri;
 
-  const focusCytoScapeContent = () => {
+      setSelectedNode(uri, type);
+    },
+    [assets, connections]
+  );
+
+  const focusCytoScapeContent = useCallback(() => {
     cyRef.current.resize();
     cyRef.current.layout({ name: layout }).run();
     cyRef.current.center();
     cyRef.current.fit();
-  };
+  }, []);
 
   useEffect(() => {
     if (!cyRef.current) return;
     focusCytoScapeContent();
-  }, [inFocus, focusCytoScapeContent]);
+  }, [inFocus]);
 
   useEffect(() => {
     const nodes = assets.map((asset) => ({
@@ -63,6 +68,11 @@ const Network = ({
       classes: `${connection.criticality}`,
     }));
     setElements([...nodes, ...links]);
+
+    if (cyRef.current) {
+      cyRef.current.removeAllListeners();
+      cyRef.current.on("tap", listener);
+    }
   }, [assets, connections]);
 
   useEffect(() => {
@@ -83,11 +93,6 @@ const Network = ({
       layout={{ name: layout }}
       cy={(cy) => {
         cyRef.current = cy;
-        if (
-          !cyRef.current.emitter().listeners.find((li) => li.event === "tap")
-        ) {
-          cyRef.current.on("tap", listener);
-        }
       }}
       className="w-full h-full"
       elements={elements}

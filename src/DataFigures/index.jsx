@@ -120,7 +120,7 @@ const DataFigures = () => {
   }, [state.selected, get, processAssessmentCategories, updateElements]);
 
   const renderCytoscape = () => {
-    return <Network assets={state.assets} connections={state.connections} />;
+    return;
   };
 
   const setSelected = (selected) => {
@@ -156,7 +156,7 @@ const DataFigures = () => {
           <TelicentGrid assets={state.assets} connections={state.connections} />
         </TabPanel>
         <TabPanel style={{ height: "calc(100% - 54px)" }}>
-          {renderCytoscape()}
+          <Network assets={state.assets} connections={state.connections} />
         </TabPanel>
       </Tabs>
     </section>

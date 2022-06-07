@@ -91,7 +91,7 @@ export default class Asset {
     const color = sparseArray.fill().map(() => this.scoreColour);
 
     // If road or assets with segments shrink marker size
-    const size = this.lat.length > 2 || this.lon > 2 ? 1 : 7;
+    const size = this.lat.length > 2 || this.lon > 2 ? 0 : 7;
     return {
       type: "scattermapbox",
       marker: {

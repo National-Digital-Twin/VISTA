@@ -14,6 +14,7 @@ const TelicentGrid = ({
     const { target } = e;
     setSelectedNode(target.id, type);
   };
+
   const zoom = 100;
   const grid = `50px 22px 22px 106px repeat(${assets.length}, 22px)`;
   const renderAssets = () => {
