@@ -119,10 +119,6 @@ const DataFigures = () => {
     ]).then(processAssessmentCategories);
   }, [state.selected, get, processAssessmentCategories, updateElements]);
 
-  const renderCytoscape = () => {
-    return;
-  };
-
   const setSelected = (selected) => {
     dispatch({ type: SET_SELECTED, data: selected });
   };
