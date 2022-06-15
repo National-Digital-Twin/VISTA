@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Plot from "react-plotly.js";
 import { IsEmpty } from "../utils";
+import config from "../config/app-config";
 
 const TelicentMap = ({ element, connections }) => {
   const center = { lat: 50.66206632912732, lon: -1.3480234953335598 };
@@ -60,8 +61,7 @@ const TelicentMap = ({ element, connections }) => {
           bearing: 0,
           margin: { r: 0, t: 0, b: 0, l: 0 },
           zoom: 10,
-          accesstoken:
-            "pk.eyJ1IjoibXJkNTA0IiwiYSI6ImNrcXkwaDY0dDA2NXkycXM2ZHY1b3VkbjcifQ.WSLCm8FHh9xj8lnZiRjdZg",
+          accesstoken: config.mb.token,
         },
         margin: { r: 0, t: 0, b: 0, l: 0 },
         font: {
