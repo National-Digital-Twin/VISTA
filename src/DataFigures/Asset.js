@@ -41,6 +41,7 @@ export default class Asset {
     this.lat = this.lat.concat(latitudes);
   };
 
+  getLonLat = () => [this.lon, this.lat];
   getLongitude = () => this.lon;
   setLongitude = (longitude) => {
     if (!longitude) return;
@@ -100,7 +101,7 @@ export default class Asset {
         cmax: 5,
         color,
       },
-      line: { color: lineColour, text: this.label },
+      line: { color: lineColour },
       text: this.label,
       name: this.label,
       lon: this.lon,

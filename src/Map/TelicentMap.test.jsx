@@ -32,7 +32,7 @@ describe("map ", () => {
     expect(image).toMatchImageSnapshot(snapshotConfig);
   });
 
-  it("should draw connections on map", async () => {
+  xit("should draw connections on map", async () => {
     await page.click('[id="http://telicent.io/test-data/iow#W007"]');
     await sleep(2000);
     const image = await page.screenshot();

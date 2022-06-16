@@ -38,6 +38,7 @@ export default class ConnectionAssessment {
     this.sourceLon = lon;
   };
 
+  getSourceLatLon = () => this.sourceAsset.getLonLat();
   setSourceLatLon = ({ lat, lon }) => {
     this.setSourceLatitude(lat);
     this.setSourceLongitude(lon);
@@ -51,9 +52,24 @@ export default class ConnectionAssessment {
     this.targetLon = lon;
   };
 
+  getTargetLatLon = () => this.targetAsset.getLonLat();
+
   setTargetLatLon = ({ lat, lon }) => {
     this.setTargetLatitude(lat);
     this.setTargetLongitude(lon);
+  };
+
+  getCoordinates = () => {
+    console.log(this.sourceAsset);
+    const sourceCoords = this.sourceAsset.lon.map((lon, index) => {
+      return [lon, this.sourceAsset.lat[index]];
+    });
+
+    const targetCoords = this.targetAsset.lon.map((lon, index) => {
+      return [lon, this.targetAsset.lat[index]];
+    });
+
+    return sourceCoords.concat(targetCoords);
   };
 
   calculateScoreColour = (maxScore) => {
@@ -78,7 +94,8 @@ export default class ConnectionAssessment {
       .map(() => [this.sourceAsset.scoreColour, this.targetAsset.scoreColour])
       .flat();
 
-    console.log("eee", this.sourceAsset, this.targetAsset);
+    // console.log("eee", this.sourceAsset, this.targetAsset);
+    console.log(this.criticality);
     // If road or assets with segments shrink marker size
     const size =
       this.sourceAsset.lat.length > 2 || this.targetAsset.lat.length > 2
@@ -86,7 +103,7 @@ export default class ConnectionAssessment {
         : 7;
     return [
       {
-        line: { color: colourMap[this.criticality || 1], text: this.label },
+        line: { color: colourMap[this.criticality] },
         lat,
         lon,
         marker: {

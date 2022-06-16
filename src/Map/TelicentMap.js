@@ -1,74 +1,126 @@
-import React, { useEffect, useState } from "react";
-import Plot from "react-plotly.js";
+import React, { useEffect, useState, useReducer } from "react";
+import ReactMapGL, { NavigationControl, Layer, Source } from "react-map-gl";
 import { IsEmpty } from "../utils";
 import config from "../config/app-config";
+import { clearStorage } from "mapbox-gl";
 
-const TelicentMap = ({ element, connections }) => {
-  const center = { lat: 50.66206632912732, lon: -1.3480234953335598 };
-  const [data, setData] = useState([{ type: "scattermapbox" }]);
+const UPDATE_LINE_STYLE = "UPDATE_LINE_STYLE";
+const UPDATE_LINE_FEATURES = "UPDATE_LINE_FEATURES";
+const UPDATE_VIEWPORT = "UPDATE_VIEWPORT";
 
-  const drawMarkup = (element, connections = []) => {
+const initialState = {
+  lineStyle: {
+    id: "line",
+    type: "line",
+    layout: {
+      "line-join": "round",
+      "line-cap": "round",
+    },
+    paint: {
+      "line-color": "#888",
+      "line-width": 1,
+    },
+  },
+  connectionsGeoJSON: {
+    type: "FeatureCollection",
+    features: [],
+  },
+  viewport: {
+    latitude: 50.66206632912732,
+    longitude: -1.3480234953335598,
+    zoom: 9,
+    height: "100%",
+    width: "100%",
+  },
+};
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case UPDATE_LINE_STYLE:
+      const lineStyleCopy = { ...state.lineStyle };
+      lineStyleCopy.paint["line-color"] = action.payload;
+      return {
+        ...state,
+        lineStyle: lineStyleCopy,
+      };
+
+    case UPDATE_LINE_FEATURES:
+      const cgjCopy = { ...state.connectionsGeoJSON };
+      cgjCopy.features = action.payload;
+      return {
+        ...state,
+        connectionsGeoJSON: cgjCopy,
+      };
+    case UPDATE_VIEWPORT:
+      return {
+        ...state,
+        viewport: { ...action.payload },
+      };
+  }
+};
+
+const TelicentMap = ({ element, connections = [] }) => {
+  const [state, dispatch] = useReducer(reducer, initialState);
+  const getFocussedConnection = (element, connections = []) => {
     const connection = connections.find(
-      (connection) => connection.uri === element.uri
+      (connection) =>
+        connection.sourceAsset.uri === element.uri ||
+        connection.targetAsset.uri === element.uri
     );
+
     if (connection) {
-      setData(connection.getMapboxMarkup());
-      return;
+      dispatch({ type: UPDATE_LINE_STYLE, payload: "#f00" });
+      dispatch({
+        type: UPDATE_LINE_FEATURES,
+        payload: {
+          type: "Feature",
+          properties: {
+            name: connection.uri,
+          },
+          geometry: {
+            type: "LineString",
+            coordinates: connection.getCoordinates(),
+          },
+        },
+      });
     }
-
-    let connectedAssets = connections
-      .filter((connection) => {
-        return (
-          connection.sourceAsset.uri === element.uri ||
-          connection.targetAsset.uri === element.uri
-        );
-      })
-      .map((asset) => asset.getMapboxMarkup())
-      .flat();
-
-    if (IsEmpty(connectedAssets)) {
-      setData([element.getMapboxMarkup()]);
-      return;
-    }
-
-    setData(connectedAssets);
   };
 
   useEffect(() => {
     if (!element || !element.category) return;
 
-    drawMarkup(element, connections);
+    getFocussedConnection(element, connections);
   }, [element, connections]);
 
+  const onHandleViewportResize = () => {
+    dispatch({ type: UPDATE_VIEWPORT, payload: state.viewport });
+  };
+
+  const handleViewport = (e) => {
+    const viewport = { e };
+    dispatch({ type: UPDATE_VIEWPORT, payload: viewport });
+  };
+  const markerStyle = {
+    id: "marker",
+    type: "circle",
+  };
+  console.log(state);
   return (
-    <Plot
-      divId="plotly"
-      className="graph"
-      style={{ width: "100%", height: "100%" }}
-      data={data}
-      layout={{
-        dragmode: "zoom",
-        legend: {
-          title: "Traces",
-          xanchor: "left",
-          x: 0.01,
-          bgcolor: "rgba(17,17,17,0.3)",
-        },
-        autosize: true,
-        mapbox: {
-          style: "mapbox://styles/mapbox/dark-v10",
-          center: center,
-          bearing: 0,
-          margin: { r: 0, t: 0, b: 0, l: 0 },
-          zoom: 10,
-          accesstoken: config.mb.token,
-        },
-        margin: { r: 0, t: 0, b: 0, l: 0 },
-        font: {
-          color: "white",
-        },
-      }}
-    />
+    <ReactMapGL
+      {...state.viewport}
+      mapboxAccessToken={config.mb.token}
+      mapStyle="mapbox://styles/mapbox/dark-v10"
+      onResize={onHandleViewportResize}
+      onDrag={handleViewport}
+    >
+      <NavigationControl />
+      {/* <Source id="connections" type="geojson" data={state.connectionsGeoJSON}> */}
+      {/* <Layer {...state.lineStyle}></Layer> */}
+      {/* </Source> */}
+      {/* <Source id="assets" type="geojson" data={assets}> */}
+      {/* <Layer {...markerStyle} /> */}
+      {/* </Source> */}
+    </ReactMapGL>
   );
 };
 
