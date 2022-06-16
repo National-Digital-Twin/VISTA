@@ -3563,6 +3563,11 @@ color-rgba@^2.1.1, color-rgba@^2.2.0:
     color-parse "^1.4.2"
     color-space "^2.0.0"
 
+color-scales@^3.0.2:
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/color-scales/-/color-scales-3.0.2.tgz#fb0c398b5a9c08e21984695495828cfb2ec72fcc"
+  integrity sha512-AwX0kUE1Ps6Gv0b8if20DAfgchAs5HRmr+ulBbP4anqcBqUevaj8S9OWVFlYynsfuvB9GF1oSpCWOVNtox7aRA==
+
 color-space@^1.14.6:
   version "1.16.0"
   resolved "https://registry.yarnpkg.com/color-space/-/color-space-1.16.0.tgz#611781bca41cd8582a1466fd9e28a7d3d89772a2"

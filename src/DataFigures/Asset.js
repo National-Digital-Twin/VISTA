@@ -1,10 +1,13 @@
 import { IsEmpty } from "../utils";
+import ColorScale from "color-scales";
 
 const colourMap = {
   1: "green",
   2: "yellow",
   3: "red",
 };
+
+const colourScale = new ColorScale(0, 100, ["#198c00", "#ff0100"], 1);
 
 export default class Asset {
   constructor(item, idx) {
@@ -54,12 +57,20 @@ export default class Asset {
   };
 
   calculateScoreColour = (maxScore) => {
-    this.scoreColour = this.getColor(this.criticality / maxScore);
+    this.scoreColour = colourScale
+      .getColor((99 * this.criticality) / maxScore)
+      .toHexString();
   };
 
+  getScoreColour = () => this.scoreColour;
+
   calculateCountColour = (maxCount) => {
-    this.countColour = this.getColor(this.count / maxCount);
+    this.countColour = colourScale
+      .getColor((99 * this.count) / maxCount)
+      .toHexString();
   };
+
+  getCountColour = () => this.countColour;
 
   incrementCount = () => {
     this.count = this.count + 1;

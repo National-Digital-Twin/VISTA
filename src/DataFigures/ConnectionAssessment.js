@@ -1,8 +1,11 @@
+import ColorScale from "color-scales";
 const colourMap = {
   1: "green",
   2: "yellow",
   3: "red",
 };
+
+const colourScale = new ColorScale(0, 100, ["#198c00", "#ff0100"], 1);
 
 export default class ConnectionAssessment {
   /*
@@ -25,9 +28,11 @@ export default class ConnectionAssessment {
     this.uri = item.connUri;
   }
 
-  getColor = (value) => {
-    let hue = ((1 - +value.toFixed(2)) * 120).toString(10);
-    return `hsl(${hue},100%, 50%)`;
+  getColour = () => this.scoreColour;
+  setColour = (maxScore) => {
+    this.scoreColour = colourScale
+      .getColor((99 * this.criticality) / maxScore)
+      .toHexString();
   };
 
   setSourceLatitude = (lat) => {
@@ -72,14 +77,6 @@ export default class ConnectionAssessment {
     return sourceCoords.concat(targetCoords);
   };
 
-  calculateScoreColour = (maxScore) => {
-    this.sourceScoreColour = this.getColor(
-      this.sourceAsset.criticality / maxScore
-    );
-    this.targetScoreColour = this.getColor(
-      this.targetAsset.criticality / maxScore
-    );
-  };
   getMapboxMarkup = () => {
     const lon = this.sourceAsset
       .getLongitude()

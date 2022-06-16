@@ -2,7 +2,7 @@ import React, { useEffect, useState, useReducer } from "react";
 import ReactMapGL, { NavigationControl, Layer, Source } from "react-map-gl";
 import { IsEmpty } from "../utils";
 import config from "../config/app-config";
-import { clearStorage } from "mapbox-gl";
+import ColorScale from "color-scales";
 
 const UPDATE_LINE_STYLE = "UPDATE_LINE_STYLE";
 const UPDATE_LINE_FEATURES = "UPDATE_LINE_FEATURES";
@@ -17,8 +17,8 @@ const initialState = {
       "line-cap": "round",
     },
     paint: {
-      "line-color": "#888",
       "line-width": 1,
+      "line-color": ["get", "color"],
     },
   },
   connectionsGeoJSON: {
@@ -46,7 +46,8 @@ const reducer = (state, action) => {
 
     case UPDATE_LINE_FEATURES:
       const cgjCopy = { ...state.connectionsGeoJSON };
-      cgjCopy.features = action.payload;
+      console.log(action.payload);
+      cgjCopy.features = [action.payload];
       return {
         ...state,
         connectionsGeoJSON: cgjCopy,
@@ -69,13 +70,14 @@ const TelicentMap = ({ element, connections = [] }) => {
     );
 
     if (connection) {
-      dispatch({ type: UPDATE_LINE_STYLE, payload: "#f00" });
       dispatch({
         type: UPDATE_LINE_FEATURES,
         payload: {
           type: "Feature",
           properties: {
             name: connection.uri,
+            // color: connection.getColour(),
+            color: connection.sourceAsset.getScoreColour(),
           },
           geometry: {
             type: "LineString",
@@ -104,7 +106,7 @@ const TelicentMap = ({ element, connections = [] }) => {
     id: "marker",
     type: "circle",
   };
-  console.log(state);
+
   return (
     <ReactMapGL
       {...state.viewport}
@@ -114,9 +116,9 @@ const TelicentMap = ({ element, connections = [] }) => {
       onDrag={handleViewport}
     >
       <NavigationControl />
-      {/* <Source id="connections" type="geojson" data={state.connectionsGeoJSON}> */}
-      {/* <Layer {...state.lineStyle}></Layer> */}
-      {/* </Source> */}
+      <Source id="connections" type="geojson" data={state.connectionsGeoJSON}>
+        <Layer {...state.lineStyle}></Layer>
+      </Source>
       {/* <Source id="assets" type="geojson" data={assets}> */}
       {/* <Layer {...markerStyle} /> */}
       {/* </Source> */}

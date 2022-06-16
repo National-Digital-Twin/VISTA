@@ -80,7 +80,7 @@ const DataFigures = () => {
       });
 
       Object.values(connectionAssessments.reports).forEach((connection) => {
-        connection.calculateScoreColour(maxScore);
+        connection.setColour(maxScore);
       });
 
       dispatch({
