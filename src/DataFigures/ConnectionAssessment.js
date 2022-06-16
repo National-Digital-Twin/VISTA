@@ -35,6 +35,8 @@ export default class ConnectionAssessment {
       .toHexString();
   };
 
+  getCriticalityColour = () => colourMap[this.criticality];
+
   setSourceLatitude = (lat) => {
     this.sourceLat = lat;
   };
@@ -65,7 +67,6 @@ export default class ConnectionAssessment {
   };
 
   getCoordinates = () => {
-    console.log(this.sourceAsset);
     const sourceCoords = this.sourceAsset.lon.map((lon, index) => {
       return [lon, this.sourceAsset.lat[index]];
     });

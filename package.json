@@ -16,7 +16,6 @@
     "mapbox-gl": "^2.7.1",
     "plotly.js": "^2.12.1",
     "plotly.js-gl2d-dist-min": "^2.12.1",
-    "ramda": "^0.28.0",
     "react": "^17.0.2",
     "react-cytoscapejs": "^1.2.1",
     "react-dom": "^17.0.2",

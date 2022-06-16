@@ -7,7 +7,7 @@ import config from "../config/app-config";
 import { Tabs, Tab, TabList, TabPanel } from "react-tabs";
 import { IsEmpty } from "../utils";
 import "react-tabs/style/react-tabs.css";
-import { generateConnectionAssessments, processAssets } from "./utils";
+import { processAssetConnections, processAssets } from "./utils";
 
 import "./DataFigures.css";
 import { ElementsContext } from "../ElementsContext";
@@ -67,19 +67,35 @@ const DataFigures = () => {
         state.selected.length
       );
 
-      const connectionAssessments = generateConnectionAssessments(
+      const connections = processAssetConnections(
         assessmentsAllCategories,
         processedAssets,
         state.selected.length
       );
 
-      const { maxScore, maxCount } = connectionAssessments;
+      const counts = connections
+        .map((connection) => [
+          connection.sourceAsset.getCount(),
+          connection.targetAsset.getCount(),
+        ])
+        .flat();
+
+      const scores = connections
+        .map((connection) => [
+          connection.sourceAsset.getCriticality(),
+          connection.targetAsset.getCriticality(),
+        ])
+        .flat();
+
+      const maxCount = Math.max(...counts);
+      const maxScore = Math.max(...scores);
+
       Object.values(processedAssets).forEach((asset) => {
         asset.calculateScoreColour(maxScore);
         asset.calculateCountColour(maxCount);
       });
 
-      Object.values(connectionAssessments.reports).forEach((connection) => {
+      Object.values(connections).forEach((connection) => {
         connection.setColour(maxScore);
       });
 
@@ -87,13 +103,13 @@ const DataFigures = () => {
         type: SET_CONNECTIONS_AND_ASSETS,
         data: {
           assets: Object.values(processedAssets),
-          connections: Object.values(connectionAssessments.reports),
+          connections: Object.values(connections),
         },
       });
 
       updateElements({
         assets: Object.values(processedAssets),
-        connections: Object.values(connectionAssessments.reports),
+        connections: Object.values(connections),
       });
     },
     [state.selected, updateElements]

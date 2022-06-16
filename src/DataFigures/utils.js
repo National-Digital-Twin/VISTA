@@ -38,7 +38,38 @@ const processConnectionAssessments = (acc, curr) => {
   return acc;
 };
 
-export const generateConnectionAssessments = (result, assets, startIndex) => {
+const filterConnectionByName = (connections, name) =>
+  connections.filter(
+    (connection) =>
+      connection.asset1Uri === name || connection.asset2Uri === name
+  );
+
+export const processAssetConnections = (result, assets, startIndex) => {
+  const connections = result.slice(startIndex, result.length).flat();
+
+  for (let name in assets) {
+    assets[name].processConnections(
+      filterConnectionByName(connections, name),
+      assets
+    );
+  }
+
+  return connections.map(
+    (connection) =>
+      new ConnectionAssessment(
+        connection,
+        assets[connection.asset1Uri],
+        assets[connection.asset2Uri],
+        connection.criticality
+      )
+  );
+};
+export const oldgenerateConnectionAssessments = (
+  result,
+  assets,
+  startIndex
+) => {
+  console.log(result);
   return result
     .slice(startIndex, result.length)
     .flat()

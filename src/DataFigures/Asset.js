@@ -9,10 +9,12 @@ const colourMap = {
 
 const colourScale = new ColorScale(0, 100, ["#198c00", "#ff0100"], 1);
 
+const sumCriticality = (acc, connection) =>
+  (acc += parseInt(connection.criticality));
+
 export default class Asset {
   constructor(item, idx) {
     this.category = "asset";
-    this.count = 0;
     this.criticality = 0;
     this.gridIndex = idx + 1;
     this.id = item.id;
@@ -21,8 +23,27 @@ export default class Asset {
     this.name = item.name;
     this.type = item.type;
     this.uri = item.uri;
+    this.connectsTo = [];
+    this.count = 0;
   }
 
+  processConnections = (connections, assets) => {
+    this.setConnections(
+      connections.map((connection) =>
+        connection.asset1Uri === this.uri
+          ? assets[connection.asset2Uri]
+          : assets[connection.asset1Uri]
+      )
+    );
+
+    this.count = connections.length;
+
+    this.criticality = connections.reduce(sumCriticality, 0);
+  };
+
+  setConnections = (connections) => {
+    this.connectsTo = connections;
+  };
   getColor = (value) => {
     let hue = ((1 - value) * 120).toString(10);
     return `hsl(${hue},100%, 50%)`;
@@ -91,6 +112,7 @@ export default class Asset {
   incrementCriticalityBy = (criticality) => {
     this.criticality = this.criticality + criticality;
   };
+  setCriticality = (criticality) => (this.criticality = criticality);
 
   hasLatLon = () => {
     return IsEmpty(this.lat) && IsEmpty(this.lon);

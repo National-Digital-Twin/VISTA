@@ -1,11 +1,10 @@
-import React, { useEffect, useState, useReducer } from "react";
+import React, { useEffect, useReducer } from "react";
 import ReactMapGL, { NavigationControl, Layer, Source } from "react-map-gl";
 import { IsEmpty } from "../utils";
 import config from "../config/app-config";
-import ColorScale from "color-scales";
 
-const UPDATE_LINE_STYLE = "UPDATE_LINE_STYLE";
 const UPDATE_LINE_FEATURES = "UPDATE_LINE_FEATURES";
+const UPDATE_ASSET_FEATURES = "UPDATE_ASSET_FEATURES";
 const UPDATE_VIEWPORT = "UPDATE_VIEWPORT";
 
 const initialState = {
@@ -21,7 +20,25 @@ const initialState = {
       "line-color": ["get", "color"],
     },
   },
+  markerStyle: {
+    id: "marker",
+    type: "circle",
+    paint: {
+      "circle-radius": {
+        base: 1.75,
+        stops: [
+          [12, 2],
+          [22, 180],
+        ],
+      },
+      "circle-color": ["get", "color"],
+    },
+  },
   connectionsGeoJSON: {
+    type: "FeatureCollection",
+    features: [],
+  },
+  assetsGeoJSON: {
     type: "FeatureCollection",
     features: [],
   },
@@ -36,18 +53,9 @@ const initialState = {
 
 const reducer = (state, action) => {
   switch (action.type) {
-    case UPDATE_LINE_STYLE:
-      const lineStyleCopy = { ...state.lineStyle };
-      lineStyleCopy.paint["line-color"] = action.payload;
-      return {
-        ...state,
-        lineStyle: lineStyleCopy,
-      };
-
     case UPDATE_LINE_FEATURES:
       const cgjCopy = { ...state.connectionsGeoJSON };
-      console.log(action.payload);
-      cgjCopy.features = [action.payload];
+      cgjCopy.features = action.payload;
       return {
         ...state,
         connectionsGeoJSON: cgjCopy,
@@ -63,27 +71,30 @@ const reducer = (state, action) => {
 const TelicentMap = ({ element, connections = [] }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const getFocussedConnection = (element, connections = []) => {
-    const connection = connections.find(
+    const connectedAssets = connections.filter(
       (connection) =>
         connection.sourceAsset.uri === element.uri ||
         connection.targetAsset.uri === element.uri
     );
 
-    if (connection) {
+    if (connectedAssets) {
       dispatch({
         type: UPDATE_LINE_FEATURES,
-        payload: {
-          type: "Feature",
-          properties: {
-            name: connection.uri,
-            // color: connection.getColour(),
-            color: connection.sourceAsset.getScoreColour(),
-          },
-          geometry: {
-            type: "LineString",
-            coordinates: connection.getCoordinates(),
-          },
-        },
+        payload: connectedAssets.map((conn) => {
+          console.log(conn);
+          return {
+            type: "Feature",
+            properties: {
+              name: conn.uri,
+              // color: conn.sourceAsset.getScoreColour(),
+              color: conn.getCriticalityColour(),
+            },
+            geometry: {
+              type: "LineString",
+              coordinates: conn.getCoordinates(),
+            },
+          };
+        }),
       });
     }
   };
@@ -119,9 +130,9 @@ const TelicentMap = ({ element, connections = [] }) => {
       <Source id="connections" type="geojson" data={state.connectionsGeoJSON}>
         <Layer {...state.lineStyle}></Layer>
       </Source>
-      {/* <Source id="assets" type="geojson" data={assets}> */}
-      {/* <Layer {...markerStyle} /> */}
-      {/* </Source> */}
+      <Source id="assets" type="geojson" data={state.assetsGeoJSON}>
+        <Layer {...markerStyle} />
+      </Source>
     </ReactMapGL>
   );
 };
