@@ -68,35 +68,34 @@ const reducer = (state, action) => {
   }
 };
 
+const buildFeatures = (assets) =>
+  assets.map((asset) => ({
+    type: "Feature",
+    properties: {
+      name: asset.uri,
+      color: asset.getScoreColour(),
+    },
+    geometry: {
+      type: "LineString",
+      coordinates: asset.getCoordinates(),
+    },
+  }));
+
 const TelicentMap = ({ element, connections = [] }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const getFocussedConnection = (element, connections = []) => {
-    const connectedAssets = connections.filter(
-      (connection) =>
-        connection.sourceAsset.uri === element.uri ||
-        connection.targetAsset.uri === element.uri
-    );
+    // if assets draw circles
+    console.log(element);
 
-    if (connectedAssets) {
-      dispatch({
-        type: UPDATE_LINE_FEATURES,
-        payload: connectedAssets.map((conn) => {
-          console.log(conn);
-          return {
-            type: "Feature",
-            properties: {
-              name: conn.uri,
-              // color: conn.sourceAsset.getScoreColour(),
-              color: conn.getCriticalityColour(),
-            },
-            geometry: {
-              type: "LineString",
-              coordinates: conn.getCoordinates(),
-            },
-          };
-        }),
-      });
-    }
+    // if asset has segments draw linstring
+
+    const features = [];
+    // if connection draw linestring and assets
+    console.log(features);
+    dispatch({
+      type: UPDATE_LINE_FEATURES,
+      payload: features,
+    });
   };
 
   useEffect(() => {

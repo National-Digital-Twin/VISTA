@@ -24,18 +24,20 @@ export default class Asset {
     this.type = item.type;
     this.uri = item.uri;
     this.connectsTo = [];
+    this.connectionList = [];
     this.count = 0;
   }
 
   processConnections = (connections, assets) => {
     this.setConnections(
       connections.map((connection) =>
-        connection.asset1Uri === this.uri
-          ? assets[connection.asset2Uri]
-          : assets[connection.asset1Uri]
+        connection.sourceAsset.uri === this.uri
+          ? assets[connection.targetAsset.uri]
+          : assets[connection.sourceAsset.uri]
       )
     );
 
+    this.connectionList = connections;
     this.count = connections.length;
 
     this.criticality = connections.reduce(sumCriticality, 0);
@@ -66,6 +68,8 @@ export default class Asset {
     this.lon = longitudes;
   };
 
+  getCoordinates = () => this.lon.map((lon, index) => [lon, this.lat[index]]);
+
   getLonLat = () => [this.lon, this.lat];
   getLongitude = () => this.lon;
   setLongitude = (longitude) => {
@@ -80,7 +84,7 @@ export default class Asset {
 
   calculateScoreColour = (maxScore) => {
     this.scoreColour = colourScale
-      .getColor((99 * this.criticality) / maxScore)
+      .getColor(parseInt(99 * this.criticality) / maxScore)
       .toHexString();
   };
 

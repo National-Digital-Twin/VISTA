@@ -7,7 +7,7 @@ import config from "../config/app-config";
 import { Tabs, Tab, TabList, TabPanel } from "react-tabs";
 import { IsEmpty } from "../utils";
 import "react-tabs/style/react-tabs.css";
-import { processAssetConnections, processAssets } from "./utils";
+import { buildAssetAndConnectionLinks } from "./utils";
 
 import "./DataFigures.css";
 import { ElementsContext } from "../ElementsContext";
@@ -62,53 +62,22 @@ const DataFigures = () => {
       }
 
       if (IsEmpty(assessmentsAllCategories)) return;
-      const processedAssets = processAssets(
+
+      const { assets, connections } = buildAssetAndConnectionLinks(
         assessmentsAllCategories,
         state.selected.length
       );
-
-      const connections = processAssetConnections(
-        assessmentsAllCategories,
-        processedAssets,
-        state.selected.length
-      );
-
-      const counts = connections
-        .map((connection) => [
-          connection.sourceAsset.getCount(),
-          connection.targetAsset.getCount(),
-        ])
-        .flat();
-
-      const scores = connections
-        .map((connection) => [
-          connection.sourceAsset.getCriticality(),
-          connection.targetAsset.getCriticality(),
-        ])
-        .flat();
-
-      const maxCount = Math.max(...counts);
-      const maxScore = Math.max(...scores);
-
-      Object.values(processedAssets).forEach((asset) => {
-        asset.calculateScoreColour(maxScore);
-        asset.calculateCountColour(maxCount);
-      });
-
-      Object.values(connections).forEach((connection) => {
-        connection.setColour(maxScore);
-      });
 
       dispatch({
         type: SET_CONNECTIONS_AND_ASSETS,
         data: {
-          assets: Object.values(processedAssets),
+          assets: Object.values(assets),
           connections: Object.values(connections),
         },
       });
 
       updateElements({
-        assets: Object.values(processedAssets),
+        assets: Object.values(assets),
         connections: Object.values(connections),
       });
     },

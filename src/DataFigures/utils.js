@@ -1,60 +1,16 @@
 import ConnectionAssessment from "./ConnectionAssessment";
 import Asset from "./Asset";
 
-const processConnectionAssessments = (acc, curr) => {
-  const criticality = parseInt(curr.criticality);
-  const asset1 = acc.processedAssets[curr.asset1Uri];
-  const asset2 = acc.processedAssets[curr.asset2Uri];
-  asset1.incrementCount();
-  asset2.incrementCount();
-  asset1.incrementCriticalityBy(criticality);
-  asset2.incrementCriticalityBy(criticality);
-
-  if (asset1.isCountGreaterThan(acc.maxCount)) {
-    acc.maxCount = asset1.getCount();
-  }
-
-  if (asset2.isCountGreaterThan(acc.maxCount)) {
-    acc.maxCount = asset2.getCount();
-  }
-
-  if (asset1.isCriticalityGreaterThan(acc.maxScore)) {
-    acc.maxScore = asset1.getCriticality();
-  }
-
-  if (asset2.isCriticalityGreaterThan(acc.maxScore)) {
-    acc.maxScore = asset2.getCriticality();
-  }
-
-  const connectionAssessment = new ConnectionAssessment(
-    curr,
-    asset1,
-    asset2,
-    criticality
-  );
-
-  acc.reports[curr.connUri] = connectionAssessment;
-
-  return acc;
-};
-
 const filterConnectionByName = (connections, name) =>
   connections.filter(
     (connection) =>
-      connection.asset1Uri === name || connection.asset2Uri === name
+      connection.sourceAsset.uri === name || connection.targetAsset.uri === name
   );
 
 export const processAssetConnections = (result, assets, startIndex) => {
   const connections = result.slice(startIndex, result.length).flat();
 
-  for (let name in assets) {
-    assets[name].processConnections(
-      filterConnectionByName(connections, name),
-      assets
-    );
-  }
-
-  return connections.map(
+  const connectionsWithAssets = connections.map(
     (connection) =>
       new ConnectionAssessment(
         connection,
@@ -63,22 +19,15 @@ export const processAssetConnections = (result, assets, startIndex) => {
         connection.criticality
       )
   );
-};
-export const oldgenerateConnectionAssessments = (
-  result,
-  assets,
-  startIndex
-) => {
-  console.log(result);
-  return result
-    .slice(startIndex, result.length)
-    .flat()
-    .reduce(processConnectionAssessments, {
-      processedAssets: assets,
-      maxCount: 1,
-      maxScore: 1,
-      reports: {},
-    });
+
+  for (let name in assets) {
+    assets[name].processConnections(
+      filterConnectionByName(connectionsWithAssets, name),
+      assets
+    );
+  }
+
+  return connectionsWithAssets;
 };
 
 const generateAssets = (acc, curr, idx) => {
@@ -99,4 +48,63 @@ export const processAssets = (rawAssets, endIndex) => {
   }
 
   return rawAssets.slice(0, endIndex).flat().reduce(generateAssets, {});
+};
+
+const getConnectionAssetsCounts = (connection) => [
+  connection.sourceAsset.getCount(),
+  connection.targetAsset.getCount(),
+];
+
+const getConnectionAssetsScores = (connection) => [
+  connection.sourceAsset.getCriticality(),
+  connection.targetAsset.getCriticality(),
+];
+
+const calcScoreAndCountColour = (count, score) => (item) => {
+  item.calculateScoreColour(score);
+  item.calculateCountColour(count);
+};
+
+const setColourByScore = (score) => (connection) => {
+  connection.setColour(score);
+};
+
+const getMaxCountAndScore = (connections) => {
+  const counts = connections.map(getConnectionAssetsCounts).flat();
+  const scores = connections.map(getConnectionAssetsScores).flat();
+  const maxCount = Math.max(...counts);
+  const maxScore = Math.max(...scores);
+
+  return { maxCount, maxScore };
+};
+
+export const buildAssetAndConnectionLinks = (
+  assessmentsAllCategories,
+  selectedLength
+) => {
+  const processedAssets = processAssets(
+    assessmentsAllCategories,
+    selectedLength
+  );
+
+  const connections = processAssetConnections(
+    assessmentsAllCategories,
+    processedAssets,
+    selectedLength
+  );
+
+  const { maxCount, maxScore } = getMaxCountAndScore(connections);
+  const calcMaxScoreAndCountColour = calcScoreAndCountColour(
+    maxCount,
+    maxScore
+  );
+  const setColourByMaxScore = setColourByScore(maxScore);
+
+  Object.values(processedAssets).forEach(calcMaxScoreAndCountColour);
+  Object.values(connections).forEach(setColourByMaxScore);
+
+  const assets = Object.values(processedAssets);
+  const assetConnections = Object.values(connections);
+
+  return { connections: assetConnections, assets };
 };
