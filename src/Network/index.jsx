@@ -11,11 +11,7 @@ import useSelectNode from "../hooks/useSelectNode";
 const emptyAssets = [];
 const emptyConnections = [];
 
-const Network = ({
-  assets = emptyAssets,
-  connections = emptyConnections,
-  inFocus = false, // just need to toggle re-paint.
-}) => {
+const Network = ({ assets = emptyAssets, connections = emptyConnections }) => {
   const [setSelectedNode] = useSelectNode(assets, connections);
   const [layout, setLayout] = useState("cose");
   const cyRef = useRef();
@@ -35,7 +31,7 @@ const Network = ({
 
       setSelectedNode(uri, type);
     },
-    [assets, connections]
+    [setSelectedNode]
   );
 
   const focusCytoScapeContent = useCallback(() => {
@@ -48,7 +44,7 @@ const Network = ({
   useEffect(() => {
     if (!cyRef.current) return;
     focusCytoScapeContent();
-  }, [inFocus]);
+  }, [focusCytoScapeContent]);
 
   useEffect(() => {
     const nodes = assets.map((asset) => ({
@@ -75,11 +71,12 @@ const Network = ({
     }
   }, [assets, connections]);
 
+  console.log(listener);
   useEffect(() => {
     if (!cyRef.current) return;
     focusCytoScapeContent();
     window.cyRef = cyRef;
-  }, [elements]);
+  }, [elements, focusCytoScapeContent]);
 
   useEffect(() => {
     return () => {
