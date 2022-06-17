@@ -80,7 +80,6 @@ const TelicentMap = ({ element }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const getFocussedAsset = (element) => {
     const { lineAssets, markerAssets } = element.generateMapboxFeatures();
-    console.log("Map", lineAssets);
     dispatch({
       type: UPDATE_LINE_FEATURES,
       payload: lineAssets,
@@ -132,7 +131,6 @@ const TelicentMap = ({ element }) => {
     },
   };
 
-  console.log(state);
   return (
     <ReactMapGL
       {...state.viewport}

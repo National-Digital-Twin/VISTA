@@ -28,7 +28,7 @@ const DataPresentation = () => {
   }, [selected, type, assetsRef, connectionsRef, setElement]);
 
   return (
-    <section style={{ width: "45%", height: "100%", padding: "4px" }}>
+    <section style={{ width: "45%", height: "100%", padding: "16px" }}>
       <PresentationSplit>
         <Details element={element} type={type} />
       </PresentationSplit>

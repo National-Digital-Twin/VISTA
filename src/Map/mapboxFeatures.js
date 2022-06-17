@@ -1,5 +1,4 @@
 export const buildLineFeature = (asset) => {
-  console.log(asset);
   const coords =
     asset.category === "connection" && asset.getCoordinates().length > 2
       ? asset.getCoordinates()[0]

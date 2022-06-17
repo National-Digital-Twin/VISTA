@@ -36,9 +36,9 @@ const Details = ({ element, type }) => {
   return (
     <div>
       {title && (
-        <h2 style={titleStyle} className={titleClassName}>
+        <h3 style={titleStyle} className={titleClassName}>
           {title}
-        </h2>
+        </h3>
       )}
       {sub && <h5 style={subStyle}>{sub}</h5>}
       <span style={{ color: "white" }}>

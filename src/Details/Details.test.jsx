@@ -41,7 +41,7 @@ describe("Details", () => {
 
     it("should show empty spans if no element is selected", () => {
       expect(
-        screen.queryByRole("heading", { level: 2 })
+        screen.queryByRole("heading", { level: 3 })
       ).not.toBeInTheDocument();
       expect(
         screen.queryByRole("heading", { level: 5 })
@@ -57,7 +57,7 @@ describe("Details", () => {
 
     it("should show element information", () => {
       expect(
-        screen.getByRole("heading", { level: 2, name: /elementLabel/ })
+        screen.getByRole("heading", { level: 3, name: /elementLabel/ })
       ).toBeInTheDocument();
       expect(screen.getByRole("heading", { level: 5 })).toHaveTextContent(
         /elementLabel/i

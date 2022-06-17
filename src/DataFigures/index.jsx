@@ -113,7 +113,7 @@ const DataFigures = () => {
       style={{
         width: "55%",
         height: "100%",
-        padding: "4px",
+        padding: "16px",
         borderRight: "solid 1px gold",
       }}
     >
