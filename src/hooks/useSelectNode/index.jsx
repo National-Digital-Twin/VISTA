@@ -20,8 +20,7 @@ const useSelectNode = (assets, connections) => {
       const lats = segments.map((segment) => segment.lat[0]);
       const lons = segments.map((segment) => segment.lon[0]);
 
-      asset.appendLatitude(lats);
-      asset.appendLongitude(lons);
+      asset.setPath(lats, lons);
     }
   };
 

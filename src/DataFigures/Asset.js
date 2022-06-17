@@ -60,9 +60,10 @@ export default class Asset {
     this.lat.push(parseFloat(latitude));
   };
 
-  appendLatitude = (latitudes) => {
-    if (IsEmpty(latitudes)) return;
-    this.lat = this.lat.concat(latitudes);
+  setPath = (latitudes, longitudes) => {
+    if (IsEmpty(latitudes) || IsEmpty(longitudes)) return;
+    this.lat = latitudes;
+    this.lon = longitudes;
   };
 
   getLonLat = () => [this.lon, this.lat];
