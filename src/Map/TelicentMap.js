@@ -79,7 +79,6 @@ const reducer = (state, action) => {
 const TelicentMap = ({ element }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const getFocussedAsset = (element) => {
-    console.log(element);
     const { lineAssets, markerAssets } = element.generateMapboxFeatures();
     dispatch({
       type: UPDATE_LINE_FEATURES,

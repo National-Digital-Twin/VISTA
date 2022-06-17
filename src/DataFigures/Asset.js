@@ -1,13 +1,10 @@
-import { IsEmpty } from "../utils";
-import ColorScale from "color-scales";
+import { IsEmpty, colourScale } from "../utils";
 import {
   buildLineFeatures,
   buildLineFeature,
   buildCircleFeature,
   buildCircleFeatures,
 } from "../Map/mapboxFeatures";
-
-const colourScale = new ColorScale(0, 100, ["#198c00", "#ff0100"], 1);
 
 const drawAssets = (element) => {
   const lines = [];

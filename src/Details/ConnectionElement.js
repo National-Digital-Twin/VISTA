@@ -12,12 +12,12 @@ export class ConnectionElement extends Element {
     this.sub = element.label;
     this.title = element.label;
     this.titleClassName = `link-crit-${element.criticality}`;
-    this.connPrefix = "connects";
+    this.connPrefix = "connects ";
     this.connSourceName = element.source ? element.sourceAsset.name : undefined;
     this.connSourceStyle = element.source
       ? { color: element.sourceAsset.scoreColour }
       : undefined;
-    this.connLink = "and";
+    this.connLink = " and ";
     this.connTargetName = element.target ? element.targetAsset.name : undefined;
     this.connTargetStyle = element.target
       ? { color: element.targetAsset.scoreColour }

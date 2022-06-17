@@ -1,18 +1,11 @@
-import ColorScale from "color-scales";
-import {
-  buildCircleFeature,
-  buildCircleFeatures,
-  buildLineFeature,
-  buildLineFeatures,
-} from "../Map/mapboxFeatures";
+import { buildCircleFeature, buildLineFeature } from "../Map/mapboxFeatures";
+import { colourScale } from "../utils";
 
 const colourMap = {
   1: "yellow",
   2: "orange",
   3: "red",
 };
-
-const colourScale = new ColorScale(0, 100, ["#198c00", "#ff0100"], 1);
 
 export default class ConnectionAssessment {
   /*
