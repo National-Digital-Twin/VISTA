@@ -4,7 +4,7 @@ const snapshotConfig = {
   failureThresholdType: "percent",
   customDiffConfig: { threshold: 0.5 },
 };
-describe("map ", () => {
+xdescribe("map ", () => {
   jest.setTimeout(8000);
   let browser, page;
 

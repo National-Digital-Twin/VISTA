@@ -23,9 +23,11 @@ const reducer = (state = initial_state, action) => {
 };
 
 const AssetProvider = ({ children }) => {
-  const [nodeState, dispatch] = useReducer(reducer, initial_state);
+  const [nodeState, setNodeState] = React.useState(initial_state)
+  // const [nodeState, dispatch] = useReducer(reducer, initial_state);
   const onSelectedNode = async (node, type) => {
-    dispatch({ type: SET_SELECTED_NODE, data: { type, selected: node } });
+    setNodeState({ type, selected: node })
+    // dispatch({ type: SET_SELECTED_NODE, data: { type, selected: node } });
   };
 
   return (
