@@ -7,6 +7,7 @@ import {
 } from "../Map/mapboxFeatures";
 
 const drawAssets = (element) => {
+  console.log("called");
   const lines = [];
   const markers = [];
 
