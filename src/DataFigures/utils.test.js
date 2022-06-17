@@ -37,7 +37,7 @@ describe("processAssets", () => {
   it("should generate assets", async () => {
     const rawAsset = rawAssets[0];
 
-    const want = { [targetUri]: new Asset(rawAsset, 0) };
+    const want = { [targetUri]: new Asset({ item: rawAsset, idx: 0 }) };
     want[targetUri].setLatitude(rawAsset.lat);
     want[targetUri].setLongitude(rawAsset.lon);
 
@@ -57,12 +57,12 @@ xdescribe("generateConnectionAssessments", () => {
   const processedAssets = processAssets(rawAssets, rawAssets.length);
   const selectedLength = 1;
 
-  const connection = new ConnectionAssessment(
-    rawConnections[0],
-    processedAssets[sourceUri],
-    processedAssets[targetUri],
-    1
-  );
+  const connection = new ConnectionAssessment({
+    item: rawConnections[0],
+    source: processedAssets[sourceUri],
+    target: processedAssets[targetUri],
+    criticality: 1,
+  });
 
   const processedConnections = processAssetConnections(
     [processedAssets, rawConnections],
