@@ -12,12 +12,12 @@ export const processAssetConnections = (result, assets, startIndex) => {
 
   const connectionsWithAssets = connections.map(
     (connection) =>
-      new ConnectionAssessment(
-        connection,
-        assets[connection.asset1Uri],
-        assets[connection.asset2Uri],
-        connection.criticality
-      )
+      new ConnectionAssessment({
+        item: connection,
+        source: assets[connection.asset1Uri],
+        target: assets[connection.asset2Uri],
+        criticality: connection.criticality,
+      })
   );
 
   for (let name in assets) {
@@ -33,7 +33,7 @@ export const processAssetConnections = (result, assets, startIndex) => {
 const generateAssets = (acc, curr, idx) => {
   const uri = curr.uri;
   if (!acc[uri]) {
-    acc[uri] = new Asset(curr, idx);
+    acc[uri] = new Asset({ item: curr, idx });
   }
   acc[uri].setDescription(curr.desc);
   acc[uri].setLatitude(curr.lat);

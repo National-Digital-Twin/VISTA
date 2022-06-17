@@ -24,16 +24,17 @@ const sumCriticality = (acc, connection) =>
   (acc += parseInt(connection.criticality));
 
 export default class Asset {
-  constructor(item, idx) {
+  constructor({ item, idx }) {
+    const { name, type, uri, id } = item;
     this.category = "asset";
     this.criticality = 0;
     this.gridIndex = idx + 1;
-    this.id = item.id;
+    this.id = id;
     this.lat = [];
     this.lon = [];
-    this.name = item.name;
-    this.type = item.type;
-    this.uri = item.uri;
+    this.name = name;
+    this.type = type;
+    this.uri = uri;
     this.connectsTo = [];
     this.connectionList = [];
     this.count = 0;

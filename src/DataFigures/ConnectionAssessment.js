@@ -15,17 +15,21 @@ export default class ConnectionAssessment {
     The reason for including the whole asset was to update the criticality colours on the asset object itself,
     rather than a primitive instance of the colour which caused the same asset to show as different colours on different connections.
   */
-  constructor(item, source, target, criticality) {
+  constructor({ item, source, target, criticality }) {
+    const { asset1Uri, asset2Uri, connUri } = item;
+    const { id: sourceId, name: sourceName } = source;
+    const { id: targetId, name: targetName } = target;
+
     this.category = "connection";
     this.criticality = parseInt(criticality);
-    this.label = `${source.id}-${target.id}`;
-    this.source = item.asset1Uri;
+    this.label = `${sourceId}-${targetId}`;
+    this.source = asset1Uri;
     this.sourceAsset = source;
-    this.sourceName = source.name;
-    this.target = item.asset2Uri;
+    this.sourceName = sourceName;
+    this.target = asset2Uri;
     this.targetAsset = target;
-    this.targetName = target.name;
-    this.uri = item.connUri;
+    this.targetName = targetName;
+    this.uri = connUri;
   }
 
   getColour = () => this.scoreColour;

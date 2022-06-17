@@ -26,22 +26,20 @@ const TelicentGrid = ({
       />
     ));
 
-    const connectionsGrid = connections.map((connection, idx) => {
-      return (
-        <ConnectionGrid
-          uri={connection.uri}
-          key={`connection-${connection.uri}`}
-          criticality={connection.criticality}
-          source={assets.find(
-            (asset) => asset.uri === connection.sourceAsset.uri
-          )}
-          target={assets.find(
-            (asset) => asset.uri === connection.targetAsset.uri
-          )}
-          onClick={onClick("connection")}
-        />
-      );
-    });
+    const connectionsGrid = connections.map((connection) => (
+      <ConnectionGrid
+        uri={connection.uri}
+        key={`connection-${connection.uri}`}
+        criticality={connection.criticality}
+        source={assets.find(
+          (asset) => asset.uri === connection.sourceAsset.uri
+        )}
+        target={assets.find(
+          (asset) => asset.uri === connection.targetAsset.uri
+        )}
+        onClick={onClick("connection")}
+      />
+    ));
     return [...assetGrid, ...connectionsGrid];
   };
   if (!Array.isArray(assets) || !Array.isArray(connections)) {
