@@ -5,7 +5,7 @@ import config from "../../config/app-config";
 
 const useSelectNode = (assets, connections) => {
   const { onSelectedNode } = useContext(AssetContext);
-  const { get, loading, error } = useFetch(config.api.url);
+  const { get } = useFetch(config.api.url);
 
   const typesWithParts = ["road"];
   const getItemById = (items, id) => items.find((item) => item.uri === id);

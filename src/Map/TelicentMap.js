@@ -1,6 +1,5 @@
 import React, { useEffect, useReducer } from "react";
 import ReactMapGL, { NavigationControl, Layer, Source } from "react-map-gl";
-import { IsEmpty } from "../utils";
 import config from "../config/app-config";
 
 const UPDATE_LINE_FEATURES = "UPDATE_LINE_FEATURES";
@@ -121,17 +120,17 @@ const drawAssets = (element) => {
   return { lineAssets: lines, markerAssets };
 };
 
-const TelicentMap = ({ element, connections = [] }) => {
+const TelicentMap = ({ element }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const getFocussedConnection = (element, connections = []) => {
+  const getFocussedConnection = (element) => {
     // if assets draw circles
     const { lineAssets, markerAssets } = drawAssets(element);
-
-    console.log(lineAssets, markerAssets);
+    const connectionAssets = buildLineFeatures(element.connectionList);
+    console.log(connectionAssets, lineAssets, markerAssets);
 
     dispatch({
       type: UPDATE_LINE_FEATURES,
-      payload: lineAssets,
+      payload: [...lineAssets, ...connectionAssets],
     });
 
     dispatch({
@@ -143,8 +142,8 @@ const TelicentMap = ({ element, connections = [] }) => {
   useEffect(() => {
     if (!element || !element.category) return;
 
-    getFocussedConnection(element, connections);
-  }, [element, connections]);
+    getFocussedConnection(element);
+  }, [element]);
 
   const onHandleViewportResize = () => {
     dispatch({ type: UPDATE_VIEWPORT, payload: state.viewport });
@@ -170,6 +169,7 @@ const TelicentMap = ({ element, connections = [] }) => {
       mapStyle="mapbox://styles/mapbox/dark-v10"
       onResize={onHandleViewportResize}
       onDrag={handleViewport}
+      onZoom={handleViewport}
     >
       <NavigationControl />
       <Source id="connections" type="geojson" data={state.connectionsGeoJSON}>

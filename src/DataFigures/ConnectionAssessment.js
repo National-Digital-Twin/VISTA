@@ -35,7 +35,7 @@ export default class ConnectionAssessment {
       .toHexString();
   };
 
-  getCriticalityColour = () => colourMap[this.criticality];
+  getScoreColour = () => colourMap[this.criticality];
 
   setSourceLatitude = (lat) => {
     this.sourceLat = lat;
