@@ -2,8 +2,7 @@ import React, { useEffect, useReducer } from "react";
 import ReactMapGL, { NavigationControl, Layer, Source } from "react-map-gl";
 import config from "../config/app-config";
 
-const UPDATE_LINE_FEATURES = "UPDATE_LINE_FEATURES";
-const UPDATE_ASSET_FEATURES = "UPDATE_ASSET_FEATURES";
+const UPDATE_FEATURES = "UPDATE_FEATURES";
 const UPDATE_VIEWPORT = "UPDATE_VIEWPORT";
 
 const initialState = {
@@ -52,18 +51,14 @@ const initialState = {
 
 const reducer = (state, action) => {
   switch (action.type) {
-    case UPDATE_LINE_FEATURES:
+    case UPDATE_FEATURES:
       const cgjCopy = { ...state.connectionsGeoJSON };
-      cgjCopy.features = action.payload;
+      const agjCopy = { ...state.assetsGeoJSON };
+      cgjCopy.features = action.payload.lines;
+      agjCopy.features = action.payload.markers;
       return {
         ...state,
         connectionsGeoJSON: cgjCopy,
-      };
-    case UPDATE_ASSET_FEATURES:
-      const agjCopy = { ...state.assetsGeoJSON };
-      agjCopy.features = action.payload;
-      return {
-        ...state,
         assetsGeoJSON: agjCopy,
       };
     case UPDATE_VIEWPORT:
@@ -81,26 +76,22 @@ const TelicentMap = ({ element }) => {
   const getFocussedAsset = (element) => {
     const { lineAssets, markerAssets } = element.generateMapboxFeatures();
     dispatch({
-      type: UPDATE_LINE_FEATURES,
-      payload: lineAssets,
-    });
-
-    dispatch({
-      type: UPDATE_ASSET_FEATURES,
-      payload: markerAssets,
+      type: UPDATE_FEATURES,
+      payload: {
+        lines: lineAssets,
+        markers: markerAssets,
+      },
     });
   };
 
   const getFocussedConnection = (connection) => {
     const { lineAssets, markerAssets } = connection.generateMapboxFeatures();
     dispatch({
-      type: UPDATE_LINE_FEATURES,
-      payload: lineAssets,
-    });
-
-    dispatch({
-      type: UPDATE_ASSET_FEATURES,
-      payload: markerAssets,
+      type: UPDATE_FEATURES,
+      payload: {
+        lines: lineAssets,
+        markers: markerAssets,
+      },
     });
   };
 

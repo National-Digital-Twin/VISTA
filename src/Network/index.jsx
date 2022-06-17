@@ -13,7 +13,7 @@ const emptyConnections = [];
 
 const Network = ({ assets = emptyAssets, connections = emptyConnections }) => {
   const [setSelectedNode] = useSelectNode(assets, connections);
-  const [layout, setLayout] = useState("cose");
+  const layout = "cose";
   const cyRef = useRef();
   const [elements, setElements] = useState([]);
 
@@ -71,7 +71,6 @@ const Network = ({ assets = emptyAssets, connections = emptyConnections }) => {
     }
   }, [assets, connections]);
 
-  console.log(listener);
   useEffect(() => {
     if (!cyRef.current) return;
     focusCytoScapeContent();
