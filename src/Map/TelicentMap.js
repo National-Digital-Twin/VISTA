@@ -76,61 +76,27 @@ const reducer = (state, action) => {
   }
 };
 
-const buildLineFeature = (asset) => ({
-  type: "Feature",
-  properties: {
-    name: asset.uri,
-    color: asset.getScoreColour(),
-  },
-  geometry: {
-    type: "LineString",
-    coordinates: asset.getCoordinates(),
-  },
-});
-
-const buildCircleFeature = (asset) => ({
-  type: "Feature",
-  properties: {
-    name: asset.uri,
-    color: asset.getScoreColour(),
-    size: asset.getSize(),
-  },
-  geometry: {
-    type: "Point",
-    coordinates: asset.getCoordinates().flat(),
-  },
-});
-
-const buildLineFeatures = (assets) => assets.map(buildLineFeature);
-const buildCircleFeatures = (assets) => assets.map(buildCircleFeature);
-const hasSegments = (asset) => asset.getCoordinates().length > 2;
-
-const drawAssets = (element) => {
-  const lines = [];
-  const markers = [];
-
-  if (hasSegments(element)) {
-    lines.push(buildLineFeature(element));
-  } else {
-    markers.push(buildCircleFeature(element));
-  }
-
-  const markerAssets = markers.concat(buildCircleFeatures(element.connectsTo));
-
-  return { lineAssets: lines, markerAssets };
-};
-
 const TelicentMap = ({ element }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const getFocussedConnection = (element) => {
-    // if assets draw circles
-    const { lineAssets, markerAssets } = drawAssets(element);
-    const connectionAssets = buildLineFeatures(element.connectionList);
-    console.log(connectionAssets, lineAssets, markerAssets);
-
+  const getFocussedAsset = (element) => {
+    console.log(element);
+    const { lineAssets, markerAssets } = element.generateMapboxFeatures();
     dispatch({
       type: UPDATE_LINE_FEATURES,
-      payload: [...lineAssets, ...connectionAssets],
+      payload: lineAssets,
+    });
+
+    dispatch({
+      type: UPDATE_ASSET_FEATURES,
+      payload: markerAssets,
+    });
+  };
+
+  const getFocussedConnection = (connection) => {
+    const { lineAssets, markerAssets } = connection.generateMapboxFeatures();
+    dispatch({
+      type: UPDATE_LINE_FEATURES,
+      payload: lineAssets,
     });
 
     dispatch({
@@ -142,7 +108,11 @@ const TelicentMap = ({ element }) => {
   useEffect(() => {
     if (!element || !element.category) return;
 
-    getFocussedConnection(element);
+    if (element.category === "connection") {
+      getFocussedConnection(element);
+    } else {
+      getFocussedAsset(element);
+    }
   }, [element]);
 
   const onHandleViewportResize = () => {
@@ -170,6 +140,7 @@ const TelicentMap = ({ element }) => {
       onResize={onHandleViewportResize}
       onDrag={handleViewport}
       onZoom={handleViewport}
+      onRotate={handleViewport}
     >
       <NavigationControl />
       <Source id="connections" type="geojson" data={state.connectionsGeoJSON}>

@@ -33,11 +33,7 @@ const DataPresentation = () => {
         <Details element={element} type={type} />
       </PresentationSplit>
       <PresentationSplit>
-        <TelicentMemoMap
-          type={type}
-          element={element}
-          connections={connectionsRef.current}
-        />
+        <TelicentMemoMap type={type} element={element} />
       </PresentationSplit>
     </section>
   );

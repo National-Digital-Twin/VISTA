@@ -1,14 +1,28 @@
 import { IsEmpty } from "../utils";
 import ColorScale from "color-scales";
-
-const colourMap = {
-  1: "green",
-  2: "yellow",
-  3: "red",
-};
+import {
+  buildLineFeatures,
+  buildLineFeature,
+  buildCircleFeature,
+  buildCircleFeatures,
+} from "../Map/mapboxFeatures";
 
 const colourScale = new ColorScale(0, 100, ["#198c00", "#ff0100"], 1);
 
+const drawAssets = (element) => {
+  const lines = [];
+  const markers = [];
+
+  if (element.hasSegments()) {
+    lines.push(buildLineFeature(element));
+  } else {
+    markers.push(buildCircleFeature(element));
+  }
+
+  const markerAssets = markers.concat(buildCircleFeatures(element.connectsTo));
+
+  return { lineAssets: lines, markerAssets };
+};
 const sumCriticality = (acc, connection) =>
   (acc += parseInt(connection.criticality));
 
@@ -70,16 +84,10 @@ export default class Asset {
 
   getCoordinates = () => this.lon.map((lon, index) => [lon, this.lat[index]]);
 
-  getLonLat = () => [this.lon, this.lat];
   getLongitude = () => this.lon;
   setLongitude = (longitude) => {
     if (!longitude) return;
     this.lon.push(parseFloat(longitude));
-  };
-
-  appendLongitude = (longitudes) => {
-    if (IsEmpty(longitudes)) return;
-    this.lon = this.lon.concat(longitudes);
   };
 
   calculateScoreColour = (maxScore) => {
@@ -116,52 +124,26 @@ export default class Asset {
 
   getCountColour = () => this.countColour;
 
-  incrementCount = () => {
-    this.count = this.count + 1;
-  };
-
   getCount = () => {
     return this.count;
   };
 
-  isCountGreaterThan = (max) => this.count > max;
+  hasSegments = () => this.getCoordinates().length > 2;
 
   getCriticality = () => {
     return this.criticality;
   };
 
-  isCriticalityGreaterThan = (max) => this.criticality > max;
-
-  incrementCriticalityBy = (criticality) => {
-    this.criticality = this.criticality + criticality;
-  };
   setCriticality = (criticality) => (this.criticality = criticality);
 
   hasLatLon = () => {
     return IsEmpty(this.lat) && IsEmpty(this.lon);
   };
 
-  getMapboxMarkup = () => {
-    const sparseArray = new Array(this.lon.length);
-    const lineColour = colourMap[this.criticality || 1];
+  generateMapboxFeatures = () => {
+    const { lineAssets, markerAssets } = drawAssets(this);
+    const connectionAssets = buildLineFeatures(this.connectionList);
 
-    const color = sparseArray.fill().map(() => this.scoreColour);
-
-    // If road or assets with segments shrink marker size
-    const size = this.lat.length > 2 || this.lon > 2 ? 0 : 7;
-    return {
-      type: "scattermapbox",
-      marker: {
-        size,
-        cmin: 1,
-        cmax: 5,
-        color,
-      },
-      line: { color: lineColour },
-      text: this.label,
-      name: this.label,
-      lon: this.lon,
-      lat: this.lat,
-    };
+    return { lineAssets: [...lineAssets, ...connectionAssets], markerAssets };
   };
 }

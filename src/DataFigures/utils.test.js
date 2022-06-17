@@ -55,8 +55,6 @@ xdescribe("generateConnectionAssessments", () => {
   const sourceUri = "http://telicent.io/test-data/iow#W001";
   const targetUri = "http://telicent.io/test-data/iow#W002";
   const processedAssets = processAssets(rawAssets, rawAssets.length);
-  processedAssets[sourceUri].incrementCriticalityBy(1);
-  processedAssets[targetUri].incrementCriticalityBy(1);
   const selectedLength = 1;
 
   const connection = new ConnectionAssessment(

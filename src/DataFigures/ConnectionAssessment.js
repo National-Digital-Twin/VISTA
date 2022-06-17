@@ -1,7 +1,14 @@
 import ColorScale from "color-scales";
+import {
+  buildCircleFeature,
+  buildCircleFeatures,
+  buildLineFeature,
+  buildLineFeatures,
+} from "../Map/mapboxFeatures";
+
 const colourMap = {
-  1: "green",
-  2: "yellow",
+  1: "yellow",
+  2: "orange",
   3: "red",
 };
 
@@ -37,35 +44,6 @@ export default class ConnectionAssessment {
 
   getScoreColour = () => colourMap[this.criticality];
 
-  setSourceLatitude = (lat) => {
-    this.sourceLat = lat;
-  };
-
-  setSourceLongitude = (lon) => {
-    this.sourceLon = lon;
-  };
-
-  getSourceLatLon = () => this.sourceAsset.getLonLat();
-  setSourceLatLon = ({ lat, lon }) => {
-    this.setSourceLatitude(lat);
-    this.setSourceLongitude(lon);
-  };
-
-  setTargetLatitude = (lat) => {
-    this.targetLat = lat;
-  };
-
-  setTargetLongitude = (lon) => {
-    this.targetLon = lon;
-  };
-
-  getTargetLatLon = () => this.targetAsset.getLonLat();
-
-  setTargetLatLon = ({ lat, lon }) => {
-    this.setTargetLatitude(lat);
-    this.setTargetLongitude(lon);
-  };
-
   getCoordinates = () => {
     const sourceCoords = this.sourceAsset.lon.map((lon, index) => {
       return [lon, this.sourceAsset.lat[index]];
@@ -78,43 +56,12 @@ export default class ConnectionAssessment {
     return sourceCoords.concat(targetCoords);
   };
 
-  getMapboxMarkup = () => {
-    const lon = this.sourceAsset
-      .getLongitude()
-      .concat(this.targetAsset.getLongitude());
-    const lat = this.sourceAsset
-      .getLatitude()
-      .concat(this.targetAsset.getLatitude());
-    const sparseArray = new Array(lon.length);
-
-    const color = sparseArray
-      .fill()
-      .map(() => [this.sourceAsset.scoreColour, this.targetAsset.scoreColour])
-      .flat();
-
-    // console.log("eee", this.sourceAsset, this.targetAsset);
-    console.log(this.criticality);
-    // If road or assets with segments shrink marker size
-    const size =
-      this.sourceAsset.lat.length > 2 || this.targetAsset.lat.length > 2
-        ? 0
-        : 7;
-    return [
-      {
-        line: { color: colourMap[this.criticality] },
-        lat,
-        lon,
-        marker: {
-          size,
-          cmin: 1,
-          cmax: 5,
-          color,
-        },
-        mode: "markers+text+lines",
-        name: this.label,
-        text: this.label,
-        type: "scattermapbox",
-      },
+  generateMapboxFeatures = () => {
+    const markerAssets = [
+      buildCircleFeature(this.sourceAsset),
+      buildCircleFeature(this.targetAsset),
     ];
+    const lineAssets = [buildLineFeature(this)];
+    return { markerAssets, lineAssets };
   };
 }
