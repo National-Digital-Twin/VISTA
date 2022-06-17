@@ -103,8 +103,8 @@ export const buildAssetAndConnectionLinks = (
   Object.values(processedAssets).forEach(calcMaxScoreAndCountColour);
   Object.values(connections).forEach(setColourByMaxScore);
 
-  const assets = Object.values(processedAssets);
-  const assetConnections = Object.values(connections);
-
-  return { connections: assetConnections, assets };
+  return {
+    connections: Object.values(connections),
+    assets: Object.values(processedAssets),
+  };
 };

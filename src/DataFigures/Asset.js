@@ -83,6 +83,7 @@ export default class Asset {
   };
 
   calculateScoreColour = (maxScore) => {
+    this.maxScore = maxScore;
     this.scoreColour = colourScale
       .getColor(parseInt(99 * this.criticality) / maxScore)
       .toHexString();
@@ -91,9 +92,26 @@ export default class Asset {
   getScoreColour = () => this.scoreColour;
 
   calculateCountColour = (maxCount) => {
+    this.maxCount = maxCount;
     this.countColour = colourScale
       .getColor((99 * this.count) / maxCount)
       .toHexString();
+  };
+
+  getSize = () => {
+    const maxCircleSize = 10;
+    const minCirceSize = 4;
+    const radius = this.criticality / this.maxScore;
+    const circleSize = Math.ceil(Math.PI * 2 * radius);
+    let result;
+    if (circleSize > maxCircleSize) {
+      result = maxCircleSize;
+    } else if (circleSize < minCirceSize) {
+      result = minCirceSize;
+    } else {
+      result = circleSize;
+    }
+    return result;
   };
 
   getCountColour = () => this.countColour;

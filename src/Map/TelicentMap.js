@@ -60,41 +60,83 @@ const reducer = (state, action) => {
         ...state,
         connectionsGeoJSON: cgjCopy,
       };
+    case UPDATE_ASSET_FEATURES:
+      const agjCopy = { ...state.assetsGeoJSON };
+      agjCopy.features = action.payload;
+      return {
+        ...state,
+        assetsGeoJSON: agjCopy,
+      };
     case UPDATE_VIEWPORT:
       return {
         ...state,
         viewport: { ...action.payload },
       };
+    default:
+      return state;
   }
 };
 
-const buildFeatures = (assets) =>
-  assets.map((asset) => ({
-    type: "Feature",
-    properties: {
-      name: asset.uri,
-      color: asset.getScoreColour(),
-    },
-    geometry: {
-      type: "LineString",
-      coordinates: asset.getCoordinates(),
-    },
-  }));
+const buildLineFeature = (asset) => ({
+  type: "Feature",
+  properties: {
+    name: asset.uri,
+    color: asset.getScoreColour(),
+  },
+  geometry: {
+    type: "LineString",
+    coordinates: asset.getCoordinates(),
+  },
+});
+
+const buildCircleFeature = (asset) => ({
+  type: "Feature",
+  properties: {
+    name: asset.uri,
+    color: asset.getScoreColour(),
+    size: asset.getSize(),
+  },
+  geometry: {
+    type: "Point",
+    coordinates: asset.getCoordinates().flat(),
+  },
+});
+
+const buildLineFeatures = (assets) => assets.map(buildLineFeature);
+const buildCircleFeatures = (assets) => assets.map(buildCircleFeature);
+const hasSegments = (asset) => asset.getCoordinates().length > 2;
+
+const drawAssets = (element) => {
+  const lines = [];
+  const markers = [];
+
+  if (hasSegments(element)) {
+    lines.push(buildLineFeature(element));
+  } else {
+    markers.push(buildCircleFeature(element));
+  }
+
+  const markerAssets = markers.concat(buildCircleFeatures(element.connectsTo));
+
+  return { lineAssets: lines, markerAssets };
+};
 
 const TelicentMap = ({ element, connections = [] }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const getFocussedConnection = (element, connections = []) => {
     // if assets draw circles
-    console.log(element);
+    const { lineAssets, markerAssets } = drawAssets(element);
 
-    // if asset has segments draw linstring
+    console.log(lineAssets, markerAssets);
 
-    const features = [];
-    // if connection draw linestring and assets
-    console.log(features);
     dispatch({
       type: UPDATE_LINE_FEATURES,
-      payload: features,
+      payload: lineAssets,
+    });
+
+    dispatch({
+      type: UPDATE_ASSET_FEATURES,
+      payload: markerAssets,
     });
   };
 
@@ -115,6 +157,10 @@ const TelicentMap = ({ element, connections = [] }) => {
   const markerStyle = {
     id: "marker",
     type: "circle",
+    paint: {
+      "circle-radius": ["get", "size"],
+      "circle-color": ["get", "color"],
+    },
   };
 
   return (
