@@ -8,6 +8,7 @@ import Battery from "./assets/battery-charge-fill-teal.svg";
 import Car from "./assets/car-fill-aqua.svg";
 import useSelectNode from "../hooks/useSelectNode";
 import { createContext } from "react";
+import { IsEmpty } from "../utils";
 
 const emptyAssets = [];
 const emptyConnections = [];
@@ -191,8 +192,10 @@ const withData =
     const [setSelectedNode] = useSelectNode(assets, connections);
 
     const onTapNode = (e) => {
+      console.log(e);
       e.preventDefault();
       const { target } = e;
+      console.log(target);
 
       const {
         group,
@@ -202,7 +205,6 @@ const withData =
       const uri = group === "nodes" ? targetId : targetUri;
 
       setSelectedNode(uri, type);
-     
     };
 
     useEffect(() => {

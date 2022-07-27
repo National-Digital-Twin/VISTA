@@ -1,33 +1,16 @@
-import React, { createContext, useReducer } from "react";
+import React, { createContext } from "react";
 
 export const AssetContext = createContext();
 
-const SET_SELECTED_NODE = "SET_SELECTED_NODE";
 const initial_state = {
   type: undefined,
   selected: {},
 };
 
-const reducer = (state = initial_state, action) => {
-  switch (action.type) {
-    case SET_SELECTED_NODE:
-      return {
-        ...state,
-        type: action.data.type,
-        selected: action.data.selected,
-      };
-
-    default:
-      return state;
-  }
-};
-
 const AssetProvider = ({ children }) => {
-  const [nodeState, setNodeState] = React.useState(initial_state)
-  // const [nodeState, dispatch] = useReducer(reducer, initial_state);
+  const [nodeState, setNodeState] = React.useState(initial_state);
   const onSelectedNode = async (node, type) => {
-    setNodeState({ type, selected: node })
-    // dispatch({ type: SET_SELECTED_NODE, data: { type, selected: node } });
+    setNodeState({ type, selected: node });
   };
 
   return (
