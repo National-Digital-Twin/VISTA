@@ -26,10 +26,10 @@ const TelicentGrid = ({
       />
     ));
 
-    const connectionsGrid = connections.map((connection) => (
+    const connectionsGrid = connections.map((connection, index) => (
       <ConnectionGrid
         uri={connection.uri}
-        key={`connection-${connection.uri}`}
+        key={`connection-${connection.uri}-${index}`}
         criticality={connection.criticality}
         source={assets.find(
           (asset) => asset.uri === connection.sourceAsset.uri
