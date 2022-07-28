@@ -1,4 +1,4 @@
-import React, { createContext } from "react";
+import React, { createContext, useState } from "react";
 
 export const AssetContext = createContext();
 
@@ -8,7 +8,7 @@ const initial_state = {
 };
 
 const AssetProvider = ({ children }) => {
-  const [nodeState, setNodeState] = React.useState(initial_state);
+  const [nodeState, setNodeState] = useState(initial_state);
   const onSelectedNode = async (node, type) => {
     setNodeState({ type, selected: node });
   };

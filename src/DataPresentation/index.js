@@ -9,20 +9,33 @@ const DataPresentation = () => {
   const { assetsRef, connectionsRef } = useContext(ElementsContext);
   const [element, setElement] = useState({});
 
+  const findElement = (elements, criteria) =>
+    elements.find((element) => element.uri === criteria);
+
   useEffect(() => {
     let element;
     if (type === "asset") {
-      element = assetsRef.current.find((asset) => asset.uri === selected);
+      element = findElement(assetsRef.current, selected);
     } else if (type === "connection") {
-      element = connectionsRef.current.find(
-        (connection) => connection.uri === selected
-      );
-      element.source = assetsRef.current.find(
-        (asset) => asset.uri === element.source
-      ).uri;
-      element.target = assetsRef.current.find(
-        (asset) => asset.uri === element.target
-      ).uri;
+      element = findElement(connectionsRef.current, selected);
+      // TODO: check if uri exists on result
+      const source = findElement(assetsRef.current, element.source);
+      const target = findElement(assetsRef.current, element.target);
+      if (!source || !source.uri) {
+        console.warn(
+          `Source ${element.uri} element has no source or source uri does not exist`
+        );
+      } else {
+        element.source = source.uri;
+      }
+
+      if (!target || !target.uri) {
+        console.warn(
+          `Target ${element.uri} element has no target or target uri does not exist`
+        );
+      } else {
+        element.target = target.uri;
+      }
     }
     setElement(element);
   }, [selected, type, assetsRef, connectionsRef, setElement]);
