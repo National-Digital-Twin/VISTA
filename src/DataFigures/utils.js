@@ -1,5 +1,5 @@
-import ConnectionAssessment from "./ConnectionAssessment";
-import Asset from "./Asset";
+import ConnectionAssessment from "../models/ConnectionAssessment";
+import Asset from "../models/Asset";
 
 const filterConnectionByName = (connections, name) =>
   connections.filter(

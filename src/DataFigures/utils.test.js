@@ -1,7 +1,7 @@
 import { processAssetConnections, processAssets } from "./utils";
 
-import Asset from "./Asset";
-import ConnectionAssessment from "./ConnectionAssessment";
+import Asset from "../models/Asset";
+import ConnectionAssessment from "../models/ConnectionAssessment";
 const rawAssets = [
   {
     id: "W001",
