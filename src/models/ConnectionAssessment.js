@@ -61,4 +61,14 @@ export default class ConnectionAssessment {
     const lineAssets = [buildLineFeature(this)];
     return { markerAssets, lineAssets };
   };
+
+  getSourceAndTargetAssetScores = () => [
+    this.sourceAsset.getCriticality(),
+    this.targetAsset.getCriticality(),
+  ];
+
+  getSourceAndTargetAssetCounts = () => [
+    this.sourceAsset.getCount(),
+    this.targetAsset.getCount(),
+  ];
 }

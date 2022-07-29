@@ -67,7 +67,7 @@ const generateAssets = (acc, curr, idx) => {
 
 /**
  *  Turn assets returned from the Api assessments endpoint
- *  to an Object of multipe Asset Instances
+ *  to an Object of multiple Asset Instances
  * @param {AssetAssessmentApiResult} rawAssets
  * @param {Number} endIndex
  * @returns {AssetInstances} Object of Asset Instances
@@ -77,19 +77,6 @@ export const processAssets = (rawAssets, endIndex) => {
   return rawAssets.slice(0, endIndex).flat().reduce(generateAssets, {});
 };
 
-// TODO: is this still used. Connection method?
-const getConnectionAssetsCounts = (connection) => [
-  connection.sourceAsset.getCount(),
-  connection.targetAsset.getCount(),
-];
-
-// TODO: is this still used. Connection method?
-const getConnectionAssetsScores = (connection) => [
-  connection.sourceAsset.getCriticality(),
-  connection.targetAsset.getCriticality(),
-];
-
-// TODO: is this still used. Connection method?
 const calcScoreAndCountColour = (count, score) => (item) => {
   item.calculateScoreColour(score);
   item.calculateCountColour(count);
@@ -100,8 +87,12 @@ const setColourByScore = (score) => (connection) => {
 };
 
 const getMaxCountAndScore = (connections) => {
-  const counts = connections.map(getConnectionAssetsCounts).flat();
-  const scores = connections.map(getConnectionAssetsScores).flat();
+  const counts = connections
+    .map((connection) => connection.getSourceAndTargetAssetCounts())
+    .flat();
+  const scores = connections
+    .map((connection) => connection.getSourceAndTargetAssetScores())
+    .flat();
   const maxCount = Math.max(...counts);
   const maxScore = Math.max(...scores);
 
@@ -109,10 +100,10 @@ const getMaxCountAndScore = (connections) => {
 };
 
 /**
- *
- * @param {*} assessmentsAllCategories
+ * buildAssetAndConnectionLinks
+ * @param {Array<AssessmentCategory>} assessmentsAllCategories
  * @param {Number} selectedLength
- * @returns
+ * @returns {Object}
  */
 export const buildAssetAndConnectionLinks = (
   assessmentsAllCategories,
