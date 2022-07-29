@@ -51,58 +51,75 @@ const DataFigures = () => {
   const { updateElements } = useContext(ElementsContext);
   const { get } = useFetch(config.api.url);
 
-  const processAssessmentCategories = useCallback(
-    (assessmentsAllCategories = []) => {
+  const resetAllConnectionsAndAssets = () => {
+    dispatch({ type: RESET_CONNECTIONS_AND_ASSETS });
+    updateElements({
+      assets: [],
+      connections: [],
+    });
+  };
+
+  const saveResults = (assets, connections) => {
+    dispatch({
+      type: SET_CONNECTIONS_AND_ASSETS,
+      data: {
+        assets,
+        connections,
+      },
+    });
+
+    updateElements({
+      assets,
+      connections,
+    });
+  };
+
+  /**
+   * Generate api calls for each endpoint
+   * @param {"assets"|"connections"} type "values should be assets or connections"
+   * @param {Array<string>} uris
+   * @returns {Array<Promise>} Array of get requests
+   */
+  const generateJobs = (type, uris) =>
+    uris.map((uri) =>
+      get(`/assessments/${type}?assessments=${encodeURIComponent(uri)}`)
+    );
+
+  const processAllConnectionsAndAssetResults = useCallback(
+    (unfilteredCategories = []) => {
+      if (IsEmpty(unfilteredCategories)) return;
+
       if (IsEmpty(state.selected)) {
-        dispatch({ type: RESET_CONNECTIONS_AND_ASSETS });
-        updateElements({
-          assets: [],
-          connections: [],
-        });
+        resetAllConnectionsAndAssets();
+        return;
       }
 
-      if (IsEmpty(assessmentsAllCategories)) return;
-
       const { assets, connections } = buildAssetAndConnectionLinks(
-        assessmentsAllCategories,
+        unfilteredCategories,
         state.selected.length
       );
 
-      dispatch({
-        type: SET_CONNECTIONS_AND_ASSETS,
-        data: {
-          assets: Object.values(assets),
-          connections: Object.values(connections),
-        },
-      });
-
-      updateElements({
-        assets: Object.values(assets),
-        connections: Object.values(connections),
-      });
+      saveResults(Object.values(assets), Object.values(connections));
     },
     [state.selected, updateElements]
   );
 
   useEffect(() => {
     if (IsEmpty(state.selected)) {
-      dispatch({ type: RESET_CONNECTIONS_AND_ASSETS });
-
-      updateElements({
-        assets: [],
-        connections: [],
-      });
+      resetAllConnectionsAndAssets();
+      return;
     }
 
     Promise.all([
-      ...state.selected.map((uri) =>
-        get(`/assessments/assets?assessments=${encodeURIComponent(uri)}`)
-      ),
-      ...state.selected.map((uri) =>
-        get(`/assessments/connections?assessments=${encodeURIComponent(uri)}`)
-      ),
-    ]).then(processAssessmentCategories);
-  }, [state.selected, get, processAssessmentCategories, updateElements]);
+      ...generateJobs("assets", state.selected),
+      ...generateJobs("connections", state.selected),
+    ]).then(processAllConnectionsAndAssetResults);
+  }, [
+    state.selected,
+    get,
+    processAllConnectionsAndAssetResults,
+    updateElements,
+  ]);
 
   const setSelected = (selected) => {
     dispatch({ type: SET_SELECTED, data: selected });
@@ -118,7 +135,7 @@ const DataFigures = () => {
       }}
     >
       <Filters selected={state.selected} setSelected={setSelected} />
-      <Tabs style={{ height: "calc(100% - 24px)" }} >
+      <Tabs style={{ height: "calc(100% - 24px)" }}>
         <TabList style={{ display: "flex" }}>
           <Tab
             className="telicent-tab"
