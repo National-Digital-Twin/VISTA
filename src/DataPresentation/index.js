@@ -4,7 +4,9 @@ import Details from "../Details";
 import { AssetContext } from "../AssetContext";
 import { ElementsContext } from "../ElementsContext";
 import TelicentMemoMap from "../Map/TelicentMap";
-import { findElement, getSelectedElement } from "./utils";
+
+const findElement = (elements, criteria) =>
+  elements.find((element) => element.uri === criteria);
 
 const DataPresentation = () => {
   const { selected, type } = useContext(AssetContext);

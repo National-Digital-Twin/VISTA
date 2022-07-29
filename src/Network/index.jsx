@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import CytoscapeComponent from "react-cytoscapejs";
 import Fuel from "./assets/gas-station-fill-green.svg";
 import Medical from "./assets/medical_services_green_24dp.svg";
@@ -8,65 +8,9 @@ import Battery from "./assets/battery-charge-fill-teal.svg";
 import Car from "./assets/car-fill-aqua.svg";
 import useSelectNode from "../hooks/useSelectNode";
 import { createContext } from "react";
-import { IsEmpty } from "../utils";
-
-const emptyAssets = [];
-const emptyConnections = [];
 
 const Network = React.memo(({ cyRef, configureCy }) => {
-  // const [setSelectedNode] = useSelectNode(assets, connections);
-
   const layout = "cose";
-  // const [elements, setElements] = useState([]);
-
-  // const listener = useCallback(
-  //   (e) => {
-  //     e.preventDefault();
-  //     const { target } = e;
-
-  //     const {
-  //       group,
-  //       data: { id: targetId, uri: targetUri },
-  //     } = target[0]._private;
-  //     const type = group === "nodes" ? "asset" : "connection";
-  //     const uri = group === "nodes" ? targetId : targetUri;
-
-  //     setSelectedNode(uri, type);
-  //   },
-  //   [setSelectedNode]
-  // );
-
-  const focusCytoScapeContent = useCallback(() => {
-    cyRef.current.resize();
-    cyRef.current.layout({ name: layout }).run();
-    cyRef.current.center();
-    cyRef.current.fit();
-  }, [cyRef]);
-
-  // useEffect(() => {
-  //   const nodes = assets.map((asset) => ({
-  //     data: {
-  //       id: asset.uri,
-  //       label: asset.id,
-  //       style: {
-  //         "border-color": asset.scoreColour,
-  //         height: `${asset.count + 40}`,
-  //         width: `${asset.count + 40}`,
-  //       },
-  //     },
-  //     classes: asset.id.charAt(0), // set class on cytospace node to add image
-  //   }));
-  //   const links = connections.map((connection) => ({
-  //     data: connection,
-  //     classes: `${connection.criticality}`,
-  //   }));
-  //   setElements([...nodes, ...links]);
-  // }, [assets, connections]);
-
-  // useEffect(() => {
-  //   if (!cyRef.current) return;
-  //   focusCytoScapeContent();
-  // }, [cyRef, focusCytoScapeContent]);
 
   useEffect(() => {
     return () => {
@@ -231,7 +175,6 @@ const withData =
       cyRef.current.layout({ name: "cose" }).run();
       cyRef.current.center();
       cyRef.current.fit();
-      // cyRef.current.json({ elements: [...nodes, ...links] });
     }, [assets, connections, cyRef]);
     const configureCy = (cy) => {
       if (cyRef.current) return;
