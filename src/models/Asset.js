@@ -5,6 +5,7 @@ import {
   buildCircleFeature,
   buildCircleFeatures,
 } from "../Map/mapboxFeatures";
+import ConnectionAssessment from "./ConnectionAssessment";
 
 const drawAssets = (element) => {
   const lines = [];
@@ -40,6 +41,16 @@ export default class Asset {
     this.count = 0;
   }
 
+  /**
+   * Process Connections
+   * Does the following:
+   *  - Set what asset connects to
+   *  - Add connections to connectionList
+   *  - Sets connection count
+   *  - Calculates criticality
+   * @param {Array<ConnectionAssessment>} connections
+   * @param {Array<Asset>} assets
+   */
   processConnections = (connections, assets) => {
     this.setConnections(
       connections.map((connection) =>
@@ -55,9 +66,15 @@ export default class Asset {
     this.criticality = connections.reduce(sumCriticality, 0);
   };
 
+  /**
+   * Set connections
+   * Setter. ConnectsTo
+   * @param {Array<ConnectionAssessment>} connections
+   */
   setConnections = (connections) => {
     this.connectsTo = connections;
   };
+
   getColor = (value) => {
     let hue = ((1 - value) * 120).toString(10);
     return `hsl(${hue},100%, 50%)`;
