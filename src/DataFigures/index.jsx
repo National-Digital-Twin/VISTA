@@ -51,28 +51,31 @@ const DataFigures = () => {
   const { updateElements } = useContext(ElementsContext);
   const { get } = useFetch(config.api.url);
 
-  const resetAllConnectionsAndAssets = () => {
+  const resetAllConnectionsAndAssets = useCallback(() => {
     dispatch({ type: RESET_CONNECTIONS_AND_ASSETS });
     updateElements({
       assets: [],
       connections: [],
     });
-  };
+  }, [updateElements]);
 
-  const saveResults = (assets, connections) => {
-    dispatch({
-      type: SET_CONNECTIONS_AND_ASSETS,
-      data: {
+  const saveResults = useCallback(
+    (assets, connections) => {
+      dispatch({
+        type: SET_CONNECTIONS_AND_ASSETS,
+        data: {
+          assets,
+          connections,
+        },
+      });
+
+      updateElements({
         assets,
         connections,
-      },
-    });
-
-    updateElements({
-      assets,
-      connections,
-    });
-  };
+      });
+    },
+    [updateElements]
+  );
 
   /**
    * Generate api calls for each endpoint
@@ -80,10 +83,13 @@ const DataFigures = () => {
    * @param {Array<string>} uris
    * @returns {Array<Promise>} Array of get requests
    */
-  const generateJobs = (type, uris) =>
-    uris.map((uri) =>
-      get(`/assessments/${type}?assessments=${encodeURIComponent(uri)}`)
-    );
+  const generateJobs = useCallback(
+    (type, uris) =>
+      uris.map((uri) =>
+        get(`/assessments/${type}?assessments=${encodeURIComponent(uri)}`)
+      ),
+    [get]
+  );
 
   const processAllConnectionsAndAssetResults = useCallback(
     (unfilteredCategories = []) => {
@@ -101,7 +107,7 @@ const DataFigures = () => {
 
       saveResults(Object.values(assets), Object.values(connections));
     },
-    [state.selected, updateElements]
+    [state.selected, resetAllConnectionsAndAssets, saveResults]
   );
 
   useEffect(() => {
@@ -117,6 +123,8 @@ const DataFigures = () => {
   }, [
     state.selected,
     get,
+    generateJobs,
+    resetAllConnectionsAndAssets,
     processAllConnectionsAndAssetResults,
     updateElements,
   ]);
