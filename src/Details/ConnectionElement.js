@@ -1,15 +1,26 @@
 class Element {
-  constructor(element) {
-    this.desc = element.desc;
+  constructor({ desc, element, name, title }) {
+    this.desc = desc;
     this.asset = element;
+    this.name = name;
+    this.title = title;
   }
 }
 
 export class ConnectionElement extends Element {
   constructor(element) {
-    super(element);
-    const { label, criticality, sourceAsset, targetAsset, source, target } =
-      element;
+    const {
+      criticality,
+      desc,
+      label,
+      source,
+      sourceAsset,
+      target,
+      targetAsset,
+    } = element;
+
+    super({ element, desc, name: label, title: label });
+
     this.name = label;
     this.sub = label;
     this.title = label;
@@ -29,8 +40,8 @@ export class ConnectionElement extends Element {
 
 export class AssetElement extends Element {
   constructor(element) {
-    const { name, scoreColour, id } = element;
-    super(element);
+    const { desc, id, name, scoreColour } = element;
+    super({ desc, element, name, title: id });
     this.name = name;
     this.sub = name;
     this.title = id;
