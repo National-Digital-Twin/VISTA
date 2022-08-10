@@ -88,111 +88,161 @@ const AssetGrid = ({ asset, onClick }) => {
     gridIndex,
   } = asset;
 
+  const AssetIdentifierCol = ({
+    gridIndex,
+    id,
+    lat,
+    lon,
+    title,
+    uri,
+    onClick,
+  }) => (
+    <div
+      title={title}
+      style={{
+        position: "sticky",
+        left: 0,
+        backgroundColor: "black",
+        width: "50px",
+        gridColumnStart: 1,
+        gridRowStart: gridIndex + 1,
+        gridColumnEnd: 1,
+        gridRowEnd: gridIndex + 1,
+      }}
+      className={classNames("asset-id", {
+        "border-2 border-red-500": !lat || !lon,
+      })}
+      onClick={onClick}
+      id={`${uri}`}
+      role="button"
+    >
+      {id}
+    </div>
+  );
+
+  const AssetNameRow = ({ gridIndex, id, lat, lon, title, uri, onClick }) => (
+    <div
+      title={title}
+      style={{
+        position: "sticky",
+        top: 0,
+        zIndex: 99,
+        backgroundColor: "black",
+        gridColumnStart: gridIndex + 4,
+        gridRowStart: 1,
+        gridColumnEnd: gridIndex + 4,
+        gridRowEnd: 1,
+      }}
+      className={classNames("col-header", {
+        "border-2 border-red-500": !lat || !lon,
+      })}
+      onClick={onClick}
+      id={`${uri}`}
+      role="button"
+    >
+      {id}
+    </div>
+  );
+
+  const AssetNameCol = ({ gridIndex, id, name, title }) => (
+    <div
+      title={title}
+      className="asset-id"
+      id={id}
+      role="cell"
+      style={{
+        position: "sticky",
+        left: "94px",
+        backgroundColor: "black",
+        overflow: "hidden",
+        gridColumnStart: 4,
+        gridRowStart: gridIndex + 1,
+        gridColumnEnd: 4,
+        gridRowEnd: gridIndex + 1,
+      }}
+    >
+      {name}
+    </div>
+  );
+  const BlankCell = ({ gridIndex }) => (
+    <div
+      className="blank-entry"
+      role="cell"
+      style={{
+        gridColumnStart: gridIndex + 4,
+        gridRowStart: gridIndex + 1,
+        gridColumnEnd: gridIndex + 4,
+        gridRowEnd: gridIndex + 1,
+      }}
+    />
+  );
+
+  const AssetCountCell = ({ color, gridIndex, value }) => (
+    <div
+      className="asset-id"
+      role="cell"
+      style={{
+        backgroundColor: color,
+        position: "sticky",
+        left: "50px",
+        overflow: "hidden",
+        gridColumnStart: 2,
+        gridRowStart: gridIndex + 1,
+        gridColumnEnd: 2,
+        gridRowEnd: gridIndex + 1,
+      }}
+    >
+      {value}
+    </div>
+  );
+
+  const AssetCriticalityCell = ({ color, gridIndex, value }) => (
+    <div
+      className="asset-id"
+      role="cell"
+      style={{
+        backgroundColor: color,
+        position: "sticky",
+        left: "72px",
+        overflow: "hidden",
+        gridColumnStart: 3,
+        gridRowStart: gridIndex + 1,
+        gridColumnEnd: 3,
+        gridRowEnd: gridIndex + 1,
+      }}
+    >
+      {value}
+    </div>
+  );
+
   return (
     <>
-      <div
-        title={name}
-        style={{
-          position: "sticky",
-          left: 0,
-          backgroundColor: "black",
-          width: "50px",
-          gridColumnStart: 1,
-          gridRowStart: gridIndex + 1,
-          gridColumnEnd: 1,
-          gridRowEnd: gridIndex + 1,
-        }}
-        className={classNames("asset-id", {
-          "border-2 border-red-500": !lat || !lon,
-        })}
-        onClick={onClick}
-        id={`${uri}`}
-        role="button"
-      >
-        {id}
-      </div>
-      <div
-        title={name}
-        className="asset-id"
+      <AssetNameRow
+        gridIndex={gridIndex}
         id={id}
-        role="cell"
-        style={{
-          position: "sticky",
-          left: "94px",
-          backgroundColor: "black",
-          overflow: "hidden",
-          gridColumnStart: 4,
-          gridRowStart: gridIndex + 1,
-          gridColumnEnd: 4,
-          gridRowEnd: gridIndex + 1,
-        }}
-      >
-        {name}
-      </div>
-      <div
         title={name}
-        style={{
-          position: "sticky",
-          top: 0,
-          zIndex: 99,
-          backgroundColor: "black",
-          gridColumnStart: gridIndex + 4,
-          gridRowStart: 1,
-          gridColumnEnd: gridIndex + 4,
-          gridRowEnd: 1,
-        }}
-        className={classNames("col-header", {
-          "border-2 border-red-500": !lat || !lon,
-        })}
+        lat={lat}
+        lon={lon}
+        uri={uri}
         onClick={onClick}
-        id={`${uri}`}
-        role="button"
-      >
-        {id}
-      </div>
-
-      <div
-        className="blank-entry"
-        role="cell"
-        style={{
-          gridColumnStart: gridIndex + 4,
-          gridRowStart: gridIndex + 1,
-          gridColumnEnd: gridIndex + 4,
-          gridRowEnd: gridIndex + 1,
-        }}
       />
-      <div
-        className="asset-id"
-        role="cell"
-        style={{
-          backgroundColor: countColour,
-          position: "sticky",
-          left: "50px",
-          overflow: "hidden",
-          gridColumnStart: 2,
-          gridRowStart: gridIndex + 1,
-          gridColumnEnd: 2,
-          gridRowEnd: gridIndex + 1,
-        }}
-      >
-        {count}
-      </div>
-      <div
-        className="asset-id"
-        role="cell"
-        style={{
-          backgroundColor: scoreColour,
-          position: "sticky",
-          left: "72px",
-          overflow: "hidden",
-          gridColumnStart: 3,
-          gridRowStart: gridIndex + 1,
-          gridColumnEnd: 3,
-          gridRowEnd: gridIndex + 1,
-        }}
-      >
-        {criticality}
-      </div>
+      <AssetIdentifierCol
+        gridIndex={gridIndex}
+        title={name}
+        id={id}
+        onClick={onClick}
+        lat={lat}
+        lon={lon}
+        uri={uri}
+      />
+      <AssetNameCol gridIndex={gridIndex} id={id} title={name} name={name} />
+      <BlankCell gridIndex={gridIndex} />
+      <AssetCountCell color={countColour} gridIndex={gridIndex} value={count} />
+      <AssetCriticalityCell
+        color={scoreColour}
+        gridIndex={gridIndex}
+        value={criticality}
+      />
     </>
   );
 };
