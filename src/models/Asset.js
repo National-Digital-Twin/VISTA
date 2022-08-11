@@ -5,6 +5,7 @@ import {
   buildCircleFeature,
   buildCircleFeatures,
 } from "../Map/mapboxFeatures";
+// eslint-disable-next-line
 import ConnectionAssessment from "./ConnectionAssessment";
 
 const drawAssets = (element) => {

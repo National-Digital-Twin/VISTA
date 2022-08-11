@@ -65,11 +65,9 @@ describe("DataPresentation should call details and map with correct props", () =
 
   const ElementsContextProps = {
     value: {
-      assetsRef: {
-        current: Assets,
-      },
-      connectionsRef: {
-        current: [connection],
+      elements: {
+        assets: Assets,
+        connections: [connection],
       },
       updateElements: jest.fn,
     },

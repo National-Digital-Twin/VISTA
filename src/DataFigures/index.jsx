@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useCallback, useReducer } from "react";
+import React, { useEffect, useContext, useCallback, useState } from "react";
 import Filters from "../Filters";
 import TelicentGrid from "../Grid";
 import Network from "../Network";
@@ -12,70 +12,18 @@ import { buildAssetAndConnectionLinks } from "./utils";
 import "./DataFigures.css";
 import { ElementsContext } from "../ElementsContext";
 
-const RESET_CONNECTIONS_AND_ASSETS = "RESET_CONNECTIONS_AND_ASSETS";
-const SET_CONNECTIONS_AND_ASSETS = "SET_CONNECTIONS_AND_ASSETS";
-const SET_SELECTED = "SET_SELECTED";
-const initialState = {
-  selected: [],
-  assets: [],
-  connections: [],
-};
-
-const reducer = (state, action) => {
-  switch (action.type) {
-    case RESET_CONNECTIONS_AND_ASSETS:
-      return {
-        ...state,
-        assets: [],
-        connections: [],
-      };
-    case SET_CONNECTIONS_AND_ASSETS:
-      return {
-        ...state,
-        assets: action.data.assets,
-        connections: action.data.connections,
-      };
-    case SET_SELECTED:
-      return {
-        ...state,
-        selected: action.data,
-      };
-
-    default:
-      return state;
-  }
-};
-
 const DataFigures = () => {
-  const [state, dispatch] = useReducer(reducer, initialState);
-  const { updateElements } = useContext(ElementsContext);
+  const [selected, setSelected] = useState([]);
+  const { updateElements, elements } = useContext(ElementsContext);
+
   const { get } = useFetch(config.api.url);
 
   const resetAllConnectionsAndAssets = useCallback(() => {
-    dispatch({ type: RESET_CONNECTIONS_AND_ASSETS });
     updateElements({
       assets: [],
       connections: [],
     });
   }, [updateElements]);
-
-  const saveResults = useCallback(
-    (assets, connections) => {
-      dispatch({
-        type: SET_CONNECTIONS_AND_ASSETS,
-        data: {
-          assets,
-          connections,
-        },
-      });
-
-      updateElements({
-        assets,
-        connections,
-      });
-    },
-    [updateElements]
-  );
 
   /**
    * Generate api calls for each endpoint
@@ -92,46 +40,45 @@ const DataFigures = () => {
   );
 
   const processAllConnectionsAndAssetResults = useCallback(
-    (unfilteredCategories = []) => {
-      if (IsEmpty(unfilteredCategories)) return;
+    (selectedFilters = []) => {
+      if (IsEmpty(selectedFilters)) return;
 
-      if (IsEmpty(state.selected)) {
+      if (IsEmpty(selected)) {
         resetAllConnectionsAndAssets();
         return;
       }
 
       const { assets, connections } = buildAssetAndConnectionLinks(
-        unfilteredCategories,
-        state.selected.length
+        selectedFilters,
+        selected.length
       );
 
-      saveResults(Object.values(assets), Object.values(connections));
+      updateElements({
+        assets: Object.values(assets),
+        connections: Object.values(connections),
+      });
     },
-    [state.selected, resetAllConnectionsAndAssets, saveResults]
+    [selected, resetAllConnectionsAndAssets, updateElements]
   );
 
   useEffect(() => {
-    if (IsEmpty(state.selected)) {
+    if (IsEmpty(selected)) {
       resetAllConnectionsAndAssets();
       return;
     }
 
     Promise.all([
-      ...generateJobs("assets", state.selected),
-      ...generateJobs("connections", state.selected),
+      ...generateJobs("assets", selected),
+      ...generateJobs("connections", selected),
     ]).then(processAllConnectionsAndAssetResults);
   }, [
-    state.selected,
+    selected,
     get,
     generateJobs,
     resetAllConnectionsAndAssets,
     processAllConnectionsAndAssetResults,
     updateElements,
   ]);
-
-  const setSelected = (selected) => {
-    dispatch({ type: SET_SELECTED, data: selected });
-  };
 
   return (
     <section
@@ -142,7 +89,7 @@ const DataFigures = () => {
         borderRight: "solid 1px gold",
       }}
     >
-      <Filters selected={state.selected} setSelected={setSelected} />
+      <Filters selected={selected} setSelected={setSelected} />
       <Tabs style={{ height: "calc(100% - 24px)" }}>
         <TabList style={{ display: "flex" }}>
           <Tab
@@ -159,10 +106,16 @@ const DataFigures = () => {
           </Tab>
         </TabList>
         <TabPanel style={{ height: "calc(100% - 54px)" }}>
-          <TelicentGrid assets={state.assets} connections={state.connections} />
+          <TelicentGrid
+            assets={elements.assets}
+            connections={elements.connections}
+          />
         </TabPanel>
         <TabPanel style={{ height: "calc(100% - 54px)" }}>
-          <Network assets={state.assets} connections={state.connections} />
+          <Network
+            assets={elements.assets}
+            connections={elements.connections}
+          />
         </TabPanel>
       </Tabs>
     </section>

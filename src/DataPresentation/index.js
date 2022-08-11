@@ -10,16 +10,16 @@ const findElement = (elements, criteria) =>
 
 const DataPresentation = () => {
   const { selected, type } = useContext(AssetContext);
-  const { assetsRef, connectionsRef } = useContext(ElementsContext);
+  const { elements } = useContext(ElementsContext);
   const [element, setElement] = useState({});
 
   useEffect(() => {
     const selectedElement =
       type === "asset"
-        ? findElement(assetsRef.current, selected)
-        : findElement(connectionsRef.current, selected);
+        ? findElement(elements.assets, selected)
+        : findElement(elements.connections, selected);
     setElement(selectedElement);
-  }, [selected, type, assetsRef, connectionsRef, setElement]);
+  }, [selected, type, elements, setElement]);
 
   return (
     <section style={{ width: "45%", height: "100%", padding: "16px" }}>
