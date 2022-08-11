@@ -1,7 +1,6 @@
 import { processAssetConnections, processAssets } from "./utils";
 
 import Asset from "../models/Asset";
-import ConnectionAssessment from "../models/ConnectionAssessment";
 const rawAssets = [
   {
     id: "W001",
@@ -51,18 +50,11 @@ describe("processAssets", () => {
   });
 });
 
-xdescribe("generateConnectionAssessments", () => {
+describe("generateConnectionAssessments", () => {
   const sourceUri = "http://telicent.io/test-data/iow#W001";
   const targetUri = "http://telicent.io/test-data/iow#W002";
   const processedAssets = processAssets(rawAssets, rawAssets.length);
   const selectedLength = 1;
-
-  const connection = new ConnectionAssessment({
-    item: rawConnections[0],
-    source: processedAssets[sourceUri],
-    target: processedAssets[targetUri],
-    criticality: 1,
-  });
 
   const processedConnections = processAssetConnections(
     [processedAssets, rawConnections],
@@ -70,10 +62,7 @@ xdescribe("generateConnectionAssessments", () => {
     selectedLength
   );
   it("should generate connections", () => {
-    expect(JSON.stringify(processedConnections.reports)).toBe(
-      JSON.stringify({
-        "http://telicent.io/test-data/iow#connector_W001_W002": connection,
-      })
-    );
+    expect(processedConnections[0].source).toBe(sourceUri);
+    expect(processedConnections[0].target).toBe(targetUri);
   });
 });
