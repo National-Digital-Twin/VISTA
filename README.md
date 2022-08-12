@@ -2,6 +2,9 @@
 
 ## What is Paralog
 
+Paralog can be used to help identify high value installations or utilities in the event of a disaster.
+Data is ingested via csv and then the criticality of the infrastructure is calculated and compiled in to easy to understand visualisations helping the teams on the ground make quick decisions.
+
 ## How to set up Paralog for Development
 
 ### Set up backend
