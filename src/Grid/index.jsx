@@ -8,6 +8,7 @@ const emptyConnections = [];
 const TelicentGrid = ({
   assets = emptyAssets,
   connections = emptyConnections,
+  loading,
 }) => {
   const [setSelectedNode] = useSelectNode(assets, connections);
   const onClick = (type) => (e) => {
@@ -48,12 +49,19 @@ const TelicentGrid = ({
     );
     return;
   }
+
+  if (loading) {
+    return (
+      <div className="display-center w-full h-full">
+        <p>Loading...</p>
+      </div>
+    );
+  }
   return (
     <div
       className="h-full w-full"
       style={{
         position: "relative",
-        // height: "calc(100% - 24px)",
         overflow: "auto",
         marginBottom: "12px",
         marginRight: "12px",

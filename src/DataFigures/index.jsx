@@ -16,7 +16,7 @@ const DataFigures = () => {
   const [selected, setSelected] = useState([]);
   const { updateElements, elements } = useContext(ElementsContext);
 
-  const { get } = useFetch(config.api.url);
+  const { get, loading } = useFetch(config.api.url);
 
   const resetAllConnectionsAndAssets = useCallback(() => {
     updateElements({
@@ -24,20 +24,6 @@ const DataFigures = () => {
       connections: [],
     });
   }, [updateElements]);
-
-  // /**
-  //  * Generate api calls for each endpoint
-  //  * @param {"assets"|"connections"} type "values should be assets or connections"
-  //  * @param {Array<string>} uris
-  //  * @returns {Array<Promise>} Array of get requests
-  //  */
-  // const generateJobs = useCallback(
-  // (type, uris) =>
-  // uris.map((uri) =>
-  // get(`/assessments/${type}?assessments=${encodeURIComponent(uri)}`)
-  // ),
-  // [get]
-  // );
 
   const processAllConnectionsAndAssetResults = useCallback(
     (selectedFilters = []) => {
@@ -111,6 +97,7 @@ const DataFigures = () => {
           <TelicentGrid
             assets={elements.assets}
             connections={elements.connections}
+            loading={loading}
           />
         </TabPanel>
         <TabPanel style={{ height: "calc(100% - 54px)" }}>
