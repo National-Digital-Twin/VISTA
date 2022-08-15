@@ -1,0 +1,12 @@
+.sponsor-logos {
+  display: flex;
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+}
+
+.sponsor-logo {
+  height: 24px;
+  width: 24px;
+  /* display: inline; */
+}
