@@ -11,11 +11,14 @@ const useSelectNode = (assets, connections) => {
   const getItemById = (items, id) => items.find((item) => item.uri === id);
 
   const setAssetSegments = async (get, asset) => {
-   
-    if(!asset || !asset.type || !asset.type.toLowerCase().includes(typesWithParts)) return
-    // const matched = asset.type.toLowerCase().includes(typesWithParts);
-    // if (!matched) return;
+    if (
+      !asset ||
+      !asset.type ||
+      !asset.type.toLowerCase().includes(typesWithParts)
+    )
+      return;
 
+    // only get segments if they have not been retrieved already
     if (asset.lat.length < 2) {
       const pathSegments = await get(`/assets/${asset.id}/parts`);
       const segments = Object.values(pathSegments);
@@ -40,7 +43,7 @@ const useSelectNode = (assets, connections) => {
       const item = getItemById(connections, id);
       await setConnectionSegments(get, item);
     }
-    
+
     onSelectedNode(id, type);
   };
 

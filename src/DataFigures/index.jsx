@@ -78,7 +78,7 @@ const DataFigures = () => {
       }}
     >
       <Filters selected={selected} setSelected={setSelected} />
-      <Tabs style={{ height: "calc(100% - 24px)" }}>
+      <Tabs style={{ height: "calc(100% - 48px)" }}>
         <TabList style={{ display: "flex" }}>
           <Tab
             className="telicent-tab"
