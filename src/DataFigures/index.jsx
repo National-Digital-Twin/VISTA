@@ -7,7 +7,7 @@ import config from "../config/app-config";
 import { Tabs, Tab, TabList, TabPanel } from "react-tabs";
 import { IsEmpty } from "../utils";
 import "react-tabs/style/react-tabs.css";
-import { buildAssetAndConnectionLinks } from "./utils";
+import { buildAssetAndConnectionLinks, generateAssetJobs } from "./utils";
 
 import "./DataFigures.css";
 import { ElementsContext } from "../ElementsContext";
@@ -25,19 +25,19 @@ const DataFigures = () => {
     });
   }, [updateElements]);
 
-  /**
-   * Generate api calls for each endpoint
-   * @param {"assets"|"connections"} type "values should be assets or connections"
-   * @param {Array<string>} uris
-   * @returns {Array<Promise>} Array of get requests
-   */
-  const generateJobs = useCallback(
-    (type, uris) =>
-      uris.map((uri) =>
-        get(`/assessments/${type}?assessments=${encodeURIComponent(uri)}`)
-      ),
-    [get]
-  );
+  // /**
+  //  * Generate api calls for each endpoint
+  //  * @param {"assets"|"connections"} type "values should be assets or connections"
+  //  * @param {Array<string>} uris
+  //  * @returns {Array<Promise>} Array of get requests
+  //  */
+  // const generateJobs = useCallback(
+  // (type, uris) =>
+  // uris.map((uri) =>
+  // get(`/assessments/${type}?assessments=${encodeURIComponent(uri)}`)
+  // ),
+  // [get]
+  // );
 
   const processAllConnectionsAndAssetResults = useCallback(
     (selectedFilters = []) => {
@@ -67,14 +67,16 @@ const DataFigures = () => {
       return;
     }
 
-    Promise.all([
-      ...generateJobs("assets", selected),
-      ...generateJobs("connections", selected),
-    ]).then(processAllConnectionsAndAssetResults);
+    const connectionUrl = `assessments/connections?${selected
+      .map((item) => `assessments=${encodeURIComponent(item)}`)
+      .join("&")}`;
+
+    Promise.all([...generateAssetJobs(get, selected), get(connectionUrl)]).then(
+      processAllConnectionsAndAssetResults
+    );
   }, [
     selected,
     get,
-    generateJobs,
     resetAllConnectionsAndAssets,
     processAllConnectionsAndAssetResults,
     updateElements,

@@ -135,3 +135,15 @@ export const buildAssetAndConnectionLinks = (
     assets: Object.values(processedAssets),
   };
 };
+
+/**
+ * Generate api calls for each endpoint
+ * @param {Function} get Get function passed from react component
+ * @param {Array<string>} uris
+ * @returns {Array<Promise>} Array of get requests
+ */
+export const generateAssetJobs = (get, uris) => {
+  return uris.map((uri) =>
+    get(`/assessments/assets?assessments=${encodeURIComponent(uri)}`)
+  );
+};
