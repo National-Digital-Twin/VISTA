@@ -191,6 +191,7 @@ const AssetGrid = ({ asset, onClick }) => {
         gridColumnEnd: 2,
         gridRowEnd: gridIndex + 1,
       }}
+      title={value}
     >
       {value}
     </div>
@@ -210,6 +211,7 @@ const AssetGrid = ({ asset, onClick }) => {
         gridColumnEnd: 3,
         gridRowEnd: gridIndex + 1,
       }}
+      title={value}
     >
       {value}
     </div>
