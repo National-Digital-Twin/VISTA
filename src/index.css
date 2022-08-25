@@ -12,10 +12,10 @@
 main {
   height: 100%;
 }
-h3 {
+h2.heading-style-1 {
   font-size: 1.75rem !important;
 }
-h5 {
+h3.heading-style-2 {
   font-size: 1.25rem !important;
 }
 body {

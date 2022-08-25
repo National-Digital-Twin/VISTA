@@ -1,21 +1,19 @@
 .telicent-tab {
-    padding: 8px;
-    border: 1px solid rgb(34,34,34);
-    border-top: 2px solid #d6d6d6;
-    /* background: rgb(17,17,17); */
-    color: white;
-    text-transform: uppercase; 
-    cursor: pointer;
-    font-weight: 600;
-    width: 50%;
-    text-align: center;
+  padding: 8px;
+  border: 1px solid rgb(34, 34, 34);
+  border-top: 2px solid #d6d6d6;
+  color: white;
+  text-transform: uppercase;
+  cursor: pointer;
+  font-weight: 600;
+  width: 50%;
+  text-align: center;
 }
 
-.telicent-tab_selected{
-    padding: 8px;
-    border: 1px solid rgb(34,34,34);
-    border-top: 2px solid gold;
-    /* background: rgb(17,17,17); */
-    color: white;
-    text-transform: uppercase; 
+.telicent-tab_selected {
+  padding: 8px;
+  border: 1px solid rgb(34, 34, 34);
+  border-top: 2px solid gold;
+  color: white;
+  text-transform: uppercase;
 }

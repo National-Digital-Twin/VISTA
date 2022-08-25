@@ -72,7 +72,7 @@ describe("DataFigures should", () => {
     expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 
-  xit("populate assets and connections on checkbox select", async () => {
+  it("populate assets and connections on checkbox select", async () => {
     const promise = jest
       .spyOn(Promise, "all")
       .mockReturnValue(Promise.resolve([assetResponse, connectionResponse]));

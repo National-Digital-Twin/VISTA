@@ -87,12 +87,12 @@ const setColourByScore = (score) => (connection) => {
 };
 
 const getMaxCountAndScore = (connections) => {
-  const counts = connections
-    .map((connection) => connection.getSourceAndTargetAssetCounts())
-    .flat();
-  const scores = connections
-    .map((connection) => connection.getSourceAndTargetAssetScores())
-    .flat();
+  const counts = connections.flatMap((connection) =>
+    connection.getSourceAndTargetAssetCounts()
+  );
+  const scores = connections.flatMap((connection) =>
+    connection.getSourceAndTargetAssetScores()
+  );
   const maxCount = Math.max(...counts);
   const maxScore = Math.max(...scores);
 

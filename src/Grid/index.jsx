@@ -258,7 +258,6 @@ const AssetGrid = ({ asset, onClick }) => {
 };
 
 const ConnectionGrid = ({ uri, criticality, source, target, onClick }) => {
-  // why is previous element becoming undefined?
   if (!source || !target) {
     return null;
   }

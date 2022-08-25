@@ -36,11 +36,15 @@ const Details = ({ element, type }) => {
   return (
     <div>
       {title && (
-        <h3 style={titleStyle} className={titleClassName}>
+        <h2 style={titleStyle} className={`heading-style-1 ${titleClassName}`}>
           {title}
+        </h2>
+      )}
+      {sub && (
+        <h3 className="heading-style-2" style={subStyle}>
+          {sub}
         </h3>
       )}
-      {sub && <h5 style={subStyle}>{sub}</h5>}
       <span style={{ color: "white" }}>
         {!asset && "Click on an asset or connection to view details"}
       </span>

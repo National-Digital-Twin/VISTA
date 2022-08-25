@@ -14,7 +14,6 @@ const Network = React.memo(({ cyRef, configureCy }) => {
 
   useEffect(() => {
     return () => {
-      console.log("unmount");
       if (!cyRef.current) return;
       cyRef.current.removeAllListeners();
       cyRef.current = null;
@@ -136,10 +135,8 @@ const withData =
     const [setSelectedNode] = useSelectNode(assets, connections);
 
     const onTapNode = (e) => {
-      console.log(e);
       e.preventDefault();
       const { target } = e;
-      console.log(target);
 
       const {
         group,

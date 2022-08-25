@@ -69,7 +69,7 @@ const DataFigures = () => {
   ]);
 
   return (
-    <section
+    <div
       style={{
         width: "55%",
         height: "100%",
@@ -107,7 +107,7 @@ const DataFigures = () => {
           />
         </TabPanel>
       </Tabs>
-    </section>
+    </div>
   );
 };
 

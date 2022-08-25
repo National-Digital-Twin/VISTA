@@ -5,11 +5,16 @@ import "./sponsor-logos.css";
 
 const SponsorLogos = () => {
   const small = 38;
-  const width = 80;
+  const medium = 80;
   return (
     <div className="sponsor-logos">
-      <img src={BEIS} height={small} width={width} alt="boo" />
-      <img src={RoyalEng} height={small} width={small} alt="yah" />
+      <img src={BEIS} height={small} width={medium} alt="beis logo" />
+      <img
+        src={RoyalEng}
+        height={small}
+        width={small}
+        alt="royal engineers logo"
+      />
     </div>
   );
 };

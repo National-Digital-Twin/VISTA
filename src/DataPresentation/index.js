@@ -22,14 +22,14 @@ const DataPresentation = () => {
   }, [selected, type, elements, setElement]);
 
   return (
-    <section style={{ width: "45%", height: "100%", padding: "16px" }}>
+    <div style={{ width: "45%", height: "100%", padding: "16px" }}>
       <PresentationSplit>
         <Details element={element} type={type} />
       </PresentationSplit>
       <PresentationSplit>
         <TelicentMemoMap type={type} element={element} />
       </PresentationSplit>
-    </section>
+    </div>
   );
 };
 

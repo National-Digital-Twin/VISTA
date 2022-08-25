@@ -41,10 +41,10 @@ describe("Details", () => {
 
     it("should show empty spans if no element is selected", () => {
       expect(
-        screen.queryByRole("heading", { level: 3 })
+        screen.queryByRole("heading", { level: 2 })
       ).not.toBeInTheDocument();
       expect(
-        screen.queryByRole("heading", { level: 5 })
+        screen.queryByRole("heading", { level: 3 })
       ).not.toBeInTheDocument();
       expect(screen.queryByText(clickMsg)).not.toBeInTheDocument();
     });
@@ -57,9 +57,9 @@ describe("Details", () => {
 
     it("should show element information", () => {
       expect(
-        screen.getByRole("heading", { level: 3, name: /elementLabel/ })
+        screen.getByRole("heading", { level: 2, name: /elementLabel/ })
       ).toBeInTheDocument();
-      expect(screen.getByRole("heading", { level: 5 })).toHaveTextContent(
+      expect(screen.getByRole("heading", { level: 3 })).toHaveTextContent(
         /elementLabel/i
       );
       expect(screen.queryByText(clickMsg)).not.toBeInTheDocument();
@@ -75,7 +75,7 @@ describe("Details", () => {
       expect(
         screen.queryByRole("heading", { name: /elementLabel/ })
       ).not.toBeInTheDocument();
-      expect(screen.getByRole("heading", { level: 5 })).toHaveTextContent(
+      expect(screen.getByRole("heading", { level: 3 })).toHaveTextContent(
         /element-name/i
       );
       expect(screen.queryByText(clickMsg)).not.toBeInTheDocument();
