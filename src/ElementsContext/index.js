@@ -1,19 +1,18 @@
-import React, { useRef } from 'react'
+import React, { useState } from "react";
 
-export const ElementsContext = React.createContext()
+export const ElementsContext = React.createContext();
 
-const ElementsProvider = ({children}) => {
-    const assetsRef = useRef()
-    const connectionsRef = useRef()
-    const updateElements = ({assets, connections}) => {
-        assetsRef.current = assets
-        connectionsRef.current = connections
-    }
-    return (
-        <ElementsContext.Provider value={{updateElements, assetsRef, connectionsRef}}>
-            {children}
-        </ElementsContext.Provider>
-    )
-}
+const ElementsProvider = ({ children }) => {
+  const [elements, updateElements] = useState({
+    assets: [],
+    connections: [],
+  });
 
-export default ElementsProvider
+  return (
+    <ElementsContext.Provider value={{ updateElements, elements }}>
+      {children}
+    </ElementsContext.Provider>
+  );
+};
+
+export default ElementsProvider;

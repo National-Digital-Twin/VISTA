@@ -19,14 +19,16 @@ Array [
   <div
     class="asset-id"
     role="cell"
-    style="background-color: rgb(255, 0, 0); position: sticky; left: 50px; overflow: hidden; grid-column-start: 2; grid-row-start: 2; grid-column-end: 2; grid-row-end: 2;"
+    style="background-color: rgb(252, 2, 0); position: sticky; left: 50px; overflow: hidden; grid-column-start: 2; grid-row-start: 2; grid-column-end: 2; grid-row-end: 2;"
+    title="1"
   >
     1
   </div>,
   <div
     class="asset-id"
     role="cell"
-    style="background-color: rgb(255, 0, 0); position: sticky; left: 72px; overflow: hidden; grid-column-start: 3; grid-row-start: 2; grid-column-end: 3; grid-row-end: 2;"
+    style="background-color: rgb(252, 2, 0); position: sticky; left: 72px; overflow: hidden; grid-column-start: 3; grid-row-start: 2; grid-column-end: 3; grid-row-end: 2;"
+    title="1"
   >
     1
   </div>,
@@ -47,14 +49,16 @@ Array [
   <div
     class="asset-id"
     role="cell"
-    style="background-color: rgb(255, 0, 0); position: sticky; left: 50px; overflow: hidden; grid-column-start: 2; grid-row-start: 3; grid-column-end: 2; grid-row-end: 3;"
+    style="background-color: rgb(252, 2, 0); position: sticky; left: 50px; overflow: hidden; grid-column-start: 2; grid-row-start: 3; grid-column-end: 2; grid-row-end: 3;"
+    title="1"
   >
     1
   </div>,
   <div
     class="asset-id"
     role="cell"
-    style="background-color: rgb(255, 0, 0); position: sticky; left: 72px; overflow: hidden; grid-column-start: 3; grid-row-start: 3; grid-column-end: 3; grid-row-end: 3;"
+    style="background-color: rgb(252, 2, 0); position: sticky; left: 72px; overflow: hidden; grid-column-start: 3; grid-row-start: 3; grid-column-end: 3; grid-row-end: 3;"
+    title="1"
   >
     1
   </div>,

@@ -1,59 +1,31 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import CytoscapeComponent from "react-cytoscapejs";
+import Fuel from "./assets/gas-station-fill-green.svg";
+import Medical from "./assets/medical_services_green_24dp.svg";
+import Phone from "./assets/phone-fill-coral.svg";
+import Drop from "./assets/drop-fill-blue.svg";
+import Battery from "./assets/battery-charge-fill-teal.svg";
+import Car from "./assets/car-fill-aqua.svg";
+import useSelectNode from "../hooks/useSelectNode";
+import { createContext } from "react";
 
-const emptyAssets = [];
-const emptyConnections = [];
-
-const Network = ({ assets = emptyAssets, connections = emptyConnections }) => {
-  const layout = "concentric";
-  const cyRef = useRef();
-  const [elements, setElements] = useState([]);
-  // useEffect(()=>{
-  //     cyRef.current.resize()
-  // },[])
-
-  useEffect(() => {
-    const nodes = assets.map((asset) => ({
-      data: {
-        id: asset.uri,
-        label: asset.id,
-        style: {
-          "border-color": asset.scoreColour,
-          height: `${asset.count + 40}`,
-          width: `${asset.count + 40}`,
-        },
-      },
-      classes: asset.id.charAt(0),
-    }));
-    const links = connections.map((connection) => ({
-      data: connection,
-      classes: `${connection.criticality}`,
-    }));
-    setElements([...nodes, ...links]);
-  }, [assets, connections]);
+const Network = React.memo(({ cyRef, configureCy }) => {
+  const layout = "cose";
 
   useEffect(() => {
-    if (!cyRef.current) return;
-    cyRef.current.layout({ name: layout }).run();
-    cyRef.current.center();
-    cyRef.current.fit();
-  }, [elements]);
-
-  if (!Array.isArray(assets) || !Array.isArray(connections)) {
-    console.warn(
-      "Network -> Assets and connections must be passed in as an array."
-    );
-    return;
-  }
+    return () => {
+      if (!cyRef.current) return;
+      cyRef.current.removeAllListeners();
+      cyRef.current = null;
+    };
+  }, [cyRef]);
 
   return (
     <CytoscapeComponent
       layout={{ name: layout }}
-      cy={(cy) => {
-        cyRef.current = cy;
-      }}
+      cy={configureCy}
       className="w-full h-full"
-      elements={elements}
+      elements={[]}
       stylesheet={[
         {
           selector: "node",
@@ -62,21 +34,21 @@ const Network = ({ assets = emptyAssets, connections = emptyConnections }) => {
             height: "60px",
             borderWidth: "4px",
             borderColor: "gray",
-            "background-color": "black",
+            backgroundColor: "black",
             label: "data(label)",
             color: "white",
             fontSize: "0.6em",
-            "text-valign": "center",
-            "text-halign": "center",
-            "text-margin-y": "10px",
-            "background-position-y": "5px",
+            textValign: "center",
+            textHalign: "center",
+            textMarginY: "10px",
+            backgroundPositionY: "5px",
           },
         },
         {
           selector: "edge",
           style: {
-            "curve-style": "haystack",
-            color: "aqua",
+            curveStyle: "haystack",
+            color: "cyan",
             fontSize: "0.6em",
             label: "data(label)",
           },
@@ -84,43 +56,43 @@ const Network = ({ assets = emptyAssets, connections = emptyConnections }) => {
         {
           selector: ".F",
           style: {
-            "background-image": "./assets/gas-station-fill-green.svg",
-            "background-color": "black",
+            backgroundImage: `url(${Fuel})`,
+            backgroundColor: "black",
           },
         },
         {
           selector: ".M",
           style: {
-            "background-image": "./assets/medical_services_green_24dp.svg",
-            "background-color": "black",
+            backgroundImage: `url(${Medical})`,
+            backgroundColor: "black",
           },
         },
         {
           selector: ".C",
           style: {
-            "background-image": "./assets/phone-fill-coral.svg",
-            "background-color": "black",
+            backgroundImage: `url(${Phone})`,
+            backgroundColor: "black",
           },
         },
         {
           selector: ".W",
           style: {
-            "background-color": "black",
-            "background-image": "./assets/drop-fill-blue.svg",
+            backgroundColor: "black",
+            backgroundImage: `url(${Drop})`,
           },
         },
         {
           selector: ".T",
           style: {
-            "background-image": "./assets/car-fill-aqua.svg",
-            "background-color": "black",
+            backgroundImage: `url(${Car})`,
+            backgroundColor: "black",
           },
         },
         {
           selector: ".E",
           style: {
-            "background-image": "./assets/battery-charge-fill-teal.svg",
-            "background-color": "black",
+            backgroundImage: `url(${Battery})`,
+            backgroundColor: "black",
           },
         },
         {
@@ -144,7 +116,7 @@ const Network = ({ assets = emptyAssets, connections = emptyConnections }) => {
         {
           selector: ":selected",
           style: {
-            "background-color": "white",
+            backgroundColor: "white",
             borderWidth: "4px",
             borderColor: "white",
             color: "black",
@@ -153,6 +125,73 @@ const Network = ({ assets = emptyAssets, connections = emptyConnections }) => {
       ]}
     ></CytoscapeComponent>
   );
-};
+});
 
-export default Network;
+const CytoscapeContext = createContext();
+const withData =
+  (Component) =>
+  ({ assets, connections }) => {
+    const cyRef = useRef();
+    const [setSelectedNode] = useSelectNode(assets, connections);
+
+    const onTapNode = (e) => {
+      e.preventDefault();
+      const { target } = e;
+
+      const {
+        group,
+        data: { id: targetId, uri: targetUri },
+      } = target[0]._private;
+      const type = group === "nodes" ? "asset" : "connection";
+      const uri = group === "nodes" ? targetId : targetUri;
+
+      setSelectedNode(uri, type);
+    };
+
+    useEffect(() => {
+      if (!cyRef.current) return;
+      const nodes = assets.map((asset) => ({
+        data: {
+          id: asset.uri,
+          label: asset.id,
+          style: {
+            "border-color": asset.scoreColour,
+            height: `${asset.count + 40}`,
+            width: `${asset.count + 40}`,
+          },
+        },
+        classes: asset.id.charAt(0), // set class on cytospace node to add image
+      }));
+      const links = connections.map((connection) => ({
+        data: connection,
+        classes: `${connection.criticality}`,
+      }));
+      cyRef.current.elements().remove();
+      cyRef.current.add([...nodes, ...links]);
+      cyRef.current.resize();
+      cyRef.current.layout({ name: "cose" }).run();
+      cyRef.current.center();
+      cyRef.current.fit();
+    }, [assets, connections, cyRef]);
+    const configureCy = (cy) => {
+      if (cyRef.current) return;
+      cyRef.current = cy;
+      cyRef.current.on("tap", onTapNode);
+      cyRef.current.resize();
+      cyRef.current.layout({ name: "cose" }).run();
+      cyRef.current.center();
+      cyRef.current.fit();
+    };
+
+    return (
+      <CytoscapeContext.Provider value={{ cyRef, configureCy }}>
+        <CytoscapeContext.Consumer>
+          {({ cyRef, configureCy }) => (
+            <Component cyRef={cyRef} configureCy={configureCy} />
+          )}
+        </CytoscapeContext.Consumer>
+      </CytoscapeContext.Provider>
+    );
+  };
+
+export default withData(Network);

@@ -3,16 +3,21 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@deck.gl/core": "^8.7.10",
+    "@deck.gl/layers": "^8.7.10",
+    "@deck.gl/react": "^8.7.10",
     "@telicent-io/ds": "^0.2.11",
     "@testing-library/jest-dom": "^5.16.3",
     "@testing-library/react": "^12.1.4",
     "@testing-library/user-event": "^13.5.0",
+    "classnames": "^2.3.1",
+    "color-scales": "^3.0.2",
     "cytoscape": "^3.19.1",
     "mapbox-gl": "^2.7.1",
     "react": "^17.0.2",
     "react-cytoscapejs": "^1.2.1",
     "react-dom": "^17.0.2",
-    "react-map-gl": "^7.0.10",
+    "react-map-gl": "^7.0.15",
     "react-scripts": "^5.0.0",
     "react-tabs": "^4.2.0",
     "use-http": "^1.0.26",
@@ -21,6 +26,7 @@
   "scripts": {
     "start": "chmod +x ./env.sh && ./env.sh && cp env-config.js ./public/ && PORT=3001 react-scripts start",
     "build": "react-scripts build",
+    "build:tailwind": "npx tailwindcss -i ./src/index.css -o ./src/main.css",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "prepare": "husky install"
@@ -46,6 +52,8 @@
   "devDependencies": {
     "husky": "^8.0.0",
     "jest-canvas-mock": "^2.4.0",
-    "jest-fetch-mock": "^3.0.3"
+    "jest-fetch-mock": "^3.0.3",
+    "jest-image-snapshot": "^4.5.1",
+    "puppeteer": "^14.1.1"
   }
 }
