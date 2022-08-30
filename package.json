@@ -1,6 +1,6 @@
 {
   "name": "telicent-paralog",
-  "version": "0.1.0",
+  "version": "v0.0.1",
   "private": true,
   "dependencies": {
     "@telicent-io/ds": "^0.2.11",
