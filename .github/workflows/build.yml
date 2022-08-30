@@ -1,0 +1,63 @@
+name: build-and-push-telicent-paralog
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  deploy_new_version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout target repository
+        uses: actions/checkout@v3
+      - name: Checkout action repository
+        uses: actions/checkout@v3
+        with:
+          repository: Telicent-io/telicent-cicd
+          ref: main
+          token: ${{ secrets.PACKAGE_PAT }}
+          path: .github/actions
+      - name: Get next version number
+        id: semver
+        uses: ./.github/actions/
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Release ${{ steps.semver.outputs.version }}
+          branch: ${{ github.base_ref }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create release
+        id: tag
+        uses: K-Phoen/semver-release-action@master
+        with:
+          release_branch: main
+          tag: ${{ steps.semver.outputs.version}}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    outputs:
+      version: ${{ steps.semver.outputs.version }}
+  test_output_from_previous:
+    needs: deploy_new_version
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo ${{ needs.deploy_new_version.outputs.version }}
+  backend:
+    needs: deploy_new_version
+    uses: ./.github/workflows/push-to-aws.yml
+    with:
+      APP_NAME: paralog-ui
+      DOCKERFILE: Dockerfile
+      PATH: .
+      VERSION: ${{ needs.deploy_new_version.outputs.version }}
+  frontend:
+    needs: deploy_new_version
+    uses: ./.github/workflows/push-to-aws.yml
+    with:
+      APP_NAME: access-ui
+      DOCKERFILE: Dockerfile
+      PATH: ./frontend/
+      VERSION: ${{ needs.deploy_new_version.outputs.version }}
+    secrets:
+      NPM_TOKEN: ${{ secrets.PACKAGE_PAT }}
