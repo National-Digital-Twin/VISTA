@@ -43,21 +43,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: echo ${{ needs.deploy_new_version.outputs.version }}
-  backend:
+  frontend:
     needs: deploy_new_version
     uses: ./.github/workflows/push-to-aws.yml
     with:
       APP_NAME: paralog-ui
       DOCKERFILE: Dockerfile
       PATH: .
-      VERSION: ${{ needs.deploy_new_version.outputs.version }}
-  frontend:
-    needs: deploy_new_version
-    uses: ./.github/workflows/push-to-aws.yml
-    with:
-      APP_NAME: access-ui
-      DOCKERFILE: Dockerfile
-      PATH: ./frontend/
       VERSION: ${{ needs.deploy_new_version.outputs.version }}
     secrets:
       NPM_TOKEN: ${{ secrets.PACKAGE_PAT }}
