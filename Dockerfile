@@ -10,7 +10,9 @@ RUN npm config set //npm.pkg.github.com/:_authToken=${NPM_TOKEN}
 RUN yarn install --frozen-lockfile && yarn cache clean
 
 FROM installation as build
+COPY src src
 RUN yarn build 
+
 
 FROM node:16-alpine
 WORKDIR /app
