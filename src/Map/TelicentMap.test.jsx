@@ -1,58 +1,45 @@
-import { screen, render } from "@testing-library/react";
-import { act } from "react-dom/test-utils";
-import TelicentMemoMap from "./TelicentMap";
+import puppeteer from "puppeteer";
+const snapshotConfig = {
+  failureThreshold: 0.01,
+  failureThresholdType: "percent",
+  customDiffConfig: { threshold: 0.5 },
+};
+xdescribe("map ", () => {
+  jest.setTimeout(8000);
+  let browser, page;
 
-jest.mock("react-map-gl", () => {
-  return {
-    __esModule: true,
-    default: ({ children }) => {
-      return <div id="map">{children}</div>;
-    },
-    Marker: ({ latitude, longitude, color, name }) => {
-      return (
-        <div id="marker">
-          <span id="lon">Longitude: {longitude}</span>
-          <span id="lat">Latitude: {latitude}</span>
-          <span id="color">Color: {color}</span>
-          <span id="name">Name: {name}</span>
-        </div>
-      );
-    },
-  };
-});
-
-describe("map ", () => {
-  describe(" no element", () => {
-    beforeEach(async () => {
-      await act(async () => {
-        await render(<TelicentMemoMap />);
-      });
-    });
-
-    it("should not show marker", () => {
-      expect(screen.queryByTestId("map")).toBeInTheDocument();
-      expect(screen.queryByTestId("marker")).not.toBeInTheDocument();
-    });
+  beforeAll(async () => {
+    browser = await puppeteer.launch();
+    page = await browser.newPage();
   });
 
-  describe(" valid element", () => {
-    beforeEach(async () => {
-      await act(async () => {
-        await render(
-          <TelicentMemoMap
-            element={{ lat: 0, lon: 0, scoreColour: "green", name: "test" }}
-          />
-        );
-      });
+  it("should load filters", async () => {
+    await page.goto("http://localhost:3001", {
+      waitUntil: "networkidle2",
     });
 
-    it("should render map based on element input", () => {
-      const marker = screen.getByTestId("marker");
-      expect(screen.getByTestId("map")).toBeInTheDocument();
-      expect(marker).toBeInTheDocument();
-      expect(screen.getByTestId("lon")).toHaveTextContent(/longitude\: 0/i);
-      expect(screen.getByTestId("lat")).toHaveTextContent(/latitude\: 0/i);
-      expect(screen.getByTestId("color")).toHaveTextContent(/color: green/i);
-    });
+    const image = await page.screenshot();
+    expect(image).toMatchImageSnapshot(snapshotConfig);
+  });
+
+  it("should load a grid when filter checkbox selected", async () => {
+    await page.click(
+      '[id="http://telicent.io/test-data/iow#Water_Assessment"]'
+    );
+
+    await sleep(2000);
+    const image = await page.screenshot();
+    expect(image).toMatchImageSnapshot(snapshotConfig);
+  });
+
+  xit("should draw connections on map", async () => {
+    await page.click('[id="http://telicent.io/test-data/iow#W007"]');
+    await sleep(2000);
+    const image = await page.screenshot();
+    expect(image).toMatchImageSnapshot(snapshotConfig);
+  });
+
+  afterAll(async () => {
+    await browser.close();
   });
 });

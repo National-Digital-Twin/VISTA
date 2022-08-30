@@ -6,26 +6,22 @@ import DataPresentation from "./DataPresentation";
 import DataFigures from "./DataFigures";
 import AssetProvider from "./AssetContext";
 import ElementsProvider from "./ElementsContext";
-function App() {
-  return (
-    <StandardLayout appName="paralog" beta={true}>
-      <ElementsProvider>
-        <AssetProvider>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              width: "inherit",
-              height: "100%",
-            }}
-          >
-            <DataFigures />
-            <DataPresentation />
-          </div>
-        </AssetProvider>
-      </ElementsProvider>
-    </StandardLayout>
-  );
-}
+import config from "./config/app-config";
+import Main from "./lib/Main";
+import SponsorsLogos from "./SponsorLogos";
+
+const App = () => (
+  <StandardLayout appName="paralog" beta={true}>
+    <SponsorsLogos />
+    <ElementsProvider>
+      <AssetProvider>
+        <Main config={config}>
+          <DataFigures />
+          <DataPresentation />
+        </Main>
+      </AssetProvider>
+    </ElementsProvider>
+  </StandardLayout>
+);
 
 export default App;
