@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@babel/runtime": "^7.17.2",
     "@deck.gl/core": "^8.7.10",
     "@deck.gl/layers": "^8.7.10",
     "@deck.gl/react": "^8.7.10",
@@ -25,7 +26,7 @@
   },
   "scripts": {
     "start": "chmod +x ./env.sh && ./env.sh && cp env-config.js ./public/ && PORT=3001 react-scripts start",
-    "build": "react-scripts build",
+    "build": "babel src --out-dir dist --copy-files",
     "build:tailwind": "npx tailwindcss -i ./src/index.css -o ./src/main.css",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
@@ -54,6 +55,11 @@
     "jest-canvas-mock": "^2.4.0",
     "jest-fetch-mock": "^3.0.3",
     "jest-image-snapshot": "^4.5.1",
-    "puppeteer": "^14.1.1"
+    "puppeteer": "^14.1.1",
+    "@babel/cli": "^7.17.3",
+    "@babel/core": "^7.15.8",
+    "@babel/node": "^7.15.8",
+    "@babel/plugin-transform-runtime": "^7.17.0",
+    "@babel/preset-env": "^7.15.8"
   }
 }
