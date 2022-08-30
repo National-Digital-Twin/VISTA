@@ -1,7 +1,6 @@
 {
   "name": "telicent-paralog",
-
-  "version": "0.1.1",
+  "version": "v0.0.1",
   "private": true,
   "dependencies": {
     "@babel/runtime": "^7.17.2",
