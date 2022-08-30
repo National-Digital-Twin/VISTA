@@ -1,8 +1,12 @@
 FROM node:16-alpine as installation 
 
 WORKDIR /app
+ARG NPM_TOKEN
 ENV PATH /app/node_modules/.bin:$PATH
 COPY package.json yarn.lock ./
+
+RUN npm config set @telicent-io:registry=https://npm.pkg.github.com/
+RUN npm config set //npm.pkg.github.com/:_authToken=${NPM_TOKEN}
 RUN yarn install --frozen-lockfile && yarn cache clean
 
 FROM installation as build
@@ -15,6 +19,9 @@ FROM node:16-alpine
 WORKDIR /app
 RUN mkdir dist node_modules
 COPY package.json yarn.lock wait-for.sh ./
+ARG NPM_TOKEN
+RUN npm config set @telicent-io:registry=https://npm.pkg.github.com/
+RUN npm config set //npm.pkg.github.com/:_authToken=${NPM_TOKEN}
 RUN yarn install --frozen-lockfile --production=true && yarn cache clean
 COPY --from=build /app/dist ./dist
 RUN chown -R 1000:1000 /app
