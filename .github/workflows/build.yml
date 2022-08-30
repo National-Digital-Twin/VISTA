@@ -1,14 +1,15 @@
 name: build-and-push-telicent-paralog
 on:
-  # pull_request:
-  # types: [closed]
-  push:
+  pull_request:
+    types: [closed]
 
 jobs:
   deploy_new_version:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: Checkout target repository
+        uses: actions/checkout@v3
+      - name: Checkout action repository
         uses: actions/checkout@v3
         with:
           repository: Telicent-io/telicent-cicd
