@@ -18,7 +18,6 @@ RUN yarn build
 FROM node:16-alpine
 WORKDIR /app
 RUN mkdir dist node_modules
-COPY package.json yarn.lock wait-for.sh ./
 ARG NPM_TOKEN
 RUN npm config set @telicent-io:registry=https://npm.pkg.github.com/
 RUN npm config set //npm.pkg.github.com/:_authToken=${NPM_TOKEN}
