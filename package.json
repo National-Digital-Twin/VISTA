@@ -1,6 +1,6 @@
 {
   "name": "telicent-paralog",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "dependencies": {
     "@deck.gl/core": "^8.7.10",
@@ -27,6 +27,7 @@
     "start": "chmod +x ./env.sh && ./env.sh && cp env-config.js ./public/ && PORT=3001 react-scripts start",
     "build": "react-scripts build",
     "build:tailwind": "npx tailwindcss -i ./src/index.css -o ./src/main.css",
+    "babel": "babel --plugins @babel/plugin-transform-arrow-functions script.js",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "prepare": "husky install"
