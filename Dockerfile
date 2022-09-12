@@ -7,24 +7,24 @@ COPY package.json yarn.lock ./
 
 RUN npm config set @telicent-io:registry=https://npm.pkg.github.com/
 RUN npm config set //npm.pkg.github.com/:_authToken=${NPM_TOKEN}
-RUN yarn install --frozen-lockfile && yarn cache clean
+RUN yarn install --frozen-lockfile --production && yarn cache clean
 
 FROM installation as build
-COPY src src
-RUN yarn build 
-COPY build build 
+ADD src src
+ADD public public
+RUN GENERATE_SOURCE=false yarn build 
 
+FROM nginx:stable-alpine
 
-FROM node:16-alpine
-WORKDIR /app
-RUN mkdir dist node_modules
-ARG NPM_TOKEN
-RUN npm config set @telicent-io:registry=https://npm.pkg.github.com/
-RUN npm config set //npm.pkg.github.com/:_authToken=${NPM_TOKEN}
-RUN yarn install --frozen-lockfile --production=true && yarn cache clean
-COPY --from=build /app/build ./build
-RUN chown -R 1000:1000 /app
-USER 1000
-ENV PORT ${PORT}
-EXPOSE ${PORT}
-CMD [ "node", "dist/index.js"]
+COPY --from=build /app/build /usr/share/nginx/html
+# COPY nginx/nginx.conf /etc/nginx/conf.d/default.conf
+WORKDIR /usr/share/nginx/html
+COPY ./env.sh ../
+COPY env.default ./.env
+COPY set-env.sh .
+RUN apk add --no-cache bash
+RUN chmod +x set-env.sh
+EXPOSE 80
+
+ENTRYPOINT [ "./set-env.sh" ]
+CMD [ "nginx", "-g", "daemon off;" ]
