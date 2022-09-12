@@ -11,8 +11,8 @@ RUN yarn install --frozen-lockfile && yarn cache clean
 
 FROM installation as build
 COPY src src
-COPY public public
 RUN yarn build 
+COPY build build 
 
 
 FROM node:16-alpine
