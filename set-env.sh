@@ -1,5 +1,5 @@
 #!/bin/bash
 
-/usr/share/nginx/html/env.sh
+./env.sh
 
 exec "$@"
