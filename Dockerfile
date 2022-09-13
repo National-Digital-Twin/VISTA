@@ -17,7 +17,6 @@ RUN GENERATE_SOURCE=false yarn build
 FROM nginx:stable-alpine
 
 COPY --from=build /app/build /usr/share/nginx/html
-# COPY nginx/nginx.conf /etc/nginx/conf.d/default.conf
 WORKDIR /usr/share/nginx/html
 COPY ./env.sh ../
 COPY env.default ./.env
