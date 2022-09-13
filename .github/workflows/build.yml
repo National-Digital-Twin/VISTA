@@ -1,9 +1,9 @@
 name: build-and-push-telicent-paralog
 on:
-  push:
+  pull_request:
+    types: [closed]
     branches:
       - main
-      - 28-create-build-workflow
 
 jobs:
   deploy_new_version:
