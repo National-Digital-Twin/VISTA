@@ -2,6 +2,7 @@
   "name": "telicent-paralog",
   "version": "0.1.1",
   "private": true,
+  "homepage": "paralog",
   "dependencies": {
     "@deck.gl/core": "^8.7.10",
     "@deck.gl/layers": "^8.7.10",
