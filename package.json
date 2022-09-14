@@ -1,6 +1,6 @@
 {
   "name": "telicent-paralog",
-  "version": "v0.0.4",
+  "version": "v0.0.2",
   "private": true,
   "homepage": "paralog",
   "dependencies": {
