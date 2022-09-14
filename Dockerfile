@@ -2,7 +2,6 @@ FROM node:16-alpine as installation
 
 WORKDIR /app
 ARG NPM_TOKEN
-ENV cachedate=140924
 ENV PATH /app/node_modules/.bin:$PATH
 COPY package.json yarn.lock ./
 
