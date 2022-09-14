@@ -2,6 +2,7 @@ FROM node:16-alpine as installation
 
 WORKDIR /app
 ARG NPM_TOKEN
+ENV cachedate=140924
 ENV PATH /app/node_modules/.bin:$PATH
 COPY package.json yarn.lock ./
 
@@ -12,6 +13,7 @@ RUN yarn install --frozen-lockfile --production && yarn cache clean
 FROM installation as build
 ADD src src
 ADD public public
+COPY craco.config.js .
 RUN GENERATE_SOURCE=false yarn build 
 WORKDIR /app/build
 COPY ./env.sh .
