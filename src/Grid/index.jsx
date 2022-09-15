@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import classNames from "classnames";
 import "./Grid.css";
 import useSelectNode from "../hooks/useSelectNode";
+import ReactSlider from "react-slider";
 
 const emptyAssets = [];
 const emptyConnections = [];
@@ -16,7 +17,7 @@ const TelicentGrid = ({
     setSelectedNode(target.id, type);
   };
 
-  const zoom = 100;
+  const [zoomLevel, setZoomLevel] = useState(100);
   const grid = `50px 22px 22px 106px repeat(${assets.length}, 22px)`;
   const renderAssets = () => {
     const assetGrid = assets.map((asset) => (
@@ -50,6 +51,10 @@ const TelicentGrid = ({
     return;
   }
 
+  const onSliderChange = (value) => {
+    setZoomLevel(value * 10);
+  };
+
   if (loading) {
     return (
       <div className="display-center w-full h-full">
@@ -58,27 +63,44 @@ const TelicentGrid = ({
     );
   }
   return (
-    <div
-      className="h-full w-full"
-      style={{
-        position: "relative",
-        overflow: "auto",
-        marginBottom: "12px",
-        marginRight: "12px",
-      }}
-    >
-      <div style={{ width: "inherit" }}>
-        <div
-          style={{
-            zoom: `${JSON.stringify(zoom)}%`,
-            gridTemplateColumns: grid,
-          }}
-          className="main-grid"
-        >
-          {renderAssets()}
+    <>
+      <ReactSlider
+        className="horizontal-slider"
+        marks
+        defaultValue={100}
+        markClassName="slider-mark"
+        min={1}
+        max={10}
+        onChange={onSliderChange}
+        thumbClassName="slider-thumb"
+        trackClassName="slider-track"
+        renderThumb={(props, state) => {
+          console.log(state, props);
+          return <div {...props}>{`${state.valueNow * 10}%`}</div>;
+        }}
+      />
+      <div
+        className="h-full w-full"
+        style={{
+          position: "relative",
+          overflow: "auto",
+          marginBottom: "12px",
+          marginRight: "12px",
+        }}
+      >
+        <div style={{ width: "inherit" }}>
+          <div
+            style={{
+              zoom: `${JSON.stringify(zoomLevel)}%`,
+              gridTemplateColumns: grid,
+            }}
+            className="main-grid"
+          >
+            {renderAssets()}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
