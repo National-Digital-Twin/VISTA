@@ -67,7 +67,7 @@ const TelicentGrid = ({
       <ReactSlider
         className="horizontal-slider"
         marks
-        defaultValue={100}
+        defaultValue={zoomLevel}
         markClassName="slider-mark"
         min={1}
         max={10}
