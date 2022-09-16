@@ -75,7 +75,6 @@ const TelicentGrid = ({
         thumbClassName="slider-thumb"
         trackClassName="slider-track"
         renderThumb={(props, state) => {
-          console.log(state, props);
           return <div {...props}>{`${state.valueNow * 10}%`}</div>;
         }}
       />
