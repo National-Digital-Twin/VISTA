@@ -31,7 +31,7 @@ const rawConnections = [
 
 describe("processAssets", () => {
   const targetUri = "http://telicent.io/test-data/iow#W001";
-  const selectedLength = 1;
+  
 
   it("should generate assets", async () => {
     const rawAsset = rawAssets[0];
@@ -39,27 +39,28 @@ describe("processAssets", () => {
     const want = { [targetUri]: new Asset({ item: rawAsset, idx: 0 }) };
     want[targetUri].setLatitude(rawAsset.lat);
     want[targetUri].setLongitude(rawAsset.lon);
+    const processedAsset = processAssets([rawAsset])
 
     expect(
-      JSON.stringify(processAssets([rawAssets[0]], selectedLength))
+      JSON.stringify(processedAsset)
     ).toEqual(JSON.stringify(want));
   });
 
   it("should process nothing", () => {
-    expect(processAssets(undefined, 0)).toBeUndefined();
+    expect(processAssets(undefined)).toBeUndefined();
   });
 });
 
 describe("generateConnectionAssessments", () => {
   const sourceUri = "http://telicent.io/test-data/iow#W001";
   const targetUri = "http://telicent.io/test-data/iow#W002";
-  const processedAssets = processAssets(rawAssets, rawAssets.length);
-  const selectedLength = 1;
+  const processedAssets = processAssets(rawAssets);
+
 
   const processedConnections = processAssetConnections(
-    [processedAssets, rawConnections],
+    rawConnections,
     processedAssets,
-    selectedLength
+
   );
   it("should generate connections", () => {
     expect(processedConnections[0].source).toBe(sourceUri);

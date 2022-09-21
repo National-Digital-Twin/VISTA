@@ -80,7 +80,7 @@ const generateAssets = (acc, curr, idx) => {
  * @returns {AssetInstances} Object of Asset Instances
  */
 export const processAssets = (rawAssets) => {
-  if (!rawAssets || rawAssets.length === 0) return;
+  if (!Array.isArray(rawAssets) || rawAssets.length === 0) return;
   return rawAssets.reduce(generateAssets, {});
 };
 
