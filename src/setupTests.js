@@ -24,3 +24,5 @@ configure({ testIdAttribute: "id" });
 global.sleep = (milliseconds) => {
   return new Promise((resolve) => setTimeout(resolve, milliseconds));
 };
+
+global.ResizeObserver = require("resize-observer-polyfill");
