@@ -7,7 +7,7 @@ import config from "../config/app-config";
 import { Tabs, Tab, TabList, TabPanel } from "react-tabs";
 import { IsEmpty } from "../utils";
 import "react-tabs/style/react-tabs.css";
-import { buildAssetAndConnectionLinks, generateAssetJobs } from "./utils";
+import { buildAssetAndConnectionLinks } from "./utils";
 
 import "./DataFigures.css";
 import { ElementsContext } from "../ElementsContext";
@@ -34,9 +34,9 @@ const DataFigures = () => {
         return;
       }
 
+     
       const { assets, connections } = buildAssetAndConnectionLinks(
-        selectedFilters,
-        selected.length
+        {rawAssets: selectedFilters[0], rawConnections: selectedFilters[1]}
       );
 
       updateElements({
@@ -56,8 +56,8 @@ const DataFigures = () => {
     const connectionUrl = `assessments/connections?${selected
       .map((item) => `assessments=${encodeURIComponent(item)}`)
       .join("&")}`;
-
-    Promise.all([...generateAssetJobs(get, selected), get(connectionUrl)]).then(
+    const assetsUrl = `assessments/assets?${selected.map(uri => `assessments=${encodeURIComponent(uri)}`).join("&")}`;
+    Promise.all([get(assetsUrl), get(connectionUrl)]).then(
       processAllConnectionsAndAssetResults
     );
   }, [

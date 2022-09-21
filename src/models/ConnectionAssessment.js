@@ -16,7 +16,9 @@ export default class ConnectionAssessment {
     rather than a primitive instance of the colour which caused the same asset to show as different colours on different connections.
   */
   constructor({ item, source, target, criticality }) {
+    
     const { asset1Uri, asset2Uri, connUri } = item;
+    
     const { id: sourceId, name: sourceName } = source;
     const { id: targetId, name: targetName } = target;
 

@@ -37,11 +37,18 @@ const createConnection = (connection, assets) =>
  * @param {Number} startIndex
  * @returns {Array<ConnectionAssessment>} Array of ConnectionAssessment instances
  */
-export const processAssetConnections = (result, assets, startIndex) => {
-  const connections = result.slice(startIndex, result.length).flat();
-  const connectionsWithAssets = connections.map((connection) =>
-    createConnection(connection, assets)
-  );
+export const processAssetConnections = (connections, assets) => {
+  const connectionsWithAssets = connections
+    .filter(
+      (connection) => {
+        const exists = assets[connection.asset1Uri] && assets[connection.asset2Uri]
+        if(!exists){
+          console.error(connection.asset1Uri, assets[connection.asset1Uri], " or ", connection.asset2Uri, assets[connection.asset2Uri], " should exist but dont")
+        }
+        return exists
+      }
+    )
+    .map((connection) => createConnection(connection, assets));
 
   for (let name in assets) {
     assets[name].processConnections(
@@ -55,6 +62,7 @@ export const processAssetConnections = (result, assets, startIndex) => {
 
 const generateAssets = (acc, curr, idx) => {
   const uri = curr.uri;
+  // console.log(uri)
   if (!acc[uri]) {
     acc[uri] = new Asset({ item: curr, idx });
   }
@@ -69,12 +77,11 @@ const generateAssets = (acc, curr, idx) => {
  *  Turn assets returned from the Api assessments endpoint
  *  to an Object of multiple Asset Instances
  * @param {AssetAssessmentApiResult} rawAssets
- * @param {Number} endIndex
  * @returns {AssetInstances} Object of Asset Instances
  */
-export const processAssets = (rawAssets, endIndex) => {
+export const processAssets = (rawAssets) => {
   if (!rawAssets || rawAssets.length === 0) return;
-  return rawAssets.slice(0, endIndex).flat().reduce(generateAssets, {});
+  return rawAssets.reduce(generateAssets, {});
 };
 
 const calcScoreAndCountColour = (count, score) => (item) => {
@@ -102,23 +109,11 @@ const getMaxCountAndScore = (connections) => {
 /**
  * buildAssetAndConnectionLinks
  * @param {Array<AssessmentCategory>} assessmentsAllCategories
- * @param {Number} selectedLength
  * @returns {Object}
  */
-export const buildAssetAndConnectionLinks = (
-  assessmentsAllCategories,
-  selectedLength
-) => {
-  const processedAssets = processAssets(
-    assessmentsAllCategories,
-    selectedLength
-  );
-
-  const connections = processAssetConnections(
-    assessmentsAllCategories,
-    processedAssets,
-    selectedLength
-  );
+export const buildAssetAndConnectionLinks = ({ rawAssets, rawConnections }) => {
+  const processedAssets = processAssets(rawAssets);
+  const connections = processAssetConnections(rawConnections, processedAssets);
 
   const { maxCount, maxScore } = getMaxCountAndScore(connections);
   const calcMaxScoreAndCountColour = calcScoreAndCountColour(
@@ -134,16 +129,4 @@ export const buildAssetAndConnectionLinks = (
     connections: Object.values(connections),
     assets: Object.values(processedAssets),
   };
-};
-
-/**
- * Generate api calls for each endpoint
- * @param {Function} get Get function passed from react component
- * @param {Array<string>} uris
- * @returns {Array<Promise>} Array of get requests
- */
-export const generateAssetJobs = (get, uris) => {
-  return uris.map((uri) =>
-    get(`/assessments/assets?assessments=${encodeURIComponent(uri)}`)
-  );
 };
