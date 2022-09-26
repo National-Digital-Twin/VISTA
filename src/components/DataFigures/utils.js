@@ -62,7 +62,6 @@ export const processAssetConnections = (connections, assets) => {
 
 const generateAssets = (acc, curr, idx) => {
   const uri = curr.uri;
-  // console.log(uri)
   if (!acc[uri]) {
     acc[uri] = new Asset({ item: curr, idx });
   }

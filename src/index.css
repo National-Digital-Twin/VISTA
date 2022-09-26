@@ -6,6 +6,41 @@
   --app-Colour: gold !important;
 }
 
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px #14141460;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #6a6a6a;
+  border-radius: 12px;
+  border: 1px solid #141414;
+}
+
+@supports (scrollbar-color: #6a6a6a #14141460) {
+  * {
+    scrollbar-width: auto;
+    scrollbar-color: #6a6a6a #14141460;
+  }
+}
+
+[role="tooltip"],
+.hideTooltip + [role="tooltip"] {
+  @apply absolute -top-9 whitespace-nowrap px-2 py-1 bg-black rounded-md invisible z-10;
+}
+[aria-labelledby]:hover + [role="tooltip"],
+[aria-labelledby]:focus + [role="tooltip"] {
+  @apply visible;
+}
+[aria-labelledby]:hover + .hideTooltip[role="tooltip"],
+[aria-labelledby]:focus + .hideTooltip[role="tooltip"] {
+  @apply invisible;
+}
+
 #theme-provider > div {
   height: 100%;
 }
@@ -26,6 +61,15 @@ body {
   font-size: 1em !important;
 }
 
+@layer utilities {
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  @supports (scrollbar-width: none) {
+    .hide-scrollbar {
+      scrollbar-width: none;
+    }
+}
 @layer components {
   .linkBorder {
     @apply mx-auto rounded-full opacity-0 w-0;

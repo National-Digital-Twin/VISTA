@@ -31,7 +31,6 @@ const rawConnections = [
 
 describe("processAssets", () => {
   const targetUri = "http://telicent.io/test-data/iow#W001";
-  
 
   it("should generate assets", async () => {
     const rawAsset = rawAssets[0];
@@ -60,7 +59,6 @@ describe("generateConnectionAssessments", () => {
   const processedConnections = processAssetConnections(
     rawConnections,
     processedAssets,
-
   );
   it("should generate connections", () => {
     expect(processedConnections[0].source).toBe(sourceUri);
