@@ -10,19 +10,6 @@ jest.mock("react-cytoscapejs");
 
 const mockCytoscapeComponent = CytoscapeComponent;
 
-const assessmentResponse = JSON.stringify([
-  {
-    uri: "http://telicent.io/test-data/iow#Water_Assessment",
-    name: "Water",
-    assCount: "94",
-  },
-  {
-    uri: "http://telicent.io/test-data/iow#Energy_Assessment",
-    name: "Energy",
-    assCount: "25",
-  },
-]);
-
 const assetResponse = [
   {
     uri: "http://telicent.io/test-data/iow#E004",
@@ -54,33 +41,22 @@ const connectionResponse = [
 describe("DataFigures should", () => {
   beforeEach(async () => {
     fetchMock.resetMocks();
-    fetchMock.mockResponses([assessmentResponse, { status: 200 }]);
     mockCytoscapeComponent.mockImplementation().mockReturnValue(null);
+  });
+
+  it("populate assets and connections on checkbox select", async () => {
+    jest
+      .spyOn(Promise, "all")
+      .mockReturnValue(Promise.resolve([assetResponse, connectionResponse]));
 
     await act(async () => {
       await render(
         <ElementsProvider>
           <AssetProvider>
-            <DataFigures />
+            <DataFigures selected={["http://telicent.io/fake_data#Water_Assessment"]} />
           </AssetProvider>
         </ElementsProvider>
       );
-    });
-  });
-
-  it("call api for assessments of selected criteria", async () => {
-    expect(fetchMock).toHaveBeenCalledTimes(1);
-  });
-
-  it("populate assets and connections on checkbox select", async () => {
-    const promise = jest
-      .spyOn(Promise, "all")
-      .mockReturnValue(Promise.resolve([assetResponse, connectionResponse]));
-
-    const cbx = screen.queryAllByRole("checkbox")[0];
-
-    await act(async () => {
-      await userEvent.click(cbx);
     });
 
     userEvent.click(screen.getByRole("tab", { name: "Grid" }));

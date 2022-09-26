@@ -1,5 +1,4 @@
-import React, { useEffect, useContext, useCallback, useState } from "react";
-import Filters from "../Filters";
+import React, { useEffect, useContext, useCallback } from "react";
 import TelicentGrid from "../Grid";
 import Network from "../Network";
 import useFetch from "use-http";
@@ -12,8 +11,7 @@ import { buildAssetAndConnectionLinks } from "./utils";
 import "./DataFigures.css";
 import { ElementsContext } from "../../ElementsContext";
 
-const DataFigures = () => {
-  const [selected, setSelected] = useState([]);
+const DataFigures = ({ selected }) => {
   const { updateElements, elements } = useContext(ElementsContext);
 
   const { get, loading } = useFetch(config.api.url);
@@ -77,7 +75,6 @@ const DataFigures = () => {
         borderRight: "solid 1px gold",
       }}
     >
-      <Filters selected={selected} setSelected={setSelected} />
       <Tabs style={{ height: "calc(100% - 48px)" }}>
         <TabList style={{ display: "flex" }}>
           <Tab className="telicent-tab" selectedClassName="telicent-tab_selected">
