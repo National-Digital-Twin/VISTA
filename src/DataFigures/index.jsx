@@ -46,25 +46,28 @@ const DataFigures = () => {
     },
     [selected, resetAllConnectionsAndAssets, updateElements]
   );
-
+  const getDetails = useCallback (async (assetsUrl, connectionUrl) => {
+    const assets = await get(assetsUrl)
+    const connections = await get(connectionUrl)
+    processAllConnectionsAndAssetResults([assets, connections])
+  }, [processAllConnectionsAndAssetResults, get])
   useEffect(() => {
     if (IsEmpty(selected)) {
       resetAllConnectionsAndAssets();
       return;
     }
-
+    
     const connectionUrl = `assessments/connections?${selected
       .map((item) => `assessments=${encodeURIComponent(item)}`)
       .join("&")}`;
     const assetsUrl = `assessments/assets?${selected.map(uri => `assessments=${encodeURIComponent(uri)}`).join("&")}`;
-    Promise.all([get(assetsUrl), get(connectionUrl)]).then(
-      processAllConnectionsAndAssetResults
-    );
+    getDetails(assetsUrl, connectionUrl)
+   
   }, [
     selected,
     get,
     resetAllConnectionsAndAssets,
-    processAllConnectionsAndAssetResults,
+    getDetails,
     updateElements,
   ]);
 
