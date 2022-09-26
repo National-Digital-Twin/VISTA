@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import useFetch from "use-http";
-import config from "../config/app-config";
+import config from "../../config/app-config";
 
 const Filters = ({ selected, setSelected }) => {
   const [filters, setFilters] = useState([]);

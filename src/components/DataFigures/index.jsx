@@ -3,14 +3,14 @@ import Filters from "../Filters";
 import TelicentGrid from "../Grid";
 import Network from "../Network";
 import useFetch from "use-http";
-import config from "../config/app-config";
+import config from "../../config/app-config";
 import { Tabs, Tab, TabList, TabPanel } from "react-tabs";
-import { IsEmpty } from "../utils";
+import { IsEmpty } from "../../utils";
 import "react-tabs/style/react-tabs.css";
 import { buildAssetAndConnectionLinks } from "./utils";
 
 import "./DataFigures.css";
-import { ElementsContext } from "../ElementsContext";
+import { ElementsContext } from "../../ElementsContext";
 
 const DataFigures = () => {
   const [selected, setSelected] = useState([]);

@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { IsEmpty } from "../utils";
+import { IsEmpty } from "../../utils";
 import { AssetElement, ConnectionElement } from "./ConnectionElement";
 import "./Details.css";
 

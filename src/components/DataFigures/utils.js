@@ -1,5 +1,5 @@
-import ConnectionAssessment from "../models/ConnectionAssessment";
-import Asset from "../models/Asset";
+import ConnectionAssessment from "../../models/ConnectionAssessment";
+import Asset from "../../models/Asset";
 
 /**
  * filterConnectionByName

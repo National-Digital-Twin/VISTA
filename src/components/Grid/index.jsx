@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import classNames from "classnames";
 import "./Grid.css";
-import useSelectNode from "../hooks/useSelectNode";
+import useSelectNode from "../../hooks/useSelectNode";
 import ReactSlider from "react-slider";
 
 const emptyAssets = [];

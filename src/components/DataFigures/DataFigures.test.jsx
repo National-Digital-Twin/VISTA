@@ -1,8 +1,8 @@
 import { screen, render } from "@testing-library/react";
 import { act } from "react-dom/test-utils";
-import DataFigures from ".";
-import AssetProvider from "../AssetContext";
-import ElementsProvider from "../ElementsContext";
+import DataFigures from "./index";
+import AssetProvider from "../../AssetContext";
+import ElementsProvider from "../../ElementsContext";
 import CytoscapeComponent from "react-cytoscapejs";
 import userEvent from "@testing-library/user-event";
 

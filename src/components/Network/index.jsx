@@ -6,7 +6,7 @@ import Phone from "./assets/phone-fill-coral.svg";
 import Drop from "./assets/drop-fill-blue.svg";
 import Battery from "./assets/battery-charge-fill-teal.svg";
 import Car from "./assets/car-fill-aqua.svg";
-import useSelectNode from "../hooks/useSelectNode";
+import useSelectNode from "../../hooks/useSelectNode";
 import { createContext } from "react";
 
 const Network = React.memo(({ cyRef, configureCy }) => {

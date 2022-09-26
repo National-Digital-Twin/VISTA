@@ -1,8 +1,5 @@
-import { screen, render } from "@testing-library/react";
-import { act } from "react-dom/test-utils";
-import Filters from ".";
-import AssetProvider from "../AssetContext";
-import ElementsProvider from "../ElementsContext";
+import {act, screen, render } from "@testing-library/react";
+import Filters from "./index";
 
 describe("Filters should", () => {
   beforeEach(async () => {

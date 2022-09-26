@@ -1,6 +1,6 @@
 import React, { useEffect, useReducer } from "react";
 import ReactMapGL, { NavigationControl, Layer, Source } from "react-map-gl";
-import config from "../config/app-config";
+import config from "../../config/app-config";
 
 const UPDATE_FEATURES = "UPDATE_FEATURES";
 const UPDATE_VIEWPORT = "UPDATE_VIEWPORT";

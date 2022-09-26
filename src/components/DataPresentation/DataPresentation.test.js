@@ -1,9 +1,9 @@
 import { render } from "@testing-library/react";
-import DataPresentation from ".";
-import { AssetContext } from "../AssetContext";
-import Asset from "../models/Asset";
-import { ElementsContext } from "../ElementsContext";
-import ConnectionAssessment from "../models/ConnectionAssessment";
+import { AssetContext } from "../../AssetContext";
+import Asset from "../../models/Asset";
+import { ElementsContext } from "../../ElementsContext";
+import ConnectionAssessment from "../../models/ConnectionAssessment";
+import DataPresentation from "./index";
 
 const mockDetails = jest.fn();
 const mockMap = jest.fn();

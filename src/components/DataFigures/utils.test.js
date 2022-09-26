@@ -1,6 +1,6 @@
 import { processAssetConnections, processAssets } from "./utils";
 
-import Asset from "../models/Asset";
+import Asset from "../../models/Asset";
 const rawAssets = [
   {
     id: "W001",

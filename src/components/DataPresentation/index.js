@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
 
+import { AssetContext } from "../../AssetContext";
+import { ElementsContext } from "../../ElementsContext";
 import Details from "../Details/Details";
-import { AssetContext } from "../AssetContext";
-import { ElementsContext } from "../ElementsContext";
 import TelicentMemoMap from "../Map/TelicentMap";
 
 const findElement = (elements, criteria) =>

@@ -1,4 +1,4 @@
-import puppeteer from "puppeteer";
+// import puppeteer from "puppeteer";
 const snapshotConfig = {
   failureThreshold: 0.01,
   failureThresholdType: "percent",
