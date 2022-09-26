@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 
-import Details from "../Details";
+import Details from "../Details/Details";
 import { AssetContext } from "../AssetContext";
 import { ElementsContext } from "../ElementsContext";
 import TelicentMemoMap from "../Map/TelicentMap";

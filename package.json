@@ -4,8 +4,11 @@
   "private": true,
   "homepage": "paralog",
   "dependencies": {
+    "@deck.gl/core": "^8.7.10",
+    "@deck.gl/layers": "^8.7.10",
+    "@deck.gl/react": "^8.7.10",
+    "@telicent-io/ds": "^0.2.18",
     "@craco/craco": "^6.4.3",
-    "@telicent-io/ds": "^0.2.11",
     "@testing-library/jest-dom": "^5.16.3",
     "@testing-library/react": "^12.1.4",
     "@testing-library/user-event": "^13.5.0",
@@ -57,6 +60,7 @@
     "jest-fetch-mock": "^3.0.3",
     "jest-image-snapshot": "^4.5.1",
     "puppeteer": "^14.1.1",
+    "tailwindcss": "^3.1.8"
     "react-app-rewired": "^2.2.1"
   }
 }

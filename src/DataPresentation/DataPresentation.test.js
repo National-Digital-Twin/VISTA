@@ -8,7 +8,7 @@ import ConnectionAssessment from "../models/ConnectionAssessment";
 const mockDetails = jest.fn();
 const mockMap = jest.fn();
 
-jest.mock("../Details", () => (props) => {
+jest.mock("../Details/Details", () => (props) => {
   mockDetails(props);
   return <div>Details</div>;
 });

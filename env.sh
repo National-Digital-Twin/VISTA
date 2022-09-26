@@ -1,11 +1,16 @@
 #!/bin/bash
-
+envFile="$PWD/.env"
+outputFile="$PWD/env-config.js"
+if [ -n "$1" ]; then 
+  envFile="$PWD/$1/.env"
+  outputFile="$PWD/$1/env-config.js"
+fi
 # Recreate config file
-rm -f ./env-config.js
-touch ./env-config.js
+rm -rf $outputFile
+touch $outputFile
 
 # Add assignment 
-echo "window._env_ = {" >> ./env-config.js
+echo "window._env_ = {" >> $outputFile
 
 # Read each line in .env file
 # Each line represents key=value pairs
@@ -23,7 +28,7 @@ do
   [[ -z $value ]] && value=${varvalue}
   
   # Append configuration property to JS file
-  echo "  $varname: \"$value\"," >> ./env-config.js
-done < $PWD/.env
+  echo "  $varname: \"$value\"," >> $outputFile
+done < $envFile
 
-echo "}" >> ./env-config.js
+echo "}" >> $outputFile
