@@ -22,6 +22,7 @@ const Network = React.memo(({ cyRef, configureCy }) => {
 
   return (
     <CytoscapeComponent
+      id="network-graph"
       layout={{ name: layout }}
       cy={configureCy}
       className="w-full h-full"

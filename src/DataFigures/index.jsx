@@ -80,30 +80,21 @@ const DataFigures = () => {
       <Filters selected={selected} setSelected={setSelected} />
       <Tabs style={{ height: "calc(100% - 48px)" }}>
         <TabList style={{ display: "flex" }}>
-          <Tab
-            className="telicent-tab"
-            selectedClassName="telicent-tab_selected"
-          >
-            Grid
-          </Tab>
-          <Tab
-            className="telicent-tab"
-            selectedClassName="telicent-tab_selected"
-          >
+          <Tab className="telicent-tab" selectedClassName="telicent-tab_selected">
             Network
           </Tab>
+          <Tab className="telicent-tab" selectedClassName="telicent-tab_selected">
+            Grid
+          </Tab>
         </TabList>
+        <TabPanel style={{ height: "calc(100% - 54px)" }}>
+          <Network assets={elements.assets} connections={elements.connections} />
+        </TabPanel>
         <TabPanel style={{ height: "calc(100% - 54px)" }}>
           <TelicentGrid
             assets={elements.assets}
             connections={elements.connections}
             loading={loading}
-          />
-        </TabPanel>
-        <TabPanel style={{ height: "calc(100% - 54px)" }}>
-          <Network
-            assets={elements.assets}
-            connections={elements.connections}
           />
         </TabPanel>
       </Tabs>

@@ -83,6 +83,8 @@ describe("DataFigures should", () => {
       await userEvent.click(cbx);
     });
 
+    userEvent.click(screen.getByRole("tab", { name: "Grid" }));
+
     expect(screen.getAllByRole("cell")).toMatchSnapshot();
   });
 });
