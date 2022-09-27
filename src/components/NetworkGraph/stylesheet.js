@@ -44,7 +44,7 @@ const cyStylesheet = [
       fontWeight: 300,
       fontSize: 6,
       textBackgroundOpacity: 0.7,
-      minZoomedFontSize: 14,
+      minZoomedFontSize: 10,
     },
   },
   {

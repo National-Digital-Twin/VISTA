@@ -353,13 +353,6 @@ input::-webkit-input-placeholder, textarea::-webkit-input-placeholder {
   /* 2 */
 }
 
-input:-ms-input-placeholder, textarea:-ms-input-placeholder {
-  opacity: 1;
-  /* 1 */
-  color: #9ca3af;
-  /* 2 */
-}
-
 input::placeholder,
 textarea::placeholder {
   opacity: 1;
@@ -574,6 +567,10 @@ video {
   opacity: 1;
 }
 
+.absolute {
+  position: absolute;
+}
+
 .relative {
   position: relative;
 }
@@ -627,6 +624,18 @@ video {
   height: 100%;
 }
 
+.h-0\.5 {
+  height: 0.125rem;
+}
+
+.h-0 {
+  height: 0px;
+}
+
+.h-8 {
+  height: 2rem;
+}
+
 .w-fit {
   width: -webkit-fit-content;
   width: -moz-fit-content;
@@ -658,13 +667,26 @@ video {
   justify-content: space-between;
 }
 
+.justify-items-center {
+  justify-items: center;
+}
+
+.gap-y-12 {
+  row-gap: 3rem;
+}
+
 .gap-x-1 {
   -webkit-column-gap: 0.25rem;
           column-gap: 0.25rem;
 }
 
-.gap-y-12 {
-  row-gap: 3rem;
+.gap-x-2 {
+  -webkit-column-gap: 0.5rem;
+          column-gap: 0.5rem;
+}
+
+.gap-y-1 {
+  row-gap: 0.25rem;
 }
 
 .self-center {
@@ -752,14 +774,14 @@ video {
   text-align: center;
 }
 
-.text-xl {
-  font-size: 1.25rem;
-  line-height: 1.75rem;
-}
-
 .text-9xl {
   font-size: 8rem;
   line-height: 1;
+}
+
+.text-xl {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
 }
 
 .\!text-base {
@@ -858,14 +880,6 @@ video {
 
 main {
   height: 100%;
-}
-
-h2.heading-style-1 {
-  font-size: 1.75rem !important;
-}
-
-h3.heading-style-2 {
-  font-size: 1.25rem !important;
 }
 
 body {

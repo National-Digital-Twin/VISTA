@@ -69,6 +69,7 @@ body {
     .hide-scrollbar {
       scrollbar-width: none;
     }
+  }
 }
 @layer components {
   .linkBorder {

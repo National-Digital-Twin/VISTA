@@ -1,6 +1,5 @@
 import React, { useEffect, useContext, useCallback } from "react";
 import TelicentGrid from "../Grid";
-import Network from "../Network";
 import useFetch from "use-http";
 import config from "../../config/app-config";
 import { Tabs, Tab, TabList, TabPanel } from "react-tabs";
@@ -10,6 +9,7 @@ import { buildAssetAndConnectionLinks } from "./utils";
 
 import "./DataFigures.css";
 import { ElementsContext } from "../../ElementsContext";
+import NetworkGraph from "../NetworkGraph/NetworkGraph";
 
 const DataFigures = ({ selected }) => {
   const { updateElements, elements } = useContext(ElementsContext);
@@ -85,7 +85,7 @@ const DataFigures = ({ selected }) => {
           </Tab>
         </TabList>
         <TabPanel style={{ height: "calc(100% - 54px)" }}>
-          <Network assets={elements.assets} connections={elements.connections} />
+          <NetworkGraph assets={elements.assets} connections={elements.connections} />
         </TabPanel>
         <TabPanel style={{ height: "calc(100% - 54px)" }}>
           <TelicentGrid
