@@ -1,5 +1,5 @@
 window._env_ = {
-  MAPBOX_TOKEN: "pk.eyJ1IjoibXJkNTA0IiwiYSI6ImNrcXkwaDY0dDA2NXkycXM2ZHY1b3VkbjcifQ.WSLCm8FHh9xj8lnZiRjdZg",
   BETA: "true",
   API_URL: "http://localhost:4001",
+  MAPBOX_TOKEN: "pk.eyJ1IjoibW9ua2V5Y2hhcDEiLCJhIjoiY2tlMm9jdXZwMGI5ODJzbzRpZjV1NzRraSJ9.G3EgCxQmDQT-jbw3knv5bQ",
 }

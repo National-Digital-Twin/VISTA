@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import classNames from "classnames";
 import "./Grid.css";
 import useSelectNode from "../hooks/useSelectNode";
-import ReactSlider from "react-slider";
+
 
 const emptyAssets = [];
 const emptyConnections = [];
@@ -17,7 +17,7 @@ const TelicentGrid = ({
     setSelectedNode(target.id, type);
   };
 
-  const [zoomLevel, setZoomLevel] = useState(100);
+  const ZOOM_LEVEL = 100;
   const grid = `50px 22px 22px 106px repeat(${assets.length}, 22px)`;
   const renderAssets = () => {
     const assetGrid = assets.map((asset) => (
@@ -51,9 +51,6 @@ const TelicentGrid = ({
     return;
   }
 
-  const onSliderChange = (value) => {
-    setZoomLevel(value * 10);
-  };
 
   if (loading) {
     return (
@@ -63,21 +60,8 @@ const TelicentGrid = ({
     );
   }
   return (
-    <>
-      <ReactSlider
-        className="horizontal-slider"
-        marks
-        defaultValue={zoomLevel}
-        markClassName="slider-mark"
-        min={1}
-        max={10}
-        onChange={onSliderChange}
-        thumbClassName="slider-thumb"
-        trackClassName="slider-track"
-        renderThumb={(props, state) => {
-          return <div {...props}>{`${state.valueNow * 10}%`}</div>;
-        }}
-      />
+
+   
       <div
         className="h-full w-full"
         style={{
@@ -90,7 +74,7 @@ const TelicentGrid = ({
         <div style={{ width: "inherit" }}>
           <div
             style={{
-              zoom: `${JSON.stringify(zoomLevel)}%`,
+              zoom: `${JSON.stringify(ZOOM_LEVEL)}%`,
               gridTemplateColumns: grid,
             }}
             className="main-grid"
@@ -99,7 +83,7 @@ const TelicentGrid = ({
           </div>
         </div>
       </div>
-    </>
+
   );
 };
 
