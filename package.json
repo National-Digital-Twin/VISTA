@@ -29,6 +29,7 @@
     "build:tailwind": "npx tailwindcss -i ./src/index.css -o ./src/main.css",
     "babel": "babel --plugins @babel/plugin-transform-arrow-functions script.js",
     "test": "craco test",
+    "test:ci": "react-scripts test --ci --json --outputFile=\"reports/results.json\" --watchAll=false",
     "eject": "react-scripts eject",
     "prepare": "husky install"
   },
@@ -56,6 +57,17 @@
     "jest-fetch-mock": "^3.0.3",
     "jest-image-snapshot": "^4.5.1",
     "puppeteer": "^14.1.1",
-    "react-app-rewired": "^2.2.1"
+    "react-app-rewired": "^2.2.1",
+    "tailwindcss": "^3.1.8",
+    "@commitlint/cli": "^17.1.2",
+    "@commitlint/config-conventional": "^17.1.0",
+    "commitizen": "^4.2.5",
+    "cz-conventional-changelog": "^3.3.0",
+    "release-please": "^14.6.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }
