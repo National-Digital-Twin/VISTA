@@ -27,3 +27,5 @@ Data is ingested via csv and then the criticality of the infrastructure is calcu
 
 - `yarn install //install node modules`
 - `yarn start // start dev server`
+
+### TODO
