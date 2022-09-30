@@ -1,0 +1,64 @@
+name: build-and-push-telicent-test
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - CHANGELOG.md
+
+jobs:
+  get_version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Get version from package.json
+        id: semver
+        uses: martinbeentjes/npm-get-version-action@main
+    outputs:
+      version: ${{ steps.semver.outputs.current-version }}
+  integrated_tests:
+    permissions:
+      id-token: write
+      contents: read
+      packages: write
+    needs: get_version
+    env:
+      APP_NAME: paralog
+      NODE_AUTH_TOKEN: ${{ secrets.PACKAGE_PAT }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: configure-node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16
+          registry-url: https://npm.pkg.github.com/
+          scope: "@Telicent-io"
+          always-auth: true
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+      - run: mkdir reports
+      - run: yarn test:ci
+      - name: Configure AWS credentials from main account
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: arn:aws:iam::098669589541:role/GitHubDeploymentRole
+          aws-region: eu-west-2
+      - name: Publish test logs to S3
+        run: |
+          aws s3 cp reports s3://telicent-deployment-${{ env.APP_NAME }}/${{ github.run_id }}-${{ needs.get_version.outputs.version }} --recursive
+
+  publish_deployment_image_to_aws:
+    needs:
+      - integrated_tests
+      - get_version
+    uses: ./.github/workflows/push-to-aws.yml
+    with:
+      APP_NAME: paralog
+      DOCKERFILE: Dockerfile
+      PATH: .
+      VERSION: ${{ needs.get_version.outputs.version }}
+    secrets:
+      NPM_TOKEN: ${{ secrets.PACKAGE_PAT }}

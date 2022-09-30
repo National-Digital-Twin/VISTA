@@ -1,4 +1,4 @@
-name: Deploy Node Telicent image to AWS
+name: Publish Node Telicent image to Amazon ECR
 
 on:
   workflow_call:
@@ -14,6 +14,12 @@ on:
         type: string
       VERSION:
         required: true
+        type: string
+      VERSION_SUFFIX:
+        required: false
+        type: string
+      ECR_SUFFIX:
+        required: false
         type: string
     secrets:
       NPM_TOKEN:
@@ -44,12 +50,10 @@ jobs:
       - name: Build, tag, and push image to Amazon ECR
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: telicent-${{ inputs.APP_NAME }}
+          ECR_REPOSITORY: telicent-${{ inputs.APP_NAME }}${{ inputs.ECR_SUFFIX }}
           IMAGE_TAG: ${{ github.sha }}
         run: |
           cd ${{ inputs.PATH }}
-          echo 'version ===> ${{ inputs.VERSION }}'
-          docker build -t ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }} --build-arg NPM_TOKEN=${{ secrets.NPM_TOKEN }} -f ${{ inputs.DOCKERFILE }} .
-          docker push ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
-          docker tag ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }} ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ inputs.VERSION }}
-          docker push ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ inputs.VERSION }}
+          echo 'version ===> ${{ inputs.VERSION }}${{ inputs.VERSION_SUFFIX }}'
+          docker build -t ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }} -t ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:latest${{ inputs.VERSION_SUFFIX }} -t ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ inputs.VERSION }}${{ inputs.VERSION_SUFFIX }} --build-arg NPM_TOKEN=${{ secrets.NPM_TOKEN }} -f ${{ inputs.DOCKERFILE }} .
+          docker image push --all-tags ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}
