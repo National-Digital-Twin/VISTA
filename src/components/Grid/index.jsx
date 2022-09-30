@@ -1,31 +1,23 @@
-import React from "react";
+import React, { useState } from "react";
 import classNames from "classnames";
 import "./Grid.css";
-import useSelectNode from "../hooks/useSelectNode";
-
+import useSelectNode from "../../hooks/useSelectNode";
+import GridToolbar from "./GridToolbar";
 
 const emptyAssets = [];
 const emptyConnections = [];
-const TelicentGrid = ({
-  assets = emptyAssets,
-  connections = emptyConnections,
-  loading,
-}) => {
+const TelicentGrid = ({ assets = emptyAssets, connections = emptyConnections, loading }) => {
   const [setSelectedNode] = useSelectNode(assets, connections);
+  const [zoomLevel, setZoomLevel] = useState(100);
+
   const onClick = (type) => (e) => {
     const { target } = e;
     setSelectedNode(target.id, type);
   };
 
-  const ZOOM_LEVEL = 100;
-  const grid = `50px 22px 22px 106px repeat(${assets.length}, 22px)`;
   const renderAssets = () => {
     const assetGrid = assets.map((asset) => (
-      <AssetGrid
-        asset={asset}
-        key={`asset-grid-${asset.uri}`}
-        onClick={onClick("asset")}
-      />
+      <AssetGrid asset={asset} key={`asset-grid-${asset.uri}`} onClick={onClick("asset")} />
     ));
 
     const connectionsGrid = connections.map((connection, index) => (
@@ -33,24 +25,17 @@ const TelicentGrid = ({
         uri={connection.uri}
         key={`connection-${connection.uri}-${index}`}
         criticality={connection.criticality}
-        source={assets.find(
-          (asset) => asset.uri === connection.sourceAsset.uri
-        )}
-        target={assets.find(
-          (asset) => asset.uri === connection.targetAsset.uri
-        )}
+        source={assets.find((asset) => asset.uri === connection.sourceAsset.uri)}
+        target={assets.find((asset) => asset.uri === connection.targetAsset.uri)}
         onClick={onClick("connection")}
       />
     ));
     return [...assetGrid, ...connectionsGrid];
   };
   if (!Array.isArray(assets) || !Array.isArray(connections)) {
-    console.warn(
-      "TelicentGrid -> Assets and connections must be passed in as an array."
-    );
+    console.warn("TelicentGrid -> Assets and connections must be passed in as an array.");
     return;
   }
-
 
   if (loading) {
     return (
@@ -59,57 +44,30 @@ const TelicentGrid = ({
       </div>
     );
   }
-  return (
 
-   
-      <div
-        className="h-full w-full"
-        style={{
-          position: "relative",
-          overflow: "auto",
-          marginBottom: "12px",
-          marginRight: "12px",
-        }}
-      >
-        <div style={{ width: "inherit" }}>
-          <div
-            style={{
-              zoom: `${JSON.stringify(ZOOM_LEVEL)}%`,
-              gridTemplateColumns: grid,
-            }}
-            className="main-grid"
-          >
-            {renderAssets()}
-          </div>
+  return (
+    <>
+      <div className="relative h-full overflow-auto">
+        <div
+          style={{
+            zoom: `${zoomLevel}%`,
+            gridTemplateColumns: `50px 22px 22px 106px repeat(${assets.length}, 22px)`,
+          }}
+          className="main-grid"
+        >
+          {renderAssets()}
         </div>
       </div>
-
+      <GridToolbar zoom={zoomLevel} setZoom={setZoomLevel} />
+    </>
   );
 };
 
 const AssetGrid = ({ asset, onClick }) => {
-  const {
-    id,
-    uri,
-    name,
-    count,
-    lon,
-    lat,
-    criticality,
-    countColour,
-    scoreColour,
-    gridIndex,
-  } = asset;
+  const { id, uri, name, count, lon, lat, criticality, countColour, scoreColour, gridIndex } =
+    asset;
 
-  const AssetIdentifierCol = ({
-    gridIndex,
-    id,
-    lat,
-    lon,
-    title,
-    uri,
-    onClick,
-  }) => (
+  const AssetIdentifierCol = ({ gridIndex, id, lat, lon, title, uri, onClick }) => (
     <div
       title={title}
       style={{
@@ -253,11 +211,7 @@ const AssetGrid = ({ asset, onClick }) => {
       <AssetNameCol gridIndex={gridIndex} id={id} title={name} name={name} />
       <BlankCell gridIndex={gridIndex} />
       <AssetCountCell color={countColour} gridIndex={gridIndex} value={count} />
-      <AssetCriticalityCell
-        color={scoreColour}
-        gridIndex={gridIndex}
-        value={criticality}
-      />
+      <AssetCriticalityCell color={scoreColour} gridIndex={gridIndex} value={criticality} />
     </>
   );
 };

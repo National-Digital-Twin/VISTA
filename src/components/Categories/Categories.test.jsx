@@ -1,10 +1,7 @@
-import { screen, render } from "@testing-library/react";
-import { act } from "react-dom/test-utils";
-import Filters from ".";
-import AssetProvider from "../AssetContext";
-import ElementsProvider from "../ElementsContext";
+import { act, screen, render } from "@testing-library/react";
+import Categories from "./Categories";
 
-describe("Filters should", () => {
+describe("Categories component should", () => {
   beforeEach(async () => {
     fetchMock.resetMocks();
     fetchMock.mockResponse(
@@ -23,7 +20,7 @@ describe("Filters should", () => {
     );
 
     await act(async () => {
-      await render(<Filters selected={[]} setSelected={jest.fn()} />);
+      await render(<Categories selected={[]} setSelected={jest.fn()} />);
     });
   });
 

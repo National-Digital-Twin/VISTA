@@ -1,4 +1,4 @@
-import { IsEmpty } from ".";
+import { IsEmpty } from "./index"
 
 describe("should be truthy if empty", () => {
   it("should be false if populated array passed as parameter", () => {

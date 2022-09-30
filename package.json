@@ -5,13 +5,20 @@
   "homepage": "paralog",
   "dependencies": {
     "@craco/craco": "^6.4.3",
-    "@telicent-io/ds": "^0.2.11",
+    "@deck.gl/core": "^8.7.10",
+    "@deck.gl/layers": "^8.7.10",
+    "@deck.gl/react": "^8.7.10",
+    "@telicent-io/ds": "^0.2.20",
     "@testing-library/jest-dom": "^5.16.3",
     "@testing-library/react": "^12.1.4",
     "@testing-library/user-event": "^13.5.0",
     "classnames": "^2.3.1",
     "color-scales": "^3.0.2",
     "cytoscape": "^3.19.1",
+    "cytoscape-avsdf": "^1.0.0",
+    "cytoscape-cola": "^2.5.1",
+    "cytoscape-dagre": "^2.4.0",
+    "lodash": "^4.17.21",
     "mapbox-gl": "^2.7.1",
     "react": "^17.0.2",
     "react-cytoscapejs": "^1.2.1",
@@ -52,18 +59,18 @@
     ]
   },
   "devDependencies": {
+    "@commitlint/cli": "^17.1.2",
+    "@commitlint/config-conventional": "^17.1.0",
+    "commitizen": "^4.2.5",
+    "cz-conventional-changelog": "^3.3.0",
     "husky": "^8.0.0",
     "jest-canvas-mock": "^2.4.0",
     "jest-fetch-mock": "^3.0.3",
     "jest-image-snapshot": "^4.5.1",
     "puppeteer": "^14.1.1",
     "react-app-rewired": "^2.2.1",
-    "tailwindcss": "^3.1.8",
-    "@commitlint/cli": "^17.1.2",
-    "@commitlint/config-conventional": "^17.1.0",
-    "commitizen": "^4.2.5",
-    "cz-conventional-changelog": "^3.3.0",
-    "release-please": "^14.6.0"
+    "release-please": "^14.6.0",
+    "tailwindcss": "^3.1.8"
   },
   "config": {
     "commitizen": {

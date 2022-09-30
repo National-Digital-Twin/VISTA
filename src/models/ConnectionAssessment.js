@@ -1,4 +1,4 @@
-import { buildCircleFeature, buildLineFeature } from "../Map/mapboxFeatures";
+import { buildCircleFeature, buildLineFeature } from "../components/Map/mapboxFeatures";
 import { colourScale } from "../utils";
 
 const colourMap = {

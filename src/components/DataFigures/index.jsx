@@ -1,19 +1,17 @@
-import React, { useEffect, useContext, useCallback, useState } from "react";
-import Filters from "../Filters";
+import React, { useEffect, useContext, useCallback } from "react";
 import TelicentGrid from "../Grid";
-import Network from "../Network";
 import useFetch from "use-http";
-import config from "../config/app-config";
+import config from "../../config/app-config";
 import { Tabs, Tab, TabList, TabPanel } from "react-tabs";
-import { IsEmpty } from "../utils";
+import { IsEmpty } from "../../utils";
 import "react-tabs/style/react-tabs.css";
 import { buildAssetAndConnectionLinks } from "./utils";
 
 import "./DataFigures.css";
-import { ElementsContext } from "../ElementsContext";
+import { ElementsContext } from "../../ElementsContext";
+import NetworkGraph from "../NetworkGraph/NetworkGraph";
 
-const DataFigures = () => {
-  const [selected, setSelected] = useState([]);
+const DataFigures = ({ selected }) => {
   const { updateElements, elements } = useContext(ElementsContext);
 
   const { get, loading } = useFetch(config.api.url);
@@ -34,7 +32,7 @@ const DataFigures = () => {
         return;
       }
 
-     
+      
       const { assets, connections } = buildAssetAndConnectionLinks(
         {rawAssets: selectedFilters[0], rawConnections: selectedFilters[1]}
       );
@@ -80,33 +78,23 @@ const DataFigures = () => {
         borderRight: "solid 1px gold",
       }}
     >
-      <Filters selected={selected} setSelected={setSelected} />
       <Tabs style={{ height: "calc(100% - 48px)" }}>
-        <TabList style={{ display: "flex" }}>
-          <Tab
-            className="telicent-tab"
-            selectedClassName="telicent-tab_selected"
-          >
-            Grid
-          </Tab>
-          <Tab
-            className="telicent-tab"
-            selectedClassName="telicent-tab_selected"
-          >
+        <TabList className="flex border-b border-black-700">
+          <Tab className="telicent-tab" selectedClassName="telicent-tab_selected">
             Network
           </Tab>
+          <Tab className="telicent-tab" selectedClassName="telicent-tab_selected">
+            Grid
+          </Tab>
         </TabList>
-        <TabPanel style={{ height: "calc(100% - 54px)" }}>
+        <TabPanel style={{ height: '100%' }}>
+          <NetworkGraph assets={elements.assets} connections={elements.connections} />
+        </TabPanel>
+        <TabPanel style={{ height: '95%', paddingTop: '4px' }}>
           <TelicentGrid
             assets={elements.assets}
             connections={elements.connections}
             loading={loading}
-          />
-        </TabPanel>
-        <TabPanel style={{ height: "calc(100% - 54px)" }}>
-          <Network
-            assets={elements.assets}
-            connections={elements.connections}
           />
         </TabPanel>
       </Tabs>

@@ -7,9 +7,14 @@ const ElementsProvider = ({ children }) => {
     assets: [],
     connections: [],
   });
+  const [graphLayout, setGraphLayout] = useState("cola");
+
+  const updateGraphLayout = (layout) => {
+    setGraphLayout(layout);
+  };
 
   return (
-    <ElementsContext.Provider value={{ updateElements, elements }}>
+    <ElementsContext.Provider value={{ elements, graphLayout, updateElements, updateGraphLayout }}>
       {children}
     </ElementsContext.Provider>
   );
