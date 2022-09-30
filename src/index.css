@@ -21,6 +21,10 @@
   border: 1px solid #141414;
 }
 
+::-webkit-scrollbar-corner {
+  width: 0;
+}
+
 @supports (scrollbar-color: #6a6a6a #14141460) {
   * {
     scrollbar-width: auto;
@@ -30,7 +34,7 @@
 
 [role="tooltip"],
 .hideTooltip + [role="tooltip"] {
-  @apply absolute -top-9 whitespace-nowrap px-2 py-1 bg-black rounded-md invisible z-10;
+  @apply absolute -top-10 whitespace-nowrap px-2 py-1 bg-black rounded-md invisible z-10;
 }
 [aria-labelledby]:hover + [role="tooltip"],
 [aria-labelledby]:focus + [role="tooltip"] {

@@ -3,6 +3,7 @@ import classNames from "classnames";
 import React, { useRef, useState } from "react";
 
 import { useOutsideAlerter } from "../../hooks";
+import { ToolbarButton } from "../../lib";
 
 const transformLayoutOptions = (item) => item.replace(/\s/g, "").toLowerCase();
 
@@ -103,31 +104,6 @@ const MinimiseBtn = ({ label, onMinimise }) => (
       {label}
     </div>
   </>
-);
-
-const ToolbarButton = ({ icon, label, onClick, secondaryMenu, showSecodaryMenu }) => (
-  <li className="grid first:justify-items-start justify-items-center gap-y-1 group relative pb-1">
-    {showSecodaryMenu && secondaryMenu}
-    <div
-      className={classNames("w-full h-0.5 bg-whiteSmoke-500", {
-        "opacity-0 group-hover:opacity-100": !showSecodaryMenu,
-      })}
-    />
-    <button
-      aria-labelledby={kebabCase(label)}
-      className="flex items-center justify-center gap-x-2 rounded-md px-2 group-hover:bg-black-400 h-full"
-      onClick={onClick}
-    >
-      <i className={classNames("!text-xl", icon)} />
-    </button>
-    <div
-      id={kebabCase(label)}
-      role="tooltip"
-      className={classNames({ hideTooltip: showSecodaryMenu })}
-    >
-      {label}
-    </div>
-  </li>
 );
 
 const SecondaryMenu = ({ selected, show, onClose, onLayoutChange, items }) => {

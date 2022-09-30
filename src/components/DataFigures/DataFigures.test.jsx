@@ -1,6 +1,6 @@
 import { screen, render } from "@testing-library/react";
 import { act } from "react-dom/test-utils";
-import DataFigures from "./DataFigures";
+import DataFigures from "./index";
 import AssetProvider from "../../AssetContext";
 import ElementsProvider from "../../ElementsContext";
 import CytoscapeComponent from "react-cytoscapejs";
@@ -38,7 +38,7 @@ const connectionResponse = [
   },
 ];
 
-describe("DataFigures should", () => {
+xdescribe("DataFigures should", () => {
   beforeEach(async () => {
     fetchMock.resetMocks();
     mockCytoscapeComponent.mockImplementation().mockReturnValue(null);

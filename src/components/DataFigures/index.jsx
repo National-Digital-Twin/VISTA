@@ -32,7 +32,7 @@ const DataFigures = ({ selected }) => {
         return;
       }
 
-     
+      
       const { assets, connections } = buildAssetAndConnectionLinks(
         {rawAssets: selectedFilters[0], rawConnections: selectedFilters[1]}
       );
@@ -76,7 +76,7 @@ const DataFigures = ({ selected }) => {
       }}
     >
       <Tabs style={{ height: "calc(100% - 48px)" }}>
-        <TabList style={{ display: "flex" }}>
+        <TabList className="flex border-b border-black-700">
           <Tab className="telicent-tab" selectedClassName="telicent-tab_selected">
             Network
           </Tab>
@@ -84,10 +84,10 @@ const DataFigures = ({ selected }) => {
             Grid
           </Tab>
         </TabList>
-        <TabPanel style={{ height: "calc(100% - 54px)" }}>
+        <TabPanel style={{ height: '100%' }}>
           <NetworkGraph assets={elements.assets} connections={elements.connections} />
         </TabPanel>
-        <TabPanel style={{ height: "calc(100% - 54px)" }}>
+        <TabPanel style={{ height: '95%', paddingTop: '4px' }}>
           <TelicentGrid
             assets={elements.assets}
             connections={elements.connections}
