@@ -1,6 +1,7 @@
-import React, { useEffect, useReducer } from "react";
-import ReactMapGL, { NavigationControl, Layer, Source } from "react-map-gl";
+import React, { useEffect, useReducer, useState } from "react";
+import { Layer, Map, MapProvider, Source } from "react-map-gl";
 import config from "../../config/app-config";
+import MapToolbar from "./MapToolbar";
 
 const UPDATE_FEATURES = "UPDATE_FEATURES";
 const UPDATE_VIEWPORT = "UPDATE_VIEWPORT";
@@ -73,6 +74,8 @@ const reducer = (state, action) => {
 
 const TelicentMap = ({ element }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
+  const [mapStyle, setMapStyle] = useState("dark-v10");
+
   const getFocussedAsset = (element) => {
     const { lineAssets, markerAssets } = element.generateMapboxFeatures();
     dispatch({
@@ -123,23 +126,29 @@ const TelicentMap = ({ element }) => {
   };
 
   return (
-    <ReactMapGL
-      {...state.viewport}
-      mapboxAccessToken={config.mb.token}
-      mapStyle="mapbox://styles/mapbox/dark-v10"
-      onResize={onHandleViewportResize}
-      onDrag={handleViewport}
-      onZoom={handleViewport}
-      onRotate={handleViewport}
-    >
-      <NavigationControl />
-      <Source id="connections" type="geojson" data={state.connectionsGeoJSON}>
-        <Layer {...state.lineStyle}></Layer>
-      </Source>
-      <Source id="assets" type="geojson" data={state.assetsGeoJSON}>
-        <Layer {...markerStyle} />
-      </Source>
-    </ReactMapGL>
+    <div className="relative h-full">
+      <MapProvider>
+        <Map
+          id="telicentMap"
+          {...state.viewport}
+          mapboxAccessToken={config.mb.token}
+          mapStyle={`mapbox://styles/mapbox/${mapStyle}`}
+          onResize={onHandleViewportResize}
+          onDrag={handleViewport}
+          onZoom={handleViewport}
+          onRotate={handleViewport}
+          styleDiffing
+        >
+          <Source id="connections" type="geojson" data={state.connectionsGeoJSON}>
+            <Layer {...state.lineStyle}></Layer>
+          </Source>
+          <Source id="assets" type="geojson" data={state.assetsGeoJSON}>
+            <Layer {...markerStyle} />
+          </Source>
+        </Map>
+        <MapToolbar mapStyle={mapStyle} setMapStyle={setMapStyle} />
+      </MapProvider>
+    </div>
   );
 };
 

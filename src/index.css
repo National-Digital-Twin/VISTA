@@ -45,6 +45,10 @@
   @apply invisible;
 }
 
+.mapboxgl-ctrl > .mapboxgl-ctrl-logo {
+  display: none;
+}
+
 #theme-provider > div {
   height: 100%;
 }

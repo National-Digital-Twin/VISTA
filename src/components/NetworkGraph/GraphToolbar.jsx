@@ -3,7 +3,7 @@ import classNames from "classnames";
 import React, { useRef, useState } from "react";
 
 import { useOutsideAlerter } from "../../hooks";
-import { ToolbarButton } from "../../lib";
+import { ToolbarButton, VerticalDivider } from "../../lib";
 
 const transformLayoutOptions = (item) => item.replace(/\s/g, "").toLowerCase();
 
@@ -150,5 +150,3 @@ const SecondaryMenu = ({ selected, show, onClose, onLayoutChange, items }) => {
     </div>
   );
 };
-
-const VerticalDivider = () => <div className="border-r border-whiteSmoke-400 h-8 self-center" />;
