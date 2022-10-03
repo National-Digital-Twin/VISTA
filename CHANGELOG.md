@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.0.1](https://github.com/Telicent-io/telicent-paralog/compare/v1.0.0...v1.0.1) (2022-10-03)
+
+
+### Bug Fixes
+
+* 99 - remove full page scroll bar ([45b9785](https://github.com/Telicent-io/telicent-paralog/commit/45b978569f9c6f8aeb8fa57680a64a3c53811207)), closes [#99](https://github.com/Telicent-io/telicent-paralog/issues/99)
+* **details.jsx:** 103 - connection title colour ([12de785](https://github.com/Telicent-io/telicent-paralog/commit/12de7852bb4c084a2702848f47aa688bae586824)), closes [#103](https://github.com/Telicent-io/telicent-paralog/issues/103)
+* updated zoom on grid, on network increased font size and when labels are added ([1b6bec2](https://github.com/Telicent-io/telicent-paralog/commit/1b6bec26e5c438e61a0673e3ec402c13f915bf4b)), closes [#101](https://github.com/Telicent-io/telicent-paralog/issues/101)
+
 ## [1.0.0](https://github.com/Telicent-io/telicent-paralog/compare/v0.2.2...v1.0.0) (2022-09-30)
 
 
