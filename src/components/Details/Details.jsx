@@ -8,6 +8,7 @@ const Details = ({ element }) => {
   if (IsEmpty(element)) return <p>Click on an asset or connection to view details</p>;
 
   const { category } = element;
+
   const item = category === "asset" ? new AssetElement(element) : new ConnectionElement(element);
 
   const {
@@ -21,6 +22,7 @@ const Details = ({ element }) => {
     desc,
     title,
     titleStyle,
+    titleClassName,
   } = item;
 
   return (
@@ -32,6 +34,7 @@ const Details = ({ element }) => {
         title={item.name}
         titleStyle={titleStyle}
         type={category}
+        connectionStyle={titleClassName}
       />
       {category === "connection" && (
         <p id="connection-details">
@@ -56,8 +59,8 @@ Details.propTypes = {
   element: PropTypes.object,
 };
 
-const Header = ({ id, latitude, longitude, title, titleStyle, type }) => {
-  if (type === "connection") return <h2 className="text-xl">{id}</h2>;
+const Header = ({ id, latitude, longitude, title, titleStyle, type, connectionStyle }) => {
+  if (type === "connection") return <h2 className={`text-xl ${connectionStyle}`}>{id}</h2>;
 
   const params = {
     api: 1,
