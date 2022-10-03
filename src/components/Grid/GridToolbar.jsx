@@ -7,7 +7,7 @@ import { ToolbarButton } from "../../lib";
 const GridToolbar = ({ zoom, setZoom }) => {
   const ZOOM_OFFSET = 10;
 
-  const enableZoomOut = zoom > 50;
+  const enableZoomOut = zoom > 20;
   const enableZoomIn = zoom < 130;
 
   const updateZoomLevel = (zoomOffset) => {

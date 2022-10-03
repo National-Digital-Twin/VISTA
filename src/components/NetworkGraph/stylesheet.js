@@ -6,7 +6,7 @@ import Battery from "./assets/battery-charge-fill-teal.svg";
 import Car from "./assets/car-fill-aqua.svg";
 
 const colors = {
-  whiteSmoke: '#F5F5F5',
+  whiteSmoke: "#F5F5F5",
 };
 
 const cyStylesheet = [
@@ -19,11 +19,11 @@ const cyStylesheet = [
       borderColor: "gray",
       backgroundColor: "black",
       label: "data(label)",
-      'text-halign': 'center',
-      'text-valign': 'bottom',
-      'text-wrap': 'ellipsis',
-      'text-max-width': 60,
-      'text-margin-y': 4,
+      "text-halign": "center",
+      "text-valign": "bottom",
+      "text-wrap": "ellipsis",
+      "text-max-width": 60,
+      "text-margin-y": 4,
     },
   },
   {
@@ -34,17 +34,17 @@ const cyStylesheet = [
     },
   },
   {
-    selector: '.label',
+    selector: ".label",
     style: {
       color: colors.whiteSmoke,
-      textBackgroundColor: 'rgb(26, 26, 26)',
-      textBackgroundPadding: '2px',
-      textBackgroundShape: 'round-rectangle',
-      fontFamily: 'Urbanist',
+      textBackgroundColor: "rgb(26, 26, 26)",
+      textBackgroundPadding: "2px",
+      textBackgroundShape: "round-rectangle",
+      fontFamily: "Urbanist",
       fontWeight: 300,
-      fontSize: 6,
+      fontSize: 12,
       textBackgroundOpacity: 0.7,
-      minZoomedFontSize: 10,
+      minZoomedFontSize: 8,
     },
   },
   {
@@ -112,9 +112,9 @@ const cyStylesheet = [
     style: {
       backgroundColor: "white",
       borderWidth: "4px",
-      borderColor: "white"
+      borderColor: "white",
     },
   },
-]
+];
 
 export default cyStylesheet;
