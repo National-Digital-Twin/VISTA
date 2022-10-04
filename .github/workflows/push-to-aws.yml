@@ -55,5 +55,5 @@ jobs:
         run: |
           cd ${{ inputs.PATH }}
           echo 'version ===> ${{ inputs.VERSION }}${{ inputs.VERSION_SUFFIX }}'
-          docker build -t ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }} -t ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:latest${{ inputs.VERSION_SUFFIX }} -t ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ inputs.VERSION }}${{ inputs.VERSION_SUFFIX }} --build-arg NPM_TOKEN=${{ secrets.NPM_TOKEN }} -f ${{ inputs.DOCKERFILE }} .
+          docker build -t ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }} -t ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:latest -t ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ inputs.VERSION }}${{ inputs.VERSION_SUFFIX }} --build-arg NPM_TOKEN=${{ secrets.NPM_TOKEN }} -f ${{ inputs.DOCKERFILE }} .
           docker image push --all-tags ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}
