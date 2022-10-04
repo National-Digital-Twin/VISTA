@@ -1,6 +1,7 @@
-import React, { useEffect, useReducer, useState } from "react";
+import React, { useEffect, useReducer } from "react";
 import { Layer, Map, MapProvider, Source } from "react-map-gl";
 import config from "../../config/app-config";
+import { useLocalStorage } from "../../hooks";
 import MapToolbar from "./MapToolbar";
 
 const UPDATE_FEATURES = "UPDATE_FEATURES";
@@ -74,7 +75,7 @@ const reducer = (state, action) => {
 
 const TelicentMap = ({ element }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const [mapStyle, setMapStyle] = useState("dark-v10");
+  const [mapStyle, setMapStyle] = useLocalStorage("mapStyle", "dark-v10");
 
   const getFocussedAsset = (element) => {
     const { lineAssets, markerAssets } = element.generateMapboxFeatures();
