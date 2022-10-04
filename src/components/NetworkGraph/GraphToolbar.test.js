@@ -41,22 +41,7 @@ describe("GraphToolbar component", () => {
       "listitem"
     );
     expect(secondaryMenuItems).toHaveLength(6);
-    expect(
-      within(secondaryMenuItems[0]).getByRole("button", { name: "Circle" })
-    ).toBeInTheDocument();
-    expect(
-      within(secondaryMenuItems[1]).getByRole("button", { name: "Random" })
-    ).toBeInTheDocument();
-    expect(
-      within(secondaryMenuItems[2]).getByRole("button", { name: "Breadth First" })
-    ).toBeInTheDocument();
-    expect(
-      within(secondaryMenuItems[3]).getByRole("button", { name: "AVSDF" })
-    ).toBeInTheDocument();
-    expect(
-      within(secondaryMenuItems[4]).getByRole("button", { name: "Dagre" })
-    ).toBeInTheDocument();
-    expect(within(secondaryMenuItems[5]).getByRole("button", { name: "Cola" })).toBeInTheDocument();
+    expect(secondaryMenuItems).toMatchSnapshot("layout options")
   });
 
   test("renders Cola as the default graph layout", () => {
@@ -67,7 +52,7 @@ describe("GraphToolbar component", () => {
     const secondaryMenuItems = within(screen.getByTestId("secondary-menu")).getAllByRole(
       "listitem"
     );
-    expect(within(secondaryMenuItems[5]).getByRole("button", { name: "Cola" })).toHaveClass(
+    expect(within(secondaryMenuItems[0]).getByRole("button", { name: "Cola" })).toHaveClass(
       "bg-black-500"
     );
   });
@@ -80,12 +65,12 @@ describe("GraphToolbar component", () => {
     const secondaryMenuItems = within(screen.getByTestId("secondary-menu")).getAllByRole(
       "listitem"
     );
-    userEvent.click(within(secondaryMenuItems[0]).getByRole("button", { name: "Circle" }));
+    userEvent.click(within(secondaryMenuItems[1]).getByRole("button", { name: "Circle" }));
 
-    expect(within(secondaryMenuItems[0]).getByRole("button", { name: "Circle" })).toHaveClass(
+    expect(within(secondaryMenuItems[1]).getByRole("button", { name: "Circle" })).toHaveClass(
       "bg-black-500"
     );
-    expect(within(secondaryMenuItems[5]).getByRole("button", { name: "Cola" })).not.toHaveClass(
+    expect(within(secondaryMenuItems[0]).getByRole("button", { name: "Cola" })).not.toHaveClass(
       "bg-black-500"
     );
   });
