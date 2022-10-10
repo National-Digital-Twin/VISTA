@@ -32,3 +32,20 @@ export const buildCircleFeature = (asset) => ({
 
 export const buildLineFeatures = (assets) => assets.map(buildLineFeature);
 export const buildCircleFeatures = (assets) => assets.map(buildCircleFeature);
+
+export const generateAssetFeatures = (assets) =>
+  assets.map((element) => ({
+    id: 'assets-layer',
+    type: "Feature",
+    properties: {
+      id: element.id,
+      uri: element.uri,
+      name: element.name,
+      criticality: element.criticality,
+      mapboxFeatures: element.generateMapboxFeatures()
+    },
+    geometry: {
+      type: "Point",
+      coordinates: [element.lon[0], element.lat[0]],
+    },
+  }));

@@ -1,150 +1,110 @@
-import React, { useEffect, useReducer, useState } from "react";
-import { Layer, Map, MapProvider, Source } from "react-map-gl";
+import React, { useContext, useEffect, useState } from "react";
+import Map, { Layer, MapProvider, Source } from "react-map-gl";
 import config from "../../config/app-config";
+import { ElementsContext } from "../../ElementsContext";
+import useSelectNode from "../../hooks/useSelectNode";
+import { IsEmpty } from "../../utils";
+import { allAssetsLayerStyle, highlightedAssets, lineStyle } from "./layerStyles";
+import { generateAssetFeatures } from "./mapboxFeatures";
 import MapToolbar from "./MapToolbar";
 
-const UPDATE_FEATURES = "UPDATE_FEATURES";
-const UPDATE_VIEWPORT = "UPDATE_VIEWPORT";
-
-const initialState = {
-  lineStyle: {
-    id: "line",
-    type: "line",
-    layout: {
-      "line-join": "round",
-      "line-cap": "round",
-    },
-    paint: {
-      "line-width": 1,
-      "line-color": ["get", "color"],
-    },
-  },
-  markerStyle: {
-    id: "marker",
-    type: "circle",
-    paint: {
-      "circle-radius": {
-        base: 1.75,
-        stops: [
-          [12, 2],
-          [22, 180],
-        ],
-      },
-      "circle-color": ["get", "color"],
-    },
-  },
-  connectionsGeoJSON: {
-    type: "FeatureCollection",
-    features: [],
-  },
-  assetsGeoJSON: {
-    type: "FeatureCollection",
-    features: [],
-  },
-  viewport: {
-    latitude: 50.66206632912732,
-    longitude: -1.3480234953335598,
-    zoom: 9,
-    height: "100%",
-    width: "100%",
-  },
+const GEOJSON = "geojson";
+const FEATURE_COLLECTION = "FeatureCollection";
+const VIEWSTATE = {
+  latitude: 50.66206632912732,
+  longitude: -1.3480234953335598,
+  zoom: 9,
 };
 
-const reducer = (state, action) => {
-  switch (action.type) {
-    case UPDATE_FEATURES:
-      const cgjCopy = { ...state.connectionsGeoJSON };
-      const agjCopy = { ...state.assetsGeoJSON };
-      cgjCopy.features = action.payload.lines;
-      agjCopy.features = action.payload.markers;
-      return {
-        ...state,
-        connectionsGeoJSON: cgjCopy,
-        assetsGeoJSON: agjCopy,
-      };
-    case UPDATE_VIEWPORT:
-      return {
-        ...state,
-        viewport: { ...action.payload },
-      };
-    default:
-      return state;
-  }
-};
+const TelicentMap = ({ selectedElement }) => {
+  const { elements } = useContext(ElementsContext);
+  const [setSelectedNode] = useSelectNode(elements.assets, elements.connections);
 
-const TelicentMap = ({ element }) => {
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const assetFeatures = generateAssetFeatures(elements.assets);
+
+  const [connections, setConnections] = useState([]);
+  const [connectedAssets, setConnectedAssets] = useState([]);
+  const [cursor, setCursor] = useState("auto");
   const [mapStyle, setMapStyle] = useState("dark-v10");
-
-  const getFocussedAsset = (element) => {
-    const { lineAssets, markerAssets } = element.generateMapboxFeatures();
-    dispatch({
-      type: UPDATE_FEATURES,
-      payload: {
-        lines: lineAssets,
-        markers: markerAssets,
-      },
-    });
-  };
-
-  const getFocussedConnection = (connection) => {
-    const { lineAssets, markerAssets } = connection.generateMapboxFeatures();
-    dispatch({
-      type: UPDATE_FEATURES,
-      payload: {
-        lines: lineAssets,
-        markers: markerAssets,
-      },
-    });
-  };
+  const [hoverInfo, setHoverInfo] = useState(undefined);
 
   useEffect(() => {
-    if (!element || !element.category) return;
+    if (IsEmpty(selectedElement)) return;
 
-    if (element.category === "connection") {
-      getFocussedConnection(element);
-    } else {
-      getFocussedAsset(element);
+    const { lineAssets: connections, markerAssets: assets } =
+      selectedElement.generateMapboxFeatures();
+
+    assets.forEach(asset => {
+      if (asset.properties.name === selectedElement.uri) {
+        asset.properties.selected = 'true'
+      }
+    })
+    setConnectedAssets(assets);
+    setConnections(connections);
+  }, [selectedElement]);
+
+  const handleOnClick = (event) => {
+    const { features } = event;
+    const clickedFeature = features && features[0];
+
+    if (clickedFeature) {
+      const { properties } = clickedFeature;
+      setSelectedNode(properties.uri, "asset");
     }
-  }, [element]);
-
-  const onHandleViewportResize = () => {
-    dispatch({ type: UPDATE_VIEWPORT, payload: state.viewport });
   };
 
-  const handleViewport = (e) => {
-    const viewport = { e };
-    dispatch({ type: UPDATE_VIEWPORT, payload: viewport });
+  const handleOnMouseMove = (event) => {
+    const {
+      features,
+      point: { x, y },
+    } = event;
+    const hoveredFeature = features && features[0];
+    setHoverInfo(hoveredFeature && { feature: hoveredFeature, x, y });
   };
-  const markerStyle = {
-    id: "marker",
-    type: "circle",
-    paint: {
-      "circle-radius": ["get", "size"],
-      "circle-color": ["get", "color"],
-    },
+
+  const resetCursor = () => {
+    setCursor("auto");
   };
 
   return (
     <div className="relative h-full">
       <MapProvider>
         <Map
+          cursor={cursor}
           id="telicentMap"
-          {...state.viewport}
+          interactiveLayerIds={[allAssetsLayerStyle.id]}
+          initialViewState={{ ...VIEWSTATE }}
           mapboxAccessToken={config.mb.token}
           mapStyle={`mapbox://styles/mapbox/${mapStyle}`}
-          onResize={onHandleViewportResize}
-          onDrag={handleViewport}
-          onZoom={handleViewport}
-          onRotate={handleViewport}
-          styleDiffing
+          onClick={handleOnClick}
+          onDragStart={() => setCursor("move")}
+          onDragEnd={resetCursor}
+          onMouseEnter={() => setCursor("pointer")}
+          onMouseLeave={resetCursor}
+          onMouseMove={handleOnMouseMove}
         >
-          <Source id="connections" type="geojson" data={state.connectionsGeoJSON}>
-            <Layer {...state.lineStyle}></Layer>
+          <Source
+            id="all-assets"
+            type={GEOJSON}
+            data={{ type: FEATURE_COLLECTION, features: assetFeatures }}
+          >
+            <Layer {...allAssetsLayerStyle} />
           </Source>
-          <Source id="assets" type="geojson" data={state.assetsGeoJSON}>
-            <Layer {...markerStyle} />
+          <Source
+            id="connections"
+            type={GEOJSON}
+            data={{ type: FEATURE_COLLECTION, features: connections }}
+          >
+            <Layer {...lineStyle} />
           </Source>
+          <Source
+            id="highlighted-assets"
+            type={GEOJSON}
+            data={{ type: FEATURE_COLLECTION, features: connectedAssets }}
+          >
+            <Layer {...highlightedAssets} />
+          </Source>
+          <HoverInfo info={hoverInfo?.feature.properties} left={hoverInfo?.x} top={hoverInfo?.y} />
         </Map>
         <MapToolbar mapStyle={mapStyle} setMapStyle={setMapStyle} />
       </MapProvider>
@@ -152,5 +112,19 @@ const TelicentMap = ({ element }) => {
   );
 };
 
-const TelicentMemoMap = React.memo(TelicentMap);
-export default TelicentMemoMap;
+export default TelicentMap;
+
+const HoverInfo = ({ info, left, top }) => {
+  if (!info) return null;
+
+  return (
+    <div
+      className="bg-black-50 text-whiteSmoke absolute font-body text-sm px-2 py-1 rounded-md"
+      style={{ left: left + 10, top: top + 8 }}
+    >
+      <p>ID: {info.id}</p>
+      <p>Name: {info.name}</p>
+      <p>Criticality: {info.criticality}</p>
+    </div>
+  );
+};

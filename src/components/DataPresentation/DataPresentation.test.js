@@ -30,37 +30,37 @@ const renderWithContexts = (
   );
 };
 
+const sourceAsset = new Asset({
+  item: {
+    name: "asset1",
+    type: "test",
+    id: 1,
+    uri: "http://asset1.com",
+  },
+  idx: 1,
+});
+
+const targetAsset = new Asset({
+  item: {
+    name: "asset2",
+    type: "test",
+    id: 2,
+    uri: "http://asset2.com",
+  },
+});
+
+const connection = new ConnectionAssessment({
+  item: {
+    connUri: "http://asset1_asset2.com",
+    asset1Uri: sourceAsset.uri,
+    asset2Uri: targetAsset.uri,
+  },
+  source: sourceAsset,
+  target: targetAsset,
+  criticality: 1,
+});
+
 describe("DataPresentation should call details and map with correct props", () => {
-  const sourceAsset = new Asset({
-    item: {
-      name: "asset1",
-      type: "test",
-      id: 1,
-      uri: "http://asset1.com",
-    },
-    idx: 1,
-  });
-
-  const targetAsset = new Asset({
-    item: {
-      name: "asset2",
-      type: "test",
-      id: 2,
-      uri: "http://asset2.com",
-    },
-  });
-
-  const connection = new ConnectionAssessment({
-    item: {
-      connUri: "http://asset1_asset2.com",
-      asset1Uri: sourceAsset.uri,
-      asset2Uri: targetAsset.uri,
-    },
-    source: sourceAsset,
-    target: targetAsset,
-    criticality: 1,
-  });
-
   const Assets = [sourceAsset, targetAsset];
 
   const ElementsContextProps = {
@@ -93,8 +93,7 @@ describe("DataPresentation should call details and map with correct props", () =
     });
 
     expect(mockMap).toHaveBeenLastCalledWith({
-      element: sourceAsset,
-      type,
+      selectedElement: sourceAsset
     });
   });
 
@@ -118,8 +117,7 @@ describe("DataPresentation should call details and map with correct props", () =
     });
 
     expect(mockMap).toHaveBeenLastCalledWith({
-      element: connection,
-      type,
+      selectedElement: connection
     });
   });
 });
