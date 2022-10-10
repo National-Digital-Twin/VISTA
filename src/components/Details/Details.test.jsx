@@ -1,5 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import Details from "./Details";
+import userEvent from "@testing-library/user-event";
 
 const assetMetadata = {
   category: "asset",
@@ -15,6 +16,22 @@ const assetMetadata = {
   scoreColour: "#128300",
   type: "http://ies.data.gov.uk/ontology/ies4#Facility",
   uri: "http://telicent.io/fake_data#W002",
+  connectionList: [
+    {
+      category: "connection",
+      criticality: 3,
+      targetAsset: {
+        name: "East Cowes Power Station",
+        id: "E001",
+        scoreColour: "#217b00",
+      },
+      sourceAsset: {
+        name: "Chale Street Chale Wps",
+        id: "W002",
+        scoreColour: "#128300",
+      },
+    },
+  ],
 };
 
 const connectionMetadata = {
@@ -27,29 +44,38 @@ const connectionMetadata = {
   sourceAsset: {
     name: "Chale wtw",
     scoreColour: "#128300",
+    id: "W002",
+    criticality: 3,
+    countColour: "#217b00",
   },
   target: "http://telicent.io/fake_data#W002",
   targetName: "Chale Street Chale Wps",
   targetAsset: {
     name: "Chale Street Chale Wps",
     scoreColour: "#128300",
+    id: "W001",
+    criticality: 3,
+    countColour: "#217b00",
   },
   uri: "http://telicent.io/fake_data#connector_W001_W002",
 };
+
+function setup(component) {
+  return {
+    user: userEvent.setup(),
+    ...render(component),
+  };
+}
 
 const renderDetailsComponent = (element) => render(<Details element={element} />);
 
 describe("Details component", () => {
   it("renders message when elements is falsy", () => {
     const { rerender } = render(<Details />);
-    expect(
-      screen.getByText(/click on an asset or connection to view details/i)
-    ).toBeInTheDocument();
+    expect(screen.getByText(/click on an asset or connection to view details/i)).toBeInTheDocument();
 
     rerender(<Details element={{}} />);
-    expect(
-      screen.getByText(/click on an asset or connection to view details/i)
-    ).toBeInTheDocument();
+    expect(screen.getByText(/click on an asset or connection to view details/i)).toBeInTheDocument();
   });
 
   test("renders asset name", () => {
@@ -75,12 +101,29 @@ describe("Details component", () => {
   test("renders connection name", () => {
     renderDetailsComponent(connectionMetadata);
     expect(
-      screen.getByRole("heading", { level: 2, name: connectionMetadata.label })
+      screen.getByRole("heading", {
+        level: 2,
+        name: `${connectionMetadata.sourceAsset.name} - ${connectionMetadata.targetAsset.name}`,
+      })
     ).toBeInTheDocument();
   });
 
-  test("renders connection details", () => {
+  test("renders connected assets when clicked on an asset", async () => {
+    const { user } = setup(<Details element={assetMetadata} />);
+
+    const accordion = screen.getByRole("heading", { level: 2, name: "Connected Assets" });
+    const connectionName = await screen.findByRole("heading", { level: 2, name: "Name: East Cowes Power Station" });
+    expect(connectionName).toBeInTheDocument();
+
+    await user.click(accordion);
+    expect(connectionName).not.toBeInTheDocument();
+  });
+
+  test("renders connected assets when clicked on a connection", () => {
     renderDetailsComponent(connectionMetadata);
-    expect(screen.getByTestId("connection-details")).toHaveTextContent('connects Chale wtw and Chale Street Chale Wps');
+
+    const connectionName = screen.getByRole("heading", { level: 2, name: "Name: Chale Street Chale Wps" });
+
+    expect(connectionName).toBeInTheDocument();
   });
 });
