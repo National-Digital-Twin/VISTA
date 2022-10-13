@@ -1,4 +1,4 @@
-name: build-and-push-telicent-test
+name: Build and push telicent-paralog
 on:
   push:
     branches:
