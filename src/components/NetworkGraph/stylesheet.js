@@ -31,6 +31,7 @@ const cyStylesheet = [
     style: {
       curveStyle: "haystack",
       label: "data(label)",
+      "line-color": "data(color)"
     },
   },
   {
@@ -51,27 +52,23 @@ const cyStylesheet = [
     selector: ".F",
     style: {
       backgroundImage: `url(${Fuel})`,
-      backgroundColor: "black",
     },
   },
   {
     selector: ".M",
     style: {
       backgroundImage: `url(${Medical})`,
-      backgroundColor: "black",
     },
   },
   {
     selector: ".C",
     style: {
       backgroundImage: `url(${Phone})`,
-      backgroundColor: "black",
     },
   },
   {
     selector: ".W",
     style: {
-      backgroundColor: "black",
       backgroundImage: `url(${Drop})`,
     },
   },
@@ -79,40 +76,19 @@ const cyStylesheet = [
     selector: ".T",
     style: {
       backgroundImage: `url(${Car})`,
-      backgroundColor: "black",
     },
   },
   {
     selector: ".E",
     style: {
       backgroundImage: `url(${Battery})`,
-      backgroundColor: "black",
-    },
-  },
-  {
-    selector: ".1",
-    style: {
-      "line-color": "Yellow",
-    },
-  },
-  {
-    selector: ".2",
-    style: {
-      "line-color": "Goldenrod",
-    },
-  },
-  {
-    selector: ".3",
-    style: {
-      "line-color": "Red",
     },
   },
   {
     selector: ":selected",
     style: {
-      backgroundColor: "white",
       borderWidth: "4px",
-      borderColor: "white",
+      borderColor: colors.whiteSmoke,
     },
   },
 ];

@@ -2,10 +2,15 @@ import React, { useContext, useEffect, useState } from "react";
 import Map, { Layer, MapProvider, Source } from "react-map-gl";
 import config from "../../config/app-config";
 import { ElementsContext } from "../../ElementsContext";
-import useSelectNode from "../../hooks/useSelectNode";
+import Asset from "../../models/Asset";
 import { IsEmpty } from "../../utils";
-import { allAssetsLayerStyle, highlightedAssets, lineStyle } from "./layerStyles";
-import { generateAssetFeatures } from "./mapboxFeatures";
+import { allAssetsLayerStyle, highlightedAssets, lineStyle, segmentStyle } from "./layerStyles";
+import {
+  createSelectedAssetFeatures,
+  createSelectedConnectionFeatures,
+  createSelectedSegmentFeatures,
+  generateAssetFeatures,
+} from "./mapboxFeatures";
 import MapToolbar from "./MapToolbar";
 
 const GEOJSON = "geojson";
@@ -16,32 +21,55 @@ const VIEWSTATE = {
   zoom: 9,
 };
 
-const TelicentMap = ({ selectedElement }) => {
-  const { elements } = useContext(ElementsContext);
-  const [setSelectedNode] = useSelectNode(elements.assets, elements.connections);
+const TelicentMap = () => {
+  const { data, onAssetSelect, selectedElements } = useContext(ElementsContext);
 
-  const assetFeatures = generateAssetFeatures(elements.assets);
+  const { assets, assetCriticalityColorScale, cxnCriticalityColorScale, maxAssetCriticality } =
+    data;
+  const assetFeatures = generateAssetFeatures(assets);
 
-  const [connections, setConnections] = useState([]);
-  const [connectedAssets, setConnectedAssets] = useState([]);
   const [cursor, setCursor] = useState("auto");
-  const [mapStyle, setMapStyle] = useState("dark-v10");
   const [hoverInfo, setHoverInfo] = useState(undefined);
+  const [mapStyle, setMapStyle] = useState("dark-v10");
+  const [selectedAssetCxns, setSelectedAssetCxns] = useState([]);
+  const [selectedAssets, setSelectedAssets] = useState([]);
+  const [selectedSegments, setSelectedSegments] = useState([]);
 
   useEffect(() => {
-    if (IsEmpty(selectedElement)) return;
+    if (IsEmpty(assets)) {
+      setSelectedAssets([]);
+      setSelectedAssetCxns([]);
+      return;
+    }
 
-    const { lineAssets: connections, markerAssets: assets } =
-      selectedElement.generateMapboxFeatures();
+    const selectedAssetFeatures = createSelectedAssetFeatures(
+      assets,
+      assetCriticalityColorScale,
+      maxAssetCriticality,
+      selectedElements
+    );
+    setSelectedAssets(selectedAssetFeatures);
 
-    assets.forEach(asset => {
-      if (asset.properties.name === selectedElement.uri) {
-        asset.properties.selected = 'true'
-      }
-    })
-    setConnectedAssets(assets);
-    setConnections(connections);
-  }, [selectedElement]);
+    const selectedSegmentFeatures = createSelectedSegmentFeatures(
+      selectedElements,
+      assetCriticalityColorScale,
+      assets
+    );
+    setSelectedSegments(selectedSegmentFeatures);
+
+    const selectedAssetCxnFeatures = createSelectedConnectionFeatures(
+      assets,
+      cxnCriticalityColorScale,
+      selectedElements
+    );
+    setSelectedAssetCxns(selectedAssetCxnFeatures);
+  }, [
+    assets,
+    cxnCriticalityColorScale,
+    assetCriticalityColorScale,
+    maxAssetCriticality,
+    selectedElements,
+  ]);
 
   const handleOnClick = (event) => {
     const { features } = event;
@@ -49,8 +77,10 @@ const TelicentMap = ({ selectedElement }) => {
 
     if (clickedFeature) {
       const { properties } = clickedFeature;
-      setSelectedNode(properties.uri, "asset");
+      onAssetSelect([new Asset(JSON.parse(properties.element))]);
+      return;
     }
+    onAssetSelect([]);
   };
 
   const handleOnMouseMove = (event) => {
@@ -67,7 +97,7 @@ const TelicentMap = ({ selectedElement }) => {
   };
 
   return (
-    <div className="relative h-full">
+    <div className="relative">
       <MapProvider>
         <Map
           cursor={cursor}
@@ -91,20 +121,31 @@ const TelicentMap = ({ selectedElement }) => {
             <Layer {...allAssetsLayerStyle} />
           </Source>
           <Source
-            id="connections"
+            id="selected-connections"
             type={GEOJSON}
-            data={{ type: FEATURE_COLLECTION, features: connections }}
+            data={{ type: FEATURE_COLLECTION, features: selectedAssetCxns }}
           >
             <Layer {...lineStyle} />
           </Source>
           <Source
-            id="highlighted-assets"
+            id="selected-segments"
             type={GEOJSON}
-            data={{ type: FEATURE_COLLECTION, features: connectedAssets }}
+            data={{ type: FEATURE_COLLECTION, features: selectedSegments }}
+          >
+            <Layer {...segmentStyle} />
+          </Source>
+          <Source
+            id="selected-assets"
+            type={GEOJSON}
+            data={{ type: FEATURE_COLLECTION, features: selectedAssets }}
           >
             <Layer {...highlightedAssets} />
           </Source>
-          <HoverInfo info={hoverInfo?.feature.properties} left={hoverInfo?.x} top={hoverInfo?.y} />
+          <HoverInfo
+            info={hoverInfo?.feature.properties.element}
+            left={hoverInfo?.x}
+            top={hoverInfo?.y}
+          />
         </Map>
         <MapToolbar mapStyle={mapStyle} setMapStyle={setMapStyle} />
       </MapProvider>
@@ -116,15 +157,16 @@ export default TelicentMap;
 
 const HoverInfo = ({ info, left, top }) => {
   if (!info) return null;
+  const assetInfo = JSON.parse(info);
 
   return (
     <div
       className="bg-black-50 text-whiteSmoke absolute font-body text-sm px-2 py-1 rounded-md"
       style={{ left: left + 10, top: top + 8 }}
     >
-      <p>ID: {info.id}</p>
-      <p>Name: {info.name}</p>
-      <p>Criticality: {info.criticality}</p>
+      <p>ID: {assetInfo.label}</p>
+      <p>Name: {assetInfo.name}</p>
+      <p>Criticality: {assetInfo.criticality}</p>
     </div>
   );
 };

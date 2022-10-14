@@ -5,22 +5,23 @@ import CytoscapeComponent from "react-cytoscapejs";
 import dagre from "cytoscape-dagre";
 import React, { useCallback, useContext, useEffect, useMemo, useRef } from "react";
 
-import { createEdges, createNode } from "./cytoscapeUtils";
+import { createEdges, createNode, getSelected } from "./cytoscapeUtils";
 import { ElementsContext } from "../../ElementsContext";
 import cyStylesheet from "./stylesheet";
 import GraphToolbar from "./GraphToolbar";
-import useSelectNode from "../../hooks/useSelectNode";
 
-const NetworkGraph = ({ assets, connections }) => {
+const NetworkGraph = () => {
   const cyRef = useRef({});
+  const { data, graphLayout, onAssetSelect, updateGraphLayout } = useContext(ElementsContext);
+  const { assets, connections, cxnCriticalityColorScale } = data;
+
   const nodes = useMemo(() => createNode(assets), [assets]);
-  const edges = useMemo(() => createEdges(connections), [connections]);
-  const [setSelectedNode] = useSelectNode(assets, connections);
-  const { graphLayout, updateGraphLayout } = useContext(ElementsContext);
+  const edges = useMemo(() => createEdges(connections, cxnCriticalityColorScale), [connections, cxnCriticalityColorScale]);
 
   cytoscape.use(cola);
   cytoscape.use(dagre);
   cytoscape.use(avsdf);
+
 
   useEffect(() => {
     const layout = cyRef.current.layout({ name: graphLayout });
@@ -31,16 +32,21 @@ const NetworkGraph = ({ assets, connections }) => {
     (cy) => {
       if (cyRef.current === cy) return;
       cyRef.current = cy;
-      cyRef.current.on("tap", "node", function (event) {
-        const { target } = event;
-        setSelectedNode(target.id(), "asset");
+      cyRef.current.on("select", "edge", function (event) {
+        onAssetSelect(getSelected(cyRef))
       });
-      cyRef.current.on("tap", "edge", function (event) {
-        const { target } = event;
-        setSelectedNode(target.id(), "connection");
+      cyRef.current.on("unselect", "edge", function (event) {
+        onAssetSelect(getSelected(cyRef))
+      });
+      cyRef.current.on("select", "node", function (event) {
+        const selectedElements = getSelected(cyRef)
+        onAssetSelect(selectedElements)
+      });
+      cyRef.current.on("unselect", "node", function (event) {
+        onAssetSelect(getSelected(cyRef))
       });
     },
-    [setSelectedNode]
+    [onAssetSelect]
   );
 
   return (

@@ -1,163 +1,182 @@
-import { IsEmpty, colourScale } from "../utils";
-import {
-  buildLineFeatures,
-  buildLineFeature,
-  buildCircleFeature,
-  buildCircleFeatures,
-} from "../components/Map/mapboxFeatures";
+import { findAsset, getHexColor } from "../utils";
 
-const drawAssets = (element) => {
-  const lines = [];
-  const markers = [];
-
-  if (element.hasSegments()) {
-    lines.push(buildLineFeature(element));
-  } else {
-    markers.push(buildCircleFeature(element));
-  }
-
-  const markerAssets = markers.concat(buildCircleFeatures(element.connectsTo));
-
-  return { lineAssets: lines, markerAssets };
-};
-const sumCriticality = (acc, connection) =>
-  (acc += parseInt(connection.criticality));
+const MAX_CIRCLE_SIZE = 10;
+const MIN_CIRCLE_SIZE = 5;
 
 export default class Asset {
-  constructor({ item, idx }) {
-    const { name, type, uri, id } = item;
-    this.category = "asset";
-    this.criticality = 0;
-    this.gridIndex = idx + 1;
+  constructor({ id, label, name, description, lat, lng, type, gridIndex, connections, segments }) {
     this.id = id;
-    this.lat = [];
-    this.lon = [];
+    this.label = label;
     this.name = name;
+    this.description = description;
+    this.lat = parseFloat(lat);
+    this.lng = parseFloat(lng);
     this.type = type;
-    this.uri = uri;
-    this.connectsTo = [];
-    this.connectionList = [];
-    this.count = 0;
+    this.gridIndex = gridIndex;
+    this.connections = connections;
+    this.criticality = this.#calculateCriticality();
+    this.segments = segments;
+    Object.preventExtensions(this);
   }
 
-  /**
-   * Process Connections
-   * Does the following:
-   *  - Set what asset connects to
-   *  - Add connections to connectionList
-   *  - Sets connection count
-   *  - Calculates criticality
-   * @param {Array<ConnectionAssessment>} connections
-   * @param {Array<Asset>} assets
-   */
-  processConnections = (connections, assets) => {
-    this.setConnections(
-      connections.map((connection) =>
-        connection.sourceAsset.uri === this.uri
-          ? assets[connection.targetAsset.uri]
-          : assets[connection.sourceAsset.uri]
-      )
-    );
+  #calculateCriticality() {
+    return this.connections.reduce((total, cxn) => total + cxn.criticality, 0);
+  }
 
-    this.connectionList = connections;
-    this.count = connections.length;
+  get totalCxns() {
+    return this.connections.length;
+  }
 
-    this.criticality = connections.reduce(sumCriticality, 0);
-  };
+  toCytoscapeNode() {
+    return {
+      data: {
+        element: this,
+        id: this.id,
+        label: this.label,
+      },
+      classes: ["label", this.label.charAt(0)],
+    };
+  }
 
-  /**
-   * Set connections
-   * Setter. ConnectsTo
-   * @param {Array<ConnectionAssessment>} connections
-   */
-  setConnections = (connections) => {
-    this.connectsTo = connections;
-  };
+  createMapAsset() {
+    return {
+      type: "Feature",
+      properties: {
+        element: this,
+        color: "#333",
+        size: 4,
+        pointType: "asset",
+      },
+      geometry: {
+        type: "Point",
+        coordinates: [this.lng, this.lat],
+      },
+    };
+  }
 
-  getColor = (value) => {
-    let hue = ((1 - value) * 120).toString(10);
-    return `hsl(${hue},100%, 50%)`;
-  };
+  #createSegmentCoords() {
+    const lats = this.segments.map((segment) => parseFloat(segment.lat[0]));
+    const lngs = this.segments.map((segment) => parseFloat(segment.lon[0]));
+    return lngs.map((lng, index) => [lng, lats[index]]);
+  }
 
-  setDescription = (description) => {
-    if (!description) return;
-    this.desc = description;
-  };
+  #lookupTargetConnection(assets) {
+    return this.connections.map((connection) => ({
+      ...connection,
+      target: findAsset(assets, connection.target),
+    }));
+  }
 
-  getLatitude = () => this.lat;
-  setLatitude = (latitude) => {
-    if (!latitude) return;
-    this.lat.push(parseFloat(latitude));
-  };
-
-  setPath = (latitudes, longitudes) => {
-    if (IsEmpty(latitudes) || IsEmpty(longitudes)) return;
-    this.lat = latitudes;
-    this.lon = longitudes;
-  };
-
-  getCoordinates = () => this.lon.map((lon, index) => [lon, this.lat[index]]);
-
-  getLongitude = () => this.lon;
-  setLongitude = (longitude) => {
-    if (!longitude) return;
-    this.lon.push(parseFloat(longitude));
-  };
-
-  calculateScoreColour = (maxScore) => {
-    this.maxScore = maxScore;
-    this.scoreColour = colourScale
-      .getColor(parseInt(99 * this.criticality) / maxScore)
-      .toHexString();
-  };
-
-  getScoreColour = () => this.scoreColour;
-
-  calculateCountColour = (maxCount) => {
-    this.maxCount = maxCount;
-    this.countColour = colourScale
-      .getColor((99 * this.count) / maxCount)
-      .toHexString();
-  };
-
-  getSize = () => {
-    const maxCircleSize = 10;
-    const minCirceSize = 4;
-    const radius = this.criticality / this.maxScore;
-    const circleSize = Math.ceil(Math.PI * 2 * radius);
-    let result;
-    if (circleSize > maxCircleSize) {
-      result = maxCircleSize;
-    } else if (circleSize < minCirceSize) {
-      result = minCirceSize;
-    } else {
-      result = circleSize;
+  createSelectedAssetFeature(colorScale, maxCriticality, isSource) {
+    const r = this.criticality / maxCriticality;
+    let circumference = Math.ceil(Math.PI * 2 * r);
+    if (circumference > MAX_CIRCLE_SIZE) {
+      circumference = MAX_CIRCLE_SIZE;
+    } else if (circumference < MIN_CIRCLE_SIZE) {
+      circumference = MIN_CIRCLE_SIZE;
     }
-    return result;
-  };
 
-  getCountColour = () => this.countColour;
+    return {
+      type: "Feature",
+      properties: {
+        color: getHexColor(colorScale, this.criticality),
+        size: circumference,
+        pointType: "asset",
+        selected: isSource ? "source" : "target",
+      },
+      geometry: {
+        type: "Point",
+        coordinates: [this.lng, this.lat],
+      },
+    };
+  }
 
-  getCount = () => {
-    return this.count;
-  };
+  generateSelectedAssetFeatures(assets, colorScale, maxCriticality) {
+    const sourceFeature = this.createSelectedAssetFeature(colorScale, maxCriticality, true);
+    const targetFeatures = this.#lookupTargetConnection(assets).map(({ target }) => {
+      return target.createSelectedAssetFeature(colorScale, maxCriticality, false);
+    });
+    return [sourceFeature, ...targetFeatures];
+  }
 
-  hasSegments = () => this.getCoordinates().length > 2;
+  createSelectedSegmentFeature(colorScale) {
+    return {
+      type: "Feature",
+      properties: {
+        color: getHexColor(colorScale, this.criticality),
+      },
+      geometry: {
+        type: "LineString",
+        coordinates: this.#createSegmentCoords(),
+      },
+    };
+  }
 
-  getCriticality = () => {
-    return this.criticality;
-  };
+  generateSelectedSegmentFeatures(assets, colorScale) {
+    if (this.segments.length > 0) {
+      const sourceFeature = this.createSelectedSegmentFeature(colorScale);
+      return [sourceFeature];
+      // const targetFeatures = this.#lookupTargetConnection(assets).map(({ target, criticality }) => {
+      //   return target.createSelectedSegmentFeature(criticality, colorScale);
+      // });
+      // return [sourceFeature, ...targetFeatures];
+    }
+    return [];
+  }
 
-  setCriticality = (criticality) => (this.criticality = criticality);
+  createSelectedConnectionFeature(target, criticality, colorScale) {
+    if (this.lng && this.lat && target.lng && target.lat) {
+      return {
+        type: "Feature",
+        properties: {
+          color: getHexColor(colorScale, criticality),
+        },
+        geometry: {
+          type: "LineString",
+          coordinates: [
+            [this.lng, this.lat],
+            [target.lng, target.lat],
+          ],
+        },
+      };
+    }
+    return {};
+  }
 
-  hasLatLon = () => {
-    return IsEmpty(this.lat) && IsEmpty(this.lon);
-  };
+  generateSelectedConnectionFeature(assets, colorScale) {
+    return this.#lookupTargetConnection(assets).map(({ target, criticality }) =>
+      this.createSelectedConnectionFeature(target, criticality, colorScale)
+    );
+  }
 
-  generateMapboxFeatures = () => {
-    const { lineAssets, markerAssets } = drawAssets(this);
-    const connectionAssets = buildLineFeatures(this.connectionList);
+  createConnectedAssets(asset, cxnCriticality, colorScale) {
+    return {
+      uri: asset.id,
+      title: `${asset.name} (${asset.label})`,
+      assetCriticality: asset.criticality,
+      cxnCriticality,
+      color: getHexColor(colorScale, asset.criticality),
+    };
+  }
 
-    return { lineAssets: [...lineAssets, ...connectionAssets], markerAssets };
-  };
+  #generateConnectedAssets(assets, colorScale) {
+    return this.#lookupTargetConnection(assets).map(({ target, criticality }) =>
+      this.createConnectedAssets(target, criticality, colorScale)
+    );
+  }
+
+  generateDetails(assets, colorScale) {
+    return {
+      uri: this.id,
+      title: `${this.name} (${this.label})`,
+      criticality: this.criticality,
+      type: this.type,
+      description: this.description,
+      lat: this.lat,
+      lng: this.lng,
+      color: getHexColor(colorScale, this.criticality),
+      connectedAssets: this.#generateConnectedAssets(assets, colorScale),
+      elementType: "asset",
+    };
+  }
 }

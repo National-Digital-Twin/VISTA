@@ -1,51 +1,32 @@
-export const buildLineFeature = (asset) => {
-  const coords =
-    asset.category === "connection" && asset.getCoordinates().length > 2
-      ? asset.getCoordinates()[0]
-      : asset.getCoordinates();
-
-  return {
-    type: "Feature",
-    properties: {
-      name: asset.uri,
-      color: asset.getScoreColour(),
-    },
-    geometry: {
-      type: "LineString",
-      coordinates: coords,
-    },
-  };
+export const generateAssetFeatures = (assets) => {
+  return assets.map((asset) => asset.createMapAsset());
 };
 
-export const buildCircleFeature = (asset) => ({
-  type: "Feature",
-  properties: {
-    name: asset.uri,
-    color: asset.getScoreColour(),
-    size: asset.getSize(),
-  },
-  geometry: {
-    type: "Point",
-    coordinates: asset.getCoordinates().flat(),
-  },
-});
+export const createSelectedAssetFeatures = (
+  assets,
+  assetCriticalityColorScale,
+  maxCriticality,
+  selectedElements
+) => {
+  return selectedElements.flatMap((element) => {
+    const colorScale = assetCriticalityColorScale;
+    return element.generateSelectedAssetFeatures(assets, colorScale, maxCriticality);
+  });
+};
 
-export const buildLineFeatures = (assets) => assets.map(buildLineFeature);
-export const buildCircleFeatures = (assets) => assets.map(buildCircleFeature);
+export const createSelectedSegmentFeatures = (selectedElements, colorScale, assets) => {
+  return selectedElements.flatMap((selectedElement) =>
+    selectedElement.generateSelectedSegmentFeatures(assets, colorScale)
+  );
+};
 
-export const generateAssetFeatures = (assets) =>
-  assets.map((element) => ({
-    id: 'assets-layer',
-    type: "Feature",
-    properties: {
-      id: element.id,
-      uri: element.uri,
-      name: element.name,
-      criticality: element.criticality,
-      mapboxFeatures: element.generateMapboxFeatures()
-    },
-    geometry: {
-      type: "Point",
-      coordinates: [element.lon[0], element.lat[0]],
-    },
-  }));
+export const createSelectedConnectionFeatures = (
+  assets,
+  cxnCriticalityColorScale,
+  selectedElements
+) => {
+  const colorScale = cxnCriticalityColorScale;
+  return selectedElements.flatMap((element) =>
+    element.generateSelectedConnectionFeature(assets, colorScale)
+  );
+};

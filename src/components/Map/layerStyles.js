@@ -12,15 +12,30 @@ export const allAssetsLayerStyle = {
 };
 
 export const lineStyle = {
-  id: "line",
+  id: "connection",
   type: "line",
+  source: "selected-connections",
   layout: {
     "line-join": "round",
     "line-cap": "round",
   },
   paint: {
-    "line-width": 1,
+    "line-width": 2,
     "line-color": ["get", "color"],
+  },
+};
+
+export const segmentStyle = {
+  id: "segments",
+  type: "line",
+  source: "selected-segments",
+  layout: {
+    "line-join": "round",
+    "line-cap": "round",
+  },
+  paint: {
+    "line-color": ["get", "color"],
+    "line-width": 3,
   },
 };
 
@@ -30,7 +45,13 @@ export const highlightedAssets = {
   paint: {
     "circle-radius": ["get", "size"],
     "circle-color": ["get", "color"],
-    "circle-stroke-color": ["match", ["get", "selected"], "true", "#E9E9E9", "rgba(255,255,255,0)"],
+    "circle-stroke-color": [
+      "match",
+      ["get", "selected"],
+      "source",
+      "#E9E9E9",
+      "rgba(255,255,255,0)",
+    ],
     "circle-stroke-width": 2,
   },
 };

@@ -1,73 +1,45 @@
-import React, { useEffect, useContext, useCallback } from "react";
+import React, { useEffect, useContext } from "react";
 import TelicentGrid from "../Grid";
 import useFetch from "use-http";
 import config from "../../config/app-config";
 import { Tabs, Tab, TabList, TabPanel } from "react-tabs";
 import { IsEmpty } from "../../utils";
 import "react-tabs/style/react-tabs.css";
-import { buildAssetAndConnectionLinks } from "./utils";
+import { createData } from "./utils";
 
 import "./DataFigures.css";
 import { ElementsContext } from "../../ElementsContext";
 import NetworkGraph from "../NetworkGraph/NetworkGraph";
 
 const DataFigures = ({ selected }) => {
-  const { updateElements, elements } = useContext(ElementsContext);
-
+  const { setData } = useContext(ElementsContext);
   const { get, loading } = useFetch(config.api.url);
 
-  const resetAllConnectionsAndAssets = useCallback(() => {
-    updateElements({
-      assets: [],
-      connections: [],
-    });
-  }, [updateElements]);
-
-  const processAllConnectionsAndAssetResults = useCallback(
-    (selectedFilters = []) => {
-      if (IsEmpty(selectedFilters)) return;
-
-      if (IsEmpty(selected)) {
-        resetAllConnectionsAndAssets();
-        return;
-      }
-
-      
-      const { assets, connections } = buildAssetAndConnectionLinks(
-        {rawAssets: selectedFilters[0], rawConnections: selectedFilters[1]}
-      );
-
-      updateElements({
-        assets: Object.values(assets),
-        connections: Object.values(connections),
-      });
-    },
-    [selected, resetAllConnectionsAndAssets, updateElements]
-  );
-  const getDetails = useCallback (async (assetsUrl, connectionUrl) => {
-    const assets = await get(assetsUrl)
-    const connections = await get(connectionUrl)
-    processAllConnectionsAndAssetResults([assets, connections])
-  }, [processAllConnectionsAndAssetResults, get])
   useEffect(() => {
     if (IsEmpty(selected)) {
-      resetAllConnectionsAndAssets();
+      setData({
+        assetCriticalityColorScale: {},
+        assets: [],
+        connections: [],
+        cxnCriticalityColorScale: {},
+        maxAssetCriticality: 0,
+        maxAssetTotalCxns: 0,
+        totalCxnsColorScale: {},
+      });
       return;
     }
-    
-    const connectionUrl = `assessments/connections?${selected
-      .map((item) => `assessments=${encodeURIComponent(item)}`)
-      .join("&")}`;
-    const assetsUrl = `assessments/assets?${selected.map(uri => `assessments=${encodeURIComponent(uri)}`).join("&")}`;
-    getDetails(assetsUrl, connectionUrl)
-   
-  }, [
-    selected,
-    get,
-    resetAllConnectionsAndAssets,
-    getDetails,
-    updateElements,
-  ]);
+
+    const paramsArray = selected.map((item) => ["assessments", item]);
+    const params = new URLSearchParams(paramsArray).toString();
+
+    const getAssessments = async () => {
+      const assets = await get(`assessments/assets?${params}`);
+      const connections = await get(`assessments/connections?${params}`);
+      const data = await createData(assets, connections, get);
+      setData(data);
+    };
+    getAssessments();
+  }, [get, selected, setData]);
 
   return (
     <div
@@ -87,15 +59,11 @@ const DataFigures = ({ selected }) => {
             Grid
           </Tab>
         </TabList>
-        <TabPanel style={{ height: '100%' }}>
-          <NetworkGraph assets={elements.assets} connections={elements.connections} />
+        <TabPanel style={{ height: "100%" }}>
+          <NetworkGraph />
         </TabPanel>
-        <TabPanel style={{ height: '95%', paddingTop: '4px' }}>
-          <TelicentGrid
-            assets={elements.assets}
-            connections={elements.connections}
-            loading={loading}
-          />
+        <TabPanel style={{ height: "95%", paddingTop: "4px" }}>
+          <TelicentGrid loading={loading} />
         </TabPanel>
       </Tabs>
     </div>

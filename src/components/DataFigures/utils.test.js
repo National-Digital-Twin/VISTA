@@ -29,7 +29,7 @@ const rawConnections = [
   },
 ];
 
-describe("processAssets", () => {
+describe.skip("processAssets", () => {
   const targetUri = "http://telicent.io/test-data/iow#W001";
 
   it("should generate assets", async () => {
@@ -50,7 +50,7 @@ describe("processAssets", () => {
   });
 });
 
-describe("generateConnectionAssessments", () => {
+describe.skip("generateConnectionAssessments", () => {
   const sourceUri = "http://telicent.io/test-data/iow#W001";
   const targetUri = "http://telicent.io/test-data/iow#W002";
   const processedAssets = processAssets(rawAssets);
