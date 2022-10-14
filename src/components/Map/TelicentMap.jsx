@@ -24,8 +24,7 @@ const VIEWSTATE = {
 const TelicentMap = () => {
   const { data, onAssetSelect, selectedElements } = useContext(ElementsContext);
 
-  const { assets, assetCriticalityColorScale, cxnCriticalityColorScale, maxAssetCriticality } =
-    data;
+  const { assets, assetCriticalityColorScale, cxnCriticalityColorScale, maxAssetCriticality } = data;
   const assetFeatures = generateAssetFeatures(assets);
 
   const [cursor, setCursor] = useState("auto");
@@ -63,13 +62,7 @@ const TelicentMap = () => {
       selectedElements
     );
     setSelectedAssetCxns(selectedAssetCxnFeatures);
-  }, [
-    assets,
-    cxnCriticalityColorScale,
-    assetCriticalityColorScale,
-    maxAssetCriticality,
-    selectedElements,
-  ]);
+  }, [assets, cxnCriticalityColorScale, assetCriticalityColorScale, maxAssetCriticality, selectedElements]);
 
   const handleOnClick = (event) => {
     const { features } = event;
@@ -113,11 +106,7 @@ const TelicentMap = () => {
           onMouseLeave={resetCursor}
           onMouseMove={handleOnMouseMove}
         >
-          <Source
-            id="all-assets"
-            type={GEOJSON}
-            data={{ type: FEATURE_COLLECTION, features: assetFeatures }}
-          >
+          <Source id="all-assets" type={GEOJSON} data={{ type: FEATURE_COLLECTION, features: assetFeatures }}>
             <Layer {...allAssetsLayerStyle} />
           </Source>
           <Source
