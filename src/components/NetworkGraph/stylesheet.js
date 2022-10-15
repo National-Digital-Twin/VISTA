@@ -4,6 +4,7 @@ import Phone from "./assets/phone-fill-coral.svg";
 import Drop from "./assets/drop-fill-blue.svg";
 import Battery from "./assets/battery-charge-fill-teal.svg";
 import Car from "./assets/car-fill-aqua.svg";
+import User3 from "./assets/user-3.svg";
 
 const colors = {
   whiteSmoke: "#F5F5F5",
@@ -51,27 +52,23 @@ const cyStylesheet = [
     selector: ".F",
     style: {
       backgroundImage: `url(${Fuel})`,
-      backgroundColor: "black",
     },
   },
   {
     selector: ".M",
     style: {
       backgroundImage: `url(${Medical})`,
-      backgroundColor: "black",
     },
   },
   {
     selector: ".C",
     style: {
       backgroundImage: `url(${Phone})`,
-      backgroundColor: "black",
     },
   },
   {
     selector: ".W",
     style: {
-      backgroundColor: "black",
       backgroundImage: `url(${Drop})`,
     },
   },
@@ -79,14 +76,18 @@ const cyStylesheet = [
     selector: ".T",
     style: {
       backgroundImage: `url(${Car})`,
-      backgroundColor: "black",
     },
   },
   {
     selector: ".E",
     style: {
       backgroundImage: `url(${Battery})`,
-      backgroundColor: "black",
+    },
+  },
+  {
+    selector: ".V",
+    style: {
+      backgroundImage: `url(${User3})`,
     },
   },
   {
