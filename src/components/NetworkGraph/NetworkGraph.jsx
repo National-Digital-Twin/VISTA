@@ -12,11 +12,15 @@ import GraphToolbar from "./GraphToolbar";
 
 const NetworkGraph = () => {
   const cyRef = useRef({});
-  const { data, graphLayout, onAssetSelect, selectedElements, updateGraphLayout } = useContext(ElementsContext);
+  const { data, graphLayout, onAssetSelect, selectedElements, updateGraphLayout } =
+    useContext(ElementsContext);
   const { assets, connections, cxnCriticalityColorScale } = data;
 
   const nodes = useMemo(() => createNode(assets), [assets]);
-  const edges = useMemo(() => createEdges(connections, cxnCriticalityColorScale), [connections, cxnCriticalityColorScale]);
+  const edges = useMemo(
+    () => createEdges(connections, cxnCriticalityColorScale),
+    [connections, cxnCriticalityColorScale]
+  );
 
   cytoscape.use(cola);
   cytoscape.use(dagre);
@@ -30,13 +34,11 @@ const NetworkGraph = () => {
 
   useEffect(() => {
     if (!cyRef.current) return;
-    if (selectedElements.length > 1) {
-      assets.forEach((asset) => {
-        const cyElement = cyRef.current.getElementById(asset.id);
-        const toSelect = selectedElements.some((element) => element.id === asset.id);
-        toSelect ? cyElement.select() : cyElement.unselect();
-      });
-    }
+    assets.forEach((asset) => {
+      const cyElement = cyRef.current.getElementById(asset.id);
+      const toSelect = selectedElements.some((element) => element.id === asset.id);
+      toSelect ? cyElement.select() : cyElement.unselect();
+    });
   }, [cyRef, assets, selectedElements]);
 
   const setCytoscape = useCallback(
