@@ -24,9 +24,7 @@ const Details = ({ element, expand }) => (
   <div className="grid gap-y-1">
     <h2 className="text-lg flex gap-x-2 items-center font-medium">
       <span
-        style={{
-          backgroundColor: element.color,
-        }}
+        style={{ backgroundColor: element.color }}
         className={classNames({
           "w-3 h-3 rounded-full border-2 border-whiteSmoke": isAsset(element),
           "w-4 h-0.5 bg-white": !isAsset(element),

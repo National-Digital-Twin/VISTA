@@ -12,7 +12,7 @@ import GraphToolbar from "./GraphToolbar";
 
 const NetworkGraph = () => {
   const cyRef = useRef({});
-  const { data, graphLayout, onAssetSelect, updateGraphLayout } = useContext(ElementsContext);
+  const { data, graphLayout, onAssetSelect, selectedElements, updateGraphLayout } = useContext(ElementsContext);
   const { assets, connections, cxnCriticalityColorScale } = data;
 
   const nodes = useMemo(() => createNode(assets), [assets]);
@@ -22,28 +22,37 @@ const NetworkGraph = () => {
   cytoscape.use(dagre);
   cytoscape.use(avsdf);
 
-
   useEffect(() => {
     const layout = cyRef.current.layout({ name: graphLayout });
     layout.run();
   }, [nodes, edges, graphLayout]);
+
+  useEffect(() => {
+    if (!cyRef.current) return;
+    if (selectedElements.length > 1) {
+      assets.forEach((asset) => {
+        const cyElement = cyRef.current.getElementById(asset.id);
+        const toSelect = selectedElements.some((element) => element.id === asset.id);
+        toSelect ? cyElement.select() : cyElement.unselect();
+      });
+    }
+  }, [cyRef, assets, selectedElements]);
 
   const setCytoscape = useCallback(
     (cy) => {
       if (cyRef.current === cy) return;
       cyRef.current = cy;
       cyRef.current.on("select", "edge", function (event) {
-        onAssetSelect(getSelected(cyRef))
+        onAssetSelect(getSelected(cyRef));
       });
       cyRef.current.on("unselect", "edge", function (event) {
-        onAssetSelect(getSelected(cyRef))
+        onAssetSelect(getSelected(cyRef));
       });
       cyRef.current.on("select", "node", function (event) {
-        const selectedElements = getSelected(cyRef)
-        onAssetSelect(selectedElements)
+        onAssetSelect(getSelected(cyRef));
       });
       cyRef.current.on("unselect", "node", function (event) {
-        onAssetSelect(getSelected(cyRef))
+        onAssetSelect(getSelected(cyRef));
       });
     },
     [onAssetSelect]

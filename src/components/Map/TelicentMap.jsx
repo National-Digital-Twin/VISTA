@@ -26,7 +26,7 @@ const TelicentMap = () => {
 
   const { assets, assetCriticalityColorScale, cxnCriticalityColorScale, maxAssetCriticality } = data;
   const assetFeatures = generateAssetFeatures(assets);
-
+  
   const [cursor, setCursor] = useState("auto");
   const [hoverInfo, setHoverInfo] = useState(undefined);
   const [mapStyle, setMapStyle] = useState("dark-v10");
@@ -62,7 +62,13 @@ const TelicentMap = () => {
       selectedElements
     );
     setSelectedAssetCxns(selectedAssetCxnFeatures);
-  }, [assets, cxnCriticalityColorScale, assetCriticalityColorScale, maxAssetCriticality, selectedElements]);
+  }, [
+    assets,
+    cxnCriticalityColorScale,
+    assetCriticalityColorScale,
+    maxAssetCriticality,
+    selectedElements,
+  ]);
 
   const handleOnClick = (event) => {
     const { features } = event;
@@ -70,7 +76,17 @@ const TelicentMap = () => {
 
     if (clickedFeature) {
       const { properties } = clickedFeature;
-      onAssetSelect([new Asset(JSON.parse(properties.element))]);
+      event.originalEvent.stopPropagation();
+      const element = JSON.parse(properties.element);
+
+      if (event.originalEvent.shiftKey) {
+        onAssetSelect((prevSelected) => {
+          const index = prevSelected.findIndex((prev) => prev.id === element.id);
+          if (index === -1) return [...prevSelected, new Asset(element)];
+          return prevSelected.filter((prev) => prev.id !== element.id);
+        });
+      }
+      onAssetSelect([new Asset(element)])
       return;
     }
     onAssetSelect([]);
@@ -105,8 +121,13 @@ const TelicentMap = () => {
           onMouseEnter={() => setCursor("pointer")}
           onMouseLeave={resetCursor}
           onMouseMove={handleOnMouseMove}
+          boxZoom={false}
         >
-          <Source id="all-assets" type={GEOJSON} data={{ type: FEATURE_COLLECTION, features: assetFeatures }}>
+          <Source
+            id="all-assets"
+            type={GEOJSON}
+            data={{ type: FEATURE_COLLECTION, features: assetFeatures }}
+          >
             <Layer {...allAssetsLayerStyle} />
           </Source>
           <Source
