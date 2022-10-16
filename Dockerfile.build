@@ -27,7 +27,7 @@ COPY --from=build /app/build /app/build
 WORKDIR /app/build
 
 COPY ./env.sh .
-COPY env.default .env
+COPY .env.default .env
 
 
 
