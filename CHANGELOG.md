@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.3](https://github.com/Telicent-io/telicent-paralog/compare/v1.1.2...v1.1.3) (2022-10-16)
+
+
+### Bug Fixes
+
+* dockerfile using the wrong file ([496bf63](https://github.com/Telicent-io/telicent-paralog/commit/496bf63214e4fcbdd175dbfbb3f1f0625b36fe05))
+
 ## [1.1.2](https://github.com/Telicent-io/telicent-paralog/compare/v1.1.1...v1.1.2) (2022-10-16)
 
 
