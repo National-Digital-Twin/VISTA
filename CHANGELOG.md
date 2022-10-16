@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/Telicent-io/telicent-paralog/compare/v1.1.0...v1.1.1) (2022-10-16)
+
+
+### Bug Fixes
+
+* **dockerfile.offline:** typo in Dockerfile.offline ([559eb00](https://github.com/Telicent-io/telicent-paralog/commit/559eb00716059b7025d95ffc084818f071a04cc8))
+
 ## [1.1.0](https://github.com/Telicent-io/telicent-paralog/compare/v1.0.1...v1.1.0) (2022-10-16)
 
 
