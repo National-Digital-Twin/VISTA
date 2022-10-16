@@ -4,19 +4,22 @@ import React, { useRef, useState } from "react";
 import { useMap } from "react-map-gl";
 import { useOutsideAlerter } from "../../hooks";
 import { ToolbarButton, VerticalDivider } from "../../lib";
+import { getMapStyles } from "./mapStyles";
 
-const MAP_STYLES = [
-  { id: "light-v10", name: "Light" },
-  { id: "dark-v10", name: "Dark" },
-  { id: "satellite-streets-v11", name: "Satellite" },
-  { id: "streets-v11", name: "Streets" },
-  { id: "outdoors-v11", name: "Outdoors" },
-];
+// const MAP_STYLES = [
+//   { id: "light-v10", name: "Light" },
+//   { id: "dark-v10", name: "Dark" },
+//   { id: "satellite-streets-v11", name: "Satellite" },
+//   { id: "streets-v11", name: "Streets" },
+//   { id: "outdoors-v11", name: "Outdoors" },
+// ];
 
 const MapToolbar = ({ mapStyle, setMapStyle }) => {
   const { telicentMap: map } = useMap();
 
   const [showMapStyles, setShowMapStyles] = useState(false);
+
+  const mapStyles = getMapStyles();
 
   const handleZoomOut = () => {
     if (!map) return;
@@ -48,7 +51,7 @@ const MapToolbar = ({ mapStyle, setMapStyle }) => {
         showSecodaryMenu={showMapStyles}
         secondaryMenu={
           <MapStyles
-            items={MAP_STYLES}
+            items={mapStyles}
             mapStyle={mapStyle}
             onClose={() => setShowMapStyles(false)}
             setMapStyle={setMapStyle}
