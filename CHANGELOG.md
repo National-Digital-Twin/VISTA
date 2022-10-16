@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.2](https://github.com/Telicent-io/telicent-paralog/compare/v1.1.1...v1.1.2) (2022-10-16)
+
+
+### Bug Fixes
+
+* make env empty defaults ([3bf8bff](https://github.com/Telicent-io/telicent-paralog/commit/3bf8bff576a2354dde207440c93c681442346f8e))
+* update .env.default to enable OFFLINE mode ([93d4a85](https://github.com/Telicent-io/telicent-paralog/commit/93d4a851e425396c436ca1126fbcb7b80929dbac))
+
 ## [1.1.1](https://github.com/Telicent-io/telicent-paralog/compare/v1.1.0...v1.1.1) (2022-10-16)
 
 
