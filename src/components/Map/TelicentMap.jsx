@@ -2,6 +2,7 @@ import React, { useEffect, useReducer } from "react";
 import { Layer, Map, MapProvider, Source } from "react-map-gl";
 import config from "../../config/app-config";
 import { useLocalStorage } from "../../hooks";
+import { getMapStyles } from "./mapStyles";
 import MapToolbar from "./MapToolbar";
 
 const UPDATE_FEATURES = "UPDATE_FEATURES";
@@ -75,8 +76,12 @@ const reducer = (state, action) => {
 
 const TelicentMap = ({ element }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const [mapStyle, setMapStyle] = useLocalStorage("mapStyle", "dark-v10");
-
+  const [mapStyle, setMapStyle] = useLocalStorage("mapStyle", "mapbox://styles/mapbox/dark-v10");
+  useEffect(() => {
+    if(!getMapStyles().some(style=> style.id === mapStyle)){
+      setMapStyle(getMapStyles()[0].id)
+    }
+  }, [mapStyle, setMapStyle])
   const getFocussedAsset = (element) => {
     const { lineAssets, markerAssets } = element.generateMapboxFeatures();
     dispatch({
@@ -133,7 +138,7 @@ const TelicentMap = ({ element }) => {
           id="telicentMap"
           {...state.viewport}
           mapboxAccessToken={config.mb.token}
-          mapStyle={`mapbox://styles/mapbox/${mapStyle}`}
+          mapStyle={mapStyle}
           onResize={onHandleViewportResize}
           onDrag={handleViewport}
           onZoom={handleViewport}
