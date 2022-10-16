@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.1.0](https://github.com/Telicent-io/telicent-paralog/compare/v1.0.1...v1.1.0) (2022-10-16)
+
+
+### Features
+
+* add an offline mode for demo ([7287897](https://github.com/Telicent-io/telicent-paralog/commit/72878977ceea60e01de89ac75deefe148327b47d))
+
+
+### Bug Fixes
+
+* added icon for vulnerable people ([4cd12b0](https://github.com/Telicent-io/telicent-paralog/commit/4cd12b0dbe0172951c9a2bff9e2b8a9ffc9a6790)), closes [#103](https://github.com/Telicent-io/telicent-paralog/issues/103)
+* made map style consist between loads ([5ae0df0](https://github.com/Telicent-io/telicent-paralog/commit/5ae0df070da4f1719a4e54ec3533313dd5557d43)), closes [#110](https://github.com/Telicent-io/telicent-paralog/issues/110)
+
 ## [1.0.1](https://github.com/Telicent-io/telicent-paralog/compare/v1.0.0...v1.0.1) (2022-10-03)
 
 
