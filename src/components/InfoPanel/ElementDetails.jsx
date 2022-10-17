@@ -13,7 +13,7 @@ const ElementDetails = ({ element, expand, onViewDetails }) => {
     );
 
   return (
-    <div id="element-details" className="grid grid-flow-row auto-rows-min gap-y-4 overflow-auto">
+    <div id="element-details" className="grid grid-flow-row auto-rows-min gap-y-4">
       <Details element={element} expand />
       <ConnectedAssets connectedAssets={element.connectedAssets} />
     </div>
@@ -70,10 +70,7 @@ const Description = ({ description }) => {
         {description}
       </p>
       {isLineClampApplied && showMore ? null : (
-        <button
-          className="w-fit float-right flex items-center gap-x-1 text-sm"
-          onClick={handleShowMore}
-        >
+        <button className="w-fit float-right flex items-center gap-x-1 text-sm" onClick={handleShowMore}>
           show {showMore ? "more" : "less"}
           <span
             className={classNames("!text-sm", {
@@ -121,9 +118,7 @@ const DetailsSection = ({ expand, onToggle, show, title, children }) => {
       <DetailsSectionTitle expand={expand} onToggle={onToggle}>
         <h3 className="text-lg pl-2">{title}</h3>
       </DetailsSectionTitle>
-      {expand && (
-        <div className="relative top-5 bg-black-200 rounded-xl w-full p-4 pt-10">{children}</div>
-      )}
+      {expand && <div className="relative top-5 bg-black-200 rounded-xl w-full p-4 pt-10">{children}</div>}
     </div>
   );
 };
@@ -154,9 +149,7 @@ const ConnectedAssets = ({ connectedAssets }) => {
                 <h4 className="flex gap-x-2 items-center whitespace-nowrap">{asset.title}</h4>
                 <div className="grid grid-flow-col auto-cols-min gap-x-6">
                   <p className="whitespace-nowrap">Asset criticality: {asset.assetCriticality}</p>
-                  <p className="whitespace-nowrap">
-                    Connection criticality: {asset.cxnCriticality}
-                  </p>
+                  <p className="whitespace-nowrap">Connection criticality: {asset.cxnCriticality}</p>
                 </div>
               </div>
             </li>
