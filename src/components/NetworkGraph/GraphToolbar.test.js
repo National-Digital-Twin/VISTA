@@ -39,9 +39,11 @@ describe("GraphToolbar component", () => {
 
     await user.click(layoutBtn);
 
-    const secondaryMenuItems = within(screen.getByTestId("secondary-menu")).getAllByRole("listitem");
+    const secondaryMenuItems = within(screen.getByTestId("secondary-menu")).getAllByRole(
+      "listitem"
+    );
     expect(secondaryMenuItems).toHaveLength(6);
-    expect(secondaryMenuItems).toMatchSnapshot("layout options")
+    expect(secondaryMenuItems).toMatchSnapshot("layout options");
   });
 
   test("renders Cola as the default graph layout", async () => {
