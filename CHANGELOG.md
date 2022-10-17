@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.2.0](https://github.com/Telicent-io/telicent-paralog/compare/v1.1.3...v1.2.0) (2022-10-17)
+
+
+### Features
+
+* hopefully this will trigger build pr ([2e98a8f](https://github.com/Telicent-io/telicent-paralog/commit/2e98a8f60e0623eb88d825e95f03f342030792e3))
+* interactivity ([19bd64b](https://github.com/Telicent-io/telicent-paralog/commit/19bd64b771d9a9fd9fc57c3c620dd5d91e854ff0))
+* removed node selection on graph when an asset is clicked on the map ([b1a17e4](https://github.com/Telicent-io/telicent-paralog/commit/b1a17e431d5f1b91a428f92892ddf691eac7ef6f))
+
+
+### Bug Fixes
+
+* fix scroll bug on the info panel ([7fbf26a](https://github.com/Telicent-io/telicent-paralog/commit/7fbf26a97c74b20db468e60da7baaab8eef4e3f0))
+
 ## [1.1.3](https://github.com/Telicent-io/telicent-paralog/compare/v1.1.2...v1.1.3) (2022-10-16)
 
 
