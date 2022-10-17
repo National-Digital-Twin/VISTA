@@ -33,8 +33,8 @@ const Toolbar = ({ cyRef, graphLayout, setGraphLayout }) => {
     const file = new Blob([png], { type: type });
 
     link.setAttribute("id", "downloadpng");
-    link.href = URL.createObjectURL(file);
-    link.download = name;
+    link.setAttribute("href", URL.createObjectURL(file));
+    link.setAttribute("download", name);
     link.click();
 
     URL.revokeObjectURL(link.href);

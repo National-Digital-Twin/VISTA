@@ -6,14 +6,6 @@ import { useOutsideAlerter } from "../../hooks";
 import { ToolbarButton, VerticalDivider } from "../../lib";
 import { getMapStyles } from "./mapStyles";
 
-// const MAP_STYLES = [
-//   { id: "light-v10", name: "Light" },
-//   { id: "dark-v10", name: "Dark" },
-//   { id: "satellite-streets-v11", name: "Satellite" },
-//   { id: "streets-v11", name: "Streets" },
-//   { id: "outdoors-v11", name: "Outdoors" },
-// ];
-
 const MapToolbar = ({ mapStyle, setMapStyle }) => {
   const { telicentMap: map } = useMap();
 

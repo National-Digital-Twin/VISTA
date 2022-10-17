@@ -1,30 +1,19 @@
-import { act, screen, render } from "@testing-library/react";
+import { screen, render, waitFor } from "@testing-library/react";
+import { server } from "../../mocks/server";
 import Categories from "./Categories";
 
-describe("Categories component should", () => {
-  beforeEach(async () => {
-    fetchMock.resetMocks();
-    fetchMock.mockResponse(
-      JSON.stringify([
-        {
-          uri: "http://telicent.io/test-data/iow#Water_Assessment",
-          name: "Water",
-          assCount: "94",
-        },
-        {
-          uri: "http://telicent.io/test-data/iow#Energy_Assessment",
-          name: "Energy",
-          assCount: "25",
-        },
-      ])
-    );
 
-    await act(async () => {
-      await render(<Categories selected={[]} setSelected={jest.fn()} />);
-    });
-  });
+describe("Categories component", () => {
+  beforeAll(() => server.listen());
+  beforeEach(() => server.resetHandlers());
+  afterAll(() => server.close());
+  
+  test("renders options with total count", async () => {
+    render(<Categories selected={[]} setSelected={jest.fn()} />);
+    await waitFor(() => expect(screen.queryByText("Loading")).not.toBeInTheDocument());
 
-  it("render a checkbox for each option returned as display number of assets counts", () => {
-    expect(screen.queryAllByRole("checkbox")).toHaveLength(2);
+    expect(screen.getAllByRole("checkbox")).toHaveLength(2);
+    expect(screen.getByRole("checkbox", { name: "Energy [25]" })).toBeInTheDocument();
+    expect(screen.getByRole("checkbox", { name: "Transport [44]" })).toBeInTheDocument();
   });
 });

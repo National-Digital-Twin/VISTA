@@ -1,41 +1,47 @@
 import React, { useState } from "react";
 import classNames from "classnames";
 import "./Grid.css";
-import useSelectNode from "../../hooks/useSelectNode";
 import GridToolbar from "./GridToolbar";
+import { useContext } from "react";
+import { ElementsContext } from "../../context/ElementContext";
+import { findAsset, getHexColor } from "../../utils";
+import { Asset, Connection } from "../../models";
 
-const emptyAssets = [];
-const emptyConnections = [];
-const TelicentGrid = ({ assets = emptyAssets, connections = emptyConnections, loading }) => {
-  const [setSelectedNode] = useSelectNode(assets, connections);
+const TelicentGrid = ({ loading }) => {
   const [zoomLevel, setZoomLevel] = useState(100);
+  const { data } = useContext(ElementsContext);
 
-  const onClick = (type) => (e) => {
-    const { target } = e;
-    setSelectedNode(target.id, type);
-  };
+  const {
+    assets,
+    connections,
+    assetCriticalityColorScale,
+    cxnCriticalityColorScale,
+    totalCxnsColorScale,
+  } = data;
 
   const renderAssets = () => {
-    const assetGrid = assets.map((asset) => (
-      <AssetGrid asset={asset} key={`asset-grid-${asset.uri}`} onClick={onClick("asset")} />
+    const assetGrid = assets.map((asset, index) => (
+      <AssetGrid
+        asset={asset}
+        criticalityColorScale={assetCriticalityColorScale}
+        gridIndex={index + 1}
+        key={`asset-grid-${asset.id}`}
+        totalCxnsColorScale={totalCxnsColorScale}
+      />
     ));
 
     const connectionsGrid = connections.map((connection, index) => (
       <ConnectionGrid
-        uri={connection.uri}
-        key={`connection-${connection.uri}-${index}`}
-        criticality={connection.criticality}
-        source={assets.find((asset) => asset.uri === connection.sourceAsset.uri)}
-        target={assets.find((asset) => asset.uri === connection.targetAsset.uri)}
-        onClick={onClick("connection")}
+        connection={connection}
+        cxnCriticalityColorScale={cxnCriticalityColorScale}
+        key={`connection-${connection.id}-${index}`}
+        source={findAsset(assets, connection.source)}
+        target={findAsset(assets, connection.target)}
+        uri={connection.id}
       />
     ));
     return [...assetGrid, ...connectionsGrid];
   };
-  if (!Array.isArray(assets) || !Array.isArray(connections)) {
-    console.warn("TelicentGrid -> Assets and connections must be passed in as an array.");
-    return;
-  }
 
   if (loading) {
     return (
@@ -47,7 +53,7 @@ const TelicentGrid = ({ assets = emptyAssets, connections = emptyConnections, lo
 
   return (
     <>
-      <div className="relative h-full overflow-auto">
+      <div id="grid" className="relative h-full overflow-auto">
         <div
           style={{
             zoom: `${zoomLevel}%`,
@@ -63,9 +69,17 @@ const TelicentGrid = ({ assets = emptyAssets, connections = emptyConnections, lo
   );
 };
 
-const AssetGrid = ({ asset, onClick }) => {
-  const { id, uri, name, count, lon, lat, criticality, countColour, scoreColour, gridIndex } =
-    asset;
+const AssetGrid = ({ asset, criticalityColorScale, totalCxnsColorScale }) => {
+  const { onAssetSelect } = useContext(ElementsContext);
+  const { id, label, name, lng, lat, gridIndex, criticality, totalCxns } = asset;
+
+  const criticalityColor = getHexColor(criticalityColorScale, criticality);
+  const totalCxnsColor = getHexColor(totalCxnsColorScale, totalCxns);
+
+  const handleOnAssetClick = (event) => {
+    const asset = event.target.dataset.asset;
+    onAssetSelect([new Asset(JSON.parse(asset))]);
+  };
 
   const AssetIdentifierCol = ({ gridIndex, id, lat, lon, title, uri, onClick }) => (
     <div
@@ -86,6 +100,7 @@ const AssetGrid = ({ asset, onClick }) => {
       onClick={onClick}
       id={`${uri}`}
       role="button"
+      data-asset={JSON.stringify(asset)}
     >
       {id}
     </div>
@@ -110,6 +125,7 @@ const AssetGrid = ({ asset, onClick }) => {
       onClick={onClick}
       id={`${uri}`}
       role="button"
+      data-asset={JSON.stringify(asset)}
     >
       {id}
     </div>
@@ -161,6 +177,7 @@ const AssetGrid = ({ asset, onClick }) => {
         gridRowStart: gridIndex + 1,
         gridColumnEnd: 2,
         gridRowEnd: gridIndex + 1,
+        color: "#1D1D1D",
       }}
       title={value}
     >
@@ -181,6 +198,7 @@ const AssetGrid = ({ asset, onClick }) => {
         gridRowStart: gridIndex + 1,
         gridColumnEnd: 3,
         gridRowEnd: gridIndex + 1,
+        color: "#1D1D1D",
       }}
       title={value}
     >
@@ -192,31 +210,55 @@ const AssetGrid = ({ asset, onClick }) => {
     <>
       <AssetNameRow
         gridIndex={gridIndex}
-        id={id}
+        id={label}
         title={name}
         lat={lat}
-        lon={lon}
-        uri={uri}
-        onClick={onClick}
+        lon={lng}
+        uri={id}
+        onClick={handleOnAssetClick}
       />
       <AssetIdentifierCol
         gridIndex={gridIndex}
         title={name}
-        id={id}
-        onClick={onClick}
+        id={label}
+        onClick={handleOnAssetClick}
         lat={lat}
-        lon={lon}
-        uri={uri}
+        lon={lng}
+        uri={id}
       />
       <AssetNameCol gridIndex={gridIndex} id={id} title={name} name={name} />
       <BlankCell gridIndex={gridIndex} />
-      <AssetCountCell color={countColour} gridIndex={gridIndex} value={count} />
-      <AssetCriticalityCell color={scoreColour} gridIndex={gridIndex} value={criticality} />
+      <AssetCountCell color={totalCxnsColor} gridIndex={gridIndex} value={totalCxns} />
+      <AssetCriticalityCell color={criticalityColor} gridIndex={gridIndex} value={criticality} />
     </>
   );
 };
 
-const ConnectionGrid = ({ uri, criticality, source, target, onClick }) => {
+const ConnectionBtn = ({ colorScale, criticality, data, position, uri }) => {
+  const { onAssetSelect } = useContext(ElementsContext);
+
+  const handleOnConnectionClick = (event) => {
+    const connection = event.target.dataset.connection;
+    onAssetSelect([new Connection(JSON.parse(connection))]);
+  };
+
+  return (
+    <button
+      className="grid-entry text-black-100"
+      style={{
+        ...position,
+        backgroundColor: getHexColor(colorScale, criticality),
+      }}
+      onClick={handleOnConnectionClick}
+      id={uri}
+      data-connection={JSON.stringify(data)}
+    >
+      {criticality}
+    </button>
+  );
+};
+
+const ConnectionGrid = ({ connection, cxnCriticalityColorScale, source, target, uri }) => {
   if (!source || !target) {
     return null;
   }
@@ -226,44 +268,36 @@ const ConnectionGrid = ({ uri, criticality, source, target, onClick }) => {
   const colsInColumnHeader = 4;
   const colsInRowHeader = 1;
 
-  const calculateSourceGridPosition = (x, y) => {
-    return {
-      gridColumnStart: colsInColumnHeader + x,
-      gridColumnEnd: colsInColumnHeader + x,
-      gridRowStart: colsInRowHeader + y,
-      gridRowEnd: colsInRowHeader + y,
-    };
-  };
+  const calculateSourceGridPosition = (x, y) => ({
+    gridColumnStart: colsInColumnHeader + x,
+    gridColumnEnd: colsInColumnHeader + x,
+    gridRowStart: colsInRowHeader + y,
+    gridRowEnd: colsInRowHeader + y,
+  });
 
-  const calculateTargetGridPosition = (x, y) => {
-    return {
-      gridColumnStart: colsInColumnHeader + y,
-      gridColumnEnd: colsInColumnHeader + y,
-      gridRowStart: colsInRowHeader + x,
-      gridRowEnd: colsInRowHeader + x,
-    };
-  };
+  const calculateTargetGridPosition = (x, y) => ({
+    gridColumnStart: colsInColumnHeader + y,
+    gridColumnEnd: colsInColumnHeader + y,
+    gridRowStart: colsInRowHeader + x,
+    gridRowEnd: colsInRowHeader + x,
+  });
 
   return (
     <>
-      <div
-        className={`grid-entry grid-entry-${criticality}`}
-        style={calculateSourceGridPosition(x, y)}
-        onClick={onClick}
-        id={`${uri}`}
-        role="button"
-      >
-        {criticality}
-      </div>
-      <div
-        className={`grid-entry grid-entry-${criticality}`}
-        style={calculateTargetGridPosition(x, y)}
-        onClick={onClick}
-        id={`${uri}`}
-        role="button"
-      >
-        {criticality}
-      </div>
+      <ConnectionBtn
+        colorScale={cxnCriticalityColorScale}
+        criticality={connection.criticality}
+        data={connection}
+        position={calculateSourceGridPosition(x, y)}
+        uri={uri}
+      />
+      <ConnectionBtn
+        colorScale={cxnCriticalityColorScale}
+        criticality={connection.criticality}
+        data={connection}
+        position={calculateTargetGridPosition(x, y)}
+        uri={uri}
+      />
     </>
   );
 };

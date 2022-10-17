@@ -1,53 +1,55 @@
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import React, { useContext } from "react";
-import ElementsProvider, { ElementsContext } from "../../ElementsContext";
+import { CytoscapeContext, CytoscapeProvider } from "../../context";
 import Toolbar from "./GraphToolbar";
 
+const user = userEvent.setup();
+
 const ToolbarTestComponent = ({ cyRef }) => {
-  const { graphLayout, updateGraphLayout } = useContext(ElementsContext);
-  return <Toolbar cyRef={cyRef} graphLayout={graphLayout} setGraphLayout={updateGraphLayout} />;
+  const { layout, updateLayout } = useContext(CytoscapeContext);
+  return <Toolbar cyRef={cyRef} graphLayout={layout} setGraphLayout={updateLayout} />;
 };
 
-const expandToolbar = () => {
-  userEvent.click(screen.getByRole("button", { name: "Toolbar" }));
+const expandToolbar = async () => {
+  await user.click(screen.getByRole("button", { name: "Toolbar" }));
 };
 
 describe("GraphToolbar component", () => {
   test("is not expanded by default", () => {
-    render(<ToolbarTestComponent />, { wrapper: ElementsProvider });
+    render(<ToolbarTestComponent />, { wrapper: CytoscapeProvider });
     expect(screen.getByRole("button", { name: "Toolbar" })).toBeInTheDocument();
   });
 
-  test("minimises toolbar", () => {
-    render(<ToolbarTestComponent />, { wrapper: ElementsProvider });
-    expandToolbar();
-    userEvent.click(screen.getByRole("button", { name: "minimise toolbar" }));
+  test("minimises toolbar", async () => {
+    render(<ToolbarTestComponent />, { wrapper: CytoscapeProvider });
+    await expandToolbar();
+    await user.click(screen.getByRole("button", { name: "minimise toolbar" }));
 
     expect(screen.getByRole("button", { name: "Toolbar" })).toBeInTheDocument();
   });
 
-  test("renders all layout options", () => {
-    render(<ToolbarTestComponent />, { wrapper: ElementsProvider });
-    expandToolbar();
+  test("renders all layout options", async () => {
+    render(<ToolbarTestComponent />, { wrapper: CytoscapeProvider });
+    await expandToolbar();
     const layoutBtn = screen.getByRole("button", { name: /layout/i });
-    userEvent.hover(layoutBtn);
+    await user.hover(layoutBtn);
     expect(screen.getByText("Layout")).toBeVisible();
     expect(screen.queryByTestId("secondary-menu")).not.toBeInTheDocument();
 
-    userEvent.click(layoutBtn);
+    await user.click(layoutBtn);
 
     const secondaryMenuItems = within(screen.getByTestId("secondary-menu")).getAllByRole(
       "listitem"
     );
     expect(secondaryMenuItems).toHaveLength(6);
-    expect(secondaryMenuItems).toMatchSnapshot("layout options")
+    expect(secondaryMenuItems).toMatchSnapshot("layout options");
   });
 
-  test("renders Cola as the default graph layout", () => {
-    render(<ToolbarTestComponent />, { wrapper: ElementsProvider });
-    expandToolbar();
-    userEvent.click(screen.getByRole("button", { name: /layout/i }));
+  test("renders Cola as the default graph layout", async () => {
+    render(<ToolbarTestComponent />, { wrapper: CytoscapeProvider });
+    await expandToolbar();
+    await user.click(screen.getByRole("button", { name: /layout/i }));
 
     const secondaryMenuItems = within(screen.getByTestId("secondary-menu")).getAllByRole(
       "listitem"
@@ -57,15 +59,15 @@ describe("GraphToolbar component", () => {
     );
   });
 
-  test("renders updated graph layout", () => {
-    render(<ToolbarTestComponent />, { wrapper: ElementsProvider });
-    expandToolbar();
-    userEvent.click(screen.getByRole("button", { name: /layout/i }));
+  test("renders updated graph layout", async () => {
+    render(<ToolbarTestComponent />, { wrapper: CytoscapeProvider });
+    await expandToolbar();
+    await user.click(screen.getByRole("button", { name: /layout/i }));
 
     const secondaryMenuItems = within(screen.getByTestId("secondary-menu")).getAllByRole(
       "listitem"
     );
-    userEvent.click(within(secondaryMenuItems[1]).getByRole("button", { name: "Circle" }));
+    await user.click(within(secondaryMenuItems[1]).getByRole("button", { name: "Circle" }));
 
     expect(within(secondaryMenuItems[1]).getByRole("button", { name: "Circle" })).toHaveClass(
       "bg-black-500"
@@ -75,37 +77,29 @@ describe("GraphToolbar component", () => {
     );
   });
 
-  test("pans and zooms the graph to fit", () => {
+  test("pans and zooms the graph to fit", async () => {
     const mockFit = jest.fn();
-    const cy = {
-      current: {
-        fit: mockFit,
-      },
-    };
-    render(<ToolbarTestComponent cyRef={cy} />, { wrapper: ElementsProvider });
-    expandToolbar();
+    const cy = { current: { fit: mockFit } };
+    render(<ToolbarTestComponent cyRef={cy} />, { wrapper: CytoscapeProvider });
+    await expandToolbar();
     const fitBtn = screen.getByRole("button", { name: /fit/i });
-    userEvent.hover(fitBtn);
+    await user.hover(fitBtn);
     expect(screen.getByText("Fit")).toBeVisible();
 
-    userEvent.click(fitBtn);
+    await user.click(fitBtn);
     expect(mockFit).toHaveBeenCalledTimes(1);
   });
 
-  test("pans the graph to the centre", () => {
+  test("pans the graph to the centre", async () => {
     const mockCenter = jest.fn();
-    const cy = {
-      current: {
-        center: mockCenter,
-      },
-    };
-    render(<ToolbarTestComponent cyRef={cy} />, { wrapper: ElementsProvider });
-    expandToolbar();
+    const cy = { current: { center: mockCenter } };
+    render(<ToolbarTestComponent cyRef={cy} />, { wrapper: CytoscapeProvider });
+    await expandToolbar();
     const centerBtn = screen.getByRole("button", { name: /center/i });
-    userEvent.hover(centerBtn);
+    await user.hover(centerBtn);
     expect(screen.getByText("Center")).toBeVisible();
 
-    userEvent.click(centerBtn);
+    await user.click(centerBtn);
     expect(mockCenter).toHaveBeenCalledTimes(1);
   });
 
@@ -113,21 +107,18 @@ describe("GraphToolbar component", () => {
     const mockPng = jest.fn();
     const mockRevokeObjectURL = jest.fn();
     const href = "blob:http://localhost:3001/eb1bb2f8-9e7d-4157-9418-cafe78aba65a";
-    const cy = {
-      current: {
-        png: mockPng,
-      },
-    };
-    global.URL.createObjectURL = jest.fn().mockReturnValue(href);
-    global.URL.revokeObjectURL = mockRevokeObjectURL;
-    render(<ToolbarTestComponent cyRef={cy} />, { wrapper: ElementsProvider });
-    expandToolbar();
+    const cy = { current: { png: mockPng } };
+    global.window.URL.createObjectURL = jest.fn().mockReturnValue(href);
+    global.window.URL.revokeObjectURL = mockRevokeObjectURL;
+    HTMLAnchorElement.prototype.click = jest.fn();
+    render(<ToolbarTestComponent cyRef={cy} />, { wrapper: CytoscapeProvider });
+    await expandToolbar();
 
     const exportBtn = screen.getByRole("button", { name: /export/i });
-    userEvent.hover(exportBtn);
+    await user.hover(exportBtn);
     expect(screen.getByText("Export")).toBeVisible();
 
-    userEvent.click(exportBtn);
+    await user.click(exportBtn);
     expect(mockPng).toHaveBeenCalledTimes(1);
     expect(mockRevokeObjectURL).toHaveBeenCalledTimes(1);
     expect(mockRevokeObjectURL).toHaveBeenCalledWith(href);

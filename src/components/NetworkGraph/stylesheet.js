@@ -32,6 +32,7 @@ const cyStylesheet = [
     style: {
       curveStyle: "haystack",
       label: "data(label)",
+      "line-color": "data(color)"
     },
   },
   {
@@ -91,29 +92,10 @@ const cyStylesheet = [
     },
   },
   {
-    selector: ".1",
-    style: {
-      "line-color": "Yellow",
-    },
-  },
-  {
-    selector: ".2",
-    style: {
-      "line-color": "Goldenrod",
-    },
-  },
-  {
-    selector: ".3",
-    style: {
-      "line-color": "Red",
-    },
-  },
-  {
     selector: ":selected",
     style: {
-      backgroundColor: "white",
       borderWidth: "4px",
-      borderColor: "white",
+      borderColor: colors.whiteSmoke,
     },
   },
 ];

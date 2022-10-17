@@ -1,0 +1,246 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Grid component renders grid 1`] = `
+<div
+  class="relative h-full overflow-auto"
+  id="grid"
+>
+  <div
+    class="main-grid"
+    style="grid-template-columns: 50px 22px 22px 106px repeat(4, 22px);"
+  >
+    <div
+      class="col-header"
+      data-asset="{\\"id\\":\\"http://telicent.io/fake_data#E001\\",\\"label\\":\\"E001\\",\\"name\\":\\"East Cowes Power Station\\",\\"description\\":\\"Cowes power station (or Kingston power station) is a 140MW Open Cycle Gas Turbine station powered by two 70MW units. The station is the Isle of Wight's only conventional power generation source other than power from the mainland. The station was built in 1982 at a cost of �30 million. The station is owned and operated by RWE Generation UK.\\",\\"lat\\":50.7469147487978,\\"lng\\":-1.286223030930041,\\"type\\":\\"http://ies.data.gov.uk/ontology/ies4#Facility\\",\\"gridIndex\\":1,\\"connections\\":[{\\"id\\":\\"http://telicent.io/fake_data#connector_E001_E003\\",\\"criticality\\":3,\\"source\\":\\"http://telicent.io/fake_data#E001\\",\\"target\\":\\"http://telicent.io/fake_data#E003\\",\\"label\\":\\"E001 - E003\\"}],\\"criticality\\":3,\\"segments\\":[]}"
+      id="http://telicent.io/fake_data#E001"
+      role="button"
+      style="position: sticky; top: 0px; z-index: 99; background-color: black; grid-column-start: 5; grid-row-start: 1; grid-column-end: 5; grid-row-end: 1;"
+      title="East Cowes Power Station"
+    >
+      E001
+    </div>
+    <div
+      class="asset-id"
+      data-asset="{\\"id\\":\\"http://telicent.io/fake_data#E001\\",\\"label\\":\\"E001\\",\\"name\\":\\"East Cowes Power Station\\",\\"description\\":\\"Cowes power station (or Kingston power station) is a 140MW Open Cycle Gas Turbine station powered by two 70MW units. The station is the Isle of Wight's only conventional power generation source other than power from the mainland. The station was built in 1982 at a cost of �30 million. The station is owned and operated by RWE Generation UK.\\",\\"lat\\":50.7469147487978,\\"lng\\":-1.286223030930041,\\"type\\":\\"http://ies.data.gov.uk/ontology/ies4#Facility\\",\\"gridIndex\\":1,\\"connections\\":[{\\"id\\":\\"http://telicent.io/fake_data#connector_E001_E003\\",\\"criticality\\":3,\\"source\\":\\"http://telicent.io/fake_data#E001\\",\\"target\\":\\"http://telicent.io/fake_data#E003\\",\\"label\\":\\"E001 - E003\\"}],\\"criticality\\":3,\\"segments\\":[]}"
+      id="http://telicent.io/fake_data#E001"
+      role="button"
+      style="position: sticky; left: 0px; background-color: black; width: 50px; grid-column-start: 1; grid-row-start: 2; grid-column-end: 1; grid-row-end: 2;"
+      title="East Cowes Power Station"
+    >
+      E001
+    </div>
+    <div
+      class="asset-id"
+      id="http://telicent.io/fake_data#E001"
+      role="cell"
+      style="position: sticky; left: 94px; background-color: black; overflow: hidden; grid-column-start: 4; grid-row-start: 2; grid-column-end: 4; grid-row-end: 2;"
+      title="East Cowes Power Station"
+    >
+      East Cowes Power Station
+    </div>
+    <div
+      class="blank-entry"
+      role="cell"
+      style="grid-column-start: 5; grid-row-start: 2; grid-column-end: 5; grid-row-end: 2;"
+    />
+    <div
+      class="asset-id"
+      role="cell"
+      style="background-color: rgb(53, 192, 53); position: sticky; left: 50px; overflow: hidden; grid-column-start: 2; grid-row-start: 2; grid-column-end: 2; grid-row-end: 2; color: rgb(29, 29, 29);"
+      title="1"
+    >
+      1
+    </div>
+    <div
+      class="asset-id"
+      role="cell"
+      style="background-color: rgb(53, 192, 53); position: sticky; left: 72px; overflow: hidden; grid-column-start: 3; grid-row-start: 2; grid-column-end: 3; grid-row-end: 2; color: rgb(29, 29, 29);"
+      title="3"
+    >
+      3
+    </div>
+    <div
+      class="col-header"
+      data-asset="{\\"id\\":\\"http://telicent.io/fake_data#E003\\",\\"label\\":\\"E003\\",\\"name\\":\\"East Cowes 132/33kV Substation\\",\\"lat\\":50.745512094115526,\\"lng\\":-1.2862585277780134,\\"type\\":\\"http://ies.data.gov.uk/ontology/ies4#Facility\\",\\"gridIndex\\":2,\\"connections\\":[{\\"id\\":\\"http://telicent.io/fake_data#connector_E001_E003\\",\\"criticality\\":3,\\"source\\":\\"http://telicent.io/fake_data#E003\\",\\"target\\":\\"http://telicent.io/fake_data#E001\\",\\"label\\":\\"E001 - E003\\"}],\\"criticality\\":3,\\"segments\\":[]}"
+      id="http://telicent.io/fake_data#E003"
+      role="button"
+      style="position: sticky; top: 0px; z-index: 99; background-color: black; grid-column-start: 6; grid-row-start: 1; grid-column-end: 6; grid-row-end: 1;"
+      title="East Cowes 132/33kV Substation"
+    >
+      E003
+    </div>
+    <div
+      class="asset-id"
+      data-asset="{\\"id\\":\\"http://telicent.io/fake_data#E003\\",\\"label\\":\\"E003\\",\\"name\\":\\"East Cowes 132/33kV Substation\\",\\"lat\\":50.745512094115526,\\"lng\\":-1.2862585277780134,\\"type\\":\\"http://ies.data.gov.uk/ontology/ies4#Facility\\",\\"gridIndex\\":2,\\"connections\\":[{\\"id\\":\\"http://telicent.io/fake_data#connector_E001_E003\\",\\"criticality\\":3,\\"source\\":\\"http://telicent.io/fake_data#E003\\",\\"target\\":\\"http://telicent.io/fake_data#E001\\",\\"label\\":\\"E001 - E003\\"}],\\"criticality\\":3,\\"segments\\":[]}"
+      id="http://telicent.io/fake_data#E003"
+      role="button"
+      style="position: sticky; left: 0px; background-color: black; width: 50px; grid-column-start: 1; grid-row-start: 3; grid-column-end: 1; grid-row-end: 3;"
+      title="East Cowes 132/33kV Substation"
+    >
+      E003
+    </div>
+    <div
+      class="asset-id"
+      id="http://telicent.io/fake_data#E003"
+      role="cell"
+      style="position: sticky; left: 94px; background-color: black; overflow: hidden; grid-column-start: 4; grid-row-start: 3; grid-column-end: 4; grid-row-end: 3;"
+      title="East Cowes 132/33kV Substation"
+    >
+      East Cowes 132/33kV Substation
+    </div>
+    <div
+      class="blank-entry"
+      role="cell"
+      style="grid-column-start: 6; grid-row-start: 3; grid-column-end: 6; grid-row-end: 3;"
+    />
+    <div
+      class="asset-id"
+      role="cell"
+      style="background-color: rgb(53, 192, 53); position: sticky; left: 50px; overflow: hidden; grid-column-start: 2; grid-row-start: 3; grid-column-end: 2; grid-row-end: 3; color: rgb(29, 29, 29);"
+      title="1"
+    >
+      1
+    </div>
+    <div
+      class="asset-id"
+      role="cell"
+      style="background-color: rgb(53, 192, 53); position: sticky; left: 72px; overflow: hidden; grid-column-start: 3; grid-row-start: 3; grid-column-end: 3; grid-row-end: 3; color: rgb(29, 29, 29);"
+      title="3"
+    >
+      3
+    </div>
+    <div
+      class="col-header"
+      data-asset="{\\"id\\":\\"http://telicent.io/fake_data#E005\\",\\"label\\":\\"E005\\",\\"name\\":\\"Arreton Power Source\\",\\"description\\":\\"Gore Cross Anerobic Digestion Plant 2.2MW biogas plant run by Wight Farm Energy\\",\\"lat\\":50.67506215068563,\\"lng\\":-1.2532016776565253,\\"type\\":\\"http://ies.data.gov.uk/ontology/ies4#Facility\\",\\"gridIndex\\":3,\\"connections\\":[{\\"id\\":\\"http://telicent.io/fake_data#connector_E005_E006\\",\\"criticality\\":3,\\"source\\":\\"http://telicent.io/fake_data#E005\\",\\"target\\":\\"http://telicent.io/fake_data#E006\\",\\"label\\":\\"E005 - E006\\"}],\\"criticality\\":3,\\"segments\\":[]}"
+      id="http://telicent.io/fake_data#E005"
+      role="button"
+      style="position: sticky; top: 0px; z-index: 99; background-color: black; grid-column-start: 7; grid-row-start: 1; grid-column-end: 7; grid-row-end: 1;"
+      title="Arreton Power Source"
+    >
+      E005
+    </div>
+    <div
+      class="asset-id"
+      data-asset="{\\"id\\":\\"http://telicent.io/fake_data#E005\\",\\"label\\":\\"E005\\",\\"name\\":\\"Arreton Power Source\\",\\"description\\":\\"Gore Cross Anerobic Digestion Plant 2.2MW biogas plant run by Wight Farm Energy\\",\\"lat\\":50.67506215068563,\\"lng\\":-1.2532016776565253,\\"type\\":\\"http://ies.data.gov.uk/ontology/ies4#Facility\\",\\"gridIndex\\":3,\\"connections\\":[{\\"id\\":\\"http://telicent.io/fake_data#connector_E005_E006\\",\\"criticality\\":3,\\"source\\":\\"http://telicent.io/fake_data#E005\\",\\"target\\":\\"http://telicent.io/fake_data#E006\\",\\"label\\":\\"E005 - E006\\"}],\\"criticality\\":3,\\"segments\\":[]}"
+      id="http://telicent.io/fake_data#E005"
+      role="button"
+      style="position: sticky; left: 0px; background-color: black; width: 50px; grid-column-start: 1; grid-row-start: 4; grid-column-end: 1; grid-row-end: 4;"
+      title="Arreton Power Source"
+    >
+      E005
+    </div>
+    <div
+      class="asset-id"
+      id="http://telicent.io/fake_data#E005"
+      role="cell"
+      style="position: sticky; left: 94px; background-color: black; overflow: hidden; grid-column-start: 4; grid-row-start: 4; grid-column-end: 4; grid-row-end: 4;"
+      title="Arreton Power Source"
+    >
+      Arreton Power Source
+    </div>
+    <div
+      class="blank-entry"
+      role="cell"
+      style="grid-column-start: 7; grid-row-start: 4; grid-column-end: 7; grid-row-end: 4;"
+    />
+    <div
+      class="asset-id"
+      role="cell"
+      style="background-color: rgb(53, 192, 53); position: sticky; left: 50px; overflow: hidden; grid-column-start: 2; grid-row-start: 4; grid-column-end: 2; grid-row-end: 4; color: rgb(29, 29, 29);"
+      title="1"
+    >
+      1
+    </div>
+    <div
+      class="asset-id"
+      role="cell"
+      style="background-color: rgb(53, 192, 53); position: sticky; left: 72px; overflow: hidden; grid-column-start: 3; grid-row-start: 4; grid-column-end: 3; grid-row-end: 4; color: rgb(29, 29, 29);"
+      title="3"
+    >
+      3
+    </div>
+    <div
+      class="col-header"
+      data-asset="{\\"id\\":\\"http://telicent.io/fake_data#E006\\",\\"label\\":\\"E006\\",\\"name\\":\\"Arreton 33kV \\",\\"description\\":\\"Not labelled as a substation on openstreetmap. Visible on Google maps though.\\",\\"lat\\":50.67381026264697,\\"lng\\":-1.2376239838760517,\\"type\\":\\"http://ies.data.gov.uk/ontology/ies4#Facility\\",\\"gridIndex\\":4,\\"connections\\":[{\\"id\\":\\"http://telicent.io/fake_data#connector_E006_E012\\",\\"criticality\\":3,\\"source\\":\\"http://telicent.io/fake_data#E006\\",\\"target\\":\\"http://telicent.io/fake_data#E012\\",\\"label\\":\\"E006 - E012\\"},{\\"id\\":\\"http://telicent.io/fake_data#connector_E005_E006\\",\\"criticality\\":3,\\"source\\":\\"http://telicent.io/fake_data#E006\\",\\"target\\":\\"http://telicent.io/fake_data#E005\\",\\"label\\":\\"E005 - E006\\"}],\\"criticality\\":6,\\"segments\\":[]}"
+      id="http://telicent.io/fake_data#E006"
+      role="button"
+      style="position: sticky; top: 0px; z-index: 99; background-color: black; grid-column-start: 8; grid-row-start: 1; grid-column-end: 8; grid-row-end: 1;"
+      title="Arreton 33kV "
+    >
+      E006
+    </div>
+    <div
+      class="asset-id"
+      data-asset="{\\"id\\":\\"http://telicent.io/fake_data#E006\\",\\"label\\":\\"E006\\",\\"name\\":\\"Arreton 33kV \\",\\"description\\":\\"Not labelled as a substation on openstreetmap. Visible on Google maps though.\\",\\"lat\\":50.67381026264697,\\"lng\\":-1.2376239838760517,\\"type\\":\\"http://ies.data.gov.uk/ontology/ies4#Facility\\",\\"gridIndex\\":4,\\"connections\\":[{\\"id\\":\\"http://telicent.io/fake_data#connector_E006_E012\\",\\"criticality\\":3,\\"source\\":\\"http://telicent.io/fake_data#E006\\",\\"target\\":\\"http://telicent.io/fake_data#E012\\",\\"label\\":\\"E006 - E012\\"},{\\"id\\":\\"http://telicent.io/fake_data#connector_E005_E006\\",\\"criticality\\":3,\\"source\\":\\"http://telicent.io/fake_data#E006\\",\\"target\\":\\"http://telicent.io/fake_data#E005\\",\\"label\\":\\"E005 - E006\\"}],\\"criticality\\":6,\\"segments\\":[]}"
+      id="http://telicent.io/fake_data#E006"
+      role="button"
+      style="position: sticky; left: 0px; background-color: black; width: 50px; grid-column-start: 1; grid-row-start: 5; grid-column-end: 1; grid-row-end: 5;"
+      title="Arreton 33kV "
+    >
+      E006
+    </div>
+    <div
+      class="asset-id"
+      id="http://telicent.io/fake_data#E006"
+      role="cell"
+      style="position: sticky; left: 94px; background-color: black; overflow: hidden; grid-column-start: 4; grid-row-start: 5; grid-column-end: 4; grid-row-end: 5;"
+      title="Arreton 33kV "
+    >
+      Arreton 33kV 
+    </div>
+    <div
+      class="blank-entry"
+      role="cell"
+      style="grid-column-start: 8; grid-row-start: 5; grid-column-end: 8; grid-row-end: 5;"
+    />
+    <div
+      class="asset-id"
+      role="cell"
+      style="background-color: rgb(251, 55, 55); position: sticky; left: 50px; overflow: hidden; grid-column-start: 2; grid-row-start: 5; grid-column-end: 2; grid-row-end: 5; color: rgb(29, 29, 29);"
+      title="2"
+    >
+      2
+    </div>
+    <div
+      class="asset-id"
+      role="cell"
+      style="background-color: rgb(251, 55, 55); position: sticky; left: 72px; overflow: hidden; grid-column-start: 3; grid-row-start: 5; grid-column-end: 3; grid-row-end: 5; color: rgb(29, 29, 29);"
+      title="6"
+    >
+      6
+    </div>
+    <button
+      class="grid-entry text-black-100"
+      data-connection="{\\"id\\":\\"http://telicent.io/fake_data#connector_E001_E003\\",\\"criticality\\":3,\\"source\\":\\"http://telicent.io/fake_data#E001\\",\\"target\\":\\"http://telicent.io/fake_data#E003\\",\\"label\\":\\"E001 - E003\\"}"
+      id="http://telicent.io/fake_data#connector_E001_E003"
+      style="grid-column-start: 5; grid-column-end: 5; grid-row-start: 3; grid-row-end: 3; background-color: rgb(251, 55, 55);"
+    >
+      3
+    </button>
+    <button
+      class="grid-entry text-black-100"
+      data-connection="{\\"id\\":\\"http://telicent.io/fake_data#connector_E001_E003\\",\\"criticality\\":3,\\"source\\":\\"http://telicent.io/fake_data#E001\\",\\"target\\":\\"http://telicent.io/fake_data#E003\\",\\"label\\":\\"E001 - E003\\"}"
+      id="http://telicent.io/fake_data#connector_E001_E003"
+      style="grid-column-start: 6; grid-column-end: 6; grid-row-start: 2; grid-row-end: 2; background-color: rgb(251, 55, 55);"
+    >
+      3
+    </button>
+    <button
+      class="grid-entry text-black-100"
+      data-connection="{\\"id\\":\\"http://telicent.io/fake_data#connector_E005_E006\\",\\"criticality\\":3,\\"source\\":\\"http://telicent.io/fake_data#E005\\",\\"target\\":\\"http://telicent.io/fake_data#E006\\",\\"label\\":\\"E005 - E006\\"}"
+      id="http://telicent.io/fake_data#connector_E005_E006"
+      style="grid-column-start: 7; grid-column-end: 7; grid-row-start: 5; grid-row-end: 5; background-color: rgb(251, 55, 55);"
+    >
+      3
+    </button>
+    <button
+      class="grid-entry text-black-100"
+      data-connection="{\\"id\\":\\"http://telicent.io/fake_data#connector_E005_E006\\",\\"criticality\\":3,\\"source\\":\\"http://telicent.io/fake_data#E005\\",\\"target\\":\\"http://telicent.io/fake_data#E006\\",\\"label\\":\\"E005 - E006\\"}"
+      id="http://telicent.io/fake_data#connector_E005_E006"
+      style="grid-column-start: 8; grid-column-end: 8; grid-row-start: 4; grid-row-end: 4; background-color: rgb(251, 55, 55);"
+    >
+      3
+    </button>
+  </div>
+</div>
+`;
