@@ -118,7 +118,7 @@ const TelicentMap = () => {
           interactiveLayerIds={[allAssetsLayerStyle.id]}
           initialViewState={{ ...VIEWSTATE }}
           mapboxAccessToken={config.mb.token}
-          mapStyle={`mapbox://styles/mapbox/${mapStyle}`}
+          mapStyle={mapStyle}
           onClick={handleOnClick}
           onDragStart={() => setCursor("move")}
           onDragEnd={resetCursor}
