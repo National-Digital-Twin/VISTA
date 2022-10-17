@@ -34,11 +34,13 @@ const NetworkGraph = () => {
 
   useEffect(() => {
     if (!cyRef.current) return;
-    assets.forEach((asset) => {
-      const cyElement = cyRef.current.getElementById(asset.id);
-      const toSelect = selectedElements.some((element) => element.id === asset.id);
-      toSelect ? cyElement.select() : cyElement.unselect();
-    });
+    if (selectedElements.length > 1) {
+      assets.forEach((asset) => {
+        const cyElement = cyRef.current.getElementById(asset.id);
+        const toSelect = selectedElements.some((element) => element.id === asset.id);
+        toSelect ? cyElement.select() : cyElement.unselect();
+      });
+    }
   }, [cyRef, assets, selectedElements]);
 
   const setCytoscape = useCallback(
