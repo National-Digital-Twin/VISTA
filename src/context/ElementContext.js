@@ -20,7 +20,12 @@ export const ElementsProvider = ({ children }) => {
 
   useEffect(() => {
     if (assets.length > 0) {
-      const details = selectedElements.map((selectedElement) =>
+      const safeElements = selectedElements.filter(elem => assets.some(asset => asset.id === elem.id))
+      if(safeElements.length === 0 ){
+        setSelectedDetails([])
+        return 
+      }
+      const details = safeElements.map((selectedElement) =>
         selectedElement.generateDetails(assets, assetCriticalityColorScale, cxnCriticalityColorScale)
       );
       setSelectedDetails(details);
