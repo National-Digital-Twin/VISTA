@@ -53,7 +53,7 @@ const TelicentGrid = ({ loading }) => {
 
   return (
     <>
-      <div className="relative h-full overflow-auto">
+      <div id="grid" className="relative h-full overflow-auto">
         <div
           style={{
             zoom: `${zoomLevel}%`,

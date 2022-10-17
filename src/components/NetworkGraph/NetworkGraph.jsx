@@ -23,6 +23,7 @@ const NetworkGraph = () => {
   cytoscape.use(avsdf);
 
   useEffect(() => {
+    if (!cyRef.current) return;
     const layout = cyRef.current.layout({ name: graphLayout });
     layout.run();
   }, [nodes, edges, graphLayout]);

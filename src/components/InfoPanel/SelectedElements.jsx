@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from "react";
 import { ReactComponent as GoogleMapIcon } from "./assets/google-map-icon.svg";
 import { ElementsContext } from "../../ElementsContext";
-import { isAsset, IsEmpty } from "../../utils";
+import { IsEmpty } from "../../utils";
 import ElementDetails from "./ElementDetails";
 
 const SelectedElements = () => {
@@ -25,13 +25,14 @@ const SelectedElements = () => {
   if (selectedIndex >= 0) {
     const selectedElement = selectedDetails[selectedIndex];
     return (
-      <Toolbar
-        selectedElements={selectedDetails}
-        element={selectedElement}
-        onViewAll={handleViewSelected}
-      >
+      <>
+        <Toolbar
+          selectedElements={selectedDetails}
+          element={selectedElement}
+          onViewAll={handleViewSelected}
+        />
         <ElementDetails element={selectedElement} expand />
-      </Toolbar>
+      </>
     );
   }
 
@@ -53,21 +54,18 @@ const SelectedElements = () => {
   );
 };
 
-const Toolbar = ({ selectedElements, element, onViewAll, children }) => {
-  if (!isAsset(element)) return children
+const Toolbar = ({ selectedElements, element, onViewAll }) => {
+  if (selectedElements.length === 1 && !element.lat && !element.lng) return null;
   return (
-    <>
-      <div className="flex items-center border-b border-whiteSmoke-800 pb-1">
-        {selectedElements.length > 1 && (
-          <button onClick={() => onViewAll(-1)} className="flex items-center gap-x-1 mr-auto">
-            <span role="img" className="ri-arrow-left-s-line" />
-            view all selected
-          </button>
-        )}
-        <StreetView latitude={element.lat} longitude={element.lng} />
-      </div>
-      {children}
-    </>
+    <div className="flex items-center border-b border-whiteSmoke-800 pb-1">
+      {selectedElements.length > 1 && (
+        <button onClick={() => onViewAll(-1)} className="flex items-center gap-x-1 mr-auto">
+          <span role="img" className="ri-arrow-left-s-line" />
+          view all selected
+        </button>
+      )}
+      <StreetView latitude={element.lat} longitude={element.lng} />
+    </div>
   );
 };
 

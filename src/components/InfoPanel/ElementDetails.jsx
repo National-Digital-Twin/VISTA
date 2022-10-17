@@ -13,7 +13,7 @@ const ElementDetails = ({ element, expand, onViewDetails }) => {
     );
 
   return (
-    <div className="grid grid-flow-row auto-rows-min gap-y-4 overflow-auto">
+    <div id="element-details" className="grid grid-flow-row auto-rows-min gap-y-4 overflow-auto">
       <Details element={element} expand />
       <ConnectedAssets connectedAssets={element.connectedAssets} />
     </div>
@@ -65,7 +65,7 @@ const Description = ({ description }) => {
   };
 
   return (
-    <div>
+    <div id="description">
       <p ref={descRef} className={classNames({ "line-clamp": showMore })}>
         {description}
       </p>
@@ -155,7 +155,7 @@ const ConnectedAssets = ({ connectedAssets }) => {
                 <div className="grid grid-flow-col auto-cols-min gap-x-6">
                   <p className="whitespace-nowrap">Asset criticality: {asset.assetCriticality}</p>
                   <p className="whitespace-nowrap">
-                    Connection Criticality: {asset.cxnCriticality}
+                    Connection criticality: {asset.cxnCriticality}
                   </p>
                 </div>
               </div>

@@ -1,52 +1,23 @@
 import { screen, render } from "@testing-library/react";
-import AssetProvider from "../../AssetContext";
+import { ElementsContext } from "../../ElementsContext";
+import { createData } from "../DataFigures/utils";
 import TelicentGrid from "./index";
+import { E001, E001_E003, E003, E005, E005_E006, E006, E006_E012 } from "../../sample-data";
 
-const assets = [
-  {
-    id: "fed",
-    uri: "http://fed.co/test-data/iow#W001",
-    name: "Federal Reserve",
-    gridIndex: 1,
-    scoreColour: "hsl(117.96610169491527,100%, 50%)",
-    countColour: "hsl(117.96610169491527,100%, 50%)",
-    count: 1,
-    criticality: 3,
-    onClick: jest.fn(),
-  },
-  {
-    id: "irs",
-    uri: "http://irs.co/test-data/iow#W002",
-    name: "Internal Revenue System",
-    gridIndex: 2,
-    scoreColour: "hsl(117.96610169491527,100%, 50%)",
-    countColour: "hsl(117.96610169491527,100%, 50%)",
-    count: 1,
-    criticality: 3,
-    onClick: jest.fn(),
-  },
-];
+const assets = [E001, E003, E005, E006];
+const connections = [E001_E003, E006_E012, E005_E006];
 
-const connections = [
-  {
-    category: "connection",
-    uri: "http://fed.co/iow#connector_W001_W002",
-    source: "http://fed.co/test-data/iow#W001",
-    sourceName: "Federal Reserve",
-    sourceLat: 40.5,
-    sourceLon: 20.3,
-    sourceAsset: assets[0],
-    sourceScoreColour: undefined,
-    target: "http://irs.co/test-data/iow#W002",
-    targetLat: 40.3,
-    targetLon: 20.1,
-    targetAsset: assets[1],
-    targetName: "Internal Revenue Service",
-    targetScoreColour: undefined,
-    criticality: 3,
-    label: "W001-W002",
-  },
-];
+describe("Grid component", () => {
+  test("renders grid", async () => {
+    const data = await createData(assets, connections);
+    render(
+      <ElementsContext.Provider value={{ data }}>
+        <TelicentGrid loading={false} />
+      </ElementsContext.Provider>
+    );
+    expect(screen.getByTestId("grid")).toMatchSnapshot();
+  });
+});
 
 xdescribe("Grid should populate assets and connections", () => {
   describe("Assets should", () => {

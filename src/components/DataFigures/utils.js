@@ -17,24 +17,24 @@ const createAssetConnections = async (assets, connections, get) => {
   return await Promise.all(
     assets.map(async (asset, index) => {
       const cxns = connections
-      .filter((cxn) => cxn.source === asset.uri || cxn.target === asset.uri)
-      .map((cxn) => {
-        let source = cxn.source;
-        let target = cxn.target;
+        .filter((cxn) => cxn.source === asset.uri || cxn.target === asset.uri)
+        .map((cxn) => {
+          let source = cxn.source;
+          let target = cxn.target;
 
-        if (cxn.target === asset.uri) {
-          source = cxn.target;
-          target = cxn.source;
-        }
+          if (cxn.target === asset.uri) {
+            source = cxn.target;
+            target = cxn.source;
+          }
 
-        return {
-          ...cxn,
-          source,
-          target,
-        };
-      });
+          return {
+            ...cxn,
+            source,
+            target,
+          };
+        });
 
-      let segments = []
+      let segments = [];
       if (asset?.type.toLowerCase().includes("road")) {
         const pathSegments = await get(`/assets/${asset.id}/parts`);
         segments = Object.values(pathSegments);
@@ -50,7 +50,7 @@ const createAssetConnections = async (assets, connections, get) => {
         lng: asset?.lon,
         gridIndex: index + 1,
         connections: cxns,
-        segments: segments
+        segments: segments,
       });
     })
   );
@@ -72,10 +72,7 @@ export const createData = async (assets, connectionsMetadata, get) => {
   const minAssetTotalCxns = Math.min(...getAllTotalCxns(assetCxns));
 
   return {
-    assetCriticalityColorScale: getColorScale(
-      minAssetCriticality,
-      maxAssetCriticality
-    ),
+    assetCriticalityColorScale: getColorScale(minAssetCriticality, maxAssetCriticality),
     assets: assetCxns,
     connections,
     cxnCriticalityColorScale: getColorScale(1, 3),

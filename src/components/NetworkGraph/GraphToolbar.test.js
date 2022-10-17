@@ -72,11 +72,7 @@ describe("GraphToolbar component", () => {
 
   test("pans and zooms the graph to fit", async () => {
     const mockFit = jest.fn();
-    const cy = {
-      current: {
-        fit: mockFit,
-      },
-    };
+    const cy = { current: { fit: mockFit } };
     render(<ToolbarTestComponent cyRef={cy} />, { wrapper: ElementsProvider });
     await expandToolbar();
     const fitBtn = screen.getByRole("button", { name: /fit/i });
@@ -89,11 +85,7 @@ describe("GraphToolbar component", () => {
 
   test("pans the graph to the centre", async () => {
     const mockCenter = jest.fn();
-    const cy = {
-      current: {
-        center: mockCenter,
-      },
-    };
+    const cy = { current: { center: mockCenter } };
     render(<ToolbarTestComponent cyRef={cy} />, { wrapper: ElementsProvider });
     await expandToolbar();
     const centerBtn = screen.getByRole("button", { name: /center/i });
@@ -108,13 +100,10 @@ describe("GraphToolbar component", () => {
     const mockPng = jest.fn();
     const mockRevokeObjectURL = jest.fn();
     const href = "blob:http://localhost:3001/eb1bb2f8-9e7d-4157-9418-cafe78aba65a";
-    const cy = {
-      current: {
-        png: mockPng,
-      },
-    };
-    global.URL.createObjectURL = jest.fn().mockReturnValue(href);
-    global.URL.revokeObjectURL = mockRevokeObjectURL;
+    const cy = { current: { png: mockPng } };
+    global.window.URL.createObjectURL = jest.fn().mockReturnValue(href);
+    global.window.URL.revokeObjectURL = mockRevokeObjectURL;
+    HTMLAnchorElement.prototype.click = jest.fn();
     render(<ToolbarTestComponent cyRef={cy} />, { wrapper: ElementsProvider });
     await expandToolbar();
 
