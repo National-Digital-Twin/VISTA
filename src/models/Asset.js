@@ -4,7 +4,18 @@ const MAX_CIRCLE_SIZE = 10;
 const MIN_CIRCLE_SIZE = 5;
 
 export default class Asset {
-  constructor({ id, label, name, description, lat, lng, type, gridIndex, connections, segments }) {
+  constructor({
+    id,
+    label,
+    name,
+    description,
+    lat,
+    lng,
+    type,
+    gridIndex,
+    connections,
+    segments,
+  }) {
     this.id = id;
     this.label = label;
     this.name = name;
@@ -92,10 +103,27 @@ export default class Asset {
   }
 
   generateSelectedAssetFeatures(assets, colorScale, maxCriticality) {
-    const sourceFeature = this.createSelectedAssetFeature(colorScale, maxCriticality, true);
-    const targetFeatures = this.#lookupTargetConnection(assets).map(({ target }) => {
-      return target.createSelectedAssetFeature(colorScale, maxCriticality, false);
-    });
+    const sourceFeature = this.createSelectedAssetFeature(
+      colorScale,
+      maxCriticality,
+      true
+    );
+ 
+
+    const targetFeatures = this.#lookupTargetConnection(assets)
+      .filter(({ target, source }) => {
+        if (!target || !source) {
+          return false;
+        } else return true;
+      })
+      .map(({ target }) => {
+        return target.createSelectedAssetFeature(
+          colorScale,
+          maxCriticality,
+          false
+        );
+      });
+
     return [sourceFeature, ...targetFeatures];
   }
 
@@ -125,7 +153,7 @@ export default class Asset {
   }
 
   createSelectedConnectionFeature(target, criticality, colorScale) {
-    if (this.lng && this.lat && target.lng && target.lat) {
+    if (target && this.lng && this.lat && target.lng && target.lat) {
       return {
         type: "Feature",
         properties: {
@@ -160,9 +188,11 @@ export default class Asset {
   }
 
   #generateConnectedAssets(assets, colorScale) {
-    return this.#lookupTargetConnection(assets).map(({ target, criticality }) =>
-      this.createConnectedAssets(target, criticality, colorScale)
-    );
+    return this.#lookupTargetConnection(assets)
+      .filter(({ target }) => target)
+      .map(({ target, criticality }) =>
+        this.createConnectedAssets(target, criticality, colorScale)
+      );
   }
 
   generateDetails(assets, colorScale) {

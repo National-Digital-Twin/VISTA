@@ -49,17 +49,23 @@ const TelicentMap = () => {
       setSelectedAssetCxns([]);
       return;
     }
-
+    const safeElements = selectedElements.filter(elem => assets.some(asset => asset.id === elem.id))
+    if(safeElements.length === 0){
+      setSelectedAssets([])
+      setSelectedAssetCxns([]);
+      setSelectedSegments([])
+      return
+    }
     const selectedAssetFeatures = createSelectedAssetFeatures(
       assets,
       assetCriticalityColorScale,
       maxAssetCriticality,
-      selectedElements
+      safeElements
     );
     setSelectedAssets(selectedAssetFeatures);
 
     const selectedSegmentFeatures = createSelectedSegmentFeatures(
-      selectedElements,
+      safeElements,
       assetCriticalityColorScale,
       assets
     );
@@ -68,7 +74,7 @@ const TelicentMap = () => {
     const selectedAssetCxnFeatures = createSelectedConnectionFeatures(
       assets,
       cxnCriticalityColorScale,
-      selectedElements
+      safeElements
     );
     setSelectedAssetCxns(selectedAssetCxnFeatures);
   }, [
