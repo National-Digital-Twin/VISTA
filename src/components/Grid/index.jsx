@@ -3,7 +3,7 @@ import classNames from "classnames";
 import "./Grid.css";
 import GridToolbar from "./GridToolbar";
 import { useContext } from "react";
-import { ElementsContext } from "../../ElementsContext";
+import { ElementsContext } from "../../context/ElementContext";
 import { findAsset, getHexColor } from "../../utils";
 import { Asset, Connection } from "../../models";
 

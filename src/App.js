@@ -3,7 +3,7 @@ import { StandardLayout } from "@telicent-io/ds";
 import "../node_modules/@telicent-io/ds/dist/style.css";
 
 import { Categories, DataFigures, DataPresentation, SponsorsLogos } from "./components";
-import ElementsProvider from "./ElementsContext";
+import { CytoscapeProvider, ElementsProvider } from "./context";
 import config from "./config/app-config";
 import Main from "./lib/Main";
 
@@ -13,13 +13,15 @@ const App = () => {
   return (
     <StandardLayout appName="paralog" beta={true}>
       <SponsorsLogos />
-      <ElementsProvider>
-        <Categories selected={selectedCategories} setSelected={setSelectedCategories} />
-        <Main config={config}>
-          <DataFigures selected={selectedCategories} />
-          <DataPresentation />
-        </Main>
-      </ElementsProvider>
+      <CytoscapeProvider>
+        <ElementsProvider>
+          <Categories selected={selectedCategories} setSelected={setSelectedCategories} />
+          <Main config={config}>
+            <DataFigures selected={selectedCategories} />
+            <DataPresentation />
+          </Main>
+        </ElementsProvider>
+      </CytoscapeProvider>
     </StandardLayout>
   );
 };

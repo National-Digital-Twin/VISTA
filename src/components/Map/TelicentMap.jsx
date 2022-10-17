@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import Map, { Layer, MapProvider, Source } from "react-map-gl";
 import config from "../../config/app-config";
-import { ElementsContext } from "../../ElementsContext";
+import { CytoscapeContext, ElementsContext } from "../../context";
 import Asset from "../../models/Asset";
 import { IsEmpty } from "../../utils";
 import { allAssetsLayerStyle, highlightedAssets, lineStyle, segmentStyle } from "./layerStyles";
@@ -22,6 +22,7 @@ const VIEWSTATE = {
 };
 
 const TelicentMap = () => {
+  const { clearSelected } = useContext(CytoscapeContext);
   const { data, onAssetSelect, selectedElements } = useContext(ElementsContext);
 
   const { assets, assetCriticalityColorScale, cxnCriticalityColorScale, maxAssetCriticality } = data;
@@ -79,12 +80,14 @@ const TelicentMap = () => {
       event.originalEvent.stopPropagation();
       const element = JSON.parse(properties.element);
 
+      clearSelected();
       if (event.originalEvent.shiftKey) {
         onAssetSelect((prevSelected) => {
           const index = prevSelected.findIndex((prev) => prev.id === element.id);
           if (index === -1) return [...prevSelected, new Asset(element)];
           return prevSelected.filter((prev) => prev.id !== element.id);
         });
+        return;
       }
       onAssetSelect([new Asset(element)])
       return;

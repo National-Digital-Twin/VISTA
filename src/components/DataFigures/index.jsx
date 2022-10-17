@@ -8,7 +8,7 @@ import "react-tabs/style/react-tabs.css";
 import { createData } from "./utils";
 
 import "./DataFigures.css";
-import { ElementsContext } from "../../ElementsContext";
+import { ElementsContext } from "../../context/ElementContext";
 import NetworkGraph from "../NetworkGraph/NetworkGraph";
 
 const DataFigures = ({ selected }) => {

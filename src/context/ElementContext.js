@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 export const ElementsContext = React.createContext();
 
-const ElementsProvider = ({ children }) => {
+export const ElementsProvider = ({ children }) => {
+  const cyRef = useRef({});
   const [data, setData] = useState({
     assetCriticalityColorScale: {},
     assets: [],
@@ -12,7 +13,6 @@ const ElementsProvider = ({ children }) => {
     maxAssetTotalCxns: 0,
     totalCxnsColorScale: {},
   });
-  const [graphLayout, setGraphLayout] = useState("cola");
   const [selectedElements, setSelectedElements] = useState([]);
   const [selectedDetails, setSelectedDetails] = useState([]);
 
@@ -29,10 +29,6 @@ const ElementsProvider = ({ children }) => {
     setSelectedDetails([])
   }, [assets, assetCriticalityColorScale, cxnCriticalityColorScale, selectedElements]);
 
-  const updateGraphLayout = (layout) => {
-    setGraphLayout(layout);
-  };
-
   const onAssetSelect = (selected) => {
     setSelectedElements(selected);
   };
@@ -40,18 +36,15 @@ const ElementsProvider = ({ children }) => {
   return (
     <ElementsContext.Provider
       value={{
+        cyRef,
         data,
-        graphLayout,
         onAssetSelect,
         selectedElements,
         selectedDetails,
         setData,
-        updateGraphLayout,
       }}
     >
       {children}
     </ElementsContext.Provider>
   );
 };
-
-export default ElementsProvider;

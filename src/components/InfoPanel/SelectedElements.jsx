@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from "react";
 import { ReactComponent as GoogleMapIcon } from "./assets/google-map-icon.svg";
-import { ElementsContext } from "../../ElementsContext";
+import { ElementsContext } from "../../context/ElementContext";
 import { IsEmpty } from "../../utils";
 import ElementDetails from "./ElementDetails";
 

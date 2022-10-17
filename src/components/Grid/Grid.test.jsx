@@ -1,5 +1,5 @@
 import { screen, render } from "@testing-library/react";
-import { ElementsContext } from "../../ElementsContext";
+import { ElementsContext } from "../../context";
 import { createData } from "../DataFigures/utils";
 import TelicentGrid from "./index";
 import { E001, E001_E003, E003, E005, E005_E006, E006, E006_E012 } from "../../sample-data";
