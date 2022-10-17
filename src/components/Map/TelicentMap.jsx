@@ -12,6 +12,7 @@ import {
   createSelectedSegmentFeatures,
   generateAssetFeatures,
 } from "./mapboxFeatures";
+import { getMapStyles } from "./mapStyles";
 import MapToolbar from "./MapToolbar";
 
 const GEOJSON = "geojson";
@@ -31,10 +32,16 @@ const TelicentMap = () => {
   
   const [cursor, setCursor] = useState("auto");
   const [hoverInfo, setHoverInfo] = useState(undefined);
-  const [mapStyle, setMapStyle] = useLocalStorage("mapStyle", "dark-v10");
+  const [mapStyle, setMapStyle] = useLocalStorage("mapStyle", "mapbox://styles/mapbox/dark-v10");
   const [selectedAssetCxns, setSelectedAssetCxns] = useState([]);
   const [selectedAssets, setSelectedAssets] = useState([]);
   const [selectedSegments, setSelectedSegments] = useState([]);
+
+  useEffect(() => {
+    if(!getMapStyles().some(style=> style.id === mapStyle)){
+      setMapStyle(getMapStyles()[0].id)
+    }
+  }, [mapStyle, setMapStyle])
 
   useEffect(() => {
     if (IsEmpty(assets)) {
