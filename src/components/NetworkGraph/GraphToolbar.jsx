@@ -72,7 +72,7 @@ const Toolbar = ({ cyRef, graphLayout, setGraphLayout }) => {
           showSecodaryMenu={showLayoutOptions}
           secondaryMenu={
             <SecondaryMenu
-              items={["Circle", "Random", "Breadth First", "AVSDF", "Dagre", "Cola"]}
+              items={["Cola", "Circle", "Random", "Breadth First", "AVSDF", "Dagre"]}
               onClose={() => setShowLayoutOptions(false)}
               onLayoutChange={hangleLayoutChange}
               selected={graphLayout}

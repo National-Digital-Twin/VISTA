@@ -1,4 +1,4 @@
-name: Publish react app
+name: Publish new release version
 
 on:
   push:

@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import Map, { Layer, MapProvider, Source } from "react-map-gl";
 import config from "../../config/app-config";
 import { CytoscapeContext, ElementsContext } from "../../context";
+import { useLocalStorage } from "../../hooks";
 import Asset from "../../models/Asset";
 import { IsEmpty } from "../../utils";
 import { allAssetsLayerStyle, highlightedAssets, lineStyle, segmentStyle } from "./layerStyles";
@@ -30,7 +31,7 @@ const TelicentMap = () => {
   
   const [cursor, setCursor] = useState("auto");
   const [hoverInfo, setHoverInfo] = useState(undefined);
-  const [mapStyle, setMapStyle] = useState("dark-v10");
+  const [mapStyle, setMapStyle] = useLocalStorage("mapStyle", "dark-v10");
   const [selectedAssetCxns, setSelectedAssetCxns] = useState([]);
   const [selectedAssets, setSelectedAssets] = useState([]);
   const [selectedSegments, setSelectedSegments] = useState([]);

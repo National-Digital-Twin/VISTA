@@ -1,5 +1,40 @@
 # Changelog
 
+## [1.1.3](https://github.com/Telicent-io/telicent-paralog/compare/v1.1.2...v1.1.3) (2022-10-16)
+
+
+### Bug Fixes
+
+* dockerfile using the wrong file ([496bf63](https://github.com/Telicent-io/telicent-paralog/commit/496bf63214e4fcbdd175dbfbb3f1f0625b36fe05))
+
+## [1.1.2](https://github.com/Telicent-io/telicent-paralog/compare/v1.1.1...v1.1.2) (2022-10-16)
+
+
+### Bug Fixes
+
+* make env empty defaults ([3bf8bff](https://github.com/Telicent-io/telicent-paralog/commit/3bf8bff576a2354dde207440c93c681442346f8e))
+* update .env.default to enable OFFLINE mode ([93d4a85](https://github.com/Telicent-io/telicent-paralog/commit/93d4a851e425396c436ca1126fbcb7b80929dbac))
+
+## [1.1.1](https://github.com/Telicent-io/telicent-paralog/compare/v1.1.0...v1.1.1) (2022-10-16)
+
+
+### Bug Fixes
+
+* **dockerfile.offline:** typo in Dockerfile.offline ([559eb00](https://github.com/Telicent-io/telicent-paralog/commit/559eb00716059b7025d95ffc084818f071a04cc8))
+
+## [1.1.0](https://github.com/Telicent-io/telicent-paralog/compare/v1.0.1...v1.1.0) (2022-10-16)
+
+
+### Features
+
+* add an offline mode for demo ([7287897](https://github.com/Telicent-io/telicent-paralog/commit/72878977ceea60e01de89ac75deefe148327b47d))
+
+
+### Bug Fixes
+
+* added icon for vulnerable people ([4cd12b0](https://github.com/Telicent-io/telicent-paralog/commit/4cd12b0dbe0172951c9a2bff9e2b8a9ffc9a6790)), closes [#103](https://github.com/Telicent-io/telicent-paralog/issues/103)
+* made map style consist between loads ([5ae0df0](https://github.com/Telicent-io/telicent-paralog/commit/5ae0df070da4f1719a4e54ec3533313dd5557d43)), closes [#110](https://github.com/Telicent-io/telicent-paralog/issues/110)
+
 ## [1.0.1](https://github.com/Telicent-io/telicent-paralog/compare/v1.0.0...v1.0.1) (2022-10-03)
 
 

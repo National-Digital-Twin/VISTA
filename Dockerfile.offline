@@ -1,13 +1,16 @@
 FROM 098669589541.dkr.ecr.eu-west-2.amazonaws.com/telicent-paralog-build:latest as build
 
 FROM nginx:stable-alpine
+RUN apk update && apk add curl 
 COPY --from=build /app/build /usr/share/nginx/html/paralog
 COPY nginx/nginx.conf /etc/nginx/conf.d/default.conf
 WORKDIR /usr/share/nginx/html/paralog
+RUN curl -XGET https://api.tiles.mapbox.com/mapbox-gl-js/v2.2.0/mapbox-gl.css -o mapbox-gl.css
+RUN sed -i "s/https:\/\/api.tiles.mapbox.com\/mapbox-gl-js\/v2.2.0/\/paralog/g" index.html
 COPY set-env.sh .
 RUN apk add --no-cache bash
 RUN chmod +x set-env.sh
 EXPOSE 80
 
 ENTRYPOINT [ "./set-env.sh" ]
-CMD [ "nginx", "-g", "daemon off;" ]
+CMD ["nginx", "-g", "daemon off;"]

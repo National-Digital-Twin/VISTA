@@ -4,6 +4,7 @@ import Phone from "./assets/phone-fill-coral.svg";
 import Drop from "./assets/drop-fill-blue.svg";
 import Battery from "./assets/battery-charge-fill-teal.svg";
 import Car from "./assets/car-fill-aqua.svg";
+import User3 from "./assets/user-3.svg";
 
 const colors = {
   whiteSmoke: "#F5F5F5",
@@ -82,6 +83,12 @@ const cyStylesheet = [
     selector: ".E",
     style: {
       backgroundImage: `url(${Battery})`,
+    },
+  },
+  {
+    selector: ".V",
+    style: {
+      backgroundImage: `url(${User3})`,
     },
   },
   {

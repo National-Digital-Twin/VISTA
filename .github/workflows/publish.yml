@@ -1,4 +1,4 @@
-name: build-and-push-telicent-test
+name: Build and push telicent-paralog
 on:
   push:
     branches:
@@ -50,10 +50,38 @@ jobs:
         run: |
           aws s3 cp reports s3://telicent-deployment-${{ env.APP_NAME }}/${{ github.run_id }}-${{ needs.get_version.outputs.version }} --recursive
 
+  publish_build_image_to_aws:
+    needs:
+      - integrated_tests
+      - get_version
+    uses: ./.github/workflows/push-to-aws.yml
+    with:
+      APP_NAME: paralog
+      DOCKERFILE: Dockerfile.build
+      PATH: .
+      VERSION: ${{ needs.get_version.outputs.version }}
+      ECR_SUFFIX: -build
+    secrets:
+      NPM_TOKEN: ${{ secrets.PACKAGE_PAT }}
+  publish_offline_image_to_aws:
+    needs:
+      - integrated_tests
+      - get_version
+      - publish_build_image_to_aws
+    uses: ./.github/workflows/push-to-aws.yml
+    with:
+      APP_NAME: paralog
+      DOCKERFILE: Dockerfile.offline
+      PATH: .
+      VERSION: ${{ needs.get_version.outputs.version }}
+      VERSION_SUFFIX: -offline
+    secrets:
+      NPM_TOKEN: ${{ secrets.PACKAGE_PAT }}
   publish_deployment_image_to_aws:
     needs:
       - integrated_tests
       - get_version
+      - publish_build_image_to_aws
     uses: ./.github/workflows/push-to-aws.yml
     with:
       APP_NAME: paralog
