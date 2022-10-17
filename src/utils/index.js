@@ -1,5 +1,3 @@
-// import ColorScale from "color-scales";
-
 import { prefixLookup } from "../config/uri-prefix";
 
 /**
@@ -8,8 +6,6 @@ import { prefixLookup } from "../config/uri-prefix";
  * @returns {boolean}
  */
 export const IsEmpty = (input) => !input || input.length === 0 || Object.keys(input).length === 0;
-
-// export const colourScale = new ColorScale(0, 100, ["#0e8600", "#ff0100"], 1);
 
 export const findAsset = (assets, uri) => assets?.find((asset) => asset.id === uri);
 export const getHexColor = (colorScale, value) => colorScale?.getColor(value).toHexString();

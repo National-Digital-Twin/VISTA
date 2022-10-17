@@ -90,11 +90,13 @@ const TelicentMap = () => {
 
       clearSelected();
       if (event.originalEvent.shiftKey) {
-        onAssetSelect((prevSelected) => {
+        const getSelected = (prevSelected) => {
           const index = prevSelected.findIndex((prev) => prev.id === element.id);
           if (index === -1) return [...prevSelected, new Asset(element)];
           return prevSelected.filter((prev) => prev.id !== element.id);
-        });
+        }
+        
+        onAssetSelect(getSelected);
         return;
       }
       onAssetSelect([new Asset(element)])
