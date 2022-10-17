@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/Telicent-io/telicent-paralog/compare/v1.2.0...v1.2.1) (2022-10-17)
+
+
+### Bug Fixes
+
+* asset with connections crashes the app when assessment deselected ([2a83e1f](https://github.com/Telicent-io/telicent-paralog/commit/2a83e1fa67eaac836b89503850a7bd5c6c6e1f1d))
+
 ## [1.2.0](https://github.com/Telicent-io/telicent-paralog/compare/v1.1.3...v1.2.0) (2022-10-17)
 
 
