@@ -1,10 +1,41 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import useFetch from "use-http";
 import config from "../../config/app-config";
+import { ElementsContext } from "../../context";
 import { IsEmpty } from "../../utils";
+import { createData } from "../DataFigures/utils";
 
-const Categories = ({ selected, setSelected }) => {
+const Categories = () => {
   const { data = [], error, loading } = useFetch(`${config.api.url}/assessments`, {}, []);
+  const { get } = useFetch(config.api.url);
+  const { setData } = useContext(ElementsContext);
+  const [selected, setSelected] = useState([]);
+
+  useEffect(() => {
+    if (IsEmpty(selected)) {
+      setData({
+        assetCriticalityColorScale: {},
+        assets: [],
+        connections: [],
+        cxnCriticalityColorScale: {},
+        maxAssetCriticality: 0,
+        maxAssetTotalCxns: 0,
+        totalCxnsColorScale: {},
+      });
+      return;
+    }
+
+    const paramsArray = selected.map((item) => ["assessments", item]);
+    const params = new URLSearchParams(paramsArray).toString();
+
+    const getAssessments = async () => {
+      const assets = await get(`assessments/assets?${params}`);
+      const connections = await get(`assessments/connections?${params}`);
+      const data = await createData(assets, connections, get);
+      setData(data);
+    };
+    getAssessments();
+  }, [selected]);
 
   if (loading) return <p>Loading</p>;
 
@@ -22,7 +53,12 @@ const Categories = ({ selected, setSelected }) => {
       value: assessment.uri,
     }));
 
-  if (IsEmpty(categories)) return <p style={{ textAlign: "center" }}>Categories not found. Please contact admin to resolve issue.</p>;
+  if (IsEmpty(categories))
+    return (
+      <p style={{ textAlign: "center" }}>
+        Categories not found. Please contact admin to resolve issue.
+      </p>
+    );
 
   const onChange = (event) => {
     const {

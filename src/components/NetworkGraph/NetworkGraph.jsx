@@ -57,7 +57,7 @@ const NetworkGraph = () => {
   );
 
   return (
-    <>
+    <div className="relative">
       <CytoscapeComponent
         elements={CytoscapeComponent.normalizeElements({ nodes, edges })}
         stylesheet={cyStylesheet}
@@ -65,7 +65,7 @@ const NetworkGraph = () => {
         className="w-full h-full"
       />
       <GraphToolbar cyRef={cyRef} graphLayout={graphLayout} setGraphLayout={updateLayout} />
-    </>
+    </div>
   );
 };
 

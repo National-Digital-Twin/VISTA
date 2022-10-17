@@ -12,34 +12,34 @@ import { ElementsContext } from "../../context/ElementContext";
 import NetworkGraph from "../NetworkGraph/NetworkGraph";
 
 const DataFigures = ({ selected }) => {
-  const { setData } = useContext(ElementsContext);
-  const { get, loading } = useFetch(config.api.url);
+  // const { setData } = useContext(ElementsContext);
+  // const { get, loading } = useFetch(config.api.url);
 
-  useEffect(() => {
-    if (IsEmpty(selected)) {
-      setData({
-        assetCriticalityColorScale: {},
-        assets: [],
-        connections: [],
-        cxnCriticalityColorScale: {},
-        maxAssetCriticality: 0,
-        maxAssetTotalCxns: 0,
-        totalCxnsColorScale: {},
-      });
-      return;
-    }
+  // useEffect(() => {
+  //   if (IsEmpty(selected)) {
+  //     setData({
+  //       assetCriticalityColorScale: {},
+  //       assets: [],
+  //       connections: [],
+  //       cxnCriticalityColorScale: {},
+  //       maxAssetCriticality: 0,
+  //       maxAssetTotalCxns: 0,
+  //       totalCxnsColorScale: {},
+  //     });
+  //     return;
+  //   }
 
-    const paramsArray = selected.map((item) => ["assessments", item]);
-    const params = new URLSearchParams(paramsArray).toString();
+  //   const paramsArray = selected.map((item) => ["assessments", item]);
+  //   const params = new URLSearchParams(paramsArray).toString();
 
-    const getAssessments = async () => {
-      const assets = await get(`assessments/assets?${params}`);
-      const connections = await get(`assessments/connections?${params}`);
-      const data = await createData(assets, connections, get);
-      setData(data);
-    };
-    getAssessments();
-  }, [get, selected, setData]);
+  //   const getAssessments = async () => {
+  //     const assets = await get(`assessments/assets?${params}`);
+  //     const connections = await get(`assessments/connections?${params}`);
+  //     const data = await createData(assets, connections, get);
+  //     setData(data);
+  //   };
+  //   getAssessments();
+  // }, [get, selected, setData]);
 
   return (
     <div
@@ -63,7 +63,7 @@ const DataFigures = ({ selected }) => {
           <NetworkGraph />
         </TabPanel>
         <TabPanel style={{ height: "95%", paddingTop: "4px" }}>
-          <TelicentGrid loading={loading} />
+          <TelicentGrid loading={false} />
         </TabPanel>
       </Tabs>
     </div>

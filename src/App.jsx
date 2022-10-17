@@ -6,20 +6,28 @@ import { Categories, DataFigures, DataPresentation, SponsorsLogos } from "./comp
 import { CytoscapeProvider, ElementsProvider } from "./context";
 import config from "./config/app-config";
 import Main from "./lib/Main";
+import NetworkGraph from "./components/NetworkGraph/NetworkGraph";
+import TelicentMap from "./components/Map/TelicentMap";
 
 const App = () => {
-  const [selectedCategories, setSelectedCategories] = useState([]);
+  // const [selectedCategories, setSelectedCategories] = useState([]);
+
+  // if (config && config.api && config.api.url)
 
   return (
     <StandardLayout appName="paralog" beta={true}>
       <SponsorsLogos />
       <CytoscapeProvider>
         <ElementsProvider>
-          <Categories selected={selectedCategories} setSelected={setSelectedCategories} />
-          <Main config={config}>
-            <DataFigures selected={selectedCategories} />
-            <DataPresentation />
-          </Main>
+          {/* <Categories /> */}
+          <div className="grid grid-rows-1 grid-cols-2 gap-x-2 h-full">
+            <NetworkGraph />
+            <TelicentMap />
+          </div>
+          {/* <Main config={config}> */}
+          {/* <DataFigures /> */}
+          {/* <DataPresentation /> */}
+          {/* </Main> */}
         </ElementsProvider>
       </CytoscapeProvider>
     </StandardLayout>
