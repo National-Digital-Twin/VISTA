@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 
 export const ElementsContext = React.createContext();
 
@@ -16,18 +16,33 @@ export const ElementsProvider = ({ children }) => {
   const [selectedElements, setSelectedElements] = useState([]);
   const [selectedDetails, setSelectedDetails] = useState([]);
 
-  const {assets, assetCriticalityColorScale, cxnCriticalityColorScale} = data
+  const { assets, assetCriticalityColorScale, cxnCriticalityColorScale } = data;
+
+  const filteredElems = useMemo(() => {
+    return selectedElements.filter((elem) => assets.some((asset) => asset.id === elem.id));
+  }, [assets, selectedElements]);
+
+  useEffect(() => {
+    if (assets.length === 0) {
+      setSelectedElements([]);
+      return;
+    }
+  }, [assets]);
 
   useEffect(() => {
     if (assets.length > 0) {
-      const details = selectedElements.map((selectedElement) =>
-        selectedElement.generateDetails(assets, assetCriticalityColorScale, cxnCriticalityColorScale)
+      const details = filteredElems.map((selectedElement) =>
+        selectedElement.generateDetails(
+          assets,
+          assetCriticalityColorScale,
+          cxnCriticalityColorScale
+        )
       );
       setSelectedDetails(details);
       return;
     }
-    setSelectedDetails([])
-  }, [assets, assetCriticalityColorScale, cxnCriticalityColorScale, selectedElements]);
+    setSelectedDetails([]);
+  }, [assets, assetCriticalityColorScale, cxnCriticalityColorScale, filteredElems]);
 
   const onAssetSelect = (selected) => {
     setSelectedElements(selected);
@@ -39,7 +54,7 @@ export const ElementsProvider = ({ children }) => {
         cyRef,
         data,
         onAssetSelect,
-        selectedElements,
+        selectedElements: filteredElems,
         selectedDetails,
         setData,
       }}

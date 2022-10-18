@@ -61,14 +61,16 @@ export default class Asset {
   }
 
   #lookupTargetConnection(assets) {
-    return this.connections.map((connection) => ({
-      ...connection,
-      target: findAsset(assets, connection.target),
-    }));
+    return this.connections
+      .filter(({ target }) => assets.some((asset) => asset.id === target))
+      .map((connection) => ({
+        ...connection,
+        target: findAsset(assets, connection.target),
+      }));
   }
 
   createSelectedAssetFeature(colorScale, maxCriticality, isSource) {
-    const r = this.criticality / maxCriticality;
+    const r = maxCriticality > 0 ? this.criticality / maxCriticality : 0;
     let circumference = Math.ceil(Math.PI * 2 * r);
     if (circumference > MAX_CIRCLE_SIZE) {
       circumference = MAX_CIRCLE_SIZE;

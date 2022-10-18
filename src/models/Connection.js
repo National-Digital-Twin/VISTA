@@ -47,18 +47,22 @@ export default class Connection {
     return source.createSelectedConnectionFeature(target, this.criticality, colorScale);
   }
 
-  generateDetails(assets, colorScale, cxnCriticalityColorScale) {
-    const { source, target } = this.#lookupAssets(assets);
-    return {
-      uri: this.id,
-      title: `${source.name} (${source.label}) to ${target.name} (${target.label})`,
-      criticality: this.criticality,
-      color: getHexColor(cxnCriticalityColorScale, this.criticality),
-      connectedAssets: [
-        source.createConnectedAssets(source, this.criticality, colorScale),
-        target.createConnectedAssets(target, this.criticality, colorScale),
-      ],
-      elementType: "connection"
-    };
+  generateDetails(allAssets, colorScale, cxnCriticalityColorScale) {
+    const assets = this.#lookupAssets(allAssets);
+    if (assets.source && assets.target) {
+      const { source, target } = assets;
+      return {
+        uri: this.id,
+        title: `${source.name} (${source.label}) to ${target.name} (${target.label})`,
+        criticality: this.criticality,
+        color: getHexColor(cxnCriticalityColorScale, this.criticality),
+        connectedAssets: [
+          source.createConnectedAssets(source, this.criticality, colorScale),
+          target.createConnectedAssets(target, this.criticality, colorScale),
+        ],
+        elementType: "connection",
+      };
+    }
+    return {};
   }
 }

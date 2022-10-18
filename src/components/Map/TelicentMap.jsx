@@ -4,7 +4,6 @@ import config from "../../config/app-config";
 import { CytoscapeContext, ElementsContext } from "../../context";
 import { useLocalStorage } from "../../hooks";
 import Asset from "../../models/Asset";
-import { IsEmpty } from "../../utils";
 import { allAssetsLayerStyle, highlightedAssets, lineStyle, segmentStyle } from "./layerStyles";
 import {
   createSelectedAssetFeatures,
@@ -44,12 +43,6 @@ const TelicentMap = () => {
   }, [mapStyle, setMapStyle])
 
   useEffect(() => {
-    if (IsEmpty(assets)) {
-      setSelectedAssets([]);
-      setSelectedAssetCxns([]);
-      return;
-    }
-
     const selectedAssetFeatures = createSelectedAssetFeatures(
       assets,
       assetCriticalityColorScale,
