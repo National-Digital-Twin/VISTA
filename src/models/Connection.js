@@ -1,8 +1,8 @@
 import { findAsset, getHexColor } from "../utils";
 
 export default class Connection {
-  constructor({ uri, criticality, source, target }) {
-    this.id = uri;
+  constructor({ uri, criticality, source, target, id}) {
+    this.id = uri ? uri : id;
     this.criticality = parseFloat(criticality);
     this.source = source;
     this.target = target;
