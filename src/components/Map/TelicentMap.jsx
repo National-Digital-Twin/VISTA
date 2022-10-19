@@ -4,7 +4,7 @@ import config from "../../config/app-config";
 import { CytoscapeContext, ElementsContext } from "../../context";
 import { useLocalStorage } from "../../hooks";
 import Asset from "../../models/Asset";
-import { IsEmpty } from "../../utils";
+import { isAsset, IsEmpty } from "../../utils";
 import { allAssetsLayerStyle, highlightedAssets, lineStyle, segmentStyle } from "./layerStyles";
 import {
   createSelectedAssetFeatures,
@@ -27,7 +27,7 @@ const TelicentMap = () => {
   const { clearSelected } = useContext(CytoscapeContext);
   const { data, onAssetSelect, selectedElements } = useContext(ElementsContext);
 
-  const { assets, assetCriticalityColorScale, cxnCriticalityColorScale, maxAssetCriticality } = data;
+  const { assets, connections, assetCriticalityColorScale, cxnCriticalityColorScale, maxAssetCriticality } = data;
   const assetFeatures = generateAssetFeatures(assets);
   
   const [cursor, setCursor] = useState("auto");
@@ -49,7 +49,12 @@ const TelicentMap = () => {
       setSelectedAssetCxns([]);
       return;
     }
-    const safeElements = selectedElements.filter(elem => assets.some(asset => asset.id === elem.id))
+    const safeElements = selectedElements.filter(elem => {
+      if (isAsset(elem)) {
+        return assets.some(asset => asset.id === elem.id)
+      }
+      return connections.some(cxn => cxn.id === elem.id)
+    })
     if(safeElements.length === 0){
       setSelectedAssets([])
       setSelectedAssetCxns([]);
@@ -79,6 +84,7 @@ const TelicentMap = () => {
     setSelectedAssetCxns(selectedAssetCxnFeatures);
   }, [
     assets,
+    connections,
     cxnCriticalityColorScale,
     assetCriticalityColorScale,
     maxAssetCriticality,
