@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.2](https://github.com/Telicent-io/telicent-paralog/compare/v1.2.1...v1.2.2) (2022-10-19)
+
+
+### Bug Fixes
+
+* cxns and segments details are now showing ([a73f3dd](https://github.com/Telicent-io/telicent-paralog/commit/a73f3ddcee6cd83be7f587e703853707b2edc360))
+* updated safe element on map ([a0606b2](https://github.com/Telicent-io/telicent-paralog/commit/a0606b2fed1e5643a7b7ba6845057d9543caa65d))
+
 ## [1.2.1](https://github.com/Telicent-io/telicent-paralog/compare/v1.2.0...v1.2.1) (2022-10-17)
 
 
