@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.3](https://github.com/Telicent-io/telicent-paralog/compare/v1.2.2...v1.2.3) (2022-10-19)
+
+
+### Bug Fixes
+
+* on connection clikc in the grid, no details were shown. FIXED ([be5ae39](https://github.com/Telicent-io/telicent-paralog/commit/be5ae39428247b12559bb79a98068b0b324da407))
+
 ## [1.2.2](https://github.com/Telicent-io/telicent-paralog/compare/v1.2.1...v1.2.2) (2022-10-19)
 
 
