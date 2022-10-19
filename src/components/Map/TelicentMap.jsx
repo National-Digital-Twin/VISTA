@@ -1,46 +1,49 @@
 import React, { useContext, useEffect, useState } from "react";
 import Map, { Layer, MapProvider, Source } from "react-map-gl";
-import config from "../../config/app-config";
+// import config from "../../config/app-config";
 import { CytoscapeContext, ElementsContext } from "../../context";
 import { useLocalStorage } from "../../hooks";
 import Asset from "../../models/Asset";
-import { allAssetsLayerStyle, highlightedAssets, lineStyle, segmentStyle } from "./layerStyles";
+// import { allAssetsLayerStyle, highlightedAssets, lineStyle, segmentStyle } from "./layerStyles";
 import {
   createSelectedAssetFeatures,
   createSelectedConnectionFeatures,
   createSelectedSegmentFeatures,
   generateAssetFeatures,
 } from "./mapboxFeatures";
-import { getMapStyles } from "./mapStyles";
+import MapboxMap from "./MapboxMap";
+// import { getMapStyles } from "./mapStyles";
 import MapToolbar from "./MapToolbar";
 
-const GEOJSON = "geojson";
-const FEATURE_COLLECTION = "FeatureCollection";
-const VIEWSTATE = {
-  latitude: 50.66206632912732,
-  longitude: -1.3480234953335598,
-  zoom: 9,
-};
+// const GEOJSON = "geojson";
+// const FEATURE_COLLECTION = "FeatureCollection";
+// const VIEWSTATE = {
+//   latitude: 50.66206632912732,
+//   longitude: -1.3480234953335598,
+//   zoom: 9,
+// };
 
 const TelicentMap = () => {
   const { clearSelected } = useContext(CytoscapeContext);
   const { data, onAssetSelect, selectedElements } = useContext(ElementsContext);
+  // console.log("data ", data);
 
-  const { assets, assetCriticalityColorScale, cxnCriticalityColorScale, maxAssetCriticality } = data;
+  const { assets, assetCriticalityColorScale, cxnCriticalityColorScale, maxAssetCriticality } =
+    data;
   const assetFeatures = generateAssetFeatures(assets);
-  
-  const [cursor, setCursor] = useState("auto");
-  const [hoverInfo, setHoverInfo] = useState(undefined);
+
+  // const [cursor, setCursor] = useState("auto");
+  // const [hoverInfo, setHoverInfo] = useState(undefined);
   const [mapStyle, setMapStyle] = useLocalStorage("mapStyle", "mapbox://styles/mapbox/dark-v10");
   const [selectedAssetCxns, setSelectedAssetCxns] = useState([]);
   const [selectedAssets, setSelectedAssets] = useState([]);
   const [selectedSegments, setSelectedSegments] = useState([]);
 
-  useEffect(() => {
-    if(!getMapStyles().some(style=> style.id === mapStyle)){
-      setMapStyle(getMapStyles()[0].id)
-    }
-  }, [mapStyle, setMapStyle])
+  // useEffect(() => {
+  //   if(!getMapStyles().some(style=> style.id === mapStyle)){
+  //     setMapStyle(getMapStyles()[0].id)
+  //   }
+  // }, [mapStyle, setMapStyle])
 
   useEffect(() => {
     const selectedAssetFeatures = createSelectedAssetFeatures(
@@ -87,34 +90,45 @@ const TelicentMap = () => {
           const index = prevSelected.findIndex((prev) => prev.id === element.id);
           if (index === -1) return [...prevSelected, new Asset(element)];
           return prevSelected.filter((prev) => prev.id !== element.id);
-        }
-        
+        };
+
         onAssetSelect(getSelected);
         return;
       }
-      onAssetSelect([new Asset(element)])
+      onAssetSelect([new Asset(element)]);
       return;
     }
     onAssetSelect([]);
   };
 
-  const handleOnMouseMove = (event) => {
-    const {
-      features,
-      point: { x, y },
-    } = event;
-    const hoveredFeature = features && features[0];
-    setHoverInfo(hoveredFeature && { feature: hoveredFeature, x, y });
-  };
+  console.log("all assets ", assetFeatures)
 
-  const resetCursor = () => {
-    setCursor("auto");
-  };
+  // const handleOnMouseMove = (event) => {
+  //   const {
+  //     features,
+  //     point: { x, y },
+  //   } = event;
+  //   const hoveredFeature = features && features[0];
+  //   setHoverInfo(hoveredFeature && { feature: hoveredFeature, x, y });
+  // };
+
+  // const resetCursor = () => {
+  //   setCursor("auto");
+  // };
 
   return (
     <div className="relative">
       <MapProvider>
-        <Map
+        <MapboxMap
+          allAssets={assetFeatures}
+          selectedAssets={selectedAssets}
+          selectedSegments={selectedSegments}
+          selectedCxns={selectedAssetCxns}
+          mapStyle={mapStyle}
+          setMapStyle={setMapStyle}
+          onClick={handleOnClick}
+        />
+        {/* <Map
           cursor={cursor}
           id="telicentMap"
           interactiveLayerIds={[allAssetsLayerStyle.id]}
@@ -162,7 +176,7 @@ const TelicentMap = () => {
             left={hoverInfo?.x}
             top={hoverInfo?.y}
           />
-        </Map>
+        </Map> */}
         <MapToolbar mapStyle={mapStyle} setMapStyle={setMapStyle} />
       </MapProvider>
     </div>
@@ -171,7 +185,7 @@ const TelicentMap = () => {
 
 export default TelicentMap;
 
-const HoverInfo = ({ info, left, top }) => {
+/* const HoverInfo = ({ info, left, top }) => {
   if (!info) return null;
   const assetInfo = JSON.parse(info);
 
@@ -185,4 +199,4 @@ const HoverInfo = ({ info, left, top }) => {
       <p>Criticality: {assetInfo.criticality}</p>
     </div>
   );
-};
+}; */

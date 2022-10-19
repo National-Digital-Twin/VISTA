@@ -1,12 +1,49 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import useFetch from "use-http";
 import config from "../../config/app-config";
+import { ElementsContext } from "../../context";
 import { IsEmpty } from "../../utils";
+import { createData } from "../DataFigures/utils";
 
-const Categories = ({ selected, setSelected }) => {
+const Categories = () => {
   const { data = [], error, loading } = useFetch(`${config.api.url}/assessments`, {}, []);
+  const { get } = useFetch(config.api.url);
+  const { setData } = useContext(ElementsContext);
+  const [loadingData, setLoadingData] = useState(false);
+
+  const [selected, setSelected] = useState([]);
+
+  useEffect(() => {
+    console.log("alecs ", selected)
+    if (IsEmpty(selected)) {
+      setData({
+        assetCriticalityColorScale: {},
+        assets: [],
+        connections: [],
+        cxnCriticalityColorScale: {},
+        maxAssetCriticality: 0,
+        maxAssetTotalCxns: 0,
+        totalCxnsColorScale: {},
+      });
+      return;
+    }
+    setLoadingData(true);
+
+    const paramsArray = selected.map((item) => ["assessments", item]);
+    const params = new URLSearchParams(paramsArray).toString();
+
+    const getAssessments = async () => {
+      const assets = await get(`assessments/assets?${params}`);
+      const connections = await get(`assessments/connections?${params}`);
+      const data = await createData(assets, connections, get);
+      setData(data);
+    };
+    getAssessments();
+    setLoadingData(false);
+  }, [get, selected, setData]);
 
   if (loading) return <p>Loading</p>;
+  if (loadingData) return <p>Loading Data</p>;
 
   if (error)
     return (

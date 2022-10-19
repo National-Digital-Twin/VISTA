@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { StandardLayout } from "@telicent-io/ds";
 import "../node_modules/@telicent-io/ds/dist/style.css";
 
@@ -8,16 +8,16 @@ import config from "./config/app-config";
 import Main from "./lib/Main";
 
 const App = () => {
-  const [selectedCategories, setSelectedCategories] = useState([]);
+  // const [selectedCategories, setSelectedCategories] = useState([]);
 
   return (
     <StandardLayout appName="paralog" beta={true}>
       <SponsorsLogos />
       <CytoscapeProvider>
         <ElementsProvider>
-          <Categories selected={selectedCategories} setSelected={setSelectedCategories} />
+          <Categories />
           <Main config={config}>
-            <DataFigures selected={selectedCategories} />
+            <DataFigures />
             <DataPresentation />
           </Main>
         </ElementsProvider>
