@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { isAsset } from "../utils";
 
 export const ElementsContext = React.createContext();
 
@@ -16,11 +17,16 @@ export const ElementsProvider = ({ children }) => {
   const [selectedElements, setSelectedElements] = useState([]);
   const [selectedDetails, setSelectedDetails] = useState([]);
 
-  const {assets, assetCriticalityColorScale, cxnCriticalityColorScale} = data
+  const {assets, connections, assetCriticalityColorScale, cxnCriticalityColorScale} = data
 
   useEffect(() => {
     if (assets.length > 0) {
-      const safeElements = selectedElements.filter(elem => assets.some(asset => asset.id === elem.id))
+      const safeElements = selectedElements.filter(elem => {
+        if (isAsset(elem)) {
+          return assets.some(asset => asset.id === elem.id)
+        }
+        return connections.some(cxn => cxn.id === elem.id)
+      })
       if(safeElements.length === 0 ){
         setSelectedDetails([])
         return 
@@ -32,7 +38,7 @@ export const ElementsProvider = ({ children }) => {
       return;
     }
     setSelectedDetails([])
-  }, [assets, assetCriticalityColorScale, cxnCriticalityColorScale, selectedElements]);
+  }, [assets, connections, selectedElements, assetCriticalityColorScale, cxnCriticalityColorScale]);
 
   const onAssetSelect = (selected) => {
     setSelectedElements(selected);

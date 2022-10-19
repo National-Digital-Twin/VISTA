@@ -27,6 +27,7 @@ export default class Asset {
     this.connections = connections;
     this.criticality = this.#calculateCriticality();
     this.segments = segments;
+    this.elementType = "asset"
     Object.preventExtensions(this);
   }
 
@@ -206,7 +207,7 @@ export default class Asset {
       lng: this.lng,
       color: getHexColor(colorScale, this.criticality),
       connectedAssets: this.#generateConnectedAssets(assets, colorScale),
-      elementType: "asset",
+      elementType: this.elementType,
     };
   }
 }

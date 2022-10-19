@@ -7,6 +7,7 @@ export default class Connection {
     this.source = source;
     this.target = target;
     this.label = `${source.split("#")[1]} - ${target.split("#")[1]}`;
+    this.elementType = "connection"
     Object.preventExtensions(this);
   }
 
@@ -58,7 +59,7 @@ export default class Connection {
         source.createConnectedAssets(source, this.criticality, colorScale),
         target.createConnectedAssets(target, this.criticality, colorScale),
       ],
-      elementType: "connection"
+      elementType: this.elementType
     };
   }
 }
