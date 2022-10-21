@@ -1,17 +1,23 @@
-import React from "react";
+import React, { useState } from "react";
 import { StandardLayout } from "@telicent-io/ds";
 import "../node_modules/@telicent-io/ds/dist/style.css";
 
-import { Categories, SponsorsLogos } from "./components";
+import { Categories, Grid, InfoPanel, NetworkGraph, SponsorsLogos, TelicentMap } from "./components";
 import { CytoscapeProvider, ElementsProvider } from "./context";
 // import config from "./config/app-config";
-// import Main from "./lib/Main";
-import NetworkGraph from "./components/NetworkGraph/NetworkGraph";
-import TelicentMap from "./components/Map/TelicentMap";
-import InfoPanel from "./components/InfoPanel/InfoPanel";
 
 const App = () => {
-  // if (config && config.api && config.api.url)
+  /*   
+  const isConfigValid = (config) => config && typeof config === "object" && config.api && config.api.url;
+  if (!isConfigValid(config)) {
+    return <ErrorHandler message="Invalid config." />;
+  } */
+
+  const [showGrid, setShowGrid] = useState(false);
+
+  const toggleView = () => {
+    setShowGrid((prevShow) => !prevShow);
+  };
 
   return (
     <StandardLayout appName="paralog" beta={true}>
@@ -19,17 +25,13 @@ const App = () => {
       <CytoscapeProvider>
         <ElementsProvider>
           <div className="relative h-full">
-            <Categories />
+            <Categories showGrid={showGrid} toggleView={toggleView} />
             <InfoPanel />
             <div className="grid grid-rows-1 grid-cols-2 gap-x-2 h-full">
-              <NetworkGraph />
+              {showGrid ? <Grid /> : <NetworkGraph />}
               <TelicentMap />
             </div>
           </div>
-          {/* <Main config={config}> */}
-          {/* <DataFigures /> */}
-          {/* <DataPresentation /> */}
-          {/* </Main> */}
         </ElementsProvider>
       </CytoscapeProvider>
     </StandardLayout>

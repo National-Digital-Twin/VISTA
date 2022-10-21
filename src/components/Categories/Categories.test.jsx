@@ -1,4 +1,5 @@
 import { screen, render, waitFor } from "@testing-library/react";
+import { ElementsProvider } from "../../context";
 import { server } from "../../mocks/server";
 import Categories from "./Categories";
 
@@ -9,10 +10,10 @@ describe("Categories component", () => {
   afterAll(() => server.close());
   
   test("renders options with total count", async () => {
-    render(<Categories selected={[]} setSelected={jest.fn()} />);
-    await waitFor(() => expect(screen.queryByText("Loading")).not.toBeInTheDocument());
+    render(<ElementsProvider><Categories /></ElementsProvider>);
+    // await waitFor(() => expect(screen.queryByText("Loading")).not.toBeInTheDocument());
 
-    expect(screen.getAllByRole("checkbox")).toHaveLength(2);
+    await waitFor(() => expect(screen.getAllByRole("checkbox")).toHaveLength(2));
     expect(screen.getByRole("checkbox", { name: "Energy [25]" })).toBeInTheDocument();
     expect(screen.getByRole("checkbox", { name: "Transport [44]" })).toBeInTheDocument();
   });

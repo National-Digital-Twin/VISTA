@@ -1,7 +1,7 @@
 import { screen, render } from "@testing-library/react";
 import { ElementsContext } from "../../context";
-import { createData } from "../DataFigures/utils";
-import TelicentGrid from "./index";
+import { createData } from "../Categories/utils";
+import Grid from "./Grid";
 import { E001, E001_E003, E003, E005, E005_E006, E006, E006_E012 } from "../../sample-data";
 
 const assets = [E001, E003, E005, E006];
@@ -12,7 +12,7 @@ describe("Grid component", () => {
     const data = await createData(assets, connections);
     render(
       <ElementsContext.Provider value={{ data }}>
-        <TelicentGrid loading={false} />
+        <Grid loading={false} />
       </ElementsContext.Provider>
     );
     expect(screen.getByTestId("grid")).toMatchSnapshot();
@@ -24,7 +24,7 @@ xdescribe("Grid should populate assets and connections", () => {
     beforeEach(() => {
       render(
         <AssetProvider>
-          <TelicentGrid assets={[assets[0]]} />
+          <Grid assets={[assets[0]]} />
         </AssetProvider>
       );
     });
@@ -46,7 +46,7 @@ xdescribe("Grid should populate assets and connections", () => {
     beforeEach(() => {
       render(
         <AssetProvider>
-          <TelicentGrid connections={connections} assets={assets} />
+          <Grid connections={connections} assets={assets} />
         </AssetProvider>
       );
     });
@@ -61,7 +61,7 @@ xdescribe("Grid should populate assets and connections", () => {
     beforeEach(() => {
       render(
         <AssetProvider>
-          <TelicentGrid />
+          <Grid />
         </AssetProvider>
       );
     });
