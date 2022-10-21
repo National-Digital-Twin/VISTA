@@ -116,21 +116,6 @@ export const ElementsProvider = ({ children }) => {
     totalCxnsColorScale,
   } = state;
 
-  // useEffect(() => {
-  //   if (assets.length > 0) {
-  //     const details = filteredElems.map((selectedElement) =>
-  //       selectedElement.generateDetails(
-  //         assets,
-  //         assetCriticalityColorScale,
-  //         cxnCriticalityColorScale
-  //       )
-  //     );
-  //     setSelectedDetails(details);
-  //     return;
-  //   }
-  //   setSelectedDetails([]);
-  // }, [assets, assetCriticalityColorScale, cxnCriticalityColorScale, filteredElems]);
-
   const updateAssets = useCallback((assets) => {
     if (!Array.isArray(assets)) return;
     dispatch({ type: UPDATE_ASSETS, assets });
@@ -164,7 +149,6 @@ export const ElementsProvider = ({ children }) => {
         assets,
         connections,
         selectedElements,
-        selectedDetails: [],
         maxAssetCriticality,
         maxAssetTotalCxns,
         assetCriticalityColorScale,

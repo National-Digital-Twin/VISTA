@@ -6,61 +6,47 @@ import ElementDetails from "./ElementDetails";
 
 const SelectedElements = () => {
   const [selectedIndex, setSelectedIndex] = useState(-1);
-  const [details, setDetails] = useState([]);
   const { assets, selectedElements, assetCriticalityColorScale, cxnCriticalityColorScale } =
     useContext(ElementsContext);
 
-  useEffect(() => {
-    if (assets.length > 0) {
-      const details = selectedElements.map((selectedElement) =>
-        selectedElement.generateDetails(
-          assets,
-          assetCriticalityColorScale,
-          cxnCriticalityColorScale
-        )
-      );
-      setDetails(details);
-      return;
-    }
-    setDetails([]);
-  }, [assets, selectedElements, assetCriticalityColorScale, cxnCriticalityColorScale]);
+  const getDetails = (element) => element.generateDetails(assets, assetCriticalityColorScale, cxnCriticalityColorScale);
 
   useEffect(() => {
-    if (details.length === 1) {
+    if (selectedElements.length === 1) {
       setSelectedIndex(0);
       return;
     }
     setSelectedIndex(-1);
-  }, [details]);
+  }, [selectedElements]);
 
   const handleViewSelected = (index) => {
     setSelectedIndex(index);
   };
 
-  if (IsEmpty(details)) return <p>Click on an asset or connection to view details</p>;
+  if (IsEmpty(selectedElements)) return <p>Click on an asset or connection to view details</p>;
 
   if (selectedIndex >= 0) {
-    const selectedElement = details[selectedIndex];
+    const selectedElement = selectedElements[selectedIndex];
     return (
       <>
         <Toolbar
-          selectedElements={details}
+          selectedElements={selectedElements}
           element={selectedElement}
           onViewAll={handleViewSelected}
         />
-        <ElementDetails element={selectedElement} expand />
+        <ElementDetails element={getDetails(selectedElement)} expand />
       </>
     );
   }
 
   return (
     <>
-      <h2 className="text-lg">{details.length} Selected Elements</h2>
+      <h2 className="text-lg">{selectedElements.length} Selected Elements</h2>
       <ul className="flex flex-col gap-y-3">
-        {details.map((selectedElement, index) => (
+        {selectedElements.map((selectedElement, index) => (
           <ElementDetails
-            key={selectedElement.uri}
-            element={selectedElement}
+            key={selectedElement.id}
+            element={getDetails(selectedElement)}
             onViewDetails={() => {
               handleViewSelected(index);
             }}

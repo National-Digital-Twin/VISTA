@@ -33,9 +33,6 @@ const TestMapComponent = ({ testComponent }) => {
       <ElementsProvider>
         <ElementsContext.Consumer>
           {({ assets, connections, selectedElements, onElementClick }) => {
-            const event = {
-              originalEvent: { shiftKey: false },
-            };
             return (
               <>
                 {testComponent && testComponent({ assets, connections, onElementClick })}

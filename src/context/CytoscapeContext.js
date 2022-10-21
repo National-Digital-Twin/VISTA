@@ -17,10 +17,6 @@ export const CytoscapeProvider = ({ children }) => {
     selected.unselect();
   };
 
-  const selectSelectedElements = (selectedElements) => {
-    
-  }
-
   const updateLayout = (layout) => {
     setLayout(layout);
   };
