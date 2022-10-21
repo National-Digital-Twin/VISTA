@@ -16,23 +16,22 @@ const getConnections = (connections) =>
 const createAssetConnections = async (assets, connections, get) => {
   return await Promise.all(
     assets.map(async (asset, index) => {
-      const cxns = connections
-        .filter((cxn) => cxn.source === asset.uri || cxn.target === asset.uri)
-        .map((cxn) => {
-          let source = cxn.source;
-          let target = cxn.target;
+      const isSource = (cxn) => cxn.source === asset.uri || cxn.target === asset.uri;
+      const cxns = connections.filter(isSource).map((cxn) => {
+        let source = cxn.source;
+        let target = cxn.target;
 
-          if (cxn.target === asset.uri) {
-            source = cxn.target;
-            target = cxn.source;
-          }
+        if (cxn.target === asset.uri) {
+          source = cxn.target;
+          target = cxn.source;
+        }
 
-          return {
-            ...cxn,
-            source,
-            target,
-          };
-        });
+        return {
+          ...cxn,
+          source,
+          target,
+        };
+      });
 
       let segments = [];
       if (asset?.type.toLowerCase().includes("road")) {

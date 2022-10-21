@@ -4,7 +4,7 @@ import config from "../../config/app-config";
 import { CytoscapeContext, ElementsContext } from "../../context";
 import { useLocalStorage } from "../../hooks";
 import Asset from "../../models/Asset";
-import { IsEmpty } from "../../utils";
+import { isAsset, IsEmpty } from "../../utils";
 import { allAssetsLayerStyle, highlightedAssets, lineStyle, segmentStyle } from "./layerStyles";
 import {
   createSelectedAssetFeatures,
@@ -27,7 +27,7 @@ const TelicentMap = () => {
   const { clearSelected } = useContext(CytoscapeContext);
   const { data, onAssetSelect, selectedElements } = useContext(ElementsContext);
 
-  const { assets, assetCriticalityColorScale, cxnCriticalityColorScale, maxAssetCriticality } = data;
+  const { assets, connections, assetCriticalityColorScale, cxnCriticalityColorScale, maxAssetCriticality } = data;
   const assetFeatures = generateAssetFeatures(assets);
   
   const [cursor, setCursor] = useState("auto");
@@ -49,17 +49,28 @@ const TelicentMap = () => {
       setSelectedAssetCxns([]);
       return;
     }
-
+    const safeElements = selectedElements.filter(elem => {
+      if (isAsset(elem)) {
+        return assets.some(asset => asset.id === elem.id)
+      }
+      return connections.some(cxn => cxn.id === elem.id)
+    })
+    if(safeElements.length === 0){
+      setSelectedAssets([])
+      setSelectedAssetCxns([]);
+      setSelectedSegments([])
+      return
+    }
     const selectedAssetFeatures = createSelectedAssetFeatures(
       assets,
       assetCriticalityColorScale,
       maxAssetCriticality,
-      selectedElements
+      safeElements
     );
     setSelectedAssets(selectedAssetFeatures);
 
     const selectedSegmentFeatures = createSelectedSegmentFeatures(
-      selectedElements,
+      safeElements,
       assetCriticalityColorScale,
       assets
     );
@@ -68,11 +79,12 @@ const TelicentMap = () => {
     const selectedAssetCxnFeatures = createSelectedConnectionFeatures(
       assets,
       cxnCriticalityColorScale,
-      selectedElements
+      safeElements
     );
     setSelectedAssetCxns(selectedAssetCxnFeatures);
   }, [
     assets,
+    connections,
     cxnCriticalityColorScale,
     assetCriticalityColorScale,
     maxAssetCriticality,
@@ -90,11 +102,13 @@ const TelicentMap = () => {
 
       clearSelected();
       if (event.originalEvent.shiftKey) {
-        onAssetSelect((prevSelected) => {
+        const getSelected = (prevSelected) => {
           const index = prevSelected.findIndex((prev) => prev.id === element.id);
           if (index === -1) return [...prevSelected, new Asset(element)];
           return prevSelected.filter((prev) => prev.id !== element.id);
-        });
+        }
+        
+        onAssetSelect(getSelected);
         return;
       }
       onAssetSelect([new Asset(element)])
