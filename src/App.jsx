@@ -1,17 +1,16 @@
-import React, { useState } from "react";
+import React from "react";
 import { StandardLayout } from "@telicent-io/ds";
 import "../node_modules/@telicent-io/ds/dist/style.css";
 
-import { Categories, DataFigures, DataPresentation, SponsorsLogos } from "./components";
+import { Categories, SponsorsLogos } from "./components";
 import { CytoscapeProvider, ElementsProvider } from "./context";
-import config from "./config/app-config";
-import Main from "./lib/Main";
+// import config from "./config/app-config";
+// import Main from "./lib/Main";
 import NetworkGraph from "./components/NetworkGraph/NetworkGraph";
 import TelicentMap from "./components/Map/TelicentMap";
+import InfoPanel from "./components/InfoPanel/InfoPanel";
 
 const App = () => {
-  // const [selectedCategories, setSelectedCategories] = useState([]);
-
   // if (config && config.api && config.api.url)
 
   return (
@@ -19,10 +18,13 @@ const App = () => {
       <SponsorsLogos />
       <CytoscapeProvider>
         <ElementsProvider>
-          {/* <Categories /> */}
-          <div className="grid grid-rows-1 grid-cols-2 gap-x-2 h-full">
-            <NetworkGraph />
-            <TelicentMap />
+          <div className="relative h-full">
+            <Categories />
+            <InfoPanel />
+            <div className="grid grid-rows-1 grid-cols-2 gap-x-2 h-full">
+              <NetworkGraph />
+              <TelicentMap />
+            </div>
           </div>
           {/* <Main config={config}> */}
           {/* <DataFigures /> */}

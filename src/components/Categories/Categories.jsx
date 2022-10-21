@@ -6,10 +6,23 @@ import { IsEmpty } from "../../utils";
 import { createData } from "../DataFigures/utils";
 
 const Categories = () => {
-  const { data = [], error, loading } = useFetch(`${config.api.url}/assessments`, {}, []);
-  const { get } = useFetch(config.api.url);
+  const { get, response, error } = useFetch(config.api.url);
   const { setData } = useContext(ElementsContext);
+
+  const [assessments, setAssessments] = useState([]);
   const [selected, setSelected] = useState([]);
+
+  useEffect(() => {
+    const getAssessments = async () => {
+      const assessments = await get("/assessments");
+      if (response.ok) {
+        setAssessments(assessments);
+        return;
+      }
+    };
+
+    getAssessments();
+  }, [get, response]);
 
   useEffect(() => {
     if (IsEmpty(selected)) {
@@ -35,9 +48,9 @@ const Categories = () => {
       setData(data);
     };
     getAssessments();
-  }, [selected]);
+  }, [get, selected, setData]);
 
-  if (loading) return <p>Loading</p>;
+  // if (loading) return <p>Loading</p>;
 
   if (error)
     return (
@@ -46,7 +59,7 @@ const Categories = () => {
       </p>
     );
 
-  const categories = data
+  const categories = assessments
     .filter((assessment) => assessment.assCount > 0)
     .map((assessment) => ({
       label: `${assessment.name} [${assessment.assCount}]`,
@@ -71,8 +84,10 @@ const Categories = () => {
     );
   };
 
+  // style={{ width: "100%", overflowX: "auto" }}
+
   return (
-    <div style={{ width: "100%", overflowX: "auto" }}>
+    <div className="absolute top-0 flex flex-col gap-y-3 p-3 bg-black-200 z-10">
       {categories.map((filter) => (
         <CheckListItem
           key={filter.value}
