@@ -46,7 +46,11 @@ export default class Connection {
 
   generateSelectedConnectionFeature(assets, colorScale) {
     const { source, target } = this.#lookupAssets(assets);
-    return source?.createSelectedConnectionFeature(target, this.criticality, colorScale) ?? {};
+
+    if (source && target) {
+      return source?.createSelectedConnectionFeature(target, this.criticality, colorScale);
+    }
+    return {};
   }
 
   generateDetails(allAssets, colorScale, cxnCriticalityColorScale) {

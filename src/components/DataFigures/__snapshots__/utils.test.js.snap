@@ -2,36 +2,12 @@
 
 exports[`creates data 1`] = `
 Object {
-  "assetCriticalityColorScale": ColorScale {
-    "alpha": 1,
-    "colorStops": Array [
-      Color {
-        "a": 1,
-        "b": 53,
-        "g": 192,
-        "r": 53,
-      },
-      Color {
-        "a": 1,
-        "b": 10,
-        "g": 182,
-        "r": 255,
-      },
-      Color {
-        "a": 1,
-        "b": 55,
-        "g": 55,
-        "r": 251,
-      },
-    ],
-    "max": 6,
-    "min": 3,
-  },
   "assets": Array [
     Asset {
       "connections": Array [
         Object {
           "criticality": 3,
+          "elementType": "connection",
           "id": "http://telicent.io/fake_data#connector_E001_E003",
           "label": "E001 - E003",
           "source": "http://telicent.io/fake_data#E001",
@@ -40,6 +16,7 @@ Object {
       ],
       "criticality": 3,
       "description": "Cowes power station (or Kingston power station) is a 140MW Open Cycle Gas Turbine station powered by two 70MW units. The station is the Isle of Wight's only conventional power generation source other than power from the mainland. The station was built in 1982 at a cost of �30 million. The station is owned and operated by RWE Generation UK.",
+      "elementType": "asset",
       "gridIndex": 1,
       "id": "http://telicent.io/fake_data#E001",
       "label": "E001",
@@ -53,6 +30,7 @@ Object {
       "connections": Array [
         Object {
           "criticality": 3,
+          "elementType": "connection",
           "id": "http://telicent.io/fake_data#connector_E001_E003",
           "label": "E001 - E003",
           "source": "http://telicent.io/fake_data#E003",
@@ -61,6 +39,7 @@ Object {
       ],
       "criticality": 3,
       "description": undefined,
+      "elementType": "asset",
       "gridIndex": 2,
       "id": "http://telicent.io/fake_data#E003",
       "label": "E003",
@@ -74,6 +53,7 @@ Object {
       "connections": Array [
         Object {
           "criticality": 3,
+          "elementType": "connection",
           "id": "http://telicent.io/fake_data#connector_E005_E006",
           "label": "E005 - E006",
           "source": "http://telicent.io/fake_data#E005",
@@ -82,6 +62,7 @@ Object {
       ],
       "criticality": 3,
       "description": "Gore Cross Anerobic Digestion Plant 2.2MW biogas plant run by Wight Farm Energy",
+      "elementType": "asset",
       "gridIndex": 3,
       "id": "http://telicent.io/fake_data#E005",
       "label": "E005",
@@ -95,6 +76,7 @@ Object {
       "connections": Array [
         Object {
           "criticality": 3,
+          "elementType": "connection",
           "id": "http://telicent.io/fake_data#connector_E006_E012",
           "label": "E006 - E012",
           "source": "http://telicent.io/fake_data#E006",
@@ -102,6 +84,7 @@ Object {
         },
         Object {
           "criticality": 3,
+          "elementType": "connection",
           "id": "http://telicent.io/fake_data#connector_E005_E006",
           "label": "E005 - E006",
           "source": "http://telicent.io/fake_data#E006",
@@ -110,6 +93,7 @@ Object {
       ],
       "criticality": 6,
       "description": "Not labelled as a substation on openstreetmap. Visible on Google maps though.",
+      "elementType": "asset",
       "gridIndex": 4,
       "id": "http://telicent.io/fake_data#E006",
       "label": "E006",
@@ -123,6 +107,7 @@ Object {
   "connections": Array [
     Connection {
       "criticality": 3,
+      "elementType": "connection",
       "id": "http://telicent.io/fake_data#connector_E001_E003",
       "label": "E001 - E003",
       "source": "http://telicent.io/fake_data#E001",
@@ -130,6 +115,7 @@ Object {
     },
     Connection {
       "criticality": 3,
+      "elementType": "connection",
       "id": "http://telicent.io/fake_data#connector_E006_E012",
       "label": "E006 - E012",
       "source": "http://telicent.io/fake_data#E006",
@@ -137,63 +123,12 @@ Object {
     },
     Connection {
       "criticality": 3,
+      "elementType": "connection",
       "id": "http://telicent.io/fake_data#connector_E005_E006",
       "label": "E005 - E006",
       "source": "http://telicent.io/fake_data#E005",
       "target": "http://telicent.io/fake_data#E006",
     },
   ],
-  "cxnCriticalityColorScale": ColorScale {
-    "alpha": 1,
-    "colorStops": Array [
-      Color {
-        "a": 1,
-        "b": 53,
-        "g": 192,
-        "r": 53,
-      },
-      Color {
-        "a": 1,
-        "b": 10,
-        "g": 182,
-        "r": 255,
-      },
-      Color {
-        "a": 1,
-        "b": 55,
-        "g": 55,
-        "r": 251,
-      },
-    ],
-    "max": 3,
-    "min": 1,
-  },
-  "maxAssetCriticality": 6,
-  "maxAssetTotalCxns": 2,
-  "totalCxnsColorScale": ColorScale {
-    "alpha": 1,
-    "colorStops": Array [
-      Color {
-        "a": 1,
-        "b": 53,
-        "g": 192,
-        "r": 53,
-      },
-      Color {
-        "a": 1,
-        "b": 10,
-        "g": 182,
-        "r": 255,
-      },
-      Color {
-        "a": 1,
-        "b": 55,
-        "g": 55,
-        "r": 251,
-      },
-    ],
-    "max": 2,
-    "min": 1,
-  },
 }
 `;

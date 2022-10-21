@@ -6,28 +6,45 @@ import ElementDetails from "./ElementDetails";
 
 const SelectedElements = () => {
   const [selectedIndex, setSelectedIndex] = useState(-1);
-  const { selectedDetails } = useContext(ElementsContext);
+  const [details, setDetails] = useState([]);
+  const { assets, selectedElements, assetCriticalityColorScale, cxnCriticalityColorScale } =
+    useContext(ElementsContext);
 
   useEffect(() => {
-    if (selectedDetails.length === 1) {
+    if (assets.length > 0) {
+      const details = selectedElements.map((selectedElement) =>
+        selectedElement.generateDetails(
+          assets,
+          assetCriticalityColorScale,
+          cxnCriticalityColorScale
+        )
+      );
+      setDetails(details);
+      return;
+    }
+    setDetails([]);
+  }, [assets, selectedElements, assetCriticalityColorScale, cxnCriticalityColorScale]);
+
+  useEffect(() => {
+    if (details.length === 1) {
       setSelectedIndex(0);
       return;
     }
     setSelectedIndex(-1);
-  }, [selectedDetails]);
+  }, [details]);
 
   const handleViewSelected = (index) => {
     setSelectedIndex(index);
   };
 
-  if (IsEmpty(selectedDetails)) return <p>Click on an asset or connection to view details</p>;
+  if (IsEmpty(details)) return <p>Click on an asset or connection to view details</p>;
 
   if (selectedIndex >= 0) {
-    const selectedElement = selectedDetails[selectedIndex];
+    const selectedElement = details[selectedIndex];
     return (
       <>
         <Toolbar
-          selectedElements={selectedDetails}
+          selectedElements={details}
           element={selectedElement}
           onViewAll={handleViewSelected}
         />
@@ -38,9 +55,9 @@ const SelectedElements = () => {
 
   return (
     <>
-      <h2 className="text-lg">{selectedDetails.length} Selected Elements</h2>
+      <h2 className="text-lg">{details.length} Selected Elements</h2>
       <ul className="flex flex-col gap-y-3">
-        {selectedDetails.map((selectedElement, index) => (
+        {details.map((selectedElement, index) => (
           <ElementDetails
             key={selectedElement.uri}
             element={selectedElement}

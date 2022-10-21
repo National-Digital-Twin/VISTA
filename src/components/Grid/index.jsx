@@ -9,15 +9,13 @@ import { Asset, Connection } from "../../models";
 
 const TelicentGrid = ({ loading }) => {
   const [zoomLevel, setZoomLevel] = useState(100);
-  const { data } = useContext(ElementsContext);
-
   const {
     assets,
     connections,
     assetCriticalityColorScale,
     cxnCriticalityColorScale,
     totalCxnsColorScale,
-  } = data;
+  } = useContext(ElementsContext);
 
   const renderAssets = () => {
     const assetGrid = assets.map((asset, index) => (

@@ -81,6 +81,15 @@ export const handlers = [
       assets.push(
         ...[
           {
+            uri: "http://telicent.io/fake_data#M001",
+            id: "M001",
+            name: "Medical Centre",
+            type: "http://ies.data.gov.uk/ontology/ies4#Facility",
+            lat: 50.7585750402657,
+            lon: -1.287151695343874,
+            desc: null,
+          },
+          {
             uri: "http://telicent.io/fake_data#M022",
             id: "M022",
             name: "Medical Centre",
@@ -136,8 +145,9 @@ export const handlers = [
         ]
       );
     }
-    if (assessments === "http://telicent.io/fake_data#Medical_Assessment") {
-      connections.push(...[
+    if (assessments.includes("http://telicent.io/fake_data#Medical_Assessment")) {
+      connections.push(
+        ...[
           {
             connUri: "http://telicent.io/fake_data#connector_E012_M022",
             asset1Uri: "http://telicent.io/fake_data#E012",
@@ -150,7 +160,8 @@ export const handlers = [
             asset2Uri: "http://telicent.io/fake_data#M023",
             criticality: 3,
           },
-        ])
+        ]
+      );
     }
     return res(ctx.status(200), ctx.json(connections));
   }),

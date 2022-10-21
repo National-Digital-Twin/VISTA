@@ -6,6 +6,7 @@ import { isAsset } from "../utils";
 const UPDATE_ASSETS = "UPDATE_ASSETS";
 const UPDATE_CONNECTIONS = "UPDATE_CONNECTIONS";
 const UPDATE_SELECTED_ELEMENTS = "UPDATE_SELECTED_ELEMENTS";
+const CLEAR_SELECTED = "CLEAR_SELECTED";
 const RESET = "RESET";
 
 const getColorScale = (min, max) =>
@@ -55,17 +56,16 @@ const elementsReducer = (state, action) => {
 
       if (action.assets && action.connections) {
         const selectedElements = state.selectedElements.filter((elem) => {
-          return (
-            isAsset(elem) ? action.assets.some((asset) => asset.id === elem.id) :
-            action.connections.some((connection) => connection.id === elem.id)
-          );
+          return isAsset(elem)
+            ? action.assets.some((asset) => asset.id === elem.id)
+            : action.connections.some((connection) => connection.id === elem.id);
         });
         return {
           ...state,
           selectedElements,
         };
       }
-      
+
       if (action.event.originalEvent.shiftKey) {
         const getSelected = () => {
           const index = state.selectedElements.findIndex(
@@ -88,6 +88,8 @@ const elementsReducer = (state, action) => {
         selectedElements: [createElement(action.selectedElement)],
       };
     }
+    case CLEAR_SELECTED:
+      return { ...state, selectedElements: [] };
     case RESET:
       return INITIAL_STATE;
     default:
@@ -151,6 +153,10 @@ export const ElementsProvider = ({ children }) => {
     dispatch({ type: UPDATE_SELECTED_ELEMENTS, event, selectedElement });
   };
 
+  const clearSelectedElements = () => {
+    dispatch({ type: CLEAR_SELECTED });
+  }
+
   return (
     <ElementsContext.Provider
       value={{
@@ -164,6 +170,7 @@ export const ElementsProvider = ({ children }) => {
         assetCriticalityColorScale,
         cxnCriticalityColorScale,
         totalCxnsColorScale,
+        clearSelectedElements,
         filterSelectedElements,
         onElementClick,
         reset,

@@ -6,7 +6,7 @@ import { IsEmpty } from "../../utils";
 import { createData } from "../DataFigures/utils";
 
 const Categories = () => {
-  const { get, response, error, loading } = useFetch(config.api.url);
+  const { get, response, error } = useFetch(config.api.url);
   const { filterSelectedElements, reset, updateAssets, updateConnections } = useContext(ElementsContext);
 
   const [assessments, setAssessments] = useState([]);
@@ -48,8 +48,6 @@ const Categories = () => {
 
     getAssessments();
   }, [get, response, selected, filterSelectedElements, reset, updateAssets, updateConnections]);
-
-  // if (loading) return <p>Loading</p>;
 
   if (error)
     return (

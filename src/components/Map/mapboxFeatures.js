@@ -24,9 +24,7 @@ export const createSelectedConnectionFeatures = (
   cxnCriticalityColorScale,
   selectedElements
 ) => {
-  const cxns = selectedElements.flatMap((element) =>
+  return selectedElements.flatMap((element) =>
     element.generateSelectedConnectionFeature(assets, cxnCriticalityColorScale)
   );
-  console.log("cxns", cxns);
-  return cxns;
 };

@@ -29,6 +29,7 @@ const TelicentMap = () => {
     assetCriticalityColorScale,
     cxnCriticalityColorScale,
     maxAssetCriticality,
+    clearSelectedElements,
     onElementClick,
   } = useContext(ElementsContext);
 
@@ -80,19 +81,16 @@ const TelicentMap = () => {
   const handleOnClick = (event) => {
     const { features } = event;
     const clickedFeature = features && features[0];
+    clearSelected();
 
     if (clickedFeature) {
       const { properties } = clickedFeature;
       event.originalEvent.stopPropagation();
       const element = JSON.parse(properties.element);
-
-      console.log("element ", element);
-
-      // clearSelected();
       onElementClick(event, element);
       return;
     }
-    onElementClick([]);
+    clearSelectedElements();
   };
 
   const handleOnMouseMove = (event) => {

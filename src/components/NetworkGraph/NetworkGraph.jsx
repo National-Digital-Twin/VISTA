@@ -11,12 +11,8 @@ import GraphToolbar from "./GraphToolbar";
 import { CytoscapeContext, ElementsContext } from "../../context";
 
 const NetworkGraph = () => {
-  const {
-    cyRef,
-    layout: graphLayout,
-    updateLayout,
-  } = useContext(CytoscapeContext);
-  const { assets, connections, cxnCriticalityColorScale, onElementClick } =
+  const { cyRef, layout: graphLayout, updateLayout } = useContext(CytoscapeContext);
+  const { assets, connections, cxnCriticalityColorScale, clearSelectedElements, onElementClick } =
     useContext(ElementsContext);
 
   const nodes = useMemo(() => createNode(assets), [assets]);
@@ -49,8 +45,14 @@ const NetworkGraph = () => {
         const element = cyRef.current.getElementById(id).json();
         onElementClick(event, element.data);
       });
+      cyRef.current.on("tap", function (event) {
+        if (event.target === cy) {
+          clearSelectedElements();
+          return;
+        }
+      });
     },
-    [cyRef, onElementClick]
+    [cyRef, clearSelectedElements, onElementClick]
   );
 
   return (
