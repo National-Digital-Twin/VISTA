@@ -8,7 +8,7 @@ export const createSelectedAssetFeatures = (
   maxCriticality,
   selectedElements
 ) => {
-  return selectedElements.flatMap((element) => 
+  return selectedElements.flatMap((element) =>
     element.generateSelectedAssetFeatures(assets, assetCriticalityColorScale, maxCriticality)
   );
 };
@@ -24,7 +24,9 @@ export const createSelectedConnectionFeatures = (
   cxnCriticalityColorScale,
   selectedElements
 ) => {
-  return selectedElements.flatMap((element) =>
+  const cxns = selectedElements.flatMap((element) =>
     element.generateSelectedConnectionFeature(assets, cxnCriticalityColorScale)
   );
+  console.log("cxns", cxns);
+  return cxns;
 };

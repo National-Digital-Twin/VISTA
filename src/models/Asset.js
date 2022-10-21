@@ -16,6 +16,7 @@ export default class Asset {
     this.connections = connections;
     this.criticality = this.#calculateCriticality();
     this.segments = segments;
+    this.elementType = "asset";
     Object.preventExtensions(this);
   }
 
@@ -30,9 +31,7 @@ export default class Asset {
   toCytoscapeNode() {
     return {
       data: {
-        element: this,
-        id: this.id,
-        label: this.label,
+        ...this,
       },
       classes: ["label", this.label.charAt(0)],
     };

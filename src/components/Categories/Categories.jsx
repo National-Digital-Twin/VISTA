@@ -6,44 +6,50 @@ import { IsEmpty } from "../../utils";
 import { createData } from "../DataFigures/utils";
 
 const Categories = () => {
-  const { data = [], error, loading } = useFetch(`${config.api.url}/assessments`, {}, []);
-  const { get } = useFetch(config.api.url);
-  const { setData } = useContext(ElementsContext);
-  const [loadingData, setLoadingData] = useState(false);
+  const { get, response, error, loading } = useFetch(config.api.url);
+  const { filterSelectedElements, reset, updateAssets, updateConnections } = useContext(ElementsContext);
 
+  const [assessments, setAssessments] = useState([]);
   const [selected, setSelected] = useState([]);
 
   useEffect(() => {
-    console.log("alecs ", selected)
-    if (IsEmpty(selected)) {
-      setData({
-        assetCriticalityColorScale: {},
-        assets: [],
-        connections: [],
-        cxnCriticalityColorScale: {},
-        maxAssetCriticality: 0,
-        maxAssetTotalCxns: 0,
-        totalCxnsColorScale: {},
-      });
+    const getAssessments = async () => {
+      const assessments = await get("/assessments");
+      if (response.ok) {
+        setAssessments(assessments);
+        return;
+      }
+    };
+
+    getAssessments();
+  }, [get, response]);
+
+  useEffect(() => {
+    if (IsEmpty(selected)) { 
+      reset();
       return;
     }
-    setLoadingData(true);
 
     const paramsArray = selected.map((item) => ["assessments", item]);
     const params = new URLSearchParams(paramsArray).toString();
 
     const getAssessments = async () => {
-      const assets = await get(`assessments/assets?${params}`);
-      const connections = await get(`assessments/connections?${params}`);
-      const data = await createData(assets, connections, get);
-      setData(data);
-    };
-    getAssessments();
-    setLoadingData(false);
-  }, [get, selected, setData]);
+      const assetsMetadata = await get(`assessments/assets?${params}`);
+      const connectionsMetadata = await get(`assessments/connections?${params}`);
 
-  if (loading) return <p>Loading</p>;
-  if (loadingData) return <p>Loading Data</p>;
+      if (response.ok) {
+        const { assets, connections } = await createData(assetsMetadata, connectionsMetadata, get);
+        updateAssets(assets);
+        updateConnections(connections);
+        filterSelectedElements(assets, connections);
+        return;
+      }
+    };
+
+    getAssessments();
+  }, [get, response, selected, filterSelectedElements, reset, updateAssets, updateConnections]);
+
+  // if (loading) return <p>Loading</p>;
 
   if (error)
     return (
@@ -52,14 +58,19 @@ const Categories = () => {
       </p>
     );
 
-  const categories = data
+  const categories = assessments
     .filter((assessment) => assessment.assCount > 0)
     .map((assessment) => ({
       label: `${assessment.name} [${assessment.assCount}]`,
       value: assessment.uri,
     }));
 
-  if (IsEmpty(categories)) return <p style={{ textAlign: "center" }}>Categories not found. Please contact admin to resolve issue.</p>;
+  if (IsEmpty(categories))
+    return (
+      <p style={{ textAlign: "center" }}>
+        Categories not found. Please contact admin to resolve issue.
+      </p>
+    );
 
   const onChange = (event) => {
     const {

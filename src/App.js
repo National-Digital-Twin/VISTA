@@ -8,8 +8,6 @@ import config from "./config/app-config";
 import Main from "./lib/Main";
 
 const App = () => {
-  // const [selectedCategories, setSelectedCategories] = useState([]);
-
   return (
     <StandardLayout appName="paralog" beta={true}>
       <SponsorsLogos />
