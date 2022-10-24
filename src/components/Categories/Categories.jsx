@@ -3,13 +3,12 @@ import useFetch from "use-http";
 import ReactSwitch from "react-switch";
 import PropTypes from "prop-types";
 
-import config from "../../config/app-config";
 import { ElementsContext } from "../../context";
 import { IsEmpty } from "../../utils";
 import { createData } from "./utils";
 
 const Categories = ({ showGrid, toggleView }) => {
-  const { get, response, error } = useFetch(config.api.url);
+  const { get, response, error } = useFetch();
   const { filterSelectedElements, reset, updateAssets, updateConnections } = useContext(ElementsContext);
 
   const [assessments, setAssessments] = useState([]);

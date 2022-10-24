@@ -1,110 +1,34 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import React from "react";
-import userEvent from "@testing-library/user-event";
-import { server } from "../../mocks/server";
+// import userEvent from "@testing-library/user-event";
 
 import * as utils from "./../Categories/utils";
 import { E001 } from "../../sample-data";
-import { ElementsContext, ElementsProvider } from "../../context";
+import { ElementsProvider } from "../../context";
 import SelectedElements from "./SelectedElements";
-import Categories from "../Categories/Categories";
+import { AssetBtn, CxnBtn, renderTestComponent, TestComponent } from "../../test-utils";
 
 const assetsMetadata = [E001];
 
-const AssetBtn = ({ label, assets, event, onElementClick }) => (
-  <button
-    onClick={() => {
-      onElementClick(
-        event,
-        assets.find((asset) => asset.label === label)
-      );
-    }}
-  >
-    {label}
-  </button>
-);
-
-const CxnBtn = ({ label, connections, event, onElementClick }) => (
-  <button
-    onClick={() => {
-      onElementClick(
-        event,
-        connections.find((cxn) => cxn.label === label)
-      );
-    }}
-  >
-    {label}
-  </button>
-);
-
-const renderSelectedDetails = () => {
-  return {
-    user: userEvent.setup(),
-    ...render(
-      <ElementsProvider>
-        <ElementsContext.Consumer>
-          {({ assets, connections, selectedElements, onElementClick }) => {
-            const event = { originalEvent: { shiftKey: true } };
-            return (
-              <>
-                <AssetBtn
-                  label="E001"
-                  assets={assets}
-                  event={event}
-                  onElementClick={onElementClick}
-                />
-                <AssetBtn
-                  label="E003"
-                  assets={assets}
-                  event={event}
-                  onElementClick={onElementClick}
-                />
-                <CxnBtn
-                  label="E001 - E003"
-                  connections={connections}
-                  event={event}
-                  onElementClick={onElementClick}
-                />
-                <div id="all-assets">
-                  {assets.map((asset) => (
-                    <p id="asset" key={asset.id}>
-                      {asset.id}
-                    </p>
-                  ))}
-                </div>
-                <div id="all-connections">
-                  {connections.map((cxn) => (
-                    <p id="cxn" key={cxn.id}>
-                      {cxn.id}
-                    </p>
-                  ))}
-                </div>
-                <div id="selected-elements">
-                  {selectedElements.map((selectedElement) => (
-                    <p id="selected-element" key={selectedElement.id}>
-                      {selectedElement.id}
-                    </p>
-                  ))}
-                </div>
-                <Categories />
-                <SelectedElements />
-              </>
-            );
-          }}
-        </ElementsContext.Consumer>
-      </ElementsProvider>
-    ),
-  };
+const TestBtns = ({ assets, connections, onElementClick }) => {
+  const event = { originalEvent: { shiftKey: true } };
+  return (
+    <>
+      <AssetBtn label="E001" assets={assets} event={event} onElementClick={onElementClick} />
+      <AssetBtn label="E003" assets={assets} event={event} onElementClick={onElementClick} />
+      <CxnBtn
+        label="E001 - E003"
+        connections={connections}
+        event={event}
+        onElementClick={onElementClick}
+      />
+    </>
+  );
 };
 
-describe("Selected Elements component", () => {
-  beforeAll(() => server.listen());
-  beforeEach(() => {
-    server.resetHandlers();
-    jest.restoreAllMocks();
-  });
-  afterAll(() => server.close());
+const renderSelectedDetails = () => renderTestComponent(<SelectedElements />, { testComponent: TestBtns });
 
+describe("Selected Elements component", () => {
   test("renders message when an element(s) aren't selected", () => {
     render(<SelectedElements />, { wrapper: ElementsProvider });
     expect(

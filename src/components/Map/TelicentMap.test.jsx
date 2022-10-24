@@ -1,8 +1,8 @@
 import { render, screen, waitFor, within } from "@testing-library/react";
 import React from "react";
 import userEvent from "@testing-library/user-event";
+
 import { CytoscapeProvider, ElementsContext, ElementsProvider } from "../../context";
-import { server } from "../../mocks/server";
 import TelicentMap from "./TelicentMap";
 import Categories from "./../Categories/Categories";
 import * as mapboxFeatures from "./mapboxFeatures";
@@ -95,13 +95,6 @@ const CxnBtn = ({ label, connections, event, onElementClick }) => (
 );
 
 describe("Map component", () => {
-  beforeAll(() => server.listen());
-  beforeEach(() => {
-    server.resetHandlers();
-    jest.restoreAllMocks();
-  });
-  afterAll(() => server.close());
-
   test("generates selected all assets", async () => {
     const spyOnCreateData = jest.spyOn(utils, "createData");
     const spyOnGenerateAssetFeatures = jest.spyOn(mapboxFeatures, "generateAssetFeatures");

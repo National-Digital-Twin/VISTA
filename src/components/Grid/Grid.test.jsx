@@ -1,6 +1,5 @@
 import { screen, render, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { server } from "../../mocks/server";
 import { ElementsProvider } from "../../context";
 import Categories from "../Categories/Categories";
 import Grid from "./Grid";
@@ -9,13 +8,6 @@ import * as utils from "./../Categories/utils";
 const user = userEvent.setup();
 
 describe("Grid component", () => {
-  beforeAll(() => server.listen());
-  beforeEach(() => {
-    server.resetHandlers();
-    jest.restoreAllMocks();
-  });
-  afterAll(() => server.close());
-  
   test("renders grid", async () => {
     const spyOnCreateData = jest.spyOn(utils, "createData");
     render(

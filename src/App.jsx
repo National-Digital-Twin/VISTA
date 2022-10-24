@@ -12,6 +12,7 @@ import {
 } from "./components";
 import { CytoscapeProvider, ElementsProvider } from "./context";
 import config from "./config/app-config";
+import { Provider as UseFetchProvider } from "use-http";
 
 const App = () => {
   const [showGrid, setShowGrid] = useState(false);
@@ -27,18 +28,20 @@ const App = () => {
   return (
     <StandardLayout appName="paralog" beta={true}>
       <SponsorsLogos />
-      <CytoscapeProvider>
-        <ElementsProvider>
-          <div className="relative h-full">
-            <Categories showGrid={showGrid} toggleView={toggleView} />
-            <InfoPanel />
-            <div className="grid grid-rows-1 grid-cols-2 gap-x-2 h-full">
-              {showGrid ? <Grid /> : <NetworkGraph />}
-              <TelicentMap />
+      <UseFetchProvider url={config.api.url}>
+        <CytoscapeProvider>
+          <ElementsProvider>
+            <div className="relative h-full">
+              <Categories showGrid={showGrid} toggleView={toggleView} />
+              <InfoPanel />
+              <div className="grid grid-rows-1 grid-cols-2 gap-x-2 h-full">
+                {showGrid ? <Grid /> : <NetworkGraph />}
+                <TelicentMap />
+              </div>
             </div>
-          </div>
-        </ElementsProvider>
-      </CytoscapeProvider>
+          </ElementsProvider>
+        </CytoscapeProvider>
+      </UseFetchProvider>
     </StandardLayout>
   );
 };

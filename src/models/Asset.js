@@ -4,24 +4,13 @@ const MAX_CIRCLE_SIZE = 10;
 const MIN_CIRCLE_SIZE = 5;
 
 export default class Asset {
-  constructor({
-    id,
-    label,
-    name,
-    description,
-    lat,
-    lng,
-    type,
-    gridIndex,
-    connections,
-    segments,
-  }) {
+  constructor({ id, label, name, description, lat, lng, type, gridIndex, connections, segments }) {
     this.id = id;
     this.label = label;
     this.name = name;
     this.description = description;
-    this.lat = parseFloat(lat);
-    this.lng = parseFloat(lng);
+    this.lat = lat;
+    this.lng = lng;
     this.type = type;
     this.gridIndex = gridIndex;
     this.connections = connections;
@@ -104,26 +93,11 @@ export default class Asset {
   }
 
   generateSelectedAssetFeatures(assets, colorScale, maxCriticality) {
-    const sourceFeature = this.createSelectedAssetFeature(
-      colorScale,
-      maxCriticality,
-      true
-    );
- 
+    const sourceFeature = this.createSelectedAssetFeature(colorScale, maxCriticality, true);
 
-    const targetFeatures = this.#lookupTargetConnection(assets)
-      .filter(({ target, source }) => {
-        if (!target || !source) {
-          return false;
-        } else return true;
-      })
-      .map(({ target }) => {
-        return target.createSelectedAssetFeature(
-          colorScale,
-          maxCriticality,
-          false
-        );
-      });
+    const targetFeatures = this.#lookupTargetConnection(assets).map(({ target }) =>
+      target.createSelectedAssetFeature(colorScale, maxCriticality, false)
+    );
 
     return [sourceFeature, ...targetFeatures];
   }
