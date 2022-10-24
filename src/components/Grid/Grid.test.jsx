@@ -1,10 +1,10 @@
 import { screen, render, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { server } from "../../mocks/server";
-import { ElementsContext, ElementsProvider } from "../../context";
+import { ElementsProvider } from "../../context";
 import Categories from "../Categories/Categories";
-import TelicentGrid from "./index";
-import * as utils from "./../DataFigures/utils";
+import Grid from "./Grid";
+import * as utils from "./../Categories/utils";
 
 const user = userEvent.setup();
 
@@ -21,7 +21,7 @@ describe("Grid component", () => {
     render(
       <ElementsProvider>
         <Categories />
-        <TelicentGrid loading={false} />
+        <Grid />
       </ElementsProvider>
     );
     
@@ -36,7 +36,7 @@ xdescribe("Grid should populate assets and connections", () => {
     beforeEach(() => {
       render(
         <AssetProvider>
-          <TelicentGrid assets={[assets[0]]} />
+          <Grid assets={[assets[0]]} />
         </AssetProvider>
       );
     });
@@ -58,7 +58,7 @@ xdescribe("Grid should populate assets and connections", () => {
     beforeEach(() => {
       render(
         <AssetProvider>
-          <TelicentGrid connections={connections} assets={assets} />
+          <Grid connections={connections} assets={assets} />
         </AssetProvider>
       );
     });
@@ -73,7 +73,7 @@ xdescribe("Grid should populate assets and connections", () => {
     beforeEach(() => {
       render(
         <AssetProvider>
-          <TelicentGrid />
+          <Grid />
         </AssetProvider>
       );
     });

@@ -6,7 +6,7 @@ import { server } from "../../mocks/server";
 import TelicentMap from "./TelicentMap";
 import Categories from "./../Categories/Categories";
 import * as mapboxFeatures from "./mapboxFeatures";
-import * as utils from "./../DataFigures/utils";
+import * as utils from "./../Categories/utils";
 
 jest.mock("react-map-gl", () => ({
   __esModule: true,

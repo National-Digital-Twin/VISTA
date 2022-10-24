@@ -3,14 +3,13 @@ import React from "react";
 import userEvent from "@testing-library/user-event";
 import { server } from "../../mocks/server";
 
-import * as utils from "./../DataFigures/utils";
-import { E001, E001_E003, E003, E005, E005_E006, E006, E006_E012 } from "../../sample-data";
+import * as utils from "./../Categories/utils";
+import { E001 } from "../../sample-data";
 import { ElementsContext, ElementsProvider } from "../../context";
 import SelectedElements from "./SelectedElements";
 import Categories from "../Categories/Categories";
 
-const assetsMetadata = [E001, E003, E005, E006];
-const connectionsMetadata = [E001_E003, E006_E012, E005_E006];
+const assetsMetadata = [E001];
 
 const AssetBtn = ({ label, assets, event, onElementClick }) => (
   <button

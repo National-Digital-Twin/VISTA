@@ -7,7 +7,7 @@ import { ElementsContext } from "../../context/ElementContext";
 import { findAsset, getHexColor } from "../../utils";
 import { Asset, Connection } from "../../models";
 
-const TelicentGrid = ({ loading }) => {
+const Grid = ({ loading }) => {
   const [zoomLevel, setZoomLevel] = useState(100);
   const {
     assets,
@@ -299,4 +299,4 @@ const ConnectionGrid = ({ connection, cxnCriticalityColorScale, source, target, 
     </>
   );
 };
-export default TelicentGrid;
+export default Grid;

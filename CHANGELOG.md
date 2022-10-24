@@ -1,5 +1,41 @@
 # Changelog
 
+## [1.2.3](https://github.com/Telicent-io/telicent-paralog/compare/v1.2.2...v1.2.3) (2022-10-19)
+
+
+### Bug Fixes
+
+* on connection clikc in the grid, no details were shown. FIXED ([be5ae39](https://github.com/Telicent-io/telicent-paralog/commit/be5ae39428247b12559bb79a98068b0b324da407))
+
+## [1.2.2](https://github.com/Telicent-io/telicent-paralog/compare/v1.2.1...v1.2.2) (2022-10-19)
+
+
+### Bug Fixes
+
+* cxns and segments details are now showing ([a73f3dd](https://github.com/Telicent-io/telicent-paralog/commit/a73f3ddcee6cd83be7f587e703853707b2edc360))
+* updated safe element on map ([a0606b2](https://github.com/Telicent-io/telicent-paralog/commit/a0606b2fed1e5643a7b7ba6845057d9543caa65d))
+
+## [1.2.1](https://github.com/Telicent-io/telicent-paralog/compare/v1.2.0...v1.2.1) (2022-10-17)
+
+
+### Bug Fixes
+
+* asset with connections crashes the app when assessment deselected ([2a83e1f](https://github.com/Telicent-io/telicent-paralog/commit/2a83e1fa67eaac836b89503850a7bd5c6c6e1f1d))
+
+## [1.2.0](https://github.com/Telicent-io/telicent-paralog/compare/v1.1.3...v1.2.0) (2022-10-17)
+
+
+### Features
+
+* hopefully this will trigger build pr ([2e98a8f](https://github.com/Telicent-io/telicent-paralog/commit/2e98a8f60e0623eb88d825e95f03f342030792e3))
+* interactivity ([19bd64b](https://github.com/Telicent-io/telicent-paralog/commit/19bd64b771d9a9fd9fc57c3c620dd5d91e854ff0))
+* removed node selection on graph when an asset is clicked on the map ([b1a17e4](https://github.com/Telicent-io/telicent-paralog/commit/b1a17e431d5f1b91a428f92892ddf691eac7ef6f))
+
+
+### Bug Fixes
+
+* fix scroll bug on the info panel ([7fbf26a](https://github.com/Telicent-io/telicent-paralog/commit/7fbf26a97c74b20db468e60da7baaab8eef4e3f0))
+
 ## [1.1.3](https://github.com/Telicent-io/telicent-paralog/compare/v1.1.2...v1.1.3) (2022-10-16)
 
 
