@@ -32,7 +32,8 @@ jobs:
           always-auth: true
       - name: Install dependencies
         run: yarn install --frozen-lockfile
+      - run: mkdir reports
       - name: run integrated tests
-        run: yarn test
+      - run: yarn test:ci
     env:
       NODE_AUTH_TOKEN: ${{ secrets.PACKAGE_PAT }}
