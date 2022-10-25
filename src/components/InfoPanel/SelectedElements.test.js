@@ -3,12 +3,10 @@ import React from "react";
 // import userEvent from "@testing-library/user-event";
 
 import * as utils from "./../Categories/utils";
-import { E001 } from "../../sample-data";
 import { ElementsProvider } from "../../context";
 import SelectedElements from "./SelectedElements";
-import { AssetBtn, CxnBtn, renderTestComponent, TestComponent } from "../../test-utils";
-
-const assetsMetadata = [E001];
+import { AssetBtn, CxnBtn, renderTestComponent } from "../../test-utils";
+import { ENERGY_ASSETS } from "../../mocks";
 
 const TestBtns = ({ assets, connections, onElementClick }) => {
   const event = { originalEvent: { shiftKey: true } };
@@ -138,7 +136,7 @@ describe("Selected Elements component", () => {
     );
     expect(screen.getByTestId("element-details")).toBeInTheDocument();
 
-    const viewpoint = encodeURIComponent(`${assetsMetadata[0].lat},${assetsMetadata[0].lon}`);
+    const viewpoint = encodeURIComponent(`${ENERGY_ASSETS[0].lat},${ENERGY_ASSETS[0].lon}`);
     expect(screen.getByRole("link", { name: /open street view/i })).toHaveAttribute(
       "href",
       `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${viewpoint}`

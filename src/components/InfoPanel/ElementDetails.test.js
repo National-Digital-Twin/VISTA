@@ -2,7 +2,7 @@ import { render, screen, within } from "@testing-library/react";
 import React from "react";
 import userEvent from "@testing-library/user-event";
 
-import { E001_DETAILS, E001_E003_DETAILS, E003_DETAILS } from "../../sample-data";
+import { E001_DETAILS, E001_E003_DETAILS, E003_DETAILS } from "../../mocks";
 import ElementDetails from "./ElementDetails";
 
 const renderElementDetails = (element) => ({
