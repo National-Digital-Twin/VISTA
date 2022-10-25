@@ -1,8 +1,9 @@
-import { render } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import React from "react";
 import userEvent from "@testing-library/user-event";
 import { Categories } from "./components";
 import { CytoscapeProvider, ElementsContext, ElementsProvider } from "./context";
+import * as utils from "./components/Categories/utils";
 
 export const AssetBtn = ({ label, assets, event, onElementClick }) => (
   <button
@@ -30,7 +31,7 @@ export const CxnBtn = ({ label, connections, event, onElementClick }) => (
   </button>
 );
 
-export const LoadDataWrapper = ({ testComponent, children }) => (
+const LoadDataWrapper = ({ testComponent, children }) => (
   <CytoscapeProvider>
     <ElementsProvider>
       <ElementsContext.Consumer>
@@ -79,4 +80,18 @@ export const renderTestComponent = (ui, options) => {
       ...options?.testingLibraryOptions,
     }),
   };
+};
+
+export const selectDatasets = async (user, datasets) => {
+  const spyOnCreateData = jest.spyOn(utils, "createData");
+
+  for (const dataset of datasets) {
+    await waitFor(() =>
+      expect(screen.getByRole("checkbox", { name: dataset })).toBeInTheDocument()
+    );
+    await user.click(await screen.findByRole("checkbox", { name: dataset }));
+    expect(screen.getByRole("checkbox", { name: dataset })).toBeChecked();
+  }
+
+  await waitFor(() => expect(spyOnCreateData).toHaveReturned());
 };
