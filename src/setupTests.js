@@ -13,6 +13,13 @@ expect.extend({ toMatchImageSnapshot });
 configure({ testIdAttribute: "id" });
 global.ResizeObserver = require("resize-observer-polyfill");
 
+process.env = {
+  ...process.env,
+  API_URL: "http://localhost:5051",
+  MAPBOX_TOKEN: "test_key",
+  MAP_URL: "http://map.com",
+};
+
 beforeAll(() => server.listen());
 beforeEach(() => {
   server.resetHandlers();
