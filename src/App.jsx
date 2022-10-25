@@ -20,7 +20,7 @@ const App = () => {
     setShowGrid((prevShow) => !prevShow);
   };
   
-  if (config && config.api && config.api.url) {
+  if (!config && !config.api && !config.api.url) {
     console.error("Missing configuration");
   }
 
