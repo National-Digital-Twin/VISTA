@@ -1,7 +1,7 @@
 import { screen, render, waitFor } from "@testing-library/react";
 import { ElementsProvider } from "../../context";
 import { server } from "../../mocks/server";
-import Categories from "./Categories";
+import Categories from "./Dataset";
 
 
 describe("Categories component", () => {

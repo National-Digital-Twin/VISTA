@@ -3,7 +3,7 @@ import { StandardLayout } from "@telicent-io/ds";
 import "../node_modules/@telicent-io/ds/dist/style.css";
 
 import {
-  Categories,
+  ActionsPanel,
   Grid,
   InfoPanel,
   NetworkGraph,
@@ -30,7 +30,7 @@ const App = () => {
       <CytoscapeProvider>
         <ElementsProvider>
           <div className="relative h-full">
-            <Categories showGrid={showGrid} toggleView={toggleView} />
+            <ActionsPanel showGrid={showGrid} toggleView={toggleView} />
             <InfoPanel />
             <div className="grid grid-rows-1 grid-cols-2 gap-x-2 h-full">
               {showGrid ? <Grid /> : <NetworkGraph />}

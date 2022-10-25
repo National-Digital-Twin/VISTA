@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import useFetch from "use-http";
-import ReactSwitch from "react-switch";
+
 import PropTypes from "prop-types";
 
 import config from "../../config/app-config";
@@ -8,7 +8,7 @@ import { ElementsContext } from "../../context";
 import { IsEmpty } from "../../utils";
 import { createData } from "./utils";
 
-const Categories = ({ showGrid, toggleView }) => {
+const Categories = () => {
   const { get, response, error } = useFetch(config.api.url);
   const { setData } = useContext(ElementsContext);
 
@@ -62,17 +62,17 @@ const Categories = ({ showGrid, toggleView }) => {
       </p>
     );
 
-  const categories = assessments
+  const data = assessments
     .filter((assessment) => assessment.assCount > 0)
     .map((assessment) => ({
       label: `${assessment.name} [${assessment.assCount}]`,
       value: assessment.uri,
     }));
 
-  if (IsEmpty(categories))
+  if (IsEmpty(data))
     return (
       <p style={{ textAlign: "center" }}>
-        Categories not found. Please contact admin to resolve issue.
+        data not found. Please contact admin to resolve issue.
       </p>
     );
 
@@ -88,32 +88,17 @@ const Categories = ({ showGrid, toggleView }) => {
   };
 
   return (
-    <div className="absolute top-0 flex flex-col gap-y-3 p-3 bg-black-200 z-10">
-      <label className="flex items-center gap-x-3 text-sm w-fit">
-        Grid
-        <ReactSwitch
-          onChange={toggleView}
-          checked={showGrid}
-          offColor="#636363"
-          onColor="#f5f5f5"
-          onHandleColor="#141414"
-          handleDiameter={10}
-          height={16}
-          width={32}
-          uncheckedIcon={false}
-          checkedIcon={false}
-        />
-      </label>
-      {categories.map((filter) => (
+    <ul id="dataset" className="flex flex-col gap-y-2">
+      {data.map(({ label, value }) => (
         <CheckListItem
-          key={filter.value}
-          value={filter.value}
-          label={filter.label}
-          selected={selected.includes(filter.value)}
+          key={value}
+          value={value}
+          label={label}
+          selected={selected.includes(value)}
           onChange={onChange}
         />
       ))}
-    </div>
+    </ul>
   );
 };
 export default Categories;
@@ -127,7 +112,7 @@ Categories.propTypes = {
 }
 
 const CheckListItem = ({ value, label, onChange, selected }) => (
-  <div
+  <li
     style={{
       display: "inline-flex",
       alignItems: "center",
@@ -149,7 +134,7 @@ const CheckListItem = ({ value, label, onChange, selected }) => (
     >
       {label}
     </label>
-  </div>
+  </li>
 );
 
 
