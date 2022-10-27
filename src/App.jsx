@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { StandardLayout } from "@telicent-io/ds";
+import { Provider as UseHttpProvider } from "use-http";
 import "../node_modules/@telicent-io/ds/dist/style.css";
 
 import {
-  ActionsPanel,
+  Dataset,
   Grid,
   InfoPanel,
   NetworkGraph,
@@ -25,21 +26,23 @@ const App = () => {
   }
 
   return (
-    <StandardLayout appName="paralog" beta={true}>
-      <SponsorsLogos />
-      <CytoscapeProvider>
-        <ElementsProvider>
-          <div className="relative h-full">
-            <ActionsPanel showGrid={showGrid} toggleView={toggleView} />
-            <InfoPanel />
-            <div className="grid grid-rows-1 grid-cols-2 gap-x-2 h-full">
-              {showGrid ? <Grid /> : <NetworkGraph />}
-              <TelicentMap />
+    <UseHttpProvider url={config.api.url}>
+      <StandardLayout appName="paralog" beta={true}>
+        <SponsorsLogos />
+        <CytoscapeProvider>
+          <ElementsProvider>
+            <div className="relative h-full">
+              <Dataset showGrid={showGrid} toggleView={toggleView} />
+              <InfoPanel />
+              <div className="grid grid-rows-1 grid-cols-2 gap-x-2 h-full">
+                {showGrid ? <Grid /> : <NetworkGraph />}
+                <TelicentMap />
+              </div>
             </div>
-          </div>
-        </ElementsProvider>
-      </CytoscapeProvider>
-    </StandardLayout>
+          </ElementsProvider>
+        </CytoscapeProvider>
+      </StandardLayout>
+    </UseHttpProvider>
   );
 };
 

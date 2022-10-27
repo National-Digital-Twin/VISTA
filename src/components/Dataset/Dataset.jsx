@@ -1,31 +1,38 @@
 import React, { useContext, useEffect, useState } from "react";
 import useFetch from "use-http";
-
 import PropTypes from "prop-types";
+import classNames from "classnames";
+import { kebabCase } from "lodash";
+import ReactSwitch from "react-switch";
 
-import config from "../../config/app-config";
-import { ElementsContext } from "../../context";
-import { IsEmpty } from "../../utils";
+import { ElementsContext } from "context";
+import config from "config/app-config";
+import { FloatingPanel } from "lib";
+import { IsEmpty } from "utils";
 import { createData } from "./utils";
+import Assessments from "./Assessments";
 
-const Categories = () => {
-  const { get, response, error } = useFetch(config.api.url);
+const Dataset = ({ showGrid, toggleView }) => {
+  const { get, response } = useFetch(config.api.url);
   const { setData } = useContext(ElementsContext);
 
-  const [assessments, setAssessments] = useState([]);
   const [selected, setSelected] = useState([]);
+  const [showPanel, setShowPanel] = useState(true);
 
-  useEffect(() => {
-    const getAssessments = async () => {
-      const assessments = await get("/assessments");
-      if (response.ok) {
-        setAssessments(assessments);
-        return;
-      }
-    };
+  const togglePanel = () => {
+    setShowPanel((show) => !show);
+  };
 
-    getAssessments();
-  }, [get, response]);
+  const handleAssessmentsChange = (event) => {
+    const {
+      target: { value },
+    } = event;
+    setSelected(
+      selected.some((filter) => filter === value)
+        ? selected.filter((filter) => filter !== value)
+        : [...selected, value]
+    );
+  };
 
   useEffect(() => {
     if (IsEmpty(selected)) {
@@ -47,94 +54,78 @@ const Categories = () => {
     const getAssessments = async () => {
       const assets = await get(`assessments/assets?${params}`);
       const connections = await get(`assessments/connections?${params}`);
-      const data = await createData(assets, connections, get);
-      setData(data);
+
+      if (response.ok) {
+        const data = await createData(assets, connections, get);
+        setData(data);
+      }
     };
     getAssessments();
-  }, [get, selected, setData]);
-
-  // if (loading) return <p>Loading</p>;
-
-  if (error)
-    return (
-      <p id="errorMsg" style={{ color: "rgb(239, 68, 68)", textAlign: "center" }}>
-        Unable to retrieve categories. Please try again, if the problem persists contact admin.
-      </p>
-    );
-
-  const data = assessments
-    .filter((assessment) => assessment.assCount > 0)
-    .map((assessment) => ({
-      label: `${assessment.name} [${assessment.assCount}]`,
-      value: assessment.uri,
-    }));
-
-  if (IsEmpty(data))
-    return (
-      <p style={{ textAlign: "center" }}>
-        data not found. Please contact admin to resolve issue.
-      </p>
-    );
-
-  const onChange = (event) => {
-    const {
-      target: { value },
-    } = event;
-    setSelected(
-      selected.some((filter) => filter === value)
-        ? selected.filter((filter) => filter !== value)
-        : [...selected, value]
-    );
-  };
+  }, [get, response.ok, selected, setData]);
 
   return (
-    <ul id="dataset" className="flex flex-col gap-y-2">
-      {data.map(({ label, value }) => (
-        <CheckListItem
-          key={value}
-          value={value}
-          label={label}
-          selected={selected.includes(value)}
-          onChange={onChange}
-        />
-      ))}
-    </ul>
+    <FloatingPanel
+      collapsedComponent={<DBButton onToggle={togglePanel} />}
+      show={showPanel}
+      position="top-0"
+      className="flex flex-col gap-y-3 p-2 w-52"
+    >
+      <div className="inline-flex gap-x-2 border-b border-black-500">
+        <DBButton active onToggle={togglePanel} />
+        <h2 className="font-medium">Dataset</h2>
+        <label className="flex items-center gap-x-1 text-sm w-fit ml-auto">
+          Grid
+          <ReactSwitch
+            onChange={toggleView}
+            checked={showGrid}
+            offColor="#636363"
+            onColor="#f5f5f5"
+            onHandleColor="#141414"
+            handleDiameter={10}
+            height={16}
+            width={32}
+            uncheckedIcon={false}
+            checkedIcon={false}
+          />
+        </label>
+      </div>
+      <Assessments
+        selected={selected}
+        onChange={handleAssessmentsChange}
+      />
+    </FloatingPanel>
   );
 };
-export default Categories;
-Categories.defaultProps = {
+export default Dataset;
+Dataset.defaultProps = {
   showGrid: false,
-  toggleView: () => {}
-}
-Categories.propTypes = {
+  toggleView: () => {},
+};
+Dataset.propTypes = {
   showGrid: PropTypes.bool,
-  toggleView: PropTypes.func
-}
+  toggleView: PropTypes.func,
+};
 
-const CheckListItem = ({ value, label, onChange, selected }) => (
-  <li
-    style={{
-      display: "inline-flex",
-      alignItems: "center",
-      marginRight: "0.5rem",
-      position: "relative",
-      fontSize: "0.8em",
-      textTransform: "uppercase",
-    }}
-  >
-    <input type="checkbox" value={value} id={value} defaultChecked={selected} onChange={onChange} />
-    <label
-      htmlFor={value}
-      style={{
-        display: "inline-block",
-        marginBottom: "0",
-        marginLeft: "4px",
-        letterSpacing: "0.5px",
-      }}
-    >
-      {label}
-    </label>
-  </li>
-);
-
-
+const DBButton = ({ active, onToggle }) => {
+  const tooltip = `${active ? "Close" : "Open"} dataset panel`;
+  return (
+    <div className="relative">
+      <button
+        aria-labelledby={kebabCase(tooltip)}
+        className="flex items-center justify-center"
+        onClick={onToggle}
+      >
+        <span
+          aria-hidden
+          role="img"
+          className={classNames("ri-database-2-fill !text-base", {
+            "text-[color:var(--app-Colour)]": active,
+          })}
+        />
+      </button>
+      <div id={kebabCase(tooltip)} role="tooltip">
+        {tooltip}
+      </div>
+    </div>
+  );
+};

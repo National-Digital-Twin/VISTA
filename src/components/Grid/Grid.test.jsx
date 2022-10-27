@@ -1,6 +1,6 @@
 import { screen, render } from "@testing-library/react";
 import { ElementsContext } from "../../context";
-import { createData } from "../Categories/utils";
+import { createData } from "../Dataset/utils";
 import Grid from "./Grid";
 import { E001, E001_E003, E003, E005, E005_E006, E006, E006_E012 } from "../../sample-data";
 

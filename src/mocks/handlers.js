@@ -2,7 +2,8 @@ import { rest } from "msw";
 import config from "../config/app-config";
 
 export const handlers = [
-  rest.get(`${config.api.url}/assessments`, (req, res, ctx) => {
+  rest.get('/assessments', (req, res, ctx) => {
+    console.log("DEFAULT")
     return res(
       ctx.status(200),
       ctx.json([
