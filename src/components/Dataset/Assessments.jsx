@@ -50,7 +50,7 @@ const Loader = ({ label }) => (
 );
 
 const CheckListItem = ({ value, label, onChange, selected }) => (
-  <li className="inline-flex gap-x-1 text-sm">
+  <li className="inline-flex gap-x-1 text-xs">
     <input
       type="checkbox"
       value={value}

@@ -34,7 +34,7 @@
 
 [role="tooltip"],
 .hideTooltip + [role="tooltip"] {
-  @apply absolute -top-10 whitespace-nowrap px-2 py-1 bg-black rounded-md invisible z-10;
+  @apply absolute -top-8 whitespace-nowrap px-2 py-1 bg-black rounded-md invisible z-10 text-sm;
 }
 [aria-labelledby]:hover + [role="tooltip"],
 [aria-labelledby]:focus + [role="tooltip"] {
@@ -65,6 +65,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
   /* height: 100%;
   min-height: 100%; */
+  font-size: 16px;
   overflow: hidden;
 }
 

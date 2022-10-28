@@ -68,12 +68,12 @@ const Dataset = ({ showGrid, toggleView }) => {
       collapsedComponent={<DBButton onToggle={togglePanel} />}
       show={showPanel}
       position="top-0"
-      className="flex flex-col gap-y-3 p-2 w-52"
+      className="flex flex-col gap-y-2 p-2 w-52"
     >
-      <div className="inline-flex gap-x-2 border-b border-black-500">
+      <div className="inline-flex gap-x-2 border-b border-black-500 pb-1">
         <DBButton active onToggle={togglePanel} />
         <h2 className="font-medium">Dataset</h2>
-        <label className="flex items-center gap-x-1 text-sm w-fit ml-auto">
+        <label className="flex items-center gap-x-1 text-xs w-fit ml-auto">
           Grid
           <ReactSwitch
             onChange={toggleView}
