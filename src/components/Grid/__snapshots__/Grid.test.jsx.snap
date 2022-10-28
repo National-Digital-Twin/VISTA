@@ -2,7 +2,7 @@
 
 exports[`Grid component renders grid 1`] = `
 <div
-  class="relative flex-1 h-full w-1/2 overflow-auto"
+  class="relative h-full overflow-auto"
   id="grid"
 >
   <div

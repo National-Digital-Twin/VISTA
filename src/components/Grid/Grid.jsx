@@ -53,7 +53,7 @@ const Grid = ({ loading }) => {
 
   return (
     <>
-      <div id="grid" className="relative flex-1 h-full w-1/2 overflow-auto">
+      <div id="grid" className="relative h-full overflow-auto">
         <div
           style={{
             zoom: `${zoomLevel}%`,
