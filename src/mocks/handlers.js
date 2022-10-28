@@ -1,5 +1,4 @@
 import { rest } from "msw";
-import config from "../config/app-config";
 
 export const handlers = [
   rest.get('/assessments', (req, res, ctx) => {
