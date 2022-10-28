@@ -10,8 +10,8 @@ import {
   SponsorsLogos,
   TelicentMap,
 } from "./components";
-import { CytoscapeProvider, ElementsProvider } from "./context";
 import config from "./config/app-config";
+import { ResizableContainer } from "./lib";
 
 const App = () => {
   const [showGrid, setShowGrid] = useState(false);
@@ -19,7 +19,7 @@ const App = () => {
   const toggleView = () => {
     setShowGrid((prevShow) => !prevShow);
   };
-  
+
   if (!config && !config.api && !config.api.url) {
     console.error("Missing configuration");
   }
@@ -27,18 +27,14 @@ const App = () => {
   return (
     <StandardLayout appName="paralog" beta={true}>
       <SponsorsLogos />
-      <CytoscapeProvider>
-        <ElementsProvider>
-          <div className="relative h-full">
-            <Categories showGrid={showGrid} toggleView={toggleView} />
-            <InfoPanel />
-            <div className="grid grid-rows-1 grid-cols-2 gap-x-2 h-full">
-              {showGrid ? <Grid /> : <NetworkGraph />}
-              <TelicentMap />
-            </div>
-          </div>
-        </ElementsProvider>
-      </CytoscapeProvider>
+      <div className="relative h-full">
+        <Categories showGrid={showGrid} toggleView={toggleView} />
+        <InfoPanel />
+        <div className="flex gap-x-2 h-full">
+          <ResizableContainer>{showGrid ? <Grid /> : <NetworkGraph />}</ResizableContainer>
+          <TelicentMap />
+        </div>
+      </div>
     </StandardLayout>
   );
 };

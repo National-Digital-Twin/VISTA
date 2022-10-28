@@ -15,6 +15,7 @@ const NetworkGraph = () => {
     cyRef,
     layout: graphLayout,
     getSelectedElements,
+    runLayout,
     updateLayout,
   } = useContext(CytoscapeContext);
   const { data, onAssetSelect } = useContext(ElementsContext);
@@ -31,10 +32,8 @@ const NetworkGraph = () => {
   cytoscape.use(avsdf);
 
   useEffect(() => {
-    if (!cyRef.current) return;
-    const layout = cyRef.current.layout({ name: graphLayout });
-    layout.run();
-  }, [cyRef, nodes, edges, graphLayout]);
+    runLayout();
+  }, [nodes, edges, runLayout]);
 
   const setCytoscape = useCallback(
     (cy) => {
@@ -57,7 +56,7 @@ const NetworkGraph = () => {
   );
 
   return (
-    <div className="relative">
+    <>
       <CytoscapeComponent
         elements={CytoscapeComponent.normalizeElements({ nodes, edges })}
         stylesheet={cyStylesheet}
@@ -65,7 +64,7 @@ const NetworkGraph = () => {
         className="w-full h-full"
       />
       <GraphToolbar cyRef={cyRef} graphLayout={graphLayout} setGraphLayout={updateLayout} />
-    </div>
+    </>
   );
 };
 
