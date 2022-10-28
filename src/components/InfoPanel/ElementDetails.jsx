@@ -119,7 +119,7 @@ const DetailsSection = ({ expand, onToggle, show, title, children }) => {
       <DetailsSectionTitle expand={expand} onToggle={onToggle}>
         <h3 className="text-lg pl-2">{title}</h3>
       </DetailsSectionTitle>
-      {expand && <div className="relative top-5 bg-black-200 rounded-xl w-full p-4 pt-10">{children}</div>}
+      {expand && <div className="relative top-5 bg-black-100 rounded-xl w-full p-4 pt-10">{children}</div>}
     </div>
   );
 };
@@ -141,18 +141,16 @@ const ConnectedAssets = ({ connectedAssets }) => {
       <ul className="grid gap-y-3">
         {connectedAssets.map((asset) => {
           return (
-            <li
-              key={asset.uri}
-              className="grid grid-flow-col auto-cols-min gap-x-2 bg-black-400 rounded-md p-2 items-center"
-            >
-              <div style={{ backgroundColor: asset.color }} className="w-2.5 h-2.5 rounded-full" />
-              <div className="grid grid-rows-2">
-                <h4 className="flex gap-x-2 items-center whitespace-nowrap">{asset.title}</h4>
-                <div className="grid grid-flow-col auto-cols-min gap-x-6">
-                  <p className="whitespace-nowrap">Asset criticality: {asset.assetCriticality}</p>
-                  <p className="whitespace-nowrap">Connection criticality: {asset.cxnCriticality}</p>
-                </div>
+            <li key={asset.uri} className="gap-x-2 bg-black-400 rounded-md p-2 items-center">
+              <div className="flex items-center  gap-x-2">
+                <div style={{ backgroundColor: asset.color }} className="w-2.5 h-2.5 rounded-full" />
+                <h4 className="truncate w-64" title={asset.title}>
+                  {asset.title}
+                </h4>
               </div>
+
+              <p className="whitespace-nowrap">Asset criticality: {asset.assetCriticality}</p>
+              <p className="whitespace-nowrap">Connection criticality: {asset.cxnCriticality}</p>
             </li>
           );
         })}

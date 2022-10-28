@@ -32,22 +32,15 @@ const renderSelectedDetails = async () => {
 describe("Selected Elements component", () => {
   test("renders message when an element(s) aren't selected", () => {
     render(<SelectedElements />, { wrapper: ElementsProvider });
-    expect(
-      screen.getByText(/click on an asset or connection to view details/i)
-    ).toBeInTheDocument();
+    expect(screen.getByText(/click on an asset or connection to view details/i)).toBeInTheDocument();
   });
 
   test("renders all selected elements", async () => {
     await renderSelectedDetails();
 
-    expect(screen.getByRole("heading", { name: "3 Selected Elements" })).toBeInTheDocument();
     expect(screen.getAllByRole("listitem")).toHaveLength(3);
-    expect(
-      screen.getByRole("heading", { name: "East Cowes Power Station (E001)" })
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("heading", { name: "East Cowes 132/33kV Substation (E003)" })
-    ).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "East Cowes Power Station (E001)" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "East Cowes 132/33kV Substation (E003)" })).toBeInTheDocument();
     expect(
       screen.getByRole("heading", {
         name: "East Cowes Power Station (E001) to East Cowes 132/33kV Substation (E003)",
@@ -71,15 +64,17 @@ describe("Selected Elements component", () => {
     await user.click(screen.getByRole("button", { name: "view all selected" }));
     expect(screen.getAllByRole("listitem")).toHaveLength(3);
 
-    await user.click(screen.getByRole("button", { name: "East Cowes Power Station (E001) to East Cowes 132/33kV Substation (E003)" }));
+    await user.click(
+      screen.getByRole("button", { name: "East Cowes Power Station (E001) to East Cowes 132/33kV Substation (E003)" })
+    );
     expect(screen.getByTestId("element-details")).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "view all selected" }));
     expect(screen.getAllByRole("listitem")).toHaveLength(3);
-  })
+  });
 
   test("renders open street view link when an asset is selected", async () => {
     const { user } = await renderSelectedDetails();
-    
+
     await user.click(screen.getByRole("button", { name: "East Cowes Power Station (E001) ies:Facility" }));
     expect(screen.getByTestId("element-details")).toBeInTheDocument();
 
