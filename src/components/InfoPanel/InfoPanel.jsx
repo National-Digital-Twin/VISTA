@@ -22,7 +22,7 @@ const InfoPanel = () => {
     );
   }
   return (
-    <div className="absolute top-0 right-0 z-10 bg-black-200 p-3 gap-y-2 w-2/5 max-h-1/2">
+    <div className="absolute top-0 right-0 z-10 bg-black-200 p-3 gap-y-2 w-2/5 overflow-y-auto" style={{ minHeight: "50%", height: "50%" }}>
       <div className="flex items-center justify-between border-b border-black-500">
         <h2 className="font-medium">Element Details</h2>
         <ExpandButton selectedDetails={selectedDetails} toggleView={toggleView} expand={expand} />
