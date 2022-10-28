@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import React from "react";
 
 const VerticalDivider = ({ color, height }, props) => (
-  <div className={classNames("border-r self-center", height, color )} {...props} />
+  <div className={classNames("border-r self-center", height, color)} {...props} />
 );
 export default VerticalDivider;
 VerticalDivider.defaultProps = {
