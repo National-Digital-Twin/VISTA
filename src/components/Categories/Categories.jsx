@@ -53,8 +53,6 @@ const Categories = ({ showGrid, toggleView }) => {
     getAssessments();
   }, [get, selected, setData]);
 
-  // if (loading) return <p>Loading</p>;
-
   if (error)
     return (
       <p id="errorMsg" style={{ color: "rgb(239, 68, 68)", textAlign: "center" }}>

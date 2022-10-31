@@ -11,7 +11,6 @@ describe("Categories component", () => {
   
   test("renders options with total count", async () => {
     render(<ElementsProvider><Categories /></ElementsProvider>);
-    // await waitFor(() => expect(screen.queryByText("Loading")).not.toBeInTheDocument());
 
     await waitFor(() => expect(screen.getAllByRole("checkbox")).toHaveLength(2));
     expect(screen.getByRole("checkbox", { name: "Energy [25]" })).toBeInTheDocument();
