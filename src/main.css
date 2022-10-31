@@ -549,6 +549,19 @@ video {
   --tw-backdrop-sepia:  ;
 }
 
+.error-notification {
+  position: absolute;
+  top: 0px;
+  z-index: 20;
+  width: 100%;
+  padding: 0.5rem;
+  display: grid;
+  grid-template-columns: 1fr -webkit-min-content;
+  grid-template-columns: 1fr min-content;
+  align-items: center;
+  background-color: #B80000;
+}
+
 .linkBorder {
   margin-left: auto;
   margin-right: auto;
@@ -565,6 +578,10 @@ video {
 .link:hover + .linkBorder {
   width: 100%;
   opacity: 1;
+}
+
+.visible {
+  visibility: visible;
 }
 
 .absolute {

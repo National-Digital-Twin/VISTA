@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { isAsset } from "../utils";
 
 export const ElementsContext = React.createContext();
@@ -16,6 +16,7 @@ export const ElementsProvider = ({ children }) => {
   });
   const [selectedElements, setSelectedElements] = useState([]);
   const [selectedDetails, setSelectedDetails] = useState([]);
+  const [error, setError] = useState(undefined);
 
   const {assets, connections, assetCriticalityColorScale, cxnCriticalityColorScale} = data
 
@@ -44,15 +45,21 @@ export const ElementsProvider = ({ children }) => {
     setSelectedElements(selected);
   };
 
+  const setNotificationError = useCallback((msg) => {
+    setError(msg);
+  }, []);
+
   return (
     <ElementsContext.Provider
       value={{
         cyRef,
         data,
+        error,
         onAssetSelect,
         selectedElements,
         selectedDetails,
         setData,
+        setNotificationError
       }}
     >
       {children}
