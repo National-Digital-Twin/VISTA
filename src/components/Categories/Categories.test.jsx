@@ -5,12 +5,7 @@ import Categories from "./Categories";
 
 describe("Categories component", () => {
   test("renders options with total count", async () => {
-    render(
-      <ElementsProvider>
-        <Categories />
-      </ElementsProvider>
-    );
-    // await waitFor(() => expect(screen.queryByText("Loading")).not.toBeInTheDocument());
+    render(<ElementsProvider><Categories /></ElementsProvider>);
 
     await waitFor(() => expect(screen.getAllByRole("checkbox")).toHaveLength(DATASET.length));
     expect(screen.getByRole("checkbox", { name: "Energy [25]" })).toBeInTheDocument();
