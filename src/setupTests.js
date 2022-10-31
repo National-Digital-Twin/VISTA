@@ -12,11 +12,6 @@ import { server } from "mocks/server";
 expect.extend({ toMatchImageSnapshot });
 configure({ testIdAttribute: "id" });
 
-global.window._env_ = {
-  API_URL: "http://localhost:5051",
-  MAPBOX_TOKEN: "test_key",
-  MAP_URL: "http://map.com",
-};
 global.ResizeObserver = require("resize-observer-polyfill");
 
 process.env = {
@@ -28,9 +23,7 @@ process.env = {
 
 beforeAll(() => server.listen());
 beforeEach(() => {
-  jest.clearAllMocks();
   server.resetHandlers();
-  // jest.restoreAllMocks();
-  // console.log("before each", server.listHandlers())
+  jest.clearAllMocks();
 });
 afterAll(() => server.close());
