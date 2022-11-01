@@ -3,14 +3,13 @@ import useFetch from "use-http";
 import ReactSwitch from "react-switch";
 import PropTypes from "prop-types";
 
-import config from "../../config/app-config";
 import { ElementsContext } from "../../context";
 import { IsEmpty } from "../../utils";
 import { createData } from "./utils";
 
 const Categories = ({ showGrid, toggleView }) => {
-  const { get, response, error } = useFetch(config.api.url);
-  const { setData } = useContext(ElementsContext);
+  const { get, response, error } = useFetch();
+  const { filterSelectedElements, reset, updateAssets, updateConnections } = useContext(ElementsContext);
 
   const [assessments, setAssessments] = useState([]);
   const [selected, setSelected] = useState([]);
@@ -28,16 +27,8 @@ const Categories = ({ showGrid, toggleView }) => {
   }, [get, response]);
 
   useEffect(() => {
-    if (IsEmpty(selected)) {
-      setData({
-        assetCriticalityColorScale: {},
-        assets: [],
-        connections: [],
-        cxnCriticalityColorScale: {},
-        maxAssetCriticality: 0,
-        maxAssetTotalCxns: 0,
-        totalCxnsColorScale: {},
-      });
+    if (IsEmpty(selected)) { 
+      reset();
       return;
     }
 
@@ -45,15 +36,20 @@ const Categories = ({ showGrid, toggleView }) => {
     const params = new URLSearchParams(paramsArray).toString();
 
     const getAssessments = async () => {
-      const assets = await get(`assessments/assets?${params}`);
-      const connections = await get(`assessments/connections?${params}`);
-      const data = await createData(assets, connections, get);
-      setData(data);
-    };
-    getAssessments();
-  }, [get, selected, setData]);
+      const assetsMetadata = await get(`assessments/assets?${params}`);
+      const connectionsMetadata = await get(`assessments/connections?${params}`);
 
-  // if (loading) return <p>Loading</p>;
+      if (response.ok) {
+        const { assets, connections } = await createData(assetsMetadata, connectionsMetadata, get);
+        updateAssets(assets);
+        updateConnections(connections);
+        filterSelectedElements(assets, connections);
+        return;
+      }
+    };
+
+    getAssessments();
+  }, [get, response, selected, filterSelectedElements, reset, updateAssets, updateConnections]);
 
   if (error)
     return (

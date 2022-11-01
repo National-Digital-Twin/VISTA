@@ -7,7 +7,7 @@ exports[`Grid component renders grid 1`] = `
 >
   <div
     class="main-grid"
-    style="grid-template-columns: 50px 22px 22px 106px repeat(4, 22px);"
+    style="grid-template-columns: 50px 22px 22px 106px repeat(5, 22px);"
   >
     <div
       class="col-header"
@@ -161,7 +161,7 @@ exports[`Grid component renders grid 1`] = `
     </div>
     <div
       class="col-header"
-      data-asset="{\\"id\\":\\"http://telicent.io/fake_data#E006\\",\\"label\\":\\"E006\\",\\"name\\":\\"Arreton 33kV \\",\\"description\\":\\"Not labelled as a substation on openstreetmap. Visible on Google maps though.\\",\\"lat\\":50.67381026264697,\\"lng\\":-1.2376239838760517,\\"type\\":\\"http://ies.data.gov.uk/ontology/ies4#Facility\\",\\"gridIndex\\":4,\\"connections\\":[{\\"id\\":\\"http://telicent.io/fake_data#connector_E006_E012\\",\\"criticality\\":3,\\"source\\":\\"http://telicent.io/fake_data#E006\\",\\"target\\":\\"http://telicent.io/fake_data#E012\\",\\"label\\":\\"E006 - E012\\",\\"elementType\\":\\"connection\\"},{\\"id\\":\\"http://telicent.io/fake_data#connector_E005_E006\\",\\"criticality\\":3,\\"source\\":\\"http://telicent.io/fake_data#E006\\",\\"target\\":\\"http://telicent.io/fake_data#E005\\",\\"label\\":\\"E005 - E006\\",\\"elementType\\":\\"connection\\"}],\\"criticality\\":6,\\"segments\\":[],\\"elementType\\":\\"asset\\"}"
+      data-asset="{\\"id\\":\\"http://telicent.io/fake_data#E006\\",\\"label\\":\\"E006\\",\\"name\\":\\"Arreton 33kV \\",\\"description\\":\\"Not labelled as a substation on openstreetmap. Visible on Google maps though.\\",\\"lat\\":50.67381026264697,\\"lng\\":-1.2376239838760517,\\"type\\":\\"http://ies.data.gov.uk/ontology/ies4#Facility\\",\\"gridIndex\\":4,\\"connections\\":[{\\"id\\":\\"http://telicent.io/fake_data#connector_E006_E012\\",\\"criticality\\":3,\\"source\\":\\"http://telicent.io/fake_data#E006\\",\\"target\\":\\"http://telicent.io/fake_data#E012\\",\\"label\\":\\"E006 - E012\\",\\"elementType\\":\\"connection\\"},{\\"id\\":\\"http://telicent.io/fake_data#connector_E004_E006\\",\\"criticality\\":3,\\"source\\":\\"http://telicent.io/fake_data#E006\\",\\"target\\":\\"http://telicent.io/fake_data#E004\\",\\"label\\":\\"E004 - E006\\",\\"elementType\\":\\"connection\\"},{\\"id\\":\\"http://telicent.io/fake_data#connector_E005_E006\\",\\"criticality\\":3,\\"source\\":\\"http://telicent.io/fake_data#E006\\",\\"target\\":\\"http://telicent.io/fake_data#E005\\",\\"label\\":\\"E005 - E006\\",\\"elementType\\":\\"connection\\"}],\\"criticality\\":9,\\"segments\\":[],\\"elementType\\":\\"asset\\"}"
       id="http://telicent.io/fake_data#E006"
       role="button"
       style="position: sticky; top: 0px; z-index: 99; background-color: black; grid-column-start: 8; grid-row-start: 1; grid-column-end: 8; grid-row-end: 1;"
@@ -171,7 +171,7 @@ exports[`Grid component renders grid 1`] = `
     </div>
     <div
       class="asset-id"
-      data-asset="{\\"id\\":\\"http://telicent.io/fake_data#E006\\",\\"label\\":\\"E006\\",\\"name\\":\\"Arreton 33kV \\",\\"description\\":\\"Not labelled as a substation on openstreetmap. Visible on Google maps though.\\",\\"lat\\":50.67381026264697,\\"lng\\":-1.2376239838760517,\\"type\\":\\"http://ies.data.gov.uk/ontology/ies4#Facility\\",\\"gridIndex\\":4,\\"connections\\":[{\\"id\\":\\"http://telicent.io/fake_data#connector_E006_E012\\",\\"criticality\\":3,\\"source\\":\\"http://telicent.io/fake_data#E006\\",\\"target\\":\\"http://telicent.io/fake_data#E012\\",\\"label\\":\\"E006 - E012\\",\\"elementType\\":\\"connection\\"},{\\"id\\":\\"http://telicent.io/fake_data#connector_E005_E006\\",\\"criticality\\":3,\\"source\\":\\"http://telicent.io/fake_data#E006\\",\\"target\\":\\"http://telicent.io/fake_data#E005\\",\\"label\\":\\"E005 - E006\\",\\"elementType\\":\\"connection\\"}],\\"criticality\\":6,\\"segments\\":[],\\"elementType\\":\\"asset\\"}"
+      data-asset="{\\"id\\":\\"http://telicent.io/fake_data#E006\\",\\"label\\":\\"E006\\",\\"name\\":\\"Arreton 33kV \\",\\"description\\":\\"Not labelled as a substation on openstreetmap. Visible on Google maps though.\\",\\"lat\\":50.67381026264697,\\"lng\\":-1.2376239838760517,\\"type\\":\\"http://ies.data.gov.uk/ontology/ies4#Facility\\",\\"gridIndex\\":4,\\"connections\\":[{\\"id\\":\\"http://telicent.io/fake_data#connector_E006_E012\\",\\"criticality\\":3,\\"source\\":\\"http://telicent.io/fake_data#E006\\",\\"target\\":\\"http://telicent.io/fake_data#E012\\",\\"label\\":\\"E006 - E012\\",\\"elementType\\":\\"connection\\"},{\\"id\\":\\"http://telicent.io/fake_data#connector_E004_E006\\",\\"criticality\\":3,\\"source\\":\\"http://telicent.io/fake_data#E006\\",\\"target\\":\\"http://telicent.io/fake_data#E004\\",\\"label\\":\\"E004 - E006\\",\\"elementType\\":\\"connection\\"},{\\"id\\":\\"http://telicent.io/fake_data#connector_E005_E006\\",\\"criticality\\":3,\\"source\\":\\"http://telicent.io/fake_data#E006\\",\\"target\\":\\"http://telicent.io/fake_data#E005\\",\\"label\\":\\"E005 - E006\\",\\"elementType\\":\\"connection\\"}],\\"criticality\\":9,\\"segments\\":[],\\"elementType\\":\\"asset\\"}"
       id="http://telicent.io/fake_data#E006"
       role="button"
       style="position: sticky; left: 0px; background-color: black; width: 50px; grid-column-start: 1; grid-row-start: 5; grid-column-end: 1; grid-row-end: 5;"
@@ -197,17 +197,67 @@ exports[`Grid component renders grid 1`] = `
       class="asset-id"
       role="cell"
       style="background-color: rgb(251, 55, 55); position: sticky; left: 50px; overflow: hidden; grid-column-start: 2; grid-row-start: 5; grid-column-end: 2; grid-row-end: 5; color: rgb(29, 29, 29);"
-      title="2"
+      title="3"
     >
-      2
+      3
     </div>
     <div
       class="asset-id"
       role="cell"
       style="background-color: rgb(251, 55, 55); position: sticky; left: 72px; overflow: hidden; grid-column-start: 3; grid-row-start: 5; grid-column-end: 3; grid-row-end: 5; color: rgb(29, 29, 29);"
-      title="6"
+      title="9"
     >
-      6
+      9
+    </div>
+    <div
+      class="col-header"
+      data-asset="{\\"id\\":\\"http://telicent.io/fake_data#E012\\",\\"label\\":\\"E012\\",\\"name\\":\\"Ventnor 33kV / 11kV Substation\\",\\"description\\":null,\\"lat\\":50.59751535205935,\\"lng\\":-1.2081500494308142,\\"type\\":\\"http://ies.data.gov.uk/ontology/ies4#Facility\\",\\"gridIndex\\":5,\\"connections\\":[{\\"id\\":\\"http://telicent.io/fake_data#connector_E006_E012\\",\\"criticality\\":3,\\"source\\":\\"http://telicent.io/fake_data#E012\\",\\"target\\":\\"http://telicent.io/fake_data#E006\\",\\"label\\":\\"E006 - E012\\",\\"elementType\\":\\"connection\\"}],\\"criticality\\":3,\\"segments\\":[],\\"elementType\\":\\"asset\\"}"
+      id="http://telicent.io/fake_data#E012"
+      role="button"
+      style="position: sticky; top: 0px; z-index: 99; background-color: black; grid-column-start: 9; grid-row-start: 1; grid-column-end: 9; grid-row-end: 1;"
+      title="Ventnor 33kV / 11kV Substation"
+    >
+      E012
+    </div>
+    <div
+      class="asset-id"
+      data-asset="{\\"id\\":\\"http://telicent.io/fake_data#E012\\",\\"label\\":\\"E012\\",\\"name\\":\\"Ventnor 33kV / 11kV Substation\\",\\"description\\":null,\\"lat\\":50.59751535205935,\\"lng\\":-1.2081500494308142,\\"type\\":\\"http://ies.data.gov.uk/ontology/ies4#Facility\\",\\"gridIndex\\":5,\\"connections\\":[{\\"id\\":\\"http://telicent.io/fake_data#connector_E006_E012\\",\\"criticality\\":3,\\"source\\":\\"http://telicent.io/fake_data#E012\\",\\"target\\":\\"http://telicent.io/fake_data#E006\\",\\"label\\":\\"E006 - E012\\",\\"elementType\\":\\"connection\\"}],\\"criticality\\":3,\\"segments\\":[],\\"elementType\\":\\"asset\\"}"
+      id="http://telicent.io/fake_data#E012"
+      role="button"
+      style="position: sticky; left: 0px; background-color: black; width: 50px; grid-column-start: 1; grid-row-start: 6; grid-column-end: 1; grid-row-end: 6;"
+      title="Ventnor 33kV / 11kV Substation"
+    >
+      E012
+    </div>
+    <div
+      class="asset-id"
+      id="http://telicent.io/fake_data#E012"
+      role="cell"
+      style="position: sticky; left: 94px; background-color: black; overflow: hidden; grid-column-start: 4; grid-row-start: 6; grid-column-end: 4; grid-row-end: 6;"
+      title="Ventnor 33kV / 11kV Substation"
+    >
+      Ventnor 33kV / 11kV Substation
+    </div>
+    <div
+      class="blank-entry"
+      role="cell"
+      style="grid-column-start: 9; grid-row-start: 6; grid-column-end: 9; grid-row-end: 6;"
+    />
+    <div
+      class="asset-id"
+      role="cell"
+      style="background-color: rgb(53, 192, 53); position: sticky; left: 50px; overflow: hidden; grid-column-start: 2; grid-row-start: 6; grid-column-end: 2; grid-row-end: 6; color: rgb(29, 29, 29);"
+      title="1"
+    >
+      1
+    </div>
+    <div
+      class="asset-id"
+      role="cell"
+      style="background-color: rgb(53, 192, 53); position: sticky; left: 72px; overflow: hidden; grid-column-start: 3; grid-row-start: 6; grid-column-end: 3; grid-row-end: 6; color: rgb(29, 29, 29);"
+      title="3"
+    >
+      3
     </div>
     <button
       class="grid-entry text-black-100"
@@ -222,6 +272,22 @@ exports[`Grid component renders grid 1`] = `
       data-connection="{\\"id\\":\\"http://telicent.io/fake_data#connector_E001_E003\\",\\"criticality\\":3,\\"source\\":\\"http://telicent.io/fake_data#E001\\",\\"target\\":\\"http://telicent.io/fake_data#E003\\",\\"label\\":\\"E001 - E003\\",\\"elementType\\":\\"connection\\"}"
       id="http://telicent.io/fake_data#connector_E001_E003"
       style="grid-column-start: 6; grid-column-end: 6; grid-row-start: 2; grid-row-end: 2; background-color: rgb(251, 55, 55);"
+    >
+      3
+    </button>
+    <button
+      class="grid-entry text-black-100"
+      data-connection="{\\"id\\":\\"http://telicent.io/fake_data#connector_E006_E012\\",\\"criticality\\":3,\\"source\\":\\"http://telicent.io/fake_data#E006\\",\\"target\\":\\"http://telicent.io/fake_data#E012\\",\\"label\\":\\"E006 - E012\\",\\"elementType\\":\\"connection\\"}"
+      id="http://telicent.io/fake_data#connector_E006_E012"
+      style="grid-column-start: 8; grid-column-end: 8; grid-row-start: 6; grid-row-end: 6; background-color: rgb(251, 55, 55);"
+    >
+      3
+    </button>
+    <button
+      class="grid-entry text-black-100"
+      data-connection="{\\"id\\":\\"http://telicent.io/fake_data#connector_E006_E012\\",\\"criticality\\":3,\\"source\\":\\"http://telicent.io/fake_data#E006\\",\\"target\\":\\"http://telicent.io/fake_data#E012\\",\\"label\\":\\"E006 - E012\\",\\"elementType\\":\\"connection\\"}"
+      id="http://telicent.io/fake_data#connector_E006_E012"
+      style="grid-column-start: 9; grid-column-end: 9; grid-row-start: 5; grid-row-end: 5; background-color: rgb(251, 55, 55);"
     >
       3
     </button>

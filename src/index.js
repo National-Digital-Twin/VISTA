@@ -1,7 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { MapProvider } from "react-map-gl";
+import { Provider as UseFetchProvider } from "use-http";
 
+import config from "./config/app-config";
 import { CytoscapeProvider, ElementsProvider } from "./context";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
@@ -9,13 +11,15 @@ import "./index.css";
 import "./main.css";
 
 ReactDOM.render(
-  <CytoscapeProvider>
-    <ElementsProvider>
-      <MapProvider>
-        <App />
-      </MapProvider>
-    </ElementsProvider>
-  </CytoscapeProvider>,
+  <UseFetchProvider url={config.api.url}>
+    <CytoscapeProvider>
+      <ElementsProvider>
+        <MapProvider>
+          <App />
+        </MapProvider>
+      </ElementsProvider>
+    </CytoscapeProvider>
+  </UseFetchProvider>,
   document.getElementById("root")
 );
 
