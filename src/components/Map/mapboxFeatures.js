@@ -8,10 +8,9 @@ export const createSelectedAssetFeatures = (
   maxCriticality,
   selectedElements
 ) => {
-  return selectedElements.flatMap((element) => {
-    const colorScale = assetCriticalityColorScale;
-    return element.generateSelectedAssetFeatures(assets, colorScale, maxCriticality);
-  });
+  return selectedElements.flatMap((element) =>
+    element.generateSelectedAssetFeatures(assets, assetCriticalityColorScale, maxCriticality)
+  );
 };
 
 export const createSelectedSegmentFeatures = (selectedElements, colorScale, assets) => {
@@ -25,8 +24,7 @@ export const createSelectedConnectionFeatures = (
   cxnCriticalityColorScale,
   selectedElements
 ) => {
-  const colorScale = cxnCriticalityColorScale;
   return selectedElements.flatMap((element) =>
-    element.generateSelectedConnectionFeature(assets, colorScale)
+    element.generateSelectedConnectionFeature(assets, cxnCriticalityColorScale)
   );
 };
