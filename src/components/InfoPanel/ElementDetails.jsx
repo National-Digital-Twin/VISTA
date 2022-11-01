@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { getShortType, isAsset, IsEmpty } from "../../utils";
 import classNames from "classnames";
-import { ReactComponent as GoogleMapIcon } from "./assets/google-map-icon.svg";
 
 const ElementDetails = ({ element, expand, onViewDetails }) => {
   if (!expand)
@@ -156,33 +155,6 @@ const ConnectedAssets = ({ connectedAssets }) => {
         })}
       </ul>
     </DetailsSection>
-  );
-};
-
-const StreetView = ({ latitude, longitude }) => {
-  if (!latitude && !longitude) return null;
-
-  const params = {
-    api: 1,
-    map_action: "pano",
-    viewpoint: `${latitude},${longitude}`,
-  };
-
-  return (
-    <div className="w-fit flex items-center justify-center gap-x-1 ml-auto">
-      <GoogleMapIcon />
-      <div>
-        <a
-          href={`https://www.google.com/maps/@?${new URLSearchParams(params).toString()}`}
-          target="_blank"
-          rel="noreferrer"
-          className="link"
-        >
-          open street view
-        </a>
-        <div className="linkBorder" />
-      </div>
-    </div>
   );
 };
 

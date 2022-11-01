@@ -1,92 +1,47 @@
-import React, { useState, useContext, useEffect } from "react";
-import { ReactComponent as GoogleMapIcon } from "./assets/google-map-icon.svg";
-import { ElementsContext } from "../../context/ElementContext";
+import React from "react";
 import { IsEmpty } from "../../utils";
 import ElementDetails from "./ElementDetails";
 
-const SelectedElements = () => {
-  const [selectedIndex, setSelectedIndex] = useState(-1);
-  const { selectedDetails } = useContext(ElementsContext);
+const SelectedElements = ({ selected, handleViewSelected, view }) => {
+  if (IsEmpty(selected)) {
+    return <p>Click on an asset or connection to view details</p>;
+  }
+  return (
+    <>
+      <MultiSelected selected={selected} view={view} handleViewSelected={handleViewSelected} />
+      <SingleView selected={selected} view={view} />
+    </>
+  );
+};
 
-  useEffect(() => {
-    if (selectedDetails.length === 1) {
-      setSelectedIndex(0);
-      return;
-    }
-    setSelectedIndex(-1);
-  }, [selectedDetails]);
+const MultiSelected = ({ selected, handleViewSelected, view }) => {
+  if (view === "multipleItems") {
+    return (
+      <ul className="flex flex-col gap-y-3">
+        {selected.map((selectedElement, index) => (
+          <ElementDetails
+            key={selectedElement.uri}
+            element={selectedElement}
+            onViewDetails={() => {
+              handleViewSelected(index);
+            }}
+          />
+        ))}
+      </ul>
+    );
+  }
+  return null;
+};
 
-  const handleViewSelected = (index) => {
-    setSelectedIndex(index);
-  };
-
-  if (IsEmpty(selectedDetails)) return <p>Click on an asset or connection to view details</p>;
-
-  if (selectedIndex >= 0) {
-    const selectedElement = selectedDetails[selectedIndex];
+const SingleView = ({ selected, view }) => {
+  if (view === "singleItem") {
     return (
       <>
-        <Toolbar selectedElements={selectedDetails} element={selectedElement} onViewAll={handleViewSelected} />
-        <ElementDetails element={selectedElement} expand />
+        <ElementDetails element={selected} expand />
       </>
     );
   }
-
-  return (
-    <ul className="flex flex-col gap-y-3">
-      {selectedDetails.map((selectedElement, index) => (
-        <ElementDetails
-          key={selectedElement.uri}
-          element={selectedElement}
-          onViewDetails={() => {
-            handleViewSelected(index);
-          }}
-        />
-      ))}
-    </ul>
-  );
-};
-
-const Toolbar = ({ selectedElements, element, onViewAll }) => {
-  if (selectedElements.length === 1 && !element.lat && !element.lng) return null;
-  return (
-    <div className="flex items-center">
-      {selectedElements.length > 1 && (
-        <button onClick={() => onViewAll(-1)} className="flex items-center gap-x-1 mr-auto">
-          <span role="img" className="ri-arrow-left-s-line" />
-          view all selected
-        </button>
-      )}
-      <StreetView latitude={element.lat} longitude={element.lng} />
-    </div>
-  );
-};
-
-const StreetView = ({ latitude, longitude }) => {
-  if (!latitude && !longitude) return null;
-
-  const params = {
-    api: 1,
-    map_action: "pano",
-    viewpoint: `${latitude},${longitude}`,
-  };
-
-  return (
-    <div className="w-fit flex items-center justify-center gap-x-1 ml-auto">
-      <GoogleMapIcon />
-      <div>
-        <a
-          href={`https://www.google.com/maps/@?${new URLSearchParams(params).toString()}`}
-          target="_blank"
-          rel="noreferrer"
-          className="link"
-        >
-          open street view
-        </a>
-        <div className="linkBorder" />
-      </div>
-    </div>
-  );
+  return null;
 };
 
 export default SelectedElements;
