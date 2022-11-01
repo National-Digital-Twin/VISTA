@@ -13,8 +13,8 @@ import { createData } from "./utils";
 import Assessments from "./Assessments";
 
 const Dataset = ({ showGrid, toggleView }) => {
-  const { get, response } = useFetch(config.api.url);
-  const { setData } = useContext(ElementsContext);
+  const { get, response } = useFetch();
+  const { filterSelectedElements, reset, updateAssets, updateConnections } = useContext(ElementsContext);
 
   const [selected, setSelected] = useState([]);
   const [showPanel, setShowPanel] = useState(true);
@@ -35,16 +35,8 @@ const Dataset = ({ showGrid, toggleView }) => {
   };
 
   useEffect(() => {
-    if (IsEmpty(selected)) {
-      setData({
-        assetCriticalityColorScale: {},
-        assets: [],
-        connections: [],
-        cxnCriticalityColorScale: {},
-        maxAssetCriticality: 0,
-        maxAssetTotalCxns: 0,
-        totalCxnsColorScale: {},
-      });
+    if (IsEmpty(selected)) { 
+      reset();
       return;
     }
 
@@ -52,16 +44,20 @@ const Dataset = ({ showGrid, toggleView }) => {
     const params = new URLSearchParams(paramsArray).toString();
 
     const getAssessments = async () => {
-      const assets = await get(`assessments/assets?${params}`);
-      const connections = await get(`assessments/connections?${params}`);
+      const assetsMetadata = await get(`assessments/assets?${params}`);
+      const connectionsMetadata = await get(`assessments/connections?${params}`);
 
       if (response.ok) {
-        const data = await createData(assets, connections, get);
-        setData(data);
+        const { assets, connections } = await createData(assetsMetadata, connectionsMetadata, get);
+        updateAssets(assets);
+        updateConnections(connections);
+        filterSelectedElements(assets, connections);
+        return;
       }
     };
+
     getAssessments();
-  }, [get, response.ok, selected, setData]);
+  }, [get, response, selected, filterSelectedElements, reset, updateAssets, updateConnections]);
 
   return (
     <FloatingPanel

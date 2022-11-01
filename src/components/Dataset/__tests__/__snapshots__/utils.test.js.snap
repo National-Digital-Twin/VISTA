@@ -2,31 +2,6 @@
 
 exports[`creates data 1`] = `
 Object {
-  "assetCriticalityColorScale": ColorScale {
-    "alpha": 1,
-    "colorStops": Array [
-      Color {
-        "a": 1,
-        "b": 53,
-        "g": 192,
-        "r": 53,
-      },
-      Color {
-        "a": 1,
-        "b": 10,
-        "g": 182,
-        "r": 255,
-      },
-      Color {
-        "a": 1,
-        "b": 55,
-        "g": 55,
-        "r": 251,
-      },
-    ],
-    "max": 6,
-    "min": 3,
-  },
   "assets": Array [
     Asset {
       "connections": Array [
@@ -110,13 +85,21 @@ Object {
         Object {
           "criticality": 3,
           "elementType": "connection",
+          "id": "http://telicent.io/fake_data#connector_E004_E006",
+          "label": "E004 - E006",
+          "source": "http://telicent.io/fake_data#E006",
+          "target": "http://telicent.io/fake_data#E004",
+        },
+        Object {
+          "criticality": 3,
+          "elementType": "connection",
           "id": "http://telicent.io/fake_data#connector_E005_E006",
           "label": "E005 - E006",
           "source": "http://telicent.io/fake_data#E006",
           "target": "http://telicent.io/fake_data#E005",
         },
       ],
-      "criticality": 6,
+      "criticality": 9,
       "description": "Not labelled as a substation on openstreetmap. Visible on Google maps though.",
       "elementType": "asset",
       "gridIndex": 4,
@@ -125,6 +108,29 @@ Object {
       "lat": 50.67381026264697,
       "lng": -1.2376239838760517,
       "name": "Arreton 33kV ",
+      "segments": Array [],
+      "type": "http://ies.data.gov.uk/ontology/ies4#Facility",
+    },
+    Asset {
+      "connections": Array [
+        Object {
+          "criticality": 3,
+          "elementType": "connection",
+          "id": "http://telicent.io/fake_data#connector_E006_E012",
+          "label": "E006 - E012",
+          "source": "http://telicent.io/fake_data#E012",
+          "target": "http://telicent.io/fake_data#E006",
+        },
+      ],
+      "criticality": 3,
+      "description": null,
+      "elementType": "asset",
+      "gridIndex": 5,
+      "id": "http://telicent.io/fake_data#E012",
+      "label": "E012",
+      "lat": 50.59751535205935,
+      "lng": -1.2081500494308142,
+      "name": "Ventnor 33kV / 11kV Substation",
       "segments": Array [],
       "type": "http://ies.data.gov.uk/ontology/ies4#Facility",
     },
@@ -149,63 +155,19 @@ Object {
     Connection {
       "criticality": 3,
       "elementType": "connection",
+      "id": "http://telicent.io/fake_data#connector_E004_E006",
+      "label": "E004 - E006",
+      "source": "http://telicent.io/fake_data#E004",
+      "target": "http://telicent.io/fake_data#E006",
+    },
+    Connection {
+      "criticality": 3,
+      "elementType": "connection",
       "id": "http://telicent.io/fake_data#connector_E005_E006",
       "label": "E005 - E006",
       "source": "http://telicent.io/fake_data#E005",
       "target": "http://telicent.io/fake_data#E006",
     },
   ],
-  "cxnCriticalityColorScale": ColorScale {
-    "alpha": 1,
-    "colorStops": Array [
-      Color {
-        "a": 1,
-        "b": 53,
-        "g": 192,
-        "r": 53,
-      },
-      Color {
-        "a": 1,
-        "b": 10,
-        "g": 182,
-        "r": 255,
-      },
-      Color {
-        "a": 1,
-        "b": 55,
-        "g": 55,
-        "r": 251,
-      },
-    ],
-    "max": 3,
-    "min": 1,
-  },
-  "maxAssetCriticality": 6,
-  "maxAssetTotalCxns": 2,
-  "totalCxnsColorScale": ColorScale {
-    "alpha": 1,
-    "colorStops": Array [
-      Color {
-        "a": 1,
-        "b": 53,
-        "g": 192,
-        "r": 53,
-      },
-      Color {
-        "a": 1,
-        "b": 10,
-        "g": 182,
-        "r": 255,
-      },
-      Color {
-        "a": 1,
-        "b": 55,
-        "g": 55,
-        "r": 251,
-      },
-    ],
-    "max": 2,
-    "min": 1,
-  },
 }
 `;

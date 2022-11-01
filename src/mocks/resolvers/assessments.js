@@ -1,19 +1,6 @@
-export const mockAssessmentsResponse = (req, res, ctx) =>
-  res(
-    ctx.status(200),
-    ctx.json([
-      {
-        uri: "http://telicent.io/fake_data#Energy_Assessment",
-        name: "Energy",
-        assCount: "25",
-      },
-      {
-        uri: "http://telicent.io/fake_data#Transport_Assessment",
-        name: "Transport",
-        assCount: "44",
-      },
-    ])
-  );
+import { DATASET } from "../data";
+
+export const assessments = (req, res, ctx) => res(ctx.status(200), ctx.json(DATASET));
 
 export const mockEmptyRespose = (req, res, ctx) => res.once(ctx.status(200), ctx.json([]));
 

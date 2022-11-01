@@ -1,18 +1,12 @@
 import React, { useState } from "react";
 import { StandardLayout } from "@telicent-io/ds";
-import { Provider as UseHttpProvider } from "use-http";
+import { Provider as UseFetchProvider } from "use-http";
 import "../node_modules/@telicent-io/ds/dist/style.css";
 
-import {
-  Dataset,
-  Grid,
-  InfoPanel,
-  NetworkGraph,
-  SponsorsLogos,
-  TelicentMap,
-} from "./components";
+import { Dataset, Grid, InfoPanel, NetworkGraph, SponsorsLogos, TelicentMap } from "./components";
 import { CytoscapeProvider, ElementsProvider } from "./context";
 import config from "./config/app-config";
+import { Provider as UseFetchProvider } from "use-http";
 
 const App = () => {
   const [showGrid, setShowGrid] = useState(false);
@@ -20,15 +14,15 @@ const App = () => {
   const toggleView = () => {
     setShowGrid((prevShow) => !prevShow);
   };
-  
+
   if (!config && !config.api && !config.api.url) {
     console.error("Missing configuration");
   }
 
   return (
-    <UseHttpProvider url={config.api.url}>
-      <StandardLayout appName="paralog" beta={true}>
-        <SponsorsLogos />
+    <StandardLayout appName="paralog" beta={true}>
+      <SponsorsLogos />
+      <UseFetchProvider url={config.api.url}>
         <CytoscapeProvider>
           <ElementsProvider>
             <div className="relative h-full">
@@ -41,8 +35,8 @@ const App = () => {
             </div>
           </ElementsProvider>
         </CytoscapeProvider>
-      </StandardLayout>
-    </UseHttpProvider>
+      </UseFetchProvider>
+    </StandardLayout>
   );
 };
 

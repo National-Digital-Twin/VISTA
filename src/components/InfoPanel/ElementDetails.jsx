@@ -3,6 +3,8 @@ import { getShortType, isAsset, IsEmpty } from "../../utils";
 import classNames from "classnames";
 
 const ElementDetails = ({ element, expand, onViewDetails }) => {
+  if (IsEmpty(element)) return null;
+
   if (!expand)
     return (
       <li className="border-b border-whiteSmoke-800">

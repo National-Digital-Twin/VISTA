@@ -1,6 +1,8 @@
 import { rest } from "msw";
-import { mockAssessmentsResponse } from "./resolvers/assessments";
+import { assessments, assets, connections } from "./resolvers";
 
 export const handlers = [
-  rest.get('/assessments', mockAssessmentsResponse),
+  rest.get('/assessments', assessments),
+  rest.get('/assessments/assets', assets),
+  rest.get('/assessments/connections', connections),
 ];
