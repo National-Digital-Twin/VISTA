@@ -13,7 +13,7 @@ const getConnections = (connections) =>
       })
   );
 
-const createAssetConnections = async (assets, connections, get) => {
+const createAssetConnections = async (assets, connections, get, response) => {
   return await Promise.all(
     assets.map(async (asset, index) => {
       const isSource = (cxn) => cxn.source === asset.uri || cxn.target === asset.uri;
@@ -36,7 +36,7 @@ const createAssetConnections = async (assets, connections, get) => {
       let segments = [];
       if (asset?.type.toLowerCase().includes("road")) {
         const pathSegments = await get(`/assets/${asset.id}/parts`);
-        segments = Object.values(pathSegments);
+        if (response.ok) segments = Object.values(pathSegments);
       }
 
       return new Asset({
@@ -62,9 +62,9 @@ const getAllTotalCxns = (assets) => assets.map((asset) => asset.totalCxns);
 
 const getAllCriticalities = (assets) => assets.map((asset) => asset.criticality);
 
-export const createData = async (assets, connectionsMetadata, get) => {
+export const createData = async (assets, connectionsMetadata, get, response) => {
   const connections = getConnections(connectionsMetadata);
-  const assetCxns = await createAssetConnections(assets, connections, get);
+  const assetCxns = await createAssetConnections(assets, connections, get, response);
   const maxAssetCriticality = Math.max(...getAllCriticalities(assetCxns));
   const minAssetCriticality = Math.min(...getAllCriticalities(assetCxns));
   const maxAssetTotalCxns = Math.max(...getAllTotalCxns(assetCxns));

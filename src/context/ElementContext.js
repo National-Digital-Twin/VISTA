@@ -18,34 +18,38 @@ export const ElementsProvider = ({ children }) => {
   const [selectedDetails, setSelectedDetails] = useState([]);
   const [error, setError] = useState(undefined);
 
-  const {assets, connections, assetCriticalityColorScale, cxnCriticalityColorScale} = data
+  const { assets, connections, assetCriticalityColorScale, cxnCriticalityColorScale } = data;
 
   useEffect(() => {
     if (assets.length > 0) {
-      const safeElements = selectedElements.filter(elem => {
+      const safeElements = selectedElements.filter((elem) => {
         if (isAsset(elem)) {
-          return assets.some(asset => asset.id === elem.id)
+          return assets.some((asset) => asset.id === elem.id);
         }
-        return connections.some(cxn => cxn.id === elem.id)
-      })
-      if(safeElements.length === 0 ){
-        setSelectedDetails([])
-        return 
+        return connections.some((cxn) => cxn.id === elem.id);
+      });
+      if (safeElements.length === 0) {
+        setSelectedDetails([]);
+        return;
       }
       const details = safeElements.map((selectedElement) =>
-        selectedElement.generateDetails(assets, assetCriticalityColorScale, cxnCriticalityColorScale)
+        selectedElement.generateDetails(
+          assets,
+          assetCriticalityColorScale,
+          cxnCriticalityColorScale
+        )
       );
       setSelectedDetails(details);
       return;
     }
-    setSelectedDetails([])
+    setSelectedDetails([]);
   }, [assets, connections, selectedElements, assetCriticalityColorScale, cxnCriticalityColorScale]);
 
   const onAssetSelect = (selected) => {
     setSelectedElements(selected);
   };
 
-  const setNotificationError = useCallback((msg) => {
+  const displayErrorNofitication = useCallback((msg) => {
     setError(msg);
   }, []);
 
@@ -59,7 +63,7 @@ export const ElementsProvider = ({ children }) => {
         selectedElements,
         selectedDetails,
         setData,
-        setNotificationError
+        displayErrorNofitication,
       }}
     >
       {children}
