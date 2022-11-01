@@ -590,6 +590,10 @@ video {
   right: 0px;
 }
 
+.top-0 {
+  top: 0px;
+}
+
 .bottom-0 {
   bottom: 0px;
 }
@@ -598,12 +602,12 @@ video {
   left: 0px;
 }
 
-.top-0 {
-  top: 0px;
-}
-
 .top-5 {
   top: 1.25rem;
+}
+
+.right-0 {
+  right: 0px;
 }
 
 .-top-12 {
@@ -658,16 +662,16 @@ video {
   display: none;
 }
 
+.h-full {
+  height: 100%;
+}
+
 .h-0\.5 {
   height: 0.125rem;
 }
 
 .h-0 {
   height: 0px;
-}
-
-.h-full {
-  height: 100%;
 }
 
 .h-8 {
@@ -690,18 +694,18 @@ video {
   width: 100%;
 }
 
+.w-fit {
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+}
+
 .w-3 {
   width: 0.75rem;
 }
 
 .w-4 {
   width: 1rem;
-}
-
-.w-fit {
-  width: -webkit-fit-content;
-  width: -moz-fit-content;
-  width: fit-content;
 }
 
 .w-2\.5 {
@@ -738,6 +742,14 @@ video {
   grid-auto-rows: min-content;
 }
 
+.grid-cols-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.grid-rows-1 {
+  grid-template-rows: repeat(1, minmax(0, 1fr));
+}
+
 .grid-rows-2 {
   grid-template-rows: repeat(2, minmax(0, 1fr));
 }
@@ -762,6 +774,11 @@ video {
   justify-items: center;
 }
 
+.gap-x-2 {
+  -webkit-column-gap: 0.5rem;
+          column-gap: 0.5rem;
+}
+
 .gap-y-12 {
   row-gap: 3rem;
 }
@@ -770,9 +787,13 @@ video {
   row-gap: 0.25rem;
 }
 
-.gap-x-2 {
-  -webkit-column-gap: 0.5rem;
-          column-gap: 0.5rem;
+.gap-y-3 {
+  row-gap: 0.75rem;
+}
+
+.gap-x-3 {
+  -webkit-column-gap: 0.75rem;
+          column-gap: 0.75rem;
 }
 
 .gap-y-4 {
@@ -782,10 +803,6 @@ video {
 .gap-x-1 {
   -webkit-column-gap: 0.25rem;
           column-gap: 0.25rem;
-}
-
-.gap-y-3 {
-  row-gap: 0.75rem;
 }
 
 .gap-x-6 {
@@ -858,11 +875,6 @@ video {
   border-color: rgb(172 172 172 / var(--tw-border-opacity));
 }
 
-.border-black-700 {
-  --tw-border-opacity: 1;
-  border-color: rgb(125 125 125 / var(--tw-border-opacity));
-}
-
 .border-red-500 {
   --tw-border-opacity: 1;
   border-color: rgb(239 68 68 / var(--tw-border-opacity));
@@ -911,6 +923,10 @@ video {
 .bg-black-50 {
   --tw-bg-opacity: 1;
   background-color: rgb(20 20 20 / var(--tw-bg-opacity));
+}
+
+.p-3 {
+  padding: 0.75rem;
 }
 
 .p-4 {
@@ -985,14 +1001,14 @@ video {
   line-height: 1.75rem !important;
 }
 
-.text-lg {
-  font-size: 1.125rem;
-  line-height: 1.75rem;
-}
-
 .text-sm {
   font-size: 0.875rem;
   line-height: 1.25rem;
+}
+
+.text-lg {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
 }
 
 .\!text-sm {

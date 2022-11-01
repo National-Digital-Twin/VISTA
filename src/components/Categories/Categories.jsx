@@ -1,12 +1,57 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import useFetch from "use-http";
+import ReactSwitch from "react-switch";
+import PropTypes from "prop-types";
+
 import config from "../../config/app-config";
+import { ElementsContext } from "../../context";
 import { IsEmpty } from "../../utils";
+import { createData } from "./utils";
 
-const Categories = ({ selected, setSelected }) => {
-  const { data = [], error, loading } = useFetch(`${config.api.url}/assessments`, {}, []);
+const Categories = ({ showGrid, toggleView }) => {
+  const { get, response, error } = useFetch(config.api.url);
+  const { setData } = useContext(ElementsContext);
 
-  if (loading) return <p>Loading</p>;
+  const [assessments, setAssessments] = useState([]);
+  const [selected, setSelected] = useState([]);
+
+  useEffect(() => {
+    const getAssessments = async () => {
+      const assessments = await get("/assessments");
+      if (response.ok) {
+        setAssessments(assessments);
+        return;
+      }
+    };
+
+    getAssessments();
+  }, [get, response]);
+
+  useEffect(() => {
+    if (IsEmpty(selected)) {
+      setData({
+        assetCriticalityColorScale: {},
+        assets: [],
+        connections: [],
+        cxnCriticalityColorScale: {},
+        maxAssetCriticality: 0,
+        maxAssetTotalCxns: 0,
+        totalCxnsColorScale: {},
+      });
+      return;
+    }
+
+    const paramsArray = selected.map((item) => ["assessments", item]);
+    const params = new URLSearchParams(paramsArray).toString();
+
+    const getAssessments = async () => {
+      const assets = await get(`assessments/assets?${params}`);
+      const connections = await get(`assessments/connections?${params}`);
+      const data = await createData(assets, connections, get);
+      setData(data);
+    };
+    getAssessments();
+  }, [get, selected, setData]);
 
   if (error)
     return (
@@ -15,14 +60,19 @@ const Categories = ({ selected, setSelected }) => {
       </p>
     );
 
-  const categories = data
+  const categories = assessments
     .filter((assessment) => assessment.assCount > 0)
     .map((assessment) => ({
       label: `${assessment.name} [${assessment.assCount}]`,
       value: assessment.uri,
     }));
 
-  if (IsEmpty(categories)) return <p style={{ textAlign: "center" }}>Categories not found. Please contact admin to resolve issue.</p>;
+  if (IsEmpty(categories))
+    return (
+      <p style={{ textAlign: "center" }}>
+        Categories not found. Please contact admin to resolve issue.
+      </p>
+    );
 
   const onChange = (event) => {
     const {
@@ -36,7 +86,22 @@ const Categories = ({ selected, setSelected }) => {
   };
 
   return (
-    <div style={{ width: "100%", overflowX: "auto" }}>
+    <div className="absolute top-0 flex flex-col gap-y-3 p-3 bg-black-200 z-10">
+      <label className="flex items-center gap-x-3 text-sm w-fit">
+        Grid
+        <ReactSwitch
+          onChange={toggleView}
+          checked={showGrid}
+          offColor="#636363"
+          onColor="#f5f5f5"
+          onHandleColor="#141414"
+          handleDiameter={10}
+          height={16}
+          width={32}
+          uncheckedIcon={false}
+          checkedIcon={false}
+        />
+      </label>
       {categories.map((filter) => (
         <CheckListItem
           key={filter.value}
@@ -49,6 +114,15 @@ const Categories = ({ selected, setSelected }) => {
     </div>
   );
 };
+export default Categories;
+Categories.defaultProps = {
+  showGrid: false,
+  toggleView: () => {}
+}
+Categories.propTypes = {
+  showGrid: PropTypes.bool,
+  toggleView: PropTypes.func
+}
 
 const CheckListItem = ({ value, label, onChange, selected }) => (
   <div
@@ -76,4 +150,4 @@ const CheckListItem = ({ value, label, onChange, selected }) => (
   </div>
 );
 
-export default Categories;
+

@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import React from "react";
 import userEvent from "@testing-library/user-event";
 
-import { createData } from "../DataFigures/utils";
+import { createData } from "../Categories/utils";
 import { E001, E001_E003, E003, E005, E005_E006, E006, E006_E012 } from "../../sample-data";
 import { ElementsContext, ElementsProvider } from "../../context";
 import SelectedElements from "./SelectedElements";
