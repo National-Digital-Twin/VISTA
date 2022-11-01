@@ -44,7 +44,7 @@ const InfoPanel = () => {
 
   return (
     <div
-      className={classNames("absolute right-1 top-1 bg-black-200 z-10 rounded-md", {
+      className={classNames("absolute right-1 top-1 bg-black-200 z-10", {
         "w-5/12 h-2/6": expand,
       })}
     >
@@ -57,7 +57,7 @@ const InfoPanel = () => {
         toggleView={toggleView}
       />
       {expand && (
-        <div className="overflow-y-auto h-full px-2 bg-black-200 rounded-md">
+        <div className="overflow-y-auto h-full px-2 bg-black-200">
           <div className="relative ">
             <SelectedElements selected={selected} handleViewSelected={handleViewSelected} view={view} />
           </div>
@@ -65,29 +65,6 @@ const InfoPanel = () => {
       )}
     </div>
   );
-
-  //   if (!expand) {
-  //     return (
-  //       <div className="absolute top-0 right-0 z-10 bg-black-200 p-3  gap-y-2 ">
-  //         <ExpandButton selected={selectedDetails} toggleView={toggleView} expand={expand} />
-  //       </div>
-  //     );
-  //   }
-  //   return (
-  //     <div
-  //       className="absolute top-0 right-0 z-10 bg-black-200 p-3 gap-y-2 w-2/5 overflow-y-auto"
-  //       style={{ minHeight: "50%", height: "50%" }}
-  //     >
-  //       <div className=" z-10 flex items-center justify-end border-b border-black-500 gap-x-2 ">
-  //         <Toolbar selectedDetails={selectedDetails} selected={selected} onBack={handleBackButton} view={view} />
-  //         <VerticalDivider />
-  //         <ExpandButton selected={selectedDetails} toggleView={toggleView} expand={expand} />
-  //       </div>
-  //       <div className="overflow-y-auto">
-  //         <SelectedElements selected={selected} handleViewSelected={handleViewSelected} view={view} />
-  //       </div>
-  //     </div>
-  //   );
 };
 
 const Toolbar = ({ selected, onBack, selectedDetails, view, toggleView, expand }) => {
@@ -134,7 +111,10 @@ const ExpandButton = ({ selected, toggleView, expand }) => {
       <button aria-labelledby={kebabCase(label)} className="relative" onClick={toggleView}>
         <i className="ri-information-line text-[color:var(--app-Colour)] !text-2xl" />
         {selected.length > 0 && !expand && (
-          <span className="absolute -top-1.5 -right-2 flex items-center justify-center w-5 h-5 rounded-full bg-whiteSmoke-300 text-black-200 text-sm">
+          <span
+            id="selected-badge"
+            className="absolute -top-1.5 -right-2 flex items-center justify-center w-5 h-5 rounded-full bg-whiteSmoke-300 text-black-200 text-sm"
+          >
             {selected.length}
           </span>
         )}
@@ -164,8 +144,7 @@ const StreetView = ({ latitude, longitude }) => {
         className="link"
       >
         <div className="flex items-center">
-          {" "}
-          <GoogleMapIcon /> StreetView
+          <GoogleMapIcon /> Street View
         </div>
       </a>
       <div className="linkBorder" />
