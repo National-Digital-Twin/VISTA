@@ -1,20 +1,20 @@
-import classNames from "classnames";
 import { ElementsContext } from "context";
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 
 const ErrorNotification = ({ msg }) => {
-  const { error, setNotificationError } = useContext(ElementsContext);
-  // const [show, setShow] = useState(false);
+  let [show, setShow] = useState(true);
+  const { error } = useContext(ElementsContext);
 
-  // if (msg) setShow(true);
+  useEffect(() => {
+    console.log('show has changed, reset component state here or pass input to change the value of show?!', show)
+   }, [show]);
 
   const handleOnClose = () => {
-    // console.log("TODO")
-    setNotificationError(undefined);
+    setShow(!show);
   };
 
   return (
-    <div className={classNames("error-notification", { "hidden": !error, "visible": error })}>
+    <div className={[ show && error ? "error-notification visible" : "error-notification hidden"]} >
       <p className="text-center">{error}</p>
       <button
         aria-label="dismiss-error-notification"
