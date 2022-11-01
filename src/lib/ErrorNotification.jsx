@@ -16,7 +16,7 @@ const ErrorNotification = () => {
 
   return (
     <div
-      className={classNames("error-notification", { visible: !dismiss, hidden: dismiss || !error })}
+      className={classNames("error-notification", { "show": !dismiss, "hide": dismiss || !error })}
     >
       <p className="text-center">{error}</p>
       <button
