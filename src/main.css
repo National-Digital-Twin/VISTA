@@ -550,36 +550,15 @@ video {
 }
 
 .error-notification {
-  position: absolute;
-  top: 0px;
-  z-index: 20;
-  width: 100%;
   padding-left: 0.5rem;
   padding-right: 0.5rem;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
   display: grid;
   grid-template-columns: 1fr -webkit-min-content;
   grid-template-columns: 1fr min-content;
   align-items: center;
   background-color: #B80000;
-  height: 2.5rem;
-  -webkit-transform-origin:top;
-          transform-origin:top;
-  transition-duration: 200ms;
-  transition-property: height, opacity;
-  transition-timing-function: ease-out;
-}
-
-.error-notification.show {
-  opacity: 1;
-}
-
-.error-notification.\!show {
-  opacity: 1;
-}
-
-.error-notification.hide {
-  height: 0px;
-  opacity: 0;
 }
 
 .linkBorder {
@@ -598,6 +577,10 @@ video {
 .link:hover + .linkBorder {
   width: 100%;
   opacity: 1;
+}
+
+.visible {
+  visibility: visible;
 }
 
 .absolute {
@@ -645,6 +628,10 @@ video {
 
 .-top-12 {
   top: -3rem;
+}
+
+.z-20 {
+  z-index: 20;
 }
 
 .z-10 {

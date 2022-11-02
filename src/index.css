@@ -88,24 +88,12 @@ body {
 }
 @layer components {
   .error-notification {
-    @apply absolute top-0 w-full z-20 px-2;
+    @apply px-2 py-1;
     display: grid;
     grid-template-columns: 1fr min-content;
     align-items: center;
     background-color: #B80000;
-    height: 2.5rem;
-    transform-origin:top;
-    transition-duration: 200ms;
-    transition-property: height, opacity;
-    transition-timing-function: ease-out;
   }
-  .error-notification.show {
-    @apply opacity-100;
-  }
-  .error-notification.hide {
-    @apply h-0 opacity-0;
-  }
-  
 
   .linkBorder {
     @apply mx-auto rounded-full opacity-0 w-0;

@@ -104,16 +104,12 @@ describe("Categories component", () => {
 
     await waitForElementToBeRemoved(() => screen.queryByText(/fetching assessments/i));
     await user.click(await screen.findByRole("checkbox", { name: "Energy [25]" }));
-    
-    await waitFor(() => expect(screen.getByTestId("error-notification")).toHaveClass("show"))
-    expect(screen.getByText("Failed to resolve the data")).toBeInTheDocument();
+    expect(await screen.findByText("Failed to resolve the data")).toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: "dismiss-error-notification" }));
-    await waitFor(() => expect(screen.getByTestId("error-notification")).toHaveClass("hide"));
     expect(screen.queryByText("Failed to resolve the data")).not.toBeInTheDocument();
 
     await user.click(await screen.findByRole("checkbox", { name: "Medical [32]" }));
-    await waitFor(() => expect(screen.getByTestId("error-notification")).toHaveClass("show"))
     expect(await screen.findByText("Failed to resolve the data")).toBeInTheDocument();
   })
 });

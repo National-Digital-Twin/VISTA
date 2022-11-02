@@ -101,14 +101,10 @@ const elementsReducer = (state, action) => {
       return { ...state, selectedElements: [] };
     case RESET:
       return INITIAL_STATE;
-    case UPDATE_ERRORS: {
-      const uniqueErrors = [...new Set([...state.errors, action.error])];
-      return { ...state, errors: uniqueErrors };
-    }
-    case REMOVE_ERROR: {
-      const updatedErrors = state.errors.splice(action.index, state.errors.length - 1);
-      return { ...state, errors: updatedErrors };
-    }
+    case UPDATE_ERRORS:
+      return { ...state, errors: [...new Set([...state.errors, action.error])] };
+    case REMOVE_ERROR:
+      return { ...state, errors: state.errors.filter((error) => error !== action.error) };
     default:
       // eslint-disable-next-line
       console.error(`Unhandled action type ${action.type}`);
@@ -159,8 +155,8 @@ export const ElementsProvider = ({ children }) => {
     dispatch({ type: UPDATE_ERRORS, error: msg });
   }, []);
 
-  const dismissErrorNotification = (index) => {
-    dispatch({ type: REMOVE_ERROR, index });
+  const dismissErrorNotification = (error) => {
+    dispatch({ type: REMOVE_ERROR, error });
   };
 
   const clearSelectedElements = () => {
