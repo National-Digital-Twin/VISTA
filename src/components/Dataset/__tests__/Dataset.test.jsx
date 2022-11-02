@@ -1,13 +1,16 @@
 import { screen, render, waitForElementToBeRemoved, waitFor } from "@testing-library/react";
 import { rest } from "msw";
 import userEvent from "@testing-library/user-event";
+import { Provider as UseHttpProvider } from "use-http";
 
 import { ElementsProvider } from "context";
 import server from "mocks";
-import Dataset from "../Dataset";
 import { mockEmptyRespose, mockError } from "mocks/resolvers";
-import { Provider as UseHttpProvider } from "use-http";
-import ErrorNotification from "lib/ErrorNotification";
+import { ErrorNotification } from "lib";
+import { clickEnergyDataset, clickMedicalDataset, clickTransportDataset } from "test-utils";
+
+import Dataset from "../Dataset";
+import * as createData from "../utils";
 
 const user = userEvent.setup();
 
@@ -47,6 +50,7 @@ describe("Categories component", () => {
   });
 
   test("renders error message when assessments/assets api call fails", async () => {
+    const spyOnCreateData = jest.spyOn(createData, "createData");
     server.use(rest.get("/assessments/assets", mockError));
     render(
       <>
@@ -57,11 +61,13 @@ describe("Categories component", () => {
     );
 
     await waitForElementToBeRemoved(() => screen.queryByText(/fetching assessments/i));
-    await user.click(await screen.findByRole("checkbox", { name: "Energy [25]" }));
+    await clickEnergyDataset();
     expect(await screen.findByText("Failed to resolve the data")).toBeInTheDocument();
+    await waitFor(() => expect(spyOnCreateData).toHaveReturned());
   });
-  
+
   test("renders error message when assessments/connections api call fails", async () => {
+    const spyOnCreateData = jest.spyOn(createData, "createData");
     server.use(rest.get("/assessments/connections", mockError));
     render(
       <>
@@ -72,11 +78,13 @@ describe("Categories component", () => {
     );
 
     await waitForElementToBeRemoved(() => screen.queryByText(/fetching assessments/i));
-    await user.click(await screen.findByRole("checkbox", { name: "Energy [25]" }));
+    await clickEnergyDataset();
     expect(await screen.findByText("Failed to resolve the data")).toBeInTheDocument();
+    await waitFor(() => expect(spyOnCreateData).toHaveReturned());
   });
 
   test("renders error message when assets/:id/parts api call fails", async () => {
+    const spyOnCreateData = jest.spyOn(createData, "createData");
     server.use(rest.get("/assets/:id/parts", mockError));
     render(
       <>
@@ -87,12 +95,18 @@ describe("Categories component", () => {
     );
 
     await waitForElementToBeRemoved(() => screen.queryByText(/fetching assessments/i));
-    await user.click(await screen.findByRole("checkbox", { name: "Transport [44]" }));
+    await clickTransportDataset();
     expect(await screen.findByText("Failed to resolve the data")).toBeInTheDocument();
+    await waitFor(() => expect(spyOnCreateData).toHaveReturned());
   });
 
   test("renders error message again after it's dismissed", async () => {
-    server.use(...[rest.get("/assessments/connections", mockError), rest.get("/assessments/assets", mockError)]);
+    server.use(
+      ...[
+        rest.get("/assessments/connections", mockError),
+        rest.get("/assessments/assets", mockError),
+      ]
+    );
 
     render(
       <>
@@ -103,13 +117,13 @@ describe("Categories component", () => {
     );
 
     await waitForElementToBeRemoved(() => screen.queryByText(/fetching assessments/i));
-    await user.click(await screen.findByRole("checkbox", { name: "Energy [25]" }));
+    await clickEnergyDataset();
     expect(await screen.findByText("Failed to resolve the data")).toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: "dismiss-error-notification" }));
     expect(screen.queryByText("Failed to resolve the data")).not.toBeInTheDocument();
 
-    await user.click(await screen.findByRole("checkbox", { name: "Medical [32]" }));
+    await clickMedicalDataset();
     expect(await screen.findByText("Failed to resolve the data")).toBeInTheDocument();
-  })
+  });
 });

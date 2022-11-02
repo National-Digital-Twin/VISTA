@@ -12,13 +12,8 @@ import Assessments from "./Assessments";
 
 const Dataset = ({ showGrid, toggleView }) => {
   const { get, response, error } = useFetch();
-  const {
-    updateErrors,
-    filterSelectedElements,
-    reset,
-    updateAssets,
-    updateConnections,
-  } = useContext(ElementsContext);
+  const { updateErrors, filterSelectedElements, reset, updateAssets, updateConnections } =
+    useContext(ElementsContext);
 
   const [selected, setSelected] = useState([]);
   const [showPanel, setShowPanel] = useState(true);
@@ -42,7 +37,7 @@ const Dataset = ({ showGrid, toggleView }) => {
     if (error) updateErrors("Failed to resolve the data");
   }, [error, updateErrors]);
 
-    useEffect(() => {
+  useEffect(() => {
     if (isEmpty(selected)) {
       reset();
       return;
@@ -65,12 +60,10 @@ const Dataset = ({ showGrid, toggleView }) => {
       const assets = await getAssets();
       const connections = await getConnections();
 
-      if (assets && connections) {
-        const data = await createData(assets, connections, get);
-        updateAssets(data.assets);
-        updateConnections(data.connections);
-        filterSelectedElements(data.assets, data.connections);
-      }
+      const data = await createData(assets, connections, get, response);
+      updateAssets(data.assets);
+      updateConnections(data.connections);
+      filterSelectedElements(data.assets, data.connections);
     };
 
     generateData();

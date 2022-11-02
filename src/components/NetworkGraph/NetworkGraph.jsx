@@ -9,6 +9,7 @@ import { createEdges, createNode } from "./cytoscapeUtils";
 import cyStylesheet from "./stylesheet";
 import GraphToolbar from "./GraphToolbar";
 import { CytoscapeContext, ElementsContext } from "../../context";
+import { isEmpty } from "lodash";
 
 const NetworkGraph = () => {
   const { cyRef, layout: graphLayout, updateLayout } = useContext(CytoscapeContext);
@@ -16,10 +17,10 @@ const NetworkGraph = () => {
     useContext(ElementsContext);
 
   const nodes = useMemo(() => createNode(assets), [assets]);
-  const edges = useMemo(
-    () => createEdges(connections, cxnCriticalityColorScale),
-    [connections, cxnCriticalityColorScale]
-  );
+  const edges = useMemo(() => {
+    if (isEmpty(nodes)) return [];
+    return createEdges(connections, cxnCriticalityColorScale);
+  }, [connections, nodes, cxnCriticalityColorScale]);
 
   cytoscape.use(cola);
   cytoscape.use(dagre);
