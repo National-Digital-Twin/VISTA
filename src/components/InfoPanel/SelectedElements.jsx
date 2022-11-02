@@ -6,44 +6,47 @@ import ElementDetails from "./ElementDetails";
 
 const SelectedElements = () => {
   const [selectedIndex, setSelectedIndex] = useState(-1);
-  const { selectedDetails } = useContext(ElementsContext);
+  const { assets, selectedElements, assetCriticalityColorScale, cxnCriticalityColorScale } =
+    useContext(ElementsContext);
+
+  const getDetails = (element) => element.generateDetails(assets, assetCriticalityColorScale, cxnCriticalityColorScale);
 
   useEffect(() => {
-    if (selectedDetails.length === 1) {
+    if (selectedElements.length === 1) {
       setSelectedIndex(0);
       return;
     }
     setSelectedIndex(-1);
-  }, [selectedDetails]);
+  }, [selectedElements]);
 
   const handleViewSelected = (index) => {
     setSelectedIndex(index);
   };
 
-  if (IsEmpty(selectedDetails)) return <p>Click on an asset or connection to view details</p>;
+  if (IsEmpty(selectedElements)) return <p>Click on an asset or connection to view details</p>;
 
   if (selectedIndex >= 0) {
-    const selectedElement = selectedDetails[selectedIndex];
+    const selectedElement = selectedElements[selectedIndex];
     return (
       <>
         <Toolbar
-          selectedElements={selectedDetails}
+          selectedElements={selectedElements}
           element={selectedElement}
           onViewAll={handleViewSelected}
         />
-        <ElementDetails element={selectedElement} expand />
+        <ElementDetails element={getDetails(selectedElement)} expand />
       </>
     );
   }
 
   return (
     <>
-      <h2 className="text-lg">{selectedDetails.length} Selected Elements</h2>
+      <h2 className="text-lg">{selectedElements.length} Selected Elements</h2>
       <ul className="flex flex-col gap-y-3">
-        {selectedDetails.map((selectedElement, index) => (
+        {selectedElements.map((selectedElement, index) => (
           <ElementDetails
-            key={selectedElement.uri}
-            element={selectedElement}
+            key={selectedElement.id}
+            element={getDetails(selectedElement)}
             onViewDetails={() => {
               handleViewSelected(index);
             }}

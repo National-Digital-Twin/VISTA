@@ -1,33 +1,29 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import React from "react";
-import userEvent from "@testing-library/user-event";
 
-import { createData } from "../Dataset/utils";
-import { E001, E001_E003, E003, E005, E005_E006, E006, E006_E012 } from "../../sample-data";
-import { ElementsContext, ElementsProvider } from "../../context";
+import * as utils from "./../Dataset/utils";
+import { ElementsProvider } from "../../context";
 import SelectedElements from "./SelectedElements";
+import { AssetBtn, CxnBtn, renderTestComponent } from "../../test-utils";
+import { ENERGY_ASSETS } from "../../mocks";
 
-const assetsMetadata = [E001, E003, E005, E006];
-const connectionsMetadata = [E001_E003, E006_E012, E005_E006];
-
-const renderSelectedDetails = async () => {
-  const data = await createData(assetsMetadata, connectionsMetadata);
-  const { assets, connections, assetCriticalityColorScale, cxnCriticalityScale } = data;
-  const selectedDetails = [
-    assets[0].generateDetails(assets, assetCriticalityColorScale),
-    assets[1].generateDetails(assets, assetCriticalityColorScale),
-    connections[0].generateDetails(assets, cxnCriticalityScale),
-  ];
-
-  return {
-    user: userEvent.setup(),
-    ...render(
-      <ElementsContext.Provider value={{ selectedDetails }}>
-        <SelectedElements />
-      </ElementsContext.Provider>
-    ),
-  };
+const TestBtns = ({ assets, connections, onElementClick }) => {
+  const event = { originalEvent: { shiftKey: true } };
+  return (
+    <>
+      <AssetBtn label="E001" assets={assets} event={event} onElementClick={onElementClick} />
+      <AssetBtn label="E003" assets={assets} event={event} onElementClick={onElementClick} />
+      <CxnBtn
+        label="E001 - E003"
+        connections={connections}
+        event={event}
+        onElementClick={onElementClick}
+      />
+    </>
+  );
 };
+
+const renderSelectedDetails = () => renderTestComponent(<SelectedElements />, { testComponent: TestBtns });
 
 describe("Selected Elements component", () => {
   test("renders message when an element(s) aren't selected", () => {
@@ -38,10 +34,21 @@ describe("Selected Elements component", () => {
   });
 
   test("renders all selected elements", async () => {
-    await renderSelectedDetails();
+    const spyOnCreateData = jest.spyOn(utils, "createData");
+    const { user } = renderSelectedDetails();
 
+    await waitFor(() =>
+      expect(screen.getByRole("checkbox", { name: "Energy [25]" })).toBeInTheDocument()
+    );
+    await user.click(await screen.findByRole("checkbox", { name: "Energy [25]" }));
+    expect(screen.getByRole("checkbox", { name: "Energy [25]" })).toBeChecked();
+    await waitFor(() => expect(spyOnCreateData).toHaveReturned());
+
+    await user.click(screen.getByRole("button", { name: "E001" }));
+    await user.click(screen.getByRole("button", { name: "E003" }));
+    await user.click(screen.getByRole("button", { name: "E001 - E003" }));
     expect(screen.getByRole("heading", { name: "3 Selected Elements" })).toBeInTheDocument();
-    expect(screen.getAllByRole("listitem")).toHaveLength(3);
+    expect(screen.getAllByRole("listitem")).toHaveLength(6);
     expect(
       screen.getByRole("heading", { name: "East Cowes Power Station (E001)" })
     ).toBeInTheDocument();
@@ -56,37 +63,106 @@ describe("Selected Elements component", () => {
   });
 
   test("renders element details when a list item is clicked", async () => {
-    const { user } = await renderSelectedDetails();
+    const spyOnCreateData = jest.spyOn(utils, "createData");
+    const { user } = renderSelectedDetails();
 
-    await user.click(screen.getByRole("button", { name: "East Cowes Power Station (E001) ies:Facility" }));
+    await waitFor(() =>
+      expect(screen.getByRole("checkbox", { name: "Energy [25]" })).toBeInTheDocument()
+    );
+    await user.click(await screen.findByRole("checkbox", { name: "Energy [25]" }));
+    expect(screen.getByRole("checkbox", { name: "Energy [25]" })).toBeChecked();
+    await waitFor(() => expect(spyOnCreateData).toHaveReturned());
+
+    await user.click(screen.getByRole("button", { name: "E001" }));
+    await user.click(screen.getByRole("button", { name: "E003" }));
+    await user.click(screen.getByRole("button", { name: "E001 - E003" }));
+
+    await user.click(
+      screen.getByRole("button", { name: "East Cowes Power Station (E001) ies:Facility" })
+    );
 
     expect(screen.getByTestId("element-details")).toBeInTheDocument();
   });
 
   test("renders all selected elements by click on back arrow", async () => {
-    const { user } = await renderSelectedDetails();
+    const spyOnCreateData = jest.spyOn(utils, "createData");
+    const { user } = renderSelectedDetails();
 
-    await user.click(screen.getByRole("button", { name: "East Cowes Power Station (E001) ies:Facility" }));
+    await waitFor(() =>
+      expect(screen.getByRole("checkbox", { name: "Energy [25]" })).toBeInTheDocument()
+    );
+    await user.click(await screen.findByRole("checkbox", { name: "Energy [25]" }));
+    expect(screen.getByRole("checkbox", { name: "Energy [25]" })).toBeChecked();
+    await waitFor(() => expect(spyOnCreateData).toHaveReturned());
+
+    await user.click(screen.getByRole("button", { name: "E001" }));
+    await user.click(screen.getByRole("button", { name: "E003" }));
+    await user.click(screen.getByRole("button", { name: "E001 - E003" }));
+
+    await user.click(
+      screen.getByRole("button", { name: "East Cowes Power Station (E001) ies:Facility" })
+    );
     expect(screen.getByTestId("element-details")).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "view all selected" }));
-    expect(screen.getAllByRole("listitem")).toHaveLength(3);
+    expect(screen.getAllByRole("listitem")).toHaveLength(6);
 
-    await user.click(screen.getByRole("button", { name: "East Cowes Power Station (E001) to East Cowes 132/33kV Substation (E003)" }));
+    await user.click(
+      screen.getByRole("button", {
+        name: "East Cowes Power Station (E001) to East Cowes 132/33kV Substation (E003)",
+      })
+    );
     expect(screen.getByTestId("element-details")).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "view all selected" }));
-    expect(screen.getAllByRole("listitem")).toHaveLength(3);
-  })
+    expect(screen.getAllByRole("listitem")).toHaveLength(6);
+  });
 
   test("renders open street view link when an asset is selected", async () => {
-    const { user } = await renderSelectedDetails();
-    
-    await user.click(screen.getByRole("button", { name: "East Cowes Power Station (E001) ies:Facility" }));
+    const spyOnCreateData = jest.spyOn(utils, "createData");
+    const { user } = renderSelectedDetails();
+
+    await waitFor(() =>
+      expect(screen.getByRole("checkbox", { name: "Energy [25]" })).toBeInTheDocument()
+    );
+    await user.click(await screen.findByRole("checkbox", { name: "Energy [25]" }));
+    expect(screen.getByRole("checkbox", { name: "Energy [25]" })).toBeChecked();
+    await waitFor(() => expect(spyOnCreateData).toHaveReturned());
+
+    await user.click(screen.getByRole("button", { name: "E001" }));
+    await user.click(screen.getByRole("button", { name: "E003" }));
+
+    await user.click(
+      screen.getByRole("button", { name: "East Cowes Power Station (E001) ies:Facility" })
+    );
     expect(screen.getByTestId("element-details")).toBeInTheDocument();
 
-    const viewpoint = encodeURIComponent(`${assetsMetadata[0].lat},${assetsMetadata[0].lon}`);
+    const viewpoint = encodeURIComponent(`${ENERGY_ASSETS[0].lat},${ENERGY_ASSETS[0].lon}`);
     expect(screen.getByRole("link", { name: /open street view/i })).toHaveAttribute(
       "href",
       `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${viewpoint}`
     );
+  });
+
+  test("renders element details when an element is selected", async () => {
+    const spyOnCreateData = jest.spyOn(utils, "createData");
+    const { user } = renderSelectedDetails();
+
+    await waitFor(() =>
+      expect(screen.getByRole("checkbox", { name: "Energy [25]" })).toBeInTheDocument()
+    );
+    await user.click(await screen.findByRole("checkbox", { name: "Energy [25]" }));
+    expect(screen.getByRole("checkbox", { name: "Energy [25]" })).toBeChecked();
+    await waitFor(() => expect(spyOnCreateData).toHaveReturned());
+
+    await user.click(screen.getByRole("button", { name: "E001" }));
+    expect(
+      screen.getByRole("heading", { name: "East Cowes Power Station (E001)" })
+    ).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "E001 - E003" }));
+    expect(
+      screen.getByRole("heading", {
+        name: "East Cowes Power Station (E001) to East Cowes 132/33kV Substation (E003)",
+      })
+    ).toBeInTheDocument();
   });
 });

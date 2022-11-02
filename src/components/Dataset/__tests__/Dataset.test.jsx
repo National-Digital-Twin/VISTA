@@ -2,7 +2,7 @@ import { screen, render, waitForElementToBeRemoved } from "@testing-library/reac
 import { rest } from "msw";
 
 import { ElementsProvider } from "context";
-import { server } from "mocks/server";
+import server from "mocks";
 import Dataset from "../Dataset";
 import {
   mockEmptyRespose,

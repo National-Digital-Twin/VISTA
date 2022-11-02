@@ -1,12 +1,10 @@
-import ColorScale from "color-scales";
-import Asset from "../../models/Asset";
-import Connection from "../../models/Connection";
+import { Asset, Connection } from "../../models";
 
 const getConnections = (connections) =>
   connections.map(
     (connection) =>
       new Connection({
-        uri: connection?.connUri,
+        id: connection?.connUri,
         criticality: connection?.criticality,
         source: connection?.asset1Uri,
         target: connection?.asset2Uri,
@@ -55,28 +53,9 @@ const createAssetConnections = async (assets, connections, get, response) => {
   );
 };
 
-const getColorScale = (min, max) =>
-  new ColorScale(min, max === 0 ? 100 : max, ["#35C035", "#FFB60A", "#FB3737"], 1);
-
-const getAllTotalCxns = (assets) => assets.map((asset) => asset.totalCxns);
-
-const getAllCriticalities = (assets) => assets.map((asset) => asset.criticality);
-
-export const createData = async (assets, connectionsMetadata, get, response) => {
+export const createData = async (assetsMetadata, connectionsMetadata, get) => {
   const connections = getConnections(connectionsMetadata);
-  const assetCxns = await createAssetConnections(assets, connections, get, response);
-  const maxAssetCriticality = Math.max(...getAllCriticalities(assetCxns));
-  const minAssetCriticality = Math.min(...getAllCriticalities(assetCxns));
-  const maxAssetTotalCxns = Math.max(...getAllTotalCxns(assetCxns));
-  const minAssetTotalCxns = Math.min(...getAllTotalCxns(assetCxns));
+  const assets = await createAssetConnections(assetsMetadata, connections, get);
 
-  return {
-    assetCriticalityColorScale: getColorScale(minAssetCriticality, maxAssetCriticality),
-    assets: assetCxns,
-    connections,
-    cxnCriticalityColorScale: getColorScale(1, 3),
-    maxAssetCriticality,
-    maxAssetTotalCxns,
-    totalCxnsColorScale: getColorScale(minAssetTotalCxns, maxAssetTotalCxns),
-  };
+  return { assets, connections };
 };

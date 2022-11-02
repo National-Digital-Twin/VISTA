@@ -7,11 +7,10 @@ import "jest-canvas-mock";
 import { configure } from "@testing-library/react";
 import { toMatchImageSnapshot } from "jest-image-snapshot";
 
-import { server } from "mocks/server";
+import server from "./mocks";
 
 expect.extend({ toMatchImageSnapshot });
 configure({ testIdAttribute: "id" });
-
 global.ResizeObserver = require("resize-observer-polyfill");
 
 process.env = {
@@ -24,6 +23,23 @@ process.env = {
 beforeAll(() => server.listen());
 beforeEach(() => {
   server.resetHandlers();
-  jest.clearAllMocks();
+  jest.restoreAllMocks();
 });
 afterAll(() => server.close());
+
+jest.mock("react-map-gl", () => ({
+  __esModule: true,
+  default: ({ children }) => <div id="telicentMap">{children}</div>,
+  Source: ({ props, children }) => (
+    <div {...props}>
+      {props}
+      {children}
+    </div>
+  ),
+  Layer: (props) => <div {...props}></div>,
+  MapProvider: ({ children }) => <div>{children}</div>,
+  useMap: () =>
+    jest.fn().mockReturnValue({
+      telicentMap: { zoomIn: jest.fn(), zoomOut: jest.fn() },
+    }),
+}));

@@ -11,12 +11,6 @@ export const CytoscapeProvider = ({ children }) => {
     return cyRef.current.elements(":selected");
   };
 
-  const getSelectedElements = () => {
-    if (!cyRef.current) return;
-    const selected = getSelected();
-    return selected.map((node) => node.data("element"));
-  };
-
   const clearSelected = () => {
     if (!cyRef.current) return;
     const selected = getSelected();
@@ -29,7 +23,7 @@ export const CytoscapeProvider = ({ children }) => {
 
   return (
     <CytoscapeContext.Provider
-      value={{ cyRef, layout, clearSelected, getSelectedElements, updateLayout }}
+      value={{ cyRef, layout, clearSelected, getSelected, updateLayout }}
     >
       {children}
     </CytoscapeContext.Provider>

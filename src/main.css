@@ -731,10 +731,6 @@ video {
   width: 0.75rem;
 }
 
-.w-52 {
-  width: 13rem;
-}
-
 .w-fit {
   width: -webkit-fit-content;
   width: -moz-fit-content;

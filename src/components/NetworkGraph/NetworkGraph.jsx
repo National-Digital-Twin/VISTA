@@ -11,14 +11,9 @@ import GraphToolbar from "./GraphToolbar";
 import { CytoscapeContext, ElementsContext } from "../../context";
 
 const NetworkGraph = () => {
-  const {
-    cyRef,
-    layout: graphLayout,
-    getSelectedElements,
-    updateLayout,
-  } = useContext(CytoscapeContext);
-  const { data, onAssetSelect } = useContext(ElementsContext);
-  const { assets, connections, cxnCriticalityColorScale } = data;
+  const { cyRef, layout: graphLayout, updateLayout } = useContext(CytoscapeContext);
+  const { assets, connections, cxnCriticalityColorScale, clearSelectedElements, onElementClick } =
+    useContext(ElementsContext);
 
   const nodes = useMemo(() => createNode(assets), [assets]);
   const edges = useMemo(
@@ -40,20 +35,24 @@ const NetworkGraph = () => {
     (cy) => {
       if (cyRef.current === cy) return;
       cyRef.current = cy;
-      cyRef.current.on("select", "edge", function (event) {
-        onAssetSelect(getSelectedElements());
+      cyRef.current.on("tap", "edge", function (event) {
+        const id = event.target.data("id");
+        const element = cyRef.current.getElementById(id).json();
+        onElementClick(event, element.data);
       });
-      cyRef.current.on("unselect", "edge", function (event) {
-        onAssetSelect(getSelectedElements());
+      cyRef.current.on("tap", "node", function (event) {
+        const id = event.target.data("id");
+        const element = cyRef.current.getElementById(id).json();
+        onElementClick(event, element.data);
       });
-      cyRef.current.on("select", "node", function (event) {
-        onAssetSelect(getSelectedElements());
-      });
-      cyRef.current.on("unselect", "node", function (event) {
-        onAssetSelect(getSelectedElements());
+      cyRef.current.on("tap", function (event) {
+        if (event.target === cy) {
+          clearSelectedElements();
+          return;
+        }
       });
     },
-    [cyRef, getSelectedElements, onAssetSelect]
+    [cyRef, clearSelectedElements, onElementClick]
   );
 
   return (

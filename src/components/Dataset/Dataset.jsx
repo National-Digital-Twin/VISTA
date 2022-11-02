@@ -6,14 +6,19 @@ import { isEmpty, kebabCase } from "lodash";
 import ReactSwitch from "react-switch";
 
 import { ElementsContext } from "context";
-import config from "config/app-config";
 import { FloatingPanel } from "lib";
 import { createData } from "./utils";
 import Assessments from "./Assessments";
 
 const Dataset = ({ showGrid, toggleView }) => {
-  const { get, response, error } = useFetch(config.api.url);
-  const { setData, displayErrorNofitication } = useContext(ElementsContext);
+  const { get, response, error } = useFetch();
+  const {
+    filterSelectedElements,
+    displayErrorNofitication,
+    reset,
+    updateAssets,
+    updateConnections,
+  } = useContext(ElementsContext);
 
   const [assets, setAssets] = useState([]);
   const [connections, setConnections] = useState([]);
@@ -45,22 +50,14 @@ const Dataset = ({ showGrid, toggleView }) => {
 
   useEffect(() => {
     if (isEmpty(selected)) {
-      setData({
-        assetCriticalityColorScale: {},
-        assets: [],
-        connections: [],
-        cxnCriticalityColorScale: {},
-        maxAssetCriticality: 0,
-        maxAssetTotalCxns: 0,
-        totalCxnsColorScale: {},
-      });
+      reset();
       return;
     }
 
     const paramsArray = selected.map((item) => ["assessments", item]);
     const params = new URLSearchParams(paramsArray).toString();
 
-    const getAssetssments = async () => {
+    const getAssessments = async () => {
       const assets = await get(`assessments/assets?${params}`);
       if (response.ok) {
         setAssets(assets);
@@ -73,24 +70,27 @@ const Dataset = ({ showGrid, toggleView }) => {
       if (response.ok) setConnections(connections);
     };
 
-    getAssetssments();
-  }, [get, response, selected, setData]);
+    getAssessments();
+  }, [get, response, reset, selected]);
 
   useEffect(() => {
-    const getAssessments = async () => {
+    const generateData = async () => {
       const data = await createData(assets, connections, get, response);
-      setData(data);
+      updateAssets(data.assets);
+      updateConnections(data.connections);
+      filterSelectedElements(data.assets, data.connections);
     };
-
-    if (!isEmpty(assets) && !isEmpty(connections)) getAssessments();
-  }, [assets, connections, response, get, setData]);
+    
+    generateData();
+  }, [assets, connections, response, get, filterSelectedElements, updateAssets, updateConnections]);
 
   return (
     <FloatingPanel
       collapsedComponent={<DBButton onToggle={togglePanel} />}
       show={showPanel}
       position="top-0"
-      className="flex flex-col gap-y-2 p-2 w-52"
+      className="flex flex-col gap-y-2 p-2"
+      style={{ maxWidth: "13rem" }}
     >
       <div className="inline-flex gap-x-2 border-b border-black-500 pb-1">
         <DBButton active onToggle={togglePanel} />
