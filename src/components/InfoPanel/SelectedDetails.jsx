@@ -18,6 +18,8 @@ const SelectedDetails = () => {
   const [selected, setSelected] = useState();
   const [view, setView] = useState(viewType.hasMultipleItems);
 
+  console.log("HERE>>>", selectedDetails);
+
   useEffect(() => {
     if (selectedDetails.length === 1) {
       setView(viewType.hasSingleItem);
@@ -85,11 +87,9 @@ const Toolbar = ({ selected, onBack, selectedDetails, view, toggleView, expand, 
 
   if (view === "singleItem" && expand) {
     return (
-      <InfoPanelHeader selected={selected} expand={expand} setExpand={setExpand}>
-        {/* <div className="flex items-center gap-x-2"> */}
+      <InfoPanelHeader selected={selected} expand={expand} setExpand={setExpand} title="Element Details">
         <StreetView latitude={selected.lat} longitude={selected.lng} />
         <VerticalDivider />
-        {/* </div> */}
       </InfoPanelHeader>
     );
   }

@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useContext } from "react";
 import classNames from "classnames";
 import { kebabCase } from "lodash";
+import { ElementsContext } from "../../context";
 
 const InfoPanelHeader = ({ selected, title, setExpand, expand, children, leftComponent }) => {
   return (
@@ -21,24 +22,42 @@ const ExpandButton = ({ selected, expand, setExpand }) => {
   };
 
   const label = `${!expand ? "open" : "close"} details panel`;
+
   return (
     <div className="relative flex justify-end">
       <button aria-labelledby={kebabCase(label)} className="relative" onClick={toggleView}>
         <i className="ri-information-line text-[color:var(--app-Colour)] !text-2xl" />
-        {selected?.length > 0 && !expand && (
+        {/* {selected?.length > 0 && !expand && (
           <span
             id="selected-badge"
             className="absolute -top-1.5 -right-2 flex items-center justify-center w-5 h-5 rounded-full bg-whiteSmoke-300 text-black-200 text-sm"
           >
             {selected.length}
           </span>
-        )}
+        )} */}
+        <SelectedBadge selected={selected} expand={expand} />
       </button>
       <div id={kebabCase(label)} role="tooltip" className="right-0">
         {label}
       </div>
     </div>
   );
+};
+
+const SelectedBadge = ({ selected, expand }) => {
+  const { selectedDetails } = useContext(ElementsContext);
+
+  if (selectedDetails.length >= 1 && !expand) {
+    return (
+      <span
+        id="selected-badge"
+        className="absolute -top-1.5 -right-2 flex items-center justify-center w-5 h-5 rounded-full bg-whiteSmoke-200 text-black-200 text-sm"
+      >
+        {selectedDetails.length}
+      </span>
+    );
+  }
+  return null;
 };
 
 export default InfoPanelHeader;
