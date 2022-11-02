@@ -29,6 +29,14 @@ describe("Categories component", () => {
     expect(screen.getByRole("checkbox", { name: "Transport [44]" })).toBeInTheDocument();
   });
 
+  test("collapses", async () => {
+    render(<Dataset />, { wrapper: AllProviders });
+    await waitForElementToBeRemoved(() => screen.queryByText(/fetching assessments/i));
+
+    await user.click(screen.getByRole("button", { name: "Close dataset panel" }));
+    expect(screen.queryByRole("checkbox", { name: "Energy [25]" })).not.toBeInTheDocument();
+  });
+
   test("renders message when assessments are not found", async () => {
     server.use(rest.get("/assessments", mockEmptyRespose));
     render(<Dataset />, { wrapper: AllProviders });
