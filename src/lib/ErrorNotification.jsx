@@ -14,8 +14,6 @@ const ErrorNotification = () => {
     setDismiss(true);
   };
 
-  console.log("notification", error)
-
   return (
     <div
       className={classNames("error-notification", { "show": !dismiss, "hide": dismiss || !error })}

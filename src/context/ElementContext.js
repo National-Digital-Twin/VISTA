@@ -146,7 +146,6 @@ export const ElementsProvider = ({ children }) => {
   };
 
   const displayErrorNofitication = useCallback((msg) => {
-    console.log({msg})
     dispatch({ type: DISPLAY_ERROR, error: msg });
   }, []);
 
