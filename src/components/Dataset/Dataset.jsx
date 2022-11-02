@@ -6,7 +6,6 @@ import { kebabCase } from "lodash";
 import ReactSwitch from "react-switch";
 
 import { ElementsContext } from "context";
-import config from "config/app-config";
 import { FloatingPanel } from "lib";
 import { IsEmpty } from "utils";
 import { createData } from "./utils";
@@ -64,7 +63,8 @@ const Dataset = ({ showGrid, toggleView }) => {
       collapsedComponent={<DBButton onToggle={togglePanel} />}
       show={showPanel}
       position="top-0"
-      className="flex flex-col gap-y-2 p-2 w-52"
+      className="flex flex-col gap-y-2 p-2"
+      style={{ maxWidth: "13rem" }}
     >
       <div className="inline-flex gap-x-2 border-b border-black-500 pb-1">
         <DBButton active onToggle={togglePanel} />

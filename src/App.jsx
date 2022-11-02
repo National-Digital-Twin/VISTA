@@ -6,7 +6,6 @@ import "../node_modules/@telicent-io/ds/dist/style.css";
 import { Dataset, Grid, InfoPanel, NetworkGraph, SponsorsLogos, TelicentMap } from "./components";
 import { CytoscapeProvider, ElementsProvider } from "./context";
 import config from "./config/app-config";
-import { Provider as UseFetchProvider } from "use-http";
 
 const App = () => {
   const [showGrid, setShowGrid] = useState(false);
