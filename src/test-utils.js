@@ -5,6 +5,10 @@ import { Dataset } from "./components";
 import { CytoscapeProvider, ElementsContext, ElementsProvider } from "./context";
 import * as utils from "./components/Dataset/utils";
 
+const clickEnergyDataset = async (user) => {
+  await user.click(await screen.findByRole("checkbox", { name: "Energy [25]" }));
+}
+
 export const AssetBtn = ({ label, assets, event, onElementClick }) => (
   <button
     onClick={() => {

@@ -13,7 +13,7 @@ import Assessments from "./Assessments";
 const Dataset = ({ showGrid, toggleView }) => {
   const { get, response, error } = useFetch();
   const {
-    displayErrorNofitication,
+    updateErrors,
     filterSelectedElements,
     reset,
     updateAssets,
@@ -39,10 +39,10 @@ const Dataset = ({ showGrid, toggleView }) => {
   };
 
   useEffect(() => {
-    if (error) displayErrorNofitication("Failed to resolve the data");
-  }, [error, displayErrorNofitication]);
+    if (error) updateErrors("Failed to resolve the data");
+  }, [error, updateErrors]);
 
-  useEffect(() => {
+    useEffect(() => {
     if (isEmpty(selected)) {
       reset();
       return;
@@ -66,7 +66,7 @@ const Dataset = ({ showGrid, toggleView }) => {
       const connections = await getConnections();
 
       if (assets && connections) {
-        const data = await createData(assets, connections, get, response);
+        const data = await createData(assets, connections, get);
         updateAssets(data.assets);
         updateConnections(data.connections);
         filterSelectedElements(data.assets, data.connections);

@@ -1,4 +1,4 @@
-import { ENERGY_CONNECTIONS, MEDICAL_CONNECTIONS } from "../data";
+import { ENERGY_CONNECTIONS, MEDICAL_CONNECTIONS, TRANSPORT_CONNECTIONS } from "../data";
 
 const connections = (req, res, ctx) => {
   const assessments = req.url.searchParams.getAll("assessments");
@@ -9,6 +9,9 @@ const connections = (req, res, ctx) => {
   }
   if (assessments.includes("http://telicent.io/fake_data#Medical_Assessment")) {
     connections.push(...MEDICAL_CONNECTIONS);
+  }
+  if (assessments.includes("http://telicent.io/fake_data#Transport_Assessment")) {
+    connections.push(...TRANSPORT_CONNECTIONS);
   }
   return res(ctx.status(200), ctx.json(connections));
 };

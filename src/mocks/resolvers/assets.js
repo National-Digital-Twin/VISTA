@@ -1,4 +1,4 @@
-import { ENERGY_ASSETS, MEDICAL_ASSETS } from "./../data"
+import { ENERGY_ASSETS, MEDICAL_ASSETS, TRANSPORT_ASSETS } from "./../data"
 
 const assets = (req, res, ctx) => {
   const assessments = req.url.searchParams.getAll("assessments");
@@ -8,6 +8,9 @@ const assets = (req, res, ctx) => {
   }
   if (assessments.includes("http://telicent.io/fake_data#Medical_Assessment")) {
     assets.push(...MEDICAL_ASSETS);
+  }
+  if (assessments.includes("http://telicent.io/fake_data#Transport_Assessment")) {
+    assets.push(...TRANSPORT_ASSETS);
   }
   return res(ctx.status(200), ctx.json(assets));
 };

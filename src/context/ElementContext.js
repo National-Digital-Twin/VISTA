@@ -5,10 +5,11 @@ import { Asset, Connection } from "../models";
 import { isAsset } from "../utils";
 
 const CLEAR_SELECTED = "CLEAR_SELECTED";
-const DISPLAY_ERROR = "DISPLAY_ERROR";
 const RESET = "RESET";
+const REMOVE_ERROR = "REMOVE_ERROR";
 const UPDATE_ASSETS = "UPDATE_ASSETS";
 const UPDATE_CONNECTIONS = "UPDATE_CONNECTIONS";
+const UPDATE_ERRORS = "UPDATE_ERRORS";
 const UPDATE_SELECTED_ELEMENTS = "UPDATE_SELECTED_ELEMENTS";
 
 const getColorScale = (min, max) => {
@@ -18,7 +19,7 @@ const getColorScale = (min, max) => {
 const INITIAL_STATE = {
   assets: [],
   connections: [],
-  error: undefined,
+  errors: [],
   selectedElements: [],
   selectedDetails: [],
   maxAssetCriticality: 0,
@@ -46,8 +47,12 @@ const elementsReducer = (state, action) => {
         assets,
         maxAssetCriticality,
         maxAssetTotalCxns,
-        assetCriticalityColorScale: isEmpty(assets) ? {} : getColorScale(minAssetCriticality, maxAssetCriticality),
-        totalCxnsColorScale: isEmpty(assets) ? {} : getColorScale(minAssetTotalCxns, maxAssetTotalCxns),
+        assetCriticalityColorScale: isEmpty(assets)
+          ? {}
+          : getColorScale(minAssetCriticality, maxAssetCriticality),
+        totalCxnsColorScale: isEmpty(assets)
+          ? {}
+          : getColorScale(minAssetTotalCxns, maxAssetTotalCxns),
       };
     }
     case UPDATE_CONNECTIONS:
@@ -96,9 +101,14 @@ const elementsReducer = (state, action) => {
       return { ...state, selectedElements: [] };
     case RESET:
       return INITIAL_STATE;
-    case DISPLAY_ERROR:
-      console.log(action.error)
-      return { ...state, error: action.error };
+    case UPDATE_ERRORS: {
+      const uniqueErrors = [...new Set([...state.errors, action.error])];
+      return { ...state, errors: uniqueErrors };
+    }
+    case REMOVE_ERROR: {
+      const updatedErrors = state.errors.splice(action.index, state.errors.length - 1);
+      return { ...state, errors: updatedErrors };
+    }
     default:
       // eslint-disable-next-line
       console.error(`Unhandled action type ${action.type}`);
@@ -114,7 +124,7 @@ export const ElementsProvider = ({ children }) => {
   const {
     assets,
     connections,
-    error,
+    errors,
     selectedElements,
     maxAssetCriticality,
     maxAssetTotalCxns,
@@ -145,9 +155,13 @@ export const ElementsProvider = ({ children }) => {
     dispatch({ type: UPDATE_SELECTED_ELEMENTS, event, selectedElement });
   };
 
-  const displayErrorNofitication = useCallback((msg) => {
-    dispatch({ type: DISPLAY_ERROR, error: msg });
+  const updateErrors = useCallback((msg) => {
+    dispatch({ type: UPDATE_ERRORS, error: msg });
   }, []);
+
+  const dismissErrorNotification = (index) => {
+    dispatch({ type: REMOVE_ERROR, index });
+  };
 
   const clearSelectedElements = () => {
     dispatch({ type: CLEAR_SELECTED });
@@ -158,7 +172,7 @@ export const ElementsProvider = ({ children }) => {
       value={{
         assets,
         connections,
-        error,
+        errors,
         selectedElements,
         maxAssetCriticality,
         maxAssetTotalCxns,
@@ -166,12 +180,13 @@ export const ElementsProvider = ({ children }) => {
         cxnCriticalityColorScale,
         totalCxnsColorScale,
         clearSelectedElements,
-        displayErrorNofitication,
+        dismissErrorNotification,
         filterSelectedElements,
         onElementClick,
         reset,
         updateAssets,
         updateConnections,
+        updateErrors,
       }}
     >
       {children}

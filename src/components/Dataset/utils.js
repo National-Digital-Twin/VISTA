@@ -11,7 +11,7 @@ const getConnections = (connections) =>
       })
   );
 
-const createAssetConnections = async (assets, connections, get, response) => {
+const createAssetConnections = async (assets, connections, get) => {
   return await Promise.all(
     assets.map(async (asset, index) => {
       const isSource = (cxn) => cxn.source === asset.uri || cxn.target === asset.uri;
@@ -34,7 +34,7 @@ const createAssetConnections = async (assets, connections, get, response) => {
       let segments = [];
       if (asset?.type.toLowerCase().includes("road")) {
         const pathSegments = await get(`/assets/${asset.id}/parts`);
-        if (response.ok) segments = Object.values(pathSegments);
+        segments = Object.values(pathSegments);
       }
 
       return new Asset({

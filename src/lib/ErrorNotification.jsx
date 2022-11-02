@@ -1,29 +1,31 @@
 import classNames from "classnames";
 import { ElementsContext } from "context";
-import React, { useContext, useState, useEffect } from "react";
+import { isEmpty } from "lodash";
+import React, { useContext } from "react";
 
 const ErrorNotification = () => {
-  const [dismiss, setDismiss] = useState(true);
-  const { error } = useContext(ElementsContext);
-
-  useEffect(() => {
-    if (error) setDismiss(false);
-  }, [error])
-
-  const handleOnClose = () => {
-    setDismiss(true);
-  };
+  const { errors, dismissErrorNotification } = useContext(ElementsContext);
 
   return (
     <div
-      className={classNames("error-notification", { "show": !dismiss, "hide": dismiss || !error })}
+      id="error-notification"
+      className={classNames("error-notification", {
+        show: !isEmpty(errors),
+        hide: isEmpty(errors),
+      })}
     >
-      <p className="text-center">{error}</p>
-      <button
-        aria-label="dismiss-error-notification"
-        className="ri-close-line !text-base"
-        onClick={handleOnClose}
-      />
+      {errors.map((error, index) => (
+        <li key={`error ${index}`}>
+          <p className="text-center">
+            {error}
+          </p>
+          <button
+            aria-label="dismiss-error-notification"
+            className="ri-close-line !text-base"
+            onClick={() => dismissErrorNotification(index)}
+          />
+        </li>
+      ))}
     </div>
   );
 };
