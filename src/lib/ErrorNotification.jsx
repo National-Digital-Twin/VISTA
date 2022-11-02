@@ -5,7 +5,6 @@ import React, { useContext } from "react";
 
 const ErrorNotification = () => {
   const { errors, dismissErrorNotification } = useContext(ElementsContext);
-  console.log({ errors });
 
   return (
     <div
