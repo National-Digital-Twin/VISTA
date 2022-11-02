@@ -18,9 +18,10 @@ describe("Grid component", () => {
         <Grid />
       </ElementsProvider>
     );
-    
+
     await user.click(await screen.findByRole("checkbox", { name: "Energy [25]" }));
-    await waitFor(() => expect(spyOnCreateData).toHaveReturned());
+    await waitFor(() => expect(spyOnCreateData).toHaveBeenCalledTimes(1));
+    expect(spyOnCreateData).toHaveReturned();
     expect(screen.getByTestId("grid")).toMatchSnapshot();
   });
 });

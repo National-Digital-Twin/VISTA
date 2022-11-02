@@ -13,15 +13,13 @@ import Assessments from "./Assessments";
 const Dataset = ({ showGrid, toggleView }) => {
   const { get, response, error } = useFetch();
   const {
-    filterSelectedElements,
     displayErrorNofitication,
+    filterSelectedElements,
     reset,
     updateAssets,
     updateConnections,
   } = useContext(ElementsContext);
 
-  const [assets, setAssets] = useState([]);
-  const [connections, setConnections] = useState([]);
   const [selected, setSelected] = useState([]);
   const [showPanel, setShowPanel] = useState(true);
 
@@ -41,11 +39,7 @@ const Dataset = ({ showGrid, toggleView }) => {
   };
 
   useEffect(() => {
-    if (error) {
-      displayErrorNofitication("Failed to resolve the data");
-      return;
-    }
-    displayErrorNofitication(undefined);
+    if (error) displayErrorNofitication("Failed to resolve the data");
   }, [error, displayErrorNofitication]);
 
   useEffect(() => {
@@ -57,32 +51,30 @@ const Dataset = ({ showGrid, toggleView }) => {
     const paramsArray = selected.map((item) => ["assessments", item]);
     const params = new URLSearchParams(paramsArray).toString();
 
-    const getAssessments = async () => {
+    const getAssets = async () => {
       const assets = await get(`assessments/assets?${params}`);
-      if (response.ok) {
-        setAssets(assets);
-        getConnections();
-      }
+      if (response.ok) return assets;
     };
 
     const getConnections = async () => {
       const connections = await get(`assessments/connections?${params}`);
-      if (response.ok) setConnections(connections);
+      if (response.ok) return connections;
     };
 
-    getAssessments();
-  }, [get, response, reset, selected]);
-
-  useEffect(() => {
     const generateData = async () => {
-      const data = await createData(assets, connections, get, response);
-      updateAssets(data.assets);
-      updateConnections(data.connections);
-      filterSelectedElements(data.assets, data.connections);
+      const assets = await getAssets();
+      const connections = await getConnections();
+
+      if (assets && connections) {
+        const data = await createData(assets, connections, get, response);
+        updateAssets(data.assets);
+        updateConnections(data.connections);
+        filterSelectedElements(data.assets, data.connections);
+      }
     };
-    
+
     generateData();
-  }, [assets, connections, response, get, filterSelectedElements, updateAssets, updateConnections]);
+  }, [get, response, filterSelectedElements, reset, selected, updateAssets, updateConnections]);
 
   return (
     <FloatingPanel

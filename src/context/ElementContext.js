@@ -12,9 +12,7 @@ const UPDATE_CONNECTIONS = "UPDATE_CONNECTIONS";
 const UPDATE_SELECTED_ELEMENTS = "UPDATE_SELECTED_ELEMENTS";
 
 const getColorScale = (min, max) => {
-  console.log({ min, max })
-  const minScale = min && max === 0 ? 1 : min
-  return new ColorScale(minScale, max === 0 ? 100 : max, ["#35C035", "#FFB60A", "#FB3737"], 1);
+  return new ColorScale(min, max === 0 ? 100 : max, ["#35C035", "#FFB60A", "#FB3737"], 1);
 };
 
 const INITIAL_STATE = {
@@ -99,6 +97,7 @@ const elementsReducer = (state, action) => {
     case RESET:
       return INITIAL_STATE;
     case DISPLAY_ERROR:
+      console.log(action.error)
       return { ...state, error: action.error };
     default:
       // eslint-disable-next-line
@@ -111,7 +110,6 @@ export const ElementsContext = React.createContext();
 
 export const ElementsProvider = ({ children }) => {
   const [state, dispatch] = useReducer(elementsReducer, INITIAL_STATE);
-  console.log(state)
 
   const {
     assets,
@@ -148,6 +146,7 @@ export const ElementsProvider = ({ children }) => {
   };
 
   const displayErrorNofitication = useCallback((msg) => {
+    console.log({msg})
     dispatch({ type: DISPLAY_ERROR, error: msg });
   }, []);
 
