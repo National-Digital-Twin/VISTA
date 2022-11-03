@@ -23,6 +23,12 @@ const MapToolbar = ({ mapStyle, setMapStyle }) => {
     map.zoomIn({ duration: 1000 });
   };
 
+  const handleOnLayerClick = () => {
+    console.log({ zoom: map.getZoom() })
+    const visibility = map.getLayoutProperty("assets-heat", "visibility");
+    map.getMap().setLayoutProperty("assets-heat", "visibility", visibility === "none" ? "visible" : "none");
+  };
+
   return (
     <div className="absolute bottom-0 left-0 text-whiteSmoke font-body bg-black-200 flex items-center justify-center gap-x-2 px-2 py-1">
       <a
@@ -50,6 +56,8 @@ const MapToolbar = ({ mapStyle, setMapStyle }) => {
           />
         }
       />
+      <VerticalDivider />
+      <ToolbarButton icon="ri-stack-line" label="Layers" onClick={handleOnLayerClick} />
     </div>
   );
 };

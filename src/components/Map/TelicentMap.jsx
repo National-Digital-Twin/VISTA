@@ -3,7 +3,13 @@ import Map, { Layer, MapProvider, Source } from "react-map-gl";
 import config from "../../config/app-config";
 import { CytoscapeContext, ElementsContext } from "../../context";
 import { useLocalStorage } from "../../hooks";
-import { allAssetsLayerStyle, highlightedAssets, lineStyle, segmentStyle } from "./layerStyles";
+import {
+  allAssetsLayerStyle,
+  heatmap,
+  highlightedAssets,
+  lineStyle,
+  segmentStyle,
+} from "./layerStyles";
 import {
   createSelectedAssetFeatures,
   createSelectedConnectionFeatures,
@@ -129,6 +135,7 @@ const TelicentMap = () => {
             type={GEOJSON}
             data={{ type: FEATURE_COLLECTION, features: assetFeatures }}
           >
+            <Layer {...heatmap} />
             <Layer {...allAssetsLayerStyle} />
           </Source>
           <Source
