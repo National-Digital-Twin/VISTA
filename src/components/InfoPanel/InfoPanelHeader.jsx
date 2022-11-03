@@ -4,19 +4,17 @@ import { kebabCase } from "lodash";
 import { ElementsContext } from "../../context";
 import VerticalDivider from "../../lib/VerticalDivider";
 
-// export const InfoPanelHeader = ({ selected, title, setExpand, expand, children, leftComponent }) => {
+// export const InfoPanelHeader = ({ selected, title, setExpand, expand, children }) => {
 //   return (
 //     <div className={classNames("flex items-center justify-between", { "border-b border-black-500": expand })}>
-//       {title && expand && title}
-//       {leftComponent}
-//       <InfoPanelActions expand={expand} selected={selected} setExpand={setExpand}>
-//         {children}
-//       </InfoPanelActions>
+//       {children}
+//       <VerticalDivider />
+//       <ExpandButton expand={expand} setExpand={setExpand} />
 //     </div>
 //   );
 // };
 
-export const InfoPanelHeader = ({ children, expand }) => {
+export const InfoPanelHeader = ({ children, expand, setExpand }) => {
   return (
     <div className={classNames("flex items-center justify-between", { "border-b border-black-500": expand })}>
       {children}

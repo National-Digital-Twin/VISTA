@@ -106,7 +106,7 @@ const SelectedDetails = () => {
   //   );
   // }
   return (
-    <PanelWrapper>
+    <PanelWrapper expand={expand}>
       <InfoPanelHeader expand={expand}>
         <InfoPanelActions expand={expand} setExpand={setExpand}>
           <div className="flex justify-between">
@@ -114,8 +114,8 @@ const SelectedDetails = () => {
           </div>
         </InfoPanelActions>
         {masterView[view](selectedDetails.length)}
-        <SelectedElements selected={selected} handleViewSelected={handleViewSelected} view={view} />
       </InfoPanelHeader>
+      <SelectedElements selected={selected} handleViewSelected={handleViewSelected} view={view} />
     </PanelWrapper>
   );
 };
