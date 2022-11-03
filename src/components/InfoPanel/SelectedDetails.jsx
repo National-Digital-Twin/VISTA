@@ -4,7 +4,7 @@ import SelectedElements from "./SelectedElements";
 import { ReactComponent as GoogleMapIcon } from "./assets/google-map-icon.svg";
 import { useEffect } from "react";
 import classNames from "classnames";
-import InfoPanelHeader from "./InfoPanelHeader";
+import { InfoPanelActions, InfoPanelHeader } from "./InfoPanelHeader";
 
 const viewType = {
   hasSingleItem: "singleItem",
@@ -17,6 +17,7 @@ const SelectedDetails = () => {
   const [selected, setSelected] = useState();
   const [view, setView] = useState(viewType.hasMultipleItems);
 
+  console.log(selectedDetails);
   useEffect(() => {
     if (selectedDetails.length === 1) {
       setView(viewType.hasSingleItem);
@@ -37,29 +38,44 @@ const SelectedDetails = () => {
     setSelected(selectedDetails);
   };
 
-  return (
-    <div
-      className={classNames("absolute right-1 top-1 p-2 bg-black-200 z-10 rounded-md", {
-        "w-5/12 h-72": expand,
-      })}
-    >
-      <Toolbar
-        selectedDetails={selectedDetails}
-        selected={selected}
-        onBack={handleBackButton}
-        view={view}
-        expand={expand}
-        setExpand={setExpand}
-      />
-      {expand && (
-        <div className="overflow-y-auto px-2 bg-black-200 h-56 rounded-md">
-          <div className="relative ">
-            <SelectedElements selected={selected} handleViewSelected={handleViewSelected} view={view} />
-          </div>
-        </div>
-      )}
-    </div>
-  );
+  const masterView = {
+    singleItem: (len) => {
+      if (len === 1) {
+        return <h2 className="font-medium text-lg">Element Details</h2>;
+      }
+      return (
+        <button onClick={handleBackButton} className="flex items-center font-medium text-lg">
+          <span role="img" className="ri-arrow-left-s-line" />
+          view all selected
+        </button>
+      );
+    },
+    multipleItems: () => <h2 className="font-medium text-lg">{selectedDetails.length}Element Details</h2>,
+  };
+
+  // return (
+  //   <div
+  //     className={classNames("absolute right-1 top-1 p-2 bg-black-200 z-10 rounded-md", {
+  //       "w-5/12 h-72": expand,
+  //     })}
+  //   >
+  //     <Toolbar
+  //       selectedDetails={selectedDetails}
+  //       selected={selected}
+  //       onBack={handleBackButton}
+  //       view={view}
+  //       expand={expand}
+  //       setExpand={setExpand}
+  //     />
+  //     {expand && (
+  //       <div className="overflow-y-auto px-2 bg-black-200 h-56 rounded-md">
+  //         <div className="relative ">
+  //           <SelectedElements selected={selected} handleViewSelected={handleViewSelected} view={view} />
+  //         </div>
+  //       </div>
+  //     )}
+  //   </div>
+  // );
 
   // if (!expand) {
   //   const elementDetails = <h2 className="font-medium text-lg">Element Details</h2>;
@@ -80,7 +96,7 @@ const SelectedDetails = () => {
 
   //   return (
   //     <PanelWrapper expand={expand}>
-  //        <InfoPanelHeader selected={selected} expand={expand} setExpand={setExpand} leftComponent={viewAllButton}>
+  //       <InfoPanelHeader selected={selected} expand={expand} setExpand={setExpand} leftComponent={viewAllButton}>
   //         <div className="flex justify-between">
   //           <StreetView latitude={selected.lat} longitude={selected.lng} />
   //         </div>
@@ -89,6 +105,19 @@ const SelectedDetails = () => {
   //     </PanelWrapper>
   //   );
   // }
+  return (
+    <PanelWrapper>
+      <InfoPanelHeader expand={expand}>
+        <InfoPanelActions expand={expand} setExpand={setExpand}>
+          <div className="flex justify-between">
+            <StreetView latitude={selected?.lat} longitude={selected?.lng} />
+          </div>
+        </InfoPanelActions>
+        {masterView[view](selectedDetails.length)}
+        <SelectedElements selected={selected} handleViewSelected={handleViewSelected} view={view} />
+      </InfoPanelHeader>
+    </PanelWrapper>
+  );
 };
 
 const Toolbar = ({ selected, onBack, selectedDetails, view, expand, setExpand }) => {

@@ -4,21 +4,41 @@ import { kebabCase } from "lodash";
 import { ElementsContext } from "../../context";
 import VerticalDivider from "../../lib/VerticalDivider";
 
-const InfoPanelHeader = ({ selected, title, setExpand, expand, children, leftComponent }) => {
+// export const InfoPanelHeader = ({ selected, title, setExpand, expand, children, leftComponent }) => {
+//   return (
+//     <div className={classNames("flex items-center justify-between", { "border-b border-black-500": expand })}>
+//       {title && expand && title}
+//       {leftComponent}
+//       <InfoPanelActions expand={expand} selected={selected} setExpand={setExpand}>
+//         {children}
+//       </InfoPanelActions>
+//     </div>
+//   );
+// };
+
+export const InfoPanelHeader = ({ children, expand }) => {
   return (
     <div className={classNames("flex items-center justify-between", { "border-b border-black-500": expand })}>
-      {title && expand && title}
-      {leftComponent}
-      <div className="flex ml-auto items-center gap-x-2">
-        {expand && children}
-        {expand && <VerticalDivider />}
-        <ExpandButton selected={selected} expand={expand} setExpand={setExpand} />
-      </div>
+      {children}
     </div>
   );
 };
 
-const ExpandButton = ({ selected, expand, setExpand }) => {
+export const InfoPanelActions = ({ expand, children, setExpand }) => {
+  return (
+    <div className="flex ml-auto items-center gap-x-2">
+      {expand && (
+        <>
+          {children}
+          <VerticalDivider />
+        </>
+      )}
+      <ExpandButton expand={expand} setExpand={setExpand} />
+    </div>
+  );
+};
+
+const ExpandButton = ({ expand, setExpand }) => {
   const toggleView = () => {
     setExpand(!expand);
   };
@@ -29,7 +49,7 @@ const ExpandButton = ({ selected, expand, setExpand }) => {
     <div className="relative flex justify-end">
       <button aria-labelledby={kebabCase(label)} className="relative" onClick={toggleView}>
         <i className="ri-information-line text-[color:var(--app-Colour)] !text-2xl" />
-        <SelectedBadge selected={selected} expand={expand} />
+        <SelectedBadge expand={expand} />
       </button>
       <div id={kebabCase(label)} role="tooltip" className="right-0">
         {label}
@@ -53,5 +73,3 @@ const SelectedBadge = ({ expand }) => {
   }
   return null;
 };
-
-export default InfoPanelHeader;
