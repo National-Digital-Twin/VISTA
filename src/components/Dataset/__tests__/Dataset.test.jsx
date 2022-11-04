@@ -5,7 +5,7 @@ import { Provider as UseHttpProvider } from "use-http";
 
 import { ElementsProvider } from "context";
 import server from "mocks";
-import { mockEmptyRespose, mockError } from "mocks/resolvers";
+import { mockEmptyResponse, mockError } from "mocks/resolvers";
 import { ErrorNotification } from "lib";
 import { clickEnergyDataset, clickMedicalDataset, clickTransportDataset } from "test-utils";
 
@@ -38,7 +38,7 @@ describe("Categories component", () => {
   });
 
   test("renders message when assessments are not found", async () => {
-    server.use(rest.get("/assessments", mockEmptyRespose));
+    server.use(rest.get("/assessments", mockEmptyResponse));
     render(<Dataset />, { wrapper: AllProviders });
 
     await waitForElementToBeRemoved(() => screen.queryByText(/fetching assessments/i));
