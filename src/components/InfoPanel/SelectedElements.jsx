@@ -35,11 +35,7 @@ const MultiSelected = ({ selected, handleViewSelected, view }) => {
 
 const SingleView = ({ selected, view }) => {
   if (view === "singleItem") {
-    return (
-      <>
-        <ElementDetails element={selected} expand />
-      </>
-    );
+    return <ElementDetails element={selected} expand />;
   }
   return null;
 };

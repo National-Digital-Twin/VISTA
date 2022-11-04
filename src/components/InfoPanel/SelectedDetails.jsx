@@ -1,10 +1,9 @@
 import React, { useState, useContext } from "react";
 import { ElementsContext } from "../../context";
 import SelectedElements from "./SelectedElements";
-import { ReactComponent as GoogleMapIcon } from "./assets/google-map-icon.svg";
 import { useEffect } from "react";
-import classNames from "classnames";
-import { InfoPanelActions, InfoPanelHeader } from "./InfoPanelHeader";
+import { InfoPanel, InfoPanelActions, InfoPanelHeader } from "./InfoPanelHeader";
+import StreetView from "../../lib/StreetView";
 
 const viewType = {
   hasSingleItem: "singleItem",
@@ -17,7 +16,6 @@ const SelectedDetails = () => {
   const [selected, setSelected] = useState();
   const [view, setView] = useState(viewType.hasMultipleItems);
 
-  console.log(selectedDetails);
   useEffect(() => {
     if (selectedDetails.length === 1) {
       setView(viewType.hasSingleItem);
@@ -38,160 +36,58 @@ const SelectedDetails = () => {
     setSelected(selectedDetails);
   };
 
-  const masterView = {
-    singleItem: (len) => {
-      if (len === 1) {
-        return <h2 className="font-medium text-lg">Element Details</h2>;
-      }
-      return (
-        <button onClick={handleBackButton} className="flex items-center font-medium text-lg">
-          <span role="img" className="ri-arrow-left-s-line" />
-          view all selected
-        </button>
-      );
-    },
-    multipleItems: () => <h2 className="font-medium text-lg">{selectedDetails.length}Element Details</h2>,
-  };
+  const elementDetails = <h2 className="font-medium text-lg">Element Details</h2>;
 
-  // return (
-  //   <div
-  //     className={classNames("absolute right-1 top-1 p-2 bg-black-200 z-10 rounded-md", {
-  //       "w-5/12 h-72": expand,
-  //     })}
-  //   >
-  //     <Toolbar
-  //       selectedDetails={selectedDetails}
-  //       selected={selected}
-  //       onBack={handleBackButton}
-  //       view={view}
-  //       expand={expand}
-  //       setExpand={setExpand}
-  //     />
-  //     {expand && (
-  //       <div className="overflow-y-auto px-2 bg-black-200 h-56 rounded-md">
-  //         <div className="relative ">
-  //           <SelectedElements selected={selected} handleViewSelected={handleViewSelected} view={view} />
-  //         </div>
-  //       </div>
-  //     )}
-  //   </div>
-  // );
-
-  // if (!expand) {
-  //   const elementDetails = <h2 className="font-medium text-lg">Element Details</h2>;
-  //   return (
-  //     <PanelWrapper expand={expand}>
-  //       <InfoPanelHeader selected={selected} title={elementDetails} expand={expand} setExpand={setExpand} />
-  //     </PanelWrapper>
-  //   );
-  // }
-
-  // if (view === "singleItem" && selectedDetails.length > 1 && expand) {
-  //   const viewAllButton = (
-  //     <button onClick={handleBackButton} className="flex items-center font-medium text-lg">
-  //       <span role="img" className="ri-arrow-left-s-line" />
-  //       view all selected
-  //     </button>
-  //   );
-
-  //   return (
-  //     <PanelWrapper expand={expand}>
-  //       <InfoPanelHeader selected={selected} expand={expand} setExpand={setExpand} leftComponent={viewAllButton}>
-  //         <div className="flex justify-between">
-  //           <StreetView latitude={selected.lat} longitude={selected.lng} />
-  //         </div>
-  //         <SelectedElements selected={selected} handleViewSelected={handleViewSelected} view={view} />
-  //       </InfoPanelHeader>
-  //     </PanelWrapper>
-  //   );
-  // }
-  return (
-    <PanelWrapper expand={expand}>
-      <InfoPanelHeader expand={expand}>
-        <InfoPanelActions expand={expand} setExpand={setExpand}>
-          <div className="flex justify-between">
-            <StreetView latitude={selected?.lat} longitude={selected?.lng} />
-          </div>
-        </InfoPanelActions>
-        {masterView[view](selectedDetails.length)}
-      </InfoPanelHeader>
-      <SelectedElements selected={selected} handleViewSelected={handleViewSelected} view={view} />
-    </PanelWrapper>
-  );
-};
-
-const Toolbar = ({ selected, onBack, selectedDetails, view, expand, setExpand }) => {
-  const viewAllButton = (
-    <button onClick={onBack} className="flex items-center font-medium text-lg">
+  const viewAllBtn = (
+    <button onClick={handleBackButton} className="flex items-center font-medium text-lg">
       <span role="img" className="ri-arrow-left-s-line" />
       view all selected
     </button>
   );
 
-  const multipleElementsSelected = <h2 className="font-medium text-lg">{selectedDetails.length} Elements Selected</h2>;
-  const elementDetails = <h2 className="font-medium text-lg">Element Details</h2>;
+  const selectedLength = <h2 className="font-medium text-lg">{selectedDetails.length} Element Details</h2>;
 
-  if (view === "singleItem" && selectedDetails.length > 1 && expand) {
-    return (
-      <InfoPanelHeader selected={selected} expand={expand} setExpand={setExpand} leftComponent={viewAllButton}>
-        <div className="flex justify-between">
-          <StreetView latitude={selected.lat} longitude={selected.lng} />
-        </div>
-      </InfoPanelHeader>
-    );
-  }
-
-  if (view === "multipleItems" && selectedDetails.length > 1 && expand) {
-    return (
-      <InfoPanelHeader selected={selected} expand={expand} setExpand={setExpand} title={multipleElementsSelected} />
-    );
-  }
-
-  if (view === "singleItem" && expand) {
-    return (
-      <InfoPanelHeader selected={selected} expand={expand} setExpand={setExpand} title={elementDetails}>
-        <StreetView latitude={selected.lat} longitude={selected.lng} />
-      </InfoPanelHeader>
-    );
-  }
-  return <InfoPanelHeader selected={selected} title={elementDetails} expand={expand} setExpand={setExpand} />;
-};
-
-const PanelWrapper = ({ expand, children }) => {
-  return (
-    <div
-      className={classNames("absolute right-1 top-1 p-2 bg-black-200 z-10", {
-        "w-5/12 h-72": expand,
-      })}
-    >
-      {children}
-    </div>
-  );
-};
-
-const StreetView = ({ latitude, longitude }) => {
-  if (!latitude && !longitude) return null;
-
-  const params = {
-    api: 1,
-    map_action: "pano",
-    viewpoint: `${latitude},${longitude}`,
+  const masterView = {
+    singleItem: (len) => {
+      if (len === 1) {
+        return elementDetails;
+      }
+      return viewAllBtn;
+    },
+    multipleItems: (len) => {
+      if (len === 0) {
+        return elementDetails;
+      }
+      return selectedLength;
+    },
   };
 
+  const topBar = (
+    <InfoPanelHeader expand={expand} navigation={masterView[view](selectedDetails.length)}>
+      <InfoPanelActions
+        expand={expand}
+        setExpand={setExpand}
+        panelActions={[
+          {
+            icon: "ri-map-pin-line",
+            label: "Open Street View",
+            onClick: () => {
+              console.log("clicked!");
+            },
+          },
+        ]}
+      />
+    </InfoPanelHeader>
+  );
+
   return (
-    <div>
-      <a
-        href={`https://www.google.com/maps/@?${new URLSearchParams(params).toString()}`}
-        target="_blank"
-        rel="noreferrer"
-        className="link"
-      >
-        <div className="flex items-center">
-          <GoogleMapIcon /> Street View
+    <InfoPanel expand={expand} topBar={topBar}>
+      <div className="overflow-y-auto px-2 bg-black-200 h-56 rounded-md">
+        <div className="relative ">
+          <SelectedElements selected={selected} handleViewSelected={handleViewSelected} view={view} />
         </div>
-      </a>
-      <div className="linkBorder" />
-    </div>
+      </div>
+    </InfoPanel>
   );
 };
 
