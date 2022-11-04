@@ -2,9 +2,9 @@ import { render, screen, within } from "@testing-library/react";
 import React from "react";
 import userEvent from "@testing-library/user-event";
 
-import { E001, E001_E003, E003, E005, E005_E006, E006, E006_E012 } from "../../sample-data";
-import ElementDetails from "./ElementDetails";
-import { createData } from "../Categories/utils";
+import { E001, E001_E003, E003, E005, E005_E006, E006, E006_E012 } from "../../../../sample-data";
+import ElementDetails from "../ElementDetails";
+import { createData } from "../../../Categories/utils";
 
 const assetsMetadata = [E001, E003, E005, E006];
 const connectionsMetadata = [E001_E003, E006_E012, E005_E006];
@@ -21,9 +21,7 @@ describe("Element details component", () => {
     const element = assets[1].generateDetails(assets, assetCriticalityColorScale);
     const { user } = renderElementDetails(element);
 
-    expect(
-      screen.getByRole("heading", { name: "1 Connected Assets", level: 3 })
-    ).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "1 Connected Assets", level: 3 })).toBeInTheDocument();
     expect(screen.getByRole("list")).toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: "1 Connected Assets" }));
@@ -38,9 +36,7 @@ describe("Element details component: asset", () => {
     const element = assets[0].generateDetails(assets, assetCriticalityColorScale);
     renderElementDetails(element);
 
-    expect(
-      screen.getByRole("heading", { name: "East Cowes Power Station (E001)" })
-    ).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "East Cowes Power Station (E001)" })).toBeInTheDocument();
   });
 
   test("renders type", async () => {
@@ -85,9 +81,7 @@ describe("Element details component: asset", () => {
     const element = assets[1].generateDetails(assets, assetCriticalityColorScale);
     renderElementDetails(element);
 
-    expect(
-      screen.getByRole("heading", { name: "1 Connected Assets", level: 3 })
-    ).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "1 Connected Assets", level: 3 })).toBeInTheDocument();
     expect(screen.getAllByRole("listitem")).toHaveLength(1);
     const connectedAsset = screen.getByRole("listitem");
     expect(
@@ -130,9 +124,7 @@ describe("Element details component: connection", () => {
     const element = connections[0].generateDetails(assets, cxnCriticalityColorScale);
     renderElementDetails(element);
 
-    expect(
-      screen.getByRole("heading", { name: "2 Connected Assets", level: 3 })
-    ).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "2 Connected Assets", level: 3 })).toBeInTheDocument();
     expect(screen.getAllByRole("listitem")).toHaveLength(2);
 
     const connectedAsset1 = screen.getAllByRole("listitem")[0];

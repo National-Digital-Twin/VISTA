@@ -1,8 +1,8 @@
 import React from "react";
-import { IsEmpty } from "../../utils";
+import { IsEmpty } from "../../../utils";
 import ElementDetails from "./ElementDetails";
 
-const SelectedElements = ({ selected, handleViewSelected, view }) => {
+const RenderElementDetails = ({ selected, handleViewSelected, view }) => {
   if (IsEmpty(selected)) {
     return <p>Click on an asset or connection to view details</p>;
   }
@@ -40,4 +40,4 @@ const SingleView = ({ selected, view }) => {
   return null;
 };
 
-export default SelectedElements;
+export default RenderElementDetails;

@@ -1,8 +1,8 @@
 import React from "react";
 import userEvent from "@testing-library/user-event";
 import { render, screen } from "@testing-library/react";
-import { ElementsContext } from "../../../context";
-import SelectedDetails from "../SelectedDetails";
+import { ElementsContext } from "../../../../context";
+import SelectedElements from "../SelectedElements";
 
 const singleElementSelected = [
   {
@@ -92,21 +92,13 @@ function setup(data) {
     user: userEvent.setup(),
     ...render(
       <ElementsContext.Provider value={{ selectedDetails }}>
-        <SelectedDetails />
+        <SelectedElements />
       </ElementsContext.Provider>
     ),
   };
 }
 
-describe("SelectedDetails Component:", () => {
-  test("renders message when no elements are selected and the panel is open", async () => {
-    const { user } = setup([]);
-
-    await user.click(screen.getByRole("button", { name: "open details panel" }));
-
-    expect(screen.getByText(/click on an asset or connection to view details/i)).toBeInTheDocument();
-  });
-
+describe("SelectedElements Component:", () => {
   test("toggles info panel on and off", async () => {
     const { user } = setup([]);
 
@@ -116,9 +108,15 @@ describe("SelectedDetails Component:", () => {
     expect(screen.queryByText(/click on an asset or connection to view details/i)).not.toBeInTheDocument();
   });
 
-  test.skip("render selected badge number", () => {
-    setup(singleElementSelected);
+  test("renders message when no elements is selected and panel is open", async () => {
+    const { user } = setup([]);
+    await user.click(screen.getByRole("button", { name: "open details panel" }));
 
+    expect(screen.getByText(/click on an asset or connection to view details/i)).toBeInTheDocument();
+  });
+
+  test("render selected badge number with the length of selected elements", () => {
+    setup(singleElementSelected);
     const selectedBadge = screen.getByTestId("selected-badge");
 
     expect(selectedBadge).toHaveTextContent("1");
@@ -134,17 +132,24 @@ describe("SelectedDetails Component:", () => {
     expect(screen.getByRole("heading", { name: "Fawley 132 kV Substation - Hants (E025)" })).toBeInTheDocument();
   });
 
-  test("render the list of selected elements when back button is clicked", async () => {
+  test("re-render the list of selected elements when back button is clicked", async () => {
     const { user } = setup(multipleSelected);
     await user.click(screen.getByRole("button", { name: "open details panel" }));
-
     await user.click(screen.getByRole("button", { name: "Newport 33kV / 11kV Substation (E007) ies:Facility" }));
     await user.click(screen.getByRole("button", { name: "view all selected" }));
 
     expect(screen.getAllByRole("listitem")).toHaveLength(3);
   });
 
-  test("render assets details when only one element is selected", async () => {
+  test("renders element details when a list item is clicked", async () => {
+    const { user } = setup(multipleSelected);
+    await user.click(screen.getByRole("button", { name: "open details panel" }));
+    await user.click(screen.getByRole("button", { name: "Newport 33kV / 11kV Substation (E007) ies:Facility" }));
+
+    expect(screen.getByTestId("element-details")).toBeInTheDocument();
+  });
+
+  test("render element details when only one element is selected", async () => {
     const { user } = setup(singleElementSelected);
     await user.click(screen.getByRole("button", { name: "open details panel" }));
 
@@ -152,7 +157,7 @@ describe("SelectedDetails Component:", () => {
     expect(screen.getByRole("heading", { name: "2 Connected Assets" })).toBeInTheDocument();
   });
 
-  test("Render connected Assets on and off when toggle", async () => {
+  test("display connected assets on and off when toggle", async () => {
     const { user } = setup(singleElementSelected);
 
     await user.click(screen.getByRole("button", { name: "open details panel" }));
@@ -168,7 +173,7 @@ describe("SelectedDetails Component:", () => {
     const { user } = setup(singleElementSelected);
     await user.click(screen.getByRole("button", { name: "open details panel" }));
 
-    expect(screen.getByRole("link", { name: /street view/i })).toHaveAttribute(
+    expect(screen.getByRole("link")).toHaveAttribute(
       "href",
       "https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=50.70349697318166%2C-1.2920374015325664"
     );

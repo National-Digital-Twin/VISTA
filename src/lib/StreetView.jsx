@@ -1,13 +1,13 @@
 import React from "react";
 import { ReactComponent as GoogleMapIcon } from "./assets/google-map-icon.svg";
 
-const StreetView = ({ latitude, longitude }) => {
-  if (!latitude && !longitude) return null;
+const StreetView = ({ selected }) => {
+  if (!selected.lat && !selected.lng) return null;
 
   const params = {
     api: 1,
     map_action: "pano",
-    viewpoint: `${latitude},${longitude}`,
+    viewpoint: `${selected.lat},${selected.lng}`,
   };
 
   return (
@@ -19,10 +19,9 @@ const StreetView = ({ latitude, longitude }) => {
         className="link"
       >
         <div className="flex items-center">
-          <GoogleMapIcon /> Street View
+          <GoogleMapIcon />
         </div>
       </a>
-      <div className="linkBorder" />
     </div>
   );
 };

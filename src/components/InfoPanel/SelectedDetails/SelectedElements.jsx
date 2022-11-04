@@ -1,16 +1,16 @@
 import React, { useState, useContext } from "react";
-import { ElementsContext } from "../../context";
-import SelectedElements from "./SelectedElements";
+import { ElementsContext } from "../../../context";
 import { useEffect } from "react";
-import { InfoPanel, InfoPanelActions, InfoPanelHeader } from "./InfoPanelHeader";
-import StreetView from "../../lib/StreetView";
+import { InfoPanel, InfoPanelActions, InfoPanelHeader } from "../InfoPanel";
+import StreetView from "../../../lib/StreetView";
+import RenderElementDetails from "./RenderElementDetails";
 
 const viewType = {
   hasSingleItem: "singleItem",
   hasMultipleItems: "multipleItems",
 };
 
-const SelectedDetails = () => {
+const SelectedElements = () => {
   const [expand, setExpand] = useState(false);
   const { selectedDetails } = useContext(ElementsContext);
   const [selected, setSelected] = useState();
@@ -36,8 +36,6 @@ const SelectedDetails = () => {
     setSelected(selectedDetails);
   };
 
-  const elementDetails = <h2 className="font-medium text-lg">Element Details</h2>;
-
   const viewAllBtn = (
     <button onClick={handleBackButton} className="flex items-center font-medium text-lg">
       <span role="img" className="ri-arrow-left-s-line" />
@@ -45,38 +43,30 @@ const SelectedDetails = () => {
     </button>
   );
 
-  const selectedLength = <h2 className="font-medium text-lg">{selectedDetails.length} Element Details</h2>;
+  const title = () => {
+    if (selectedDetails.length > 1) {
+      return <h2 className="font-medium text-lg">{selectedDetails.length} Selected Elements</h2>;
+    }
+    return <h2 className="font-medium text-lg">Element Details</h2>;
+  };
 
   const masterView = {
     singleItem: (len) => {
       if (len === 1) {
-        return elementDetails;
+        return title();
       }
       return viewAllBtn;
     },
     multipleItems: (len) => {
       if (len === 0) {
-        return elementDetails;
+        return title();
       }
-      return selectedLength;
+      return title();
     },
   };
-
   const topBar = (
     <InfoPanelHeader expand={expand} navigation={masterView[view](selectedDetails.length)}>
-      <InfoPanelActions
-        expand={expand}
-        setExpand={setExpand}
-        panelActions={[
-          {
-            icon: "ri-map-pin-line",
-            label: "Open Street View",
-            onClick: () => {
-              console.log("clicked!");
-            },
-          },
-        ]}
-      />
+      <InfoPanelActions expand={expand} setExpand={setExpand} streetViewButton={<StreetView selected={selected} />} />
     </InfoPanelHeader>
   );
 
@@ -84,11 +74,11 @@ const SelectedDetails = () => {
     <InfoPanel expand={expand} topBar={topBar}>
       <div className="overflow-y-auto px-2 bg-black-200 h-56 rounded-md">
         <div className="relative ">
-          <SelectedElements selected={selected} handleViewSelected={handleViewSelected} view={view} />
+          <RenderElementDetails selected={selected} handleViewSelected={handleViewSelected} view={view} />
         </div>
       </div>
     </InfoPanel>
   );
 };
 
-export default SelectedDetails;
+export default SelectedElements;
