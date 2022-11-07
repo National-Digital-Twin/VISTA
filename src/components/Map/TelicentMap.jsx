@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useMemo, useState } from "react";
-import Map, { Layer, MapProvider, Source } from "react-map-gl";
+import Map, { Layer, Source, ScaleControl, useMap } from "react-map-gl";
 import config from "../../config/app-config";
 import { CytoscapeContext, ElementsContext } from "../../context";
 import { useLocalStorage } from "../../hooks";
@@ -28,6 +28,7 @@ const VIEWSTATE = {
 };
 
 const TelicentMap = () => {
+  const { telicentMap: map } = useMap();
   const { clearSelected } = useContext(CytoscapeContext);
   const {
     assets,
@@ -112,61 +113,72 @@ const TelicentMap = () => {
     setCursor("auto");
   };
 
+  const HEAT_RADIUS = 100;
+
+  const handleOnZoom = (event) => {
+    const { pixelsPerMeter } = event.target.transform;
+    let radius = HEAT_RADIUS * pixelsPerMeter
+    if (radius <= 1) radius = 1;
+    console.log({ radius, zoom: event.viewState.zoom });
+    // (event.target.transform.pixelsPerMeter
+    map.getMap().setPaintProperty(heatmap.id,"heatmap-radius", radius );
+  };
+
   return (
     <div className="relative">
-      <MapProvider>
-        <Map
-          cursor={cursor}
-          id="telicentMap"
-          interactiveLayerIds={[allAssetsLayerStyle.id]}
-          initialViewState={{ ...VIEWSTATE }}
-          mapboxAccessToken={config.mb.token}
-          mapStyle={mapStyle}
-          onClick={handleOnClick}
-          onDragStart={() => setCursor("move")}
-          onDragEnd={resetCursor}
-          onMouseEnter={() => setCursor("pointer")}
-          onMouseLeave={resetCursor}
-          onMouseMove={handleOnMouseMove}
-          boxZoom={false}
+      <Map
+        cursor={cursor}
+        id="telicentMap"
+        interactiveLayerIds={[allAssetsLayerStyle.id]}
+        initialViewState={{ ...VIEWSTATE }}
+        mapboxAccessToken={config.mb.token}
+        mapStyle={mapStyle}
+        onClick={handleOnClick}
+        onDragStart={() => setCursor("move")}
+        onDragEnd={resetCursor}
+        onMouseEnter={() => setCursor("pointer")}
+        onMouseLeave={resetCursor}
+        onMouseMove={handleOnMouseMove}
+        boxZoom={false}
+        onZoom={handleOnZoom}
+      >
+        <Source
+          id="all-assets"
+          type={GEOJSON}
+          data={{ type: FEATURE_COLLECTION, features: assetFeatures }}
         >
-          <Source
-            id="all-assets"
-            type={GEOJSON}
-            data={{ type: FEATURE_COLLECTION, features: assetFeatures }}
-          >
-            <Layer {...heatmap} />
-            <Layer {...allAssetsLayerStyle} />
-          </Source>
-          <Source
-            id="selected-connections"
-            type={GEOJSON}
-            data={{ type: FEATURE_COLLECTION, features: selectedAssetCxns }}
-          >
-            <Layer {...lineStyle} />
-          </Source>
-          <Source
-            id="selected-segments"
-            type={GEOJSON}
-            data={{ type: FEATURE_COLLECTION, features: selectedSegments }}
-          >
-            <Layer {...segmentStyle} />
-          </Source>
-          <Source
-            id="selected-assets"
-            type={GEOJSON}
-            data={{ type: FEATURE_COLLECTION, features: selectedAssets }}
-          >
-            <Layer {...highlightedAssets} />
-          </Source>
-          <HoverInfo
-            info={hoverInfo?.feature.properties.element}
-            left={hoverInfo?.x}
-            top={hoverInfo?.y}
-          />
-        </Map>
-        <MapToolbar mapStyle={mapStyle} setMapStyle={setMapStyle} />
-      </MapProvider>
+          <Layer {...heatmap} />
+          <Layer {...allAssetsLayerStyle} />
+        </Source>
+        <Source
+          id="selected-connections"
+          type={GEOJSON}
+          data={{ type: FEATURE_COLLECTION, features: selectedAssetCxns }}
+        >
+          <Layer {...lineStyle} />
+        </Source>
+        <Source
+          id="selected-segments"
+          type={GEOJSON}
+          data={{ type: FEATURE_COLLECTION, features: selectedSegments }}
+        >
+          <Layer {...segmentStyle} />
+        </Source>
+        <Source
+          id="selected-assets"
+          type={GEOJSON}
+          data={{ type: FEATURE_COLLECTION, features: selectedAssets }}
+        >
+          <Layer {...highlightedAssets} />
+        </Source>
+        <HoverInfo
+          info={hoverInfo?.feature.properties.element}
+          left={hoverInfo?.x}
+          top={hoverInfo?.y}
+        />
+        <ScaleControl position="top-left" />
+      </Map>
+      <MapToolbar mapStyle={mapStyle} setMapStyle={setMapStyle} />
     </div>
   );
 };

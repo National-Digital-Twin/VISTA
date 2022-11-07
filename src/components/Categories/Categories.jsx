@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, useState } from "react";
 import useFetch from "use-http";
-import ReactSwitch from "react-switch";
 import PropTypes from "prop-types";
 
 import { ElementsContext } from "../../context";
+import { TelicentSwitch } from "../../lib";
 import { IsEmpty } from "../../utils";
 import { createData } from "./utils";
 
@@ -85,21 +85,7 @@ const Categories = ({ showGrid, toggleView }) => {
 
   return (
     <div className="absolute top-0 flex flex-col gap-y-3 p-3 bg-black-200 z-10">
-      <label className="flex items-center gap-x-3 text-sm w-fit">
-        Grid
-        <ReactSwitch
-          onChange={toggleView}
-          checked={showGrid}
-          offColor="#636363"
-          onColor="#f5f5f5"
-          onHandleColor="#141414"
-          handleDiameter={10}
-          height={16}
-          width={32}
-          uncheckedIcon={false}
-          checkedIcon={false}
-        />
-      </label>
+      <TelicentSwitch label="Grid" checked={showGrid} onChange={toggleView} />
       {categories.map((filter) => (
         <CheckListItem
           key={filter.value}

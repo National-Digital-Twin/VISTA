@@ -3,12 +3,14 @@ import classNames from "classnames";
 import React, { useRef, useState } from "react";
 import { useMap } from "react-map-gl";
 import { useOutsideAlerter } from "../../hooks";
-import { ToolbarButton, VerticalDivider } from "../../lib";
+import { TelicentSwitch, ToolbarButton, VerticalDivider } from "../../lib";
 import { getMapStyles } from "./mapStyles";
 
-const MapToolbar = ({ mapStyle, setMapStyle }) => {
+const MapToolbar = ({ mapStyle: selectedMapStyle, setMapStyle }) => {
   const { telicentMap: map } = useMap();
 
+  const [isHeatVisible, setIsHeatVisible] = useState(false);
+  const [showLayers, setShowLayers] = useState(false);
   const [showMapStyles, setShowMapStyles] = useState(false);
 
   const mapStyles = getMapStyles();
@@ -23,11 +25,25 @@ const MapToolbar = ({ mapStyle, setMapStyle }) => {
     map.zoomIn({ duration: 1000 });
   };
 
-  const handleOnLayerClick = () => {
-    console.log({ zoom: map.getZoom() })
-    const visibility = map.getLayoutProperty("assets-heat", "visibility");
-    map.getMap().setLayoutProperty("assets-heat", "visibility", visibility === "none" ? "visible" : "none");
+  const isLayerVisible = (layerId) => {
+    if (map?.getLayer(layerId)) {
+      const visibility = map?.getLayoutProperty(layerId, "visibility");
+      return setIsHeatVisible(visibility === "visible");
+    }
+    return setIsHeatVisible(false);
   };
+
+  const handleLayerVisibility = (layerId) => {
+    const isVisible = isLayerVisible(layerId);
+    map.getMap().setLayoutProperty(layerId, "visibility", isVisible ? "none" : "visible");
+  };
+
+  const mapMenuItems = mapStyles.map(({ name, id }) => ({
+    name: name,
+    selected: id === selectedMapStyle,
+    type: "button",
+    onItemClick: () => setMapStyle(id),
+  }));
 
   return (
     <div className="absolute bottom-0 left-0 text-whiteSmoke font-body bg-black-200 flex items-center justify-center gap-x-2 px-2 py-1">
@@ -45,41 +61,55 @@ const MapToolbar = ({ mapStyle, setMapStyle }) => {
       <ToolbarButton
         icon="ri-map-2-fill"
         label="Map style"
-        onClick={() => setShowMapStyles((show) => !show)}
+        onClick={() => setShowMapStyles(true)}
         showSecodaryMenu={showMapStyles}
         secondaryMenu={
-          <MapStyles
-            items={mapStyles}
-            mapStyle={mapStyle}
-            onClose={() => setShowMapStyles(false)}
-            setMapStyle={setMapStyle}
-          />
+          <SecondaryMenu menuItems={mapMenuItems} onClose={() => setShowMapStyles(false)} />
         }
       />
       <VerticalDivider />
-      <ToolbarButton icon="ri-stack-line" label="Layers" onClick={handleOnLayerClick} />
+      <ToolbarButton
+        icon="ri-stack-line"
+        label="Layers"
+        onClick={() => setShowLayers(true)}
+        showSecodaryMenu={showLayers}
+        secondaryMenu={
+          <SecondaryMenu
+            menuItems={[
+              {
+                name: "Heatmap",
+                selected: isHeatVisible,
+                type: "toggleSwitch",
+                onItemClick: () => handleLayerVisibility("assets-heat"),
+              },
+            ]}
+            onClose={() => setShowLayers(false)}
+          />
+        }
+      />
     </div>
   );
 };
 
 export default MapToolbar;
 
-const MapStyles = ({ items, mapStyle, onClose, setMapStyle }) => {
+const SecondaryMenu = ({ menuItems, onClose }) => {
   const containerRef = useRef();
   useOutsideAlerter({ ref: containerRef, fn: onClose });
 
-  const generateMenuItems = ({ id, name }) => (
-    <li key={name} className="whitespace-nowrap">
-      <button
-        className={classNames("hover:bg-black-400 px-2 rounded-md w-full h-full", {
-          "bg-black-500": id === mapStyle,
-        })}
-        onClick={() => setMapStyle(id)}
-      >
-        {name}
-      </button>
-    </li>
-  );
+  const generateMenuItems = ({ name, selected, type, onItemClick }) => {
+    const typeProps = { name, selected, onItemClick };
+    const menuItemTypes = {
+      button: <SecondaryMenuBtn {...typeProps} />,
+      toggleSwitch: <SecondaryMenuToggle {...typeProps} />,
+    };
+
+    return (
+      <li key={name} className="whitespace-nowrap">
+        {menuItemTypes[type]}
+      </li>
+    );
+  };
 
   return (
     <ul
@@ -87,7 +117,22 @@ const MapStyles = ({ items, mapStyle, onClose, setMapStyle }) => {
       className="absolute -top-12 bg-black-200 px-2 py-1 rounded-md flex gap-x-2 overflow-x-auto overscroll-x-contain scroll-smooth"
       style={{ maxWidth: "25rem" }}
     >
-      {items.map(generateMenuItems)}
+      {menuItems.map(generateMenuItems)}
     </ul>
   );
 };
+
+const SecondaryMenuBtn = ({ name, selected, onItemClick }) => (
+  <button
+    className={classNames("hover:bg-black-400 px-2 rounded-md w-full h-full", {
+      "bg-black-500": selected,
+    })}
+    onClick={onItemClick}
+  >
+    {name}
+  </button>
+);
+
+const SecondaryMenuToggle = ({ name, selected, onItemClick }) => (
+  <TelicentSwitch label={name} checked={selected} onChange={onItemClick} />
+);

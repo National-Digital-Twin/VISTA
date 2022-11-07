@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { StandardLayout } from "@telicent-io/ds";
+import { Provider as UseFetchProvider } from "use-http";
+import { MapProvider } from "react-map-gl";
 import "../node_modules/@telicent-io/ds/dist/style.css";
 
 import {
@@ -12,7 +14,6 @@ import {
 } from "./components";
 import { CytoscapeProvider, ElementsProvider } from "./context";
 import config from "./config/app-config";
-import { Provider as UseFetchProvider } from "use-http";
 
 const App = () => {
   const [showGrid, setShowGrid] = useState(false);
@@ -20,7 +21,7 @@ const App = () => {
   const toggleView = () => {
     setShowGrid((prevShow) => !prevShow);
   };
-  
+
   if (!config && !config.api && !config.api.url) {
     console.error("Missing configuration");
   }
@@ -31,14 +32,16 @@ const App = () => {
       <UseFetchProvider url={config.api.url}>
         <CytoscapeProvider>
           <ElementsProvider>
-            <div className="relative h-full">
-              <Categories showGrid={showGrid} toggleView={toggleView} />
-              <InfoPanel />
-              <div className="grid grid-rows-1 grid-cols-2 gap-x-2 h-full">
-                {showGrid ? <Grid /> : <NetworkGraph />}
-                <TelicentMap />
+            <MapProvider>
+              <div className="relative h-full">
+                <Categories showGrid={showGrid} toggleView={toggleView} />
+                <InfoPanel />
+                <div className="grid grid-rows-1 grid-cols-2 gap-x-2 h-full">
+                  {showGrid ? <Grid /> : <NetworkGraph />}
+                  <TelicentMap />
+                </div>
               </div>
-            </div>
+            </MapProvider>
           </ElementsProvider>
         </CytoscapeProvider>
       </UseFetchProvider>
