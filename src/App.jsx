@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 import { StandardLayout } from "@telicent-io/ds";
-import { Provider as UseFetchProvider } from "use-http";
 import "../node_modules/@telicent-io/ds/dist/style.css";
 
 import {
-  Categories,
+  Dataset,
   Grid,
   InfoPanel,
   NetworkGraph,
@@ -29,7 +28,7 @@ const App = () => {
     <StandardLayout appName="paralog" beta={true}>
       <SponsorsLogos />
       <div className="relative h-full">
-        <Categories showGrid={showGrid} toggleView={toggleView} />
+        <Dataset showGrid={showGrid} toggleView={toggleView} />
         <InfoPanel />
         <div className="flex gap-x-2 h-full">
           <ResizableContainer>{showGrid ? <Grid /> : <NetworkGraph />}</ResizableContainer>
