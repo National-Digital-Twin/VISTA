@@ -1,11 +1,12 @@
-import React, { useContext, useEffect, useMemo, useReducer } from "react";
+import React, { useContext, useEffect, useReducer } from "react";
 import { ElementsContext } from "../../context";
 import { isEmpty } from "lodash";
 
-import ElementDetails from "./SelectedDetails/ElementDetails";
+import ElementDetails from "./ElementDetails";
 import {
   LIST_VIEW,
   MULTIPLE_ITEMS,
+  RESET_STATE,
   selectedElementsReducer,
   SELECTED_ELEMENTS_INITIAL_STATE,
   SINGLE_ELEMENT,
@@ -37,28 +38,27 @@ const SelectedElements = ({ updateHeaderProps }) => {
   //   []
   // );
 
-  // useEffect(() => {
-  //   if (selectedDetails.length === 1) {
-  //     dispatch({ type: SINGLE_ELEMENT, index: 0, panelActions });
-  //     return;
-  //   }
-  //   // dispatch({ type: LIST_VIEW });
-  // }, [panelActions, selectedDetails]);
+  useEffect(() => {
+    if (selectedDetails.length === 1) {
+      dispatch({ type: SINGLE_ELEMENT, index: 0 });
+      return;
+    }
+    if (selectedDetails.length > 0) {
+      dispatch({ type: LIST_VIEW });
+      return;
+    }
+    dispatch({ type: RESET_STATE });
+  }, [selectedDetails]);
 
-  // useEffect(() => {
-  //   console.log({ header: state.header });
-  //   // updateHeaderProps(state.header);
-  // }, [state.header]);
-  console.log({ header: state.header, index: state.index  });
+  useEffect(() => {
+    updateHeaderProps(state.header);
+  }, [state.header, updateHeaderProps]);
 
-  const handleMultiItemsView = (index) => {
+  const handleOnViewDetails = (index) => {
     dispatch({
       type: MULTIPLE_ITEMS,
       index,
-      onViewAll: () => {
-        console.log("dispatch list view")
-        dispatch({ type: LIST_VIEW });
-      },
+      onViewAll: () => dispatch({ type: LIST_VIEW }),
     });
   };
 
@@ -66,22 +66,20 @@ const SelectedElements = ({ updateHeaderProps }) => {
     return <p>Click on an asset or dependacy to view it's details</p>;
   }
 
+  if (state.index > -1) {
+    return <ElementDetails expand element={selectedDetails[state.index]} />;
+  }
+
   return (
-    <>
-      {state.index > -1 ? (
-        <ElementDetails expand element={selectedDetails[state.index]} />
-      ) : (
-        <ul className="flex flex-col gap-y-3">
-          {selectedDetails.map((selectedElement, index) => (
-            <ElementDetails
-              key={selectedElement.uri}
-              element={selectedElement}
-              onViewDetails={() => handleMultiItemsView(index)}
-            />
-          ))}
-        </ul>
-      )}
-    </>
+    <ul className="flex flex-col gap-y-3">
+      {selectedDetails.map((selectedElement, index) => (
+        <ElementDetails
+          key={selectedElement.uri}
+          element={selectedElement}
+          onViewDetails={() => handleOnViewDetails(index)}
+        />
+      ))}
+    </ul>
   );
 };
 

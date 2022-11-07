@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { getShortType, isAsset, IsEmpty } from "../../../utils";
+import { getShortType, isAsset, IsEmpty } from "../../utils";
 import classNames from "classnames";
 
 const ElementDetails = ({ element, expand, onViewDetails }) => {

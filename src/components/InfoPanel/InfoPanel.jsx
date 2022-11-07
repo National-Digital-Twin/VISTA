@@ -18,7 +18,6 @@ const InfoPanel = () => {
   };
 
   const updateHeaderProps = useCallback((headerProps) => {
-    console.log({ headerProps });
     setHeaderProps({...headerProps});
   }, []);
 
