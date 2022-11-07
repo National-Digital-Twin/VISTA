@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useMemo, useState } from "react";
-import Map, { Layer, MapProvider, Source } from "react-map-gl";
+import Map, { Layer, Source } from "react-map-gl";
 import config from "../../config/app-config";
 import { CytoscapeContext, ElementsContext } from "../../context";
 import { useLocalStorage } from "../../hooks";
@@ -107,59 +107,57 @@ const TelicentMap = () => {
   };
 
   return (
-    <div className="relative">
-      <MapProvider>
-        <Map
-          cursor={cursor}
-          id="telicentMap"
-          interactiveLayerIds={[allAssetsLayerStyle.id]}
-          initialViewState={{ ...VIEWSTATE }}
-          mapboxAccessToken={config.mb.token}
-          mapStyle={mapStyle}
-          onClick={handleOnClick}
-          onDragStart={() => setCursor("move")}
-          onDragEnd={resetCursor}
-          onMouseEnter={() => setCursor("pointer")}
-          onMouseLeave={resetCursor}
-          onMouseMove={handleOnMouseMove}
-          boxZoom={false}
+    <div className="relative w-full">
+      <Map
+        cursor={cursor}
+        id="telicentMap"
+        interactiveLayerIds={[allAssetsLayerStyle.id]}
+        initialViewState={{ ...VIEWSTATE }}
+        mapboxAccessToken={config.mb.token}
+        mapStyle={mapStyle}
+        onClick={handleOnClick}
+        onDragStart={() => setCursor("move")}
+        onDragEnd={resetCursor}
+        onMouseEnter={() => setCursor("pointer")}
+        onMouseLeave={resetCursor}
+        onMouseMove={handleOnMouseMove}
+        boxZoom={false}
+      >
+        <Source
+          id="all-assets"
+          type={GEOJSON}
+          data={{ type: FEATURE_COLLECTION, features: assetFeatures }}
         >
-          <Source
-            id="all-assets"
-            type={GEOJSON}
-            data={{ type: FEATURE_COLLECTION, features: assetFeatures }}
-          >
-            <Layer {...allAssetsLayerStyle} />
-          </Source>
-          <Source
-            id="selected-connections"
-            type={GEOJSON}
-            data={{ type: FEATURE_COLLECTION, features: selectedAssetCxns }}
-          >
-            <Layer {...lineStyle} />
-          </Source>
-          <Source
-            id="selected-segments"
-            type={GEOJSON}
-            data={{ type: FEATURE_COLLECTION, features: selectedSegments }}
-          >
-            <Layer {...segmentStyle} />
-          </Source>
-          <Source
-            id="selected-assets"
-            type={GEOJSON}
-            data={{ type: FEATURE_COLLECTION, features: selectedAssets }}
-          >
-            <Layer {...highlightedAssets} />
-          </Source>
-          <HoverInfo
-            info={hoverInfo?.feature.properties.element}
-            left={hoverInfo?.x}
-            top={hoverInfo?.y}
-          />
-        </Map>
-        <MapToolbar mapStyle={mapStyle} setMapStyle={setMapStyle} />
-      </MapProvider>
+          <Layer {...allAssetsLayerStyle} />
+        </Source>
+        <Source
+          id="selected-connections"
+          type={GEOJSON}
+          data={{ type: FEATURE_COLLECTION, features: selectedAssetCxns }}
+        >
+          <Layer {...lineStyle} />
+        </Source>
+        <Source
+          id="selected-segments"
+          type={GEOJSON}
+          data={{ type: FEATURE_COLLECTION, features: selectedSegments }}
+        >
+          <Layer {...segmentStyle} />
+        </Source>
+        <Source
+          id="selected-assets"
+          type={GEOJSON}
+          data={{ type: FEATURE_COLLECTION, features: selectedAssets }}
+        >
+          <Layer {...highlightedAssets} />
+        </Source>
+        <HoverInfo
+          info={hoverInfo?.feature.properties.element}
+          left={hoverInfo?.x}
+          top={hoverInfo?.y}
+        />
+      </Map>
+      <MapToolbar mapStyle={mapStyle} setMapStyle={setMapStyle} />
     </div>
   );
 };
