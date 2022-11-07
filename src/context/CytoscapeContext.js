@@ -1,4 +1,4 @@
-import React, { createContext, useRef, useState } from "react";
+import React, { createContext, useCallback, useRef, useState } from "react";
 
 export const CytoscapeContext = createContext();
 
@@ -21,9 +21,20 @@ export const CytoscapeProvider = ({ children }) => {
     setLayout(layout);
   };
 
+  const resize = () => {
+    if (!cyRef.current) return;
+    cyRef.current.resize();
+  };
+
+  const runLayout = useCallback(() => {
+    if (!cyRef.current) return;
+    const cylayout = cyRef.current.layout({ name: layout });
+    cylayout.run();
+  }, [cyRef, layout]);
+
   return (
     <CytoscapeContext.Provider
-      value={{ cyRef, layout, clearSelected, getSelected, updateLayout }}
+      value={{ cyRef, layout, clearSelected, resize, runLayout, updateLayout }}
     >
       {children}
     </CytoscapeContext.Provider>
