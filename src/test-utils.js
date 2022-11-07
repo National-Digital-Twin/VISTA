@@ -5,6 +5,19 @@ import { Dataset } from "./components";
 import { CytoscapeProvider, ElementsContext, ElementsProvider } from "./context";
 import * as utils from "./components/Dataset/utils";
 
+const user = userEvent.setup();
+export const clickEnergyDataset = async () => {
+  await user.click(await screen.findByRole("checkbox", { name: "Energy [25]" }));
+}
+
+export const clickTransportDataset = async () => {
+  await user.click(await screen.findByRole("checkbox", { name: "Transport [44]" }));
+}
+
+export const clickMedicalDataset = async () => {
+  await user.click(await screen.findByRole("checkbox", { name: "Medical [32]" }));
+}
+
 export const AssetBtn = ({ label, assets, event, onElementClick }) => (
   <button
     onClick={() => {

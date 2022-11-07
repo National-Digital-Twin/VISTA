@@ -87,6 +87,14 @@ body {
   }
 }
 @layer components {
+  .error-notification {
+    @apply px-2 py-1;
+    display: grid;
+    grid-template-columns: 1fr min-content;
+    align-items: center;
+    background-color: #B80000;
+  }
+
   .linkBorder {
     @apply mx-auto rounded-full opacity-0 w-0;
     background: #f5f5f5;

@@ -1,7 +1,8 @@
 import { Asset, Connection } from "../../models";
 
-const getConnections = (connections) =>
-  connections.map(
+const getConnections = (connections) => {
+  if (!connections && !Array.isArray(connections)) return [];
+  return connections.map(
     (connection) =>
       new Connection({
         id: connection?.connUri,
@@ -10,31 +11,36 @@ const getConnections = (connections) =>
         target: connection?.asset2Uri,
       })
   );
+};
 
-const createAssetConnections = async (assets, connections, get) => {
+const createAssetConnections = async (assets, connections, get, response) => {
+  if (!assets && !Array.isArray(assets)) return [];
   return await Promise.all(
     assets.map(async (asset, index) => {
-      const isSource = (cxn) => cxn.source === asset.uri || cxn.target === asset.uri;
-      const cxns = connections.filter(isSource).map((cxn) => {
-        let source = cxn.source;
-        let target = cxn.target;
+      let cxns = []
+      if (connections && Array.isArray(connections)) {
+        const isSource = (cxn) => cxn.source === asset.uri || cxn.target === asset.uri;
+        cxns = connections.filter(isSource).map((cxn) => {
+          let source = cxn.source;
+          let target = cxn.target;
 
-        if (cxn.target === asset.uri) {
-          source = cxn.target;
-          target = cxn.source;
-        }
+          if (cxn.target === asset.uri) {
+            source = cxn.target;
+            target = cxn.source;
+          }
 
-        return {
-          ...cxn,
-          source,
-          target,
-        };
-      });
+          return {
+            ...cxn,
+            source,
+            target,
+          };
+        });
+      }
 
       let segments = [];
       if (asset?.type.toLowerCase().includes("road")) {
         const pathSegments = await get(`/assets/${asset.id}/parts`);
-        segments = Object.values(pathSegments);
+        if (response.ok) segments = Object.values(pathSegments);
       }
 
       return new Asset({
@@ -53,9 +59,9 @@ const createAssetConnections = async (assets, connections, get) => {
   );
 };
 
-export const createData = async (assetsMetadata, connectionsMetadata, get) => {
+export const createData = async (assetsMetadata, connectionsMetadata, get, response) => {
   const connections = getConnections(connectionsMetadata);
-  const assets = await createAssetConnections(assetsMetadata, connections, get);
+  const assets = await createAssetConnections(assetsMetadata, connections, get, response);
 
   return { assets, connections };
 };

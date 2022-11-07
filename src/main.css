@@ -549,6 +549,18 @@ video {
   --tw-backdrop-sepia:  ;
 }
 
+.error-notification {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  display: grid;
+  grid-template-columns: 1fr -webkit-min-content;
+  grid-template-columns: 1fr min-content;
+  align-items: center;
+  background-color: #B80000;
+}
+
 .linkBorder {
   margin-left: auto;
   margin-right: auto;
@@ -565,6 +577,10 @@ video {
 .link:hover + .linkBorder {
   width: 100%;
   opacity: 1;
+}
+
+.visible {
+  visibility: visible;
 }
 
 .absolute {
@@ -612,6 +628,10 @@ video {
 
 .-top-12 {
   top: -3rem;
+}
+
+.z-20 {
+  z-index: 20;
 }
 
 .z-10 {
@@ -1009,6 +1029,11 @@ video {
   line-height: 1;
 }
 
+.\!text-base {
+  font-size: 1rem !important;
+  line-height: 1.5rem !important;
+}
+
 .\!text-xl {
   font-size: 1.25rem !important;
   line-height: 1.75rem !important;
@@ -1017,11 +1042,6 @@ video {
 .text-xs {
   font-size: 0.75rem;
   line-height: 1rem;
-}
-
-.\!text-base {
-  font-size: 1rem !important;
-  line-height: 1.5rem !important;
 }
 
 .text-lg {
