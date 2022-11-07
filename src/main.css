@@ -549,6 +549,18 @@ video {
   --tw-backdrop-sepia:  ;
 }
 
+.error-notification {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  display: grid;
+  grid-template-columns: 1fr -webkit-min-content;
+  grid-template-columns: 1fr min-content;
+  align-items: center;
+  background-color: #B80000;
+}
+
 .linkBorder {
   margin-left: auto;
   margin-right: auto;
@@ -565,6 +577,10 @@ video {
 .link:hover + .linkBorder {
   width: 100%;
   opacity: 1;
+}
+
+.visible {
+  visibility: visible;
 }
 
 .absolute {
@@ -614,6 +630,10 @@ video {
   top: -3rem;
 }
 
+.z-20 {
+  z-index: 20;
+}
+
 .z-10 {
   z-index: 10;
 }
@@ -640,10 +660,6 @@ video {
 
 .ml-10 {
   margin-left: 2.5rem;
-}
-
-.inline-block {
-  display: inline-block;
 }
 
 .flex {
@@ -694,10 +710,8 @@ video {
   width: 100%;
 }
 
-.w-fit {
-  width: -webkit-fit-content;
-  width: -moz-fit-content;
-  width: fit-content;
+.w-3\.5 {
+  width: 0.875rem;
 }
 
 .w-1\/2 {
@@ -706,6 +720,12 @@ video {
 
 .w-3 {
   width: 0.75rem;
+}
+
+.w-fit {
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
 }
 
 .w-4 {
@@ -791,17 +811,8 @@ video {
   row-gap: 0.25rem;
 }
 
-.gap-y-3 {
-  row-gap: 0.75rem;
-}
-
-.gap-x-3 {
-  -webkit-column-gap: 0.75rem;
-          column-gap: 0.75rem;
-}
-
-.gap-y-4 {
-  row-gap: 1rem;
+.gap-y-2 {
+  row-gap: 0.5rem;
 }
 
 .gap-x-1 {
@@ -809,13 +820,17 @@ video {
           column-gap: 0.25rem;
 }
 
+.gap-y-4 {
+  row-gap: 1rem;
+}
+
+.gap-y-3 {
+  row-gap: 0.75rem;
+}
+
 .gap-x-6 {
   -webkit-column-gap: 1.5rem;
           column-gap: 1.5rem;
-}
-
-.gap-y-2 {
-  row-gap: 0.5rem;
 }
 
 .self-center {
@@ -884,6 +899,11 @@ video {
   border-color: rgb(172 172 172 / var(--tw-border-opacity));
 }
 
+.border-black-500 {
+  --tw-border-opacity: 1;
+  border-color: rgb(87 87 87 / var(--tw-border-opacity));
+}
+
 .border-red-500 {
   --tw-border-opacity: 1;
   border-color: rgb(239 68 68 / var(--tw-border-opacity));
@@ -899,14 +919,18 @@ video {
   border-color: rgb(245 245 245 / var(--tw-border-opacity));
 }
 
-.bg-whiteSmoke-500 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(148 148 148 / var(--tw-bg-opacity));
+.bg-transparent {
+  background-color: transparent;
 }
 
 .bg-black-200 {
   --tw-bg-opacity: 1;
   background-color: rgb(39 39 39 / var(--tw-bg-opacity));
+}
+
+.bg-whiteSmoke-500 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(148 148 148 / var(--tw-bg-opacity));
 }
 
 .bg-white {
@@ -934,16 +958,16 @@ video {
   background-color: rgb(20 20 20 / var(--tw-bg-opacity));
 }
 
-.p-3 {
-  padding: 0.75rem;
+.p-2 {
+  padding: 0.5rem;
 }
 
 .p-4 {
   padding: 1rem;
 }
 
-.p-2 {
-  padding: 0.5rem;
+.p-3 {
+  padding: 0.75rem;
 }
 
 .px-2 {
@@ -1005,19 +1029,29 @@ video {
   line-height: 1;
 }
 
+.\!text-base {
+  font-size: 1rem !important;
+  line-height: 1.5rem !important;
+}
+
 .\!text-xl {
   font-size: 1.25rem !important;
   line-height: 1.75rem !important;
 }
 
-.text-sm {
-  font-size: 0.875rem;
-  line-height: 1.25rem;
+.text-xs {
+  font-size: 0.75rem;
+  line-height: 1rem;
 }
 
 .text-lg {
   font-size: 1.125rem;
   line-height: 1.75rem;
+}
+
+.text-sm {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
 }
 
 .\!text-sm {
@@ -1028,11 +1062,6 @@ video {
 .\!text-2xl {
   font-size: 1.5rem !important;
   line-height: 2rem !important;
-}
-
-.\!text-base {
-  font-size: 1rem !important;
-  line-height: 1.5rem !important;
 }
 
 .font-bold {
@@ -1047,9 +1076,22 @@ video {
   text-transform: uppercase;
 }
 
+.lowercase {
+  text-transform: lowercase;
+}
+
 .text-whiteSmoke {
   --tw-text-opacity: 1;
   color: rgb(245 245 245 / var(--tw-text-opacity));
+}
+
+.text-fluorescentRed {
+  --tw-text-opacity: 1;
+  color: rgb(255 84 84 / var(--tw-text-opacity));
+}
+
+.text-\[color\:var\(--app-Colour\)\] {
+  color: var(--app-Colour);
 }
 
 .text-black-100 {
@@ -1084,7 +1126,7 @@ video {
 }
 
 :root {
-  --app-Colour: gold !important;
+  --app-Colour: #2EFA8D !important;
 }
 
 ::-webkit-scrollbar {
@@ -1117,7 +1159,7 @@ video {
 .hideTooltip + [role="tooltip"] {
   visibility: hidden;
   position: absolute;
-  top: -2.5rem;
+  top: -2rem;
   z-index: 10;
   white-space: nowrap;
   border-radius: 0.375rem;
@@ -1127,6 +1169,8 @@ video {
   padding-right: 0.5rem;
   padding-top: 0.25rem;
   padding-bottom: 0.25rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
 }
 
 [aria-labelledby]:hover + [role="tooltip"], 
@@ -1159,8 +1203,8 @@ body {
   -moz-osx-font-smoothing: grayscale;
   /* height: 100%;
   min-height: 100%; */
+  font-size: 16px;
   overflow: hidden;
-  font-size: 1em !important;
 }
 
 .first\:justify-items-start:first-child {

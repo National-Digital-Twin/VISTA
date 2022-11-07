@@ -7,7 +7,6 @@ import config from "./config/app-config";
 import { CytoscapeProvider, ElementsProvider } from "./context";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
-import "./index.css";
 import "./main.css";
 
 ReactDOM.render(

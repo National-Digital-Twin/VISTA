@@ -2,16 +2,9 @@ import React, { useState } from "react";
 import { StandardLayout } from "@telicent-io/ds";
 import "../node_modules/@telicent-io/ds/dist/style.css";
 
-import {
-  Categories,
-  Grid,
-  InfoPanel,
-  NetworkGraph,
-  SponsorsLogos,
-  TelicentMap,
-} from "./components";
+import { Dataset, Grid, InfoPanel, NetworkGraph, SponsorsLogos, TelicentMap } from "./components";
 import config from "./config/app-config";
-import { ResizableContainer } from "./lib";
+import { ErrorNotification, ResizableContainer } from "./lib";
 
 const App = () => {
   const [showGrid, setShowGrid] = useState(false);
@@ -28,7 +21,8 @@ const App = () => {
     <StandardLayout appName="paralog" beta={true}>
       <SponsorsLogos />
       <div className="relative h-full">
-        <Categories showGrid={showGrid} toggleView={toggleView} />
+        <ErrorNotification />
+        <Dataset showGrid={showGrid} toggleView={toggleView} />
         <InfoPanel />
         <div className="flex gap-x-2 h-full">
           <ResizableContainer>{showGrid ? <Grid /> : <NetworkGraph />}</ResizableContainer>

@@ -1,9 +1,11 @@
 import { screen, render, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { ElementsProvider } from "../../context";
-import Categories from "../Categories/Categories";
+
+import { Dataset } from "components";
+import { ElementsProvider } from "context";
+
 import Grid from "./Grid";
-import * as utils from "./../Categories/utils";
+import * as utils from "./../Dataset/utils";
 
 const user = userEvent.setup();
 
@@ -12,13 +14,14 @@ describe("Grid component", () => {
     const spyOnCreateData = jest.spyOn(utils, "createData");
     render(
       <ElementsProvider>
-        <Categories />
+        <Dataset />
         <Grid />
       </ElementsProvider>
     );
-    
+
     await user.click(await screen.findByRole("checkbox", { name: "Energy [25]" }));
-    await waitFor(() => expect(spyOnCreateData).toHaveReturned());
+    await waitFor(() => expect(spyOnCreateData).toHaveBeenCalledTimes(1));
+    expect(spyOnCreateData).toHaveReturned();
     expect(screen.getByTestId("grid")).toMatchSnapshot();
   });
 });

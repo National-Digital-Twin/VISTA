@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import React from "react";
 
-import * as utils from "./../Categories/utils";
+import * as utils from "./../Dataset/utils";
 import { ElementsProvider } from "../../context";
 import SelectedElements from "./SelectedElements";
 import { AssetBtn, CxnBtn, renderTestComponent } from "../../test-utils";
@@ -48,7 +48,7 @@ describe("Selected Elements component", () => {
     await user.click(screen.getByRole("button", { name: "E003" }));
     await user.click(screen.getByRole("button", { name: "E001 - E003" }));
     expect(screen.getByRole("heading", { name: "3 Selected Elements" })).toBeInTheDocument();
-    expect(screen.getAllByRole("listitem")).toHaveLength(3);
+    expect(screen.getAllByRole("listitem")).toHaveLength(6);
     expect(
       screen.getByRole("heading", { name: "East Cowes Power Station (E001)" })
     ).toBeInTheDocument();
@@ -104,7 +104,7 @@ describe("Selected Elements component", () => {
     );
     expect(screen.getByTestId("element-details")).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "view all selected" }));
-    expect(screen.getAllByRole("listitem")).toHaveLength(3);
+    expect(screen.getAllByRole("listitem")).toHaveLength(6);
 
     await user.click(
       screen.getByRole("button", {
@@ -113,7 +113,7 @@ describe("Selected Elements component", () => {
     );
     expect(screen.getByTestId("element-details")).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "view all selected" }));
-    expect(screen.getAllByRole("listitem")).toHaveLength(3);
+    expect(screen.getAllByRole("listitem")).toHaveLength(6);
   });
 
   test("renders open street view link when an asset is selected", async () => {
