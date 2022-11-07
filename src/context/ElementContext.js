@@ -75,7 +75,7 @@ const elementsReducer = (state, action) => {
         };
       }
 
-      if (action.event.originalEvent.shiftKey) {
+      if (action.event?.originalEvent?.shiftKey ?? action.event.shiftKey) {
         const getSelected = () => {
           const index = state.selectedElements.findIndex(
             (selectedElement) => selectedElement.id === action.selectedElement.id
