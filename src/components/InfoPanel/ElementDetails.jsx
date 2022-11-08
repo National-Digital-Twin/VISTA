@@ -156,7 +156,7 @@ const ConnectedAssets = ({ connectedAssets }) => {
       <ul className="grid gap-y-3">
         {connectedAssets.map((asset) => {
           return (
-            <li key={asset.uri} className="gap-x-2 bg-black-400 rounded-md p-2 items-center">
+            <li key={asset.uri} className="gap-x-2 bg-black-300 rounded-md p-2 items-center">
               <div className="flex items-center  gap-x-2">
                 <div
                   style={{ backgroundColor: asset.color }}

@@ -950,9 +950,9 @@ video {
   background-color: rgb(29 29 29 / var(--tw-bg-opacity));
 }
 
-.bg-black-400 {
+.bg-black-300 {
   --tw-bg-opacity: 1;
-  background-color: rgb(68 68 68 / var(--tw-bg-opacity));
+  background-color: rgb(48 48 48 / var(--tw-bg-opacity));
 }
 
 .bg-black-500 {
