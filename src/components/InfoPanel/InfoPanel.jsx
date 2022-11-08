@@ -6,9 +6,13 @@ import InfoPanelHeader from "./InfoPanelHeader";
 import SelectedElements from "./SelectedElements";
 
 const InfoPanel = () => {
-  const { selectedElements } = useContext(ElementsContext);
+  const { assets, selectedElements, assetCriticalityColorScale, cxnCriticalityColorScale } =
+    useContext(ElementsContext);
   const [showPanel, setShowPanel] = useState(false);
   const [headerProps, setHeaderProps] = useState(undefined);
+
+  const getDetails = (element) =>
+    element.generateDetails(assets, assetCriticalityColorScale, cxnCriticalityColorScale);
 
   const selectedCount = selectedElements.length;
 
@@ -22,7 +26,8 @@ const InfoPanel = () => {
 
   return (
     <FloatingPanel
-      position="top-0 right-0"
+      id="information-panel"
+      position="top-0 right-0 max-h-full flex flex-col"
       show={showPanel}
       collapsedComponent={<InfoBtn count={selectedCount} onToggle={handleTogglePanel} />}
       style={{ maxWidth: "25rem" }}
@@ -30,7 +35,8 @@ const InfoPanel = () => {
       <InfoPanelHeader count={selectedCount} onToggle={handleTogglePanel} {...headerProps} />
       <SelectedElements
         headerProps={headerProps}
-        selectedDetails={selectedElements}
+        getDetails={getDetails}
+        selectedElements={selectedElements}
         onToggle={handleTogglePanel}
         updateHeaderProps={updateHeaderProps}
       />

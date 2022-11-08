@@ -2,12 +2,12 @@ import { kebabCase } from "lodash";
 import classNames from "classnames";
 import React from "react";
 
-const InfoBtn = ({ active, count, onToggle, className: wrapperClassName }) => {
-  const label = `${!active ? "Close" : "Open"} information panel`;
+const InfoBtn = ({ active, count, onToggle }) => {
+  const label = `${active ? "Close" : "Open"} information panel`;
 
   return (
-    <div className={wrapperClassName}>
-      <button aria-labelledby={kebabCase(label)} className="relative" onClick={onToggle}>
+    <div className="relative">
+      <button aria-labelledby={kebabCase(label)} onClick={onToggle} className="flex items-center justify-center">
         <i
           className={classNames("ri-information-line !text-xl", {
             "text-[color:var(--app-Colour)]": active,
@@ -28,7 +28,7 @@ const Badge = ({ count }) => {
   return (
     <span
       id="selected-badge"
-      className="absolute -top-2 -right-2 flex items-center justify-center w-4 h-4 rounded-full bg-whiteSmoke text-black-200 text-xs"
+      className="absolute -top-1.5 -right-0.5 text-[color:var(--app-Colour)] text-xs"
     >
       {count}
     </span>

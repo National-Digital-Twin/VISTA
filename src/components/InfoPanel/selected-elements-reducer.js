@@ -4,7 +4,7 @@ export const SELECTED_ELEMENTS_INITIAL_STATE = {
   header: {
     title: "Information",
     viewAll: undefined,
-    panelActions: [],
+    onViewAll: undefined
   },
 };
 export const SINGLE_ELEMENT = "SINGLE_ELEMENT";
@@ -21,7 +21,7 @@ export const selectedElementsReducer = (state, action) => {
         header: {
           title: undefined,
           viewAll: undefined,
-          panelActions: [],
+          onViewAll: undefined,
         },
       };
     case MULTIPLE_ITEMS:
@@ -31,12 +31,11 @@ export const selectedElementsReducer = (state, action) => {
         header: {
           title: undefined,
           viewAll: "view all selected",
-          panelActions: [],
           onViewAll: action.onViewAll,
         },
       };
     case LIST_VIEW:
-      return { ...state, index: -1, header: { title: "Selected Elements", viewAll: undefined } };
+      return { ...state, index: -1, header: { title: "Selected Elements", viewAll: undefined, onViewAll: undefined } };
     case RESET_STATE:
       return SELECTED_ELEMENTS_INITIAL_STATE;
     default:

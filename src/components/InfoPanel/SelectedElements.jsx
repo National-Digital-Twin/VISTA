@@ -1,5 +1,4 @@
-import React, { useContext, useEffect, useReducer } from "react";
-import { ElementsContext } from "../../context";
+import React, { useEffect, useMemo, useReducer } from "react";
 import { isEmpty } from "lodash";
 
 import ElementDetails from "./ElementDetails";
@@ -12,23 +11,11 @@ import {
   SINGLE_ELEMENT,
 } from "./selected-elements-reducer";
 
-const getStreetViewLink = (element) => {
-  if (!element?.lat && !element?.lng) return undefined;
-
-  const params = {
-    api: 1,
-    map_action: "pano",
-    viewpoint: `${element.lat},${element.lng}`,
-  };
-  return `https://www.google.com/maps/@?${new URLSearchParams(params).toString()}`;
-};
-
-const SelectedElements = ({ updateHeaderProps }) => {
-  const { assets, selectedElements, assetCriticalityColorScale, cxnCriticalityColorScale } =
-    useContext(ElementsContext);
-
-  const getDetails = (element) => element.generateDetails(assets, assetCriticalityColorScale, cxnCriticalityColorScale);
+const SelectedElements = ({ getDetails, selectedElements, updateHeaderProps }) => {
   const [state, dispatch] = useReducer(selectedElementsReducer, SELECTED_ELEMENTS_INITIAL_STATE);
+  const { index, header } = state;
+
+  const selectedElement = useMemo(() => selectedElements[index], [selectedElements, index]);
 
   useEffect(() => {
     if (selectedElements.length === 1) {
@@ -43,8 +30,12 @@ const SelectedElements = ({ updateHeaderProps }) => {
   }, [selectedElements]);
 
   useEffect(() => {
-    updateHeaderProps(state.header);
-  }, [state.header, updateHeaderProps]);
+    updateHeaderProps({
+      ...header,
+      latitude: selectedElement?.lat,
+      longitude: selectedElement?.lng,
+    });
+  }, [header, selectedElement, updateHeaderProps]);
 
   const handleOnViewDetails = (index) => {
     dispatch({
@@ -55,18 +46,18 @@ const SelectedElements = ({ updateHeaderProps }) => {
   };
 
   if (isEmpty(selectedElements)) {
-    return <p>Click on an asset or dependacy to view it's details</p>;
+    return <p>Click on an asset or connection to view details</p>;
   }
 
-  if (state.index > -1) {
-    return <ElementDetails expand element={getDetails(selectedElements[state.index])} />;
+  if (index > -1) {
+    return <ElementDetails expand element={getDetails(selectedElement)} />;
   }
 
   return (
-    <ul className="flex flex-col gap-y-3">
+    <ul className="gap-y-3 grow min-h-0 overflow-y-auto">
       {selectedElements.map((selectedElement, index) => (
         <ElementDetails
-          key={selectedElement.uri}
+          key={selectedElement.id}
           element={getDetails(selectedElement)}
           onViewDetails={() => handleOnViewDetails(index)}
         />

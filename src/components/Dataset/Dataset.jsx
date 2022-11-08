@@ -6,7 +6,7 @@ import { isEmpty, kebabCase } from "lodash";
 import ReactSwitch from "react-switch";
 
 import { ElementsContext } from "context";
-import { FloatingPanel } from "lib";
+import { FloatingPanel, VerticalDivider } from "lib";
 import { createData } from "./utils";
 import Assessments from "./Assessments";
 
@@ -79,6 +79,7 @@ const Dataset = ({ showGrid, toggleView }) => {
     >
       <div className="inline-flex gap-x-2 border-b border-black-500 pb-1">
         <DBButton active onToggle={togglePanel} />
+        <VerticalDivider height="h-5" />
         <h2 className="font-medium">Dataset</h2>
         <label className="flex items-center gap-x-1 text-xs w-fit ml-auto">
           Grid
