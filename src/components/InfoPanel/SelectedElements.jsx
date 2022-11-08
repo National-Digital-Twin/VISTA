@@ -23,20 +23,8 @@ const getStreetViewLink = (element) => {
   return `https://www.google.com/maps/@?${new URLSearchParams(params).toString()}`;
 };
 
-const SelectedElements = ({ updateHeaderProps }) => {
-  const { selectedDetails } = useContext(ElementsContext);
+const SelectedElements = ({ selectedDetails, updateHeaderProps }) => {
   const [state, dispatch] = useReducer(selectedElementsReducer, SELECTED_ELEMENTS_INITIAL_STATE);
-
-  // const panelActions = useMemo(
-  //   () => [
-  //     {
-  //       label: "street view",
-  //       type: "link",
-  //       href: getStreetViewLink("#alecs"),
-  //     },
-  //   ],
-  //   []
-  // );
 
   useEffect(() => {
     if (selectedDetails.length === 1) {

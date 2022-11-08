@@ -2,7 +2,6 @@ import { kebabCase } from "lodash";
 import React from "react";
 
 import InfoBtn from "./InfoBtn";
-// move assets folder
 import { ReactComponent as GoogleMapIcon } from "./assets/google-map-icon.svg";
 import { VerticalDivider } from "../../lib";
 

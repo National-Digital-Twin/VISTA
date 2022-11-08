@@ -13,7 +13,6 @@ export const MULTIPLE_ITEMS = "MULTIPLE_ITEMS";
 export const RESET_STATE = "RESET_STATE";
 
 export const selectedElementsReducer = (state, action) => {
-  console.log({ action: action.type });
   switch (action.type) {
     case SINGLE_ELEMENT:
       return {
