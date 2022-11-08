@@ -4,30 +4,19 @@ const MAX_CIRCLE_SIZE = 10;
 const MIN_CIRCLE_SIZE = 5;
 
 export default class Asset {
-  constructor({
-    id,
-    label,
-    name,
-    description,
-    lat,
-    lng,
-    type,
-    gridIndex,
-    connections,
-    segments,
-  }) {
+  constructor({ id, label, name, description, lat, lng, type, gridIndex, connections, segments }) {
     this.id = id;
     this.label = label;
     this.name = name;
     this.description = description;
-    this.lat = parseFloat(lat);
-    this.lng = parseFloat(lng);
+    this.lat = lat;
+    this.lng = lng;
     this.type = type;
     this.gridIndex = gridIndex;
     this.connections = connections;
     this.criticality = this.#calculateCriticality();
     this.segments = segments;
-    this.elementType = "asset"
+    this.elementType = "asset";
     Object.preventExtensions(this);
   }
 
@@ -42,9 +31,7 @@ export default class Asset {
   toCytoscapeNode() {
     return {
       data: {
-        element: this,
-        id: this.id,
-        label: this.label,
+        ...this,
       },
       classes: ["label", this.label.charAt(0)],
     };
@@ -73,14 +60,16 @@ export default class Asset {
   }
 
   #lookupTargetConnection(assets) {
-    return this.connections.map((connection) => ({
-      ...connection,
-      target: findAsset(assets, connection.target),
-    }));
+    return this.connections
+      .filter(({ target }) => assets.some((asset) => asset.id === target))
+      .map((connection) => ({
+        ...connection,
+        target: findAsset(assets, connection.target),
+      }));
   }
 
   createSelectedAssetFeature(colorScale, maxCriticality, isSource) {
-    const r = this.criticality / maxCriticality;
+    const r = maxCriticality > 0 ? this.criticality / maxCriticality : 0;
     let circumference = Math.ceil(Math.PI * 2 * r);
     if (circumference > MAX_CIRCLE_SIZE) {
       circumference = MAX_CIRCLE_SIZE;
@@ -104,26 +93,11 @@ export default class Asset {
   }
 
   generateSelectedAssetFeatures(assets, colorScale, maxCriticality) {
-    const sourceFeature = this.createSelectedAssetFeature(
-      colorScale,
-      maxCriticality,
-      true
-    );
- 
+    const sourceFeature = this.createSelectedAssetFeature(colorScale, maxCriticality, true);
 
-    const targetFeatures = this.#lookupTargetConnection(assets)
-      .filter(({ target, source }) => {
-        if (!target || !source) {
-          return false;
-        } else return true;
-      })
-      .map(({ target }) => {
-        return target.createSelectedAssetFeature(
-          colorScale,
-          maxCriticality,
-          false
-        );
-      });
+    const targetFeatures = this.#lookupTargetConnection(assets).map(({ target }) =>
+      target.createSelectedAssetFeature(colorScale, maxCriticality, false)
+    );
 
     return [sourceFeature, ...targetFeatures];
   }

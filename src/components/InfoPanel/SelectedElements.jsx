@@ -23,20 +23,24 @@ const getStreetViewLink = (element) => {
   return `https://www.google.com/maps/@?${new URLSearchParams(params).toString()}`;
 };
 
-const SelectedElements = ({ selectedDetails, updateHeaderProps }) => {
+const SelectedElements = ({ updateHeaderProps }) => {
+  const { assets, selectedElements, assetCriticalityColorScale, cxnCriticalityColorScale } =
+    useContext(ElementsContext);
+
+  const getDetails = (element) => element.generateDetails(assets, assetCriticalityColorScale, cxnCriticalityColorScale);
   const [state, dispatch] = useReducer(selectedElementsReducer, SELECTED_ELEMENTS_INITIAL_STATE);
 
   useEffect(() => {
-    if (selectedDetails.length === 1) {
+    if (selectedElements.length === 1) {
       dispatch({ type: SINGLE_ELEMENT, index: 0 });
       return;
     }
-    if (selectedDetails.length > 0) {
+    if (selectedElements.length > 0) {
       dispatch({ type: LIST_VIEW });
       return;
     }
     dispatch({ type: RESET_STATE });
-  }, [selectedDetails]);
+  }, [selectedElements]);
 
   useEffect(() => {
     updateHeaderProps(state.header);
@@ -50,20 +54,20 @@ const SelectedElements = ({ selectedDetails, updateHeaderProps }) => {
     });
   };
 
-  if (isEmpty(selectedDetails)) {
+  if (isEmpty(selectedElements)) {
     return <p>Click on an asset or dependacy to view it's details</p>;
   }
 
   if (state.index > -1) {
-    return <ElementDetails expand element={selectedDetails[state.index]} />;
+    return <ElementDetails expand element={getDetails(selectedElements[state.index])} />;
   }
 
   return (
     <ul className="flex flex-col gap-y-3">
-      {selectedDetails.map((selectedElement, index) => (
+      {selectedElements.map((selectedElement, index) => (
         <ElementDetails
           key={selectedElement.uri}
-          element={selectedElement}
+          element={getDetails(selectedElement)}
           onViewDetails={() => handleOnViewDetails(index)}
         />
       ))}

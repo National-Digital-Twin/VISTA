@@ -9,55 +9,58 @@ import { createEdges, createNode } from "./cytoscapeUtils";
 import cyStylesheet from "./stylesheet";
 import GraphToolbar from "./GraphToolbar";
 import { CytoscapeContext, ElementsContext } from "../../context";
+import { isEmpty } from "lodash";
 
 const NetworkGraph = () => {
   const {
     cyRef,
     layout: graphLayout,
-    getSelectedElements,
+    runLayout,
     updateLayout,
   } = useContext(CytoscapeContext);
-  const { data, onAssetSelect } = useContext(ElementsContext);
-  const { assets, connections, cxnCriticalityColorScale } = data;
+  const { assets, connections, cxnCriticalityColorScale, clearSelectedElements, onElementClick } =
+    useContext(ElementsContext);
 
   const nodes = useMemo(() => createNode(assets), [assets]);
-  const edges = useMemo(
-    () => createEdges(connections, cxnCriticalityColorScale),
-    [connections, cxnCriticalityColorScale]
-  );
+  const edges = useMemo(() => {
+    if (isEmpty(nodes)) return [];
+    return createEdges(connections, cxnCriticalityColorScale);
+  }, [connections, nodes, cxnCriticalityColorScale]);
 
   cytoscape.use(cola);
   cytoscape.use(dagre);
   cytoscape.use(avsdf);
 
   useEffect(() => {
-    if (!cyRef.current) return;
-    const layout = cyRef.current.layout({ name: graphLayout });
-    layout.run();
-  }, [cyRef, nodes, edges, graphLayout]);
+    runLayout();
+  }, [nodes, edges, runLayout]);
 
   const setCytoscape = useCallback(
     (cy) => {
       if (cyRef.current === cy) return;
       cyRef.current = cy;
-      cyRef.current.on("select", "edge", function (event) {
-        onAssetSelect(getSelectedElements());
+      cyRef.current.on("tap", "edge", function (event) {
+        const id = event.target.data("id");
+        const element = cyRef.current.getElementById(id).json();
+        onElementClick(event, element.data);
       });
-      cyRef.current.on("unselect", "edge", function (event) {
-        onAssetSelect(getSelectedElements());
+      cyRef.current.on("tap", "node", function (event) {
+        const id = event.target.data("id");
+        const element = cyRef.current.getElementById(id).json();
+        onElementClick(event, element.data);
       });
-      cyRef.current.on("select", "node", function (event) {
-        onAssetSelect(getSelectedElements());
-      });
-      cyRef.current.on("unselect", "node", function (event) {
-        onAssetSelect(getSelectedElements());
+      cyRef.current.on("tap", function (event) {
+        if (event.target === cy) {
+          clearSelectedElements();
+          return;
+        }
       });
     },
-    [cyRef, getSelectedElements, onAssetSelect]
+    [cyRef, clearSelectedElements, onElementClick]
   );
 
   return (
-    <div className="relative">
+    <>
       <CytoscapeComponent
         elements={CytoscapeComponent.normalizeElements({ nodes, edges })}
         stylesheet={cyStylesheet}
@@ -65,7 +68,7 @@ const NetworkGraph = () => {
         className="w-full h-full"
       />
       <GraphToolbar cyRef={cyRef} graphLayout={graphLayout} setGraphLayout={updateLayout} />
-    </div>
+    </>
   );
 };
 

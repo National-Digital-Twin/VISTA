@@ -5,19 +5,16 @@ import GridToolbar from "./GridToolbar";
 import { useContext } from "react";
 import { ElementsContext } from "../../context/ElementContext";
 import { findAsset, getHexColor } from "../../utils";
-import { Asset, Connection } from "../../models";
 
 const Grid = ({ loading }) => {
   const [zoomLevel, setZoomLevel] = useState(100);
-  const { data } = useContext(ElementsContext);
-
   const {
     assets,
     connections,
     assetCriticalityColorScale,
     cxnCriticalityColorScale,
     totalCxnsColorScale,
-  } = data;
+  } = useContext(ElementsContext);
 
   const renderAssets = () => {
     const assetGrid = assets.map((asset, index) => (
@@ -53,7 +50,7 @@ const Grid = ({ loading }) => {
 
   return (
     <>
-      <div id="grid" className="relative h-full overflow-auto">
+      <div id="grid" className="relative flex-1 h-full w-1/2 overflow-auto">
         <div
           style={{
             zoom: `${zoomLevel}%`,
@@ -70,7 +67,7 @@ const Grid = ({ loading }) => {
 };
 
 const AssetGrid = ({ asset, criticalityColorScale, totalCxnsColorScale }) => {
-  const { onAssetSelect } = useContext(ElementsContext);
+  const { onElementClick } = useContext(ElementsContext);
   const { id, label, name, lng, lat, gridIndex, criticality, totalCxns } = asset;
 
   const criticalityColor = getHexColor(criticalityColorScale, criticality);
@@ -78,7 +75,7 @@ const AssetGrid = ({ asset, criticalityColorScale, totalCxnsColorScale }) => {
 
   const handleOnAssetClick = (event) => {
     const asset = event.target.dataset.asset;
-    onAssetSelect([new Asset(JSON.parse(asset))]);
+    onElementClick(event, JSON.parse(asset));
   };
 
   const AssetIdentifierCol = ({ gridIndex, id, lat, lon, title, uri, onClick }) => (
@@ -235,11 +232,11 @@ const AssetGrid = ({ asset, criticalityColorScale, totalCxnsColorScale }) => {
 };
 
 const ConnectionBtn = ({ colorScale, criticality, data, position, uri }) => {
-  const { onAssetSelect } = useContext(ElementsContext);
+  const { onElementClick } = useContext(ElementsContext);
 
   const handleOnConnectionClick = (event) => {
     const connection = event.target.dataset.connection;
-    onAssetSelect([new Connection(JSON.parse(connection))]);
+    onElementClick(event, JSON.parse(connection));
   };
 
   return (

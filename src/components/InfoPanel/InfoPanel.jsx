@@ -6,11 +6,11 @@ import InfoPanelHeader from "./InfoPanelHeader";
 import SelectedElements from "./SelectedElements";
 
 const InfoPanel = () => {
-  const { selectedDetails } = useContext(ElementsContext);
+  const { selectedElements } = useContext(ElementsContext);
   const [showPanel, setShowPanel] = useState(false);
   const [headerProps, setHeaderProps] = useState(undefined);
 
-  const selectedCount = selectedDetails.length;
+  const selectedCount = selectedElements.length;
 
   const handleTogglePanel = () => {
     setShowPanel((show) => !show);
@@ -30,7 +30,7 @@ const InfoPanel = () => {
       <InfoPanelHeader count={selectedCount} onToggle={handleTogglePanel} {...headerProps} />
       <SelectedElements
         headerProps={headerProps}
-        selectedDetails={selectedDetails}
+        selectedDetails={selectedElements}
         onToggle={handleTogglePanel}
         updateHeaderProps={updateHeaderProps}
       />

@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { StandardLayout } from "@telicent-io/ds";
 import "../node_modules/@telicent-io/ds/dist/style.css";
 
-import { Categories, Grid, InfoPanel, NetworkGraph, SponsorsLogos, TelicentMap } from "./components";
-import { CytoscapeProvider, ElementsProvider } from "./context";
+import { Dataset, Grid, InfoPanel, NetworkGraph, SponsorsLogos, TelicentMap } from "./components";
 import config from "./config/app-config";
+import { ErrorNotification, ResizableContainer } from "./lib";
 
 const App = () => {
   const [showGrid, setShowGrid] = useState(false);
@@ -20,18 +20,15 @@ const App = () => {
   return (
     <StandardLayout appName="paralog" beta={true}>
       <SponsorsLogos />
-      <CytoscapeProvider>
-        <ElementsProvider>
-          <div className="relative h-full">
-            <Categories showGrid={showGrid} toggleView={toggleView} />
-            <InfoPanel />
-            <div className="grid grid-rows-1 grid-cols-2 gap-x-2 h-full">
-              {showGrid ? <Grid /> : <NetworkGraph />}
-              <TelicentMap />
-            </div>
-          </div>
-        </ElementsProvider>
-      </CytoscapeProvider>
+      <div className="relative h-full">
+        <ErrorNotification />
+        <Dataset showGrid={showGrid} toggleView={toggleView} />
+        <InfoPanel />
+        <div className="flex gap-x-2 h-full">
+          <ResizableContainer>{showGrid ? <Grid /> : <NetworkGraph />}</ResizableContainer>
+          <TelicentMap />
+        </div>
+      </div>
     </StandardLayout>
   );
 };

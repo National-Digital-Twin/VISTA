@@ -1,20 +1,27 @@
-import { screen, render } from "@testing-library/react";
-import { ElementsContext } from "../../context";
-import { createData } from "../Categories/utils";
-import Grid from "./Grid";
-import { E001, E001_E003, E003, E005, E005_E006, E006, E006_E012 } from "../../sample-data";
+import { screen, render, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 
-const assets = [E001, E003, E005, E006];
-const connections = [E001_E003, E006_E012, E005_E006];
+import { Dataset } from "components";
+import { ElementsProvider } from "context";
+
+import Grid from "./Grid";
+import * as utils from "./../Dataset/utils";
+
+const user = userEvent.setup();
 
 describe("Grid component", () => {
   test("renders grid", async () => {
-    const data = await createData(assets, connections);
+    const spyOnCreateData = jest.spyOn(utils, "createData");
     render(
-      <ElementsContext.Provider value={{ data }}>
-        <Grid loading={false} />
-      </ElementsContext.Provider>
+      <ElementsProvider>
+        <Dataset />
+        <Grid />
+      </ElementsProvider>
     );
+
+    await user.click(await screen.findByRole("checkbox", { name: "Energy [25]" }));
+    await waitFor(() => expect(spyOnCreateData).toHaveBeenCalledTimes(1));
+    expect(spyOnCreateData).toHaveReturned();
     expect(screen.getByTestId("grid")).toMatchSnapshot();
   });
 });

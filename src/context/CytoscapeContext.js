@@ -1,4 +1,4 @@
-import React, { createContext, useRef, useState } from "react";
+import React, { createContext, useCallback, useRef, useState } from "react";
 
 export const CytoscapeContext = createContext();
 
@@ -11,12 +11,6 @@ export const CytoscapeProvider = ({ children }) => {
     return cyRef.current.elements(":selected");
   };
 
-  const getSelectedElements = () => {
-    if (!cyRef.current) return;
-    const selected = getSelected();
-    return selected.map((node) => node.data("element"));
-  };
-
   const clearSelected = () => {
     if (!cyRef.current) return;
     const selected = getSelected();
@@ -27,9 +21,20 @@ export const CytoscapeProvider = ({ children }) => {
     setLayout(layout);
   };
 
+  const resize = () => {
+    if (!cyRef.current) return;
+    cyRef.current.resize();
+  };
+
+  const runLayout = useCallback(() => {
+    if (!cyRef.current) return;
+    const cylayout = cyRef.current.layout({ name: layout });
+    cylayout.run();
+  }, [cyRef, layout]);
+
   return (
     <CytoscapeContext.Provider
-      value={{ cyRef, layout, clearSelected, getSelectedElements, updateLayout }}
+      value={{ cyRef, layout, clearSelected, resize, runLayout, updateLayout }}
     >
       {children}
     </CytoscapeContext.Provider>
