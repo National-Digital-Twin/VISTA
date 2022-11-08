@@ -116,9 +116,7 @@ const AssetGrid = ({ asset, criticalityColorScale, totalCxnsColorScale }) => {
         gridColumnEnd: gridIndex + 4,
         gridRowEnd: 1,
       }}
-      className={classNames("col-header", {
-        "border-2 border-red-500": !lat || !lon,
-      })}
+      className="col-header"
       onClick={onClick}
       id={`${uri}`}
       role="button"
