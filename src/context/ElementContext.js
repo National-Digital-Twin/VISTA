@@ -92,6 +92,13 @@ const elementsReducer = (state, action) => {
           selectedElements: getSelected(),
         };
       }
+
+      if (Array.isArray(action.selectedElement) && !isEmpty(action.selectedElement)) {
+        const selectedElements = action.selectedElement.map((selected) => createElement(selected))
+        console.log("here ", selectedElements)
+        return { ...state, selectedElements }
+      }
+
       return {
         ...state,
         selectedElements: [createElement(action.selectedElement)],
@@ -148,6 +155,7 @@ export const ElementsProvider = ({ children }) => {
   }, []);
 
   const onElementClick = (event, selectedElement) => {
+    console.log({ selectedElement })
     dispatch({ type: UPDATE_SELECTED_ELEMENTS, event, selectedElement });
   };
 
