@@ -22,6 +22,7 @@ const App = () => {
       <SponsorsLogos />
       <div className="relative h-full">
         <ErrorNotification />
+        <link href="https://viglino.github.io/font-gis/css/font-gis.css" rel="stylesheet" />
         <Dataset showGrid={showGrid} toggleView={toggleView} />
         <InfoPanel />
         <div className="flex gap-x-2 h-full">

@@ -23,6 +23,16 @@ const MapToolbar = ({ mapStyle, setMapStyle }) => {
     map.zoomIn({ duration: 1000 });
   };
 
+  const togglePolygon = () => {
+    const control = map.getMap()
+    return control._controls[2].changeMode("draw_polygon")
+  }
+
+  const deletePolygon = () => {
+    const control = map.getMap()
+    return control._controls[2].deleteAll()
+  }
+
   return (
     <div className="absolute bottom-0 left-0 text-whiteSmoke font-body bg-black-200 flex items-center justify-center gap-x-2 px-2 py-1">
       <a
@@ -50,6 +60,9 @@ const MapToolbar = ({ mapStyle, setMapStyle }) => {
           />
         }
       />
+      <VerticalDivider />
+      <ToolbarButton icon="fg-polyline-pt" label="Draw Polygon" onClick={togglePolygon} />
+      <ToolbarButton icon="ri-delete-bin-line" label="Delete Polygons" onClick={deletePolygon} />
     </div>
   );
 };
@@ -83,3 +96,4 @@ const MapStyles = ({ items, mapStyle, onClose, setMapStyle }) => {
     </ul>
   );
 };
+

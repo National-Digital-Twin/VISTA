@@ -714,10 +714,6 @@ video {
   width: 0.875rem;
 }
 
-.w-1\/2 {
-  width: 50%;
-}
-
 .w-3 {
   width: 0.75rem;
 }
@@ -726,6 +722,10 @@ video {
   width: -webkit-fit-content;
   width: -moz-fit-content;
   width: fit-content;
+}
+
+.w-1\/2 {
+  width: 50%;
 }
 
 .w-4 {

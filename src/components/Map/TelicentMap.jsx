@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useMemo, useState } from "react";
-import Map, { Layer, Source } from "react-map-gl";
+import Map, { Layer, Source, MapProvider } from "react-map-gl";
 import config from "../../config/app-config";
 import { CytoscapeContext, ElementsContext } from "../../context";
 import { useLocalStorage } from "../../hooks";
@@ -12,6 +12,7 @@ import {
 } from "./mapboxFeatures";
 import { getMapStyles } from "./mapStyles";
 import MapToolbar from "./MapToolbar";
+import DrawingControlPanel from "./DrawingControlPanel";
 
 const GEOJSON = "geojson";
 const FEATURE_COLLECTION = "FeatureCollection";
@@ -41,7 +42,7 @@ const TelicentMap = () => {
   const [selectedAssetCxns, setSelectedAssetCxns] = useState([]);
   const [selectedAssets, setSelectedAssets] = useState([]);
   const [selectedSegments, setSelectedSegments] = useState([]);
-
+ 
   useEffect(() => {
     if (!getMapStyles().some((style) => style.id === mapStyle)) {
       setMapStyle(getMapStyles()[0].id);
@@ -83,7 +84,7 @@ const TelicentMap = () => {
     const clickedFeature = features && features[0];
     clearSelected();
 
-    if (clickedFeature) {
+    if (clickedFeature?.source === "all-assets") {
       const { properties } = clickedFeature;
       event.originalEvent.stopPropagation();
       const element = JSON.parse(properties.element);
@@ -108,6 +109,7 @@ const TelicentMap = () => {
 
   return (
     <div className="relative w-full">
+      <MapProvider>
       <Map
         cursor={cursor}
         id="telicentMap"
@@ -123,41 +125,43 @@ const TelicentMap = () => {
         onMouseMove={handleOnMouseMove}
         boxZoom={false}
       >
-        <Source
-          id="all-assets"
-          type={GEOJSON}
-          data={{ type: FEATURE_COLLECTION, features: assetFeatures }}
-        >
-          <Layer {...allAssetsLayerStyle} />
-        </Source>
-        <Source
-          id="selected-connections"
-          type={GEOJSON}
-          data={{ type: FEATURE_COLLECTION, features: selectedAssetCxns }}
-        >
-          <Layer {...lineStyle} />
-        </Source>
-        <Source
-          id="selected-segments"
-          type={GEOJSON}
-          data={{ type: FEATURE_COLLECTION, features: selectedSegments }}
-        >
-          <Layer {...segmentStyle} />
-        </Source>
-        <Source
-          id="selected-assets"
-          type={GEOJSON}
-          data={{ type: FEATURE_COLLECTION, features: selectedAssets }}
-        >
-          <Layer {...highlightedAssets} />
-        </Source>
-        <HoverInfo
-          info={hoverInfo?.feature.properties.element}
-          left={hoverInfo?.x}
-          top={hoverInfo?.y}
-        />
-      </Map>
-      <MapToolbar mapStyle={mapStyle} setMapStyle={setMapStyle} />
+          <Source
+            id="all-assets"
+            type={GEOJSON}
+            data={{ type: FEATURE_COLLECTION, features: assetFeatures }}
+          >
+            <Layer {...allAssetsLayerStyle} />
+          </Source>
+          <Source
+            id="selected-connections"
+            type={GEOJSON}
+            data={{ type: FEATURE_COLLECTION, features: selectedAssetCxns }}
+          >
+            <Layer {...lineStyle} />
+          </Source>
+          <Source
+            id="selected-segments"
+            type={GEOJSON}
+            data={{ type: FEATURE_COLLECTION, features: selectedSegments }}
+          >
+            <Layer {...segmentStyle} />
+          </Source>
+          <Source
+            id="selected-assets"
+            type={GEOJSON}
+            data={{ type: FEATURE_COLLECTION, features: selectedAssets }}
+          >
+            <Layer {...highlightedAssets} />
+          </Source>
+          <HoverInfo
+            info={hoverInfo?.feature.properties.element}
+            left={hoverInfo?.x}
+            top={hoverInfo?.y}
+          />
+          <DrawingControlPanel onElementClick={onElementClick} assetFeatures={generateAssetFeatures(assets) }/>
+        </Map>
+        <MapToolbar mapStyle={mapStyle} setMapStyle={setMapStyle} />
+      </MapProvider>
     </div>
   );
 };
