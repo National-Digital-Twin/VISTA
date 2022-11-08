@@ -109,7 +109,7 @@ const AssetGrid = ({ asset, criticalityColorScale, totalCxnsColorScale }) => {
       style={{
         position: "sticky",
         top: 0,
-        zIndex: 99,
+        zIndex: 5,
         backgroundColor: "black",
         gridColumnStart: gridIndex + 4,
         gridRowStart: 1,

@@ -1,3 +1,4 @@
+import { useLocalStorage } from "hooks";
 import React, { useCallback, useContext, useState } from "react";
 import { ElementsContext } from "../../context";
 import { FloatingPanel } from "../../lib";
@@ -8,7 +9,7 @@ import SelectedElements from "./SelectedElements";
 const InfoPanel = () => {
   const { assets, selectedElements, assetCriticalityColorScale, cxnCriticalityColorScale } =
     useContext(ElementsContext);
-  const [showPanel, setShowPanel] = useState(false);
+  const [showPanel, setShowPanel] = useLocalStorage("showInformationPanel", false)
   const [headerProps, setHeaderProps] = useState(undefined);
 
   const getDetails = (element) =>
