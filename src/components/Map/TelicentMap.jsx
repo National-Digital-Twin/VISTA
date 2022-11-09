@@ -83,7 +83,11 @@ const TelicentMap = () => {
     const clickedFeature = features && features[0];
     clearSelected();
 
-    console.log(" handle click ", event)
+    const polygonControl = event.target._controls.filter( item => item?.types?.POLYGON ? item : null);
+
+    if ( polygonControl[0].getSelected().features.length === 0 && !clickedFeature) {
+      clearSelectedElements();
+    }
 
     if (clickedFeature) {
       const { properties } = clickedFeature;
@@ -92,7 +96,7 @@ const TelicentMap = () => {
       onElementClick(event, element);
       return;
     }
-    // clearSelectedElements();
+
   };
 
   const handleOnMouseMove = (event) => {

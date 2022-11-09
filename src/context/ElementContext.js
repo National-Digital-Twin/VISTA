@@ -95,7 +95,6 @@ const elementsReducer = (state, action) => {
 
       if (Array.isArray(action.selectedElement) && !isEmpty(action.selectedElement)) {
         const selectedElements = action.selectedElement.map((selected) => createElement(selected))
-        console.log("here ", selectedElements)
         return { ...state, selectedElements }
       }
 

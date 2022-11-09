@@ -1,37 +1,34 @@
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import * as turf from "@turf/turf";
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import { useControl } from "react-map-gl";
 import { ElementsContext } from "context";
 import { isEmpty } from "lodash";
 
 const useDraw = () => {
-  const [assetsWithinPolygon, setAssetsWithinPolygon] = useState([]);
   const { clearSelectedElements, onElementClick } = useContext(ElementsContext);
 
-  // useEffect(() => {
-  //   if (assetsWithinPolygon.length > 0) onElementClick(undefined, assetsWithinPolygon);
-  // }, [assetsWithinPolygon, onElementClick]);
-
-  const selectElemsInPolygon = (event) => {
-    const { features, target } = event;
-    console.log({ features, points: event.points })
-    if (isEmpty(features)) return;
-
-    const search = turf.polygon(features[0].geometry.coordinates);
+  const selectElemsInPolygon = (event, feature) => {
+    const { target } = event;
+    const search = turf.polygon(feature.geometry.coordinates);
     const points = turf.pointsWithinPolygon(target.getSource("all-assets")?._data, search);
-    const assets = points.features.map((feature) => ({ ...feature.properties.element }));
-    onElementClick(event, assets)
+    return points.features.map((feature) => ({ ...feature.properties.element }));
+  };
+
+  const searchAllPolygons = ( event ) => {
+    if (isEmpty(event.features)) return;
+    const assets = event.features.flatMap(( feature ) => {
+      return selectElemsInPolygon( event, feature )
+    });
+    onElementClick(event, assets);
   };
 
   const onSelectionChange = (event) => {
-    console.log("selecting", event);
-    selectElemsInPolygon(event);
+    searchAllPolygons(event);
   };
 
   const onUpdatePolygon = (event) => {
-    console.log("updating");
-    selectElemsInPolygon(event);
+    searchAllPolygons(event);
   };
 
   const onDeletePolygon = () => {
@@ -68,7 +65,7 @@ const useDraw = () => {
     draw.deleteAll();
   };
 
-  return { assetsWithinPolygon, activatePolygonMode, activateSimpleSelectMode, deleteAllPolygons };
+  return { activatePolygonMode, activateSimpleSelectMode, deleteAllPolygons };
 };
 
 export default useDraw;
