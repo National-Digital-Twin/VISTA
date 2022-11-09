@@ -63,6 +63,7 @@ const useDraw = () => {
 
   const deleteAllPolygons = () => {
     draw.deleteAll();
+    clearSelectedElements();
   };
 
   return { activatePolygonMode, activateSimpleSelectMode, deleteAllPolygons };
