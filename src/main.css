@@ -750,6 +750,10 @@ video {
   width: 16rem;
 }
 
+.w-1\/4 {
+  width: 25%;
+}
+
 .flex-1 {
   flex: 1 1 0%;
 }
