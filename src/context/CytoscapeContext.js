@@ -1,3 +1,4 @@
+import { isEmpty } from "lodash";
 import React, { createContext, useCallback, useRef, useState } from "react";
 
 export const CytoscapeContext = createContext();
@@ -22,12 +23,12 @@ export const CytoscapeProvider = ({ children }) => {
   };
 
   const resize = () => {
-    if (!cyRef.current) return;
+    if (isEmpty(cyRef?.current)) return;
     cyRef.current.resize();
   };
 
   const runLayout = useCallback(() => {
-    if (!cyRef.current) return;
+    if (isEmpty(cyRef?.current) || cyRef.current?.destroyed()) return;
     const cylayout = cyRef.current.layout({ name: layout });
     cylayout.run();
   }, [cyRef, layout]);
