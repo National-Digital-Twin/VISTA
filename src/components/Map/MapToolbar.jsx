@@ -23,14 +23,10 @@ const MapToolbar = ({ mapStyle, setMapStyle }) => {
     map.zoomIn({ duration: 1000 });
   };
 
-  const togglePolygon = () => {
-    const control = map.getMap()
-    return control._controls[2].changeMode("draw_polygon")
-  }
-
-  const deletePolygon = () => {
-    const control = map.getMap()
-    return control._controls[2].deleteAll()
+  const togglePolygon = ( isActive ) => {
+    const control = map.getMap();
+    const polygonControl = control._controls.filter( item => item?.types?.POLYGON ? item : null);
+    return isActive ? polygonControl[0].changeMode("draw_polygon") : polygonControl[0].deleteAll();
   }
 
   return (
@@ -61,8 +57,8 @@ const MapToolbar = ({ mapStyle, setMapStyle }) => {
         }
       />
       <VerticalDivider />
-      <ToolbarButton icon="fg-polyline-pt" label="Draw Polygon" onClick={togglePolygon} />
-      <ToolbarButton icon="ri-delete-bin-line" label="Delete Polygons" onClick={deletePolygon} />
+      <ToolbarButton icon="fg-polyline-pt" label="Draw Polygon" onClick={() => togglePolygon(true)} />
+      <ToolbarButton icon="ri-delete-bin-line" label="Delete Polygons" onClick={() => togglePolygon(false)} />
     </div>
   );
 };

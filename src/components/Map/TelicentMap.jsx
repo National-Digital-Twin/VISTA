@@ -84,16 +84,14 @@ const TelicentMap = () => {
     const clickedFeature = features && features[0];
     clearSelected();
 
-    console.log(event.target._controls)
-
-    // if (clickedFeature?.source === "all-assets") {
-    //   const { properties } = clickedFeature;
-    //   event.originalEvent.stopPropagation();
-    //   const element = JSON.parse(properties.element);
-    //   onElementClick(event, element);
-    //   return;
-    // }
-    // clearSelectedElements();
+   /* if (mode === "simple-select") {
+      const { properties } = clickedFeature;
+      event.originalEvent.stopPropagation();
+      const element = JSON.parse(properties.element);
+      onElementClick(event, element);
+      return;
+    }
+    clearSelectedElements();*/
   };
 
   const handleOnMouseMove = (event) => {
