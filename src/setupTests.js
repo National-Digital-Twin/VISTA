@@ -24,6 +24,7 @@ beforeAll(() => server.listen());
 beforeEach(() => {
   server.resetHandlers();
   jest.restoreAllMocks();
+  window.localStorage.clear();
 });
 afterAll(() => server.close());
 

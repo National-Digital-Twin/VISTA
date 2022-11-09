@@ -7,11 +7,12 @@ const FloatingPanel = ({
   collapsedComponent,
   position,
   transparent,
-  children,
+  id,
   className: wrapperClassName,
-  style
+  style,
+  children,
 }) => {
-  const wrapperProps = { position, transparent, className: wrapperClassName, style };
+  const wrapperProps = { position, transparent, id, className: wrapperClassName, style };
   if (show) return <Wrapper {...wrapperProps}>{children}</Wrapper>;
   return <Wrapper {...wrapperProps}>{collapsedComponent}</Wrapper>;
 };
@@ -26,8 +27,9 @@ FloatingPanel.propTypes = {
   children: PropTypes.node.isRequired,
 };
 
-const Wrapper = ({ position, transparent, children, className, style }) => (
+const Wrapper = ({ position, transparent, id, className, style, children }) => (
   <div
+    id={id}
     className={classNames("p-2", {
       [`absolute ${position} z-10`]: position,
       "bg-transparent": transparent,

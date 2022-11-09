@@ -1,11 +1,10 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import React from "react";
 
-import * as utils from "./../Dataset/utils";
-import { ElementsProvider } from "../../context";
-import SelectedElements from "./SelectedElements";
-import { AssetBtn, CxnBtn, renderTestComponent } from "../../test-utils";
-import { ENERGY_ASSETS } from "../../mocks";
+import * as utils from "../../Dataset/utils";
+import { AssetBtn, clickEnergyDataset, CxnBtn, expandPanel, renderTestComponent } from "../../../test-utils";
+import { ENERGY_ASSETS } from "../../../mocks";
+import InfoPanel from "../InfoPanel";
 
 const TestBtns = ({ assets, connections, onElementClick }) => {
   const event = { originalEvent: { shiftKey: true } };
@@ -23,13 +22,15 @@ const TestBtns = ({ assets, connections, onElementClick }) => {
   );
 };
 
-const renderSelectedDetails = () => renderTestComponent(<SelectedElements />, { testComponent: TestBtns });
+const renderSelectedDetails = () => renderTestComponent(<InfoPanel />, { testComponent: TestBtns });
 
 describe("Selected Elements component", () => {
-  test("renders message when an element(s) aren't selected", () => {
-    render(<SelectedElements />, { wrapper: ElementsProvider });
+  test("renders message when an element(s) aren't selected", async () => {
+    const { user } = renderTestComponent(<InfoPanel />);
+    await expandPanel(user);
+
     expect(
-      screen.getByText(/click on an asset or connection to view details/i)
+      await screen.findByText(/click on an asset or connection to view details/i)
     ).toBeInTheDocument();
   });
 
@@ -37,17 +38,14 @@ describe("Selected Elements component", () => {
     const spyOnCreateData = jest.spyOn(utils, "createData");
     const { user } = renderSelectedDetails();
 
-    await waitFor(() =>
-      expect(screen.getByRole("checkbox", { name: "Energy [25]" })).toBeInTheDocument()
-    );
-    await user.click(await screen.findByRole("checkbox", { name: "Energy [25]" }));
-    expect(screen.getByRole("checkbox", { name: "Energy [25]" })).toBeChecked();
+    await expandPanel(user);
+    await clickEnergyDataset(user);
     await waitFor(() => expect(spyOnCreateData).toHaveReturned());
 
     await user.click(screen.getByRole("button", { name: "E001" }));
     await user.click(screen.getByRole("button", { name: "E003" }));
     await user.click(screen.getByRole("button", { name: "E001 - E003" }));
-    expect(screen.getByRole("heading", { name: "3 Selected Elements" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Selected Elements" })).toBeInTheDocument();
     expect(screen.getAllByRole("listitem")).toHaveLength(6);
     expect(
       screen.getByRole("heading", { name: "East Cowes Power Station (E001)" })
@@ -66,11 +64,8 @@ describe("Selected Elements component", () => {
     const spyOnCreateData = jest.spyOn(utils, "createData");
     const { user } = renderSelectedDetails();
 
-    await waitFor(() =>
-      expect(screen.getByRole("checkbox", { name: "Energy [25]" })).toBeInTheDocument()
-    );
-    await user.click(await screen.findByRole("checkbox", { name: "Energy [25]" }));
-    expect(screen.getByRole("checkbox", { name: "Energy [25]" })).toBeChecked();
+    await expandPanel(user);
+    await clickEnergyDataset(user);
     await waitFor(() => expect(spyOnCreateData).toHaveReturned());
 
     await user.click(screen.getByRole("button", { name: "E001" }));
@@ -88,11 +83,8 @@ describe("Selected Elements component", () => {
     const spyOnCreateData = jest.spyOn(utils, "createData");
     const { user } = renderSelectedDetails();
 
-    await waitFor(() =>
-      expect(screen.getByRole("checkbox", { name: "Energy [25]" })).toBeInTheDocument()
-    );
-    await user.click(await screen.findByRole("checkbox", { name: "Energy [25]" }));
-    expect(screen.getByRole("checkbox", { name: "Energy [25]" })).toBeChecked();
+    await expandPanel(user);
+    await clickEnergyDataset(user);
     await waitFor(() => expect(spyOnCreateData).toHaveReturned());
 
     await user.click(screen.getByRole("button", { name: "E001" }));
@@ -120,11 +112,8 @@ describe("Selected Elements component", () => {
     const spyOnCreateData = jest.spyOn(utils, "createData");
     const { user } = renderSelectedDetails();
 
-    await waitFor(() =>
-      expect(screen.getByRole("checkbox", { name: "Energy [25]" })).toBeInTheDocument()
-    );
-    await user.click(await screen.findByRole("checkbox", { name: "Energy [25]" }));
-    expect(screen.getByRole("checkbox", { name: "Energy [25]" })).toBeChecked();
+    await expandPanel(user);
+    await clickEnergyDataset(user);
     await waitFor(() => expect(spyOnCreateData).toHaveReturned());
 
     await user.click(screen.getByRole("button", { name: "E001" }));
@@ -146,11 +135,8 @@ describe("Selected Elements component", () => {
     const spyOnCreateData = jest.spyOn(utils, "createData");
     const { user } = renderSelectedDetails();
 
-    await waitFor(() =>
-      expect(screen.getByRole("checkbox", { name: "Energy [25]" })).toBeInTheDocument()
-    );
-    await user.click(await screen.findByRole("checkbox", { name: "Energy [25]" }));
-    expect(screen.getByRole("checkbox", { name: "Energy [25]" })).toBeChecked();
+    await expandPanel(user);
+    await clickEnergyDataset(user);
     await waitFor(() => expect(spyOnCreateData).toHaveReturned());
 
     await user.click(screen.getByRole("button", { name: "E001" }));

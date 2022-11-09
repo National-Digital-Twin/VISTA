@@ -2,8 +2,8 @@ import { render, screen, within } from "@testing-library/react";
 import React from "react";
 import userEvent from "@testing-library/user-event";
 
-import { E001_DETAILS, E001_E003_DETAILS, E003_DETAILS } from "../../mocks";
-import ElementDetails from "./ElementDetails";
+import { E001_DETAILS, E001_E003_DETAILS, E003_DETAILS } from "mocks";
+import ElementDetails from "../ElementDetails";
 
 const renderElementDetails = (element) => ({
   user: userEvent.setup(),
@@ -14,9 +14,7 @@ describe("Element details component", () => {
   test("can toggle connected assets section", async () => {
     const { user } = renderElementDetails(E001_DETAILS);
 
-    expect(
-      screen.getByRole("heading", { name: "1 Connected Assets", level: 3 })
-    ).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "1 Connected Assets", level: 3 })).toBeInTheDocument();
     expect(screen.getByRole("list")).toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: "1 Connected Assets" }));
@@ -55,9 +53,7 @@ describe("Element details component: asset", () => {
   test("renders connected assets", async () => {
     renderElementDetails(E003_DETAILS);
 
-    expect(
-      screen.getByRole("heading", { name: "1 Connected Assets", level: 3 })
-    ).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "1 Connected Assets", level: 3 })).toBeInTheDocument();
     expect(screen.getAllByRole("listitem")).toHaveLength(1);
     const connectedAsset = screen.getByRole("listitem");
     expect(
@@ -89,9 +85,7 @@ describe("Element details component: connection", () => {
   test("renders connected assets", async () => {
     renderElementDetails(E001_E003_DETAILS);
 
-    expect(
-      screen.getByRole("heading", { name: "2 Connected Assets", level: 3 })
-    ).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "2 Connected Assets", level: 3 })).toBeInTheDocument();
     expect(screen.getAllByRole("listitem")).toHaveLength(2);
 
     const connectedAsset1 = screen.getAllByRole("listitem")[0];

@@ -109,16 +109,14 @@ const AssetGrid = ({ asset, criticalityColorScale, totalCxnsColorScale }) => {
       style={{
         position: "sticky",
         top: 0,
-        zIndex: 99,
+        zIndex: 5,
         backgroundColor: "black",
         gridColumnStart: gridIndex + 4,
         gridRowStart: 1,
         gridColumnEnd: gridIndex + 4,
         gridRowEnd: 1,
       }}
-      className={classNames("col-header", {
-        "border-2 border-red-500": !lat || !lon,
-      })}
+      className="col-header"
       onClick={onClick}
       id={`${uri}`}
       role="button"
