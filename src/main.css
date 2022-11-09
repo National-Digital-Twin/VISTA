@@ -750,10 +750,6 @@ video {
   width: 16rem;
 }
 
-.w-1\/4 {
-  width: 25%;
-}
-
 .flex-1 {
   flex: 1 1 0%;
 }
@@ -1069,6 +1065,11 @@ video {
 .\!text-2xl {
   font-size: 1.5rem !important;
   line-height: 2rem !important;
+}
+
+.text-base {
+  font-size: 1rem;
+  line-height: 1.5rem;
 }
 
 .font-bold {
