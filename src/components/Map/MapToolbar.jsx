@@ -5,12 +5,13 @@ import { useMap } from "react-map-gl";
 import { useOutsideAlerter } from "../../hooks";
 import { ToolbarButton, VerticalDivider } from "../../lib";
 import { getMapStyles } from "./mapStyles";
+import useDraw from "./useDraw";
 
 const MapToolbar = ({ mapStyle, setMapStyle }) => {
   const { telicentMap: map } = useMap();
+  const { activatePolygonMode, deleteAllPolygons } = useDraw();
 
   const [showMapStyles, setShowMapStyles] = useState(false);
-
   const mapStyles = getMapStyles();
 
   const handleZoomOut = () => {
@@ -23,11 +24,11 @@ const MapToolbar = ({ mapStyle, setMapStyle }) => {
     map.zoomIn({ duration: 1000 });
   };
 
-  const togglePolygon = ( isActive ) => {
+/*   const togglePolygon = ( isActive ) => {
     const control = map.getMap();
     const polygonControl = control._controls.filter( item => item?.types?.POLYGON ? item : null);
     return isActive ? polygonControl[0].changeMode("draw_polygon") : polygonControl[0].deleteAll();
-  }
+  } */
 
   return (
     <div className="absolute bottom-0 left-0 text-whiteSmoke font-body bg-black-200 flex items-center justify-center gap-x-2 px-2 py-1">
@@ -57,8 +58,8 @@ const MapToolbar = ({ mapStyle, setMapStyle }) => {
         }
       />
       <VerticalDivider />
-      <ToolbarButton icon="fg-polyline-pt" label="Draw Polygon" onClick={() => togglePolygon(true)} />
-      <ToolbarButton icon="ri-delete-bin-line" label="Delete Polygons" onClick={() => togglePolygon(false)} />
+      <ToolbarButton icon="fg-polyline-pt" label="Draw Polygon" onClick={() => activatePolygonMode()} />
+      <ToolbarButton icon="ri-delete-bin-line" label="Delete Polygons" onClick={() => deleteAllPolygons()} />
     </div>
   );
 };

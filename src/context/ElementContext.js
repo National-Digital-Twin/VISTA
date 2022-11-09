@@ -75,7 +75,7 @@ const elementsReducer = (state, action) => {
         };
       }
 
-      if (action.event?.originalEvent?.shiftKey ?? action.event.shiftKey) {
+      if (action.event?.originalEvent?.shiftKey ?? action.event?.shiftKey) {
         const getSelected = () => {
           const index = state.selectedElements.findIndex(
             (selectedElement) => selectedElement.id === action.selectedElement.id
@@ -154,10 +154,9 @@ export const ElementsProvider = ({ children }) => {
     dispatch({ type: RESET });
   }, []);
 
-  const onElementClick = (event, selectedElement) => {
-    console.log({ selectedElement })
+  const onElementClick = useCallback((event, selectedElement) => {
     dispatch({ type: UPDATE_SELECTED_ELEMENTS, event, selectedElement });
-  };
+  }, []);
 
   const updateErrors = useCallback((msg) => {
     dispatch({ type: UPDATE_ERRORS, error: msg });
