@@ -73,7 +73,7 @@ const MapStyles = ({ items, mapStyle, onClose, setMapStyle }) => {
   const generateMenuItems = ({ id, name }) => (
     <li key={name} className="whitespace-nowrap">
       <button
-        className={classNames("hover:bg-black-400 px-2 rounded-md w-full h-full", {
+        className={classNames("hover:bg-black-400 px-2 rounded-md w-full h-full text-base", {
           "bg-black-500": id === mapStyle,
         })}
         onClick={() => setMapStyle(id)}
