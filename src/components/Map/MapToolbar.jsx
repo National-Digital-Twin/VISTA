@@ -5,10 +5,11 @@ import { useMap } from "react-map-gl";
 import { useOutsideAlerter } from "../../hooks";
 import { ToolbarButton, VerticalDivider } from "../../lib";
 import { getMapStyles } from "./mapStyles";
+import useDraw from "./useDraw";
 
 const MapToolbar = ({ mapStyle, setMapStyle }) => {
   const { telicentMap: map } = useMap();
-
+  const { activatePolygonMode, deleteAllPolygons } = useDraw();
   const [showMapStyles, setShowMapStyles] = useState(false);
 
   const mapStyles = getMapStyles();
@@ -50,6 +51,15 @@ const MapToolbar = ({ mapStyle, setMapStyle }) => {
           />
         }
       />
+      <VerticalDivider />
+      <ToolbarButton 
+        icon="fg-polyline-pt" 
+        label="Draw Polygon (Beta)" 
+        onClick={() => { activatePolygonMode() }} />
+      <ToolbarButton 
+        icon="ri-delete-bin-line" 
+        label="Delete Polygons" 
+        onClick={() => { deleteAllPolygons() }}/>
     </div>
   );
 };
@@ -83,3 +93,4 @@ const MapStyles = ({ items, mapStyle, onClose, setMapStyle }) => {
     </ul>
   );
 };
+

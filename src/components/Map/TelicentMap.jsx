@@ -83,6 +83,12 @@ const TelicentMap = () => {
     const clickedFeature = features && features[0];
     clearSelected();
 
+    const polygonControl = event.target._controls.filter( item => item?.types?.POLYGON ? item : null);
+
+    if ( polygonControl[0].getSelected().features.length === 0 && !clickedFeature) {
+      clearSelectedElements();
+    }
+
     if (clickedFeature) {
       const { properties } = clickedFeature;
       event.originalEvent.stopPropagation();
@@ -90,7 +96,7 @@ const TelicentMap = () => {
       onElementClick(event, element);
       return;
     }
-    clearSelectedElements();
+
   };
 
   const handleOnMouseMove = (event) => {
@@ -156,8 +162,8 @@ const TelicentMap = () => {
           left={hoverInfo?.x}
           top={hoverInfo?.y}
         />
+        <MapToolbar mapStyle={mapStyle} setMapStyle={setMapStyle} />
       </Map>
-      <MapToolbar mapStyle={mapStyle} setMapStyle={setMapStyle} />
     </div>
   );
 };
