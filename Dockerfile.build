@@ -14,6 +14,7 @@ FROM installation as build
 ADD src src
 ADD public public
 COPY craco.config.js .
+COPY jsconfig.json .
 COPY tailwind.config.js .
 
 RUN yarn build:tailwind
