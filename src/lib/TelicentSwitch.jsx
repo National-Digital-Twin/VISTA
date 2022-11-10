@@ -1,8 +1,13 @@
+import classNames from "classnames";
 import React from "react";
 import ReactSwitch from "react-switch";
 
-const TelicentSwitch = ({ label, checked, onChange }) => (
-  <label className="flex items-center gap-x-3 text-sm w-fit">
+const TelicentSwitch = ({ label, checked, onChange, className: wrapperClassName }) => (
+  <label
+    className={classNames("flex items-center gap-x-3 text-sm w-fit", {
+      [wrapperClassName]: wrapperClassName,
+    })}
+  >
     {label}
     <ReactSwitch
       onChange={onChange}

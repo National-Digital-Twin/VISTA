@@ -558,7 +558,7 @@ video {
   grid-template-columns: 1fr -webkit-min-content;
   grid-template-columns: 1fr min-content;
   align-items: center;
-  background-color: #B80000;
+  background-color: #b80000;
 }
 
 .link:hover + .linkBorder {
@@ -622,6 +622,10 @@ video {
 
 .-right-0 {
   right: -0px;
+}
+
+.bottom-12 {
+  bottom: 3rem;
 }
 
 .-top-12 {
@@ -708,6 +712,10 @@ video {
   max-height: 100%;
 }
 
+.max-h-40 {
+  max-height: 10rem;
+}
+
 .min-h-0 {
   min-height: 0px;
 }
@@ -716,18 +724,18 @@ video {
   width: 100%;
 }
 
+.w-fit {
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+}
+
 .w-3\.5 {
   width: 0.875rem;
 }
 
 .w-3 {
   width: 0.75rem;
-}
-
-.w-fit {
-  width: -webkit-fit-content;
-  width: -moz-fit-content;
-  width: fit-content;
 }
 
 .w-1\/2 {
@@ -756,6 +764,11 @@ video {
 
 .grow {
   flex-grow: 1;
+}
+
+.transform {
+  -webkit-transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+          transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
 .cursor-default {
@@ -808,6 +821,11 @@ video {
   row-gap: 0.25rem;
 }
 
+.gap-x-3 {
+  -webkit-column-gap: 0.75rem;
+          column-gap: 0.75rem;
+}
+
 .gap-y-2 {
   row-gap: 0.5rem;
 }
@@ -833,10 +851,6 @@ video {
   overflow: auto;
 }
 
-.overflow-x-auto {
-  overflow-x: auto;
-}
-
 .overflow-y-auto {
   overflow-y: auto;
 }
@@ -845,8 +859,8 @@ video {
   overflow-x: scroll;
 }
 
-.overscroll-x-contain {
-  overscroll-behavior-x: contain;
+.overscroll-y-contain {
+  overscroll-behavior-y: contain;
 }
 
 .scroll-smooth {
@@ -861,6 +875,10 @@ video {
 
 .whitespace-nowrap {
   white-space: nowrap;
+}
+
+.break-words {
+  overflow-wrap: break-word;
 }
 
 .rounded-md {
@@ -1037,6 +1055,11 @@ video {
   line-height: 1.5rem !important;
 }
 
+.text-sm {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
 .\!text-xl {
   font-size: 1.25rem !important;
   line-height: 1.75rem !important;
@@ -1050,11 +1073,6 @@ video {
 .text-lg {
   font-size: 1.125rem;
   line-height: 1.75rem;
-}
-
-.text-sm {
-  font-size: 0.875rem;
-  line-height: 1.25rem;
 }
 
 .\!text-sm {
@@ -1134,7 +1152,7 @@ video {
 }
 
 :root {
-  --app-Colour: #2EFA8D !important;
+  --app-Colour: #2efa8d !important;
 }
 
 ::-webkit-scrollbar {

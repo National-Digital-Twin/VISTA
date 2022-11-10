@@ -26,6 +26,7 @@ const VIEWSTATE = {
   longitude: -1.3480234953335598,
   zoom: 9,
 };
+const HEAT_RADIUS = 1000;
 
 const TelicentMap = () => {
   const { telicentMap: map } = useMap();
@@ -120,14 +121,9 @@ const TelicentMap = () => {
     setCursor("auto");
   };
 
-  const HEAT_RADIUS = 100;
-
   const handleOnZoom = (event) => {
     const { pixelsPerMeter } = event.target.transform;
-    let radius = HEAT_RADIUS * pixelsPerMeter;
-    if (radius <= 1) radius = 1;
-    console.log({ radius, zoom: event.viewState.zoom });
-    // (event.target.transform.pixelsPerMeter
+    const radius = HEAT_RADIUS * pixelsPerMeter;
     map.getMap().setPaintProperty(heatmap.id, "heatmap-radius", radius);
   };
 
@@ -149,6 +145,7 @@ const TelicentMap = () => {
         boxZoom={false}
         onZoom={handleOnZoom}
       >
+        <ScaleControl position="top-left" style={{ backgroundColor: "#27272780", color: "#F5F5F5", borderColor: "#949494", fontFamily: "Urbanist", letterSpacing: "1.5px" }} />
         <Source
           id="all-assets"
           type={GEOJSON}
@@ -183,8 +180,7 @@ const TelicentMap = () => {
           left={hoverInfo?.x}
           top={hoverInfo?.y}
         />
-        <ScaleControl position="top-left" />
-        <MapToolbar mapStyle={mapStyle} setMapStyle={setMapStyle} />
+        <MapToolbar map={map} mapStyle={mapStyle} setMapStyle={setMapStyle} />
       </Map>
     </div>
   );
