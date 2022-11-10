@@ -136,7 +136,7 @@ const DetailsSection = ({ expand, onToggle, show, title, children }) => {
 };
 
 const ConnectedAssets = ({ connectedAssets }) => {
-  const [expand, setExpand] = useLocalStorage("showConnectedAssets", false);
+  const [expand, setExpand] = useLocalStorage("showConnectedAssets", true);
 
   const handleToggleSection = () => {
     setExpand((prev) => !prev);
