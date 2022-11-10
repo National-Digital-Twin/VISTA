@@ -90,6 +90,14 @@ const TelicentMap = () => {
     const clickedFeature = features && features[0];
     clearSelected();
 
+    const polygonControl = event.target._controls.filter((item) =>
+      item?.types?.POLYGON ? item : null
+    );
+
+    if (polygonControl[0].getSelected().features.length === 0 && !clickedFeature) {
+      clearSelectedElements();
+    }
+
     if (clickedFeature) {
       const { properties } = clickedFeature;
       event.originalEvent.stopPropagation();
@@ -97,7 +105,6 @@ const TelicentMap = () => {
       onElementClick(event, element);
       return;
     }
-    clearSelectedElements();
   };
 
   const handleOnMouseMove = (event) => {
@@ -117,15 +124,15 @@ const TelicentMap = () => {
 
   const handleOnZoom = (event) => {
     const { pixelsPerMeter } = event.target.transform;
-    let radius = HEAT_RADIUS * pixelsPerMeter
+    let radius = HEAT_RADIUS * pixelsPerMeter;
     if (radius <= 1) radius = 1;
     console.log({ radius, zoom: event.viewState.zoom });
     // (event.target.transform.pixelsPerMeter
-    map.getMap().setPaintProperty(heatmap.id,"heatmap-radius", radius );
+    map.getMap().setPaintProperty(heatmap.id, "heatmap-radius", radius);
   };
 
   return (
-    <div className="relative">
+    <div className="relative w-full">
       <Map
         cursor={cursor}
         id="telicentMap"
@@ -177,8 +184,8 @@ const TelicentMap = () => {
           top={hoverInfo?.y}
         />
         <ScaleControl position="top-left" />
+        <MapToolbar mapStyle={mapStyle} setMapStyle={setMapStyle} />
       </Map>
-      <MapToolbar mapStyle={mapStyle} setMapStyle={setMapStyle} />
     </div>
   );
 };

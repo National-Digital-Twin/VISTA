@@ -1,0 +1,136 @@
+const TRANSPORT_CONNECTIONS = [
+  {
+    connUri: "http://telicent.io/fake_data#connector_T001_T045",
+    asset1Uri: "http://telicent.io/fake_data#T001",
+    asset2Uri: "http://telicent.io/fake_data#T045",
+    criticality: 3,
+  },
+  {
+    connUri: "http://telicent.io/fake_data#connector_T001_T002",
+    asset1Uri: "http://telicent.io/fake_data#T001",
+    asset2Uri: "http://telicent.io/fake_data#T002",
+    criticality: 1,
+  },
+  {
+    connUri: "http://telicent.io/fake_data#connector_T004_T005",
+    asset1Uri: "http://telicent.io/fake_data#T004",
+    asset2Uri: "http://telicent.io/fake_data#T005",
+    criticality: 3,
+  },
+  {
+    connUri: "http://telicent.io/fake_data#connector_T003_T005",
+    asset1Uri: "http://telicent.io/fake_data#T003",
+    asset2Uri: "http://telicent.io/fake_data#T005",
+    criticality: 2,
+  },
+  {
+    connUri: "http://telicent.io/fake_data#connector_T005_T009",
+    asset1Uri: "http://telicent.io/fake_data#T005",
+    asset2Uri: "http://telicent.io/fake_data#T009",
+    criticality: 1,
+  },
+  {
+    connUri: "http://telicent.io/fake_data#connector_T005_T040",
+    asset1Uri: "http://telicent.io/fake_data#T005",
+    asset2Uri: "http://telicent.io/fake_data#T040",
+    criticality: 3,
+  },
+  {
+    connUri: "http://telicent.io/fake_data#connector_T005_T022",
+    asset1Uri: "http://telicent.io/fake_data#T005",
+    asset2Uri: "http://telicent.io/fake_data#T022",
+    criticality: 1,
+  },
+  {
+    connUri: "http://telicent.io/fake_data#connector_T005_T017",
+    asset1Uri: "http://telicent.io/fake_data#T005",
+    asset2Uri: "http://telicent.io/fake_data#T017",
+    criticality: 1,
+  },
+  {
+    connUri: "http://telicent.io/fake_data#connector_T005_T007",
+    asset1Uri: "http://telicent.io/fake_data#T005",
+    asset2Uri: "http://telicent.io/fake_data#T007",
+    criticality: 2,
+  },
+  {
+    connUri: "http://telicent.io/fake_data#connector_T005_T023",
+    asset1Uri: "http://telicent.io/fake_data#T005",
+    asset2Uri: "http://telicent.io/fake_data#T023",
+    criticality: 1,
+  },
+  {
+    connUri: "http://telicent.io/fake_data#connector_T005_T029",
+    asset1Uri: "http://telicent.io/fake_data#T005",
+    asset2Uri: "http://telicent.io/fake_data#T029",
+    criticality: 2,
+  },
+  {
+    connUri: "http://telicent.io/fake_data#connector_T005_T016",
+    asset1Uri: "http://telicent.io/fake_data#T005",
+    asset2Uri: "http://telicent.io/fake_data#T016",
+    criticality: 1,
+  },
+  {
+    connUri: "http://telicent.io/fake_data#connector_T005_T021",
+    asset1Uri: "http://telicent.io/fake_data#T005",
+    asset2Uri: "http://telicent.io/fake_data#T021",
+    criticality: 1,
+  },
+  {
+    connUri: "http://telicent.io/fake_data#connector_T005_T019",
+    asset1Uri: "http://telicent.io/fake_data#T005",
+    asset2Uri: "http://telicent.io/fake_data#T019",
+    criticality: 1,
+  },
+  {
+    connUri: "http://telicent.io/fake_data#connector_T005_T020",
+    asset1Uri: "http://telicent.io/fake_data#T005",
+    asset2Uri: "http://telicent.io/fake_data#T020",
+    criticality: 1,
+  },
+  {
+    connUri: "http://telicent.io/fake_data#connector_T005_T028",
+    asset1Uri: "http://telicent.io/fake_data#T005",
+    asset2Uri: "http://telicent.io/fake_data#T028",
+    criticality: 2,
+  },
+  {
+    connUri: "http://telicent.io/fake_data#connector_T005_T008",
+    asset1Uri: "http://telicent.io/fake_data#T005",
+    asset2Uri: "http://telicent.io/fake_data#T008",
+    criticality: 1,
+  },
+  {
+    connUri: "http://telicent.io/fake_data#connector_T005_T041",
+    asset1Uri: "http://telicent.io/fake_data#T005",
+    asset2Uri: "http://telicent.io/fake_data#T041",
+    criticality: 3,
+  },
+  {
+    connUri: "http://telicent.io/fake_data#connector_T005_T018",
+    asset1Uri: "http://telicent.io/fake_data#T005",
+    asset2Uri: "http://telicent.io/fake_data#T018",
+    criticality: 1,
+  },
+  {
+    connUri: "http://telicent.io/fake_data#connector_T005_T006",
+    asset1Uri: "http://telicent.io/fake_data#T005",
+    asset2Uri: "http://telicent.io/fake_data#T006",
+    criticality: 3,
+  },
+  {
+    connUri: "http://telicent.io/fake_data#connector_T026_T031",
+    asset1Uri: "http://telicent.io/fake_data#T026",
+    asset2Uri: "http://telicent.io/fake_data#T031",
+    criticality: 3,
+  },
+  {
+    connUri: "http://telicent.io/fake_data#connector_T031_T032",
+    asset1Uri: "http://telicent.io/fake_data#T031",
+    asset2Uri: "http://telicent.io/fake_data#T032",
+    criticality: 3,
+  },
+];
+
+export default TRANSPORT_CONNECTIONS;

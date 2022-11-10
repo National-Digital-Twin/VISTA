@@ -2,7 +2,7 @@
 
 exports[`Grid component renders grid 1`] = `
 <div
-  class="relative h-full overflow-auto"
+  class="relative flex-1 h-full w-1/2 overflow-auto"
   id="grid"
 >
   <div
@@ -14,7 +14,7 @@ exports[`Grid component renders grid 1`] = `
       data-asset="{\\"id\\":\\"http://telicent.io/fake_data#E001\\",\\"label\\":\\"E001\\",\\"name\\":\\"East Cowes Power Station\\",\\"description\\":\\"Cowes power station (or Kingston power station) is a 140MW Open Cycle Gas Turbine station powered by two 70MW units. The station is the Isle of Wight's only conventional power generation source other than power from the mainland. The station was built in 1982 at a cost of �30 million. The station is owned and operated by RWE Generation UK.\\",\\"lat\\":50.7469147487978,\\"lng\\":-1.286223030930041,\\"type\\":\\"http://ies.data.gov.uk/ontology/ies4#Facility\\",\\"gridIndex\\":1,\\"connections\\":[{\\"id\\":\\"http://telicent.io/fake_data#connector_E001_E003\\",\\"criticality\\":3,\\"source\\":\\"http://telicent.io/fake_data#E001\\",\\"target\\":\\"http://telicent.io/fake_data#E003\\",\\"label\\":\\"E001 - E003\\",\\"elementType\\":\\"connection\\"}],\\"criticality\\":3,\\"segments\\":[],\\"elementType\\":\\"asset\\"}"
       id="http://telicent.io/fake_data#E001"
       role="button"
-      style="position: sticky; top: 0px; z-index: 99; background-color: black; grid-column-start: 5; grid-row-start: 1; grid-column-end: 5; grid-row-end: 1;"
+      style="position: sticky; top: 0px; z-index: 5; background-color: black; grid-column-start: 5; grid-row-start: 1; grid-column-end: 5; grid-row-end: 1;"
       title="East Cowes Power Station"
     >
       E001
@@ -64,7 +64,7 @@ exports[`Grid component renders grid 1`] = `
       data-asset="{\\"id\\":\\"http://telicent.io/fake_data#E003\\",\\"label\\":\\"E003\\",\\"name\\":\\"East Cowes 132/33kV Substation\\",\\"lat\\":50.745512094115526,\\"lng\\":-1.2862585277780134,\\"type\\":\\"http://ies.data.gov.uk/ontology/ies4#Facility\\",\\"gridIndex\\":2,\\"connections\\":[{\\"id\\":\\"http://telicent.io/fake_data#connector_E001_E003\\",\\"criticality\\":3,\\"source\\":\\"http://telicent.io/fake_data#E003\\",\\"target\\":\\"http://telicent.io/fake_data#E001\\",\\"label\\":\\"E001 - E003\\",\\"elementType\\":\\"connection\\"}],\\"criticality\\":3,\\"segments\\":[],\\"elementType\\":\\"asset\\"}"
       id="http://telicent.io/fake_data#E003"
       role="button"
-      style="position: sticky; top: 0px; z-index: 99; background-color: black; grid-column-start: 6; grid-row-start: 1; grid-column-end: 6; grid-row-end: 1;"
+      style="position: sticky; top: 0px; z-index: 5; background-color: black; grid-column-start: 6; grid-row-start: 1; grid-column-end: 6; grid-row-end: 1;"
       title="East Cowes 132/33kV Substation"
     >
       E003
@@ -114,7 +114,7 @@ exports[`Grid component renders grid 1`] = `
       data-asset="{\\"id\\":\\"http://telicent.io/fake_data#E005\\",\\"label\\":\\"E005\\",\\"name\\":\\"Arreton Power Source\\",\\"description\\":\\"Gore Cross Anerobic Digestion Plant 2.2MW biogas plant run by Wight Farm Energy\\",\\"lat\\":50.67506215068563,\\"lng\\":-1.2532016776565253,\\"type\\":\\"http://ies.data.gov.uk/ontology/ies4#Facility\\",\\"gridIndex\\":3,\\"connections\\":[{\\"id\\":\\"http://telicent.io/fake_data#connector_E005_E006\\",\\"criticality\\":3,\\"source\\":\\"http://telicent.io/fake_data#E005\\",\\"target\\":\\"http://telicent.io/fake_data#E006\\",\\"label\\":\\"E005 - E006\\",\\"elementType\\":\\"connection\\"}],\\"criticality\\":3,\\"segments\\":[],\\"elementType\\":\\"asset\\"}"
       id="http://telicent.io/fake_data#E005"
       role="button"
-      style="position: sticky; top: 0px; z-index: 99; background-color: black; grid-column-start: 7; grid-row-start: 1; grid-column-end: 7; grid-row-end: 1;"
+      style="position: sticky; top: 0px; z-index: 5; background-color: black; grid-column-start: 7; grid-row-start: 1; grid-column-end: 7; grid-row-end: 1;"
       title="Arreton Power Source"
     >
       E005
@@ -164,7 +164,7 @@ exports[`Grid component renders grid 1`] = `
       data-asset="{\\"id\\":\\"http://telicent.io/fake_data#E006\\",\\"label\\":\\"E006\\",\\"name\\":\\"Arreton 33kV \\",\\"description\\":\\"Not labelled as a substation on openstreetmap. Visible on Google maps though.\\",\\"lat\\":50.67381026264697,\\"lng\\":-1.2376239838760517,\\"type\\":\\"http://ies.data.gov.uk/ontology/ies4#Facility\\",\\"gridIndex\\":4,\\"connections\\":[{\\"id\\":\\"http://telicent.io/fake_data#connector_E006_E012\\",\\"criticality\\":3,\\"source\\":\\"http://telicent.io/fake_data#E006\\",\\"target\\":\\"http://telicent.io/fake_data#E012\\",\\"label\\":\\"E006 - E012\\",\\"elementType\\":\\"connection\\"},{\\"id\\":\\"http://telicent.io/fake_data#connector_E004_E006\\",\\"criticality\\":3,\\"source\\":\\"http://telicent.io/fake_data#E006\\",\\"target\\":\\"http://telicent.io/fake_data#E004\\",\\"label\\":\\"E004 - E006\\",\\"elementType\\":\\"connection\\"},{\\"id\\":\\"http://telicent.io/fake_data#connector_E005_E006\\",\\"criticality\\":3,\\"source\\":\\"http://telicent.io/fake_data#E006\\",\\"target\\":\\"http://telicent.io/fake_data#E005\\",\\"label\\":\\"E005 - E006\\",\\"elementType\\":\\"connection\\"}],\\"criticality\\":9,\\"segments\\":[],\\"elementType\\":\\"asset\\"}"
       id="http://telicent.io/fake_data#E006"
       role="button"
-      style="position: sticky; top: 0px; z-index: 99; background-color: black; grid-column-start: 8; grid-row-start: 1; grid-column-end: 8; grid-row-end: 1;"
+      style="position: sticky; top: 0px; z-index: 5; background-color: black; grid-column-start: 8; grid-row-start: 1; grid-column-end: 8; grid-row-end: 1;"
       title="Arreton 33kV "
     >
       E006
@@ -214,7 +214,7 @@ exports[`Grid component renders grid 1`] = `
       data-asset="{\\"id\\":\\"http://telicent.io/fake_data#E012\\",\\"label\\":\\"E012\\",\\"name\\":\\"Ventnor 33kV / 11kV Substation\\",\\"description\\":null,\\"lat\\":50.59751535205935,\\"lng\\":-1.2081500494308142,\\"type\\":\\"http://ies.data.gov.uk/ontology/ies4#Facility\\",\\"gridIndex\\":5,\\"connections\\":[{\\"id\\":\\"http://telicent.io/fake_data#connector_E006_E012\\",\\"criticality\\":3,\\"source\\":\\"http://telicent.io/fake_data#E012\\",\\"target\\":\\"http://telicent.io/fake_data#E006\\",\\"label\\":\\"E006 - E012\\",\\"elementType\\":\\"connection\\"}],\\"criticality\\":3,\\"segments\\":[],\\"elementType\\":\\"asset\\"}"
       id="http://telicent.io/fake_data#E012"
       role="button"
-      style="position: sticky; top: 0px; z-index: 99; background-color: black; grid-column-start: 9; grid-row-start: 1; grid-column-end: 9; grid-row-end: 1;"
+      style="position: sticky; top: 0px; z-index: 5; background-color: black; grid-column-start: 9; grid-row-start: 1; grid-column-end: 9; grid-row-end: 1;"
       title="Ventnor 33kV / 11kV Substation"
     >
       E012

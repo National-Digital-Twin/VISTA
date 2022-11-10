@@ -1,9 +1,25 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import React from "react";
 import userEvent from "@testing-library/user-event";
-import { Categories } from "./components";
+import { Dataset } from "./components";
 import { CytoscapeProvider, ElementsContext, ElementsProvider } from "./context";
-import * as utils from "./components/Categories/utils";
+import * as utils from "./components/Dataset/utils";
+
+const user = userEvent.setup();
+export const clickEnergyDataset = async () => {
+  await user.click(await screen.findByRole("checkbox", { name: "Energy [25]" }));
+  expect(screen.getByRole("checkbox", { name: "Energy [25]" })).toBeChecked();
+}
+
+export const clickTransportDataset = async () => {
+  await user.click(await screen.findByRole("checkbox", { name: "Transport [44]" }));
+}
+
+export const clickMedicalDataset = async () => {
+  await user.click(await screen.findByRole("checkbox", { name: "Medical [32]" }));
+}
+
+export const expandPanel = async (user) => await user.click(screen.getByRole("button", { name: "Open information panel" }));
 
 export const AssetBtn = ({ label, assets, event, onElementClick }) => (
   <button
@@ -60,7 +76,7 @@ const LoadDataWrapper = ({ testComponent, children }) => (
                   </p>
                 ))}
               </div>
-              <Categories />
+              <Dataset />
               {children}
             </>
           );

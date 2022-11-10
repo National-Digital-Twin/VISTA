@@ -24,6 +24,7 @@ beforeAll(() => server.listen());
 beforeEach(() => {
   server.resetHandlers();
   jest.restoreAllMocks();
+  window.localStorage.clear();
 });
 afterAll(() => server.close());
 
@@ -38,6 +39,7 @@ jest.mock("react-map-gl", () => ({
   ),
   Layer: (props) => <div {...props}></div>,
   MapProvider: ({ children }) => <div>{children}</div>,
+  useControl: () => ({}),
   useMap: () =>
     jest.fn().mockReturnValue({
       telicentMap: { zoomIn: jest.fn(), zoomOut: jest.fn() },

@@ -5,7 +5,6 @@ import GridToolbar from "./GridToolbar";
 import { useContext } from "react";
 import { ElementsContext } from "../../context/ElementContext";
 import { findAsset, getHexColor } from "../../utils";
-import { Asset, Connection } from "../../models";
 
 const Grid = ({ loading }) => {
   const [zoomLevel, setZoomLevel] = useState(100);
@@ -51,7 +50,7 @@ const Grid = ({ loading }) => {
 
   return (
     <>
-      <div id="grid" className="relative h-full overflow-auto">
+      <div id="grid" className="relative flex-1 h-full w-1/2 overflow-auto">
         <div
           style={{
             zoom: `${zoomLevel}%`,
@@ -68,7 +67,7 @@ const Grid = ({ loading }) => {
 };
 
 const AssetGrid = ({ asset, criticalityColorScale, totalCxnsColorScale }) => {
-  const { onAssetSelect } = useContext(ElementsContext);
+  const { onElementClick } = useContext(ElementsContext);
   const { id, label, name, lng, lat, gridIndex, criticality, totalCxns } = asset;
 
   const criticalityColor = getHexColor(criticalityColorScale, criticality);
@@ -76,7 +75,7 @@ const AssetGrid = ({ asset, criticalityColorScale, totalCxnsColorScale }) => {
 
   const handleOnAssetClick = (event) => {
     const asset = event.target.dataset.asset;
-    onAssetSelect([new Asset(JSON.parse(asset))]);
+    onElementClick(event, JSON.parse(asset));
   };
 
   const AssetIdentifierCol = ({ gridIndex, id, lat, lon, title, uri, onClick }) => (
@@ -110,16 +109,14 @@ const AssetGrid = ({ asset, criticalityColorScale, totalCxnsColorScale }) => {
       style={{
         position: "sticky",
         top: 0,
-        zIndex: 99,
+        zIndex: 5,
         backgroundColor: "black",
         gridColumnStart: gridIndex + 4,
         gridRowStart: 1,
         gridColumnEnd: gridIndex + 4,
         gridRowEnd: 1,
       }}
-      className={classNames("col-header", {
-        "border-2 border-red-500": !lat || !lon,
-      })}
+      className="col-header"
       onClick={onClick}
       id={`${uri}`}
       role="button"
@@ -233,11 +230,11 @@ const AssetGrid = ({ asset, criticalityColorScale, totalCxnsColorScale }) => {
 };
 
 const ConnectionBtn = ({ colorScale, criticality, data, position, uri }) => {
-  const { onAssetSelect } = useContext(ElementsContext);
+  const { onElementClick } = useContext(ElementsContext);
 
   const handleOnConnectionClick = (event) => {
     const connection = event.target.dataset.connection;
-    onAssetSelect([new Connection(JSON.parse(connection))]);
+    onElementClick(event, JSON.parse(connection));
   };
 
   return (

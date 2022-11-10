@@ -5,12 +5,14 @@ import { useMap } from "react-map-gl";
 import { useOutsideAlerter } from "../../hooks";
 import { TelicentSwitch, ToolbarButton, VerticalDivider } from "../../lib";
 import { getMapStyles } from "./mapStyles";
+import useDraw from "./useDraw";
 
 const MapToolbar = ({ mapStyle: selectedMapStyle, setMapStyle }) => {
   const { telicentMap: map } = useMap();
 
   const [isHeatVisible, setIsHeatVisible] = useState(false);
   const [showLayers, setShowLayers] = useState(false);
+  const { activatePolygonMode, deleteAllPolygons } = useDraw();
   const [showMapStyles, setShowMapStyles] = useState(false);
 
   const mapStyles = getMapStyles();
@@ -87,6 +89,15 @@ const MapToolbar = ({ mapStyle: selectedMapStyle, setMapStyle }) => {
           />
         }
       />
+      <VerticalDivider />
+      <ToolbarButton 
+        icon="fg-polyline-pt" 
+        label="Draw Polygon (Beta)" 
+        onClick={() => { activatePolygonMode() }} />
+      <ToolbarButton 
+        icon="ri-delete-bin-line" 
+        label="Delete Polygons" 
+        onClick={() => { deleteAllPolygons() }}/>
     </div>
   );
 };
@@ -110,6 +121,18 @@ const SecondaryMenu = ({ menuItems, onClose }) => {
       </li>
     );
   };
+/*   const generateMenuItems = ({ id, name }) => (
+    <li key={name} className="whitespace-nowrap">
+      <button
+        className={classNames("hover:bg-black-400 px-2 rounded-md w-full h-full text-base", {
+          "bg-black-500": id === mapStyle,
+        })}
+        onClick={() => setMapStyle(id)}
+      >
+        {name}
+      </button>
+    </li>
+  ); */
 
   return (
     <ul

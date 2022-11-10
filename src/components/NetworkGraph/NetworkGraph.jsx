@@ -9,27 +9,31 @@ import { createEdges, createNode } from "./cytoscapeUtils";
 import cyStylesheet from "./stylesheet";
 import GraphToolbar from "./GraphToolbar";
 import { CytoscapeContext, ElementsContext } from "../../context";
+import { isEmpty } from "lodash";
 
 const NetworkGraph = () => {
-  const { cyRef, layout: graphLayout, updateLayout } = useContext(CytoscapeContext);
+  const {
+    cyRef,
+    layout: graphLayout,
+    runLayout,
+    updateLayout,
+  } = useContext(CytoscapeContext);
   const { assets, connections, cxnCriticalityColorScale, clearSelectedElements, onElementClick } =
     useContext(ElementsContext);
 
   const nodes = useMemo(() => createNode(assets), [assets]);
-  const edges = useMemo(
-    () => createEdges(connections, cxnCriticalityColorScale),
-    [connections, cxnCriticalityColorScale]
-  );
+  const edges = useMemo(() => {
+    if (isEmpty(nodes)) return [];
+    return createEdges(connections, cxnCriticalityColorScale);
+  }, [connections, nodes, cxnCriticalityColorScale]);
 
   cytoscape.use(cola);
   cytoscape.use(dagre);
   cytoscape.use(avsdf);
 
   useEffect(() => {
-    if (!cyRef.current) return;
-    const layout = cyRef.current.layout({ name: graphLayout });
-    layout.run();
-  }, [cyRef, nodes, edges, graphLayout]);
+    runLayout();
+  }, [nodes, edges, runLayout]);
 
   const setCytoscape = useCallback(
     (cy) => {
@@ -56,7 +60,7 @@ const NetworkGraph = () => {
   );
 
   return (
-    <div className="relative">
+    <>
       <CytoscapeComponent
         elements={CytoscapeComponent.normalizeElements({ nodes, edges })}
         stylesheet={cyStylesheet}
@@ -64,7 +68,7 @@ const NetworkGraph = () => {
         className="w-full h-full"
       />
       <GraphToolbar cyRef={cyRef} graphLayout={graphLayout} setGraphLayout={updateLayout} />
-    </div>
+    </>
   );
 };
 
