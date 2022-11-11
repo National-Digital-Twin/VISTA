@@ -57,11 +57,7 @@ const TelicentMap = () => {
     );
     setSelectedAssets(selectedAssetFeatures);
 
-    const selectedSegmentFeatures = createSelectedSegmentFeatures(
-      selectedElements,
-      assetCriticalityColorScale,
-      assets
-    );
+    const selectedSegmentFeatures = createSelectedSegmentFeatures(selectedElements, assetCriticalityColorScale, assets);
     setSelectedSegments(selectedSegmentFeatures);
 
     const selectedAssetCxnFeatures = createSelectedConnectionFeatures(
@@ -70,22 +66,16 @@ const TelicentMap = () => {
       selectedElements
     );
     setSelectedAssetCxns(selectedAssetCxnFeatures);
-  }, [
-    assets,
-    cxnCriticalityColorScale,
-    assetCriticalityColorScale,
-    maxAssetCriticality,
-    selectedElements,
-  ]);
+  }, [assets, cxnCriticalityColorScale, assetCriticalityColorScale, maxAssetCriticality, selectedElements]);
 
   const handleOnClick = (event) => {
     const { features } = event;
     const clickedFeature = features && features[0];
     clearSelected();
 
-    const polygonControl = event.target._controls.filter( item => item?.types?.POLYGON ? item : null);
+    const polygonControl = event.target._controls.filter((item) => (item?.types?.POLYGON ? item : null));
 
-    if ( polygonControl[0].getSelected().features.length === 0 && !clickedFeature) {
+    if (polygonControl[0].getSelected().features.length === 0 && !clickedFeature) {
       clearSelectedElements();
     }
 
@@ -93,10 +83,9 @@ const TelicentMap = () => {
       const { properties } = clickedFeature;
       event.originalEvent.stopPropagation();
       const element = JSON.parse(properties.element);
-      onElementClick(event, element);
+      onElementClick(event.originalEvent.shiftKey, element);
       return;
     }
-
   };
 
   const handleOnMouseMove = (event) => {
@@ -129,11 +118,7 @@ const TelicentMap = () => {
         onMouseMove={handleOnMouseMove}
         boxZoom={false}
       >
-        <Source
-          id="all-assets"
-          type={GEOJSON}
-          data={{ type: FEATURE_COLLECTION, features: assetFeatures }}
-        >
+        <Source id="all-assets" type={GEOJSON} data={{ type: FEATURE_COLLECTION, features: assetFeatures }}>
           <Layer {...allAssetsLayerStyle} />
         </Source>
         <Source
@@ -143,25 +128,13 @@ const TelicentMap = () => {
         >
           <Layer {...lineStyle} />
         </Source>
-        <Source
-          id="selected-segments"
-          type={GEOJSON}
-          data={{ type: FEATURE_COLLECTION, features: selectedSegments }}
-        >
+        <Source id="selected-segments" type={GEOJSON} data={{ type: FEATURE_COLLECTION, features: selectedSegments }}>
           <Layer {...segmentStyle} />
         </Source>
-        <Source
-          id="selected-assets"
-          type={GEOJSON}
-          data={{ type: FEATURE_COLLECTION, features: selectedAssets }}
-        >
+        <Source id="selected-assets" type={GEOJSON} data={{ type: FEATURE_COLLECTION, features: selectedAssets }}>
           <Layer {...highlightedAssets} />
         </Source>
-        <HoverInfo
-          info={hoverInfo?.feature.properties.element}
-          left={hoverInfo?.x}
-          top={hoverInfo?.y}
-        />
+        <HoverInfo info={hoverInfo?.feature.properties.element} left={hoverInfo?.x} top={hoverInfo?.y} />
         <MapToolbar mapStyle={mapStyle} setMapStyle={setMapStyle} />
       </Map>
     </div>

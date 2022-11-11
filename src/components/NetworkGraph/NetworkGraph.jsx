@@ -12,12 +12,7 @@ import { CytoscapeContext, ElementsContext } from "../../context";
 import { isEmpty } from "lodash";
 
 const NetworkGraph = () => {
-  const {
-    cyRef,
-    layout: graphLayout,
-    runLayout,
-    updateLayout,
-  } = useContext(CytoscapeContext);
+  const { cyRef, layout: graphLayout, runLayout, updateLayout } = useContext(CytoscapeContext);
   const { assets, connections, cxnCriticalityColorScale, clearSelectedElements, onElementClick } =
     useContext(ElementsContext);
 
@@ -42,12 +37,12 @@ const NetworkGraph = () => {
       cyRef.current.on("tap", "edge", function (event) {
         const id = event.target.data("id");
         const element = cyRef.current.getElementById(id).json();
-        onElementClick(event, element.data);
+        onElementClick(event.originalEvent.shiftKey, element.data);
       });
       cyRef.current.on("tap", "node", function (event) {
         const id = event.target.data("id");
         const element = cyRef.current.getElementById(id).json();
-        onElementClick(event, element.data);
+        onElementClick(event.originalEvent.shiftKey, element.data);
       });
       cyRef.current.on("tap", function (event) {
         if (event.target === cy) {
@@ -56,8 +51,8 @@ const NetworkGraph = () => {
         }
       });
       cyRef.current.on("boxselect", function (event) {
-        console.log(event)
-      })
+        onElementClick(true, event.target.data());
+      });
     },
     [cyRef, clearSelectedElements, onElementClick]
   );

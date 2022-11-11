@@ -8,13 +8,8 @@ import { findAsset, getHexColor } from "../../utils";
 
 const Grid = ({ loading }) => {
   const [zoomLevel, setZoomLevel] = useState(100);
-  const {
-    assets,
-    connections,
-    assetCriticalityColorScale,
-    cxnCriticalityColorScale,
-    totalCxnsColorScale,
-  } = useContext(ElementsContext);
+  const { assets, connections, assetCriticalityColorScale, cxnCriticalityColorScale, totalCxnsColorScale } =
+    useContext(ElementsContext);
 
   const renderAssets = () => {
     const assetGrid = assets.map((asset, index) => (
@@ -75,7 +70,7 @@ const AssetGrid = ({ asset, criticalityColorScale, totalCxnsColorScale }) => {
 
   const handleOnAssetClick = (event) => {
     const asset = event.target.dataset.asset;
-    onElementClick(event, JSON.parse(asset));
+    onElementClick(event.shiftKey, JSON.parse(asset));
   };
 
   const AssetIdentifierCol = ({ gridIndex, id, lat, lon, title, uri, onClick }) => (
@@ -234,7 +229,7 @@ const ConnectionBtn = ({ colorScale, criticality, data, position, uri }) => {
 
   const handleOnConnectionClick = (event) => {
     const connection = event.target.dataset.connection;
-    onElementClick(event, JSON.parse(connection));
+    onElementClick(event.shiftKey, JSON.parse(connection));
   };
 
   return (

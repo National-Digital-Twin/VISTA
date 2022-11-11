@@ -47,12 +47,8 @@ const elementsReducer = (state, action) => {
         assets,
         maxAssetCriticality,
         maxAssetTotalCxns,
-        assetCriticalityColorScale: isEmpty(assets)
-          ? {}
-          : getColorScale(minAssetCriticality, maxAssetCriticality),
-        totalCxnsColorScale: isEmpty(assets)
-          ? {}
-          : getColorScale(minAssetTotalCxns, maxAssetTotalCxns),
+        assetCriticalityColorScale: isEmpty(assets) ? {} : getColorScale(minAssetCriticality, maxAssetCriticality),
+        totalCxnsColorScale: isEmpty(assets) ? {} : getColorScale(minAssetTotalCxns, maxAssetTotalCxns),
       };
     }
     case UPDATE_CONNECTIONS:
@@ -75,16 +71,13 @@ const elementsReducer = (state, action) => {
         };
       }
 
-      if (action.event?.originalEvent?.shiftKey ?? action.event?.shiftKey) {
+      if (action.multiSelect) {
         const getSelected = () => {
           const index = state.selectedElements.findIndex(
             (selectedElement) => selectedElement.id === action.selectedElement.id
           );
-          if (index === -1)
-            return [...state.selectedElements, createElement(action.selectedElement)];
-          return state.selectedElements.filter(
-            (selectedElement) => selectedElement.id !== action.selectedElement.id
-          );
+          if (index === -1) return [...state.selectedElements, createElement(action.selectedElement)];
+          return state.selectedElements.filter((selectedElement) => selectedElement.id !== action.selectedElement.id);
         };
 
         return {
@@ -94,8 +87,8 @@ const elementsReducer = (state, action) => {
       }
 
       if (Array.isArray(action.selectedElement) && !isEmpty(action.selectedElement)) {
-        const selectedElements = action.selectedElement.map((selected) => createElement(selected))
-        return { ...state, selectedElements }
+        const selectedElements = action.selectedElement.map((selected) => createElement(selected));
+        return { ...state, selectedElements };
       }
 
       return {
@@ -153,13 +146,11 @@ export const ElementsProvider = ({ children }) => {
     dispatch({ type: RESET });
   }, []);
 
-  const onElementClick = useCallback((event, selectedElement) => {
-    dispatch({ type: UPDATE_SELECTED_ELEMENTS, event, selectedElement });
+  const onElementClick = useCallback((multiSelect, selectedElement) => {
+    dispatch({ type: UPDATE_SELECTED_ELEMENTS, multiSelect, selectedElement });
   }, []);
 
-  const onMultiSelect = (event, selectedElements) => {
-    console.log(event, selectedElements)
-  }
+  const onMultiSelect = useCallback((event, selectedElements) => {}, []);
 
   const updateErrors = useCallback((msg) => {
     dispatch({ type: UPDATE_ERRORS, error: msg });
