@@ -55,6 +55,9 @@ const NetworkGraph = () => {
           return;
         }
       });
+      cyRef.current.on("boxselect", function (event) {
+        console.log(event)
+      })
     },
     [cyRef, clearSelectedElements, onElementClick]
   );
