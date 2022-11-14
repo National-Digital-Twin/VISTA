@@ -12,23 +12,25 @@ modes = MapboxDrawGeodesic.enable(modes);
 const useDraw = () => {
   const { clearSelectedElements, onMultiSelect } = useContext(ElementsContext);
 
+  const getAssetsInPolygon = (target, polygon) => {
+    const points = turf.pointsWithinPolygon(target.getSource("all-assets")?._data, polygon);
+    return points.features.map((feature) => ({ ...feature.properties.element }));
+  };
+
   const assetsInPolygon = (event, feature) => {
     const { target } = event;
     if (MapboxDrawGeodesic.isCircle(feature)) {
       const center = MapboxDrawGeodesic.getCircleCenter(feature);
       const radius = MapboxDrawGeodesic.getCircleRadius(feature);
-      const options = { steps: 10, units: "kilometers" };
-      const circle = turf.circle(center, radius, options);
-      
-      const points = turf.pointsWithinPolygon(target.getSource("all-assets")?._data, circle);
-      return points.features.map((feature) => ({ ...feature.properties.element }));
+      const circle = turf.circle(center, radius, { steps: 10, units: "kilometers" });
+      return getAssetsInPolygon(target, circle);
     }
+
     const polygon = turf.polygon(feature.geometry.coordinates);
-    const points = turf.pointsWithinPolygon(target.getSource("all-assets")?._data, polygon);
-    return points.features.map((feature) => ({ ...feature.properties.element }));
+    return getAssetsInPolygon(target, polygon)
   };
 
-  const searchAllPolygons = (event) => {
+  const selectAssetsInPolygons = (event) => {
     if (isEmpty(event.features)) return;
     const assets = event.features.flatMap((feature) => {
       return assetsInPolygon(event, feature);
@@ -37,11 +39,11 @@ const useDraw = () => {
   };
 
   const onSelectionChange = (event) => {
-    searchAllPolygons(event);
+    selectAssetsInPolygons(event);
   };
 
   const onUpdatePolygon = (event) => {
-    searchAllPolygons(event);
+    selectAssetsInPolygons(event);
   };
 
   const onDeletePolygon = () => {
@@ -69,18 +71,15 @@ const useDraw = () => {
   );
 
   const activatePolygonMode = () => {
-    const drawPolygonMode = draw.modes.DRAW_POLYGON;
-    draw.changeMode(drawPolygonMode);
+    draw.changeMode(draw.modes.DRAW_POLYGON);
   };
 
   const activateSimpleSelectMode = () => {
-    const simpleSelectMode = draw.modes.SIMPLE_SELECT;
-    draw.changeMode(simpleSelectMode);
+    draw.changeMode(draw.modes.SIMPLE_SELECT);
   };
 
   const activateDrawCircleMode = () => {
     draw.changeMode("draw_circle");
-    // console.log({ modes: MapboxDrawGeodesic.con, draw, modes1: modes });
   };
 
   const deleteAllPolygons = () => {

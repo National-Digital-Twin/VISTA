@@ -52,6 +52,7 @@ export const ElementsProvider = ({ children }) => {
   }, []);
 
   const onMultiSelect = (selectedElements) => {
+    if (!Array.isArray(selectedElements)) return;
     dispatch({ type: MULTI_SELECT_ELEMENTS, selectedElements });
   };
 
