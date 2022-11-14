@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { getShortType, isAsset, IsEmpty } from "../../utils";
 import classNames from "classnames";
+import useLocalStorage from "../../hooks/useLocalStorage";
 
 const ElementDetails = ({ element, expand, onViewDetails }) => {
   if (IsEmpty(element)) return null;
@@ -72,10 +73,7 @@ const Description = ({ description }) => {
         {description}
       </p>
       {isLineClampApplied && showMore ? null : (
-        <button
-          className="w-fit float-right flex items-center gap-x-1 text-sm"
-          onClick={handleShowMore}
-        >
+        <button className="w-fit float-right flex items-center gap-x-1 text-sm" onClick={handleShowMore}>
           show {showMore ? "more" : "less"}
           <span
             className={classNames("!text-sm", {
@@ -93,10 +91,10 @@ const DetailsSectionTitle = ({ expand, onToggle, children }) => {
   if (onToggle)
     return (
       <button
-        className={classNames(
-          "bg-whiteSmoke-900 rounded-lg px-2 flex justify-between items-center py-2",
-          { "inset-x-4 absolute top-0": expand, "w-full": !expand }
-        )}
+        className={classNames("bg-whiteSmoke-900 rounded-lg px-2 flex justify-between items-center py-2", {
+          "inset-x-4 absolute top-0": expand,
+          "w-full": !expand,
+        })}
         style={{ zIndex: 5 }}
         onClick={onToggle}
       >
@@ -132,15 +130,13 @@ const DetailsSection = ({ expand, onToggle, show, title, children }) => {
       <DetailsSectionTitle expand={expand} onToggle={onToggle}>
         <h3 className="text-lg pl-2">{title}</h3>
       </DetailsSectionTitle>
-      {expand && (
-        <div className="relative top-5 bg-black-100 rounded-xl w-full p-4 pt-10">{children}</div>
-      )}
+      {expand && <div className="relative top-5 bg-black-100 rounded-xl w-full p-4 pt-10">{children}</div>}
     </div>
   );
 };
 
 const ConnectedAssets = ({ connectedAssets }) => {
-  const [expand, setExpand] = useState(true);
+  const [expand, setExpand] = useLocalStorage("showConnectedAssets", true);
 
   const handleToggleSection = () => {
     setExpand((prev) => !prev);
@@ -158,10 +154,7 @@ const ConnectedAssets = ({ connectedAssets }) => {
           return (
             <li key={asset.uri} className="gap-x-2 bg-black-300 rounded-md p-2 items-center">
               <div className="flex items-center  gap-x-2">
-                <div
-                  style={{ backgroundColor: asset.color }}
-                  className="w-2.5 h-2.5 rounded-full"
-                />
+                <div style={{ backgroundColor: asset.color }} className="w-2.5 h-2.5 rounded-full" />
                 <h4 className="truncate w-64" title={asset.title}>
                   {asset.title}
                 </h4>
