@@ -1,12 +1,11 @@
 /* eslint jsx-a11y/anchor-has-content: 0 */
 import React, { useCallback, useState } from "react";
-import { useEffect } from "react";
 import { ToolbarButton, ToolbarMenu, VerticalDivider } from "../../lib";
 import { heatmap } from "./layerStyles";
 import { getMapStyles } from "./mapStyles";
 import useDraw from "./useDraw";
 
-const MapToolbar = ({ map, mapStyle: selectedMapStyle, setMapStyle }) => {
+const MapToolbar = ({ heatmapRadius, map, mapStyle: selectedMapStyle, setMapStyle }) => {
   const [isHeatVisible, setIsHeatVisible] = useState(false);
   const [showLayers, setShowLayers] = useState(false);
   const { activatePolygonMode, deleteAllPolygons } = useDraw();
@@ -14,18 +13,17 @@ const MapToolbar = ({ map, mapStyle: selectedMapStyle, setMapStyle }) => {
 
   const mapStyles = getMapStyles();
 
+  map?.on("style.load", function () {
+    handleLayerVisibility(heatmap.id, isHeatVisible);
+    map.getMap().setPaintProperty(heatmap.id, "heatmap-radius", heatmapRadius);
+  });
+
   const handleLayerVisibility = useCallback(
     (layerId, isVisible) => {
       map?.getMap().setLayoutProperty(layerId, "visibility", isVisible ? "visible" : "none");
     },
     [map]
   );
-
-  useEffect(() => {
-    map?.on("style.load", function () {
-      handleLayerVisibility(heatmap.id, isHeatVisible);
-    });
-  }, [map, handleLayerVisibility, isHeatVisible]);
 
   const handleZoomOut = () => {
     if (!map) return;
@@ -74,7 +72,7 @@ const MapToolbar = ({ map, mapStyle: selectedMapStyle, setMapStyle }) => {
       type: "toggleSwitch",
       onItemClick: () => toggleHeatVisibility(),
     },
-  ]
+  ];
 
   return (
     <div className="absolute bottom-0 left-0 text-whiteSmoke font-body bg-black-200 flex items-center justify-center gap-x-2 px-2 py-1">
@@ -105,10 +103,7 @@ const MapToolbar = ({ map, mapStyle: selectedMapStyle, setMapStyle }) => {
         onClick={() => setShowLayers(true)}
         showSecondaryMenu={showLayers}
         secondaryMenu={
-          <ToolbarMenu
-            menuItems={layersMenuItems}
-            onClose={() => setShowLayers(false)}
-          />
+          <ToolbarMenu menuItems={layersMenuItems} onClose={() => setShowLayers(false)} />
         }
       />
       <VerticalDivider />

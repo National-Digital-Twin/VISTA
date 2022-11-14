@@ -78,7 +78,6 @@ export const heatmap = {
       1,
       "rgb(245,221,11)",
     ],
-    "heatmap-radius": 10,
     "heatmap-opacity": ["interpolate", ["linear"], ["zoom"], 4, 0, 5, 1, 18, 0.7]
   },
 };

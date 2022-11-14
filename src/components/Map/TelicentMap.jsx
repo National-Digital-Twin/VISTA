@@ -40,15 +40,16 @@ const TelicentMap = () => {
     clearSelectedElements,
     onElementClick,
   } = useContext(ElementsContext);
-
-  const assetFeatures = useMemo(() => generateAssetFeatures(assets), [assets]);
+  const [mapStyle, setMapStyle] = useLocalStorage("mapStyle", "mapbox://styles/mapbox/dark-v10");
 
   const [cursor, setCursor] = useState("auto");
   const [hoverInfo, setHoverInfo] = useState(undefined);
-  const [mapStyle, setMapStyle] = useLocalStorage("mapStyle", "mapbox://styles/mapbox/dark-v10");
+  const [heatmapRadius, setHeatmapRadius] = useState(10);
   const [selectedAssetCxns, setSelectedAssetCxns] = useState([]);
   const [selectedAssets, setSelectedAssets] = useState([]);
   const [selectedSegments, setSelectedSegments] = useState([]);
+  
+  const assetFeatures = useMemo(() => generateAssetFeatures(assets), [assets]);
 
   useEffect(() => {
     if (!getMapStyles().some((style) => style.id === mapStyle)) {
@@ -125,6 +126,7 @@ const TelicentMap = () => {
     const { pixelsPerMeter } = event.target.transform;
     const radius = HEAT_RADIUS * pixelsPerMeter;
     map.getMap().setPaintProperty(heatmap.id, "heatmap-radius", radius);
+    setHeatmapRadius(radius);
   };
 
   return (
@@ -180,7 +182,7 @@ const TelicentMap = () => {
           left={hoverInfo?.x}
           top={hoverInfo?.y}
         />
-        <MapToolbar map={map} mapStyle={mapStyle} setMapStyle={setMapStyle} />
+        <MapToolbar heatmapRadius={heatmapRadius} map={map} mapStyle={mapStyle} setMapStyle={setMapStyle} />
       </Map>
     </div>
   );
