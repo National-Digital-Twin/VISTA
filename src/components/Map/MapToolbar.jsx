@@ -9,7 +9,7 @@ import useDraw from "./useDraw";
 
 const MapToolbar = ({ mapStyle, setMapStyle }) => {
   const { telicentMap: map } = useMap();
-  const { activatePolygonMode, deleteAllPolygons } = useDraw();
+  const { activateDrawCircleMode, activatePolygonMode, deleteAllPolygons } = useDraw();
   const [showMapStyles, setShowMapStyles] = useState(false);
 
   const mapStyles = getMapStyles();
@@ -52,14 +52,25 @@ const MapToolbar = ({ mapStyle, setMapStyle }) => {
         }
       />
       <VerticalDivider />
-      <ToolbarButton 
-        icon="fg-polyline-pt" 
-        label="Draw Polygon (Beta)" 
-        onClick={() => { activatePolygonMode() }} />
-      <ToolbarButton 
-        icon="ri-delete-bin-line" 
-        label="Delete Polygons" 
-        onClick={() => { deleteAllPolygons() }}/>
+      <ToolbarButton
+        icon="fg-polyline-pt"
+        label="Draw Polygon (Beta)"
+        onClick={() => {
+          activatePolygonMode();
+        }}
+      />
+      <ToolbarButton
+        icon="fg-circle-o"
+        label="Draw Circle (Beta)"
+        onClick={() => activateDrawCircleMode()}
+      />
+      <ToolbarButton
+        icon="ri-delete-bin-line"
+        label="Delete Polygons"
+        onClick={() => {
+          deleteAllPolygons();
+        }}
+      />
     </div>
   );
 };
@@ -93,4 +104,3 @@ const MapStyles = ({ items, mapStyle, onClose, setMapStyle }) => {
     </ul>
   );
 };
-

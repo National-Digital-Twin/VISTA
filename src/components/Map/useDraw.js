@@ -1,26 +1,39 @@
-import MapboxDraw from "@mapbox/mapbox-gl-draw";
-import * as turf from "@turf/turf";
+import { isEmpty } from "lodash";
 import { useContext } from "react";
 import { useControl } from "react-map-gl";
+import * as MapboxDrawGeodesic from "mapbox-gl-draw-geodesic";
+import * as turf from "@turf/turf";
+import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import { ElementsContext } from "context";
-import { isEmpty } from "lodash";
+
+let modes = MapboxDraw.modes;
+modes = MapboxDrawGeodesic.enable(modes);
 
 const useDraw = () => {
-  const { clearSelectedElements, onElementClick } = useContext(ElementsContext);
+  const { clearSelectedElements, onMultiSelect } = useContext(ElementsContext);
 
-  const selectElemsInPolygon = (event, feature) => {
+  const assetsInPolygon = (event, feature) => {
     const { target } = event;
-    const search = turf.polygon(feature.geometry.coordinates);
-    const points = turf.pointsWithinPolygon(target.getSource("all-assets")?._data, search);
+    if (MapboxDrawGeodesic.isCircle(feature)) {
+      const center = MapboxDrawGeodesic.getCircleCenter(feature);
+      const radius = MapboxDrawGeodesic.getCircleRadius(feature);
+      const options = { steps: 10, units: "kilometers" };
+      const circle = turf.circle(center, radius, options);
+      
+      const points = turf.pointsWithinPolygon(target.getSource("all-assets")?._data, circle);
+      return points.features.map((feature) => ({ ...feature.properties.element }));
+    }
+    const polygon = turf.polygon(feature.geometry.coordinates);
+    const points = turf.pointsWithinPolygon(target.getSource("all-assets")?._data, polygon);
     return points.features.map((feature) => ({ ...feature.properties.element }));
   };
 
-  const searchAllPolygons = ( event ) => {
+  const searchAllPolygons = (event) => {
     if (isEmpty(event.features)) return;
-    const assets = event.features.flatMap(( feature ) => {
-      return selectElemsInPolygon( event, feature )
+    const assets = event.features.flatMap((feature) => {
+      return assetsInPolygon(event, feature);
     });
-    onElementClick(event, assets);
+    onMultiSelect(assets);
   };
 
   const onSelectionChange = (event) => {
@@ -36,15 +49,19 @@ const useDraw = () => {
   };
 
   const draw = useControl(
-    () => new MapboxDraw({ displayControlsDefault: false }),
+    () =>
+      new MapboxDraw({
+        displayControlsDefault: false,
+        modes,
+      }),
     ({ map }) => {
-      // map.on("draw.create", onUpdatePolygon);
+      map.on("draw.create", onUpdatePolygon);
       map.on("draw.update", onUpdatePolygon);
       map.on("draw.delete", onDeletePolygon);
       map.on("draw.selectionchange", onSelectionChange);
     },
     ({ map }) => {
-      // map.off("draw.create", onUpdatePolygon);
+      map.off("draw.create", onUpdatePolygon);
       map.off("draw.update", onUpdatePolygon);
       map.off("draw.delete", onDeletePolygon);
       map.off("draw.selectionchange", onSelectionChange);
@@ -61,12 +78,22 @@ const useDraw = () => {
     draw.changeMode(simpleSelectMode);
   };
 
+  const activateDrawCircleMode = () => {
+    draw.changeMode("draw_circle");
+    // console.log({ modes: MapboxDrawGeodesic.con, draw, modes1: modes });
+  };
+
   const deleteAllPolygons = () => {
     draw.deleteAll();
     clearSelectedElements();
   };
 
-  return { activatePolygonMode, activateSimpleSelectMode, deleteAllPolygons };
+  return {
+    activateDrawCircleMode,
+    activatePolygonMode,
+    activateSimpleSelectMode,
+    deleteAllPolygons,
+  };
 };
 
 export default useDraw;

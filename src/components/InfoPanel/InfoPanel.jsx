@@ -24,6 +24,8 @@ const InfoPanel = () => {
     setHeaderProps({ ...headerProps });
   }, []);
 
+  console.log(selectedElements)
+
   return (
     <FloatingPanel
       id="information-panel"
