@@ -30,7 +30,7 @@ const InfoPanel = () => {
       position="top-0 right-0 max-h-full flex flex-col"
       show={showPanel}
       collapsedComponent={<InfoBtn count={selectedCount} onToggle={handleTogglePanel} />}
-      style={{ width: showPanel ? "25rem" : "fit-content", maxWidth: "25rem", maxHeight: "50%" }}
+      style={{ width: showPanel ? "30rem" : "fit-content", maxWidth: "30rem", maxHeight: "calc(100% - 50px)" }}
     >
       <InfoPanelHeader count={selectedCount} onToggle={handleTogglePanel} {...headerProps} />
       <SelectedElements
