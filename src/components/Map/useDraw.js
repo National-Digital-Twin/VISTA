@@ -43,7 +43,9 @@ const useDraw = () => {
   const onClick = (event) => {
     const { lat, lng } = event.lngLat;
     if (draw.getMode() === DRAW_CIRCLE) {
-      const circle = MapboxDrawGeodesic.createCircle([lng, lat], 1);
+      let radius = 1
+      if (event.target.transform.zoom > 14) radius = 0.05
+      const circle = MapboxDrawGeodesic.createCircle([lng, lat], radius);
       draw.add(circle);
       activateSimpleSelectMode();
     }

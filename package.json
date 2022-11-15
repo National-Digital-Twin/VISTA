@@ -37,7 +37,7 @@
     "build": "craco build",
     "build:tailwind": "npx tailwindcss -i ./src/index.css -o ./src/main.css",
     "babel": "babel --plugins @babel/plugin-transform-arrow-functions script.js",
-    "test": "craco test --transformIgnorePatterns \"node_modules/(?!mapbox-gl-draw-geodesic)/\"",
+    "test": "craco test",
     "test:ci": "react-scripts test --ci --json --outputFile=\"reports/results.json\" --watchAll=false",
     "eject": "react-scripts eject",
     "prepare": "husky install"
@@ -84,5 +84,8 @@
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
+  },
+  "jest": {
+    "transformIgnorePatterns": ["node_modules/(?!mapbox-gl-draw-geodesic)/"]
   }
 }
