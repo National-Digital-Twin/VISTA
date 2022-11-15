@@ -54,14 +54,14 @@ const MapToolbar = ({ mapStyle, setMapStyle }) => {
       <VerticalDivider />
       <ToolbarButton
         icon="fg-polyline-pt"
-        label="Draw Polygon (Beta)"
+        label="Polygon Selection (Beta)"
         onClick={() => {
           activatePolygonMode();
         }}
       />
       <ToolbarButton
         icon="fg-circle-o"
-        label="Draw Circle (Beta)"
+        label="Radius Selection (Beta)"
         onClick={() => activateDrawCircleMode()}
       />
       <ToolbarButton

@@ -6,6 +6,8 @@ import * as turf from "@turf/turf";
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import { ElementsContext } from "context";
 
+const DRAW_CIRCLE = "draw_circle";
+
 let modes = MapboxDraw.modes;
 modes = MapboxDrawGeodesic.enable(modes);
 
@@ -27,7 +29,7 @@ const useDraw = () => {
     }
 
     const polygon = turf.polygon(feature.geometry.coordinates);
-    return getAssetsInPolygon(target, polygon)
+    return getAssetsInPolygon(target, polygon);
   };
 
   const selectAssetsInPolygons = (event) => {
@@ -38,10 +40,14 @@ const useDraw = () => {
     onMultiSelect(assets);
   };
 
-  const onCreate = (event) => {
-    if (isEmpty(event.features)) return;
-    console.log({ mode: event })
-  }
+  const onClick = (event) => {
+    const { lat, lng } = event.lngLat;
+    if (draw.getMode() === DRAW_CIRCLE) {
+      const circle = MapboxDrawGeodesic.createCircle([lng, lat], 1);
+      draw.add(circle);
+      activateSimpleSelectMode();
+    }
+  };
 
   const onSelectionChange = (event) => {
     selectAssetsInPolygons(event);
@@ -62,16 +68,18 @@ const useDraw = () => {
         modes,
       }),
     ({ map }) => {
-      map.on("draw.create", onCreate);
+      map.on("draw.create", onUpdatePolygon);
       map.on("draw.update", onUpdatePolygon);
       map.on("draw.delete", onDeletePolygon);
       map.on("draw.selectionchange", onSelectionChange);
+      map.on("click", onClick);
     },
     ({ map }) => {
-      map.off("draw.create", onCreate);
+      map.off("draw.create", onUpdatePolygon);
       map.off("draw.update", onUpdatePolygon);
       map.off("draw.delete", onDeletePolygon);
       map.off("draw.selectionchange", onSelectionChange);
+      map.on("click", onClick);
     }
   );
 
@@ -84,7 +92,7 @@ const useDraw = () => {
   };
 
   const activateDrawCircleMode = () => {
-    draw.changeMode("draw_circle");
+    draw.changeMode(DRAW_CIRCLE);
   };
 
   const deleteAllPolygons = () => {
