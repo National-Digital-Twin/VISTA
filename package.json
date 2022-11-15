@@ -37,7 +37,7 @@
     "build": "craco build",
     "build:tailwind": "npx tailwindcss -i ./src/index.css -o ./src/main.css",
     "babel": "babel --plugins @babel/plugin-transform-arrow-functions script.js",
-    "test": "react-scripts test",
+    "test": "craco test --transformIgnorePatterns \"node_modules/(?!mapbox-gl-draw-geodesic)/\"",
     "test:ci": "react-scripts test --ci --json --outputFile=\"reports/results.json\" --watchAll=false",
     "eject": "react-scripts eject",
     "prepare": "husky install"
@@ -61,6 +61,7 @@
     ]
   },
   "devDependencies": {
+    "@babel/plugin-transform-modules-commonjs": "^7.19.6",
     "@commitlint/cli": "^17.1.2",
     "@commitlint/config-conventional": "^17.1.0",
     "@testing-library/jest-dom": "^5.16.5",

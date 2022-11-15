@@ -38,6 +38,11 @@ const useDraw = () => {
     onMultiSelect(assets);
   };
 
+  const onCreate = (event) => {
+    if (isEmpty(event.features)) return;
+    console.log({ mode: event })
+  }
+
   const onSelectionChange = (event) => {
     selectAssetsInPolygons(event);
   };
@@ -57,13 +62,13 @@ const useDraw = () => {
         modes,
       }),
     ({ map }) => {
-      map.on("draw.create", onUpdatePolygon);
+      map.on("draw.create", onCreate);
       map.on("draw.update", onUpdatePolygon);
       map.on("draw.delete", onDeletePolygon);
       map.on("draw.selectionchange", onSelectionChange);
     },
     ({ map }) => {
-      map.off("draw.create", onUpdatePolygon);
+      map.off("draw.create", onCreate);
       map.off("draw.update", onUpdatePolygon);
       map.off("draw.delete", onDeletePolygon);
       map.off("draw.selectionchange", onSelectionChange);
