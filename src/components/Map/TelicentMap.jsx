@@ -1,8 +1,9 @@
 import React, { useContext, useEffect, useMemo, useState } from "react";
 import Map, { Layer, Source } from "react-map-gl";
-import config from "../../config/app-config";
-import { CytoscapeContext, ElementsContext } from "../../context";
-import { useLocalStorage } from "../../hooks";
+
+import config from "config/app-config";
+import { CytoscapeContext, ElementsContext } from "context";
+import { useLocalStorage } from "hooks";
 import { allAssetsLayerStyle, highlightedAssets, lineStyle, segmentStyle } from "./layerStyles";
 import {
   createSelectedAssetFeatures,
@@ -11,7 +12,7 @@ import {
   generateAssetFeatures,
 } from "./mapboxFeatures";
 import { getMapStyles } from "./mapStyles";
-import MapToolbar from "./MapToolbar";
+import MapConfig from "./MapConfig";
 
 const GEOJSON = "geojson";
 const FEATURE_COLLECTION = "FeatureCollection";
@@ -38,9 +39,16 @@ const TelicentMap = () => {
   const [cursor, setCursor] = useState("auto");
   const [hoverInfo, setHoverInfo] = useState(undefined);
   const [mapStyle, setMapStyle] = useLocalStorage("mapStyle", "mapbox://styles/mapbox/dark-v10");
-  const [selectedAssetCxns, setSelectedAssetCxns] = useState([]);
+  const [selectedCxns, setSelectedAssetCxns] = useState([]);
   const [selectedAssets, setSelectedAssets] = useState([]);
   const [selectedSegments, setSelectedSegments] = useState([]);
+
+  const sources = [
+    { id: "assets", features: assetFeatures, layers: [allAssetsLayerStyle] },
+    { id: "selected-connections", features: selectedCxns, layers: [lineStyle] },
+    { id: "selected-segments", features: selectedSegments, layers: [segmentStyle] },
+    { id: "selected-assets", features: selectedAssets, layers: [highlightedAssets] },
+  ];
 
   useEffect(() => {
     if (!getMapStyles().some((style) => style.id === mapStyle)) {
@@ -83,9 +91,11 @@ const TelicentMap = () => {
     const clickedFeature = features && features[0];
     clearSelected();
 
-    const polygonControl = event.target._controls.filter( item => item?.types?.POLYGON ? item : null);
+    const polygonControl = event.target._controls.filter((item) =>
+      item?.types?.POLYGON ? item : null
+    );
 
-    if ( polygonControl[0].getSelected().features.length === 0 && !clickedFeature) {
+    if (polygonControl[0].getSelected().features.length === 0 && !clickedFeature) {
       clearSelectedElements();
     }
 
@@ -96,7 +106,6 @@ const TelicentMap = () => {
       onElementClick(event, element);
       return;
     }
-
   };
 
   const handleOnMouseMove = (event) => {
@@ -129,40 +138,24 @@ const TelicentMap = () => {
         onMouseMove={handleOnMouseMove}
         boxZoom={false}
       >
-        <Source
-          id="all-assets"
-          type={GEOJSON}
-          data={{ type: FEATURE_COLLECTION, features: assetFeatures }}
-        >
-          <Layer {...allAssetsLayerStyle} />
-        </Source>
-        <Source
-          id="selected-connections"
-          type={GEOJSON}
-          data={{ type: FEATURE_COLLECTION, features: selectedAssetCxns }}
-        >
-          <Layer {...lineStyle} />
-        </Source>
-        <Source
-          id="selected-segments"
-          type={GEOJSON}
-          data={{ type: FEATURE_COLLECTION, features: selectedSegments }}
-        >
-          <Layer {...segmentStyle} />
-        </Source>
-        <Source
-          id="selected-assets"
-          type={GEOJSON}
-          data={{ type: FEATURE_COLLECTION, features: selectedAssets }}
-        >
-          <Layer {...highlightedAssets} />
-        </Source>
+        {sources.map((source) => (
+          <Source
+            key={source.id}
+            id={source.id}
+            type={GEOJSON}
+            data={{ type: FEATURE_COLLECTION, features: source.features }}
+          >
+            {source.layers.map((layer) => (
+              <Layer key={layer.id} {...layer} />
+            ))}
+          </Source>
+        ))}
         <HoverInfo
           info={hoverInfo?.feature.properties.element}
           left={hoverInfo?.x}
           top={hoverInfo?.y}
         />
-        <MapToolbar mapStyle={mapStyle} setCursor={setCursor} setMapStyle={setMapStyle} />
+        <MapConfig />
       </Map>
     </div>
   );
