@@ -6,19 +6,30 @@ import MapToolbar from "./MapToolbar";
 
 const MapConfig = () => {
   const { telicentMap: map } = useMap();
-  // console.log(map?.getMap())
+
+  const [controls, setControls] = useState([]);
   const [polygonsConfig, setPolygonsConfig] = useState([]);
 
-  const {
-    activateDrawCircleMode,
-    activatePolygonMode,
-    deleteAllPolygons,
-    setRadius,
-  } = useDraw(setPolygonsConfig);
+  const { activateDrawCircleMode, activatePolygonMode, deleteAllPolygons, setRadius } =
+    useDraw(setPolygonsConfig);
+
+  if (!map) return null;
+
+  map?.on("load", () => {
+    setControls(map.getMap()._controls);
+  });
+  map?.off("load", () => {
+    console.log("A load event occurred. off");
+  });
+
+  const drawControl = Object.values(controls).find((item) => item.modes);
+
+  const polygons = drawControl?.getAll();
+  console.log(polygons);
 
   return (
     <>
-      <PolygonInfo map={map} polygonsInfo={polygonsConfig} setRadius={setRadius} />
+      <PolygonInfo polygons={polygons} polygonsInfo={polygonsConfig} setRadius={setRadius} />
       <MapToolbar
         activateDrawCircleMode={activateDrawCircleMode}
         activatePolygonMode={activatePolygonMode}
@@ -30,8 +41,8 @@ const MapConfig = () => {
 
 export default MapConfig;
 
-const PolygonInfo = ({ map, polygonsInfo, setRadius }) => {
-  if (isEmpty(polygonsInfo)) return null;
+const PolygonInfo = ({ polygons, polygonsInfo, setRadius }) => {
+  if (isEmpty(polygonsInfo) || isEmpty(polygons?.features)) return null;
 
   const handleRadiusChange = (geojson, enteredRadius) => {
     const fEnteredR = parseFloat(enteredRadius);
@@ -70,15 +81,10 @@ const PolygonInfo = ({ map, polygonsInfo, setRadius }) => {
               min={1}
               step="0.05"
               defaultValue={radius}
-              // onFocus={() => {
-              //   console.log("make sure only this feature is selected", info.geojson.id);
-              //   selectFocused(info.geojson.id)
-              // }}
               onKeyDown={(event) => handleOnKeyDown(event, info.geojson)}
-              // onBlur={(event) => handleRadiusChange(info.geojson, event.target.value)}
+              onBlur={(event) => handleRadiusChange(info.geojson, event.target.value)}
               className="bg-transparent border border-whiteSmoke-400 p-1 text-center rounded-md w-16"
               required
-              autoFocus={false}
             />
           </label>
         </div>

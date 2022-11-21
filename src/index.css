@@ -45,17 +45,6 @@
   @apply invisible;
 }
 
-.mapboxgl-ctrl > .mapboxgl-ctrl-logo {
-  display: none;
-}
-
-.mapboxgl-popup-content {
-  @apply bg-black-50 text-whiteSmoke p-2;
-}
-.mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip {
-  @apply border-t-black-50
-}
-
 #theme-provider > div {
   height: 100%;
 }

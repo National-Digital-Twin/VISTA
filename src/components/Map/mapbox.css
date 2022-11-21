@@ -1,0 +1,19 @@
+.mapboxgl-ctrl > .mapboxgl-ctrl-logo {
+  display: none;
+}
+
+.mapboxgl-popup-content {
+  @apply bg-black-50 text-whiteSmoke p-2;
+}
+.mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip {
+  @apply border-t-black-50
+}
+.mapboxgl-popup-anchor-top .mapboxgl-popup-tip {
+  @apply border-b-black-50
+}
+.mapboxgl-popup-anchor-left .mapboxgl-popup-tip {
+  @apply border-r-black-50
+}
+.mapboxgl-popup-anchor-right .mapboxgl-popup-tip {
+  @apply border-l-black-50
+}

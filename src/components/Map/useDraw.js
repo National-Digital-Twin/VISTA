@@ -37,8 +37,8 @@ const useDraw = (setPolygonsInfo, map) => {
   const selectAssetsInPolygons = (event) => {
     if (isEmpty(event.features)) return;
     const assets = event.features.flatMap((feature) => {
-      // const roundedRadius = parseFloat(Math.fround(feature.properties.circleRadius).toFixed(2));
-      // setRadius({ geojson: feature, radius: roundedRadius, manualEdit: false });
+      const roundedRadius = parseFloat(Math.fround(feature.properties.circleRadius).toFixed(2));
+      setRadius({ geojson: feature, radius: roundedRadius, manualEdit: false });
       return assetsInPolygon(event, feature);
     });
     onMultiSelect(assets);
@@ -129,11 +129,16 @@ const useDraw = (setPolygonsInfo, map) => {
     }
   };
 
+  const getAllPolygons = () => {
+    return draw.getAll()
+  }
+
   return {
     activateDrawCircleMode,
     activatePolygonMode,
     activateSimpleSelectMode,
     deleteAllPolygons,
+    getAllPolygons,
     setRadius,
   };
 };

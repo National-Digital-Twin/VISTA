@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import React, { useContext, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import Map, { Layer, Source } from "react-map-gl";
 
 import config from "config/app-config";
@@ -6,13 +6,12 @@ import { CytoscapeContext, ElementsContext } from "context";
 import { useLocalStorage } from "hooks";
 import { allAssetsLayerStyle, highlightedAssets, lineStyle, segmentStyle } from "./layerStyles";
 import {
-  createSelectedAssetFeatures,
-  createSelectedConnectionFeatures,
-  createSelectedSegmentFeatures,
   generateAssetFeatures,
 } from "./mapboxFeatures";
 import { getMapStyles } from "./mapStyles";
 import MapConfig from "./MapConfig";
+import "./mapbox.css";
+import mapReducer, { HIGHLIGHT_SELECTED_ELEMENTS, INITIAL_STATE } from "./map-reducer";
 
 const GEOJSON = "geojson";
 const FEATURE_COLLECTION = "FeatureCollection";
@@ -23,6 +22,7 @@ const VIEWSTATE = {
 };
 
 const TelicentMap = () => {
+  const mapRef = useRef();
   const { clearSelected } = useContext(CytoscapeContext);
   const {
     assets,
@@ -39,13 +39,15 @@ const TelicentMap = () => {
   const [cursor, setCursor] = useState("auto");
   const [hoverInfo, setHoverInfo] = useState(undefined);
   const [mapStyle, setMapStyle] = useLocalStorage("mapStyle", "mapbox://styles/mapbox/dark-v10");
-  const [selectedCxns, setSelectedAssetCxns] = useState([]);
-  const [selectedAssets, setSelectedAssets] = useState([]);
-  const [selectedSegments, setSelectedSegments] = useState([]);
 
+  const [state, dispatch] = useReducer(mapReducer, INITIAL_STATE);
+  const { selectedAssets, selectedDependacies, selectedSegments } = state;
+
+  // The order of the array is the order in which the features will appear in the map.
+  // index 0 being the lowest level
   const sources = [
     { id: "assets", features: assetFeatures, layers: [allAssetsLayerStyle] },
-    { id: "selected-connections", features: selectedCxns, layers: [lineStyle] },
+    { id: "selected-connections", features: selectedDependacies, layers: [lineStyle] },
     { id: "selected-segments", features: selectedSegments, layers: [segmentStyle] },
     { id: "selected-assets", features: selectedAssets, layers: [highlightedAssets] },
   ];
@@ -57,27 +59,14 @@ const TelicentMap = () => {
   }, [mapStyle, setMapStyle]);
 
   useEffect(() => {
-    const selectedAssetFeatures = createSelectedAssetFeatures(
+    dispatch({
+      type: HIGHLIGHT_SELECTED_ELEMENTS,
       assets,
-      assetCriticalityColorScale,
-      maxAssetCriticality,
-      selectedElements
-    );
-    setSelectedAssets(selectedAssetFeatures);
-
-    const selectedSegmentFeatures = createSelectedSegmentFeatures(
       selectedElements,
+      maxAssetCriticality,
       assetCriticalityColorScale,
-      assets
-    );
-    setSelectedSegments(selectedSegmentFeatures);
-
-    const selectedAssetCxnFeatures = createSelectedConnectionFeatures(
-      assets,
       cxnCriticalityColorScale,
-      selectedElements
-    );
-    setSelectedAssetCxns(selectedAssetCxnFeatures);
+    });
   }, [
     assets,
     cxnCriticalityColorScale,
@@ -124,6 +113,7 @@ const TelicentMap = () => {
   return (
     <div className="relative w-full">
       <Map
+        ref={mapRef}
         cursor={cursor}
         id="telicentMap"
         interactiveLayerIds={[allAssetsLayerStyle.id]}

@@ -1203,23 +1203,6 @@ video {
   visibility: hidden;
 }
 
-.mapboxgl-ctrl > .mapboxgl-ctrl-logo {
-  display: none;
-}
-
-.mapboxgl-popup-content {
-  --tw-bg-opacity: 1;
-  background-color: rgb(20 20 20 / var(--tw-bg-opacity));
-  padding: 0.5rem;
-  --tw-text-opacity: 1;
-  color: rgb(245 245 245 / var(--tw-text-opacity));
-}
-
-.mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip {
-  --tw-border-opacity: 1;
-  border-top-color: rgb(20 20 20 / var(--tw-border-opacity));
-}
-
 #theme-provider > div {
   height: 100%;
 }
