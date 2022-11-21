@@ -33,6 +33,23 @@ export const INITIAL_STATE = {
 const getAllTotalCxns = (assets) => assets.map((asset) => asset.totalCxns);
 const getAllCriticalities = (assets) => assets.map((asset) => asset.criticality);
 const createElement = (elem) => (isAsset(elem) ? new Asset(elem) : new Connection(elem));
+const multiSelectElement = (state, action) => {
+  const getSelected = () => {
+    const index = state.selectedElements.findIndex(
+      (selectedElement) => selectedElement.id === action.selectedElement.id
+    );
+    if (index === -1)
+      return [...state.selectedElements, createElement(action.selectedElement)];
+    return state.selectedElements.filter(
+      (selectedElement) => selectedElement.id !== action.selectedElement.id
+    );
+  };
+
+  return {
+    ...state,
+    selectedElements: getSelected(),
+  };
+}
 
 const elementsReducer = (state, action) => {
   switch (action.type) {
@@ -74,21 +91,7 @@ const elementsReducer = (state, action) => {
     }
     case SELECT_ELEMENT: {
       if (action.event?.originalEvent?.shiftKey ?? action.event?.shiftKey) {
-        const getSelected = () => {
-          const index = state.selectedElements.findIndex(
-            (selectedElement) => selectedElement.id === action.selectedElement.id
-          );
-          if (index === -1)
-            return [...state.selectedElements, createElement(action.selectedElement)];
-          return state.selectedElements.filter(
-            (selectedElement) => selectedElement.id !== action.selectedElement.id
-          );
-        };
-
-        return {
-          ...state,
-          selectedElements: getSelected(),
-        };
+        return multiSelectElement(state, action);
       }
 
       return {

@@ -58,21 +58,17 @@ const MapToolbar = ({
       <ToolbarButton
         icon="fg-polyline-pt"
         label="Polygon Selection (Beta)"
-        onClick={() => {
-          activatePolygonMode();
-        }}
+        onClick={activatePolygonMode}
       />
       <ToolbarButton
         icon="fg-circle-o"
         label="Radius Selection (Beta)"
-        onClick={() => activateDrawCircleMode()}
+        onClick={activateDrawCircleMode}
       />
       <ToolbarButton
         icon="ri-delete-bin-line"
         label="Delete Polygons"
-        onClick={() => {
-          deleteAllPolygons();
-        }}
+        onClick={deleteAllPolygons}
       />
     </div>
   );
