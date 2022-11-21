@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useMemo, useState } from "react";
 import Map, { Layer, Source, ScaleControl, useMap } from "react-map-gl";
-import config from "../../config/app-config";
-import { CytoscapeContext, ElementsContext } from "../../context";
-import { useLocalStorage } from "../../hooks";
+import config from "config/app-config";
+import { CytoscapeContext, ElementsContext } from "context";
+import { useLocalStorage } from "hooks";
 import {
   allAssetsLayerStyle,
   heatmap,

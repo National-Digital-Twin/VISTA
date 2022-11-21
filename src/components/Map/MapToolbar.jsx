@@ -1,6 +1,6 @@
 /* eslint jsx-a11y/anchor-has-content: 0 */
 import React, { useCallback, useState } from "react";
-import { ToolbarButton, ToolbarMenu, VerticalDivider } from "../../lib";
+import { ToolbarButton, ToolbarMenu, VerticalDivider } from "lib";
 import { heatmap } from "./layerStyles";
 import { getMapStyles } from "./mapStyles";
 import useDraw from "./useDraw";
