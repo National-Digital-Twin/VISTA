@@ -5,13 +5,13 @@ import config from "config/app-config";
 import { CytoscapeContext, ElementsContext } from "context";
 import { useLocalStorage } from "hooks";
 import { allAssetsLayerStyle, highlightedAssets, lineStyle, segmentStyle } from "./layerStyles";
-import {
-  generateAssetFeatures,
-} from "./mapboxFeatures";
+import { generateAssetFeatures } from "./mapboxFeatures";
 import { getMapStyles } from "./mapStyles";
 import MapConfig from "./MapConfig";
 import "./mapbox.css";
-import mapReducer, { HIGHLIGHT_SELECTED_ELEMENTS, INITIAL_STATE } from "./map-reducer";
+import mapReducer, { HIGHLIGHT_SELECTED_ELEMENTS, INITIAL_STATE, UPDATE_SELECTED_POLYGONS } from "./map-reducer";
+import { isEmpty } from "lodash";
+import { useCallback } from "react";
 
 const GEOJSON = "geojson";
 const FEATURE_COLLECTION = "FeatureCollection";
@@ -41,7 +41,7 @@ const TelicentMap = () => {
   const [mapStyle, setMapStyle] = useLocalStorage("mapStyle", "mapbox://styles/mapbox/dark-v10");
 
   const [state, dispatch] = useReducer(mapReducer, INITIAL_STATE);
-  const { selectedAssets, selectedDependacies, selectedSegments } = state;
+  const { selectedAssets, selectedDependacies, selectedSegments, selectedPolygons } = state;
 
   // The order of the array is the order in which the features will appear in the map.
   // index 0 being the lowest level
@@ -75,20 +75,30 @@ const TelicentMap = () => {
     selectedElements,
   ]);
 
+  const updateSelectedPolygons = useCallback((selectedPolygons) => {
+    dispatch({ type: UPDATE_SELECTED_POLYGONS, selectedPolygons})
+  }, []);
+
   const handleOnClick = (event) => {
     const { features } = event;
     const clickedFeature = features && features[0];
     clearSelected();
 
-    const polygonControl = event.target._controls.filter((item) =>
-      item?.types?.POLYGON ? item : null
-    );
+    const controls = event.target._controls;
+    const drawControl = Object.values(controls).find((item) => item.modes);
+    const polygons = drawControl.getAll().features;
 
-    if (polygonControl[0].getSelected().features.length === 0 && !clickedFeature) {
+    if (!clickedFeature && isEmpty(polygons)) {
       clearSelectedElements();
+      return;
     }
 
-    if (clickedFeature) {
+    if (!isEmpty(polygons)) {
+      updateSelectedPolygons(drawControl.getSelected().features)
+      return;
+    }
+
+    if (clickedFeature && clickedFeature.type === "Feature") {
       const { properties } = clickedFeature;
       event.originalEvent.stopPropagation();
       const element = JSON.parse(properties.element);
@@ -145,7 +155,7 @@ const TelicentMap = () => {
           left={hoverInfo?.x}
           top={hoverInfo?.y}
         />
-        <MapConfig />
+        <MapConfig polygons={selectedPolygons} setPolygons={updateSelectedPolygons} />
       </Map>
     </div>
   );

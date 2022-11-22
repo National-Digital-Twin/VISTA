@@ -6,18 +6,17 @@ import * as turf from "@turf/turf";
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 
 import { ElementsContext } from "context";
-import { Polygon } from "models";
 
 const DRAW_CIRCLE = "draw_circle";
 
 let modes = MapboxDraw.modes;
 modes = MapboxDrawGeodesic.enable(modes);
 
-const useDraw = (setPolygonsInfo, map) => {
+const useDraw = (setPolygons) => {
   const { clearSelectedElements, onMultiSelect } = useContext(ElementsContext);
 
   const getAssetsInPolygon = (target, polygon) => {
-    const points = turf.pointsWithinPolygon(target.getSource("assets")?._data, polygon);
+    const points = turf.pointsWithinPolygon(target?.getSource("assets")?._data, polygon);
     return points.features.map((feature) => ({ ...feature.properties.element }));
   };
 
@@ -25,7 +24,10 @@ const useDraw = (setPolygonsInfo, map) => {
     const { target } = event;
     if (MapboxDrawGeodesic.isCircle(feature)) {
       const center = MapboxDrawGeodesic.getCircleCenter(feature);
-      const radius = MapboxDrawGeodesic.getCircleRadius(feature);
+      const radius = parseFloat(Math.fround(feature.properties.circleRadius).toFixed(2));
+      feature.properties.center = center;
+      setRadius({ geojson: feature, radius, manualEdit: false });
+
       const circle = turf.circle(center, radius, { steps: 50, units: "kilometers" });
       return getAssetsInPolygon(target, circle);
     }
@@ -35,23 +37,20 @@ const useDraw = (setPolygonsInfo, map) => {
   };
 
   const selectAssetsInPolygons = (event) => {
-    if (isEmpty(event.features)) return;
-    const assets = event.features.flatMap((feature) => {
-      const roundedRadius = parseFloat(Math.fround(feature.properties.circleRadius).toFixed(2));
-      setRadius({ geojson: feature, radius: roundedRadius, manualEdit: false });
-      return assetsInPolygon(event, feature);
-    });
+    const { features } = event;
+    if (isEmpty(features)) return;
+    const assets = features.flatMap((feature) => assetsInPolygon(event, feature));
     onMultiSelect(assets);
-    getSelectedPolygon();
+    setPolygons(features);
   };
 
   const onClick = (event) => {
-    const { lngLat, features } = event;
-    if (!features) setPolygonsInfo([]);
+    const { lngLat } = event;
     if (draw.getMode() === DRAW_CIRCLE) {
-      let radius = 1;
+      let radius = 2;
       if (event.target.transform.zoom > 14) radius = 0.05;
       const circle = MapboxDrawGeodesic.createCircle([lngLat.lng, lngLat.lat], radius);
+      circle.properties.center = MapboxDrawGeodesic.getCircleCenter(circle);
       draw.add(circle);
       activateSimpleSelectMode();
     }
@@ -108,12 +107,6 @@ const useDraw = (setPolygonsInfo, map) => {
     clearSelectedElements();
   };
 
-  const getSelectedPolygon = () => {
-    const selectedPolygons = draw.getSelected().features;
-    const info = selectedPolygons.map((polygon) => new Polygon({ geojson: polygon }));
-    setPolygonsInfo(info);
-  };
-
   /**
    * This function is resposible for updating the radius of a selected circle based on user input
    * setCircleRadius updates the circleRadius property in the geojson provided
@@ -124,14 +117,13 @@ const useDraw = (setPolygonsInfo, map) => {
     MapboxDrawGeodesic.setCircleRadius(geojson, radius);
     const featureIds = draw.add(geojson);
     if (manualEdit) {
-      console.log("manual edit");
       draw.changeMode("simple_select").changeMode("direct_select", { featureId: featureIds[0] });
     }
   };
 
   const getAllPolygons = () => {
-    return draw.getAll()
-  }
+    return draw.getAll();
+  };
 
   return {
     activateDrawCircleMode,
