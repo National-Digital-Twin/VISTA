@@ -1,17 +1,21 @@
-import React, { useContext, useEffect, useMemo, useReducer, useRef, useState } from "react";
+import React, { useCallback, useContext, useEffect, useMemo, useReducer, useState } from "react";
 import Map, { Layer, Source } from "react-map-gl";
+import { isEmpty } from "lodash";
 
 import config from "config/app-config";
 import { CytoscapeContext, ElementsContext } from "context";
 import { useLocalStorage } from "hooks";
+
 import { allAssetsLayerStyle, highlightedAssets, lineStyle, segmentStyle } from "./layerStyles";
 import { generateAssetFeatures } from "./mapboxFeatures";
 import { getMapStyles } from "./mapStyles";
 import MapConfig from "./MapConfig";
+import mapReducer, {
+  HIGHLIGHT_SELECTED_ELEMENTS,
+  INITIAL_STATE,
+  UPDATE_SELECTED_POLYGONS,
+} from "./map-reducer";
 import "./mapbox.css";
-import mapReducer, { HIGHLIGHT_SELECTED_ELEMENTS, INITIAL_STATE, UPDATE_SELECTED_POLYGONS } from "./map-reducer";
-import { isEmpty } from "lodash";
-import { useCallback } from "react";
 
 const GEOJSON = "geojson";
 const FEATURE_COLLECTION = "FeatureCollection";
@@ -22,7 +26,6 @@ const VIEWSTATE = {
 };
 
 const TelicentMap = () => {
-  const mapRef = useRef();
   const { clearSelected } = useContext(CytoscapeContext);
   const {
     assets,
@@ -59,6 +62,7 @@ const TelicentMap = () => {
   }, [mapStyle, setMapStyle]);
 
   useEffect(() => {
+    if (isEmpty(assets) && isEmpty(selectedElements)) return;
     dispatch({
       type: HIGHLIGHT_SELECTED_ELEMENTS,
       assets,
@@ -76,7 +80,7 @@ const TelicentMap = () => {
   ]);
 
   const updateSelectedPolygons = useCallback((selectedPolygons) => {
-    dispatch({ type: UPDATE_SELECTED_POLYGONS, selectedPolygons})
+    dispatch({ type: UPDATE_SELECTED_POLYGONS, selectedPolygons });
   }, []);
 
   const handleOnClick = (event) => {
@@ -87,18 +91,19 @@ const TelicentMap = () => {
     const controls = event.target._controls;
     const drawControl = Object.values(controls).find((item) => item.modes);
     const polygons = drawControl.getAll().features;
+    const selectedPolygons = drawControl.getSelected().features;
 
-    if (!clickedFeature && isEmpty(polygons)) {
+    if (!clickedFeature || isEmpty(polygons)) {
       clearSelectedElements();
       return;
     }
 
-    if (!isEmpty(polygons)) {
-      updateSelectedPolygons(drawControl.getSelected().features)
+    if (!isEmpty(selectedPolygons)) {
+      updateSelectedPolygons(selectedPolygons);
       return;
     }
 
-    if (clickedFeature && clickedFeature.type === "Feature") {
+    if (clickedFeature?.type === "Feature") {
       const { properties } = clickedFeature;
       event.originalEvent.stopPropagation();
       const element = JSON.parse(properties.element);
@@ -123,7 +128,6 @@ const TelicentMap = () => {
   return (
     <div className="relative w-full">
       <Map
-        ref={mapRef}
         cursor={cursor}
         id="telicentMap"
         interactiveLayerIds={[allAssetsLayerStyle.id]}

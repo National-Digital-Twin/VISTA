@@ -121,16 +121,11 @@ const useDraw = (setPolygons) => {
     }
   };
 
-  const getAllPolygons = () => {
-    return draw.getAll();
-  };
-
   return {
     activateDrawCircleMode,
     activatePolygonMode,
     activateSimpleSelectMode,
     deleteAllPolygons,
-    getAllPolygons,
     setRadius,
   };
 };
