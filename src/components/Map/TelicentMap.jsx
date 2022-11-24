@@ -135,7 +135,7 @@ const TelicentMap = () => {
           <Layer {...highlightedAssets} />
         </Source>
         <HoverInfo info={hoverInfo?.feature.properties.element} left={hoverInfo?.x} top={hoverInfo?.y} />
-        <MapToolbar mapStyle={mapStyle} setMapStyle={setMapStyle} />
+        <MapToolbar mapStyle={mapStyle} setCursor={setCursor} setMapStyle={setMapStyle} />
       </Map>
     </div>
   );
