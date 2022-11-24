@@ -12,7 +12,7 @@ let modes = MapboxDraw.modes;
 modes = MapboxDrawGeodesic.enable(modes);
 
 const useDraw = () => {
-  const { clearSelectedElements, onMultiSelect } = useContext(ElementsContext);
+  const { clearSelectedElements, onAreaSelect } = useContext(ElementsContext);
 
   const getAssetsInPolygon = (target, polygon) => {
     const points = turf.pointsWithinPolygon(target.getSource("all-assets")?._data, polygon);
@@ -37,7 +37,7 @@ const useDraw = () => {
     const assets = event.features.flatMap((feature) => {
       return assetsInPolygon(event, feature);
     });
-    onMultiSelect(assets);
+    onAreaSelect(assets);
   };
 
   const onClick = (event) => {
