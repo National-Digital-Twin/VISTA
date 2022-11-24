@@ -5,10 +5,11 @@ import { heatmap } from "./layerStyles";
 import { getMapStyles } from "./mapStyles";
 import useDraw from "./useDraw";
 
-const MapToolbar = ({ heatmapRadius, map, mapStyle: selectedMapStyle, setMapStyle }) => {
+const MapToolbar = ({ heatmapRadius, map, mapStyle, setMapStyle }) => {
+  const { activateDrawCircleMode, activatePolygonMode, deleteAllPolygons } = useDraw();
+
   const [isHeatVisible, setIsHeatVisible] = useState(false);
   const [showLayers, setShowLayers] = useState(false);
-  const { activatePolygonMode, deleteAllPolygons } = useDraw();
   const [showMapStyles, setShowMapStyles] = useState(false);
 
   const mapStyles = getMapStyles();
@@ -52,7 +53,6 @@ const MapToolbar = ({ heatmapRadius, map, mapStyle: selectedMapStyle, setMapStyl
   };
 
   const toggleHeatVisibility = () => {
-    console.log("toggle visibility")
     const { id } = heatmap;
     const isVisible = isLayerVisible(id);
     setIsHeatVisible(!isVisible);
@@ -61,7 +61,7 @@ const MapToolbar = ({ heatmapRadius, map, mapStyle: selectedMapStyle, setMapStyl
 
   const mapMenuItems = mapStyles.map(({ name, id }) => ({
     name: name,
-    selected: id === selectedMapStyle,
+    selected: id === mapStyle,
     type: "button",
     onItemClick: () => {
       setMapStyle(id);
@@ -113,8 +113,13 @@ const MapToolbar = ({ heatmapRadius, map, mapStyle: selectedMapStyle, setMapStyl
       <VerticalDivider />
       <ToolbarButton
         icon="fg-polyline-pt"
-        label="Draw Polygon (Beta)"
+        label="Polygon Selection (Beta)"
         onClick={activatePolygonMode}
+      />
+      <ToolbarButton
+        icon="fg-circle-o"
+        label="Radius Selection (Beta)"
+        onClick={activateDrawCircleMode}
       />
       <ToolbarButton
         icon="ri-delete-bin-line"
