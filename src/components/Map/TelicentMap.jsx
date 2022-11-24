@@ -162,7 +162,7 @@ const TelicentMap = () => {
           left={hoverInfo?.x}
           top={hoverInfo?.y}
         />
-        <MapConfig />
+        <MapConfig mapStyle={mapStyle} setMapStyle={setMapStyle} />
       </Map>
     </div>
   );

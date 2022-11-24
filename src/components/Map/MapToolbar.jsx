@@ -2,17 +2,18 @@
 import classNames from "classnames";
 import React, { useRef, useState } from "react";
 import { useMap } from "react-map-gl";
-import { useLocalStorage, useOutsideAlerter } from "hooks";
+import { useOutsideAlerter } from "hooks";
 import { ToolbarButton, VerticalDivider } from "lib";
 import { getMapStyles } from "./mapStyles";
 
 const MapToolbar = ({
+  mapStyle,
   activateDrawCircleMode,
   activatePolygonMode,
   deleteAllPolygons,
+  setMapStyle
 }) => {
   const { telicentMap: map } = useMap();
-  const [mapStyle, setMapStyle] = useLocalStorage("mapStyle", "mapbox://styles/mapbox/dark-v10");
   const [showMapStyles, setShowMapStyles] = useState(false);
 
   const mapStyles = getMapStyles();

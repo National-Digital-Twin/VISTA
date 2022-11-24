@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import useDraw from "./useDraw";
 import MapToolbar from "./MapToolbar";
 
-const MapConfig = () => {
+const MapConfig = ({ mapStyle, setMapStyle }) => {
   const [polygon, setPolygon] = useState(undefined);
   const { activateDrawCircleMode, activatePolygonMode, deleteAllPolygons, setRadius } =
     useDraw(setPolygon);
@@ -16,9 +16,11 @@ const MapConfig = () => {
     <>
       <RadiusConfig polygon={polygon} onClose={handleOnPopupClose} setRadius={setRadius} />
       <MapToolbar
+        mapStyle={mapStyle}
         activateDrawCircleMode={activateDrawCircleMode}
         activatePolygonMode={activatePolygonMode}
         deleteAllPolygons={deleteAllPolygons}
+        setMapStyle={setMapStyle}
       />
     </>
   );
