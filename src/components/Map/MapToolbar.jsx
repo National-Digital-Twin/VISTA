@@ -1,5 +1,5 @@
 /* eslint jsx-a11y/anchor-has-content: 0 */
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { ToolbarButton, ToolbarMenu, VerticalDivider } from "lib";
 import { heatmap } from "./layerStyles";
 import { getMapStyles } from "./mapStyles";
@@ -13,17 +13,25 @@ const MapToolbar = ({ heatmapRadius, map, mapStyle: selectedMapStyle, setMapStyl
 
   const mapStyles = getMapStyles();
 
-  map?.on("style.load", function () {
-    handleLayerVisibility(heatmap.id, isHeatVisible);
-    map.getMap().setPaintProperty(heatmap.id, "heatmap-radius", heatmapRadius);
-  });
-
   const handleLayerVisibility = useCallback(
     (layerId, isVisible) => {
       map?.getMap().setLayoutProperty(layerId, "visibility", isVisible ? "visible" : "none");
     },
     [map]
   );
+
+  const onStyleLoad = useCallback((event) => {
+    handleLayerVisibility(heatmap.id, isHeatVisible);
+    map?.getMap().setPaintProperty(heatmap.id, "heatmap-radius", heatmapRadius);
+  }, [map, handleLayerVisibility, isHeatVisible, heatmapRadius])
+
+  map?.on("style.load", onStyleLoad)
+
+  useEffect(() => {
+    return () => {
+      map?.off("style.load", onStyleLoad)
+    }
+  }, [map, onStyleLoad])
 
   const handleZoomOut = () => {
     if (!map) return;
@@ -44,15 +52,11 @@ const MapToolbar = ({ heatmapRadius, map, mapStyle: selectedMapStyle, setMapStyl
   };
 
   const toggleHeatVisibility = () => {
+    console.log("toggle visibility")
     const { id } = heatmap;
     const isVisible = isLayerVisible(id);
-    if (isVisible) {
-      setIsHeatVisible(false);
-      handleLayerVisibility(id, false);
-      return;
-    }
-    setIsHeatVisible(true);
-    handleLayerVisibility(id, true);
+    setIsHeatVisible(!isVisible);
+    handleLayerVisibility(id, !isVisible);
   };
 
   const mapMenuItems = mapStyles.map(({ name, id }) => ({
@@ -110,16 +114,12 @@ const MapToolbar = ({ heatmapRadius, map, mapStyle: selectedMapStyle, setMapStyl
       <ToolbarButton
         icon="fg-polyline-pt"
         label="Draw Polygon (Beta)"
-        onClick={() => {
-          activatePolygonMode();
-        }}
+        onClick={activatePolygonMode}
       />
       <ToolbarButton
         icon="ri-delete-bin-line"
         label="Delete Polygons"
-        onClick={() => {
-          deleteAllPolygons();
-        }}
+        onClick={deleteAllPolygons}
       />
     </div>
   );
