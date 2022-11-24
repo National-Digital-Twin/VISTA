@@ -40,9 +40,7 @@ const NetworkGraph = () => {
         onElementClick(event.originalEvent.shiftKey, element.data);
       });
       cyRef.current.on("tap", "node", function (event) {
-        const id = event.target.data("id");
-        const element = cyRef.current.getElementById(id).json();
-        onElementClick(event.originalEvent.shiftKey, event.target.data())
+        onElementClick(event.originalEvent.shiftKey, event.target.data());
       });
       cyRef.current.on("tap", function (event) {
         if (event.target === cy) {

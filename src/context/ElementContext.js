@@ -150,8 +150,6 @@ export const ElementsProvider = ({ children }) => {
     dispatch({ type: UPDATE_SELECTED_ELEMENTS, multiSelect, selectedElement });
   }, []);
 
-  const onMultiSelect = useCallback((event, selectedElements) => {}, []);
-
   const updateErrors = useCallback((msg) => {
     dispatch({ type: UPDATE_ERRORS, error: msg });
   }, []);
@@ -180,7 +178,6 @@ export const ElementsProvider = ({ children }) => {
         dismissErrorNotification,
         filterSelectedElements,
         onElementClick,
-        onMultiSelect,
         reset,
         updateAssets,
         updateConnections,
