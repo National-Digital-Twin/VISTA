@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useMemo, useReducer, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import Map, { Layer, Source } from "react-map-gl";
 import { isEmpty } from "lodash";
 
@@ -7,14 +7,14 @@ import { CytoscapeContext, ElementsContext } from "context";
 import { useLocalStorage } from "hooks";
 
 import { allAssetsLayerStyle, highlightedAssets, lineStyle, segmentStyle } from "./layerStyles";
-import { generateAssetFeatures } from "./mapboxFeatures";
+import {
+  createSelectedAssetFeatures,
+  createSelectedConnectionFeatures,
+  createSelectedSegmentFeatures,
+  generateAssetFeatures,
+} from "./mapboxFeatures";
 import { getMapStyles } from "./mapStyles";
 import MapConfig from "./MapConfig";
-import mapReducer, {
-  HIGHLIGHT_SELECTED_ELEMENTS,
-  INITIAL_STATE,
-  UPDATE_SELECTED_POLYGONS,
-} from "./map-reducer";
 import "./mapbox.css";
 
 const GEOJSON = "geojson";
@@ -36,21 +36,21 @@ const TelicentMap = () => {
     clearSelectedElements,
     onElementClick,
   } = useContext(ElementsContext);
+  const [mapStyle, setMapStyle] = useLocalStorage("mapStyle", "mapbox://styles/mapbox/dark-v10");
 
   const assetFeatures = useMemo(() => generateAssetFeatures(assets), [assets]);
 
   const [cursor, setCursor] = useState("auto");
   const [hoverInfo, setHoverInfo] = useState(undefined);
-  const [mapStyle, setMapStyle] = useLocalStorage("mapStyle", "mapbox://styles/mapbox/dark-v10");
-
-  const [state, dispatch] = useReducer(mapReducer, INITIAL_STATE);
-  const { selectedAssets, selectedDependacies, selectedSegments, selectedPolygons } = state;
+  const [selectedAssetCxns, setSelectedAssetCxns] = useState([]);
+  const [selectedAssets, setSelectedAssets] = useState([]);
+  const [selectedSegments, setSelectedSegments] = useState([]);
 
   // The order of the array is the order in which the features will appear in the map.
   // index 0 being the lowest level
   const sources = [
     { id: "assets", features: assetFeatures, layers: [allAssetsLayerStyle] },
-    { id: "selected-connections", features: selectedDependacies, layers: [lineStyle] },
+    { id: "selected-connections", features: selectedAssetCxns, layers: [lineStyle] },
     { id: "selected-segments", features: selectedSegments, layers: [segmentStyle] },
     { id: "selected-assets", features: selectedAssets, layers: [highlightedAssets] },
   ];
@@ -63,14 +63,27 @@ const TelicentMap = () => {
 
   useEffect(() => {
     if (isEmpty(assets) && isEmpty(selectedElements)) return;
-    dispatch({
-      type: HIGHLIGHT_SELECTED_ELEMENTS,
+    const selectedAssetFeatures = createSelectedAssetFeatures(
       assets,
-      selectedElements,
-      maxAssetCriticality,
       assetCriticalityColorScale,
+      maxAssetCriticality,
+      selectedElements
+    );
+    setSelectedAssets(selectedAssetFeatures);
+
+    const selectedSegmentFeatures = createSelectedSegmentFeatures(
+      selectedElements,
+      assetCriticalityColorScale,
+      assets
+    );
+    setSelectedSegments(selectedSegmentFeatures);
+
+    const selectedAssetCxnFeatures = createSelectedConnectionFeatures(
+      assets,
       cxnCriticalityColorScale,
-    });
+      selectedElements
+    );
+    setSelectedAssetCxns(selectedAssetCxnFeatures);
   }, [
     assets,
     cxnCriticalityColorScale,
@@ -78,10 +91,6 @@ const TelicentMap = () => {
     maxAssetCriticality,
     selectedElements,
   ]);
-
-  const updateSelectedPolygons = useCallback((selectedPolygons) => {
-    dispatch({ type: UPDATE_SELECTED_POLYGONS, selectedPolygons });
-  }, []);
 
   const handleOnClick = (event) => {
     const { features } = event;
@@ -91,15 +100,9 @@ const TelicentMap = () => {
     const controls = event.target._controls;
     const drawControl = Object.values(controls).find((item) => item.modes);
     const polygons = drawControl.getAll().features;
-    const selectedPolygons = drawControl.getSelected().features;
 
-    if (!clickedFeature || isEmpty(polygons)) {
+    if (!clickedFeature && isEmpty(polygons)) {
       clearSelectedElements();
-      return;
-    }
-
-    if (!isEmpty(selectedPolygons)) {
-      updateSelectedPolygons(selectedPolygons);
       return;
     }
 
@@ -159,7 +162,7 @@ const TelicentMap = () => {
           left={hoverInfo?.x}
           top={hoverInfo?.y}
         />
-        <MapConfig polygons={selectedPolygons} setPolygons={updateSelectedPolygons} />
+        <MapConfig />
       </Map>
     </div>
   );

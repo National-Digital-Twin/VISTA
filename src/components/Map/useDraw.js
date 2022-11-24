@@ -1,4 +1,3 @@
-import { isEmpty } from "lodash";
 import { useContext } from "react";
 import { useControl } from "react-map-gl";
 import * as MapboxDrawGeodesic from "mapbox-gl-draw-geodesic";
@@ -12,7 +11,7 @@ const DRAW_CIRCLE = "draw_circle";
 let modes = MapboxDraw.modes;
 modes = MapboxDrawGeodesic.enable(modes);
 
-const useDraw = (setPolygons) => {
+const useDraw = (setPolygon) => {
   const { clearSelectedElements, onMultiSelect } = useContext(ElementsContext);
 
   const getAssetsInPolygon = (target, polygon) => {
@@ -37,11 +36,14 @@ const useDraw = (setPolygons) => {
   };
 
   const selectAssetsInPolygons = (event) => {
+    setPolygon(undefined);
     const { features } = event;
-    if (isEmpty(features)) return;
     const assets = features.flatMap((feature) => assetsInPolygon(event, feature));
     onMultiSelect(assets);
-    setPolygons(features);
+    if (features.length === 1) {
+      setPolygon(features[0]);
+      return;
+    }
   };
 
   const onClick = (event) => {
@@ -90,6 +92,8 @@ const useDraw = (setPolygons) => {
     }
   );
 
+  const SIMPLE_SELECT = draw?.modes?.SIMPLE_SELECT;
+
   const activatePolygonMode = () => {
     draw.changeMode(draw.modes.DRAW_POLYGON);
   };
@@ -99,12 +103,13 @@ const useDraw = (setPolygons) => {
   };
 
   const activateDrawCircleMode = () => {
-    draw.changeMode(DRAW_CIRCLE);
+    draw.changeMode(draw.modes.SIMPLE_SELECT);
   };
 
   const deleteAllPolygons = () => {
     draw.deleteAll();
     clearSelectedElements();
+    setPolygon(undefined);
   };
 
   /**
@@ -117,7 +122,7 @@ const useDraw = (setPolygons) => {
     MapboxDrawGeodesic.setCircleRadius(geojson, radius);
     const featureIds = draw.add(geojson);
     if (manualEdit) {
-      draw.changeMode("simple_select").changeMode("direct_select", { featureId: featureIds[0] });
+      draw.changeMode(SIMPLE_SELECT).changeMode(SIMPLE_SELECT, { featureIds: featureIds[0] })
     }
   };
 
