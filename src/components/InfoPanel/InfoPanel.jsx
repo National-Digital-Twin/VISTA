@@ -9,11 +9,10 @@ import SelectedElements from "./SelectedElements";
 const InfoPanel = () => {
   const { assets, selectedElements, assetCriticalityColorScale, cxnCriticalityColorScale } =
     useContext(ElementsContext);
-  const [showPanel, setShowPanel] = useLocalStorage("showInformationPanel", false)
+  const [showPanel, setShowPanel] = useLocalStorage("showInformationPanel", false);
   const [headerProps, setHeaderProps] = useState(undefined);
 
-  const getDetails = (element) =>
-    element.generateDetails(assets, assetCriticalityColorScale, cxnCriticalityColorScale);
+  const getDetails = (element) => element.generateDetails(assets, assetCriticalityColorScale, cxnCriticalityColorScale);
 
   const selectedCount = selectedElements.length;
 
@@ -31,7 +30,7 @@ const InfoPanel = () => {
       position="top-0 right-0 max-h-full flex flex-col"
       show={showPanel}
       collapsedComponent={<InfoBtn count={selectedCount} onToggle={handleTogglePanel} />}
-      style={{ width: "25rem", maxWidth: "25rem" }}
+      style={{ width: showPanel ? "26rem" : "fit-content", maxWidth: "26rem", maxHeight: "calc(100% - 50px)" }}
     >
       <InfoPanelHeader count={selectedCount} onToggle={handleTogglePanel} {...headerProps} />
       <SelectedElements
