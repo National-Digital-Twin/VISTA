@@ -99,11 +99,11 @@ const useDraw = (setPolygon) => {
   };
 
   const activateSimpleSelectMode = () => {
-    draw.changeMode(draw.modes.SIMPLE_SELECT);
+    draw.changeMode(SIMPLE_SELECT);
   };
 
   const activateDrawCircleMode = () => {
-    draw.changeMode(draw.modes.SIMPLE_SELECT);
+    draw.changeMode(DRAW_CIRCLE);
   };
 
   const deleteAllPolygons = () => {
