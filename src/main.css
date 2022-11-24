@@ -644,14 +644,6 @@ video {
   float: right;
 }
 
-.m-1 {
-  margin: 0.25rem;
-}
-
-.m-3 {
-  margin: 0.75rem;
-}
-
 .ml-auto {
   margin-left: auto;
 }
@@ -660,16 +652,12 @@ video {
   margin-bottom: 1.25rem;
 }
 
-.ml-10 {
-  margin-left: 2.5rem;
-}
-
-.mt-5 {
-  margin-top: 1.25rem;
-}
-
 .mt-3 {
   margin-top: 0.75rem;
+}
+
+.ml-10 {
+  margin-left: 2.5rem;
 }
 
 .flex {
@@ -999,10 +987,6 @@ video {
 
 .p-1 {
   padding: 0.25rem;
-}
-
-.p-3 {
-  padding: 0.75rem;
 }
 
 .px-2 {
