@@ -21,14 +21,13 @@ const MapToolbar = ({ heatmapRadius, map, mapStyle, setMapStyle }) => {
     [map]
   );
 
-  const onStyleLoad = useCallback((event) => {
+  const onStyleLoad = useCallback(() => {
     handleLayerVisibility(heatmap.id, isHeatVisible);
     map?.getMap().setPaintProperty(heatmap.id, "heatmap-radius", heatmapRadius);
   }, [map, handleLayerVisibility, isHeatVisible, heatmapRadius])
 
-  map?.on("style.load", onStyleLoad)
-
   useEffect(() => {
+    map?.on("style.load", onStyleLoad)
     return () => {
       map?.off("style.load", onStyleLoad)
     }
