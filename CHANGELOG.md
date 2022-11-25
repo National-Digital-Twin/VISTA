@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.4.0](https://github.com/Telicent-io/telicent-paralog/compare/v1.3.0...v1.4.0) (2022-11-25)
+
+
+### Features
+
+* Radius selection ([179](https://github.com/Telicent-io/telicent-paralog/pull/179), [184](https://github.com/Telicent-io/telicent-paralog/pull/184))
+* Heatmap ([180](https://github.com/Telicent-io/telicent-paralog/pull/180))
+
+
+### Bug Fixes
+
+* Box selection on network graph ([173](https://github.com/Telicent-io/telicent-paralog/pull/173))
+* Network layout persists between reloads ([185](https://github.com/Telicent-io/telicent-paralog/pull/185))
+* Reduce width of information panel width when closed ([171](https://github.com/Telicent-io/telicent-paralog/pull/171))
+* Save connected assets state to local storage ([172](https://github.com/Telicent-io/telicent-paralog/pull/172))
+
+
 ## [1.3.0](https://github.com/Telicent-io/telicent-paralog/compare/v1.2.3...v1.3.0) (2022-11-09)
 
 
