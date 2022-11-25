@@ -124,7 +124,7 @@ const DBButton = ({ active, onToggle }) => {
           aria-hidden
           role="img"
           className={classNames("ri-database-2-fill !text-base", {
-            "text-[color:var(--app-Colour)]": active,
+            "text-appColor": active,
           })}
         />
       </button>

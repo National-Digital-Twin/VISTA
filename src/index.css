@@ -45,10 +45,6 @@
   @apply invisible;
 }
 
-.mapboxgl-ctrl > .mapboxgl-ctrl-logo {
-  display: none;
-}
-
 #theme-provider > div {
   height: 100%;
 }
@@ -57,13 +53,13 @@ main {
 }
 
 body {
-  margin: 0;
-
-  font-family: "Urbanist", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
   overflow: hidden;
+}
+
+@layer base {
+  :root {
+    --color-app: 46 250 141;
+  }
 }
 
 @layer utilities {
@@ -85,11 +81,17 @@ body {
 }
 @layer components {
   .error-notification {
-    @apply px-2 py-1;
+    @apply px-2 py-1 bg-error;
     display: grid;
     grid-template-columns: 1fr min-content;
     align-items: center;
-    background-color: #b80000;
+  }
+
+  .tl-input {
+    @apply focus:outline-none focus:border-appColor
+    focus:ring-1 focus:ring-appColor
+    invalid:border-red-400 invalid:text-red-400
+    focus:invalid:border-red-400 focus:invalid:ring-red-400;
   }
 
   .linkBorder {

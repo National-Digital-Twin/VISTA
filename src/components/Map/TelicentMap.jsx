@@ -1,8 +1,11 @@
 import React, { useContext, useEffect, useMemo, useState } from "react";
 import Map, { Layer, Source, ScaleControl, useMap } from "react-map-gl";
+import { isEmpty } from "lodash";
+
 import config from "config/app-config";
 import { CytoscapeContext, ElementsContext } from "context";
 import { useLocalStorage } from "hooks";
+
 import {
   allAssetsLayerStyle,
   heatmap,
@@ -17,7 +20,8 @@ import {
   generateAssetFeatures,
 } from "./mapboxFeatures";
 import { getMapStyles } from "./mapStyles";
-import MapToolbar from "./MapToolbar";
+import MapConfig from "./MapConfig";
+import "./mapbox.css";
 
 const GEOJSON = "geojson";
 const FEATURE_COLLECTION = "FeatureCollection";
@@ -48,8 +52,17 @@ const TelicentMap = () => {
   const [selectedAssetCxns, setSelectedAssetCxns] = useState([]);
   const [selectedAssets, setSelectedAssets] = useState([]);
   const [selectedSegments, setSelectedSegments] = useState([]);
-  
+
   const assetFeatures = useMemo(() => generateAssetFeatures(assets), [assets]);
+
+  // The order of the array is the order in which the features will appear in the map.
+  // index 0 being the lowest level
+  const sources = [
+    { id: "assets", features: assetFeatures, layers: [heatmap, allAssetsLayerStyle] },
+    { id: "selected-connections", features: selectedAssetCxns, layers: [lineStyle] },
+    { id: "selected-segments", features: selectedSegments, layers: [segmentStyle] },
+    { id: "selected-assets", features: selectedAssets, layers: [highlightedAssets] },
+  ];
 
   useEffect(() => {
     if (!getMapStyles().some((style) => style.id === mapStyle)) {
@@ -58,6 +71,7 @@ const TelicentMap = () => {
   }, [mapStyle, setMapStyle]);
 
   useEffect(() => {
+    if (isEmpty(assets) && isEmpty(selectedElements)) return;
     const selectedAssetFeatures = createSelectedAssetFeatures(
       assets,
       assetCriticalityColorScale,
@@ -82,13 +96,16 @@ const TelicentMap = () => {
     const clickedFeature = features && features[0];
     clearSelected();
 
-    const polygonControl = event.target._controls.filter((item) => (item?.types?.POLYGON ? item : null));
+    const controls = event.target._controls;
+    const drawControl = Object.values(controls).find((item) => item.modes);
+    const polygons = drawControl.getAll().features;
 
-    if (polygonControl[0].getSelected().features.length === 0 && !clickedFeature) {
+    if (!clickedFeature && isEmpty(polygons)) {
       clearSelectedElements();
+      return;
     }
 
-    if (clickedFeature) {
+    if (clickedFeature?.type === "Feature") {
       const { properties } = clickedFeature;
       event.originalEvent.stopPropagation();
       const element = JSON.parse(properties.element);
@@ -135,30 +152,39 @@ const TelicentMap = () => {
         boxZoom={false}
         onZoom={handleOnZoom}
       >
-        <ScaleControl position="top-left" style={{ backgroundColor: "#27272780", color: "#F5F5F5", borderColor: "#949494", fontFamily: "Urbanist", letterSpacing: "1.5px" }} />
-        <Source
-          id="all-assets"
-          type={GEOJSON}
-          data={{ type: FEATURE_COLLECTION, features: assetFeatures }}
-        >
-          <Layer {...heatmap} />
-          <Layer {...allAssetsLayerStyle} />
-        </Source>
-        <Source
-          id="selected-connections"
-          type={GEOJSON}
-          data={{ type: FEATURE_COLLECTION, features: selectedAssetCxns }}
-        >
-          <Layer {...lineStyle} />
-        </Source>
-        <Source id="selected-segments" type={GEOJSON} data={{ type: FEATURE_COLLECTION, features: selectedSegments }}>
-          <Layer {...segmentStyle} />
-        </Source>
-        <Source id="selected-assets" type={GEOJSON} data={{ type: FEATURE_COLLECTION, features: selectedAssets }}>
-          <Layer {...highlightedAssets} />
-        </Source>
-        <HoverInfo info={hoverInfo?.feature.properties.element} left={hoverInfo?.x} top={hoverInfo?.y} />
-        <MapToolbar heatmapRadius={heatmapRadius} map={map} mapStyle={mapStyle} setMapStyle={setMapStyle} />
+        {sources.map((source) => (
+          <Source
+            key={source.id}
+            id={source.id}
+            type={GEOJSON}
+            data={{ type: FEATURE_COLLECTION, features: source.features }}
+          >
+            {source.layers.map((layer) => (
+              <Layer key={layer.id} {...layer} />
+            ))}
+          </Source>
+        ))}
+        <ScaleControl
+          position="top-left"
+          style={{
+            backgroundColor: "#27272780",
+            color: "#F5F5F5",
+            borderColor: "#949494",
+            fontFamily: "Urbanist",
+            letterSpacing: "1.5px",
+          }}
+        />
+        <HoverInfo
+          info={hoverInfo?.feature.properties.element}
+          left={hoverInfo?.x}
+          top={hoverInfo?.y}
+        />
+        <MapConfig
+          heatmapRadius={heatmapRadius}
+          map={map}
+          mapStyle={mapStyle}
+          setMapStyle={setMapStyle}
+        />
       </Map>
     </div>
   );

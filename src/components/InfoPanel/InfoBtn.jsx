@@ -10,7 +10,7 @@ const InfoBtn = ({ active, count, onToggle }) => {
       <button aria-labelledby={kebabCase(label)} onClick={onToggle} className="flex items-center justify-center">
         <i
           className={classNames("ri-information-line !text-xl", {
-            "text-[color:var(--app-Colour)]": active,
+            "text-appColor": active,
           })}
         />
         <Badge count={count} />
@@ -28,7 +28,7 @@ const Badge = ({ count }) => {
   return (
     <span
       id="selected-badge"
-      className="absolute -top-1.5 -right-0.5 text-[color:var(--app-Colour)] text-xs"
+      className="absolute -top-1.5 -right-0.5 text-appColor text-xs"
     >
       {count}
     </span>
