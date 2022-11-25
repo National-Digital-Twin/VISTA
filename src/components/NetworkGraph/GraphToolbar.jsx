@@ -1,10 +1,9 @@
 import { kebabCase } from "lodash";
-import classNames from "classnames";
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 
-import { useOutsideAlerter } from "../../hooks";
-import { ToolbarButton, VerticalDivider } from "../../lib";
+import { ToolbarButton, ToolbarMenu, VerticalDivider } from "../../lib";
 
+const LAYOUTS = ["Cola", "Circle", "Random", "Breadth First", "AVSDF", "Dagre"];
 const transformLayoutOptions = (item) => item.replace(/\s/g, "").toLowerCase();
 
 const Toolbar = ({ cyRef, graphLayout, setGraphLayout }) => {
@@ -14,6 +13,13 @@ const Toolbar = ({ cyRef, graphLayout, setGraphLayout }) => {
   const hangleLayoutChange = (event) => {
     setGraphLayout(transformLayoutOptions(event.target.innerHTML));
   };
+
+  const layoutMenuItems = LAYOUTS.map((layout) => ({
+    name: layout,
+    selected: transformLayoutOptions(layout) === graphLayout,
+    type: "button",
+    onItemClick: hangleLayoutChange,
+  }));
 
   const onCenterClick = () => {
     if (!cyRef.current) return;
@@ -68,16 +74,10 @@ const Toolbar = ({ cyRef, graphLayout, setGraphLayout }) => {
         <ToolbarButton
           icon="ri-shape-fill"
           label="Layout"
-          onClick={() => setShowLayoutOptions((show) => !show)}
-          showSecodaryMenu={showLayoutOptions}
+          onClick={() => setShowLayoutOptions(true)}
+          showSecondaryMenu={showLayoutOptions}
           secondaryMenu={
-            <SecondaryMenu
-              items={["Cola", "Circle", "Random", "Breadth First", "AVSDF", "Dagre"]}
-              onClose={() => setShowLayoutOptions(false)}
-              onLayoutChange={hangleLayoutChange}
-              selected={graphLayout}
-              show={showLayoutOptions}
-            />
+            <ToolbarMenu id="secondary-menu" menuItems={layoutMenuItems} onClose={() => setShowLayoutOptions(false)} />
           }
         />
       </ul>
@@ -105,48 +105,3 @@ const MinimiseBtn = ({ label, onMinimise }) => (
     </div>
   </>
 );
-
-const SecondaryMenu = ({ selected, show, onClose, onLayoutChange, items }) => {
-  const SCROLL_OFFSET = 100;
-  const secondaryMenuRef = useRef();
-  const menuContainerRef = useRef();
-
-  useOutsideAlerter({ ref: menuContainerRef, fn: onClose });
-
-  const scroll = (scrollOffset) => {
-    secondaryMenuRef.current.scrollLeft += scrollOffset;
-  };
-
-  if (!show) return null;
-
-  const generateMenuItems = (item) => (
-    <li key={item} className="whitespace-nowrap">
-      <button
-        className={classNames("hover:bg-black-400 px-2 rounded-md w-full h-full", {
-          "bg-black-500": transformLayoutOptions(item) === selected,
-        })}
-        onClick={onLayoutChange}
-      >
-        {item}
-      </button>
-    </li>
-  );
-
-  return (
-    <div
-      ref={menuContainerRef}
-      className="absolute -top-12 ml-10 bg-black-200 px-2 py-1 rounded-md flex"
-    >
-      <button className="ri-arrow-left-s-line" onClick={() => scroll(-SCROLL_OFFSET)} />
-      <ul
-        id="secondary-menu"
-        ref={secondaryMenuRef}
-        className="flex gap-x-2 overflow-x-scroll hide-scrollbar scroll-smooth"
-        style={{ maxWidth: "24rem" }}
-      >
-        {items.map(generateMenuItems)}
-      </ul>
-      <button className="ri-arrow-right-s-line" onClick={() => scroll(SCROLL_OFFSET)} />
-    </div>
-  );
-};

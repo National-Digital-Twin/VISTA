@@ -3,55 +3,55 @@
 exports[`GraphToolbar component renders all layout options: layout options 1`] = `
 Array [
   <li
-    class="whitespace-nowrap"
+    class="w-full"
   >
     <button
-      class="hover:bg-black-400 px-2 rounded-md w-full h-full bg-black-500"
+      class="hover:bg-black-400 px-2 rounded-md w-full h-full whitespace-nowrap bg-black-500"
     >
       Cola
     </button>
   </li>,
   <li
-    class="whitespace-nowrap"
+    class="w-full"
   >
     <button
-      class="hover:bg-black-400 px-2 rounded-md w-full h-full"
+      class="hover:bg-black-400 px-2 rounded-md w-full h-full whitespace-nowrap"
     >
       Circle
     </button>
   </li>,
   <li
-    class="whitespace-nowrap"
+    class="w-full"
   >
     <button
-      class="hover:bg-black-400 px-2 rounded-md w-full h-full"
+      class="hover:bg-black-400 px-2 rounded-md w-full h-full whitespace-nowrap"
     >
       Random
     </button>
   </li>,
   <li
-    class="whitespace-nowrap"
+    class="w-full"
   >
     <button
-      class="hover:bg-black-400 px-2 rounded-md w-full h-full"
+      class="hover:bg-black-400 px-2 rounded-md w-full h-full whitespace-nowrap"
     >
       Breadth First
     </button>
   </li>,
   <li
-    class="whitespace-nowrap"
+    class="w-full"
   >
     <button
-      class="hover:bg-black-400 px-2 rounded-md w-full h-full"
+      class="hover:bg-black-400 px-2 rounded-md w-full h-full whitespace-nowrap"
     >
       AVSDF
     </button>
   </li>,
   <li
-    class="whitespace-nowrap"
+    class="w-full"
   >
     <button
-      class="hover:bg-black-400 px-2 rounded-md w-full h-full"
+      class="hover:bg-black-400 px-2 rounded-md w-full h-full whitespace-nowrap"
     >
       Dagre
     </button>

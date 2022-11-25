@@ -7,7 +7,7 @@ const ToolbarButton = ({
   label,
   onClick,
   secondaryMenu,
-  showSecodaryMenu,
+  showSecondaryMenu,
   className: listItemClassName,
   buttonClassName,
 }) => (
@@ -17,10 +17,10 @@ const ToolbarButton = ({
       { [listItemClassName]: listItemClassName }
     )}
   >
-    {showSecodaryMenu && secondaryMenu}
+    {showSecondaryMenu && secondaryMenu}
     <div
       className={classNames("w-full h-0.5 bg-whiteSmoke-500", {
-        "opacity-0 group-hover:opacity-100": !showSecodaryMenu,
+        "opacity-0 group-hover:opacity-100": !showSecondaryMenu,
       })}
     />
     <button
@@ -36,7 +36,7 @@ const ToolbarButton = ({
     <div
       id={kebabCase(label)}
       role="tooltip"
-      className={classNames({ hideTooltip: showSecodaryMenu })}
+      className={classNames({ hideTooltip: showSecondaryMenu })}
     >
       {label}
     </div>
