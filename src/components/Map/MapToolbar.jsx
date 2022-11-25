@@ -1,13 +1,19 @@
 /* eslint jsx-a11y/anchor-has-content: 0 */
 import React, { useCallback, useEffect, useState } from "react";
+
 import { ToolbarButton, ToolbarMenu, VerticalDivider } from "lib";
 import { heatmap } from "./layerStyles";
 import { getMapStyles } from "./mapStyles";
-import useDraw from "./useDraw";
 
-const MapToolbar = ({ heatmapRadius, map, mapStyle, setMapStyle }) => {
-  const { activateDrawCircleMode, activatePolygonMode, deleteAllPolygons } = useDraw();
-
+const MapToolbar = ({
+  heatmapRadius,
+  map,
+  mapStyle,
+  activateDrawCircleMode,
+  activatePolygonMode,
+  deleteAllPolygons,
+  setMapStyle,
+}) => {
   const [isHeatVisible, setIsHeatVisible] = useState(false);
   const [showLayers, setShowLayers] = useState(false);
   const [showMapStyles, setShowMapStyles] = useState(false);
@@ -24,14 +30,14 @@ const MapToolbar = ({ heatmapRadius, map, mapStyle, setMapStyle }) => {
   const onStyleLoad = useCallback(() => {
     handleLayerVisibility(heatmap.id, isHeatVisible);
     map?.getMap().setPaintProperty(heatmap.id, "heatmap-radius", heatmapRadius);
-  }, [map, handleLayerVisibility, isHeatVisible, heatmapRadius])
+  }, [map, handleLayerVisibility, isHeatVisible, heatmapRadius]);
 
   useEffect(() => {
-    map?.on("style.load", onStyleLoad)
+    map?.on("style.load", onStyleLoad);
     return () => {
-      map?.off("style.load", onStyleLoad)
-    }
-  }, [map, onStyleLoad])
+      map?.off("style.load", onStyleLoad);
+    };
+  }, [map, onStyleLoad]);
 
   const handleZoomOut = () => {
     if (!map) return;

@@ -1,9 +1,9 @@
-import { isEmpty } from "lodash";
 import { useContext } from "react";
 import { useControl } from "react-map-gl";
 import * as MapboxDrawGeodesic from "mapbox-gl-draw-geodesic";
 import * as turf from "@turf/turf";
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
+
 import { ElementsContext } from "context";
 
 const DRAW_CIRCLE = "draw_circle";
@@ -11,11 +11,11 @@ const DRAW_CIRCLE = "draw_circle";
 let modes = MapboxDraw.modes;
 modes = MapboxDrawGeodesic.enable(modes);
 
-const useDraw = () => {
+const useDraw = (setPolygon) => {
   const { clearSelectedElements, onMultiSelect } = useContext(ElementsContext);
 
   const getAssetsInPolygon = (target, polygon) => {
-    const points = turf.pointsWithinPolygon(target.getSource("all-assets")?._data, polygon);
+    const points = turf.pointsWithinPolygon(target?.getSource("assets")?._data, polygon);
     return points.features.map((feature) => ({ ...feature.properties.element }));
   };
 
@@ -23,8 +23,11 @@ const useDraw = () => {
     const { target } = event;
     if (MapboxDrawGeodesic.isCircle(feature)) {
       const center = MapboxDrawGeodesic.getCircleCenter(feature);
-      const radius = MapboxDrawGeodesic.getCircleRadius(feature);
-      const circle = turf.circle(center, radius, { steps: 10, units: "kilometers" });
+      const radius = parseFloat(Math.fround(feature.properties.circleRadius).toFixed(3));
+      feature.properties.center = center;
+      setRadius({ geojson: feature, radius, manualEdit: false });
+
+      const circle = turf.circle(center, radius, { steps: 50, units: "kilometers" });
       return getAssetsInPolygon(target, circle);
     }
 
@@ -33,19 +36,23 @@ const useDraw = () => {
   };
 
   const selectAssetsInPolygons = (event) => {
-    if (isEmpty(event.features)) return;
-    const assets = event.features.flatMap((feature) => {
-      return assetsInPolygon(event, feature);
-    });
+    setPolygon(undefined);
+    const { features } = event;
+    const assets = features.flatMap((feature) => assetsInPolygon(event, feature));
     onMultiSelect(assets);
+    if (features.length === 1) {
+      setPolygon(features[0]);
+      return;
+    }
   };
 
   const onClick = (event) => {
-    const { lat, lng } = event.lngLat;
+    const { lngLat } = event;
     if (draw.getMode() === DRAW_CIRCLE) {
-      let radius = 1
-      if (event.target.transform.zoom > 14) radius = 0.05
-      const circle = MapboxDrawGeodesic.createCircle([lng, lat], radius);
+      let radius = 2;
+      if (event.target.transform.zoom > 14) radius = 0.05;
+      const circle = MapboxDrawGeodesic.createCircle([lngLat.lng, lngLat.lat], radius);
+      circle.properties.center = MapboxDrawGeodesic.getCircleCenter(circle);
       draw.add(circle);
       activateSimpleSelectMode();
     }
@@ -85,12 +92,14 @@ const useDraw = () => {
     }
   );
 
+  const SIMPLE_SELECT = draw?.modes?.SIMPLE_SELECT;
+
   const activatePolygonMode = () => {
     draw.changeMode(draw.modes.DRAW_POLYGON);
   };
 
   const activateSimpleSelectMode = () => {
-    draw.changeMode(draw.modes.SIMPLE_SELECT);
+    draw.changeMode(SIMPLE_SELECT);
   };
 
   const activateDrawCircleMode = () => {
@@ -100,6 +109,21 @@ const useDraw = () => {
   const deleteAllPolygons = () => {
     draw.deleteAll();
     clearSelectedElements();
+    setPolygon(undefined);
+  };
+
+  /**
+   * This function is resposible for updating the radius of a selected circle based on user input
+   * setCircleRadius updates the circleRadius property in the geojson provided
+   * draw.changeMode is called to programatically select the feature
+   * this triggers the draw.selectionchange event which then updates the selected feature to the entered radius
+   */
+  const setRadius = ({ geojson, radius, manualEdit }) => {
+    MapboxDrawGeodesic.setCircleRadius(geojson, radius);
+    const featureIds = draw.add(geojson);
+    if (manualEdit) {
+      draw.changeMode(SIMPLE_SELECT).changeMode(SIMPLE_SELECT, { featureIds: featureIds[0] })
+    }
   };
 
   return {
@@ -107,6 +131,7 @@ const useDraw = () => {
     activatePolygonMode,
     activateSimpleSelectMode,
     deleteAllPolygons,
+    setRadius,
   };
 };
 

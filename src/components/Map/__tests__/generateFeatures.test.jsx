@@ -42,17 +42,17 @@ describe("Map component: Generates features which are used by mapbox", () => {
     await selectDatasets(user, ["Energy [25]"]);
 
     expect(screen.getAllByTestId("asset")).toHaveLength(5);
-    expect(spyOnCreateSelectedAssetFeatures).toHaveBeenCalledTimes(3);
+    expect(spyOnCreateSelectedAssetFeatures).toHaveBeenCalledTimes(2);
     expect(spyOnCreateSelectedAssetFeatures).toHaveReturnedWith([]);
 
     expect(screen.getAllByTestId("cxn")).toHaveLength(4);
-    expect(spyOnCreateSelectedCxnFeatures).toHaveBeenCalledTimes(3);
+    expect(spyOnCreateSelectedCxnFeatures).toHaveBeenCalledTimes(2);
     expect(spyOnCreateSelectedCxnFeatures).toHaveReturnedWith([]);
 
     await user.click(screen.getByRole("button", { name: "E005" }));
-    expect(spyOnCreateSelectedAssetFeatures).toHaveBeenCalledTimes(4);
+    expect(spyOnCreateSelectedAssetFeatures).toHaveBeenCalledTimes(3);
     expect(spyOnCreateSelectedAssetFeatures).toHaveReturned();
-    expect(spyOnCreateSelectedCxnFeatures).toHaveBeenCalledTimes(4);
+    expect(spyOnCreateSelectedCxnFeatures).toHaveBeenCalledTimes(3);
     expect(spyOnCreateSelectedCxnFeatures).toHaveReturned();
   });
 
@@ -69,17 +69,17 @@ describe("Map component: Generates features which are used by mapbox", () => {
     await selectDatasets(user, ["Energy [25]"]);
 
     expect(screen.getAllByTestId("asset")).toHaveLength(5);
-    expect(spyOnCreateSelectedAssetFeatures).toHaveBeenCalledTimes(3);
+    expect(spyOnCreateSelectedAssetFeatures).toHaveBeenCalledTimes(2);
     expect(spyOnCreateSelectedAssetFeatures).toHaveReturnedWith([]);
 
     expect(screen.getAllByTestId("cxn")).toHaveLength(4);
-    expect(spyOnCreateSelectedCxnFeatures).toHaveBeenCalledTimes(3);
+    expect(spyOnCreateSelectedCxnFeatures).toHaveBeenCalledTimes(2);
     expect(spyOnCreateSelectedCxnFeatures).toHaveReturnedWith([]);
 
     await user.click(screen.getByRole("button", { name: "E005 - E006" }));
-    expect(spyOnCreateSelectedAssetFeatures).toHaveBeenCalledTimes(4);
+    expect(spyOnCreateSelectedAssetFeatures).toHaveBeenCalledTimes(3);
     expect(spyOnCreateSelectedAssetFeatures).toHaveReturned();
-    expect(spyOnCreateSelectedCxnFeatures).toHaveBeenCalledTimes(4);
+    expect(spyOnCreateSelectedCxnFeatures).toHaveBeenCalledTimes(3);
     expect(spyOnCreateSelectedCxnFeatures).toHaveReturned();
   });
 });

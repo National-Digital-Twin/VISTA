@@ -4,6 +4,8 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        appColor: 'rgb(var(--color-app) / <alpha-value>)',
+        error: '#B80000',
         jet: '#292929',
         ravenBlack: '#3D3D3D',
         brilliantLicorice: '#525252',
