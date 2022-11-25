@@ -44,7 +44,6 @@ export default class Asset {
         element: this,
         color: "#333",
         size: 4,
-        pointType: "asset",
       },
       geometry: {
         type: "Point",

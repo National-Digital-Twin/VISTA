@@ -23,7 +23,7 @@ const useDraw = (setPolygon) => {
     const { target } = event;
     if (MapboxDrawGeodesic.isCircle(feature)) {
       const center = MapboxDrawGeodesic.getCircleCenter(feature);
-      const radius = parseFloat(Math.fround(feature.properties.circleRadius).toFixed(2));
+      const radius = parseFloat(Math.fround(feature.properties.circleRadius).toFixed(3));
       feature.properties.center = center;
       setRadius({ geojson: feature, radius, manualEdit: false });
 

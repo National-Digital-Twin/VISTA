@@ -1,22 +1,43 @@
 /* eslint jsx-a11y/anchor-has-content: 0 */
-import classNames from "classnames";
-import React, { useRef, useState } from "react";
-import { useMap } from "react-map-gl";
-import { useOutsideAlerter } from "hooks";
-import { ToolbarButton, VerticalDivider } from "lib";
+import React, { useCallback, useEffect, useState } from "react";
+
+import { ToolbarButton, ToolbarMenu, VerticalDivider } from "lib";
+import { heatmap } from "./layerStyles";
 import { getMapStyles } from "./mapStyles";
 
 const MapToolbar = ({
+  heatmapRadius,
+  map,
   mapStyle,
   activateDrawCircleMode,
   activatePolygonMode,
   deleteAllPolygons,
-  setMapStyle
+  setMapStyle,
 }) => {
-  const { telicentMap: map } = useMap();
+  const [isHeatVisible, setIsHeatVisible] = useState(false);
+  const [showLayers, setShowLayers] = useState(false);
   const [showMapStyles, setShowMapStyles] = useState(false);
 
   const mapStyles = getMapStyles();
+
+  const handleLayerVisibility = useCallback(
+    (layerId, isVisible) => {
+      map?.getMap().setLayoutProperty(layerId, "visibility", isVisible ? "visible" : "none");
+    },
+    [map]
+  );
+
+  const onStyleLoad = useCallback(() => {
+    handleLayerVisibility(heatmap.id, isHeatVisible);
+    map?.getMap().setPaintProperty(heatmap.id, "heatmap-radius", heatmapRadius);
+  }, [map, handleLayerVisibility, isHeatVisible, heatmapRadius]);
+
+  useEffect(() => {
+    map?.on("style.load", onStyleLoad);
+    return () => {
+      map?.off("style.load", onStyleLoad);
+    };
+  }, [map, onStyleLoad]);
 
   const handleZoomOut = () => {
     if (!map) return;
@@ -27,6 +48,40 @@ const MapToolbar = ({
     if (!map) return;
     map.zoomIn({ duration: 1000 });
   };
+
+  const isLayerVisible = (layerId) => {
+    if (map?.getLayer(layerId)) {
+      const visibility = map?.getLayoutProperty(layerId, "visibility");
+      return visibility === "visible";
+    }
+    return false;
+  };
+
+  const toggleHeatVisibility = () => {
+    const { id } = heatmap;
+    const isVisible = isLayerVisible(id);
+    setIsHeatVisible(!isVisible);
+    handleLayerVisibility(id, !isVisible);
+  };
+
+  const mapMenuItems = mapStyles.map(({ name, id }) => ({
+    name: name,
+    selected: id === mapStyle,
+    type: "button",
+    onItemClick: () => {
+      setMapStyle(id);
+      handleLayerVisibility(heatmap.id, isHeatVisible);
+    },
+  }));
+
+  const layersMenuItems = [
+    {
+      name: "Heatmap",
+      selected: isHeatVisible,
+      type: "toggleSwitch",
+      onItemClick: () => toggleHeatVisibility(),
+    },
+  ];
 
   return (
     <div className="absolute bottom-0 left-0 text-whiteSmoke font-body bg-black-200 flex items-center justify-center gap-x-2 px-2 py-1">
@@ -44,15 +99,20 @@ const MapToolbar = ({
       <ToolbarButton
         icon="ri-map-2-fill"
         label="Map style"
-        onClick={() => setShowMapStyles((show) => !show)}
-        showSecodaryMenu={showMapStyles}
+        onClick={() => setShowMapStyles(true)}
+        showSecondaryMenu={showMapStyles}
         secondaryMenu={
-          <MapStyles
-            items={mapStyles}
-            mapStyle={mapStyle}
-            onClose={() => setShowMapStyles(false)}
-            setMapStyle={setMapStyle}
-          />
+          <ToolbarMenu menuItems={mapMenuItems} onClose={() => setShowMapStyles(false)} />
+        }
+      />
+      <VerticalDivider />
+      <ToolbarButton
+        icon="ri-stack-line"
+        label="Layers"
+        onClick={() => setShowLayers(true)}
+        showSecondaryMenu={showLayers}
+        secondaryMenu={
+          <ToolbarMenu menuItems={layersMenuItems} onClose={() => setShowLayers(false)} />
         }
       />
       <VerticalDivider />
@@ -76,31 +136,3 @@ const MapToolbar = ({
 };
 
 export default MapToolbar;
-
-const MapStyles = ({ items, mapStyle, onClose, setMapStyle }) => {
-  const containerRef = useRef();
-  useOutsideAlerter({ ref: containerRef, fn: onClose });
-
-  const generateMenuItems = ({ id, name }) => (
-    <li key={name} className="whitespace-nowrap">
-      <button
-        className={classNames("hover:bg-black-400 px-2 rounded-md w-full h-full text-base", {
-          "bg-black-500": id === mapStyle,
-        })}
-        onClick={() => setMapStyle(id)}
-      >
-        {name}
-      </button>
-    </li>
-  );
-
-  return (
-    <ul
-      ref={containerRef}
-      className="absolute -top-12 bg-black-200 px-2 py-1 rounded-md flex gap-x-2 overflow-x-auto overscroll-x-contain scroll-smooth"
-      style={{ maxWidth: "25rem" }}
-    >
-      {items.map(generateMenuItems)}
-    </ul>
-  );
-};

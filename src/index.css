@@ -3,7 +3,8 @@
 @tailwind utilities;
 
 :root {
-  --app-Colour: #2EFA8D !important;
+  --app-Colour: #2efa8d !important;
+  --error-colour: #b80000;
 }
 
 ::-webkit-scrollbar {
@@ -56,6 +57,12 @@ body {
   overflow: hidden;
 }
 
+@layer base {
+  :root {
+    --color-app: 46 250 141;
+  }
+}
+
 @layer utilities {
   .hide-scrollbar::-webkit-scrollbar {
     display: none;
@@ -75,11 +82,17 @@ body {
 }
 @layer components {
   .error-notification {
-    @apply px-2 py-1;
+    @apply px-2 py-1 bg-error;
     display: grid;
     grid-template-columns: 1fr min-content;
     align-items: center;
-    background-color: #B80000;
+  }
+
+  .tl-input {
+    @apply focus:outline-none focus:border-app
+    focus:ring-1 focus:ring-app
+    invalid:border-red-400 invalid:text-red-400
+    focus:invalid:border-red-400 focus:invalid:ring-red-400;
   }
 
   .linkBorder {
