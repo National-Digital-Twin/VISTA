@@ -28,7 +28,7 @@ const Badge = ({ count }) => {
   return (
     <span
       id="selected-badge"
-      className="absolute -top-1.5 -right-0.5 text-appColor] text-xs"
+      className="absolute -top-1.5 -right-0.5 text-appColor text-xs"
     >
       {count}
     </span>

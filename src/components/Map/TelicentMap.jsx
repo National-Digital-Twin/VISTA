@@ -80,11 +80,7 @@ const TelicentMap = () => {
     );
     setSelectedAssets(selectedAssetFeatures);
 
-    const selectedSegmentFeatures = createSelectedSegmentFeatures(
-      selectedElements,
-      assetCriticalityColorScale,
-      assets
-    );
+    const selectedSegmentFeatures = createSelectedSegmentFeatures(selectedElements, assetCriticalityColorScale, assets);
     setSelectedSegments(selectedSegmentFeatures);
 
     const selectedAssetCxnFeatures = createSelectedConnectionFeatures(
@@ -93,13 +89,7 @@ const TelicentMap = () => {
       selectedElements
     );
     setSelectedAssetCxns(selectedAssetCxnFeatures);
-  }, [
-    assets,
-    cxnCriticalityColorScale,
-    assetCriticalityColorScale,
-    maxAssetCriticality,
-    selectedElements,
-  ]);
+  }, [assets, cxnCriticalityColorScale, assetCriticalityColorScale, maxAssetCriticality, selectedElements]);
 
   const handleOnClick = (event) => {
     const { features } = event;
@@ -119,7 +109,7 @@ const TelicentMap = () => {
       const { properties } = clickedFeature;
       event.originalEvent.stopPropagation();
       const element = JSON.parse(properties.element);
-      onElementClick(event, element);
+      onElementClick(event.originalEvent.shiftKey, element);
       return;
     }
   };

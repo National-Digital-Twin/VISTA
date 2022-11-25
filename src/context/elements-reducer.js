@@ -9,6 +9,7 @@ export const DISMISS_ERROR = "DISMISS_ERROR";
 export const FILTER_SELECTED = "FILTER_SELECTED";
 export const SELECT_ELEMENT = "SELECT_ELEMENT";
 export const MULTI_SELECT_ELEMENTS = "MULTI_SELECT_ELEMENTS";
+export const AREA_SELECTION = "AREA_SELECTION";
 export const UPDATE_ASSETS = "UPDATE_ASSETS";
 export const UPDATE_CONNECTIONS = "UPDATE_CONNECTIONS";
 export const UPDATE_ERRORS = "UPDATE_ERRORS";
@@ -33,23 +34,6 @@ export const INITIAL_STATE = {
 const getAllTotalCxns = (assets) => assets.map((asset) => asset.totalCxns);
 const getAllCriticalities = (assets) => assets.map((asset) => asset.criticality);
 const createElement = (elem) => (isAsset(elem) ? new Asset(elem) : new Connection(elem));
-const multiSelectElement = (state, action) => {
-  const getSelected = () => {
-    const index = state.selectedElements.findIndex(
-      (selectedElement) => selectedElement.id === action.selectedElement.id
-    );
-    if (index === -1)
-      return [...state.selectedElements, createElement(action.selectedElement)];
-    return state.selectedElements.filter(
-      (selectedElement) => selectedElement.id !== action.selectedElement.id
-    );
-  };
-
-  return {
-    ...state,
-    selectedElements: getSelected(),
-  };
-}
 
 const elementsReducer = (state, action) => {
   switch (action.type) {
@@ -89,17 +73,28 @@ const elementsReducer = (state, action) => {
         selectedElements,
       };
     }
-    case SELECT_ELEMENT: {
-      if (action.event?.originalEvent?.shiftKey ?? action.event?.shiftKey) {
-        return multiSelectElement(state, action);
-      }
-
+    case SELECT_ELEMENT:
       return {
         ...state,
         selectedElements: [createElement(action.selectedElement)],
       };
-    }
     case MULTI_SELECT_ELEMENTS: {
+      const getSelected = () => {
+        const index = state.selectedElements.findIndex(
+          (selectedElement) => selectedElement.id === action.selectedElement.id
+        );
+        if (index === -1) return [...state.selectedElements, createElement(action.selectedElement)];
+        return state.selectedElements.filter(
+          (selectedElement) => selectedElement.id !== action.selectedElement.id
+        );
+      };
+
+      return {
+        ...state,
+        selectedElements: getSelected(),
+      };
+    }
+    case AREA_SELECTION: {
       const selectedElements = action.selectedElements.map((selected) => createElement(selected));
       return { ...state, selectedElements };
     }

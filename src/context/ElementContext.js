@@ -1,5 +1,6 @@
 import React, { useCallback, useReducer } from "react";
 import elementsReducer, {
+  AREA_SELECTION,
   CLEAR_SELECTED,
   DISMISS_ERROR,
   FILTER_SELECTED,
@@ -47,13 +48,17 @@ export const ElementsProvider = ({ children }) => {
     dispatch({ type: RESET });
   }, []);
 
-  const onElementClick = useCallback((event, selectedElement) => {
-    dispatch({ type: SELECT_ELEMENT, event, selectedElement });
+  const onElementClick = useCallback((multiSelect, selectedElement) => {
+    if (multiSelect) {
+      dispatch({ type: MULTI_SELECT_ELEMENTS, selectedElement });
+      return;
+    }
+    dispatch({ type: SELECT_ELEMENT, selectedElement });
   }, []);
 
-  const onMultiSelect = (selectedElements) => {
+  const onAreaSelect = (selectedElements) => {
     if (!Array.isArray(selectedElements)) return;
-    dispatch({ type: MULTI_SELECT_ELEMENTS, selectedElements });
+    dispatch({ type: AREA_SELECTION, selectedElements });
   };
 
   const updateErrors = useCallback((msg) => {
@@ -83,8 +88,8 @@ export const ElementsProvider = ({ children }) => {
         clearSelectedElements,
         dismissErrorNotification,
         filterSelectedElements,
+        onAreaSelect,
         onElementClick,
-        onMultiSelect,
         reset,
         updateAssets,
         updateConnections,
