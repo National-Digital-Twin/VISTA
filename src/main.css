@@ -1147,8 +1147,9 @@ video {
   color: rgb(255 84 84 / var(--tw-text-opacity));
 }
 
-.text-\[color\:var\(--app-Colour\)\] {
-  color: var(--app-Colour);
+.text-appColor {
+  --tw-text-opacity: 1;
+  color: rgb(var(--color-app) / var(--tw-text-opacity));
 }
 
 .text-black-100 {
@@ -1174,7 +1175,6 @@ video {
 
 :root {
   --app-Colour: #2efa8d !important;
-  --error-colour: #b80000;
 }
 
 ::-webkit-scrollbar {
