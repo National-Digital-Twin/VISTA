@@ -1,11 +1,13 @@
 import { isEmpty } from "lodash";
-import React, { createContext, useCallback, useRef, useState } from "react";
+import React, { createContext, useCallback, useRef } from "react";
+
+import { useLocalStorage } from "hooks";
 
 export const CytoscapeContext = createContext();
 
 export const CytoscapeProvider = ({ children }) => {
   const cyRef = useRef({});
-  const [layout, setLayout] = useState("cola");
+  const [layout, setLayout] = useLocalStorage("graphLayout", "cola");
 
   const getSelected = () => {
     if (!cyRef.current) return;
