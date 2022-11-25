@@ -5,20 +5,17 @@
 
 ### Features
 
-* click and drag to drag circle ([6ecd9b9](https://github.com/Telicent-io/telicent-paralog/commit/6ecd9b9dd351e2628ee7428d28d4515fc6e91d3b))
+* Radius selection ([179](https://github.com/Telicent-io/telicent-paralog/pull/179), [184](https://github.com/Telicent-io/telicent-paralog/pull/184))
+* Heatmap ([180](https://github.com/Telicent-io/telicent-paralog/pull/180))
 
 
 ### Bug Fixes
 
-* adjust hight and width is passed as a style ([e424e59](https://github.com/Telicent-io/telicent-paralog/commit/e424e59f9db3d6cc2cb10de3d394b74d9cdd04a6))
-* change default to open ([15fc2bd](https://github.com/Telicent-io/telicent-paralog/commit/15fc2bd10f7be67ebe96a5cc876aadb8a7c10ec8))
-* fixed bug - boxselect on network and shift select on map ([e1525e7](https://github.com/Telicent-io/telicent-paralog/commit/e1525e75420cd7dbb2fa4b8aa8524239680b92bc))
-* **info panel:** fix bug where info panel had width of 25 rem even when closed ([39068c0](https://github.com/Telicent-io/telicent-paralog/commit/39068c045fe2c11a4c8a47e50764c06837afba80))
-* made graph layout persist ([cb7428e](https://github.com/Telicent-io/telicent-paralog/commit/cb7428ea348638203107e57f95734886b0ec130d))
-* save connected assets state to local storage ([2a24018](https://github.com/Telicent-io/telicent-paralog/commit/2a240182194f110211428ab06ed994ad6a1f4d46))
-* updated width value ([24fc53e](https://github.com/Telicent-io/telicent-paralog/commit/24fc53e875449afe3d3d2fdf4b7c4a4b17255148))
-* wip ([b5c1f86](https://github.com/Telicent-io/telicent-paralog/commit/b5c1f865dde882ee7d650e17a21cb3471026a669))
-* wip - box selection ([9d72eca](https://github.com/Telicent-io/telicent-paralog/commit/9d72eca72140157ce970dcbe5c8ae021a156bed9))
+* Box selection on network graph ([173](https://github.com/Telicent-io/telicent-paralog/pull/173))
+* Network layout persists between reloads ([185](https://github.com/Telicent-io/telicent-paralog/pull/185))
+* Reduce width of information panel width when closed ([171](https://github.com/Telicent-io/telicent-paralog/pull/171))
+* Save connected assets state to local storage ([172](https://github.com/Telicent-io/telicent-paralog/pull/172))
+
 
 ## [1.3.0](https://github.com/Telicent-io/telicent-paralog/compare/v1.2.3...v1.3.0) (2022-11-09)
 
