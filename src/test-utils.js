@@ -4,22 +4,24 @@ import userEvent from "@testing-library/user-event";
 import { Dataset } from "./components";
 import { CytoscapeProvider, ElementsContext, ElementsProvider } from "./context";
 import * as utils from "./components/Dataset/utils";
+import { MapProvider } from "react-map-gl";
 
 const user = userEvent.setup();
 export const clickEnergyDataset = async () => {
   await user.click(await screen.findByRole("checkbox", { name: "Energy [25]" }));
   expect(screen.getByRole("checkbox", { name: "Energy [25]" })).toBeChecked();
-}
+};
 
 export const clickTransportDataset = async () => {
   await user.click(await screen.findByRole("checkbox", { name: "Transport [44]" }));
-}
+};
 
 export const clickMedicalDataset = async () => {
   await user.click(await screen.findByRole("checkbox", { name: "Medical [32]" }));
-}
+};
 
-export const expandPanel = async (user) => await user.click(screen.getByRole("button", { name: "Open information panel" }));
+export const expandPanel = async (user) =>
+  await user.click(screen.getByRole("button", { name: "Open information panel" }));
 
 export const AssetBtn = ({ label, assets, event, onElementClick }) => (
   <button
@@ -48,42 +50,44 @@ export const CxnBtn = ({ label, connections, event, onElementClick }) => (
 );
 
 const LoadDataWrapper = ({ testComponent, children }) => (
-  <CytoscapeProvider>
-    <ElementsProvider>
-      <ElementsContext.Consumer>
-        {({ assets, connections, selectedElements, onElementClick }) => {
-          return (
-            <>
-              {testComponent && testComponent({ assets, connections, onElementClick })}
-              <div id="all-assets">
-                {assets.map((asset) => (
-                  <p id="asset" key={asset.id}>
-                    {asset.id}
-                  </p>
-                ))}
-              </div>
-              <div id="all-connections">
-                {connections.map((cxn) => (
-                  <p id="cxn" key={cxn.id}>
-                    {cxn.id}
-                  </p>
-                ))}
-              </div>
-              <div id="selected-elements">
-                {selectedElements.map((selectedElement) => (
-                  <p id="selected-element" key={selectedElement.id}>
-                    {selectedElement.id}
-                  </p>
-                ))}
-              </div>
-              <Dataset />
-              {children}
-            </>
-          );
-        }}
-      </ElementsContext.Consumer>
-    </ElementsProvider>
-  </CytoscapeProvider>
+  <MapProvider>
+    <CytoscapeProvider>
+      <ElementsProvider>
+        <ElementsContext.Consumer>
+          {({ assets, connections, selectedElements, onElementClick }) => {
+            return (
+              <>
+                {testComponent && testComponent({ assets, connections, onElementClick })}
+                <div id="all-assets">
+                  {assets.map((asset) => (
+                    <p id="asset" key={asset.id}>
+                      {asset.id}
+                    </p>
+                  ))}
+                </div>
+                <div id="all-connections">
+                  {connections.map((cxn) => (
+                    <p id="cxn" key={cxn.id}>
+                      {cxn.id}
+                    </p>
+                  ))}
+                </div>
+                <div id="selected-elements">
+                  {selectedElements.map((selectedElement) => (
+                    <p id="selected-element" key={selectedElement.id}>
+                      {selectedElement.id}
+                    </p>
+                  ))}
+                </div>
+                <Dataset />
+                {children}
+              </>
+            );
+          }}
+        </ElementsContext.Consumer>
+      </ElementsProvider>
+    </CytoscapeProvider>
+  </MapProvider>
 );
 
 export const renderTestComponent = (ui, options) => {

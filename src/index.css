@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  --app-Colour: #2EFA8D !important;
+  --app-Colour: #2efa8d !important;
 }
 
 ::-webkit-scrollbar {
@@ -89,7 +89,7 @@ body {
     display: grid;
     grid-template-columns: 1fr min-content;
     align-items: center;
-    background-color: #B80000;
+    background-color: #b80000;
   }
 
   .linkBorder {

@@ -1,0 +1,51 @@
+import classNames from "classnames";
+import React, { useRef } from "react";
+
+import { useOutsideAlerter } from "hooks";
+import TelicentSwitch from "./TelicentSwitch";
+
+const ToolbarMenu = ({ id, menuItems, onClose }) => {
+  const containerRef = useRef();
+  useOutsideAlerter({ ref: containerRef, fn: onClose });
+
+  const generateMenuItems = ({ name, selected, type, onItemClick }) => {
+    const typeProps = { name, selected, onItemClick };
+    const menuItemTypes = {
+      button: <MenuBtn {...typeProps} />,
+      toggleSwitch: <MenuToggle {...typeProps} />,
+    };
+
+    return (
+      <li key={name} className="w-full">
+        {menuItemTypes[type]}
+      </li>
+    );
+  };
+
+  return (
+    <ul
+      ref={containerRef}
+      id={id}
+      className="absolute bottom-12 bg-black-200 px-2 py-1 rounded-md flex flex-col items-center gap-y-2 max-h-40 overflow-y-auto overscroll-y-contain scroll-smooth text-base"
+      style={{ maxWidth: "10rem" }}
+    >
+      {menuItems.map(generateMenuItems)}
+    </ul>
+  );
+};
+export default ToolbarMenu;
+
+const MenuBtn = ({ name, selected, onItemClick }) => (
+  <button
+    className={classNames("hover:bg-black-400 px-2 rounded-md w-full h-full whitespace-nowrap", {
+      "bg-black-500": selected,
+    })}
+    onClick={onItemClick}
+  >
+    {name}
+  </button>
+);
+
+const MenuToggle = ({ name, selected, onItemClick }) => (
+  <TelicentSwitch label={name} checked={selected} onChange={onItemClick} />
+);

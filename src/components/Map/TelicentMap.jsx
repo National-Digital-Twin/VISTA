@@ -1,9 +1,15 @@
 import React, { useContext, useEffect, useMemo, useState } from "react";
-import Map, { Layer, Source } from "react-map-gl";
-import config from "../../config/app-config";
-import { CytoscapeContext, ElementsContext } from "../../context";
-import { useLocalStorage } from "../../hooks";
-import { allAssetsLayerStyle, highlightedAssets, lineStyle, segmentStyle } from "./layerStyles";
+import Map, { Layer, Source, ScaleControl, useMap } from "react-map-gl";
+import config from "config/app-config";
+import { CytoscapeContext, ElementsContext } from "context";
+import { useLocalStorage } from "hooks";
+import {
+  allAssetsLayerStyle,
+  heatmap,
+  highlightedAssets,
+  lineStyle,
+  segmentStyle,
+} from "./layerStyles";
 import {
   createSelectedAssetFeatures,
   createSelectedConnectionFeatures,
@@ -20,8 +26,10 @@ const VIEWSTATE = {
   longitude: -1.3480234953335598,
   zoom: 9,
 };
+const HEAT_RADIUS = 1000;
 
 const TelicentMap = () => {
+  const { telicentMap: map } = useMap();
   const { clearSelected } = useContext(CytoscapeContext);
   const {
     assets,
@@ -32,15 +40,16 @@ const TelicentMap = () => {
     clearSelectedElements,
     onElementClick,
   } = useContext(ElementsContext);
-
-  const assetFeatures = useMemo(() => generateAssetFeatures(assets), [assets]);
+  const [mapStyle, setMapStyle] = useLocalStorage("mapStyle", "mapbox://styles/mapbox/dark-v10");
 
   const [cursor, setCursor] = useState("auto");
   const [hoverInfo, setHoverInfo] = useState(undefined);
-  const [mapStyle, setMapStyle] = useLocalStorage("mapStyle", "mapbox://styles/mapbox/dark-v10");
+  const [heatmapRadius, setHeatmapRadius] = useState(10);
   const [selectedAssetCxns, setSelectedAssetCxns] = useState([]);
   const [selectedAssets, setSelectedAssets] = useState([]);
   const [selectedSegments, setSelectedSegments] = useState([]);
+  
+  const assetFeatures = useMemo(() => generateAssetFeatures(assets), [assets]);
 
   useEffect(() => {
     if (!getMapStyles().some((style) => style.id === mapStyle)) {
@@ -101,6 +110,13 @@ const TelicentMap = () => {
     setCursor("auto");
   };
 
+  const handleOnZoom = (event) => {
+    const { pixelsPerMeter } = event.target.transform;
+    const radius = HEAT_RADIUS * pixelsPerMeter;
+    map.getMap().setPaintProperty(heatmap.id, "heatmap-radius", radius);
+    setHeatmapRadius(radius);
+  };
+
   return (
     <div className="relative w-full">
       <Map
@@ -117,8 +133,15 @@ const TelicentMap = () => {
         onMouseLeave={resetCursor}
         onMouseMove={handleOnMouseMove}
         boxZoom={false}
+        onZoom={handleOnZoom}
       >
-        <Source id="all-assets" type={GEOJSON} data={{ type: FEATURE_COLLECTION, features: assetFeatures }}>
+        <ScaleControl position="top-left" style={{ backgroundColor: "#27272780", color: "#F5F5F5", borderColor: "#949494", fontFamily: "Urbanist", letterSpacing: "1.5px" }} />
+        <Source
+          id="all-assets"
+          type={GEOJSON}
+          data={{ type: FEATURE_COLLECTION, features: assetFeatures }}
+        >
+          <Layer {...heatmap} />
           <Layer {...allAssetsLayerStyle} />
         </Source>
         <Source
@@ -135,7 +158,7 @@ const TelicentMap = () => {
           <Layer {...highlightedAssets} />
         </Source>
         <HoverInfo info={hoverInfo?.feature.properties.element} left={hoverInfo?.x} top={hoverInfo?.y} />
-        <MapToolbar mapStyle={mapStyle} setCursor={setCursor} setMapStyle={setMapStyle} />
+        <MapToolbar heatmapRadius={heatmapRadius} map={map} mapStyle={mapStyle} setMapStyle={setMapStyle} />
       </Map>
     </div>
   );
