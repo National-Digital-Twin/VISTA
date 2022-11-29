@@ -1,10 +1,13 @@
 import { Popup } from "react-map-gl";
 import React, { useState } from "react";
+
 import useDraw from "./useDraw";
 import MapToolbar from "./MapToolbar";
+import PointerCoordinates from "./PointerCoords";
 
-const MapConfig = ({ heatmapRadius, map, mapStyle, setMapStyle }) => {
+const MapConfig = ({ heatmapRadius, map, mapStyle, mousePosition, setMapStyle }) => {
   const [polygon, setPolygon] = useState(undefined);
+  const [showCoords, setShowCoords] = useState(false);
   const { activateDrawCircleMode, activatePolygonMode, deleteAllPolygons, setRadius } =
     useDraw(setPolygon);
 
@@ -12,17 +15,24 @@ const MapConfig = ({ heatmapRadius, map, mapStyle, setMapStyle }) => {
     setPolygon(undefined);
   };
 
+  const togglePointerCoords = () => {
+    setShowCoords((prev) => !prev)
+  }
+
   return (
     <>
+      <PointerCoordinates show={showCoords} lat={mousePosition?.lat} lng={mousePosition?.lng} />
       <RadiusConfig polygon={polygon} onClose={handleOnPopupClose} setRadius={setRadius} />
       <MapToolbar
         heatmapRadius={heatmapRadius}
         map={map}
         mapStyle={mapStyle}
+        showCoordinates={showCoords}
         activateDrawCircleMode={activateDrawCircleMode}
         activatePolygonMode={activatePolygonMode}
         deleteAllPolygons={deleteAllPolygons}
         setMapStyle={setMapStyle}
+        togglePointerCoords={togglePointerCoords}
       />
     </>
   );
