@@ -1,4 +1,4 @@
-import { createData } from "../utils";
+import { createData } from "../dataset-utils";
 import { ENERGY_ASSETS, ENERGY_CONNECTIONS } from "mocks";
 
 test("creates data", async () => {

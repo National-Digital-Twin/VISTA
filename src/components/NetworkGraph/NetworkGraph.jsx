@@ -5,22 +5,19 @@ import CytoscapeComponent from "react-cytoscapejs";
 import dagre from "cytoscape-dagre";
 import React, { useCallback, useContext, useEffect, useMemo } from "react";
 
+import { CytoscapeContext, ElementsContext } from "context";
+
 import { createEdges, createNode } from "./cytoscapeUtils";
 import cyStylesheet from "./stylesheet";
 import GraphToolbar from "./GraphToolbar";
-import { CytoscapeContext, ElementsContext } from "../../context";
-import { isEmpty } from "lodash";
 
 const NetworkGraph = () => {
   const { cyRef, layout: graphLayout, runLayout, updateLayout } = useContext(CytoscapeContext);
-  const { assets, connections, cxnCriticalityColorScale, clearSelectedElements, onElementClick } =
+  const { assets, dependencies, clearSelectedElements, onElementClick } =
     useContext(ElementsContext);
 
   const nodes = useMemo(() => createNode(assets), [assets]);
-  const edges = useMemo(() => {
-    if (isEmpty(nodes)) return [];
-    return createEdges(connections, cxnCriticalityColorScale);
-  }, [connections, nodes, cxnCriticalityColorScale]);
+  const edges = useMemo(() => createEdges(dependencies), [dependencies]);
 
   cytoscape.use(cola);
   cytoscape.use(dagre);

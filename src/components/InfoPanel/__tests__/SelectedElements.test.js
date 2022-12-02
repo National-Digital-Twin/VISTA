@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import React from "react";
 
-import * as utils from "../../Dataset/utils";
+import * as utils from "../../Dataset/dataset-utils";
 import { AssetBtn, clickEnergyDataset, CxnBtn, expandPanel, renderTestComponent } from "../../../test-utils";
 import { ENERGY_ASSETS } from "../../../mocks";
 import InfoPanel from "../InfoPanel";

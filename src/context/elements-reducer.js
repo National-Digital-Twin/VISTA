@@ -1,17 +1,17 @@
 import ColorScale from "color-scales";
-import { isEmpty } from "lodash";
+// import { isEmpty } from "lodash";
 import { Asset, Connection } from "models";
 import { isAsset } from "utils";
 
 export const CLEAR_SELECTED = "CLEAR_SELECTED";
 export const RESET = "RESET";
 export const DISMISS_ERROR = "DISMISS_ERROR";
-export const FILTER_SELECTED = "FILTER_SELECTED";
+export const FILTER_SELECTED_ELEMENTS = "FILTER_SELECTED_ELEMENTS";
 export const SELECT_ELEMENT = "SELECT_ELEMENT";
 export const MULTI_SELECT_ELEMENTS = "MULTI_SELECT_ELEMENTS";
 export const AREA_SELECTION = "AREA_SELECTION";
 export const UPDATE_ASSETS = "UPDATE_ASSETS";
-export const UPDATE_CONNECTIONS = "UPDATE_CONNECTIONS";
+export const UPDATE_DEPENDENCIES = "UPDATE_DEPENDENCIES";
 export const UPDATE_ERRORS = "UPDATE_ERRORS";
 
 const getColorScale = (min, max) => {
@@ -20,7 +20,7 @@ const getColorScale = (min, max) => {
 
 export const INITIAL_STATE = {
   assets: [],
-  connections: [],
+  dependencies: [],
   errors: [],
   selectedElements: [],
   selectedDetails: [],
@@ -31,42 +31,36 @@ export const INITIAL_STATE = {
   totalCxnsColorScale: {},
 };
 
-const getAllTotalCxns = (assets) => assets.map((asset) => asset.totalCxns);
-const getAllCriticalities = (assets) => assets.map((asset) => asset.criticality);
+const getAllCounts = (assets) => assets.map((asset) => asset.dependent.count);
+const getAllCriticalitySums = (assets) => assets.map((asset) => asset.dependent.criticalitySum);
 const createElement = (elem) => (isAsset(elem) ? new Asset(elem) : new Connection(elem));
 
 const elementsReducer = (state, action) => {
   switch (action.type) {
     case UPDATE_ASSETS: {
       const assets = action.assets;
-      const maxAssetCriticality = Math.max(...getAllCriticalities(assets));
-      const minAssetCriticality = Math.min(...getAllCriticalities(assets));
-      const maxAssetTotalCxns = Math.max(...getAllTotalCxns(assets));
-      const minAssetTotalCxns = Math.min(...getAllTotalCxns(assets));
+      const minTotalCount = Math.min(...getAllCounts(assets));
+      const maxTotalCount = Math.max(...getAllCounts(assets));
+      const minCriticalitySum = Math.min(...getAllCriticalitySums(assets));
+      const maxCriticalitySum = Math.max(...getAllCriticalitySums(assets));
 
-      return {
-        ...state,
-        assets,
-        maxAssetCriticality,
-        maxAssetTotalCxns,
-        assetCriticalityColorScale: isEmpty(assets)
-          ? {}
-          : getColorScale(minAssetCriticality, maxAssetCriticality),
-        totalCxnsColorScale: isEmpty(assets)
-          ? {}
-          : getColorScale(minAssetTotalCxns, maxAssetTotalCxns),
-      };
+      assets.forEach((asset) => {
+        asset.setCountColorScale(minTotalCount, maxTotalCount);
+        asset.setCriticalitySumColorScale(minCriticalitySum, maxCriticalitySum);
+      });
+
+      return { ...state, assets };
     }
-    case UPDATE_CONNECTIONS:
+    case UPDATE_DEPENDENCIES:
       return {
         ...state,
-        connections: action.connections,
+        dependencies: action.dependencies,
       };
-    case FILTER_SELECTED: {
+    case FILTER_SELECTED_ELEMENTS: {
       const selectedElements = state.selectedElements.filter((elem) => {
         return isAsset(elem)
           ? action.assets.some((asset) => asset.id === elem.id)
-          : action.connections.some((connection) => connection.id === elem.id);
+          : action.dependencies.some((dependency) => dependency.id === elem.id);
       });
       return {
         ...state,

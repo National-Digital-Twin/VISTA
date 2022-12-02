@@ -1,81 +1,27 @@
-import React, { useContext, useEffect, useState } from "react";
-import useFetch from "use-http";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 import classNames from "classnames";
-import { isEmpty, kebabCase } from "lodash";
+import { kebabCase } from "lodash";
 import ReactSwitch from "react-switch";
 
-import { ElementsContext } from "context";
 import { FloatingPanel, VerticalDivider } from "lib";
-import { createData } from "./utils";
 import Assessments from "./Assessments";
 
 const Dataset = ({ showGrid, toggleView }) => {
-  const { get, response, error } = useFetch();
-  const { updateErrors, filterSelectedElements, reset, updateAssets, updateConnections } =
-    useContext(ElementsContext);
-
-  const [selected, setSelected] = useState([]);
+  const [selectedTypes, setSelectedTypes] = useState([]);
   const [showPanel, setShowPanel] = useState(true);
 
   const togglePanel = () => {
     setShowPanel((show) => !show);
   };
 
-  const handleAssessmentsChange = (event) => {
-    const {
-      target: { value },
-    } = event;
-    setSelected(
-      selected.some((filter) => filter === value)
-        ? selected.filter((filter) => filter !== value)
-        : [...selected, value]
-    );
-  };
-
-  useEffect(() => {
-    if (error) updateErrors("Failed to resolve the data");
-  }, [error, updateErrors]);
-
-  useEffect(() => {
-    if (isEmpty(selected)) {
-      reset();
-      return;
-    }
-
-    const paramsArray = selected.map((item) => ["assessments", item]);
-    const params = new URLSearchParams(paramsArray).toString();
-
-    const getAssets = async () => {
-      const assets = await get(`assessments/assets?${params}`);
-      if (response.ok) return assets;
-    };
-
-    const getConnections = async () => {
-      const connections = await get(`assessments/connections?${params}`);
-      if (response.ok) return connections;
-    };
-
-    const generateData = async () => {
-      const assets = await getAssets();
-      const connections = await getConnections();
-
-      const data = await createData(assets, connections, get, response);
-      updateAssets(data.assets);
-      updateConnections(data.connections);
-      filterSelectedElements(data.assets, data.connections);
-    };
-
-    generateData();
-  }, [get, response, filterSelectedElements, reset, selected, updateAssets, updateConnections]);
-
   return (
     <FloatingPanel
       collapsedComponent={<DBButton onToggle={togglePanel} />}
       show={showPanel}
       position="top-0"
-      className="flex flex-col gap-y-2 p-2"
-      style={{ maxWidth: "13rem" }}
+      className="flex flex-col gap-y-2 p-2 overflow-auto"
+      style={{ maxWidth: "13rem", maxHeight: "100%" }}
     >
       <div className="inline-flex gap-x-2 border-b border-black-500 pb-1">
         <DBButton active onToggle={togglePanel} />
@@ -97,7 +43,7 @@ const Dataset = ({ showGrid, toggleView }) => {
           />
         </label>
       </div>
-      <Assessments selected={selected} onChange={handleAssessmentsChange} />
+      <Assessments selectedTypes={selectedTypes} setSelectedTypes={setSelectedTypes} />
     </FloatingPanel>
   );
 };

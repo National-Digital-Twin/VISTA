@@ -5,7 +5,7 @@ import { Dataset } from "components";
 import { ElementsProvider } from "context";
 
 import Grid from "./Grid";
-import * as utils from "./../Dataset/utils";
+import * as utils from "../Dataset/dataset-utils";
 
 const user = userEvent.setup();
 

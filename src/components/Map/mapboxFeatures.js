@@ -1,5 +1,5 @@
 export const generateAssetFeatures = (assets) => {
-  return assets.map((asset) => asset.createMapAsset());
+  return assets.filter(asset => asset.lat && asset.lng).map((asset) => asset.createPointAsset());
 };
 
 export const createSelectedAssetFeatures = (

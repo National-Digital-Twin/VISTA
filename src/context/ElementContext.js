@@ -3,13 +3,13 @@ import elementsReducer, {
   AREA_SELECTION,
   CLEAR_SELECTED,
   DISMISS_ERROR,
-  FILTER_SELECTED,
+  FILTER_SELECTED_ELEMENTS,
   INITIAL_STATE,
   MULTI_SELECT_ELEMENTS,
   RESET,
   SELECT_ELEMENT,
   UPDATE_ASSETS,
-  UPDATE_CONNECTIONS,
+  UPDATE_DEPENDENCIES,
   UPDATE_ERRORS,
 } from "./elements-reducer";
 
@@ -20,7 +20,7 @@ export const ElementsProvider = ({ children }) => {
 
   const {
     assets,
-    connections,
+    dependencies,
     errors,
     selectedElements,
     maxAssetCriticality,
@@ -35,13 +35,13 @@ export const ElementsProvider = ({ children }) => {
     dispatch({ type: UPDATE_ASSETS, assets });
   }, []);
 
-  const updateConnections = useCallback((connections) => {
-    if (!Array.isArray(connections)) return;
-    dispatch({ type: UPDATE_CONNECTIONS, connections });
+  const updateDependencies = useCallback((dependencies) => {
+    if (!Array.isArray(dependencies)) return;
+    dispatch({ type: UPDATE_DEPENDENCIES, dependencies });
   }, []);
 
-  const filterSelectedElements = useCallback((assets, connections) => {
-    dispatch({ type: FILTER_SELECTED, assets, connections });
+  const filterSelectedElements = useCallback((assets, dependencies) => {
+    dispatch({ type: FILTER_SELECTED_ELEMENTS, assets, dependencies });
   }, []);
 
   const reset = useCallback(() => {
@@ -77,7 +77,7 @@ export const ElementsProvider = ({ children }) => {
     <ElementsContext.Provider
       value={{
         assets,
-        connections,
+        dependencies,
         errors,
         selectedElements,
         maxAssetCriticality,
@@ -92,7 +92,7 @@ export const ElementsProvider = ({ children }) => {
         onElementClick,
         reset,
         updateAssets,
-        updateConnections,
+        updateDependencies,
         updateErrors,
       }}
     >

@@ -1,294 +1,110 @@
-import React, { useState } from "react";
-import classNames from "classnames";
-import "./Grid.css";
+import React, { useContext, useState } from "react";
+import { isEmpty } from "lodash";
+
+import { ElementsContext } from "context";
 import GridToolbar from "./GridToolbar";
-import { useContext } from "react";
-import { ElementsContext } from "../../context/ElementContext";
-import { findAsset, getHexColor } from "../../utils";
+import "./Grid.css";
 
-const Grid = ({ loading }) => {
-  const [zoomLevel, setZoomLevel] = useState(100);
-  const { assets, connections, assetCriticalityColorScale, cxnCriticalityColorScale, totalCxnsColorScale } =
-    useContext(ElementsContext);
+const HEADINGS_COL_SPAN = 3;
+const generateCarverMatrix = (assets, dependencies) => {
+  const ROWS = assets.length;
+  const COLS = ROWS + HEADINGS_COL_SPAN;
+  let grid = new Array(ROWS);
+  let headings = new Array(0);
 
-  const renderAssets = () => {
-    const assetGrid = assets.map((asset, index) => (
-      <AssetGrid
-        asset={asset}
-        criticalityColorScale={assetCriticalityColorScale}
-        gridIndex={index + 1}
-        key={`asset-grid-${asset.id}`}
-        totalCxnsColorScale={totalCxnsColorScale}
-      />
-    ));
+  console.log(assets, dependencies);
 
-    const connectionsGrid = connections.map((connection, index) => (
-      <ConnectionGrid
-        connection={connection}
-        cxnCriticalityColorScale={cxnCriticalityColorScale}
-        key={`connection-${connection.id}-${index}`}
-        source={findAsset(assets, connection.source)}
-        target={findAsset(assets, connection.target)}
-        uri={connection.id}
-      />
-    ));
-    return [...assetGrid, ...connectionsGrid];
-  };
+  for (let rowIndex = 0; rowIndex < ROWS; rowIndex++) {
+    grid[rowIndex] = [];
+    headings[rowIndex] = assets[rowIndex].id;
 
-  if (loading) {
-    return (
-      <div className="display-center w-full h-full">
-        <p>Loading...</p>
-      </div>
-    );
+    for (let colIndex = HEADINGS_COL_SPAN; colIndex < COLS; colIndex++) {
+      const asset = assets[rowIndex];
+      grid[rowIndex][0] = asset.id;
+      grid[rowIndex][1] = asset.dependent.count;
+      grid[rowIndex][2] = asset.dependent.criticalitySum;
+      // grid[rowIndex][3] = asset.name;
+
+      if (rowIndex === colIndex - HEADINGS_COL_SPAN) {
+        grid[rowIndex][colIndex] = { color: "#4B4B4B", value: "" };
+      } else if (
+        asset.uri === dependencies[colIndex]?.dependent?.uri ||
+        asset.uri === dependencies[colIndex]?.provider?.uri
+      ) {
+        grid[rowIndex][colIndex] = {
+          color: dependencies[colIndex].criticalityColor,
+          value: dependencies[colIndex].criticality,
+        };
+      } else {
+        grid[rowIndex][colIndex] = { color: "transparent", value: "" };
+      }
+    }
   }
+  return { grid, headings };
+};
+
+const Grid = () => {
+  const [zoomLevel, setZoomLevel] = useState(100);
+  const { assets, dependencies } = useContext(ElementsContext);
+
+  if (isEmpty(assets)) return null;
+  const { grid, headings } = generateCarverMatrix(assets, dependencies);
 
   return (
     <>
-      <div id="grid" className="relative flex-1 h-full w-1/2 overflow-auto">
-        <div
-          style={{
-            zoom: `${zoomLevel}%`,
-            gridTemplateColumns: `50px 22px 22px 106px repeat(${assets.length}, 22px)`,
-          }}
-          className="main-grid"
+      <div className="overflow-auto" style={{ height: '95%' }}>
+        <table
+          className="carver-grid--fixed table-fixed w-full border-collapse text-sm"
+          style={{ zoom: `${zoomLevel}%` }}
         >
-          {renderAssets()}
-        </div>
+          <colgroup>
+            <col span={3} className="sticky left-0" />
+          </colgroup>
+          <thead>
+            <tr className="h-12">
+              <th scope="row" colSpan={HEADINGS_COL_SPAN} className="w-32"></th>
+              {headings.map((head) => (
+                <th scope="row" className="border border-slate-300 w-12">
+                  {head}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody className="w-full h-full overflow-auto">
+            {grid.map((row, index) => (
+              <tr key={row} className="h-12">
+                <th scope="col" className="border border-slate-300">
+                  {row[0]}
+                </th>
+                <td
+                  className="border border-slate-300 text-black-100 text-center"
+                  style={{ backgroundColor: assets[index].countColor }}
+                >
+                  {row[1]}
+                </td>
+                <td
+                  className="border border-slate-300 text-black-100 text-center"
+                  style={{ backgroundColor: assets[index].criticalitySumColor }}
+                >
+                  {row[2]}
+                </td>
+                {row.slice(HEADINGS_COL_SPAN).map((val, index) => (
+                  <td
+                    key={index}
+                    className="border border-slate-300 text-black-100 text-center"
+                    style={{ backgroundColor: val.color }}
+                  >
+                    {val.value}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
       <GridToolbar zoom={zoomLevel} setZoom={setZoomLevel} />
     </>
   );
 };
 
-const AssetGrid = ({ asset, criticalityColorScale, totalCxnsColorScale }) => {
-  const { onElementClick } = useContext(ElementsContext);
-  const { id, label, name, lng, lat, gridIndex, criticality, totalCxns } = asset;
-
-  const criticalityColor = getHexColor(criticalityColorScale, criticality);
-  const totalCxnsColor = getHexColor(totalCxnsColorScale, totalCxns);
-
-  const handleOnAssetClick = (event) => {
-    const asset = event.target.dataset.asset;
-    onElementClick(event.shiftKey, JSON.parse(asset));
-  };
-
-  const AssetIdentifierCol = ({ gridIndex, id, lat, lon, title, uri, onClick }) => (
-    <div
-      title={title}
-      style={{
-        position: "sticky",
-        left: 0,
-        backgroundColor: "black",
-        width: "50px",
-        gridColumnStart: 1,
-        gridRowStart: gridIndex + 1,
-        gridColumnEnd: 1,
-        gridRowEnd: gridIndex + 1,
-      }}
-      className={classNames("asset-id", {
-        "border-2 border-red-500": !lat || !lon,
-      })}
-      onClick={onClick}
-      id={`${uri}`}
-      role="button"
-      data-asset={JSON.stringify(asset)}
-    >
-      {id}
-    </div>
-  );
-
-  const AssetNameRow = ({ gridIndex, id, lat, lon, title, uri, onClick }) => (
-    <div
-      title={title}
-      style={{
-        position: "sticky",
-        top: 0,
-        zIndex: 5,
-        backgroundColor: "black",
-        gridColumnStart: gridIndex + 4,
-        gridRowStart: 1,
-        gridColumnEnd: gridIndex + 4,
-        gridRowEnd: 1,
-      }}
-      className="col-header"
-      onClick={onClick}
-      id={`${uri}`}
-      role="button"
-      data-asset={JSON.stringify(asset)}
-    >
-      {id}
-    </div>
-  );
-
-  const AssetNameCol = ({ gridIndex, id, name, title }) => (
-    <div
-      title={title}
-      className="asset-id"
-      id={id}
-      role="cell"
-      style={{
-        position: "sticky",
-        left: "94px",
-        backgroundColor: "black",
-        overflow: "hidden",
-        gridColumnStart: 4,
-        gridRowStart: gridIndex + 1,
-        gridColumnEnd: 4,
-        gridRowEnd: gridIndex + 1,
-      }}
-    >
-      {name}
-    </div>
-  );
-  const BlankCell = ({ gridIndex }) => (
-    <div
-      className="blank-entry"
-      role="cell"
-      style={{
-        gridColumnStart: gridIndex + 4,
-        gridRowStart: gridIndex + 1,
-        gridColumnEnd: gridIndex + 4,
-        gridRowEnd: gridIndex + 1,
-      }}
-    />
-  );
-
-  const AssetCountCell = ({ color, gridIndex, value }) => (
-    <div
-      className="asset-id"
-      role="cell"
-      style={{
-        backgroundColor: color,
-        position: "sticky",
-        left: "50px",
-        overflow: "hidden",
-        gridColumnStart: 2,
-        gridRowStart: gridIndex + 1,
-        gridColumnEnd: 2,
-        gridRowEnd: gridIndex + 1,
-        color: "#1D1D1D",
-      }}
-      title={value}
-    >
-      {value}
-    </div>
-  );
-
-  const AssetCriticalityCell = ({ color, gridIndex, value }) => (
-    <div
-      className="asset-id"
-      role="cell"
-      style={{
-        backgroundColor: color,
-        position: "sticky",
-        left: "72px",
-        overflow: "hidden",
-        gridColumnStart: 3,
-        gridRowStart: gridIndex + 1,
-        gridColumnEnd: 3,
-        gridRowEnd: gridIndex + 1,
-        color: "#1D1D1D",
-      }}
-      title={value}
-    >
-      {value}
-    </div>
-  );
-
-  return (
-    <>
-      <AssetNameRow
-        gridIndex={gridIndex}
-        id={label}
-        title={name}
-        lat={lat}
-        lon={lng}
-        uri={id}
-        onClick={handleOnAssetClick}
-      />
-      <AssetIdentifierCol
-        gridIndex={gridIndex}
-        title={name}
-        id={label}
-        onClick={handleOnAssetClick}
-        lat={lat}
-        lon={lng}
-        uri={id}
-      />
-      <AssetNameCol gridIndex={gridIndex} id={id} title={name} name={name} />
-      <BlankCell gridIndex={gridIndex} />
-      <AssetCountCell color={totalCxnsColor} gridIndex={gridIndex} value={totalCxns} />
-      <AssetCriticalityCell color={criticalityColor} gridIndex={gridIndex} value={criticality} />
-    </>
-  );
-};
-
-const ConnectionBtn = ({ colorScale, criticality, data, position, uri }) => {
-  const { onElementClick } = useContext(ElementsContext);
-
-  const handleOnConnectionClick = (event) => {
-    const connection = event.target.dataset.connection;
-    onElementClick(event.shiftKey, JSON.parse(connection));
-  };
-
-  return (
-    <button
-      className="grid-entry text-black-100"
-      style={{
-        ...position,
-        backgroundColor: getHexColor(colorScale, criticality),
-      }}
-      onClick={handleOnConnectionClick}
-      id={uri}
-      data-connection={JSON.stringify(data)}
-    >
-      {criticality}
-    </button>
-  );
-};
-
-const ConnectionGrid = ({ connection, cxnCriticalityColorScale, source, target, uri }) => {
-  if (!source || !target) {
-    return null;
-  }
-  const x = source.gridIndex;
-  const y = target.gridIndex;
-
-  const colsInColumnHeader = 4;
-  const colsInRowHeader = 1;
-
-  const calculateSourceGridPosition = (x, y) => ({
-    gridColumnStart: colsInColumnHeader + x,
-    gridColumnEnd: colsInColumnHeader + x,
-    gridRowStart: colsInRowHeader + y,
-    gridRowEnd: colsInRowHeader + y,
-  });
-
-  const calculateTargetGridPosition = (x, y) => ({
-    gridColumnStart: colsInColumnHeader + y,
-    gridColumnEnd: colsInColumnHeader + y,
-    gridRowStart: colsInRowHeader + x,
-    gridRowEnd: colsInRowHeader + x,
-  });
-
-  return (
-    <>
-      <ConnectionBtn
-        colorScale={cxnCriticalityColorScale}
-        criticality={connection.criticality}
-        data={connection}
-        position={calculateSourceGridPosition(x, y)}
-        uri={uri}
-      />
-      <ConnectionBtn
-        colorScale={cxnCriticalityColorScale}
-        criticality={connection.criticality}
-        data={connection}
-        position={calculateTargetGridPosition(x, y)}
-        uri={uri}
-      />
-    </>
-  );
-};
 export default Grid;

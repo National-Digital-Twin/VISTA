@@ -1,7 +1,7 @@
-export const allAssetsLayerStyle = {
-  id: "all-asset-points",
+export const pointAssetLayer = {
+  id: "point-assets",
   type: "circle",
-  source: "all-assets",
+  source: "point-assets",
   paint: {
     "circle-radius": 4,
     "circle-opacity": 0.8,

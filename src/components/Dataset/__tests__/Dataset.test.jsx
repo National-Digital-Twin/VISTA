@@ -10,7 +10,7 @@ import { ErrorNotification } from "lib";
 import { clickEnergyDataset, clickMedicalDataset, clickTransportDataset } from "test-utils";
 
 import Dataset from "../Dataset";
-import * as createData from "../utils";
+import * as createData from "../dataset-utils";
 
 const user = userEvent.setup();
 

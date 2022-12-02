@@ -1,3 +1,4 @@
+import ColorScale from "color-scales";
 import { prefixLookup } from "../config/uri-prefix";
 
 /**
@@ -22,4 +23,16 @@ export const getShortType = (type) => {
     return type;
   }
   return type;
+};
+
+export const getURIFragment = (uri) => {
+  if (uri) {
+    const uriParts = uri.split("#")
+    return uriParts.length > 1 ? uriParts[1] : uri;
+  }
+  return uri;
+}
+
+export const getColorScale = (min, max) => {
+  return new ColorScale(min, max === 0 ? 100 : max, ["#35C035", "#FFB60A", "#FB3737"], 1);
 };

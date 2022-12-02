@@ -3,7 +3,7 @@ import React from "react";
 import userEvent from "@testing-library/user-event";
 import { Dataset } from "./components";
 import { CytoscapeProvider, ElementsContext, ElementsProvider } from "./context";
-import * as utils from "./components/Dataset/utils";
+import * as utils from "./components/Dataset/dataset-utils";
 import { MapProvider } from "react-map-gl";
 
 const user = userEvent.setup();

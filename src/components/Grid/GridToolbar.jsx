@@ -23,7 +23,7 @@ const GridToolbar = ({ zoom, setZoom }) => {
   };
 
   return (
-    <div className="absolute bottom-0 left-0 bg-black-200 text-whiteSmoke font-body flex gap-x-2 px-2 py-1">
+    <div className="absolute bottom-0 left-0 bg-black-200 text-whiteSmoke font-body flex gap-x-2 px-2 py-1 w-fit">
       <ToolbarButton
         icon="ri-zoom-out-line"
         label="Zoom out"

@@ -7,10 +7,10 @@ import { CytoscapeContext, ElementsContext } from "context";
 import { useLocalStorage } from "hooks";
 
 import {
-  allAssetsLayerStyle,
   heatmap,
   highlightedAssets,
   lineStyle,
+  pointAssetLayer,
   segmentStyle,
 } from "./layerStyles";
 import {
@@ -37,10 +37,10 @@ const TelicentMap = () => {
   const { clearSelected } = useContext(CytoscapeContext);
   const {
     assets,
-    selectedElements,
-    assetCriticalityColorScale,
-    cxnCriticalityColorScale,
-    maxAssetCriticality,
+    // selectedElements,
+    // assetCriticalityColorScale,
+    // cxnCriticalityColorScale,
+    // maxAssetCriticality,
     clearSelectedElements,
     onElementClick,
   } = useContext(ElementsContext);
@@ -49,47 +49,47 @@ const TelicentMap = () => {
   const [cursor, setCursor] = useState("auto");
   const [hoverInfo, setHoverInfo] = useState(undefined);
   const [heatmapRadius, setHeatmapRadius] = useState(10);
-  const [selectedAssetCxns, setSelectedAssetCxns] = useState([]);
-  const [selectedAssets, setSelectedAssets] = useState([]);
-  const [selectedSegments, setSelectedSegments] = useState([]);
+  // const [selectedAssetCxns, setSelectedAssetCxns] = useState([]);
+  // const [selectedAssets, setSelectedAssets] = useState([]);
+  // const [selectedSegments, setSelectedSegments] = useState([]);
 
-  const assetFeatures = useMemo(() => generateAssetFeatures(assets), [assets]);
+  const pointAssets = useMemo(() => generateAssetFeatures(assets), [assets]);
 
   // The order of the array is the order in which the features will appear in the map.
   // index 0 being the lowest level
-  const sources = [
-    { id: "assets", features: assetFeatures, layers: [heatmap, allAssetsLayerStyle] },
-    { id: "selected-connections", features: selectedAssetCxns, layers: [lineStyle] },
-    { id: "selected-segments", features: selectedSegments, layers: [segmentStyle] },
-    { id: "selected-assets", features: selectedAssets, layers: [highlightedAssets] },
-  ];
+  const sources = useMemo(() => ([
+    { id: "assets", features: pointAssets, layers: [heatmap, pointAssetLayer] },
+    // { id: "selected-connections", features: selectedAssetCxns, layers: [lineStyle] },
+    // { id: "selected-segments", features: selectedSegments, layers: [segmentStyle] },
+    // { id: "selected-assets", features: selectedAssets, layers: [highlightedAssets] },
+  ]), [pointAssets]);
 
-  useEffect(() => {
-    if (!getMapStyles().some((style) => style.id === mapStyle)) {
-      setMapStyle(getMapStyles()[0].id);
-    }
-  }, [mapStyle, setMapStyle]);
+  // useEffect(() => {
+  //   if (!getMapStyles().some((style) => style.id === mapStyle)) {
+  //     setMapStyle(getMapStyles()[0].id);
+  //   }
+  // }, [mapStyle, setMapStyle]);
 
-  useEffect(() => {
-    if (isEmpty(assets) && isEmpty(selectedElements)) return;
-    const selectedAssetFeatures = createSelectedAssetFeatures(
-      assets,
-      assetCriticalityColorScale,
-      maxAssetCriticality,
-      selectedElements
-    );
-    setSelectedAssets(selectedAssetFeatures);
+  // useEffect(() => {
+  //   if (isEmpty(assets) && isEmpty(selectedElements)) return;
+  //   const selectedAssetFeatures = createSelectedAssetFeatures(
+  //     assets,
+  //     assetCriticalityColorScale,
+  //     maxAssetCriticality,
+  //     selectedElements
+  //   );
+  //   setSelectedAssets(selectedAssetFeatures);
 
-    const selectedSegmentFeatures = createSelectedSegmentFeatures(selectedElements, assetCriticalityColorScale, assets);
-    setSelectedSegments(selectedSegmentFeatures);
+  //   const selectedSegmentFeatures = createSelectedSegmentFeatures(selectedElements, assetCriticalityColorScale, assets);
+  //   setSelectedSegments(selectedSegmentFeatures);
 
-    const selectedAssetCxnFeatures = createSelectedConnectionFeatures(
-      assets,
-      cxnCriticalityColorScale,
-      selectedElements
-    );
-    setSelectedAssetCxns(selectedAssetCxnFeatures);
-  }, [assets, cxnCriticalityColorScale, assetCriticalityColorScale, maxAssetCriticality, selectedElements]);
+  //   const selectedAssetCxnFeatures = createSelectedConnectionFeatures(
+  //     assets,
+  //     cxnCriticalityColorScale,
+  //     selectedElements
+  //   );
+  //   setSelectedAssetCxns(selectedAssetCxnFeatures);
+  // }, [assets, cxnCriticalityColorScale, assetCriticalityColorScale, maxAssetCriticality, selectedElements]);
 
   const handleOnClick = (event) => {
     const { features } = event;
@@ -139,7 +139,7 @@ const TelicentMap = () => {
       <Map
         cursor={cursor}
         id="telicentMap"
-        interactiveLayerIds={[allAssetsLayerStyle.id]}
+        interactiveLayerIds={[pointAssetLayer.id]}
         initialViewState={{ ...VIEWSTATE }}
         mapboxAccessToken={config.mb.token}
         mapStyle={mapStyle}
@@ -201,9 +201,9 @@ const HoverInfo = ({ info, left, top }) => {
       className="bg-black-50 text-whiteSmoke absolute font-body text-sm px-2 py-1 rounded-md"
       style={{ left: left + 10, top: top + 8 }}
     >
-      <p>ID: {assetInfo.label}</p>
-      <p>Name: {assetInfo.name}</p>
-      <p>Criticality: {assetInfo.criticality}</p>
+      <p>ID: {assetInfo.id}</p>
+      {/* <p>Name: {assetInfo.name}</p> */}
+      <p>Criticality: {assetInfo.dependent.criticalitySum}</p>
     </div>
   );
 };
