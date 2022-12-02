@@ -50,17 +50,19 @@ const SelectedElements = ({ getDetails, selectedElements, updateHeaderProps }) =
   }
 
   if (index > -1) {
-    return <ElementDetails expand element={getDetails(selectedElement)} />;
+    return <div className="break-words">{JSON.stringify(selectedElement)}</div>
+    // return <ElementDetails expand element={getDetails(selectedElement)} />;
   }
 
   return (
     <ul className="gap-y-3 grow min-h-0 overflow-y-auto">
       {selectedElements.map((selectedElement, index) => (
-        <ElementDetails
-          key={selectedElement.id}
-          element={getDetails(selectedElement)}
-          onViewDetails={() => handleOnViewDetails(index)}
-        />
+        <div className="break-words">{JSON.stringify(selectedElement)}</div>
+        // <ElementDetails
+        //   key={selectedElement.id}
+        //   element={getDetails(selectedElement)}
+        //   onViewDetails={() => handleOnViewDetails(index)}
+        // />
       ))}
     </ul>
   );

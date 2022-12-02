@@ -6,19 +6,8 @@ import config from "config/app-config";
 import { CytoscapeContext, ElementsContext } from "context";
 import { useLocalStorage } from "hooks";
 
-import {
-  heatmap,
-  highlightedAssets,
-  lineStyle,
-  pointAssetLayer,
-  segmentStyle,
-} from "./layerStyles";
-import {
-  createSelectedAssetFeatures,
-  createSelectedConnectionFeatures,
-  createSelectedSegmentFeatures,
-  generateAssetFeatures,
-} from "./mapboxFeatures";
+import { heatmap, pointAssetLayer } from "./layerStyles";
+import { generateAssetFeatures } from "./mapboxFeatures";
 import { getMapStyles } from "./mapStyles";
 import MapConfig from "./MapConfig";
 import "./mapbox.css";
@@ -54,21 +43,26 @@ const TelicentMap = () => {
   // const [selectedSegments, setSelectedSegments] = useState([]);
 
   const pointAssets = useMemo(() => generateAssetFeatures(assets), [assets]);
+  // const linearAssets = useMemo(() => generateLinearAssetFeatures(assets), [assets]);
+  // console.log(linearAssets)
 
   // The order of the array is the order in which the features will appear in the map.
   // index 0 being the lowest level
-  const sources = useMemo(() => ([
-    { id: "assets", features: pointAssets, layers: [heatmap, pointAssetLayer] },
-    // { id: "selected-connections", features: selectedAssetCxns, layers: [lineStyle] },
-    // { id: "selected-segments", features: selectedSegments, layers: [segmentStyle] },
-    // { id: "selected-assets", features: selectedAssets, layers: [highlightedAssets] },
-  ]), [pointAssets]);
+  const sources = useMemo(
+    () => [
+      { id: "assets", features: pointAssets, layers: [heatmap, pointAssetLayer] },
+      // { id: "selected-connections", features: selectedAssetCxns, layers: [lineStyle] },
+      // { id: "selected-segments", features: selectedSegments, layers: [segmentStyle] },
+      // { id: "selected-assets", features: selectedAssets, layers: [highlightedAssets] },
+    ],
+    [pointAssets]
+  );
 
-  // useEffect(() => {
-  //   if (!getMapStyles().some((style) => style.id === mapStyle)) {
-  //     setMapStyle(getMapStyles()[0].id);
-  //   }
-  // }, [mapStyle, setMapStyle]);
+  useEffect(() => {
+    if (!getMapStyles().some((style) => style.id === mapStyle)) {
+      setMapStyle(getMapStyles()[0].id);
+    }
+  }, [mapStyle, setMapStyle]);
 
   // useEffect(() => {
   //   if (isEmpty(assets) && isEmpty(selectedElements)) return;

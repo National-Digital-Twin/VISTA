@@ -70,7 +70,6 @@ const getAssets = (assets) => {
       new Asset({
         uri: asset.uri,
         type: asset.type,
-        name: "name",
         lat: asset.lat,
         lng: asset.lon,
         dependentCount: asset.dependentCount,
@@ -79,10 +78,6 @@ const getAssets = (assets) => {
   );
 };
 
-export const createData = async (assets, dependencies, assessment, get, response) => {
-  // const dependencies = getDepedencies(dependenciesMeta);
-  // const assets = getAssets(assetsMeta)
-  // const assets = await createAssetConnections(assetsMetadata, connections, get, response);
-
+export const createData = (assets, dependencies) => {
   return { assets: getAssets(assets), dependencies: getDepedencies(dependencies) };
 };

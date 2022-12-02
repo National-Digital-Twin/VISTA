@@ -27,27 +27,57 @@ const NetworkGraph = () => {
     runLayout();
   }, [nodes, edges, runLayout]);
 
+  useEffect(() => {
+    if (!cyRef.current) return;
+
+    const onNodeTap = (event) => {
+      const { originalEvent, target } = event;
+      const selected = { dependent: target.data("id") };
+      onElementClick(originalEvent.shiftKey, selected);
+    };
+    const onEdgeTap = (event) => {
+      const { originalEvent, target } = event;
+      const selected = {
+        dependent: target.source().data("id"),
+        provider: target.target().data("id"),
+      };
+      onElementClick(originalEvent.shiftKey, selected);
+    };
+    const onTap = (event) => {
+      if (event.target === cyRef.current) {
+        clearSelectedElements();
+      }
+    };
+    const onBoxSelect = (event) => {
+      const { target } = event;
+      const isNode = target.isNode();
+      let selected = {
+        dependent: target.source().data("id"),
+        provider: target.target().data("id"),
+      }
+      if (isNode) selected = { dependent: target.data("id") }
+      onElementClick(true, selected);
+    };
+
+    cyRef.current.on("boxselect", onBoxSelect);
+    cyRef.current.on("tap", "edge", onEdgeTap);
+    cyRef.current.on("tap", "node", onNodeTap);
+    cyRef.current.on("tap", onTap);
+
+    return () => {
+      cyRef.current.off("boxselect", onBoxSelect);
+      cyRef.current.off("tap", "edge", onEdgeTap);
+      cyRef.current.off("tap", "node", onNodeTap);
+      cyRef.current.off("tap", onTap);
+    };
+  }, [cyRef, clearSelectedElements, onElementClick]);
+
   const setCytoscape = useCallback(
     (cy) => {
       if (cyRef.current === cy) return;
       cyRef.current = cy;
-      cyRef.current.on("tap", "edge", function (event) {
-        onElementClick(event.originalEvent.shiftKey, event.target.data());
-      });
-      cyRef.current.on("tap", "node", function (event) {
-        onElementClick(event.originalEvent.shiftKey, event.target.data());
-      });
-      cyRef.current.on("boxselect", function (event) {
-        onElementClick(true, event.target.data());
-      });
-      cyRef.current.on("tap", function (event) {
-        if (event.target === cy) {
-          clearSelectedElements();
-          return;
-        }
-      });
     },
-    [cyRef, clearSelectedElements, onElementClick]
+    [cyRef]
   );
 
   return (
@@ -57,6 +87,7 @@ const NetworkGraph = () => {
         stylesheet={cyStylesheet}
         cy={setCytoscape}
         className="w-full h-full"
+        minZoom={0.3}
       />
       <GraphToolbar cyRef={cyRef} graphLayout={graphLayout} setGraphLayout={updateLayout} />
     </>

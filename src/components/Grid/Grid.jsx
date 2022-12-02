@@ -2,53 +2,18 @@ import React, { useContext, useState } from "react";
 import { isEmpty } from "lodash";
 
 import { ElementsContext } from "context";
+
 import GridToolbar from "./GridToolbar";
-import "./Grid.css";
+import { generateCarverGrid, HEADINGS_COL_SPAN } from "./grid-utils";
 
-const HEADINGS_COL_SPAN = 3;
-const generateCarverMatrix = (assets, dependencies) => {
-  const ROWS = assets.length;
-  const COLS = ROWS + HEADINGS_COL_SPAN;
-  let grid = new Array(ROWS);
-  let headings = new Array(0);
-
-  console.log(assets, dependencies);
-
-  for (let rowIndex = 0; rowIndex < ROWS; rowIndex++) {
-    grid[rowIndex] = [];
-    headings[rowIndex] = assets[rowIndex].id;
-
-    for (let colIndex = HEADINGS_COL_SPAN; colIndex < COLS; colIndex++) {
-      const asset = assets[rowIndex];
-      grid[rowIndex][0] = asset.id;
-      grid[rowIndex][1] = asset.dependent.count;
-      grid[rowIndex][2] = asset.dependent.criticalitySum;
-      // grid[rowIndex][3] = asset.name;
-
-      if (rowIndex === colIndex - HEADINGS_COL_SPAN) {
-        grid[rowIndex][colIndex] = { color: "#4B4B4B", value: "" };
-      } else if (
-        asset.uri === dependencies[colIndex]?.dependent?.uri ||
-        asset.uri === dependencies[colIndex]?.provider?.uri
-      ) {
-        grid[rowIndex][colIndex] = {
-          color: dependencies[colIndex].criticalityColor,
-          value: dependencies[colIndex].criticality,
-        };
-      } else {
-        grid[rowIndex][colIndex] = { color: "transparent", value: "" };
-      }
-    }
-  }
-  return { grid, headings };
-};
+import "./grid.css";
 
 const Grid = () => {
   const [zoomLevel, setZoomLevel] = useState(100);
   const { assets, dependencies } = useContext(ElementsContext);
 
   if (isEmpty(assets)) return null;
-  const { grid, headings } = generateCarverMatrix(assets, dependencies);
+  const { grid, headings } = generateCarverGrid(assets, dependencies);
 
   return (
     <>

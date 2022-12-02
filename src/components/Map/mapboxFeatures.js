@@ -1,5 +1,9 @@
 export const generateAssetFeatures = (assets) => {
-  return assets.filter(asset => asset.lat && asset.lng).map((asset) => asset.createPointAsset());
+  return assets.filter((asset) => asset.lat && asset.lng).map((asset) => asset.createPointAsset("#333"));
+};
+
+export const generateLinearAssetFeatures = (assets) => {
+  return assets.flatMap((asset) => asset.createLinearAsset("#949494"));
 };
 
 export const createSelectedAssetFeatures = (

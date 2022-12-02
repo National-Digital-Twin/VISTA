@@ -30,11 +30,11 @@ export default class Dependency {
   toCytoscapeEdge() {
     return {
       data: {
-        element: { ...this },
         id: this.uri,
         label: this.id,
         source: this.dependent.uri,
         target: this.provider.uri,
+        color: this.criticalityColor
       },
       classes: ["label"],
     };

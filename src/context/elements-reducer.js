@@ -33,7 +33,7 @@ export const INITIAL_STATE = {
 
 const getAllCounts = (assets) => assets.map((asset) => asset.dependent.count);
 const getAllCriticalitySums = (assets) => assets.map((asset) => asset.dependent.criticalitySum);
-const createElement = (elem) => (isAsset(elem) ? new Asset(elem) : new Connection(elem));
+// const createElement = (elem) => (isAsset(elem) ? new Asset(elem) : new Connection(elem));
 
 const elementsReducer = (state, action) => {
   switch (action.type) {
@@ -57,10 +57,10 @@ const elementsReducer = (state, action) => {
         dependencies: action.dependencies,
       };
     case FILTER_SELECTED_ELEMENTS: {
-      const selectedElements = state.selectedElements.filter((elem) => {
-        return isAsset(elem)
-          ? action.assets.some((asset) => asset.id === elem.id)
-          : action.dependencies.some((dependency) => dependency.id === elem.id);
+      const selectedElements = state.selectedElements.filter((selectedElement) => {
+        return isAsset(selectedElement)
+          ? action.assets.some((asset) => asset.uri === selectedElement)
+          : action.dependencies.some((dependency) => dependency.uri === selectedElement);
       });
       return {
         ...state,
@@ -70,16 +70,18 @@ const elementsReducer = (state, action) => {
     case SELECT_ELEMENT:
       return {
         ...state,
-        selectedElements: [createElement(action.selectedElement)],
+        selectedElements: [action.selectedElement],
+        // selectedElements: [createElement(action.selectedElement)],
       };
     case MULTI_SELECT_ELEMENTS: {
       const getSelected = () => {
         const index = state.selectedElements.findIndex(
-          (selectedElement) => selectedElement.id === action.selectedElement.id
+          (selectedElement) => selectedElement === action.selectedElement
         );
-        if (index === -1) return [...state.selectedElements, createElement(action.selectedElement)];
+        if (index === -1) return [...state.selectedElements, action.selectedElement];
+        // if (index === -1) return [...state.selectedElements, createElement(action.selectedElement)];
         return state.selectedElements.filter(
-          (selectedElement) => selectedElement.id !== action.selectedElement.id
+          (selectedElement) => selectedElement !== action.selectedElement
         );
       };
 
@@ -89,8 +91,8 @@ const elementsReducer = (state, action) => {
       };
     }
     case AREA_SELECTION: {
-      const selectedElements = action.selectedElements.map((selected) => createElement(selected));
-      return { ...state, selectedElements };
+      // const selectedElements = action.selectedElements.map((selected) => createElement(selected));
+      return { ...state, selectedElements: action.selectedElements };
     }
     case CLEAR_SELECTED:
       return { ...state, selectedElements: [] };
