@@ -54,8 +54,8 @@ const NetworkGraph = () => {
       let selected = {
         dependent: target.source().data("id"),
         provider: target.target().data("id"),
-      }
-      if (isNode) selected = { dependent: target.data("id") }
+      };
+      if (isNode) selected = { dependent: target.data("id") };
       onElementClick(true, selected);
     };
 
@@ -87,7 +87,7 @@ const NetworkGraph = () => {
         stylesheet={cyStylesheet}
         cy={setCytoscape}
         className="w-full h-full"
-        minZoom={0.3}
+        minZoom={0.1}
       />
       <GraphToolbar cyRef={cyRef} graphLayout={graphLayout} setGraphLayout={updateLayout} />
     </>

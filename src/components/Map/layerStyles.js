@@ -1,11 +1,11 @@
 export const pointAssetLayer = {
-  id: "point-assets",
+  id: "point-assets-layer",
   type: "circle",
   source: "point-assets",
   paint: {
     "circle-radius": 4,
     "circle-opacity": 0.8,
-    "circle-color": "#333333",
+    "circle-color": ["get", "color"],
     "circle-stroke-color": "#C4C4C4",
     "circle-stroke-width": 1,
   },

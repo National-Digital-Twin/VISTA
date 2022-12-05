@@ -43,7 +43,7 @@ const AssessmentTypes = ({ assessment, selectedTypes, setSelectedTypes }) => {
       const dependencies = await getDependencies();
 
       const data = createData(assets, dependencies);
-      console.log(data.assets)
+      console.log(data)
       updateAssets(data.assets);
       updateDependencies(data.dependencies);
       // filterSelectedElements(data.assets, data.dependencies);

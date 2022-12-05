@@ -58,14 +58,17 @@ export default class Asset {
     };
   }
 
-  createPointAsset(color) {
+  createPointAsset(selected) {
     if (!this.lat && !this.lng) return {};
     return {
       type: "Feature",
       properties: {
-        element: { ...this },
-        color: color ?? this.criticalitySumColor,
+        uri: this.uri,
+        id: this.id,
+        criticality: this.dependent.criticalitySum,
+        color: selected ? this.criticalitySumColor : "#333",
         size: 4,
+        selected: false,
       },
       geometry: {
         type: "Point",
@@ -73,6 +76,10 @@ export default class Asset {
       },
     };
   }
+
+  // generateSelectedPointAssets(selectedPointAsset) {
+  //   // const sourceFeature = this.createSelectedAssetFeature(colorScale, maxCriticality, true);
+  // }
 
   #createSegmentCoords() {
     const lats = this.segments.map((segment) => parseFloat(segment.lat[0]));
