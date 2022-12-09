@@ -1,6 +1,4 @@
 import ColorScale from "color-scales";
-// import { isEmpty } from "lodash";
-import { Asset, Connection } from "models";
 import { isAsset } from "utils";
 
 export const CLEAR_SELECTED = "CLEAR_SELECTED";
@@ -33,7 +31,6 @@ export const INITIAL_STATE = {
 
 const getAllCounts = (assets) => assets.map((asset) => asset.dependent.count);
 const getAllCriticalitySums = (assets) => assets.map((asset) => asset.dependent.criticalitySum);
-// const createElement = (elem) => (isAsset(elem) ? new Asset(elem) : new Connection(elem));
 
 const elementsReducer = (state, action) => {
   switch (action.type) {
@@ -71,7 +68,6 @@ const elementsReducer = (state, action) => {
       return {
         ...state,
         selectedElements: [action.selectedElement],
-        // selectedElements: [createElement(action.selectedElement)],
       };
     case MULTI_SELECT_ELEMENTS: {
       const getSelected = () => {
@@ -79,7 +75,6 @@ const elementsReducer = (state, action) => {
           (selectedElement) => selectedElement === action.selectedElement
         );
         if (index === -1) return [...state.selectedElements, action.selectedElement];
-        // if (index === -1) return [...state.selectedElements, createElement(action.selectedElement)];
         return state.selectedElements.filter(
           (selectedElement) => selectedElement !== action.selectedElement
         );
@@ -91,7 +86,6 @@ const elementsReducer = (state, action) => {
       };
     }
     case AREA_SELECTION: {
-      // const selectedElements = action.selectedElements.map((selected) => createElement(selected));
       return { ...state, selectedElements: action.selectedElements };
     }
     case CLEAR_SELECTED:

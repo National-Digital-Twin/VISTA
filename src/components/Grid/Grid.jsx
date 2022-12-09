@@ -46,7 +46,7 @@ const Grid = () => {
                 </td>
                 <td
                   className="border border-slate-300 text-black-100 text-center"
-                  style={{ backgroundColor: assets[rowIndex].criticalitySumColor }}
+                  style={{ backgroundColor: assets[rowIndex].criticalityColor }}
                 >
                   {row[2]}
                 </td>

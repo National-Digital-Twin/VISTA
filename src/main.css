@@ -1267,6 +1267,10 @@ body {
   justify-items: start;
 }
 
+.last-of-type\:border-0:last-of-type {
+  border-width: 0px;
+}
+
 .hover\:bg-black-400:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(68 68 68 / var(--tw-bg-opacity));

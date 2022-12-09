@@ -5,54 +5,38 @@ export const pointAssetLayer = {
   paint: {
     "circle-radius": 4,
     "circle-opacity": 0.8,
-    "circle-color": ["get", "color"],
+    "circle-color": ["get", "circleColor"],
     "circle-stroke-color": "#C4C4C4",
-    "circle-stroke-width": 1,
+    "circle-stroke-width": ["get", "circleStrokeWidth"]
   },
 };
 
-export const lineStyle = {
-  id: "connection",
+export const pointAssetCxnLayer = {
+  id: "point-asset-connection-layer",
   type: "line",
-  source: "selected-connections",
+  source: "point-asset-connections",
   layout: {
     "line-join": "round",
     "line-cap": "round",
   },
   paint: {
     "line-width": 2,
-    "line-color": ["get", "color"],
+    "line-color": ["get", "lineColor"],
+    "line-opacity": ["get", "lineOpacity"]
   },
 };
 
-export const segmentStyle = {
-  id: "segments",
+export const linearAssetsLayer = {
+  id: "linear-assets-layer",
   type: "line",
-  source: "selected-segments",
+  source: "linear-assets",
   layout: {
     "line-join": "round",
     "line-cap": "round",
   },
   paint: {
-    "line-color": ["get", "color"],
+    "line-color": ["get", "lineColor"],
     "line-width": 3,
-  },
-};
-
-export const highlightedAssets = {
-  id: "highlighted-asset-points",
-  type: "circle",
-  paint: {
-    "circle-radius": ["get", "size"],
-    "circle-color": ["get", "color"],
-    "circle-stroke-color": [
-      "match",
-      ["get", "selected"],
-      "source",
-      "#E9E9E9",
-      "rgba(255,255,255,0)",
-    ],
-    "circle-stroke-width": 2,
   },
 };
 

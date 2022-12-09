@@ -5,9 +5,10 @@ import { isEmpty } from "lodash";
 import config from "config/app-config";
 import { CytoscapeContext, ElementsContext } from "context";
 import { useLocalStorage } from "hooks";
+import { findAsset } from "utils";
 
-import { heatmap, pointAssetLayer } from "./layerStyles";
-import { generatePointAssets } from "./mapboxFeatures";
+import { heatmap, linearAssetsLayer, pointAssetCxnLayer, pointAssetLayer } from "./layerStyles";
+import { generateFeatures } from "./mapboxFeatures";
 import { getMapStyles } from "./mapStyles";
 import MapConfig from "./MapConfig";
 import "./mapbox.css";
@@ -24,30 +25,32 @@ const HEAT_RADIUS = 1000;
 const TelicentMap = () => {
   const { telicentMap: map } = useMap();
   const { clearSelected } = useContext(CytoscapeContext);
-  const { assets, selectedElements, clearSelectedElements, onElementClick } =
+  const { assets, dependencies, selectedElements, clearSelectedElements, onElementClick } =
     useContext(ElementsContext);
   const [mapStyle, setMapStyle] = useLocalStorage("mapStyle", "mapbox://styles/mapbox/dark-v10");
 
   const [cursor, setCursor] = useState("auto");
   const [hoverInfo, setHoverInfo] = useState(undefined);
   const [heatmapRadius, setHeatmapRadius] = useState(10);
+  
+  const [linearAssets, setLinearAssets] = useState([]);
   const [pointAssets, setPointAssets] = useState([]);
-  const [pointAssetDependencies, setPointAssetDependecies] = useState([]);
-  // const [selectedAssetCxns, setSelectedAssetCxns] = useState([]);
-  // const [selectedSegments, setSelectedSegments] = useState([]);
-
-  // const linearAssets = useMemo(() => generateLinearAssetFeatures(assets), [assets]);
-  // console.log(linearAssets)
+  const [pointAssetDependencies, setPointAssetDependencies] = useState([]);
 
   // The order of the array is the order in which the features will appear in the map.
   // index 0 being the lowest level
   const sources = useMemo(
     () => [
-      { id: "point-assets", features: pointAssets, layers: [heatmap, pointAssetLayer] },
-      // { id: "selected-connections", features: selectedAssetCxns, layers: [lineStyle] },
-      // { id: "selected-segments", features: selectedSegments, layers: [segmentStyle] },
+      { id: "heatmap", features: pointAssets, layers: [heatmap] },
+      {
+        id: "point-asset-dependecies",
+        features: pointAssetDependencies,
+        layers: [pointAssetCxnLayer],
+      },
+      { id: "point-assets", features: pointAssets, layers: [pointAssetLayer] },
+      { id: "linear-assets", features: linearAssets, layers: [linearAssetsLayer] },
     ],
-    [pointAssets]
+    [linearAssets, pointAssets, pointAssetDependencies]
   );
 
   useEffect(() => {
@@ -57,22 +60,16 @@ const TelicentMap = () => {
   }, [mapStyle, setMapStyle]);
 
   useEffect(() => {
-    // if (isEmpty(assets) && isEmpty(selectedElements)) return;
-    const pointAssets = generatePointAssets(assets, selectedElements);
+    if (isEmpty(assets) && isEmpty(selectedElements)) return;
+    const { pointAssets, pointAssetDependencies, linearAssets } = generateFeatures(
+      assets,
+      dependencies,
+      selectedElements
+    );
     setPointAssets(pointAssets);
-
-    // const pointAssetDependencies = 
-
-    //   const selectedSegmentFeatures = createSelectedSegmentFeatures(selectedElements, assetCriticalityColorScale, assets);
-    //   setSelectedSegments(selectedSegmentFeatures);
-
-    //   const selectedAssetCxnFeatures = createSelectedConnectionFeatures(
-    //     assets,
-    //     cxnCriticalityColorScale,
-    //     selectedElements
-    //   );
-    //   setSelectedAssetCxns(selectedAssetCxnFeatures);
-  }, [assets, selectedElements]);
+    setPointAssetDependencies(pointAssetDependencies);
+    setLinearAssets(linearAssets);
+  }, [assets, dependencies, selectedElements]);
 
   const handleOnClick = (event) => {
     const { features } = event;
@@ -91,8 +88,8 @@ const TelicentMap = () => {
     if (clickedFeature?.type === "Feature") {
       const { properties } = clickedFeature;
       event.originalEvent.stopPropagation();
-      const selected = { dependent: properties.uri };
-      onElementClick(event.originalEvent.shiftKey, selected);
+      const element = findAsset([...assets, ...dependencies], properties.uri);
+      onElementClick(event.originalEvent.shiftKey, element);
       return;
     }
   };
@@ -122,7 +119,7 @@ const TelicentMap = () => {
       <Map
         cursor={cursor}
         id="telicentMap"
-        interactiveLayerIds={[pointAssetLayer.id]}
+        interactiveLayerIds={[pointAssetLayer.id, pointAssetCxnLayer.id, linearAssetsLayer.id]}
         initialViewState={{ ...VIEWSTATE }}
         mapboxAccessToken={config.mb.token}
         mapStyle={mapStyle}

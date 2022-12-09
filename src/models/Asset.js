@@ -3,17 +3,16 @@ import { getColorScale, getHexColor } from "utils";
 export default class Asset {
   #countColorScale = {};
   #criticalitySumColorScale = {};
-  constructor({ uri, type, lat, lng, segments, dependentCount, dependentCriticalitySum }) {
+  constructor({ uri, type, lat, lng, geometry, dependent }) {
     this.uri = uri;
     this.id = this.uri.split("#")[1];
     this.type = type;
     this.lat = lat;
     this.lng = lng;
-    this.segments = segments;
-    this.dependent = {
-      count: dependentCount,
-      criticalitySum: dependentCriticalitySum,
-    };
+    this.geometry = geometry;
+    this.dependent = dependent;
+    this.elementType = "asset";
+    Object.preventExtensions(this);
   }
 
   /**
@@ -44,13 +43,14 @@ export default class Asset {
     this.#criticalitySumColorScale = getColorScale(min, max);
   }
 
-  get criticalitySumColor() {
+  get criticalityColor() {
     return getHexColor(this.#criticalitySumColorScale, this.dependent.criticalitySum);
   }
 
   toCytoscapeNode() {
     return {
       data: {
+        element: this,
         id: this.uri,
         label: this.id,
       },
@@ -58,17 +58,22 @@ export default class Asset {
     };
   }
 
-  createPointAsset(selected) {
+  #isSelected(selectedElements) {
+    return selectedElements.some((selectedElement) => selectedElement.uri === this.uri)
+  }
+
+  createPointAsset(selectedElements) {
     if (!this.lat && !this.lng) return {};
+    
+    const selected = this.#isSelected(selectedElements);
     return {
       type: "Feature",
       properties: {
         uri: this.uri,
         id: this.id,
         criticality: this.dependent.criticalitySum,
-        color: selected ? this.criticalitySumColor : "#333",
-        size: 4,
-        selected: false,
+        circleColor: selected ? this.criticalityColor : "#333",
+        circleStrokeWidth: selected ? 2 : 1,
       },
       geometry: {
         type: "Point",
@@ -77,22 +82,21 @@ export default class Asset {
     };
   }
 
-  // generateSelectedPointAssets(selectedPointAsset) {
-  //   // const sourceFeature = this.createSelectedAssetFeature(colorScale, maxCriticality, true);
-  // }
-
   #createSegmentCoords() {
-    const lats = this.segments.map((segment) => parseFloat(segment.lat[0]));
-    const lngs = this.segments.map((segment) => parseFloat(segment.lon[0]));
+    const lats = this.geometry.map((segment) => parseFloat(segment.lat1));
+    const lngs = this.geometry.map((segment) => parseFloat(segment.lon1));
     return lngs.map((lng, index) => [lng, lats[index]]);
   }
 
-  createLinearAsset(color) {
+  createLinearAsset(selectedElements) {
+    const selected = this.#isSelected(selectedElements);
     return {
       type: "Feature",
       properties: {
-        element: this,
-        color: color ?? this.criticalitySumColor,
+        uri: this.uri,
+        id: this.id,
+        criticality: this.dependent.criticalitySum,
+        lineColor: selected ? this.criticalityColor : "#7C7C7C",
       },
       geometry: {
         type: "LineString",

@@ -1,7 +1,9 @@
 import { useLocalStorage } from "hooks";
 import React, { useCallback, useContext, useState } from "react";
-import { ElementsContext } from "../../context";
-import { FloatingPanel } from "../../lib";
+
+import { ElementsContext } from "context";
+import { FloatingPanel } from "lib";
+
 import InfoBtn from "./InfoBtn";
 import InfoPanelHeader from "./InfoPanelHeader";
 import SelectedElements from "./SelectedElements";

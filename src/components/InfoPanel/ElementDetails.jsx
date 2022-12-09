@@ -2,9 +2,27 @@ import React, { useEffect, useRef, useState } from "react";
 import { getShortType, isAsset, IsEmpty } from "../../utils";
 import classNames from "classnames";
 import useLocalStorage from "../../hooks/useLocalStorage";
+import useFetch from "use-http";
+import { isEmpty } from "lodash";
 
 const ElementDetails = ({ element, expand, onViewDetails }) => {
-  if (IsEmpty(element)) return null;
+  const { get, response, loading, error } = useFetch();
+  const [elementInfo, setElementInfo] = useState(undefined);
+
+  // useEffect(() => {
+  //   // if (isEmpty(element)) return;
+
+  //   const getAssetInfo = async () => {
+  //     const assetUri = { assetUri: element.uri }
+  //     const assetInfo = await get(`/asset?${new URLSearchParams(assetUri).toString()}`)
+  //     if (response.ok) setElementInfo(assetInfo);
+  //   }
+  //   if (expand) {
+  //     getAssetInfo();
+  //   }
+  // }, [expand, response, get])
+
+  // if (IsEmpty(elementInfo)) return null;
 
   if (!expand)
     return (
@@ -15,31 +33,42 @@ const ElementDetails = ({ element, expand, onViewDetails }) => {
       </li>
     );
 
+  console.log(element);
+
+  // const getAssetInfo = async () => {
+  //   const assetUri = { assetUri: element.uri };
+  //   const assetInfo = await get(`/asset?${new URLSearchParams(assetUri).toString()}`);
+  //   if (response.ok) setElementInfo(assetInfo);
+  // };
+  // if (expand) {
+  //   getAssetInfo();
+  // }
+
   return (
     <div id="element-details" className="flex flex-col grow min-h-0 overflow-y-auto gap-y-4">
-      <Details element={element} expand />
-      <ConnectedAssets connectedAssets={element.connectedAssets} />
+      <Details element={element} info={elementInfo} expand />
+      {/* <ConnectedAssets connectedAssets={element.connectedAssets} /> */}
     </div>
   );
 };
 
-const Details = ({ element, expand }) => (
+const Details = ({ element, info, expand }) => (
   <div className="grid gap-y-1">
     <h2 className="text-lg flex gap-x-2 items-center font-medium">
       <span
-        style={{ backgroundColor: element.color }}
+        style={{ backgroundColor: element.criticalityColor }}
         className={classNames({
           "w-3 h-3 rounded-full border-2 border-whiteSmoke": isAsset(element),
           "w-4 h-0.5 bg-white": !isAsset(element),
         })}
       />
-      {element.title}
+      {info?.name}
     </h2>
-    {element.type && <p className="uppercase text-sm">{getShortType(element.type)}</p>}
+    {info?.assetType && <p className="uppercase text-sm">{getShortType(info.assetType)}</p>}
     {expand && (
       <>
-        <p>Criticality: {element.criticality}</p>
-        <Description description={element.description} />
+        <p>Criticality: {element.dependent.criticalitySum}</p>
+        <Description description={info?.desc} />
       </>
     )}
   </div>
@@ -73,7 +102,10 @@ const Description = ({ description }) => {
         {description}
       </p>
       {isLineClampApplied && showMore ? null : (
-        <button className="w-fit float-right flex items-center gap-x-1 text-sm" onClick={handleShowMore}>
+        <button
+          className="w-fit float-right flex items-center gap-x-1 text-sm"
+          onClick={handleShowMore}
+        >
           show {showMore ? "more" : "less"}
           <span
             className={classNames("!text-sm", {
@@ -91,10 +123,13 @@ const DetailsSectionTitle = ({ expand, onToggle, children }) => {
   if (onToggle)
     return (
       <button
-        className={classNames("bg-whiteSmoke-900 rounded-lg px-2 flex justify-between items-center py-2", {
-          "inset-x-4 absolute top-0": expand,
-          "w-full": !expand,
-        })}
+        className={classNames(
+          "bg-whiteSmoke-900 rounded-lg px-2 flex justify-between items-center py-2",
+          {
+            "inset-x-4 absolute top-0": expand,
+            "w-full": !expand,
+          }
+        )}
         style={{ zIndex: 5 }}
         onClick={onToggle}
       >
@@ -130,7 +165,9 @@ const DetailsSection = ({ expand, onToggle, show, title, children }) => {
       <DetailsSectionTitle expand={expand} onToggle={onToggle}>
         <h3 className="text-lg pl-2">{title}</h3>
       </DetailsSectionTitle>
-      {expand && <div className="relative top-5 bg-black-100 rounded-xl w-full p-4 pt-10">{children}</div>}
+      {expand && (
+        <div className="relative top-5 bg-black-100 rounded-xl w-full p-4 pt-10">{children}</div>
+      )}
     </div>
   );
 };
@@ -154,7 +191,10 @@ const ConnectedAssets = ({ connectedAssets }) => {
           return (
             <li key={asset.uri} className="gap-x-2 bg-black-300 rounded-md p-2 items-center">
               <div className="flex items-center  gap-x-2">
-                <div style={{ backgroundColor: asset.color }} className="w-2.5 h-2.5 rounded-full" />
+                <div
+                  style={{ backgroundColor: asset.color }}
+                  className="w-2.5 h-2.5 rounded-full"
+                />
                 <h4 className="truncate w-64" title={asset.title}>
                   {asset.title}
                 </h4>

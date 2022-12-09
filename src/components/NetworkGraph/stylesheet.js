@@ -30,9 +30,14 @@ const cyStylesheet = [
   {
     selector: "edge",
     style: {
-      curveStyle: "haystack",
+      curveStyle: "bezier",
       label: "data(label)",
-      "line-color": "data(color)"
+      lineColor: "data(color)",
+      width: 2,
+      arrowScale: 1.5,
+      lineOpacity: 0.8,
+      sourceArrowShape: "vee",
+      sourceArrowColor: "data(color)",
     },
   },
   {
@@ -92,10 +97,17 @@ const cyStylesheet = [
     },
   },
   {
-    selector: ":selected",
+    selector: "node:selected",
     style: {
       borderWidth: "4px",
       borderColor: colors.whiteSmoke,
+    },
+  },
+  {
+    selector: "edge:selected",
+    style: {
+      width: 3,
+      lineOpacity: 1,
     },
   },
 ];

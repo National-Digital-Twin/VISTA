@@ -15,9 +15,10 @@ const SelectedElements = ({ getDetails, selectedElements, updateHeaderProps }) =
   const [state, dispatch] = useReducer(selectedElementsReducer, SELECTED_ELEMENTS_INITIAL_STATE);
   const { index, header } = state;
 
-  const selectedElement = useMemo(() => selectedElements[index], [selectedElements, index]);
+  // const selectedElement = useMemo(() => selectedElements[index], [selectedElements, index]);
 
   useEffect(() => {
+    // if (index === 0) return;
     if (selectedElements.length === 1) {
       dispatch({ type: SINGLE_ELEMENT, index: 0 });
       return;
@@ -26,16 +27,19 @@ const SelectedElements = ({ getDetails, selectedElements, updateHeaderProps }) =
       dispatch({ type: LIST_VIEW });
       return;
     }
-    dispatch({ type: RESET_STATE });
+    if (isEmpty(selectedElements)) {
+      dispatch({ type: RESET_STATE });
+      return;
+    }
   }, [selectedElements]);
 
-  useEffect(() => {
-    updateHeaderProps({
-      ...header,
-      latitude: selectedElement?.lat,
-      longitude: selectedElement?.lng,
-    });
-  }, [header, selectedElement, updateHeaderProps]);
+  // useEffect(() => {
+  //   updateHeaderProps({
+  //     ...header,
+  //     latitude: selectedElement?.lat,
+  //     longitude: selectedElement?.lng,
+  //   });
+  // }, [header, selectedElement, updateHeaderProps]);
 
   const handleOnViewDetails = (index) => {
     dispatch({
@@ -50,8 +54,10 @@ const SelectedElements = ({ getDetails, selectedElements, updateHeaderProps }) =
   }
 
   if (index > -1) {
-    return <div className="break-words">{JSON.stringify(selectedElement)}</div>
-    // return <ElementDetails expand element={getDetails(selectedElement)} />;
+    console.log("here");
+    const selectedElement = selectedElements[index];
+    // return <div className="break-words">{JSON.stringify(selectedElement)}</div>
+    return <ElementDetails expand element={selectedElement} />;
   }
 
   return (

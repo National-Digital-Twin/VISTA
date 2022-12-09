@@ -32,16 +32,11 @@ const NetworkGraph = () => {
 
     const onNodeTap = (event) => {
       const { originalEvent, target } = event;
-      const selected = { dependent: target.data("id") };
-      onElementClick(originalEvent.shiftKey, selected);
+      onElementClick(originalEvent.shiftKey, target.data('element'));
     };
     const onEdgeTap = (event) => {
       const { originalEvent, target } = event;
-      const selected = {
-        dependent: target.source().data("id"),
-        provider: target.target().data("id"),
-      };
-      onElementClick(originalEvent.shiftKey, selected);
+      onElementClick(originalEvent.shiftKey, target.data('element'));
     };
     const onTap = (event) => {
       if (event.target === cyRef.current) {
@@ -50,13 +45,7 @@ const NetworkGraph = () => {
     };
     const onBoxSelect = (event) => {
       const { target } = event;
-      const isNode = target.isNode();
-      let selected = {
-        dependent: target.source().data("id"),
-        provider: target.target().data("id"),
-      };
-      if (isNode) selected = { dependent: target.data("id") };
-      onElementClick(true, selected);
+      onElementClick(true, target.data('element'));
     };
 
     cyRef.current.on("boxselect", onBoxSelect);

@@ -1,6 +1,6 @@
 export const SELECTED_ELEMENTS_INITIAL_STATE = {
   view: "singleElement",
-  index: 0,
+  index: undefined,
   header: {
     title: "Information",
     viewAll: undefined,

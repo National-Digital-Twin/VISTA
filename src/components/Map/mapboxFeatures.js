@@ -1,35 +1,19 @@
-export const generatePointAssets = (assets, selectedElements) => {
-  return assets.filter((asset) => asset.lat && asset.lng).map((asset) => {
-    const selected = selectedElements.find(
-      (selectedElement) => selectedElement.dependent === asset.uri
-    );
-    return asset.createPointAsset(selected);
+import { isEmpty } from "lodash";
+
+export const generateFeatures = (assets, dependencies, selectedElements) => {
+  const pointAssets = assets
+    .filter((asset) => asset.lat && asset.lng)
+    .map((asset) => {
+      return asset.createPointAsset(selectedElements);
+    });
+
+  const pointAssetDependencies = dependencies.map((dependency) => {
+    return dependency.createLineFeature(assets, selectedElements);
   });
-};
 
-export const generateLinearAssetFeatures = (assets) => {
-  return assets.flatMap((asset) => asset.createLinearAsset("#949494"));
-};
+  const linearAssets = assets
+    .filter((asset) => !isEmpty(asset.geometry))
+    .map((asset) => asset.createLinearAsset(selectedElements));
 
-export const createSelectedSegmentFeatures = (selectedElements, colorScale, assets) => {
-  return selectedElements.flatMap((selectedElement) =>
-    selectedElement.generateSelectedSegmentFeatures(assets, colorScale)
-  );
-};
-
-export const generatePointAssetDependencies = (dependencies, features) => {
-  // get selected dependent uri
-  // find the dependent uri, get all assets that depend on selected asset
-  // find asset in point asset features
-  // use this information to create line feature
-}
-
-export const createSelectedConnectionFeatures = (
-  assets,
-  cxnCriticalityColorScale,
-  selectedElements
-) => {
-  return selectedElements.flatMap((element) =>
-    element.generateSelectedConnectionFeature(assets, cxnCriticalityColorScale)
-  );
+  return { pointAssets, pointAssetDependencies, linearAssets };
 };
