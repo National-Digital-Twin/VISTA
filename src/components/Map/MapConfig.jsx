@@ -3,10 +3,10 @@ import React, { useState } from "react";
 import useDraw from "./useDraw";
 import MapToolbar from "./MapToolbar";
 
-const MapConfig = ({ heatmapRadius, map, mapStyle, setMapStyle }) => {
+const MapConfig = ({ assets, dependencies, heatmapRadius, map, mapStyle, setMapStyle }) => {
   const [polygon, setPolygon] = useState(undefined);
   const { activateDrawCircleMode, activatePolygonMode, deleteAllPolygons, setRadius } =
-    useDraw(setPolygon);
+    useDraw(assets, dependencies, setPolygon);
 
   const handleOnPopupClose = () => {
     setPolygon(undefined);

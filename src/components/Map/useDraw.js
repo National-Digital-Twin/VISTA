@@ -11,12 +11,17 @@ const DRAW_CIRCLE = "draw_circle";
 let modes = MapboxDraw.modes;
 modes = MapboxDrawGeodesic.enable(modes);
 
-const useDraw = (setPolygon) => {
+const useDraw = (assets, dependencies, setPolygon) => {
   const { clearSelectedElements, onAreaSelect } = useContext(ElementsContext);
 
   const getAssetsInPolygon = (target, polygon) => {
-    const points = turf.pointsWithinPolygon(target?.getSource("assets")?._data, polygon);
-    return points.features.map((feature) => ({ ...feature.properties.element }));
+    // console.log(target?.getSource("point-assets")?._data)
+    // const test = turf.pointsWithinPolygon(
+    //   { type: "FeatureCollection", features: [...assets, ...dependencies] },
+    //   polygon
+    // );
+    const points = turf.pointsWithinPolygon(target?.getSource("point-assets")?._data, polygon);
+    return points.features.map((feature) => ({ ...feature.properties }));
   };
 
   const assetsInPolygon = (event, feature) => {
@@ -38,12 +43,16 @@ const useDraw = (setPolygon) => {
   const selectAssetsInPolygons = (event) => {
     setPolygon(undefined);
     const { features } = event;
-    const assets = features.flatMap((feature) => assetsInPolygon(event, feature));
-    onAreaSelect(assets);
-    if (features.length === 1) {
-      setPolygon(features[0]);
-      return;
-    }
+    const elementsInPolygon = features.flatMap((feature) => assetsInPolygon(event, feature));
+    const elements = elementsInPolygon.map((element) =>
+      assets.find((asset) => element.uri === asset.uri)
+    );
+    console.log(elements);
+    // onAreaSelect(elements);
+    // if (features.length === 1) {
+    //   setPolygon(features[0]);
+    //   return;
+    // }
   };
 
   const onClick = (event) => {
@@ -122,7 +131,7 @@ const useDraw = (setPolygon) => {
     MapboxDrawGeodesic.setCircleRadius(geojson, radius);
     const featureIds = draw.add(geojson);
     if (manualEdit) {
-      draw.changeMode(SIMPLE_SELECT).changeMode(SIMPLE_SELECT, { featureIds: featureIds[0] })
+      draw.changeMode(SIMPLE_SELECT).changeMode(SIMPLE_SELECT, { featureIds: featureIds[0] });
     }
   };
 

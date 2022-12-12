@@ -32,7 +32,7 @@ const TelicentMap = () => {
   const [cursor, setCursor] = useState("auto");
   const [hoverInfo, setHoverInfo] = useState(undefined);
   const [heatmapRadius, setHeatmapRadius] = useState(10);
-  
+
   const [linearAssets, setLinearAssets] = useState([]);
   const [pointAssets, setPointAssets] = useState([]);
   const [pointAssetDependencies, setPointAssetDependencies] = useState([]);
@@ -156,6 +156,8 @@ const TelicentMap = () => {
         />
         <HoverInfo info={hoverInfo?.feature.properties} left={hoverInfo?.x} top={hoverInfo?.y} />
         <MapConfig
+          assets={assets}
+          dependencies={dependencies}
           heatmapRadius={heatmapRadius}
           map={map}
           mapStyle={mapStyle}

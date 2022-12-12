@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useReducer } from "react";
+import React, { useEffect, useReducer } from "react";
 import { isEmpty } from "lodash";
 
 import ElementDetails from "./ElementDetails";
@@ -11,35 +11,31 @@ import {
   SINGLE_ELEMENT,
 } from "./selected-elements-reducer";
 
-const SelectedElements = ({ getDetails, selectedElements, updateHeaderProps }) => {
+const SelectedElements = ({ selectedElements, updateHeaderProps }) => {
   const [state, dispatch] = useReducer(selectedElementsReducer, SELECTED_ELEMENTS_INITIAL_STATE);
   const { index, header } = state;
 
-  // const selectedElement = useMemo(() => selectedElements[index], [selectedElements, index]);
-
   useEffect(() => {
-    // if (index === 0) return;
     if (selectedElements.length === 1) {
       dispatch({ type: SINGLE_ELEMENT, index: 0 });
-      return;
     }
-    if (selectedElements.length > 0) {
+    else if (selectedElements.length > 1) {
       dispatch({ type: LIST_VIEW });
-      return;
     }
-    if (isEmpty(selectedElements)) {
+    else {
       dispatch({ type: RESET_STATE });
-      return;
     }
   }, [selectedElements]);
 
-  // useEffect(() => {
-  //   updateHeaderProps({
-  //     ...header,
-  //     latitude: selectedElement?.lat,
-  //     longitude: selectedElement?.lng,
-  //   });
-  // }, [header, selectedElement, updateHeaderProps]);
+  useEffect(() => {
+    updateHeaderProps({
+      ...header,
+      latitude: selectedElements[index]?.lat,
+      longitude: selectedElements[index]?.lng,
+    });
+  }, [header, selectedElements, index, updateHeaderProps]);
+
+  console.log(selectedElements)
 
   const handleOnViewDetails = (index) => {
     dispatch({
@@ -54,21 +50,18 @@ const SelectedElements = ({ getDetails, selectedElements, updateHeaderProps }) =
   }
 
   if (index > -1) {
-    console.log("here");
     const selectedElement = selectedElements[index];
-    // return <div className="break-words">{JSON.stringify(selectedElement)}</div>
     return <ElementDetails expand element={selectedElement} />;
   }
 
   return (
     <ul className="gap-y-3 grow min-h-0 overflow-y-auto">
       {selectedElements.map((selectedElement, index) => (
-        <div className="break-words">{JSON.stringify(selectedElement)}</div>
-        // <ElementDetails
-        //   key={selectedElement.id}
-        //   element={getDetails(selectedElement)}
-        //   onViewDetails={() => handleOnViewDetails(index)}
-        // />
+        <ElementDetails
+          key={selectedElement.id}
+          element={selectedElement}
+          onViewDetails={() => handleOnViewDetails(index)}
+        />
       ))}
     </ul>
   );

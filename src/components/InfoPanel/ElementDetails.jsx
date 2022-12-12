@@ -1,56 +1,42 @@
 import React, { useEffect, useRef, useState } from "react";
-import { getShortType, isAsset, IsEmpty } from "../../utils";
-import classNames from "classnames";
-import useLocalStorage from "../../hooks/useLocalStorage";
 import useFetch from "use-http";
 import { isEmpty } from "lodash";
+import classNames from "classnames";
+
+import { getShortType, isAsset } from "utils";
+import useLocalStorage from "hooks/useLocalStorage";
 
 const ElementDetails = ({ element, expand, onViewDetails }) => {
-  const { get, response, loading, error } = useFetch();
-  const [elementInfo, setElementInfo] = useState(undefined);
+  const assetUri = { assetUri: element?.uri };
+  const { data, loading, error } = useFetch(
+    `/asset?${new URLSearchParams(assetUri).toString()}`,
+    {},
+    []
+  );
 
-  // useEffect(() => {
-  //   // if (isEmpty(element)) return;
+  if (loading) return <p>Fetching element information</p>;
+  if (error) return <p>An error has occured while fetching element information</p>;
+  if (isEmpty(data)) return null;
 
-  //   const getAssetInfo = async () => {
-  //     const assetUri = { assetUri: element.uri }
-  //     const assetInfo = await get(`/asset?${new URLSearchParams(assetUri).toString()}`)
-  //     if (response.ok) setElementInfo(assetInfo);
-  //   }
-  //   if (expand) {
-  //     getAssetInfo();
-  //   }
-  // }, [expand, response, get])
-
-  // if (IsEmpty(elementInfo)) return null;
-
-  if (!expand)
+  if (!expand) {
     return (
       <li className="border-b border-whiteSmoke-800">
         <button onClick={onViewDetails} className="text-left pb-3">
-          <Details element={element} />
+          <Details element={element} info={data} />
         </button>
       </li>
     );
-
-  console.log(element);
-
-  // const getAssetInfo = async () => {
-  //   const assetUri = { assetUri: element.uri };
-  //   const assetInfo = await get(`/asset?${new URLSearchParams(assetUri).toString()}`);
-  //   if (response.ok) setElementInfo(assetInfo);
-  // };
-  // if (expand) {
-  //   getAssetInfo();
-  // }
+  }
 
   return (
     <div id="element-details" className="flex flex-col grow min-h-0 overflow-y-auto gap-y-4">
-      <Details element={element} info={elementInfo} expand />
-      {/* <ConnectedAssets connectedAssets={element.connectedAssets} /> */}
+      <Details element={element} info={data} expand />
+      <Dependents assetUri={assetUri} />
+      <Providers assetUri={assetUri} />
     </div>
   );
 };
+export default ElementDetails;
 
 const Details = ({ element, info, expand }) => (
   <div className="grid gap-y-1">
@@ -149,9 +135,7 @@ const DetailsSectionTitle = ({ expand, onToggle, children }) => {
   );
 };
 
-const DetailsSection = ({ expand, onToggle, show, title, children }) => {
-  if (!show) return null;
-
+const DetailsSection = ({ expand, onToggle, title, children }) => {
   if (!expand) {
     return (
       <DetailsSectionTitle expand={expand} onToggle={onToggle}>
@@ -172,36 +156,45 @@ const DetailsSection = ({ expand, onToggle, show, title, children }) => {
   );
 };
 
-const ConnectedAssets = ({ connectedAssets }) => {
-  const [expand, setExpand] = useLocalStorage("showConnectedAssets", true);
+const Dependents = ({ assetUri }) => {
+  const { data, loading, error } = useFetch(
+    `/asset/dependents?${new URLSearchParams(assetUri).toString()}`,
+    {},
+    [assetUri]
+  );
+  const [expand, setExpand] = useLocalStorage("showDependents", false);
 
   const handleToggleSection = () => {
     setExpand((prev) => !prev);
   };
 
+  if (isEmpty(data)) return null;
+
   return (
     <DetailsSection
       expand={expand}
       onToggle={handleToggleSection}
-      show={!IsEmpty(connectedAssets)}
-      title={`${connectedAssets.length} Connected Assets`}
+      show={!isEmpty(data)}
+      title={`${data.length} Dependent Assets`}
     >
+      {loading && <p>loading...</p>}
+      {error && <p>Failed to retrieve asset dependents</p>}
       <ul className="grid gap-y-3">
-        {connectedAssets.map((asset) => {
+      {data.map((asset) => {
           return (
-            <li key={asset.uri} className="gap-x-2 bg-black-300 rounded-md p-2 items-center">
+            <li key={asset.dependentNode} className="gap-x-2 bg-black-300 rounded-md p-2 items-center">
               <div className="flex items-center  gap-x-2">
                 <div
-                  style={{ backgroundColor: asset.color }}
+                  style={{ backgroundColor: "#A3A3A3" }}
                   className="w-2.5 h-2.5 rounded-full"
                 />
-                <h4 className="truncate w-64" title={asset.title}>
-                  {asset.title}
+                <h4 className="truncate w-64" title={asset.dependentNode}>
+                  {asset.dependentNode}
                 </h4>
               </div>
 
-              <p className="whitespace-nowrap">Asset criticality: {asset.assetCriticality}</p>
-              <p className="whitespace-nowrap">Connection criticality: {asset.cxnCriticality}</p>
+              <p className="whitespace-nowrap">Asset criticality: tbh</p>
+              <p className="whitespace-nowrap">Dependency Criticality: {asset.criticalityRating}</p>
             </li>
           );
         })}
@@ -210,4 +203,48 @@ const ConnectedAssets = ({ connectedAssets }) => {
   );
 };
 
-export default ElementDetails;
+const Providers = ({ assetUri }) => {
+  const { data, loading, error } = useFetch(
+    `/asset/providers?${new URLSearchParams(assetUri).toString()}`,
+    {},
+    [assetUri]
+  );
+  const [expand, setExpand] = useLocalStorage("showProviders", false);
+
+  const handleToggleSection = () => {
+    setExpand((prev) => !prev);
+  };
+
+  if (isEmpty(data)) return null;
+
+  return (
+    <DetailsSection
+      expand={expand}
+      onToggle={handleToggleSection}
+      title={`${data.length} Provider Assets`}
+    >
+      {loading && <p>loading...</p>}
+      {error && <p>Failed to retrieve asset dependents</p>}
+      <ul className="grid gap-y-3">
+        {data.map((asset) => {
+          return (
+            <li key={asset.providerNode} className="gap-x-2 bg-black-300 rounded-md p-2 items-center">
+              <div className="flex items-center  gap-x-2">
+                <div
+                  style={{ backgroundColor: "#A3A3A3" }}
+                  className="w-2.5 h-2.5 rounded-full"
+                />
+                <h4 className="truncate w-64" title={asset.providerNode}>
+                  {asset.providerNode}
+                </h4>
+              </div>
+
+              <p className="whitespace-nowrap">Asset criticality: tbh</p>
+              <p className="whitespace-nowrap">Dependency Criticality: {asset.criticalityRating}</p>
+            </li>
+          );
+        })}
+      </ul>
+    </DetailsSection>
+  );
+};
