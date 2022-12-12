@@ -56,8 +56,8 @@ const elementsReducer = (state, action) => {
     case FILTER_SELECTED_ELEMENTS: {
       const selectedElements = state.selectedElements.filter((selectedElement) => {
         return isAsset(selectedElement)
-          ? action.assets.some((asset) => asset.uri === selectedElement)
-          : action.dependencies.some((dependency) => dependency.uri === selectedElement);
+          ? action.assets.some((asset) => asset.uri === selectedElement.uri)
+          : action.dependencies.some((dependency) => dependency.uri === selectedElement.uri);
       });
       return {
         ...state,

@@ -35,8 +35,6 @@ const SelectedElements = ({ selectedElements, updateHeaderProps }) => {
     });
   }, [header, selectedElements, index, updateHeaderProps]);
 
-  console.log(selectedElements)
-
   const handleOnViewDetails = (index) => {
     dispatch({
       type: MULTIPLE_ITEMS,

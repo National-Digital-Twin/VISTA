@@ -1,12 +1,17 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import useFetch from "use-http";
 import { isEmpty } from "lodash";
 import classNames from "classnames";
 
 import { getShortType, isAsset } from "utils";
 import useLocalStorage from "hooks/useLocalStorage";
+import { ElementsContext } from "context";
 
-const ElementDetails = ({ element, expand, onViewDetails }) => {
+const ElementDetails = (props) =>
+  isAsset(props.element) ? <AssetDetails {...props} /> : <DependencyDetails {...props} />;
+export default ElementDetails;
+
+const AssetDetails = ({ element, expand, onViewDetails }) => {
   const assetUri = { assetUri: element?.uri };
   const { data, loading, error } = useFetch(
     `/asset?${new URLSearchParams(assetUri).toString()}`,
@@ -18,11 +23,20 @@ const ElementDetails = ({ element, expand, onViewDetails }) => {
   if (error) return <p>An error has occured while fetching element information</p>;
   if (isEmpty(data)) return null;
 
+  const details = {
+    title: data?.name,
+    criticality: element.dependent.criticalitySum,
+    type: data?.assetType,
+    desc: data?.desc,
+    criticalityColor: element.criticalityColor,
+    icon: "w-3 h-3 rounded-full border-2 border-whiteSmoke",
+  };
+
   if (!expand) {
     return (
       <li className="border-b border-whiteSmoke-800">
         <button onClick={onViewDetails} className="text-left pb-3">
-          <Details element={element} info={data} />
+          <Details {...details} />
         </button>
       </li>
     );
@@ -30,31 +44,76 @@ const ElementDetails = ({ element, expand, onViewDetails }) => {
 
   return (
     <div id="element-details" className="flex flex-col grow min-h-0 overflow-y-auto gap-y-4">
-      <Details element={element} info={data} expand />
+      <Details expand {...details} />
       <Dependents assetUri={assetUri} />
       <Providers assetUri={assetUri} />
     </div>
   );
 };
-export default ElementDetails;
 
-const Details = ({ element, info, expand }) => (
+const DependencyDetails = ({ element, expand, onViewDetails }) => {
+  const { get, response, loading, error } = useFetch();
+  const [dependentInfo, setDependentInfo] = useState({});
+  const [providerInfo, setProviderInfo] = useState({});
+
+  useEffect(() => {
+    const getDependent = async () => {
+      const assetUri = { assetUri: element.dependent.uri };
+      const dependent = await get(`/asset?${new URLSearchParams(assetUri).toString()}`);
+      response.ok ? setDependentInfo(dependent) : setDependentInfo({});
+    };
+
+    const getProvider = async () => {
+      const assetUri = { assetUri: element.provider.uri };
+      const provider = await get(`/asset?${new URLSearchParams(assetUri).toString()}`);
+      response.ok ? setProviderInfo(provider) : setProviderInfo({});
+    };
+
+    getDependent();
+    getProvider();
+  }, [response, get]);
+
+  if (isEmpty(dependentInfo) || isEmpty(providerInfo)) return null;
+
+  const details = {
+    title: `${dependentInfo.name} - ${providerInfo.name}`,
+    criticalityColor: element.criticalityColor,
+    icon: "w-4 h-0.5 bg-white",
+    criticality: element.criticality,
+  };
+
+  console.log(dependentInfo);
+
+  if (!expand) {
+    return (
+      <li className="border-b border-whiteSmoke-800">
+        <button onClick={onViewDetails} className="text-left pb-3">
+          <Details element={element} {...details} />
+        </button>
+      </li>
+    );
+  }
+
+  return (
+    <div id="depedency-details" className="flex flex-col grow min-h-0 overflow-y-auto gap-y-4">
+      <Details element={element} {...details} expand />
+      <DependencyDependent uri={element.dependent.uri} criticality={details.criticality} />
+      <DependencyProvider uri={element.provider.uri} criticality={details.criticality} />
+    </div>
+  );
+};
+
+const Details = ({ expand, title, criticality, type, desc, criticalityColor, icon }) => (
   <div className="grid gap-y-1">
     <h2 className="text-lg flex gap-x-2 items-center font-medium">
-      <span
-        style={{ backgroundColor: element.criticalityColor }}
-        className={classNames({
-          "w-3 h-3 rounded-full border-2 border-whiteSmoke": isAsset(element),
-          "w-4 h-0.5 bg-white": !isAsset(element),
-        })}
-      />
-      {info?.name}
+      <span style={{ backgroundColor: criticalityColor }} className={classNames(icon)} />
+      {title}
     </h2>
-    {info?.assetType && <p className="uppercase text-sm">{getShortType(info.assetType)}</p>}
+    {type && <p className="uppercase text-sm">{getShortType(type)}</p>}
     {expand && (
       <>
-        <p>Criticality: {element.dependent.criticalitySum}</p>
-        <Description description={info?.desc} />
+        <p>Criticality: {criticality}</p>
+        <Description description={desc} />
       </>
     )}
   </div>
@@ -156,6 +215,40 @@ const DetailsSection = ({ expand, onToggle, title, children }) => {
   );
 };
 
+const ConnectedAsset = ({ uri, criticality }) => {
+  const assetUri = { assetUri: uri };
+  const { data, loading, error } = useFetch(
+    `/asset?${new URLSearchParams(assetUri).toString()}`,
+    {},
+    []
+  );
+
+  const { assets } = useContext(ElementsContext);
+
+  if (loading) return <p>fetching element information</p>;
+  if (error) return <p>failed to retrieve element information</p>;
+  if (isEmpty(data)) return null;
+
+  const existingAsset = assets.find((asset) => asset.uri === data.uri);
+
+  return (
+    <li className="gap-x-2 bg-black-300 rounded-md p-2 items-center">
+      <div className="flex items-center  gap-x-2">
+        <div
+          style={{ backgroundColor: existingAsset?.criticalityColor ?? "#A3A3A3" }}
+          className="w-2.5 h-2.5 rounded-full"
+        />
+        <h4 className="truncate w-64">{data.name}</h4>
+      </div>
+      <p>
+        <b>ID:</b> {data.uri.split("#")[1]}
+      </p>
+      <p className="whitespace-nowrap">Asset criticality: tbh</p>
+      <p className="whitespace-nowrap">Dependency Criticality: {criticality}</p>
+    </li>
+  );
+};
+
 const Dependents = ({ assetUri }) => {
   const { data, loading, error } = useFetch(
     `/asset/dependents?${new URLSearchParams(assetUri).toString()}`,
@@ -180,24 +273,13 @@ const Dependents = ({ assetUri }) => {
       {loading && <p>loading...</p>}
       {error && <p>Failed to retrieve asset dependents</p>}
       <ul className="grid gap-y-3">
-      {data.map((asset) => {
-          return (
-            <li key={asset.dependentNode} className="gap-x-2 bg-black-300 rounded-md p-2 items-center">
-              <div className="flex items-center  gap-x-2">
-                <div
-                  style={{ backgroundColor: "#A3A3A3" }}
-                  className="w-2.5 h-2.5 rounded-full"
-                />
-                <h4 className="truncate w-64" title={asset.dependentNode}>
-                  {asset.dependentNode}
-                </h4>
-              </div>
-
-              <p className="whitespace-nowrap">Asset criticality: tbh</p>
-              <p className="whitespace-nowrap">Dependency Criticality: {asset.criticalityRating}</p>
-            </li>
-          );
-        })}
+        {data.map((dependency) => (
+          <ConnectedAsset
+            key={dependency.dependencyUri}
+            uri={dependency.dependentNode}
+            criticality={dependency.criticalityRating}
+          />
+        ))}
       </ul>
     </DetailsSection>
   );
@@ -226,24 +308,73 @@ const Providers = ({ assetUri }) => {
       {loading && <p>loading...</p>}
       {error && <p>Failed to retrieve asset dependents</p>}
       <ul className="grid gap-y-3">
-        {data.map((asset) => {
-          return (
-            <li key={asset.providerNode} className="gap-x-2 bg-black-300 rounded-md p-2 items-center">
-              <div className="flex items-center  gap-x-2">
-                <div
-                  style={{ backgroundColor: "#A3A3A3" }}
-                  className="w-2.5 h-2.5 rounded-full"
-                />
-                <h4 className="truncate w-64" title={asset.providerNode}>
-                  {asset.providerNode}
-                </h4>
-              </div>
+        {data.map((dependency) => (
+          <ConnectedAsset
+            key={dependency.dependencyUri}
+            uri={dependency.providerNode}
+            criticality={dependency.criticalityRating}
+          />
+        ))}
+      </ul>
+    </DetailsSection>
+  );
+};
 
-              <p className="whitespace-nowrap">Asset criticality: tbh</p>
-              <p className="whitespace-nowrap">Dependency Criticality: {asset.criticalityRating}</p>
-            </li>
-          );
-        })}
+const DependencyDependent = ({ uri , criticality }) => {
+  const [expand, setExpand] = useLocalStorage("showDependents", false);
+
+  const handleToggleSection = () => {
+    setExpand((prev) => !prev);
+  };
+
+  if (!uri) return null;
+
+  return (
+    <DetailsSection
+      expand={expand}
+      onToggle={handleToggleSection}
+      title={`1 Dependent Asset`}
+    >
+      {/* {loading && <p>loading...</p>} */}
+      {/* {error && <p>Failed to retrieve asset dependents</p>} */}
+      <ul className="grid gap-y-3">
+        {/* {data.map((dependency) => ( */}
+          <ConnectedAsset
+            // key={dependency.dependencyUri}
+            uri={uri}
+            criticality={criticality}
+          />
+        {/* ))} */}
+      </ul>
+    </DetailsSection>
+  );
+};
+
+const DependencyProvider = ({ uri , criticality }) => {
+  const [expand, setExpand] = useLocalStorage("showProviders", false);
+
+  const handleToggleSection = () => {
+    setExpand((prev) => !prev);
+  };
+
+  if (!uri) return null;
+
+  return (
+    <DetailsSection
+      expand={expand}
+      onToggle={handleToggleSection}
+      title={`1 Provider Asset`}
+    >
+      {/* {loading && <p>loading...</p>} */}
+      {/* {error && <p>Failed to retrieve asset dependents</p>} */}
+      <ul className="grid gap-y-3">
+        {/* {data.map((dependency) => ( */}
+          <ConnectedAsset
+            // key={dependency.dependencyUri}
+            uri={uri}
+            criticality={criticality}
+          />
+        {/* ))} */}
       </ul>
     </DetailsSection>
   );
