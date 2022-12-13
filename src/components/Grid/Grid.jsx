@@ -6,7 +6,7 @@ import { ElementsContext } from "context";
 import GridToolbar from "./GridToolbar";
 import { generateCarverGrid, HEADINGS_COL_SPAN } from "./grid-utils";
 
-import "./grid.css";
+// import "./grid.css"
 
 const Grid = () => {
   const [zoomLevel, setZoomLevel] = useState(100);
