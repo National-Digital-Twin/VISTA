@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useMemo, useState } from "react";
-import Map, { Layer, Source, ScaleControl, useMap } from "react-map-gl";
+import Map, { Layer, Source, ScaleControl, useMap, AttributionControl } from "react-map-gl";
 import { isEmpty } from "lodash";
 
 import config from "config/app-config";
@@ -36,6 +36,7 @@ const TelicentMap = () => {
   const [linearAssets, setLinearAssets] = useState([]);
   const [pointAssets, setPointAssets] = useState([]);
   const [pointAssetDependencies, setPointAssetDependencies] = useState([]);
+  const [mousePosition, setMousePosition] = useState(undefined);
 
   // The order of the array is the order in which the features will appear in the map.
   // index 0 being the lowest level
@@ -101,6 +102,7 @@ const TelicentMap = () => {
     } = event;
     const hoveredFeature = features && features[0];
     setHoverInfo(hoveredFeature && { feature: hoveredFeature, x, y });
+    setMousePosition(event.lngLat);
   };
 
   const resetCursor = () => {
@@ -123,6 +125,7 @@ const TelicentMap = () => {
         initialViewState={{ ...VIEWSTATE }}
         mapboxAccessToken={config.mb.token}
         mapStyle={mapStyle}
+        attributionControl={false}
         onClick={handleOnClick}
         onDragStart={() => setCursor("move")}
         onDragEnd={resetCursor}
@@ -131,6 +134,7 @@ const TelicentMap = () => {
         onMouseMove={handleOnMouseMove}
         boxZoom={false}
         onZoom={handleOnZoom}
+        styleDiffing
       >
         {sources.map((source) => (
           <Source
@@ -144,14 +148,18 @@ const TelicentMap = () => {
             ))}
           </Source>
         ))}
+        <AttributionControl compact />
         <ScaleControl
-          position="top-left"
+          position="bottom-right"
           style={{
+            position: "relative",
             backgroundColor: "#27272780",
             color: "#F5F5F5",
             borderColor: "#949494",
             fontFamily: "Urbanist",
             letterSpacing: "1.5px",
+            margin: 0,
+            height: "22px",
           }}
         />
         <HoverInfo info={hoverInfo?.feature.properties} left={hoverInfo?.x} top={hoverInfo?.y} />
@@ -161,6 +169,7 @@ const TelicentMap = () => {
           heatmapRadius={heatmapRadius}
           map={map}
           mapStyle={mapStyle}
+          mousePosition={mousePosition}
           setMapStyle={setMapStyle}
         />
       </Map>

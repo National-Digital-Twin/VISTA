@@ -39,6 +39,7 @@ jest.mock("react-map-gl", () => ({
   ),
   Layer: (props) => <div {...props}></div>,
   MapProvider: ({ children }) => <div>{children}</div>,
+  AttributionControl: () => <div>attribute control</div>,
   ScaleControl: () => <div>scale control</div>,
   useControl: () => ({}),
   useMap: () =>

@@ -9,14 +9,17 @@ const MapToolbar = ({
   heatmapRadius,
   map,
   mapStyle,
+  showCoordinates,
   activateDrawCircleMode,
   activatePolygonMode,
   deleteAllPolygons,
   setMapStyle,
+  togglePointerCoords
 }) => {
   const [isHeatVisible, setIsHeatVisible] = useState(false);
   const [showLayers, setShowLayers] = useState(false);
   const [showMapStyles, setShowMapStyles] = useState(false);
+  const [showMapTools, setShowMapTools] = useState(false);
 
   const mapStyles = getMapStyles();
 
@@ -83,6 +86,15 @@ const MapToolbar = ({
     },
   ];
 
+  const mapTools = [
+    {
+      name: "Coordinates",
+      selected: showCoordinates,
+      type: "toggleSwitch",
+      onItemClick: () => togglePointerCoords()
+    }
+  ]
+
   return (
     <div className="absolute bottom-0 left-0 text-whiteSmoke font-body bg-black-200 flex items-center justify-center gap-x-2 px-2 py-1">
       <a
@@ -97,6 +109,15 @@ const MapToolbar = ({
       <ToolbarButton icon="ri-add-line" label="Zoom in" onClick={handleZoomIn} />
       <VerticalDivider />
       <ToolbarButton
+        icon="ri-tools-line"
+        label="Map tools"
+        onClick={() => setShowMapTools(true)}
+        showSecondaryMenu={showMapTools}
+        secondaryMenu={
+          <ToolbarMenu menuItems={mapTools} onClose={() => setShowMapTools(false)} />
+        }
+      />
+      <ToolbarButton
         icon="ri-map-2-fill"
         label="Map style"
         onClick={() => setShowMapStyles(true)}
@@ -105,7 +126,6 @@ const MapToolbar = ({
           <ToolbarMenu menuItems={mapMenuItems} onClose={() => setShowMapStyles(false)} />
         }
       />
-      <VerticalDivider />
       <ToolbarButton
         icon="ri-stack-line"
         label="Layers"

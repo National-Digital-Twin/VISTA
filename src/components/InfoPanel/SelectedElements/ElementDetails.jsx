@@ -52,6 +52,8 @@ const ElementDetails = ({ element, expand, onViewDetails }) => {
 
     return () => {
       abort();
+      setDetails({});
+      setLoading(false);
     };
   }, [element, response, get, abort]);
 
@@ -247,6 +249,7 @@ const Dependents = ({ assetUri, dependent }) => {
 
     return () => {
       abort();
+      setDepependents([]);
     };
   }, [assetUri, dependent, response, abort, get]);
 
@@ -296,6 +299,7 @@ const Providers = ({ assetUri, provider }) => {
 
     return () => {
       abort();
+      setProviders([]);
     };
   }, [assetUri, provider, response, abort, get]);
 
