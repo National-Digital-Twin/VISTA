@@ -1,11 +1,12 @@
 import { kebabCase } from "lodash";
 import React from "react";
 
-import InfoBtn from "./InfoBtn";
-import { ReactComponent as GoogleMapIcon } from "./assets/google-map-icon.svg";
-import { VerticalDivider } from "../../lib";
+import { VerticalDivider } from "lib";
 
-const InfoPanelHeader = ({ count, latitude, longitude, title, viewAll, onToggle, onViewAll }) => {
+import InfoBtn from "../InfoBtn";
+import { ReactComponent as GoogleMapIcon } from "./assets/google-map-icon.svg";
+
+const SelectedElementsHeader = ({ count, latitude, longitude, title, viewAll, onToggle, onViewAll }) => {
   
   return (
     <div className="flex items-center gap-x-2 border-b border-black-500 pb-1">
@@ -24,7 +25,7 @@ const InfoPanelHeader = ({ count, latitude, longitude, title, viewAll, onToggle,
     </div>
   );
 };
-export default InfoPanelHeader;
+export default SelectedElementsHeader;
 
 const StreetView = ({ latitude, longitude }) => {
   const label = "Open street view";

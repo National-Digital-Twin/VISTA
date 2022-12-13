@@ -80,7 +80,7 @@ const AssessmentTypes = ({ assessment, selectedTypes, setSelectedTypes }) => {
       const dependencies = createDependencies(assessmentDependencies);
       updateAssets(assets);
       updateDependencies(dependencies);
-      filterSelectedElements(assets, dependencies);
+      // filterSelectedElements(assets, dependencies);
     };
 
     generateData();
