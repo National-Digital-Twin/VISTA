@@ -6,6 +6,7 @@ const ToolbarButton = ({
   icon,
   label,
   onClick,
+  disabled,
   secondaryMenu,
   showSecondaryMenu,
   className: listItemClassName,
@@ -27,9 +28,10 @@ const ToolbarButton = ({
       aria-labelledby={kebabCase(label)}
       className={classNames(
         "flex items-center justify-center gap-x-2 rounded-md px-2 group-hover:bg-black-400 h-full",
-        { [buttonClassName]: buttonClassName }
+        { [buttonClassName]: buttonClassName, "cursor-not-allowed": disabled }
       )}
       onClick={onClick}
+      disabled={disabled}
     >
       <i className={classNames("!text-xl", icon)} />
     </button>

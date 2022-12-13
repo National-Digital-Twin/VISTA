@@ -118,18 +118,21 @@ const MapToolbar = ({
       <VerticalDivider />
       <ToolbarButton
         icon="fg-polyline-pt"
-        label="Polygon Selection (Beta)"
+        label="Polygon Selection (Beta) - Disabled"
         onClick={activatePolygonMode}
+        disabled
       />
       <ToolbarButton
         icon="fg-circle-o"
-        label="Radius Selection (Beta)"
+        label="Radius Selection (Beta) - Disabled"
         onClick={activateDrawCircleMode}
+        disabled
       />
       <ToolbarButton
         icon="ri-delete-bin-line"
-        label="Delete Polygons"
+        label="Delete Polygons - Disabled"
         onClick={deleteAllPolygons}
+        disabled
       />
     </div>
   );
