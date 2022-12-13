@@ -8,7 +8,7 @@ import { getShortType, isAsset } from "utils";
 import useLocalStorage from "hooks/useLocalStorage";
 
 const ElementDetails = ({ element, expand, onViewDetails }) => {
-  const { get, response, error } = useFetch();
+  const { abort, get, response, error } = useFetch();
   const [details, setDetails] = useState({});
   const [loading, setLoading] = useState(false);
 
@@ -49,7 +49,11 @@ const ElementDetails = ({ element, expand, onViewDetails }) => {
     };
 
     getDetails();
-  }, [element, response, get]);
+
+    return () => {
+      abort();
+    };
+  }, [element, response, get, abort]);
 
   if (loading) return <p>Fetching element information</p>;
   if (error) return <p>An error has occured while fetching element information</p>;
@@ -222,7 +226,7 @@ const ConnectedAsset = ({ uri, criticality }) => {
 };
 
 const Dependents = ({ assetUri, dependent }) => {
-  const { get, response, loading, error } = useFetch();
+  const { abort, get, response, loading, error } = useFetch();
   const [expand, setExpand] = useLocalStorage("showDependents", false);
   const [dependents, setDepependents] = useState([]);
 
@@ -240,7 +244,11 @@ const Dependents = ({ assetUri, dependent }) => {
     }
 
     setDepependents([dependent]);
-  }, [assetUri, dependent, response, get]);
+
+    return () => {
+      abort();
+    };
+  }, [assetUri, dependent, response, abort, get]);
 
   const handleToggleSection = () => {
     setExpand((prev) => !prev);
@@ -267,7 +275,7 @@ const Dependents = ({ assetUri, dependent }) => {
 };
 
 const Providers = ({ assetUri, provider }) => {
-  const { get, response, loading, error } = useFetch();
+  const { abort, get, response, loading, error } = useFetch();
   const [expand, setExpand] = useLocalStorage("showProviders", false);
   const [providers, setProviders] = useState([]);
 
@@ -285,7 +293,11 @@ const Providers = ({ assetUri, provider }) => {
     }
 
     setProviders([provider]);
-  }, [assetUri, provider, response, get]);
+
+    return () => {
+      abort();
+    };
+  }, [assetUri, provider, response, abort, get]);
 
   const handleToggleSection = () => {
     setExpand((prev) => !prev);
