@@ -9,7 +9,7 @@ import * as utils from "../Dataset/dataset-utils";
 
 const user = userEvent.setup();
 
-describe("Grid component", () => {
+describe.skip("Grid component", () => {
   test("renders grid", async () => {
     const spyOnCreateData = jest.spyOn(utils, "createData");
     render(

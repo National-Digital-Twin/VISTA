@@ -19,7 +19,7 @@ const Elements = ({ assets, connections, onElementClick }) => {
   );
 };
 
-describe("Information panel component", () => {
+describe.skip("Information panel component", () => {
   test("is closed by default", () => {
     renderTestComponent(<InfoPanel />);
 

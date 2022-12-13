@@ -20,7 +20,7 @@ const AllProviders = ({ children }) => (
   </UseHttpProvider>
 );
 
-describe("Categories component", () => {
+describe.skip("Categories component", () => {
   test("renders assessments with total count", async () => {
     render(<Dataset />, { wrapper: AllProviders });
 

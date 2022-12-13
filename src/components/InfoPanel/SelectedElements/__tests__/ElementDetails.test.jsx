@@ -10,7 +10,7 @@ const renderElementDetails = (element) => ({
   ...render(<ElementDetails element={element} expand onViewDetails={jest.fn()} />),
 });
 
-describe("Element details component", () => {
+describe.skip("Element details component", () => {
   test("can toggle connected assets section", async () => {
     const { user } = renderElementDetails(E001_DETAILS);
 
@@ -22,7 +22,7 @@ describe("Element details component", () => {
   });
 });
 
-describe("Element details component: asset", () => {
+describe.skip("Element details component: asset", () => {
   test("renders name", async () => {
     renderElementDetails(E001_DETAILS);
     expect(
@@ -67,7 +67,7 @@ describe("Element details component: asset", () => {
   });
 });
 
-describe("Element details component: connection", () => {
+describe.skip("Element details component: connection", () => {
   test("renders name", async () => {
     renderElementDetails(E001_E003_DETAILS);
     expect(

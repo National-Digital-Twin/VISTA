@@ -20,7 +20,7 @@ const TestBtns = ({ assets, connections, onElementClick }) => {
   );
 };
 
-describe("Map component: Generates features which are used by mapbox", () => {
+describe.skip("Map component: Generates features which are used by mapbox", () => {
   test("generates asset features when data is added", async () => {
     const spyOnGenerateAssetFeatures = jest.spyOn(mapboxFeatures, "generateAssetFeatures");
     const { user } = renderTestComponent(<TelicentMap />);

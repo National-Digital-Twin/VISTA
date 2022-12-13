@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import PropTypes from "prop-types";
 import classNames from "classnames";
 import { kebabCase } from "lodash";
-import ReactSwitch from "react-switch";
+// import ReactSwitch from "react-switch";
 
 import { FloatingPanel, VerticalDivider } from "lib";
 import Assessments from "./Assessments";
@@ -27,7 +27,7 @@ const Dataset = ({ showGrid, toggleView }) => {
         <DBButton active onToggle={togglePanel} />
         <VerticalDivider height="h-5" />
         <h2 className="font-medium">Dataset</h2>
-        <label className="flex items-center gap-x-1 text-xs w-fit ml-auto">
+        {/* <label className="flex items-center gap-x-1 text-xs w-fit ml-auto">
           Grid
           <ReactSwitch
             onChange={toggleView}
@@ -41,7 +41,7 @@ const Dataset = ({ showGrid, toggleView }) => {
             uncheckedIcon={false}
             checkedIcon={false}
           />
-        </label>
+        </label> */}
       </div>
       <Assessments selectedTypes={selectedTypes} setSelectedTypes={setSelectedTypes} />
     </FloatingPanel>
