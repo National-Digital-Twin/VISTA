@@ -29,16 +29,3 @@ WORKDIR /app/build
 
 COPY ./env.sh .
 COPY .env.default .env
-
-
-
-
-COPY nginx/nginx.conf /etc/nginx/conf.d/default.conf
-WORKDIR /usr/share/nginx/html/paralog
-COPY set-env.sh .
-RUN apk add --no-cache bash
-RUN chmod +x set-env.sh
-EXPOSE 80
-
-ENTRYPOINT [ "./set-env.sh" ]
-CMD [ "nginx", "-g", "daemon off;" ]
