@@ -1,11 +1,10 @@
-import { capitalize, isEmpty, lowerCase } from "lodash";
+import { capitalize, lowerCase } from "lodash";
 import classNames from "classnames";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import useFetch from "use-http";
 
-import { ElementsContext } from "context";
 import { getURIFragment } from "utils";
-import { createAssets, createDependencies } from "./dataset-utils";
+import GroupedTypes from "./GroupedTypes";
 
 const AssessmentTypes = ({ assessment, selectedTypes, setSelectedTypes }) => {
   const { get, error, response } = useFetch();
@@ -79,7 +78,7 @@ const AssessmentTypes = ({ assessment, selectedTypes, setSelectedTypes }) => {
           onToggle={() => updateSelectedGroup(ontologyGroup)}
           className="flex flex-col gap-y-2"
         >
-          <AssessmentTypeItems
+          <GroupedTypes
             assessment={assessment}
             types={getTypesInGroup(ontologyGroup)}
             selectedTypes={selectedTypes}
@@ -119,94 +118,3 @@ const AssessmentGroup = ({ show, title, onToggle, className: wrapperClassName, c
     {show && children}
   </div>
 );
-
-const AssessmentTypeItems = ({ assessment, types, selectedTypes, setSelectedTypes }) => {
-  const { get, error, response } = useFetch();
-  const { updateErrors, filterSelectedElements, reset, updateAssets, updateDependencies } =
-    useContext(ElementsContext);
-
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    if (error) updateErrors("Could not add data. Reason: Failed to resolve the data");
-  }, [error, updateErrors]);
-
-  useEffect(() => {
-    if (!assessment) return;
-    if (isEmpty(selectedTypes)) {
-      reset();
-      return;
-    }
-
-    const types = selectedTypes.map((type) => ["types", type]);
-    const params = new URLSearchParams([["assessment", assessment], ...types]).toString();
-
-    const getAssets = async () => {
-      const assets = await get(`assessments/assets?${params}`);
-      return response.ok ? assets : [];
-    };
-
-    const getDependencies = async () => {
-      const dependencies = await get(`assessments/dependencies?${params}`);
-      return response.ok ? dependencies : [];
-    };
-
-    const getAssetGeometry = async (uri) => {
-      const assetUri = { assetUri: uri };
-      const linearAssets = await get(`asset/parts?${new URLSearchParams(assetUri).toString()}`);
-      return response.ok ? linearAssets : [];
-    };
-
-    const generateData = async () => {
-      setLoading(true);
-      const assessmentAssets = await getAssets();
-      const assessmentDependencies = await getDependencies();
-
-      const assets = await createAssets(assessmentAssets, getAssetGeometry);
-      const dependencies = createDependencies(assessmentDependencies);
-      updateAssets(assets);
-      updateDependencies(dependencies);
-      filterSelectedElements(assets, dependencies);
-      setLoading(false);
-    };
-
-    generateData();
-  }, [
-    assessment,
-    selectedTypes,
-    response,
-    get,
-    filterSelectedElements,
-    reset,
-    updateAssets,
-    updateDependencies,
-  ]);
-
-  const handleTypeChange = (event) => {
-    const { target } = event;
-    setSelectedTypes((prevSelected) => {
-      if (target.checked) return [...prevSelected, target.value];
-      return prevSelected.filter((selectedType) => selectedType !== target.value);
-    });
-  };
-
-  return (
-    <ul className="flex flex-col gap-y-2">
-      {types.map(({ uri, assetCount }) => (
-        <li key={uri} className="inline-flex gap-x-1 text-xs">
-          <input
-            type="checkbox"
-            value={uri}
-            id={uri}
-            checked={selectedTypes.includes(uri)}
-            onChange={handleTypeChange}
-            className="w-3.5"
-          />
-          <label htmlFor={uri} className="uppercase">
-            {lowerCase(getURIFragment(uri))} [{assetCount}]
-          </label>
-        </li>
-      ))}
-    </ul>
-  );
-};

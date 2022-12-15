@@ -11,6 +11,7 @@ import elementsReducer, {
   UPDATE_ASSETS,
   UPDATE_DEPENDENCIES,
   UPDATE_ERRORS,
+  UPDATE_LOADING_STATUS,
 } from "./elements-reducer";
 
 export const ElementsContext = React.createContext();
@@ -73,6 +74,10 @@ export const ElementsProvider = ({ children }) => {
     dispatch({ type: CLEAR_SELECTED });
   };
 
+  const setLoading = useCallback((loading) => {
+    dispatch({ type: UPDATE_LOADING_STATUS, loading });
+  }, []);
+
   return (
     <ElementsContext.Provider
       value={{
@@ -91,6 +96,7 @@ export const ElementsProvider = ({ children }) => {
         onAreaSelect,
         onElementClick,
         reset,
+        setLoading,
         updateAssets,
         updateDependencies,
         updateErrors,
