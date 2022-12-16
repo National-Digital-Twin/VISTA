@@ -20,8 +20,19 @@ const AllProviders = ({ children }) => (
   </UseHttpProvider>
 );
 
+describe.only("Dataset panel", () => {
+  test("collapses", async () => {
+    render(<Dataset />, { wrapper: AllProviders });
+    // await waitForElementToBeRemoved(() => screen.queryByText(/fetching assessments/i));
+    // await waitForElementToBeRemoved(() => screen.queryByText(/fetching data types/i));
+
+    await user.click(screen.getByRole("button", { name: "Close dataset panel" }));
+    expect(screen.queryByRole("checkbox", { name: "Energy [25]" })).not.toBeInTheDocument();
+  });
+});
+
 describe.skip("Categories component", () => {
-  test("renders assessments with total count", async () => {
+  test.skip("renders assessments with total count", async () => {
     render(<Dataset />, { wrapper: AllProviders });
 
     await waitForElementToBeRemoved(() => screen.queryByText(/fetching assessments/i));
@@ -45,7 +56,7 @@ describe.skip("Categories component", () => {
     expect(await screen.findByText(/assessments not found/i)).toBeInTheDocument();
   });
 
-  test("renders error message when assessments api call fails", async () => {
+  test.skip("renders error message when assessments api call fails", async () => {
     server.use(rest.get("/assessments", mockError));
     render(<Dataset />, { wrapper: AllProviders });
 
@@ -57,7 +68,7 @@ describe.skip("Categories component", () => {
     ).toBeInTheDocument();
   });
 
-  test("renders error message when assessments/assets api call fails", async () => {
+  test.skip("renders error message when assessments/assets api call fails", async () => {
     const spyOnCreateData = jest.spyOn(createData, "createData");
     server.use(rest.get("/assessments/assets", mockError));
     render(
@@ -74,7 +85,7 @@ describe.skip("Categories component", () => {
     await waitFor(() => expect(spyOnCreateData).toHaveReturned());
   });
 
-  test("renders error message when assessments/connections api call fails", async () => {
+  test.skip("renders error message when assessments/connections api call fails", async () => {
     const spyOnCreateData = jest.spyOn(createData, "createData");
     server.use(rest.get("/assessments/connections", mockError));
     render(
@@ -91,7 +102,7 @@ describe.skip("Categories component", () => {
     await waitFor(() => expect(spyOnCreateData).toHaveReturned());
   });
 
-  test("renders error message when assets/:id/parts api call fails", async () => {
+  test.skip("renders error message when assets/:id/parts api call fails", async () => {
     const spyOnCreateData = jest.spyOn(createData, "createData");
     server.use(rest.get("/assets/:id/parts", mockError));
     render(
@@ -108,7 +119,7 @@ describe.skip("Categories component", () => {
     await waitFor(() => expect(spyOnCreateData).toHaveReturned());
   });
 
-  test("renders error message again after it's dismissed", async () => {
+  test.skip("renders error message again after it's dismissed", async () => {
     server.use(
       ...[
         rest.get("/assessments/connections", mockError),

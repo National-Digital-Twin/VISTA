@@ -5,8 +5,8 @@ import AssessmentTypes from "./AssessmentTypes";
 const Assessments = ({ selectedTypes, setSelectedTypes }) => {
   const { data, error, loading } = useFetch("/assessments", {}, []);
 
-  if (loading) return <p>loading</p>;
-  if (error) return <p>{error.message}</p>;
+  if (loading) return <p>Fetching assessments</p>;
+  if (error) return <p>An error occured while retrieving assessments. Please try again.</p>;
 
   return (
     <AssessmentTypes

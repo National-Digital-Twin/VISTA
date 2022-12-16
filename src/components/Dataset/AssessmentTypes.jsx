@@ -7,7 +7,7 @@ import { getURIFragment } from "utils";
 import GroupedTypes from "./GroupedTypes";
 
 const AssessmentTypes = ({ assessment, selectedTypes, setSelectedTypes }) => {
-  const { get, error, response } = useFetch();
+  const { abort, get, error, response } = useFetch();
 
   const [loading, setLoading] = useState(false);
   const [types, setTypes] = useState([]);
@@ -28,24 +28,33 @@ const AssessmentTypes = ({ assessment, selectedTypes, setSelectedTypes }) => {
       setLoading(true);
       const types = await getTypes();
 
-      for (let i = 0; i < types.length; i++) {
-        const typeUri = types[i].uri;
-        const classUri = { classUri: typeUri };
-        const superClasses = await get(
-          `ontology/class?${new URLSearchParams(classUri).toString()}`
-        );
+      const typesWithSuperClasses = await Promise.all(
+        types.map(async (type) => {
+          const { uri } = type;
+          const classUri = { classUri: uri };
+          const superClasses = await get(
+            `ontology/class?${new URLSearchParams(classUri).toString()}`
+          );
 
-        if (response.ok) {
-          const superClass = superClasses[typeUri]?.superClass[0] ?? "other";
-          types[i].superClass = superClass;
-        }
-      }
-      setTypes(types);
+          if (response.ok) {
+            const superClass = superClasses[uri]?.superClass[0] ?? "other";
+            return { ...type, superClass };
+          }
+        })
+      ).catch((error) => {
+        console.log(error);
+      });
+      setTypes(typesWithSuperClasses);
       setLoading(false);
     };
 
     generateOntologyGroups();
-  }, [assessment, response, get]);
+
+    return () => {
+      abort();
+      setTypes([]);
+    };
+  }, [assessment, response, abort, get]);
 
   if (loading) return <p>Fetching data types</p>;
   if (error) return <p>An error occured while retrieving data types. Please try again</p>;
