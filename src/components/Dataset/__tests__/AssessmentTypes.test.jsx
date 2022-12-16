@@ -32,11 +32,11 @@ describe("AssessmentTypes component", () => {
     await waitForDataToLoad();
 
     expect(
-      screen.getByRole("treeitem", { name: "Electrical power distribution complex" })
+      screen.getByRole("button", { name: /Electrical power distribution complex/i })
     ).toBeInTheDocument();
-    expect(screen.getByRole("treeitem", { name: "Facility" })).toBeInTheDocument();
-    expect(screen.getByRole("treeitem", { name: "Wastewater complex" })).toBeInTheDocument();
-    expect(screen.getByRole("treeitem", { name: "Other" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Facility/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Wastewater complex/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Other/i })).toBeInTheDocument();
   });
 
   test("renders electrical power distribution complex types with total count", async () => {

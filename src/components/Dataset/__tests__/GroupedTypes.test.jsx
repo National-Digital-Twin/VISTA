@@ -1,4 +1,4 @@
-import { screen, render, waitForElementToBeRemoved } from "@testing-library/react";
+import { screen, render, waitFor } from "@testing-library/react";
 import { rest } from "msw";
 
 import {
@@ -14,7 +14,13 @@ import GroupedTypes from "../GroupedTypes";
 import * as datasetUtils from "../dataset-utils";
 
 const waitForDataToLoad = async () => {
-  await waitForElementToBeRemoved(() => screen.queryByText(/loading data/i));
+  const spyOnCreateAssets = jest.spyOn(datasetUtils, "createAssets");
+  const spyOnCreateDependencies = jest.spyOn(datasetUtils, "createDependencies");
+
+  await waitFor(() => {
+    expect(spyOnCreateAssets).toHaveReturned();
+    expect(spyOnCreateDependencies).toHaveReturned();
+  })
 };
 
 const renderGroupedTypes = ({ types, selectedTypes }) => {
@@ -30,6 +36,7 @@ const renderGroupedTypes = ({ types, selectedTypes }) => {
         types={types}
         selectedTypes={selectedTypes}
         setSelectedTypes={jest.fn()}
+        setIsGeneratingData={jest.fn()}
       />
     </>,
     { wrapper: PanelProviders, container: document.body.appendChild(modalRoot) }
@@ -38,8 +45,6 @@ const renderGroupedTypes = ({ types, selectedTypes }) => {
 
 describe("GroupedTypes component", () => {
   test("renders error message when assessments/assets api call fails", async () => {
-    const spyOnCreateAssets = jest.spyOn(datasetUtils, "createAssets");
-    const spyOnCreateDependencies = jest.spyOn(datasetUtils, "createDependencies");
     server.use(rest.get(ASSESSMENTS_ASSETS_ENDPOINT, mockError));
     renderGroupedTypes({
       types: [
@@ -55,16 +60,12 @@ describe("GroupedTypes component", () => {
 
     await waitForDataToLoad();
     expect(screen.getByRole("checkbox", { name: "tunnel [2]" })).toBeChecked();
-    expect(spyOnCreateAssets).toHaveReturned();
-    expect(spyOnCreateDependencies).toHaveReturned();
     expect(
       screen.getByText("Could not add data. Reason: Failed to resolve the data")
     ).toBeInTheDocument();
   });
 
   test("renders error message when assessments/dependencies api call fails", async () => {
-    const spyOnCreateAssets = jest.spyOn(datasetUtils, "createAssets");
-    const spyOnCreateDependencies = jest.spyOn(datasetUtils, "createDependencies");
     server.use(rest.get(ASSESSMENTS_DEPENDENCIES_ENDPOINT, mockError));
     renderGroupedTypes({
       types: [
@@ -80,16 +81,13 @@ describe("GroupedTypes component", () => {
 
     await waitForDataToLoad();
     expect(screen.getByRole("checkbox", { name: "tunnel [2]" })).toBeChecked();
-    expect(spyOnCreateAssets).toHaveReturned();
-    expect(spyOnCreateDependencies).toHaveReturned();
     expect(
       screen.getByText("Could not add data. Reason: Failed to resolve the data")
     ).toBeInTheDocument();
   });
 
   test.skip("renders error message when assets/:id/parts api call fails", async () => {
-    const spyOnCreateAssets = jest.spyOn(datasetUtils, "createAssets");
-    const spyOnCreateDependencies = jest.spyOn(datasetUtils, "createDependencies");
+ 
     server.use(rest.get("/assets/:id/parts", mockError));
     renderGroupedTypes({
       types: [
@@ -105,8 +103,6 @@ describe("GroupedTypes component", () => {
 
     await waitForDataToLoad();
     expect(screen.getByRole("checkbox", { name: "tunnel [2]" })).toBeChecked();
-    expect(spyOnCreateAssets).toHaveReturned();
-    expect(spyOnCreateDependencies).toHaveReturned();
     expect(
       screen.getByText("Could not add data. Reason: Failed to resolve the data")
     ).toBeInTheDocument();

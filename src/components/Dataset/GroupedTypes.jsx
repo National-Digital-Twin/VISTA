@@ -1,19 +1,18 @@
 import { isEmpty, lowerCase } from "lodash";
 import { useFetch } from "use-http";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect } from "react";
 
 import { ElementsContext } from "context";
 import { ASSESSMENTS_ENDPOINT, ASSET_PARTS_ENDPOINT } from "constants/endpoints";
-import { Modal } from "lib";
 import { getURIFragment } from "utils";
 
 import { createAssets, createDependencies } from "./dataset-utils";
+import classNames from "classnames";
 
-const GroupedTypes = ({ assessment, types, selectedTypes, setSelectedTypes }) => {
+const GroupedTypes = ({ expand, assessment, types, selectedTypes, setSelectedTypes, setIsGeneratingData }) => {
   const { get, error, response } = useFetch();
   const { filterSelectedElements, reset, updateAssets, updateDependencies, updateErrors } =
     useContext(ElementsContext);
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (error) updateErrors("Could not add data. Reason: Failed to resolve the data");
@@ -36,12 +35,14 @@ const GroupedTypes = ({ assessment, types, selectedTypes, setSelectedTypes }) =>
 
     const getAssetGeometry = async (uri) => {
       const assetUri = { assetUri: uri };
-      const linearAssets = await get(`${ASSET_PARTS_ENDPOINT}?${new URLSearchParams(assetUri).toString()}`);
+      const linearAssets = await get(
+        `${ASSET_PARTS_ENDPOINT}?${new URLSearchParams(assetUri).toString()}`
+      );
       return response.ok ? linearAssets : [];
     };
 
     const generateData = async () => {
-      setLoading(true);
+      setIsGeneratingData(true);
       const { assets, dependencies } = await Promise.all(
         ["assets", "dependencies"].map(async (elementType) => ({
           [elementType]: await getAssessmentElements(elementType),
@@ -55,7 +56,7 @@ const GroupedTypes = ({ assessment, types, selectedTypes, setSelectedTypes }) =>
       updateAssets(assets);
       updateDependencies(dependencies);
       filterSelectedElements(assets, dependencies);
-      setLoading(false);
+      setIsGeneratingData(false);
     };
 
     generateData();
@@ -66,7 +67,7 @@ const GroupedTypes = ({ assessment, types, selectedTypes, setSelectedTypes }) =>
     get,
     filterSelectedElements,
     reset,
-    setLoading,
+    setIsGeneratingData,
     updateAssets,
     updateDependencies,
   ]);
@@ -106,12 +107,9 @@ const GroupedTypes = ({ assessment, types, selectedTypes, setSelectedTypes }) =>
   };
 
   return (
-    <>
-      <ul className="flex flex-col gap-y-2">{sortedTypes.map(renderType)}</ul>
-      <Modal appElement="root" isOpen={loading} className="py-2 px-6 rounded-lg">
-        <p>Loading data</p>
-      </Modal>
-    </>
+    <ul className={classNames("flex flex-col gap-y-2", { hidden: !expand })}>
+      {sortedTypes.map(renderType)}
+    </ul>
   );
 };
 
