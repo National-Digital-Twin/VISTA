@@ -48,7 +48,7 @@ const GroupedTypes = ({ assessment, types, selectedTypes, setSelectedTypes }) =>
         }))
       ).then(async (assessmentElements) => {
         const assets = await createAssets(assessmentElements[0].assets, getAssetGeometry);
-        const dependencies = createDependencies(assessmentElements[0].dependencies);
+        const dependencies = createDependencies(assessmentElements[1].dependencies);
         return { assets, dependencies };
       });
 
