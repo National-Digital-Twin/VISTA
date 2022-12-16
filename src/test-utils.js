@@ -1,10 +1,12 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import React from "react";
 import userEvent from "@testing-library/user-event";
+import { Provider as UseHttpProvider } from "use-http";
+import { MapProvider } from "react-map-gl";
+
 import { Dataset } from "./components";
 import { CytoscapeProvider, ElementsContext, ElementsProvider } from "./context";
 import * as utils from "./components/Dataset/dataset-utils";
-import { MapProvider } from "react-map-gl";
 
 const user = userEvent.setup();
 export const clickEnergyDataset = async () => {
@@ -47,6 +49,12 @@ export const CxnBtn = ({ label, connections, event, onElementClick }) => (
   >
     {label}
   </button>
+);
+
+export const PanelProviders = ({ children }) => (
+  <UseHttpProvider options={{ cacheLife: 0, cachePolicy: "no-cache" }}>
+    <ElementsProvider>{children}</ElementsProvider>
+  </UseHttpProvider>
 );
 
 const LoadDataWrapper = ({ testComponent, children }) => (

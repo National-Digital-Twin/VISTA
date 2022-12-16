@@ -11,7 +11,6 @@ export const AREA_SELECTION = "AREA_SELECTION";
 export const UPDATE_ASSETS = "UPDATE_ASSETS";
 export const UPDATE_DEPENDENCIES = "UPDATE_DEPENDENCIES";
 export const UPDATE_ERRORS = "UPDATE_ERRORS";
-export const UPDATE_LOADING_STATUS = "UPDATE_LOADING_STATUS";
 
 const getColorScale = (min, max) => {
   return new ColorScale(min, max === 0 ? 100 : max, ["#35C035", "#FFB60A", "#FB3737"], 1);
@@ -98,8 +97,6 @@ const elementsReducer = (state, action) => {
       return { ...state, errors: [...new Set([...state.errors, action.error])] };
     case DISMISS_ERROR:
       return { ...state, errors: state.errors.filter((error) => error !== action.error) };
-    case UPDATE_LOADING_STATUS:
-      return { ...state, loading: action.loading };
     default:
       // eslint-disable-next-line
       console.error(`Unhandled action type ${action.type}`);
