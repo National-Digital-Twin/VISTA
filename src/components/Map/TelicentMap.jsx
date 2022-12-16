@@ -61,7 +61,6 @@ const TelicentMap = () => {
   }, [mapStyle, setMapStyle]);
 
   useEffect(() => {
-    if (isEmpty(assets) && isEmpty(selectedElements)) return;
     const { pointAssets, pointAssetDependencies, linearAssets } = generateFeatures(
       assets,
       dependencies,

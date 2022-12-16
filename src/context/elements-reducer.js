@@ -17,6 +17,7 @@ const getColorScale = (min, max) => {
 };
 
 export const INITIAL_STATE = {
+  loading: false,
   assets: [],
   dependencies: [],
   errors: [],

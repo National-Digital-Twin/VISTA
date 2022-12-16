@@ -21,7 +21,7 @@ export default class Asset {
    */
   setCountColorScale(min, max) {
     if (min === max) {
-      this.#countColorScale = {};
+      this.#countColorScale = getColorScale(0, 1);
       return;
     }
     this.#countColorScale = getColorScale(min, max);
@@ -37,7 +37,7 @@ export default class Asset {
    */
   setCriticalitySumColorScale(min, max) {
     if (min === max) {
-      this.#criticalitySumColorScale = {};
+      this.#criticalitySumColorScale = getColorScale(0, 1);
       return;
     }
     this.#criticalitySumColorScale = getColorScale(min, max);

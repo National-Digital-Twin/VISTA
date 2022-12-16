@@ -20,7 +20,7 @@ const Dataset = ({ showGrid, toggleView }) => {
       collapsedComponent={<DBButton onToggle={togglePanel} />}
       show={showPanel}
       position="top-0"
-      className="flex flex-col gap-y-2 p-2 overflow-auto"
+      className="flex flex-col gap-y-2 p-2"
       style={{ maxWidth: "13rem",  maxHeight: "calc(100% - 50px)" }}
     >
       <div className="inline-flex gap-x-2 border-b border-black-500 pb-1">

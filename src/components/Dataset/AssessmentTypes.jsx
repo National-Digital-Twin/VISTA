@@ -1,149 +1,173 @@
-import { ElementsContext } from "context";
-import { isEmpty, lowerCase } from "lodash";
-import React, { useContext, useEffect } from "react";
+import { capitalize, isEmpty, lowerCase } from "lodash";
+import classNames from "classnames";
+import React, { useEffect, useState } from "react";
 import useFetch from "use-http";
-import { createAssets, createDependencies } from "./dataset-utils";
+import PropTypes from "prop-types";
+
+import { ASSESSMENTS_ASSET_TYPES_ENDPOINT, ONTOLOGY_CLASS_ENDPOINT } from "constants/endpoints";
+import { Modal } from "lib";
+import { getURIFragment } from "utils";
+
+import GroupedTypes from "./GroupedTypes";
 
 const AssessmentTypes = ({ assessment, selectedTypes, setSelectedTypes }) => {
-  const assetTypesParams = { assessment };
-  const {
-    data: types,
-    error: typesError,
-    loading: loadingTypes,
-  } = useFetch(`/assessments/asset-types?${new URLSearchParams(assetTypesParams).toString()}`, {}, [
-    assessment,
-  ]);
-  const { get, response, error } = useFetch();
-  const { updateErrors, filterSelectedElements, reset, updateAssets, updateDependencies } =
-    useContext(ElementsContext);
+  const { abort, get, error, response } = useFetch();
 
-  // const [ontologyGroups, setOntologyGroups] = useState({});
-
-  // useEffect(() => {
-  //   const typeGroups = {};
-  //   if (isEmpty(types)) return;
-
-  //   const generateOntologyGroups = async () => {
-  //     for (let type of types) {
-  //       const classUri = { classUri: type.uri };
-  //       const superClasses = await get(
-  //         `ontology/class?${new URLSearchParams(classUri).toString()}`
-  //       );
-
-  //       if (response.ok) {
-  //         const superClass = superClasses[type.uri]?.superClass[0];
-  //         superClass ? (typeGroups[type.uri] = superClass) : (typeGroups[type.uri] = "other");
-  //       }
-  //     }
-  //   };
-
-  //   generateOntologyGroups();
-  //   setOntologyGroups(typeGroups);
-
-  //   // console.log(typeGroups);
-  // }, [types, response, get]);
+  const [isGeneratingData, setIsGeneratingData] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [types, setTypes] = useState([]);
+  const [selectedGroups, setSelectedGroups] = useState([]);
 
   useEffect(() => {
-    if (error) updateErrors("Failed to resolve the data");
-  }, [error, updateErrors]);
+    if (!assessment) return;
 
-  useEffect(() => {
-    if (isEmpty(selectedTypes)) {
-      reset();
+    const getTypes = async () => {
+      const types = await get(
+        `${ASSESSMENTS_ASSET_TYPES_ENDPOINT}?${new URLSearchParams({ assessment }).toString()}`
+      );
+      return response.ok ? types : [];
+    };
+
+    const generateOntologyGroups = async () => {
+      setLoading(true);
+      const types = await getTypes();
+
+      const typesWithSuperClasses = await Promise.all(
+        types.map(async (type) => {
+          const { uri } = type;
+          const classUri = { classUri: uri };
+          const superClasses = await get(
+            `${ONTOLOGY_CLASS_ENDPOINT}?${new URLSearchParams(classUri).toString()}`
+          );
+
+          if (response.ok) {
+            const superClass = superClasses[uri]?.superClass[0] ?? "other";
+            return { ...type, superClass };
+          }
+        })
+      );
+
+      setTypes(typesWithSuperClasses);
+      setLoading(false);
+    };
+
+    generateOntologyGroups();
+
+    return () => {
+      abort();
+      setTypes([]);
+    };
+  }, [assessment, response, abort, get]);
+
+  if (loading) return <p>Fetching data types</p>;
+  if (error)
+    return (
+      <p>
+        An error occured while retrieving data types. Please try again. If problem persists contact
+        admin
+      </p>
+    );
+  if (isEmpty(types)) return <p>Dataset types not found</p>;
+
+  const superClassGroups = [...new Set(types.map((type) => type.superClass))];
+
+  const updateSelectedGroup = (selectedGroup) => {
+    const index = selectedGroups.findIndex((ontologyGroup) => ontologyGroup === selectedGroup);
+    if (index === -1) {
+      setSelectedGroups([...selectedGroups, selectedGroup]);
       return;
     }
-
-    const types = selectedTypes.map((type) => ["types", type]);
-    const params = new URLSearchParams([["assessment", assessment], ...types]).toString();
-
-    const getAssets = async () => {
-      const assets = await get(`assessments/assets?${params}`);
-      return response.ok ? assets : [];
-    };
-
-    const getDependencies = async () => {
-      const dependencies = await get(`assessments/dependencies?${params}`);
-      return response.ok ? dependencies : [];
-    };
-
-    const getAssetGeometry = async (uri) => {
-      const assetUri = { assetUri: uri };
-      const linearAssets = await get(`asset/parts?${new URLSearchParams(assetUri).toString()}`);
-      return response.ok ? linearAssets : [];
-    };
-
-    const generateData = async () => {
-      const assessmentAssets = await getAssets();
-      const assessmentDependencies = await getDependencies();
-
-      const assets = await createAssets(assessmentAssets, getAssetGeometry);
-      const dependencies = createDependencies(assessmentDependencies);
-      updateAssets(assets);
-      updateDependencies(dependencies);
-      filterSelectedElements(assets, dependencies);
-    };
-
-    generateData();
-  }, [
-    assessment,
-    selectedTypes,
-    response,
-    get,
-    filterSelectedElements,
-    reset,
-    updateAssets,
-    updateDependencies,
-  ]);
-
-  if (loadingTypes) return <p>loading</p>;
-  if (typesError) return <p>{error.message}</p>;
-
-  const handleTypeChange = (event) => {
-    const { target } = event;
-    setSelectedTypes((prevSelected) => {
-      if (target.checked) return [...prevSelected, target.value];
-      return prevSelected.filter((selectedType) => selectedType !== target.value);
-    });
+    const filteredGroups = selectedGroups.filter(
+      (ontologyGroup) => ontologyGroup !== selectedGroup
+    );
+    setSelectedGroups(filteredGroups);
   };
 
-  // const groups = [...new Set(Object.values(ontologyGroups))];
+  const getTypesInGroup = (selectedGroup) => {
+    return types.filter((type) => type.superClass === selectedGroup);
+  };
 
-  // const getTypesInGroup = (selected) => {
-  //   const types = Object.entries(ontologyGroups)
-  //     .filter(([key, value]) => value === selected)
-  //     .map(([key, value]) => key);
-  //   console.log(types);
-  // };
-  // // console.log(getTypesInGroup("http://ies.data.gov.uk/ontology/ies4#WastewaterComplex"))
-
-  // return groups.map((group) => {
-  //   const label = group.includes("#") ? group.split("#")[1] : group;
-  //   return (
-  //     <ul>
-  //       <li className="uppercase border-b">
-  //         <button onClick={() => getTypesInGroup(group)}>{lowerCase(label)}</button>
-  //       </li>
-  //     </ul>
-  //   );
-  // });
-
-  return types.map(({ uri, assetCount }) => {
-    const label = uri.split("#")[1];
-    return (
-      <li key={uri} className="inline-flex gap-x-1 text-xs">
-        <input
-          type="checkbox"
-          value={uri}
-          id={uri}
-          checked={selectedTypes.includes(uri)}
-          onChange={handleTypeChange}
-          className="w-3.5"
-        />
-        <label htmlFor={uri} className="uppercase">
-          {lowerCase(label)} [{assetCount}]
-        </label>
-      </li>
-    );
-  });
+  return (
+    <>
+      <div
+        role="tree"
+        aria-labelledby="assetTypesTree"
+        className="flex flex-col grow min-h-0 overflow-y-auto gap-y-2"
+      >
+        {superClassGroups.sort().map((ontologyGroup) => {
+          const expand = selectedGroups.includes(ontologyGroup);
+          return (
+            <AssessmentGroup
+              key={ontologyGroup}
+              title={capitalize(lowerCase(getURIFragment(ontologyGroup)))}
+              expand={expand}
+              onToggle={() => updateSelectedGroup(ontologyGroup)}
+              className="flex flex-col gap-y-2"
+            >
+              <GroupedTypes
+                expand={expand}
+                assessment={assessment}
+                types={getTypesInGroup(ontologyGroup)}
+                selectedTypes={selectedTypes}
+                setSelectedTypes={setSelectedTypes}
+                setIsGeneratingData={setIsGeneratingData}
+              />
+            </AssessmentGroup>
+          );
+        })}
+      </div>
+      <Modal appElement="root" isOpen={isGeneratingData} className="py-2 px-6 rounded-lg">
+        <p>Loading data</p>
+      </Modal>
+    </>
+  );
 };
 export default AssessmentTypes;
+
+AssessmentTypes.defaultProps = {
+  assessment: undefined,
+  selectedTypes: [],
+  setSelectedTypes: () => {},
+};
+
+AssessmentTypes.propTypes = {
+  assessment: PropTypes.string,
+  selectedTypes: PropTypes.arrayOf(PropTypes.string),
+  setSelectedTypes: PropTypes.func,
+};
+
+const AssessmentGroup = ({ expand, title, onToggle, className: wrapperClassName, children }) => (
+  <div role="treeitem" aria-expanded={expand} className={classNames(wrapperClassName)}>
+    <button
+      className={classNames("w-full text-left border-b border-whiteSmoke-700", {
+        "cursor-default": !onToggle,
+      })}
+      type="button"
+      onClick={onToggle}
+    >
+      {title}
+      {onToggle && (
+        <i
+          className={classNames("float-right", {
+            "ri-arrow-up-s-fill !text-xl": expand,
+            "ri-arrow-down-s-fill !text-xl": !expand,
+          })}
+        />
+      )}
+    </button>
+    {children}
+  </div>
+);
+
+AssessmentGroup.defaultProps = {
+  show: false,
+  classNames: undefined,
+};
+
+AssessmentGroup.propTypes = {
+  show: PropTypes.bool,
+  title: PropTypes.string.isRequired,
+  onToggle: PropTypes.func.isRequired,
+  className: PropTypes.string,
+  children: PropTypes.element.isRequired,
+};
