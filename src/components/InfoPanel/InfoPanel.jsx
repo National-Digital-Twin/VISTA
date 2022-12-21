@@ -27,7 +27,7 @@ const InfoPanel = () => {
         maxHeight: "calc(100% - 50px)",
       }}
     >
-      <SelectedElements selectedElements={selectedElements} />
+      <SelectedElements selectedElements={selectedElements} onTogglePanel={handleTogglePanel} />
     </FloatingPanel>
   );
 };

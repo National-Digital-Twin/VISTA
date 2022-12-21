@@ -13,7 +13,7 @@ import {
 } from "./selected-elements-reducer";
 import SelectedElementsHeader from "./SelectedElementsHeader";
 
-const SelectedElements = ({ selectedElements }) => {
+const SelectedElements = ({ selectedElements, onTogglePanel }) => {
   const [state, dispatch] = useReducer(selectedElementsReducer, SELECTED_ELEMENTS_INITIAL_STATE);
   const { index, view, header } = state;
 
@@ -67,7 +67,7 @@ const SelectedElements = ({ selectedElements }) => {
   }
 
   return <>
-    <SelectedElementsHeader {...header} />
+    <SelectedElementsHeader onToggle={onTogglePanel} {...header} />
     {renderSelectedElements()}
   </>
 };
