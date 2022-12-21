@@ -1,6 +1,6 @@
 export { default as ASSESSMENTS } from "./assessments";
 export { default as IOW_ASSET_TYPES } from "./iow-asset-types";
-export { default as ENERGY_ASSETS } from "./energy-assets";
+export * from "./electrical-power-distribution-complex";
 export { default as ENERGY_CONNECTIONS } from "./energy-connections";
 export * from "./energy-details";
 export { default as MEDICAL_ASSETS } from "./medical-assets";

@@ -1,10 +1,13 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, waitForElementToBeRemoved } from "@testing-library/react";
 import React from "react";
 
-import * as utils from "../../../Dataset/dataset-utils";
-import { AssetBtn, clickEnergyDataset, CxnBtn, expandPanel, renderTestComponent } from "../../../../test-utils";
-import { ENERGY_ASSETS } from "../../../../mocks";
-import InfoPanel from "../../InfoPanel";
+import * as utils from "components/Dataset/dataset-utils";
+import { expandPanel, PanelProviders } from "test-utils";
+import { ENERGY_ASSETS, LOW_ENERGY_VOLTAGE_ELECTRICITY_SUBSTATION_COMPLEX } from "mocks";
+import { Asset, Dependency } from "models";
+
+// import InfoPanel from "../../InfoPanel";
+import SelectedElements from "../SelectedElements";
 
 const TestBtns = ({ assets, connections, onElementClick }) => {
   const event = { originalEvent: { shiftKey: true } };
@@ -24,17 +27,21 @@ const TestBtns = ({ assets, connections, onElementClick }) => {
 
 const renderSelectedDetails = () => renderTestComponent(<InfoPanel />, { testComponent: TestBtns });
 
-describe.skip("Selected Elements component", () => {
+const expandInfoPanel = () => {
+  window.localStorage.setItem("showInformationPanel", true);
+};
+
+describe("Selected Elements component", () => {
   test("renders message when an element(s) aren't selected", async () => {
-    const { user } = renderTestComponent(<InfoPanel />);
-    await expandPanel(user);
+    render(<SelectedElements />, { wrapper: PanelProviders });
+    expandInfoPanel();
 
     expect(
       await screen.findByText(/click on an asset or connection to view details/i)
     ).toBeInTheDocument();
   });
 
-  test("renders all selected elements", async () => {
+  test.skip("renders all selected elements", async () => {
     const spyOnCreateData = jest.spyOn(utils, "createData");
     const { user } = renderSelectedDetails();
 
@@ -60,7 +67,7 @@ describe.skip("Selected Elements component", () => {
     ).toBeInTheDocument();
   });
 
-  test("renders element details when a list item is clicked", async () => {
+  test.skip("renders element details when a list item is clicked", async () => {
     const spyOnCreateData = jest.spyOn(utils, "createData");
     const { user } = renderSelectedDetails();
 
@@ -79,7 +86,7 @@ describe.skip("Selected Elements component", () => {
     expect(screen.getByTestId("element-details")).toBeInTheDocument();
   });
 
-  test("renders all selected elements by click on back arrow", async () => {
+  test.skip("renders all selected elements by click on back arrow", async () => {
     const spyOnCreateData = jest.spyOn(utils, "createData");
     const { user } = renderSelectedDetails();
 
@@ -108,7 +115,7 @@ describe.skip("Selected Elements component", () => {
     expect(screen.getAllByRole("listitem")).toHaveLength(6);
   });
 
-  test("renders open street view link when an asset is selected", async () => {
+  test.skip("renders open street view link when an asset is selected", async () => {
     const spyOnCreateData = jest.spyOn(utils, "createData");
     const { user } = renderSelectedDetails();
 
@@ -132,22 +139,52 @@ describe.skip("Selected Elements component", () => {
   });
 
   test("renders element details when an element is selected", async () => {
-    const spyOnCreateData = jest.spyOn(utils, "createData");
-    const { user } = renderSelectedDetails();
+    let selectedElements = LOW_ENERGY_VOLTAGE_ELECTRICITY_SUBSTATION_COMPLEX.filter(
+      (asset) => asset.id === "E014"
+    ).map((asset) => {
+      return new Asset({
+        uri: asset.uri,
+        type: asset.type,
+        lat: asset.lat,
+        lng: asset.lon,
+        geometry: [],
+        dependent: {
+          count: asset.dependentCount,
+          criticalitySum: asset.dependentCriticalitySum,
+        },
+      });
+    });
 
-    await expandPanel(user);
-    await clickEnergyDataset(user);
-    await waitFor(() => expect(spyOnCreateData).toHaveReturned());
+    const { rerender } = render(<SelectedElements selectedElements={selectedElements} />, {
+      wrapper: PanelProviders,
+    });
+    expandInfoPanel();
 
-    await user.click(screen.getByRole("button", { name: "E001" }));
+    await waitForElementToBeRemoved(() => screen.queryByText(/Fetching element information/i));
+
     expect(
-      screen.getByRole("heading", { name: "East Cowes Power Station (E001)" })
+      screen.getByRole("heading", { name: "Sandown 33kV / 11kV Substation" })
     ).toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: "E001 - E003" }));
+    selectedElements = new Dependency({
+      uri: "https://www.iow.gov.uk/DigitalTwin#_E014_E012_dependency",
+      criticality: 3,
+      dependent: {
+        uri: "https://www.iow.gov.uk/DigitalTwin#E014",
+        type: "http://ies.data.gov.uk/ontology/ies4#LowVoltageElectricitySubstationComplex",
+      },
+      provider: {
+        uri: "https://www.iow.gov.uk/DigitalTwin#E012",
+        type: "http://ies.data.gov.uk/ontology/ies4#LowVoltageElectricitySubstationComplex",
+      },
+      osmID: null,
+    });
+    rerender(<SelectedElements selectedElements={[selectedElements]} />);
+    await waitForElementToBeRemoved(() => screen.getByText(/Fetching element information/i));
+
     expect(
       screen.getByRole("heading", {
-        name: "East Cowes Power Station (E001) to East Cowes 132/33kV Substation (E003)",
+        name: "Sandown 33kV / 11kV Substation - Ventnor 33kV / 11kV Substation",
       })
     ).toBeInTheDocument();
   });

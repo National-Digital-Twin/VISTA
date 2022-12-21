@@ -30,7 +30,7 @@
     "react-switch": "^7.0.0",
     "react-tabs": "^4.2.0",
     "resize-observer-polyfill": "^1.5.1",
-    "use-http": "^1.0.26",
+    "use-http": "^1.0.27",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

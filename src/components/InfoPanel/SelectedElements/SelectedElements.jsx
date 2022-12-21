@@ -18,6 +18,11 @@ const SelectedElements = ({ selectedElements }) => {
   const { index, view, header } = state;
 
   useEffect(() => {
+    if (isEmpty(selectedElements)) {
+      dispatch({ type: RESET_STATE });
+      return;
+    }
+
     if (selectedElements.length === 1) {
       dispatch({ type: SINGLE_ELEMENT });
       return;
@@ -25,11 +30,6 @@ const SelectedElements = ({ selectedElements }) => {
 
     if (selectedElements.length > 1) {
       dispatch({ type: LIST_VIEW });
-      return;
-    }
-
-    if (isEmpty(selectedElements)) {
-      dispatch({ type: RESET_STATE });
       return;
     }
   }, [selectedElements]);

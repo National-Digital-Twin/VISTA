@@ -1,5 +1,5 @@
 import ColorScale from "color-scales";
-import { lowerCase } from "lodash";
+import { isEmpty, lowerCase } from "lodash";
 import { prefixLookup } from "../config/uri-prefix";
 
 /**
@@ -11,7 +11,10 @@ export const IsEmpty = (input) => !input || input.length === 0 || Object.keys(in
 
 export const findAsset = (assets, uri) => assets?.find((asset) => asset.uri === uri);
 
-export const getHexColor = (colorScale, value) => colorScale?.getColor(value).toHexString();
+export const getHexColor = (colorScale, value) => {
+  if (isEmpty(colorScale)) return undefined;
+  return colorScale.getColor(value).toHexString()
+}
 export const isAsset = (element) => element?.elementType === "asset" ?? false;
 
 export const getShortType = (type) => {

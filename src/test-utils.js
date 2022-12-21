@@ -9,6 +9,13 @@ import { CytoscapeProvider, ElementsContext, ElementsProvider } from "./context"
 import * as utils from "./components/Dataset/dataset-utils";
 
 const user = userEvent.setup();
+
+export const clickLowVoltageElectricity = async () => {
+  await user.click(screen.getByRole("button", { name: /Electrical power distribution complex/i }))
+  await user.click(await screen.findByRole("checkbox", { name: "Energy [25]" }));
+  expect(screen.getByRole("checkbox", { name: "Energy [25]" })).toBeChecked();
+}
+
 export const clickEnergyDataset = async () => {
   await user.click(await screen.findByRole("checkbox", { name: "Energy [25]" }));
   expect(screen.getByRole("checkbox", { name: "Energy [25]" })).toBeChecked();
@@ -22,8 +29,8 @@ export const clickMedicalDataset = async () => {
   await user.click(await screen.findByRole("checkbox", { name: "Medical [32]" }));
 };
 
-export const expandPanel = async (user) =>
-  await user.click(screen.getByRole("button", { name: "Open information panel" }));
+export const expandPanel = async (panelName) =>
+  await user.click(screen.getByRole("button", { name: panelName }));
 
 export const AssetBtn = ({ label, assets, event, onElementClick }) => (
   <button
@@ -51,9 +58,9 @@ export const CxnBtn = ({ label, connections, event, onElementClick }) => (
   </button>
 );
 
-export const PanelProviders = ({ children }) => (
+export const PanelProviders = ({ children, elementsProviderValue }) => (
   <UseHttpProvider options={{ cacheLife: 0, cachePolicy: "no-cache" }}>
-    <ElementsProvider>{children}</ElementsProvider>
+    <ElementsProvider value={elementsProviderValue}>{children}</ElementsProvider>
   </UseHttpProvider>
 );
 

@@ -1,30 +1,38 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import useFetch from "use-http";
-import { isEmpty } from "lodash";
+import { camelCase, capitalize, isEmpty } from "lodash";
 import classNames from "classnames";
 
+import config from "config/app-config";
 import { ElementsContext } from "context";
-import { getShortType, isAsset } from "utils";
-import useLocalStorage from "hooks/useLocalStorage";
+import { findAsset, getShortType, isAsset } from "utils";
+import { useJSFetch, useLocalStorage } from "hooks";
 
 const ElementDetails = ({ element, expand, onViewDetails }) => {
-  const { abort, get, response, error } = useFetch();
+  const { error, get } = useJSFetch();
   const [details, setDetails] = useState({});
-  const [loading, setLoading] = useState(false);
-
-  const assetUri = isAsset(element) ? element.uri : undefined;
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const getAssetInformation = async (assetUri) => {
-      const assetInfo = await get(`/asset?${new URLSearchParams(assetUri).toString()}`);
-      return response.ok && assetInfo;
+    const controller = new AbortController();
+    const signal = controller.signal;
+
+    const getAssetInformation = async (uri) => {
+      const url = `${config.api.url}/asset?${new URLSearchParams({ assetUri: uri }).toString()}`;
+      const asset = await get(url, { signal });
+      return asset ?? {};
     };
 
     const getDetails = async () => {
       setLoading(true);
-      if (isEmpty(element)) return;
+      if (isEmpty(element)) {
+        setDetails({});
+        return;
+      }
+
       if (isAsset(element)) {
-        const assetInfo = await getAssetInformation({ assetUri: element.uri });
+        const assetInfo = await getAssetInformation(element.uri);
+        if (signal.aborted) return;
+
         setDetails({
           title: assetInfo?.name,
           criticality: element.dependent.criticalitySum,
@@ -37,25 +45,33 @@ const ElementDetails = ({ element, expand, onViewDetails }) => {
         return;
       }
 
-      const dependentInfo = await getAssetInformation({ assetUri: element.dependent.uri });
-      const providerInfo = await getAssetInformation({ assetUri: element.provider.uri });
-      setDetails({
-        title: `${dependentInfo.name} - ${providerInfo.name}`,
-        criticality: element.criticality,
-        criticalityColor: element.criticalityColor,
-        icon: "w-4 h-0.5 bg-white",
-      });
-      setLoading(false);
+      try {
+        const [dependentInfo, providerInfo] = await Promise.all(
+          [element.dependent.uri, element.provider.uri].map(async (assetUri) => {
+            const assetInfo = await getAssetInformation(assetUri);
+            return assetInfo;
+          })
+        );
+        if (signal.aborted) return;
+        
+        setDetails({
+          title: `${dependentInfo.name} - ${providerInfo.name}`,
+          criticality: element.criticality,
+          criticalityColor: element.criticalityColor,
+          icon: "w-4 h-0.5 bg-white",
+        });
+        setLoading(false);
+      } catch (error) {
+        console.log(error);
+      }
     };
 
     getDetails();
 
     return () => {
-      abort();
-      setDetails({});
-      setLoading(false);
-    };
-  }, [element, response, get, abort]);
+      controller.abort();
+    }
+  }, [element, get]);
 
   if (loading) return <p>Fetching element information</p>;
   if (error) return <p>An error has occured while fetching element information</p>;
@@ -74,8 +90,8 @@ const ElementDetails = ({ element, expand, onViewDetails }) => {
   return (
     <div id="element-details" className="flex flex-col grow min-h-0 overflow-y-auto gap-y-4">
       <Details expand {...details} />
-      <Dependents assetUri={assetUri} dependent={element.dependent} />
-      <Providers assetUri={assetUri} provider={element.provider} />
+      <ConnectedAssets type="dependent" element={element} />
+      <ConnectedAssets type="provider" element={element} />
     </div>
   );
 };
@@ -195,113 +211,89 @@ const DetailsSection = ({ expand, show, onToggle, title, children }) => {
   );
 };
 
-const ConnectedAsset = ({ uri, criticality }) => {
-  const assetUri = { assetUri: uri };
-  const { data, loading, error } = useFetch(
-    `/asset?${new URLSearchParams(assetUri).toString()}`,
-    {},
-    []
-  );
-
+const ConnectedAssetListItems = ({ connectedAssets }) => {
   const { assets } = useContext(ElementsContext);
 
-  if (loading) return <p>fetching element information</p>;
-  if (error) return <p>failed to retrieve element information</p>;
-  if (isEmpty(data)) return null;
+  if (isEmpty(connectedAssets)) return <p>No assets found</p>;
 
-  const existingAsset = assets.find((asset) => asset.uri === data.uri);
-
-  return (
-    <li className="gap-x-2 bg-black-300 rounded-md p-2 items-center">
-      <div className="flex items-center  gap-x-2">
-        <div
-          style={{ backgroundColor: existingAsset?.criticalityColor ?? "#A3A3A3" }}
-          className="w-2.5 h-2.5 rounded-full"
-        />
-        <h4 className="truncate w-64">{data.name}</h4>
-      </div>
-      <p className="text-sm">ID: {data.uri.split("#")[1]}</p>
-      <p className="whitespace-nowrap text-sm">Criticality: {data.dependentCriticalitySum}</p>
-      <p className="whitespace-nowrap text-sm">Connection Strength: {criticality}</p>
-    </li>
-  );
+  return connectedAssets.map((asset) => {
+    const existingAsset = findAsset(assets, asset.uri);
+    return (
+      <li key={asset.uri} className="gap-x-2 bg-black-300 rounded-md p-2 items-center">
+        <div className="flex items-center  gap-x-2">
+          <div
+            style={{ backgroundColor: existingAsset?.criticalityColor ?? "#A3A3A3" }}
+            className="w-2.5 h-2.5 rounded-full"
+          />
+          <h4 className="truncate w-64">{asset.name}</h4>
+        </div>
+        <p className="text-sm">ID: {asset.uri.split("#")[1]}</p>
+        <p className="whitespace-nowrap text-sm">Criticality: {asset.dependentCriticalitySum}</p>
+        <p className="whitespace-nowrap text-sm">Connection Strength: {asset.connectionStrength}</p>
+      </li>
+    );
+  });
 };
 
-const Dependents = ({ assetUri, dependent }) => {
-  const { abort, get, response, loading, error } = useFetch();
-  const [expand, setExpand] = useLocalStorage("showDependents", false);
-  const [dependents, setDepependents] = useState([]);
+const ConnectedAssets = ({ type, element }) => {
+  const { error, get } = useJSFetch();
+  const [expand, setExpand] = useLocalStorage(camelCase(`show${type}`), false);
+  const [connectedAssets, setConnectedAssets] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const getDependents = async () => {
-      const dependents = await get(
-        `/asset/dependents?${new URLSearchParams({ assetUri }).toString()}`
-      );
-      if (response.ok) setDepependents(dependents);
+    const controller = new AbortController();
+    const signal = controller.signal;
+
+    const getDependencies = async () => {
+      const params = new URLSearchParams({ assetUri: element.uri }).toString();
+      const url = `${config.api.url}/asset/${type}s?${params}`;
+      const dependencies = await get(url, { signal });
+      return dependencies ?? [];
     };
 
-    if (assetUri) {
-      getDependents();
-      return;
-    }
+    const getAssetInformation = async (uri) => {
+      const url = `${config.api.url}/asset?${new URLSearchParams({ assetUri: uri }).toString()}`;
+      const asset = await get(url, { signal });
+      return asset ?? {};
+    };
 
-    setDepependents([dependent]);
+    const getConnectedAssetInfo = async () => {
+      setLoading(true);
+
+      if (isAsset(element)) {
+        const dependencies = await getDependencies();
+        const assetsInfo = await Promise.all(
+          dependencies.map(async (dependency) => {
+            const uri = type === "provider" ? dependency.providerNode : dependency.dependentNode;
+
+            const asset = await getAssetInformation(uri);
+            return {
+              ...asset,
+              connectionStrength: dependency.criticalityRating,
+            };
+          })
+        );
+
+        if (signal.aborted) return;
+        setConnectedAssets(assetsInfo);
+        setLoading(false);
+        return;
+      }
+
+      const connectedAsset = await getAssetInformation(element[type].uri);
+
+      if (signal.aborted) return;
+      setConnectedAssets([{ ...connectedAsset, connectionStrength: element.criticalityRating }]);
+      setLoading(false);
+    };
+
+    getConnectedAssetInfo();
 
     return () => {
-      abort();
-      setDepependents([]);
+      controller.abort();
     };
-  }, [assetUri, dependent, response, abort, get]);
-
-  const handleToggleSection = () => {
-    setExpand((prev) => !prev);
-  };
-
-  return (
-    <DetailsSection
-      expand={expand}
-      show={!isEmpty(dependents)}
-      onToggle={handleToggleSection}
-      title={`${dependents.length} Dependent Assets`}
-    >
-      {loading && <p>loading...</p>}
-      {error && <p>Failed to retrieve asset dependents</p>}
-      <ul className="grid gap-y-3">
-        {dependents.map((dependent) => {
-          const uri = dependent?.dependentNode ?? dependent.uri;
-          const criticality = dependent?.criticalityRating ?? dependent.criticality;
-          return <ConnectedAsset key={uri} uri={uri} criticality={criticality} />;
-        })}
-      </ul>
-    </DetailsSection>
-  );
-};
-
-const Providers = ({ assetUri, provider }) => {
-  const { abort, get, response, loading, error } = useFetch();
-  const [expand, setExpand] = useLocalStorage("showProviders", false);
-  const [providers, setProviders] = useState([]);
-
-  useEffect(() => {
-    const getProviders = async () => {
-      const providers = await get(
-        `/asset/providers?${new URLSearchParams({ assetUri }).toString()}`
-      );
-      if (response.ok) setProviders(providers);
-    };
-
-    if (assetUri) {
-      getProviders();
-      return;
-    }
-
-    setProviders([provider]);
-
-    return () => {
-      abort();
-      setProviders([]);
-    };
-  }, [assetUri, provider, response, abort, get]);
+  }, [type, element, get]);
 
   const handleToggleSection = () => {
     setExpand((prev) => !prev);
@@ -311,17 +303,13 @@ const Providers = ({ assetUri, provider }) => {
     <DetailsSection
       expand={expand}
       onToggle={handleToggleSection}
-      show={!isEmpty(providers)}
-      title={`${providers.length} Provider Assets`}
+      title={`${connectedAssets.length} ${capitalize(type)} Assets`}
+      show
     >
-      {loading && <p>loading...</p>}
-      {error && <p>Failed to retrieve asset dependents</p>}
+      {loading && <p>Loading providers</p>}
+      {error && <p>Failed to retrieve {type} assets</p>}
       <ul className="grid gap-y-3">
-        {providers.map((provider) => {
-          const uri = provider?.providerNode ?? provider.uri;
-          const criticality = provider?.criticalityRating ?? provider.criticality;
-          return <ConnectedAsset key={uri} uri={uri} criticality={criticality} />;
-        })}
+        <ConnectedAssetListItems connectedAssets={connectedAssets} />
       </ul>
     </DetailsSection>
   );
