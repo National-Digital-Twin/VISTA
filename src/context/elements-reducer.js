@@ -33,6 +33,14 @@ export const INITIAL_STATE = {
 const getAllCounts = (assets) => assets.map((asset) => asset.dependent.count);
 const getAllCriticalitySums = (assets) => assets.map((asset) => asset.dependent.criticalitySum);
 
+export const getSelected = ({ cachedElements, selectedElement }) => {
+  const index = cachedElements.findIndex(
+    (cachedElement) => cachedElement.id === selectedElement.id
+  );
+  if (index === -1) return [...cachedElements, selectedElement];
+  return cachedElements.filter((cachedElement) => cachedElement.id !== selectedElement.id);
+};
+
 const elementsReducer = (state, action) => {
   switch (action.type) {
     case UPDATE_ASSETS: {
@@ -71,19 +79,12 @@ const elementsReducer = (state, action) => {
         selectedElements: [action.selectedElement],
       };
     case MULTI_SELECT_ELEMENTS: {
-      const getSelected = () => {
-        const index = state.selectedElements.findIndex(
-          (selectedElement) => selectedElement === action.selectedElement
-        );
-        if (index === -1) return [...state.selectedElements, action.selectedElement];
-        return state.selectedElements.filter(
-          (selectedElement) => selectedElement !== action.selectedElement
-        );
-      };
-
       return {
         ...state,
-        selectedElements: getSelected(),
+        selectedElements: getSelected({
+          cachedElements: state.selectedElements,
+          selectedElement: action.selectedElement,
+        }),
       };
     }
     case AREA_SELECTION: {

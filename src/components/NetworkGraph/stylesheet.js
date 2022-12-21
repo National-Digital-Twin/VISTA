@@ -97,7 +97,7 @@ const cyStylesheet = [
     },
   },
   {
-    selector: "node:selected",
+    selector: ".highlight-selected",
     style: {
       borderWidth: "4px",
       borderColor: colors.whiteSmoke,

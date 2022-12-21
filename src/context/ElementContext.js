@@ -69,9 +69,9 @@ export const ElementsProvider = ({ children }) => {
     dispatch({ type: DISMISS_ERROR, error });
   };
 
-  const clearSelectedElements = () => {
+  const clearSelectedElements = useCallback(() => {
     dispatch({ type: CLEAR_SELECTED });
-  };
+  }, []);
 
   return (
     <ElementsContext.Provider

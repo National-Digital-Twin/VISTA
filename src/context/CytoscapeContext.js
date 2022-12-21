@@ -2,6 +2,7 @@ import { isEmpty } from "lodash";
 import React, { createContext, useCallback, useRef } from "react";
 
 import { useLocalStorage } from "hooks";
+import { getSelected } from "./elements-reducer";
 
 export const CytoscapeContext = createContext();
 
@@ -9,15 +10,37 @@ export const CytoscapeProvider = ({ children }) => {
   const cyRef = useRef({});
   const [layout, setLayout] = useLocalStorage("graphLayout", "cola");
 
-  const getSelected = () => {
+  const moveTo = ({
+    areaSelect,
+    multiSelect,
+    cachedElements,
+    selectedElement,
+    selectedElements,
+  }) => {
     if (!cyRef.current) return;
-    return cyRef.current.elements(":selected");
+    const padding = areaSelect || multiSelect ? 20 : 200;
+    let selected = [selectedElement];
+
+    if (multiSelect) {
+      selected = getSelected({ cachedElements, selectedElement });
+    }
+
+    if (areaSelect) {
+      selected = selectedElements;
+    }
+
+    const nodes = cyRef.current.nodes().filter((element) => {
+      return selected.some((selectedElement) => {
+        const data = element.data("element")
+        return selectedElement.id === data.id;
+      });
+    });
+    fit(nodes, padding);
   };
 
-  const clearSelected = () => {
+  const fit = (nodes, padding) => {
     if (!cyRef.current) return;
-    const selected = getSelected();
-    selected.unselect();
+    cyRef.current.fit(nodes, padding);
   };
 
   const updateLayout = (layout) => {
@@ -37,7 +60,7 @@ export const CytoscapeProvider = ({ children }) => {
 
   return (
     <CytoscapeContext.Provider
-      value={{ cyRef, layout, clearSelected, resize, runLayout, updateLayout }}
+      value={{ cyRef, layout, fit, moveTo, resize, runLayout, updateLayout }}
     >
       {children}
     </CytoscapeContext.Provider>

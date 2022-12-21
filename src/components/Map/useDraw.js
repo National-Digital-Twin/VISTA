@@ -4,7 +4,7 @@ import * as MapboxDrawGeodesic from "mapbox-gl-draw-geodesic";
 import * as turf from "@turf/turf";
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 
-import { ElementsContext } from "context";
+import { CytoscapeContext, ElementsContext } from "context";
 
 const DRAW_CIRCLE = "draw_circle";
 
@@ -12,7 +12,8 @@ let modes = MapboxDraw.modes;
 modes = MapboxDrawGeodesic.enable(modes);
 
 const useDraw = (assets, dependencies, setPolygon) => {
-  const { clearSelectedElements, onAreaSelect } = useContext(ElementsContext);
+  const { fit, moveTo } = useContext(CytoscapeContext);
+  const { clearSelectedElements, selectedElements, onAreaSelect } = useContext(ElementsContext);
 
   const getAssetsInPolygon = (target, polygon) => {
     // console.log(target?.getSource("point-assets")?._data)
@@ -47,12 +48,12 @@ const useDraw = (assets, dependencies, setPolygon) => {
     const elements = elementsInPolygon.map((element) =>
       assets.find((asset) => element.uri === asset.uri)
     );
-    console.log(elements);
     // onAreaSelect(elements);
     // if (features.length === 1) {
     //   setPolygon(features[0]);
     //   return;
     // }
+    moveTo({ areaSelect: true, cachedElements: selectedElements, selectedElements: assets });
   };
 
   const onClick = (event) => {
@@ -119,6 +120,7 @@ const useDraw = (assets, dependencies, setPolygon) => {
     draw.deleteAll();
     clearSelectedElements();
     setPolygon(undefined);
+    fit();
   };
 
   /**

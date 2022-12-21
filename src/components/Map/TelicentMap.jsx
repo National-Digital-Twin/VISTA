@@ -24,7 +24,7 @@ const HEAT_RADIUS = 1000;
 
 const TelicentMap = () => {
   const { telicentMap: map } = useMap();
-  const { clearSelected } = useContext(CytoscapeContext);
+  const { fit, moveTo } = useContext(CytoscapeContext);
   const { assets, dependencies, selectedElements, clearSelectedElements, onElementClick } =
     useContext(ElementsContext);
   const [mapStyle, setMapStyle] = useLocalStorage("mapStyle", "mapbox://styles/mapbox/dark-v10");
@@ -74,22 +74,26 @@ const TelicentMap = () => {
   const handleOnClick = (event) => {
     const { features } = event;
     const clickedFeature = features && features[0];
-    clearSelected();
 
     const controls = event.target._controls;
     const drawControl = Object.values(controls).find((item) => item.modes);
-    const polygons = drawControl.getAll().features;
+    const selectedPolygons = drawControl.getSelected().features;
 
-    if (!clickedFeature && isEmpty(polygons)) {
+    if (!clickedFeature && isEmpty(selectedPolygons)) {
       clearSelectedElements();
+      fit();
       return;
     }
 
     if (clickedFeature?.type === "Feature") {
       const { properties } = clickedFeature;
       event.originalEvent.stopPropagation();
+
+      const multiSelect = event.originalEvent.shiftKey;
       const element = findAsset([...assets, ...dependencies], properties.uri);
-      onElementClick(event.originalEvent.shiftKey, element);
+      
+      onElementClick(multiSelect, element);
+      moveTo({ multiSelect, cachedElements: selectedElements, selectedElement: element });
       return;
     }
   };
