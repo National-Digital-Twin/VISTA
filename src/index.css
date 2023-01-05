@@ -87,6 +87,11 @@ body {
     align-items: center;
   }
 
+  .floating-menu {
+    @apply absolute bg-black-200 text-base z-30 rounded-md
+    shadow-surround-lg shadow-black-50;
+  }
+
   .tl-input {
     @apply focus:outline-none focus:border-appColor
     focus:ring-1 focus:ring-appColor
