@@ -1,5 +1,5 @@
 import { isEmpty } from "lodash";
-import { findAsset, getColorScale, getHexColor, getURIFragment } from "utils";
+import { findElement, getColorScale, getHexColor, getURIFragment } from "utils";
 
 export default class Dependency {
   #colorScale = getColorScale(1, 3);
@@ -32,8 +32,8 @@ export default class Dependency {
   }
 
   #lookupConnectedAssets(assets) {
-    const source = findAsset(assets, this.dependent.uri);
-    const target = findAsset(assets, this.provider.uri);
+    const source = findElement(assets, this.dependent.uri);
+    const target = findElement(assets, this.provider.uri);
     return { source, target }
   }
 

@@ -2,19 +2,17 @@
 import React, { useCallback, useEffect, useState } from "react";
 
 import { ToolbarButton, ToolbarMenu, VerticalDivider } from "lib";
-import { heatmap } from "./layerStyles";
-import { getMapStyles } from "./mapStyles";
+import { heatmap } from "../layerStyles";
+import { getMapStyles } from "../mapStyles";
+import DrawControls from "./DrawControl";
 
 const MapToolbar = ({
   heatmapRadius,
   map,
   mapStyle,
-  showCoordinates,
-  activateDrawCircleMode,
-  activatePolygonMode,
-  deleteAllPolygons,
   setMapStyle,
-  togglePointerCoords
+  showPointerCoords,
+  onPointerCoordsClick,
 }) => {
   const [isHeatVisible, setIsHeatVisible] = useState(false);
   const [showLayers, setShowLayers] = useState(false);
@@ -89,9 +87,9 @@ const MapToolbar = ({
   const mapTools = [
     {
       name: "Coordinates",
-      selected: showCoordinates,
+      selected: showPointerCoords,
       type: "toggleSwitch",
-      onItemClick: () => togglePointerCoords()
+      onItemClick: onPointerCoordsClick
     }
   ]
 
@@ -113,9 +111,7 @@ const MapToolbar = ({
         label="Map tools"
         onClick={() => setShowMapTools(true)}
         showSecondaryMenu={showMapTools}
-        secondaryMenu={
-          <ToolbarMenu menuItems={mapTools} onClose={() => setShowMapTools(false)} />
-        }
+        secondaryMenu={<ToolbarMenu menuItems={mapTools} onClose={() => setShowMapTools(false)} />}
       />
       <ToolbarButton
         icon="ri-map-2-fill"
@@ -136,24 +132,7 @@ const MapToolbar = ({
         }
       />
       <VerticalDivider />
-      <ToolbarButton
-        icon="fg-polyline-pt"
-        label="Polygon Selection (Beta) - Disabled"
-        onClick={activatePolygonMode}
-        disabled
-      />
-      <ToolbarButton
-        icon="fg-circle-o"
-        label="Radius Selection (Beta) - Disabled"
-        onClick={activateDrawCircleMode}
-        disabled
-      />
-      <ToolbarButton
-        icon="ri-delete-bin-line"
-        label="Delete Polygons - Disabled"
-        onClick={deleteAllPolygons}
-        disabled
-      />
+      <DrawControls map={map} />
     </div>
   );
 };

@@ -29,18 +29,18 @@ export const CytoscapeProvider = ({ children }) => {
       selected = selectedElements;
     }
 
-    const nodes = cyRef.current.nodes().filter((element) => {
+    const elements = cyRef.current.elements().filter((element) => {
       return selected.some((selectedElement) => {
         const data = element.data("element")
-        return selectedElement.id === data.id;
+        return selectedElement.uri === data.uri;
       });
     });
-    fit(nodes, padding);
+    fit(elements, padding);
   };
 
-  const fit = (nodes, padding) => {
+  const fit = (elements, padding) => {
     if (!cyRef.current) return;
-    cyRef.current.fit(nodes, padding);
+    cyRef.current.fit(elements, padding);
   };
 
   const updateLayout = (layout) => {

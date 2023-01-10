@@ -5,13 +5,14 @@ import { isEmpty } from "lodash";
 import config from "config/app-config";
 import { CytoscapeContext, ElementsContext } from "context";
 import { useLocalStorage } from "hooks";
-import { findAsset } from "utils";
+import { findElement } from "utils";
 
 import { heatmap, linearAssetsLayer, pointAssetCxnLayer, pointAssetLayer } from "./layerStyles";
-import { generateFeatures } from "./mapboxFeatures";
+import { generateFeatures } from "./map-utils";
 import { getMapStyles } from "./mapStyles";
-import MapConfig from "./MapConfig";
 import "./mapbox.css";
+import MapToolbar from "./MapToolbar/MapToolbar";
+import PointerCoordinates from "./PointerCoords";
 
 const GEOJSON = "geojson";
 const FEATURE_COLLECTION = "FeatureCollection";
@@ -32,6 +33,7 @@ const TelicentMap = () => {
   const [cursor, setCursor] = useState("auto");
   const [hoverInfo, setHoverInfo] = useState(undefined);
   const [heatmapRadius, setHeatmapRadius] = useState(10);
+  const [showPointerCoords, setShowPointerCoords] = useState(false);
 
   const [linearAssets, setLinearAssets] = useState([]);
   const [pointAssets, setPointAssets] = useState([]);
@@ -90,7 +92,7 @@ const TelicentMap = () => {
       event.originalEvent.stopPropagation();
 
       const multiSelect = event.originalEvent.shiftKey;
-      const element = findAsset([...assets, ...dependencies], properties.uri);
+      const element = findElement([...assets, ...dependencies], properties.uri);
 
       onElementClick(multiSelect, element);
       moveTo({ multiSelect, cachedElements: selectedElements, selectedElement: element });
@@ -118,6 +120,10 @@ const TelicentMap = () => {
     map.getMap().setPaintProperty(heatmap.id, "heatmap-radius", radius);
     setHeatmapRadius(radius);
   };
+
+  const togglePointerCoords = () => {
+    setShowPointerCoords((prev) => !prev)
+  }
 
   return (
     <div className="relative w-full">
@@ -166,14 +172,14 @@ const TelicentMap = () => {
           }}
         />
         <HoverInfo info={hoverInfo?.feature.properties} left={hoverInfo?.x} top={hoverInfo?.y} />
-        <MapConfig
-          assets={assets}
-          dependencies={dependencies}
+        <PointerCoordinates show={showPointerCoords} lat={mousePosition?.lat} lng={mousePosition?.lng} />
+        <MapToolbar
           heatmapRadius={heatmapRadius}
           map={map}
           mapStyle={mapStyle}
-          mousePosition={mousePosition}
           setMapStyle={setMapStyle}
+          showPointerCoords={showPointerCoords}
+          onPointerCoordsClick={togglePointerCoords}
         />
       </Map>
     </div>

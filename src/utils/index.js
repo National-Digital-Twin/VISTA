@@ -9,7 +9,7 @@ import { prefixLookup } from "../config/uri-prefix";
  */
 export const IsEmpty = (input) => !input || input.length === 0 || Object.keys(input).length === 0;
 
-export const findAsset = (assets, uri) => assets?.find((asset) => asset.uri === uri);
+export const findElement = (assets, uri) => assets?.find((asset) => asset.uri === uri);
 
 export const getHexColor = (colorScale, value) => {
   if (isEmpty(colorScale)) return undefined;

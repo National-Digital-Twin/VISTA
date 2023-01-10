@@ -56,10 +56,10 @@ export const ElementsProvider = ({ children }) => {
     dispatch({ type: SELECT_ELEMENT, selectedElement });
   }, []);
 
-  const onAreaSelect = (selectedElements) => {
+  const onAreaSelect = useCallback((selectedElements) => {
     if (!Array.isArray(selectedElements)) return;
     dispatch({ type: AREA_SELECTION, selectedElements });
-  };
+  }, []);
 
   const updateErrors = useCallback((msg) => {
     dispatch({ type: UPDATE_ERRORS, error: msg });

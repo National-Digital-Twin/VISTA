@@ -33,16 +33,14 @@ const NetworkGraph = () => {
 
   useEffect(() => {
     if (!cyRef.current) return;
-    cyRef.current.nodes().forEach((element) => {
+    cyRef.current.elements().forEach((element) => {
       const selected = selectedElements.some((selectedElement) => {
         const data = element.data("element");
-        return selectedElement.id === data.id;
+        return selectedElement.uri === data.uri;
       });
-      if (selected) {
-        element.addClass("highlight-selected");
-        return;
-      }
-      element.removeClass("highlight-selected");
+
+      if (selected) element.addClass("highlight-selected");
+      else element.removeClass("highlight-selected");
     });
   }, [cyRef, selectedElements]);
 
@@ -55,8 +53,8 @@ const NetworkGraph = () => {
       const selected = cyRef.current
         .elements(":selected")
         .map((element) => element.data("element"));
-      return selected
-    }
+      return selected;
+    };
 
     const selectNode = (event) => {
       const { originalEvent, target } = event;

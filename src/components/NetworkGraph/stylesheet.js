@@ -97,14 +97,14 @@ const cyStylesheet = [
     },
   },
   {
-    selector: ".highlight-selected",
+    selector: "node.highlight-selected",
     style: {
       borderWidth: "4px",
       borderColor: colors.whiteSmoke,
     },
   },
   {
-    selector: "edge:selected",
+    selector: "edge.highlight-selected",
     style: {
       width: 3,
       lineOpacity: 1,

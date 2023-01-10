@@ -4,7 +4,7 @@ import classNames from "classnames";
 
 import config from "config/app-config";
 import { ElementsContext } from "context";
-import { findAsset, getShortType, isAsset } from "utils";
+import { findElement, getShortType, isAsset } from "utils";
 import { useJSFetch, useLocalStorage } from "hooks";
 
 const ElementDetails = ({ element, expand, onViewDetails }) => {
@@ -217,7 +217,7 @@ const ConnectedAssetListItems = ({ connectedAssets }) => {
   if (isEmpty(connectedAssets)) return <p>No assets found</p>;
 
   return connectedAssets.map((asset) => {
-    const existingAsset = findAsset(assets, asset.uri);
+    const existingAsset = findElement(assets, asset.uri);
     return (
       <li key={asset.uri} className="gap-x-2 bg-black-300 rounded-md p-2 items-center">
         <div className="flex items-center  gap-x-2">

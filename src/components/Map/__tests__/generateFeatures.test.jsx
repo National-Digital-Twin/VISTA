@@ -2,7 +2,7 @@ import { screen } from "@testing-library/react";
 import React from "react";
 
 import TelicentMap from "../TelicentMap";
-import * as mapboxFeatures from "../mapboxFeatures";
+import * as mapboxFeatures from "../map-utils";
 import { AssetBtn, CxnBtn, renderTestComponent, selectDatasets } from "../../../test-utils";
 
 const TestBtns = ({ assets, connections, onElementClick }) => {
