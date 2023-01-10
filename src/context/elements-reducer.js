@@ -33,7 +33,8 @@ export const INITIAL_STATE = {
 const getAllCounts = (assets) => assets.map((asset) => asset.dependent.count);
 const getAllCriticalitySums = (assets) => assets.map((asset) => asset.dependent.criticalitySum);
 
-export const getSelected = ({ cachedElements, selectedElement }) => {
+// get active elements
+export const getSelectedElements = ({ cachedElements, selectedElement }) => {
   const index = cachedElements.findIndex(
     (cachedElement) => cachedElement.id === selectedElement.id
   );
@@ -81,7 +82,7 @@ const elementsReducer = (state, action) => {
     case MULTI_SELECT_ELEMENTS: {
       return {
         ...state,
-        selectedElements: getSelected({
+        selectedElements: getSelectedElements({
           cachedElements: state.selectedElements,
           selectedElement: action.selectedElement,
         }),

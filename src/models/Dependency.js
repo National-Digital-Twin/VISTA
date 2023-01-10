@@ -1,3 +1,4 @@
+import { isEmpty } from "lodash";
 import { findAsset, getColorScale, getHexColor, getURIFragment } from "utils";
 
 export default class Dependency {
@@ -12,6 +13,7 @@ export default class Dependency {
     this.provider = provider;
     this.osmID = osmID;
     this.elementType = "dependency";
+    this.isDependency = true;
     Object.preventExtensions(this);
   }
 
@@ -29,11 +31,30 @@ export default class Dependency {
     };
   }
 
-  createLineFeature(assets, selectedElements) {
-    const source = findAsset(assets, this.dependent.uri)
-    const target = findAsset(assets, this.provider.uri)
+  #lookupConnectedAssets(assets) {
+    const source = findAsset(assets, this.dependent.uri);
+    const target = findAsset(assets, this.provider.uri);
+    return { source, target }
+  }
 
-    if (!source?.lat || !source?.lng || !target?.lat || !target?.lng) return {};
+  #hasLatLng(source, target) {
+    if (source?.lat && source?.lng && target?.lat && target?.lng) return true;
+    return false;
+  }
+
+  generateCoordinates(assets) {
+    const { source, target } = this.#lookupConnectedAssets(assets);
+    if (!this.#hasLatLng(source, target)) return [];
+    return [
+      [source.lng, source.lat],
+      [target.lng, target.lat],
+    ];
+  }
+
+  createLineFeature(assets, selectedElements) {
+    const coordinates = this.generateCoordinates(assets);
+
+    if (isEmpty(coordinates)) return {};
 
     const selected = selectedElements.some((selectedElement) => selectedElement.uri === this.uri);
     return {
@@ -47,10 +68,7 @@ export default class Dependency {
       },
       geometry: {
         type: "LineString",
-        coordinates: [
-          [source.lng, source.lat],
-          [target.lng, target.lat],
-        ],
+        coordinates,
       },
     };
   }

@@ -96,7 +96,7 @@ const MapToolbar = ({
   ]
 
   return (
-    <div className="absolute bottom-0 left-0 text-whiteSmoke font-body bg-black-200 flex items-center justify-center gap-x-2 px-2 py-1">
+    <div className="absolute bottom-0 left-0 text-whiteSmoke font-body bg-black-200 bg-opacity-80 flex items-center justify-center gap-x-2 px-2 py-1">
       <a
         className="mapboxgl-ctrl-logo"
         target="_blank"

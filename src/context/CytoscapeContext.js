@@ -2,7 +2,7 @@ import { isEmpty } from "lodash";
 import React, { createContext, useCallback, useRef } from "react";
 
 import { useLocalStorage } from "hooks";
-import { getSelected } from "./elements-reducer";
+import { getSelectedElements } from "./elements-reducer";
 
 export const CytoscapeContext = createContext();
 
@@ -22,7 +22,7 @@ export const CytoscapeProvider = ({ children }) => {
     let selected = [selectedElement];
 
     if (multiSelect) {
-      selected = getSelected({ cachedElements, selectedElement });
+      selected = getSelectedElements({ cachedElements, selectedElement });
     }
 
     if (areaSelect) {

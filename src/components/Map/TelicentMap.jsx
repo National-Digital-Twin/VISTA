@@ -48,8 +48,8 @@ const TelicentMap = () => {
         features: pointAssetDependencies,
         layers: [pointAssetCxnLayer],
       },
-      { id: "point-assets", features: pointAssets, layers: [pointAssetLayer] },
       { id: "linear-assets", features: linearAssets, layers: [linearAssetsLayer] },
+      { id: "point-assets", features: pointAssets, layers: [pointAssetLayer] },
     ],
     [linearAssets, pointAssets, pointAssetDependencies]
   );
@@ -91,7 +91,7 @@ const TelicentMap = () => {
 
       const multiSelect = event.originalEvent.shiftKey;
       const element = findAsset([...assets, ...dependencies], properties.uri);
-      
+
       onElementClick(multiSelect, element);
       moveTo({ multiSelect, cachedElements: selectedElements, selectedElement: element });
       return;

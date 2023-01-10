@@ -5,10 +5,10 @@ import { useMap } from "react-map-gl";
 import CytoscapeComponent from "react-cytoscapejs";
 import dagre from "cytoscape-dagre";
 import React, { useCallback, useContext, useEffect, useMemo } from "react";
-import { center as turfCenter, points } from "@turf/turf";
 
+import { fitMultiToBounds, fitToBounds } from "components/Map/map-utils";
 import { CytoscapeContext, ElementsContext } from "context";
-import { getSelected } from "context/elements-reducer";
+import { getSelectedElements } from "context/elements-reducer";
 
 import { createEdges, createNode } from "./cytoscapeUtils";
 import cyStylesheet from "./stylesheet";
@@ -35,7 +35,7 @@ const NetworkGraph = () => {
     if (!cyRef.current) return;
     cyRef.current.nodes().forEach((element) => {
       const selected = selectedElements.some((selectedElement) => {
-        const data = element.data("element")
+        const data = element.data("element");
         return selectedElement.id === data.id;
       });
       if (selected) {
@@ -49,24 +49,29 @@ const NetworkGraph = () => {
   useEffect(() => {
     if (!cyRef.current && map) return;
 
+    const getSelectedCyElements = () => {
+      if (!cyRef.current) return;
+
+      const selected = cyRef.current
+        .elements(":selected")
+        .map((element) => element.data("element"));
+      return selected
+    }
+
     const selectNode = (event) => {
-      const data = event.target.data("element");
-      const multiSelect = event.originalEvent.shiftKey;
+      const { originalEvent, target } = event;
+      const selectedElement = target.data("element");
+      const multiSelect = originalEvent.shiftKey;
+      const previouslySelected = getSelectedCyElements();
+      const selectedElements = getSelectedElements({
+        cachedElements: previouslySelected,
+        selectedElement,
+      });
 
-      if (multiSelect) {
-        const previouslySelected = cyRef.current
-          .elements(":selected")
-          .map((element) => element.data("element"));
-        const lngLats = getSelected({ cachedElements: previouslySelected, selectedElement: data })
-          .filter((element) => element.lng && element.lat)
-          .map((element) => [element.lng, element.lat]);
-        const features = points(lngLats);
-        const center = turfCenter(features).geometry.coordinates;
+      if (multiSelect) fitMultiToBounds(map, selectedElements, assets);
+      else fitToBounds(map, selectedElement, assets);
 
-        map.jumpTo({ center, zoom: 10 });
-      } else map.jumpTo({ center: [data.lng, data.lat], zoom: 12 });
-
-      onElementClick(multiSelect, data);
+      onElementClick(multiSelect, selectedElement);
     };
 
     const onNodeTap = (event) => {
@@ -82,6 +87,9 @@ const NetworkGraph = () => {
     };
     const onBoxSelect = (event) => {
       const { target } = event;
+      const selectedElements = getSelectedCyElements();
+
+      fitMultiToBounds(map, selectedElements, assets);
       onElementClick(true, target.data("element"));
     };
 
@@ -96,7 +104,7 @@ const NetworkGraph = () => {
       cyRef.current.off("tap", "node", onNodeTap);
       cyRef.current.off("tap", onTap);
     };
-  }, [cyRef, map, clearSelectedElements, onElementClick]);
+  }, [assets, cyRef, map, clearSelectedElements, onElementClick]);
 
   const setCytoscape = useCallback(
     (cy) => {

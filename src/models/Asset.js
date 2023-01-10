@@ -1,3 +1,4 @@
+import { isEmpty } from "lodash";
 import { getColorScale, getHexColor } from "utils";
 
 export default class Asset {
@@ -47,6 +48,14 @@ export default class Asset {
     return getHexColor(this.#criticalitySumColorScale, this.dependent.criticalitySum);
   }
 
+  get isPointAsset() {
+    return !this.hasGeometry();
+  }
+
+  get isLinearAsset() {
+    return this.hasGeometry();
+  }
+
   toCytoscapeNode() {
     return {
       data: {
@@ -59,12 +68,20 @@ export default class Asset {
   }
 
   #isSelected(selectedElements) {
-    return selectedElements.some((selectedElement) => selectedElement.uri === this.uri)
+    return selectedElements.some((selectedElement) => selectedElement.uri === this.uri);
+  }
+
+  hasLatLng() {
+    return Boolean(this.lat && this.lng);
+  }
+
+  hasGeometry() {
+    return !isEmpty(this.geometry);
   }
 
   createPointAsset(selectedElements) {
     if (!this.lat && !this.lng) return {};
-    
+
     const selected = this.#isSelected(selectedElements);
     return {
       type: "Feature",
@@ -82,7 +99,7 @@ export default class Asset {
     };
   }
 
-  #createSegmentCoords() {
+  createSegmentCoords() {
     const lats = this.geometry.map((segment) => parseFloat(segment.lat1));
     const lngs = this.geometry.map((segment) => parseFloat(segment.lon1));
     return lngs.map((lng, index) => [lng, lats[index]]);
@@ -100,7 +117,7 @@ export default class Asset {
       },
       geometry: {
         type: "LineString",
-        coordinates: this.#createSegmentCoords(),
+        coordinates: this.createSegmentCoords(),
       },
     };
   }
