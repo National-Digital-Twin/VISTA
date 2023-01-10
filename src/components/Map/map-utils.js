@@ -3,19 +3,25 @@ import { isEmpty } from "lodash";
 import * as MapboxDrawGeodesic from "mapbox-gl-draw-geodesic";
 
 export const generateFeatures = (assets, dependencies, selectedElements) => {
+  const filterEmptyElements = (element) => !isEmpty(element);
+
   const pointAssets = assets
     .filter((asset) => asset.lat && asset.lng)
     .map((asset) => {
       return asset.createPointAsset(selectedElements);
-    });
+    })
+    .filter(filterEmptyElements);
 
-  const pointAssetDependencies = dependencies.map((dependency) => {
-    return dependency.createLineFeature(assets, selectedElements);
-  });
+  const pointAssetDependencies = dependencies
+    .map((dependency) => {
+      return dependency.createLineFeature(assets, selectedElements);
+    })
+    .filter(filterEmptyElements);
 
   const linearAssets = assets
     .filter((asset) => !isEmpty(asset.geometry))
-    .map((asset) => asset.createLinearAsset(selectedElements));
+    .map((asset) => asset.createLinearAsset(selectedElements))
+    .filter(filterEmptyElements);
 
   return { pointAssets, pointAssetDependencies, linearAssets };
 };
@@ -27,8 +33,8 @@ const getPolygon = (feature) => {
     feature.properties = {
       ...feature.properties,
       center,
-      radius
-    }
+      radius,
+    };
 
     const circle = turf.circle(center, radius, {
       steps: 50,
@@ -42,6 +48,9 @@ const getPolygon = (feature) => {
 
 export const findPointsInPolygon = (polygonFeatures, points) => {
   const pointsInPolygon = [];
+
+  if (isEmpty(polygonFeatures) || isEmpty(points)) return pointsInPolygon;
+
   for (let polygon of polygonFeatures) {
     polygon = getPolygon(polygon);
     for (const point of points) {
@@ -54,6 +63,8 @@ export const findPointsInPolygon = (polygonFeatures, points) => {
 
 export const findLinesIntersectingPolygon = (polygonFeatures, lineStringFeatures) => {
   const intersectingLineStrings = [];
+
+  if (isEmpty(polygonFeatures) || isEmpty(lineStringFeatures)) return intersectingLineStrings;
 
   for (let polygon of polygonFeatures) {
     polygon = getPolygon(polygon);
