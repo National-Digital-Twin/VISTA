@@ -46,14 +46,24 @@ jobs:
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
-
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@master
+        with:
+          platforms: all
+      - name: Setup Docker buildx
+        id: buildx
+        uses: docker/setup-buildx-action@master
       - name: Build, tag, and push image to Amazon ECR
+        uses: docker/build-push-action@v2
+        with:
+          builder: ${{ steps.buildx.outputs.name }}
+          context: .
+          file: ${{ inputs.DOCKERFILE }}
+          platforms: linux/amd64,linux/arm64,linux/ppc64le
+          push: true
+          tags: ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }},${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:latest,${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ inputs.VERSION }}${{ inputs.VERSION_SUFFIX }}
+          build-args: |
+            NPM_TOKEN=${{ secrets.NPM_TOKEN }}
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: telicent-${{ inputs.APP_NAME }}${{ inputs.ECR_SUFFIX }}
-          IMAGE_TAG: ${{ github.sha }}
-        run: |
-          cd ${{ inputs.PATH }}
-          echo 'version ===> ${{ inputs.VERSION }}${{ inputs.VERSION_SUFFIX }}'
-          docker build -t ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }} -t ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:latest${{ inputs.VERSION_SUFFIX }}  -t ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ inputs.VERSION }}${{ inputs.VERSION_SUFFIX }} --build-arg NPM_TOKEN=${{ secrets.NPM_TOKEN }} -f ${{ inputs.DOCKERFILE }} .
-          docker image push --all-tags ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}
