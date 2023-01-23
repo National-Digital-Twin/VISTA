@@ -61,14 +61,14 @@ const SelectedElements = ({ selectedElements, onTogglePanel }) => {
     ),
   };
 
-  const renderSelectedElements = () => {
+  const renderView = () => {
     const component = VIEWS[view]
     return component();
   }
 
   return <>
     <SelectedElementsHeader onToggle={onTogglePanel} {...header} />
-    {renderSelectedElements()}
+    {renderView()}
   </>
 };
 

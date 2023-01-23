@@ -5,7 +5,12 @@ const useJSFetch = () => {
   const get = useCallback(async (url, options) => {
     setError(undefined);
     try {
-      const response = await fetch(url, options);
+      const response = await fetch(url, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        ...options,
+      });
 
       const data = await response.json();
       if (response.ok && response.status < 400) return data;

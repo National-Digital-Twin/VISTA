@@ -8,7 +8,6 @@ import { FloatingPanel, VerticalDivider } from "lib";
 import Assessments from "./Assessments";
 
 const Dataset = ({ showGrid, toggleView }) => {
-  const [selectedTypes, setSelectedTypes] = useState([]);
   const [showPanel, setShowPanel] = useState(true);
 
   const togglePanel = () => {
@@ -17,34 +16,35 @@ const Dataset = ({ showGrid, toggleView }) => {
 
   return (
     <FloatingPanel
-      collapsedComponent={<DBButton onToggle={togglePanel} />}
-      show={showPanel}
       position="top-0"
       className="flex flex-col gap-y-2 p-2"
-      style={{ maxWidth: "13rem",  maxHeight: "calc(100% - 50px)" }}
+      style={{ maxWidth: "13rem", maxHeight: "calc(100% - 50px)" }}
     >
-      <div className="inline-flex gap-x-2 border-b border-black-500 pb-1">
-        <DBButton active onToggle={togglePanel} />
-        <VerticalDivider height="h-5" />
-        <h2 className="font-medium">Dataset</h2>
-        <label className="flex items-center gap-x-1 text-xs w-fit ml-auto">
-          Grid
-          <ReactSwitch
-            onChange={toggleView}
-            checked={showGrid}
-            offColor="#636363"
-            onColor="#f5f5f5"
-            onHandleColor="#141414"
-            handleDiameter={10}
-            height={16}
-            width={32}
-            uncheckedIcon={false}
-            checkedIcon={false}
-            disabled
-          />
-        </label>
+      <DBButton ariaHidden onToggle={togglePanel} className={classNames({ hidden: showPanel, block: !showPanel })} />
+      <div className={classNames({ hidden: !showPanel, block: showPanel })}>
+        <div className="inline-flex gap-x-2 border-b border-black-500 pb-1 w-full">
+          <DBButton active onToggle={togglePanel} />
+          <VerticalDivider height="h-5" />
+          <h2 className="font-medium">Dataset</h2>
+          <label className="flex items-center gap-x-1 text-xs w-fit ml-auto">
+            Grid
+            <ReactSwitch
+              onChange={toggleView}
+              checked={showGrid}
+              offColor="#636363"
+              onColor="#f5f5f5"
+              onHandleColor="#141414"
+              handleDiameter={10}
+              height={16}
+              width={32}
+              uncheckedIcon={false}
+              checkedIcon={false}
+              disabled
+            />
+          </label>
+        </div>
+        <Assessments />
       </div>
-      <Assessments selectedTypes={selectedTypes} setSelectedTypes={setSelectedTypes} />
     </FloatingPanel>
   );
 };
@@ -58,10 +58,10 @@ Dataset.propTypes = {
   toggleView: PropTypes.func,
 };
 
-const DBButton = ({ active, onToggle }) => {
+const DBButton = ({ active, onToggle, ariaHidden, className: wrapperClassName }) => {
   const tooltip = `${active ? "Close" : "Open"} dataset panel`;
   return (
-    <div className="relative">
+    <div aria-hidden={ariaHidden} className={classNames("relative", { [wrapperClassName]: wrapperClassName })}>
       <button
         aria-labelledby={kebabCase(tooltip)}
         className="flex items-center justify-center"

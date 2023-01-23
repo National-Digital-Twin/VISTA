@@ -2,11 +2,11 @@ import { kebabCase } from "lodash";
 import classNames from "classnames";
 import React from "react";
 
-const InfoBtn = ({ active, count, onToggle }) => {
+const InfoBtn = ({ active, count, onToggle, ariaHidden, className: wrapperClassName }) => {
   const label = `${active ? "Close" : "Open"} information panel`;
 
   return (
-    <div className="relative">
+    <div aria-hidden={ariaHidden} className={classNames("relative", { [wrapperClassName]: wrapperClassName })}>
       <button aria-labelledby={kebabCase(label)} onClick={onToggle} className="flex items-center justify-center">
         <i
           className={classNames("ri-information-line !text-xl", {

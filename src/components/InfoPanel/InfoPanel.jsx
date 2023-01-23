@@ -1,4 +1,5 @@
 import React, { useContext } from "react";
+import classNames from "classnames";
 
 import { ElementsContext } from "context";
 import { useLocalStorage } from "hooks";
@@ -18,16 +19,23 @@ const InfoPanel = () => {
   return (
     <FloatingPanel
       id="information-panel"
-      position="top-0 right-0 max-h-full flex flex-col"
-      show={showPanel}
-      collapsedComponent={<InfoBtn count={selectedElements.length} onToggle={handleTogglePanel} />}
+      position="top-0 right-0"
+      className="flex flex-col max-h-full"
       style={{
         width: showPanel ? "26rem" : "fit-content",
         maxWidth: "26rem",
         maxHeight: "calc(100% - 50px)",
       }}
     >
-      <SelectedElements selectedElements={selectedElements} onTogglePanel={handleTogglePanel} />
+      <InfoBtn
+        count={selectedElements.length}
+        onToggle={handleTogglePanel}
+        className={classNames({ hidden: showPanel, block: !showPanel })}
+        ariaHidden={showPanel}
+      />
+      <div className={classNames({ hidden: !showPanel, block: showPanel })} aria-hidden={showPanel}>
+        <SelectedElements selectedElements={selectedElements} onTogglePanel={handleTogglePanel} />
+      </div>
     </FloatingPanel>
   );
 };

@@ -6,7 +6,7 @@ import PropTypes from "prop-types";
 import { ASSESSMENTS_ENDPOINT } from "constants/endpoints";
 import AssessmentTypes from "./AssessmentTypes";
 
-const Assessments = ({ selectedTypes, setSelectedTypes }) => {
+const Assessments = () => {
   const { data, error, loading } = useFetch(ASSESSMENTS_ENDPOINT, {}, []);
 
   if (loading) return <p>Fetching assessments</p>;
@@ -19,13 +19,7 @@ const Assessments = ({ selectedTypes, setSelectedTypes }) => {
     );
   if (isEmpty(data)) return <p>Assessments not found</p>;
 
-  return (
-    <AssessmentTypes
-      assessment={data[0].uri}
-      selectedTypes={selectedTypes}
-      setSelectedTypes={setSelectedTypes}
-    />
-  );
+  return <AssessmentTypes assessment={data[0].uri} />;
 };
 
 export default Assessments;

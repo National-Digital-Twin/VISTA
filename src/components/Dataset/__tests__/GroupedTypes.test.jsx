@@ -32,6 +32,7 @@ const renderGroupedTypes = ({ types, selectedTypes }) => {
     <>
       <ErrorNotification />
       <GroupedTypes
+        expand
         assessment={ASSESSMENTS[0].uri}
         types={types}
         selectedTypes={selectedTypes}

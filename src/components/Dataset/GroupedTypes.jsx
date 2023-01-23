@@ -1,18 +1,26 @@
 import { isEmpty, lowerCase } from "lodash";
 import { useFetch } from "use-http";
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useMemo } from "react";
 
 import { ElementsContext } from "context";
 import { ASSESSMENTS_ENDPOINT, ASSET_PARTS_ENDPOINT } from "constants/endpoints";
 import { getURIFragment } from "utils";
 
 import { createAssets, createDependencies } from "./dataset-utils";
-import classNames from "classnames";
 
 const GroupedTypes = ({ expand, assessment, types, selectedTypes, setSelectedTypes, setIsGeneratingData }) => {
   const { get, error, response } = useFetch();
   const { filterSelectedElements, reset, updateAssets, updateDependencies, updateErrors } =
     useContext(ElementsContext);
+
+  const sortedTypes = useMemo(() => {
+    const alphabeticallySortedTypes = types.sort((a, b) => {
+      const aUri = lowerCase(getURIFragment(a?.uri));
+      const bUri = lowerCase(getURIFragment(b?.uri));
+      return aUri.localeCompare(bUri);
+    });
+    return alphabeticallySortedTypes;
+  }, [types]);
 
   useEffect(() => {
     if (error) updateErrors("Could not add data. Reason: Failed to resolve the data");
@@ -80,12 +88,6 @@ const GroupedTypes = ({ expand, assessment, types, selectedTypes, setSelectedTyp
     });
   };
 
-  const sortedTypes = types.sort((a, b) => {
-    const aUri = lowerCase(getURIFragment(a?.uri));
-    const bUri = lowerCase(getURIFragment(b?.uri));
-    return aUri.localeCompare(bUri);
-  });
-
   const renderType = (type) => {
     if (!type?.uri || !type.assetCount) return null;
     const { uri, assetCount } = type;
@@ -106,8 +108,10 @@ const GroupedTypes = ({ expand, assessment, types, selectedTypes, setSelectedTyp
     );
   };
 
+  if (!expand) return null;
+
   return (
-    <ul className={classNames("flex flex-col gap-y-2", { hidden: !expand })}>
+    <ul className="flex flex-col gap-y-2">
       {sortedTypes.map(renderType)}
     </ul>
   );

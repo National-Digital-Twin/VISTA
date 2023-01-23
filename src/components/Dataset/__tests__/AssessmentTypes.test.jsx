@@ -5,6 +5,7 @@ import userEvent from "@testing-library/user-event";
 import server, { ASSESSMENTS } from "mocks";
 import { ASSESSMENTS_ASSET_TYPES_ENDPOINT, ONTOLOGY_CLASS_ENDPOINT } from "constants/endpoints";
 import { mockEmptyResponse, mockError } from "mocks/resolvers";
+import { apiUrl } from "mocks/handlers";
 import { PanelProviders } from "test-utils";
 
 import AssessmentTypes from "../AssessmentTypes";
@@ -88,7 +89,7 @@ describe("AssessmentTypes component", () => {
   });
 
   test("renders message when asset types are not found", async () => {
-    server.use(rest.get(ASSESSMENTS_ASSET_TYPES_ENDPOINT, mockEmptyResponse));
+    server.use(rest.get(apiUrl(ASSESSMENTS_ASSET_TYPES_ENDPOINT), mockEmptyResponse));
     renderAssessmentTypes();
     await waitForDataToLoad();
 
@@ -96,7 +97,7 @@ describe("AssessmentTypes component", () => {
   });
 
   test("renders error message when /assessments/asset-types api call fails", async () => {
-    server.use(rest.get(ASSESSMENTS_ASSET_TYPES_ENDPOINT, mockError));
+    server.use(rest.get(apiUrl(ASSESSMENTS_ASSET_TYPES_ENDPOINT), mockError));
     renderAssessmentTypes();
     await waitForDataToLoad();
 
@@ -108,7 +109,7 @@ describe("AssessmentTypes component", () => {
   });
 
   test("renders error message when /ontology/class api call fails", async () => {
-    server.use(rest.get(ONTOLOGY_CLASS_ENDPOINT, mockError));
+    server.use(rest.get(apiUrl(ONTOLOGY_CLASS_ENDPOINT), mockError));
     renderAssessmentTypes();
     await waitForDataToLoad();
 

@@ -23,7 +23,7 @@ export const getShortType = (type) => {
     if (URLFragments.length === 2) {
       const prefix = prefixLookup[URLFragments[0]];
       const name = lowerCase(URLFragments[1]);
-      return name;
+      return prefix + name;
     }
     return type;
   }

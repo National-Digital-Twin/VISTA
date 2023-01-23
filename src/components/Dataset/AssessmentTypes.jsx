@@ -1,49 +1,62 @@
 import { capitalize, isEmpty, lowerCase } from "lodash";
 import classNames from "classnames";
-import React, { useEffect, useState } from "react";
-import useFetch from "use-http";
+import React, { useEffect, useMemo, useState } from "react";
 import PropTypes from "prop-types";
 
+import config from "config/app-config";
 import { ASSESSMENTS_ASSET_TYPES_ENDPOINT, ONTOLOGY_CLASS_ENDPOINT } from "constants/endpoints";
+import { useJSFetch } from "hooks";
 import { Modal } from "lib";
 import { getURIFragment } from "utils";
 
 import GroupedTypes from "./GroupedTypes";
 
-const AssessmentTypes = ({ assessment, selectedTypes, setSelectedTypes }) => {
-  const { abort, get, error, response } = useFetch();
+const AssessmentTypes = ({ assessment }) => {
+  const { error, get } = useJSFetch();
 
+  
   const [isGeneratingData, setIsGeneratingData] = useState(false);
   const [loading, setLoading] = useState(false);
   const [types, setTypes] = useState([]);
   const [selectedGroups, setSelectedGroups] = useState([]);
+  const [selectedTypes, setSelectedTypes] = useState([]);
+  
+  const superClassGroups = useMemo(() => [...new Set(types.map((type) => type.superClass))], [types]);
 
   useEffect(() => {
     if (!assessment) return;
+    const controller = new AbortController();
+    const signal = controller.signal;
 
     const getTypes = async () => {
       const types = await get(
-        `${ASSESSMENTS_ASSET_TYPES_ENDPOINT}?${new URLSearchParams({ assessment }).toString()}`
+        `${config.api.url}/${ASSESSMENTS_ASSET_TYPES_ENDPOINT}?${new URLSearchParams({
+          assessment,
+        }).toString()}`,
+        { signal }
       );
-      return response.ok ? types : [];
+      return types || [];
     };
 
     const generateOntologyGroups = async () => {
       setLoading(true);
       const types = await getTypes();
+      if (signal.aborted) return;
 
       const typesWithSuperClasses = await Promise.all(
         types.map(async (type) => {
           const { uri } = type;
           const classUri = { classUri: uri };
           const superClasses = await get(
-            `${ONTOLOGY_CLASS_ENDPOINT}?${new URLSearchParams(classUri).toString()}`
+            `${config.api.url}/${ONTOLOGY_CLASS_ENDPOINT}?${new URLSearchParams(
+              classUri
+            ).toString()}`
           );
 
-          if (response.ok) {
-            const superClass = superClasses[uri]?.superClass[0] ?? "other";
-            return { ...type, superClass };
-          }
+          let superClass = "other"
+          if (superClasses) superClass = superClasses[uri]?.superClass[0] ?? "other"
+
+          return { ...type, superClass };
         })
       );
 
@@ -54,10 +67,9 @@ const AssessmentTypes = ({ assessment, selectedTypes, setSelectedTypes }) => {
     generateOntologyGroups();
 
     return () => {
-      abort();
-      setTypes([]);
+      controller.abort();
     };
-  }, [assessment, response, abort, get]);
+  }, [assessment, get]);
 
   if (loading) return <p>Fetching data types</p>;
   if (error)
@@ -68,8 +80,6 @@ const AssessmentTypes = ({ assessment, selectedTypes, setSelectedTypes }) => {
       </p>
     );
   if (isEmpty(types)) return <p>Dataset types not found</p>;
-
-  const superClassGroups = [...new Set(types.map((type) => type.superClass))];
 
   const updateSelectedGroup = (selectedGroup) => {
     const index = selectedGroups.findIndex((ontologyGroup) => ontologyGroup === selectedGroup);
@@ -142,7 +152,6 @@ const AssessmentGroup = ({ expand, title, onToggle, className: wrapperClassName,
       className={classNames("w-full text-left border-b border-whiteSmoke-700", {
         "cursor-default": !onToggle,
       })}
-      type="button"
       onClick={onToggle}
     >
       {title}
