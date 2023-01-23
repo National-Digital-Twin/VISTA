@@ -54,7 +54,7 @@ jobs:
     needs:
       - integrated_tests
       - get_version
-    uses: ./.github/workflows/push-to-aws.yml
+    uses: Telicent-io/telicent-test/.github/workflows/push-to-aws.yml@main
     with:
       APP_NAME: paralog
       DOCKERFILE: Dockerfile.build
