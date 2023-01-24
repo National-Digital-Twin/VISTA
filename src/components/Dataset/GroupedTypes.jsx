@@ -60,7 +60,6 @@ const GroupedTypes = ({ expand, assessment, types, setIsGeneratingData }) => {
 
     if (!assessment) return;
     if (typeIsChecked) {
-      
       const getData = async () => {
         setIsGeneratingData(true);
         const params = new URLSearchParams([
@@ -80,10 +79,10 @@ const GroupedTypes = ({ expand, assessment, types, setIsGeneratingData }) => {
         const createdDependencies = createDependencies(dependencies);
         addElements(createdAssets, createdDependencies);
         setIsGeneratingData(false);
-      })
+      });
       return;
     }
-    
+
     removeElementsByType(type);
     setIsGeneratingData(false);
   };
@@ -103,11 +102,7 @@ const GroupedTypes = ({ expand, assessment, types, setIsGeneratingData }) => {
 
   if (!expand) return null;
 
-  return (
-    <ul className="flex flex-col gap-y-2">
-      {sortedTypes.map(renderType)}
-    </ul>
-  );
+  return <ul className="flex flex-col gap-y-2">{sortedTypes.map(renderType)}</ul>;
 };
 
 export default GroupedTypes;

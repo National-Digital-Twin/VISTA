@@ -79,6 +79,7 @@ body {
     -webkit-box-orient: vertical;
   }
 }
+
 @layer components {
   .error-notification {
     @apply px-2 py-1 bg-error;
@@ -109,5 +110,9 @@ body {
   }
   .link:hover + .linkBorder {
     @apply opacity-100 w-full;
+  }
+
+  .marker-icon {
+    @apply text-whiteSmoke bg-black-100 bg-opacity-80 rounded-md p-0.5;
   }
 }

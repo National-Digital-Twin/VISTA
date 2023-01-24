@@ -144,7 +144,7 @@ AssessmentTypes.propTypes = {
 };
 
 const AssessmentGroup = ({ expand, title, onToggle, className: wrapperClassName, children }) => (
-  <div role="treeitem" aria-expanded={expand} className={classNames(wrapperClassName)}>
+  <div role="treeitem" aria-expanded={expand} aria-selected={expand} className={classNames(wrapperClassName)}>
     <button
       className={classNames("w-full text-left border-b border-whiteSmoke-700", {
         "cursor-default": !onToggle,

@@ -34,9 +34,9 @@ const MapToolbar = ({
   }, [map, handleLayerVisibility, isHeatVisible, heatmapRadius]);
 
   useEffect(() => {
-    map?.on("style.load", onStyleLoad);
+    map?.on("style.load", heatmap.id, onStyleLoad);
     return () => {
-      map?.off("style.load", onStyleLoad);
+      map?.off("style.load", heatmap.id, onStyleLoad);
     };
   }, [map, onStyleLoad]);
 

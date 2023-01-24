@@ -115,8 +115,10 @@ export default class Asset {
         uri: this.uri,
         id: this.id,
         criticality: this.dependent.criticalitySum,
-        circleColor: selected ? this.criticalityColor : "#333",
+        circleStrokeColor: selected ? "#F2F2F2" : "#C4C4C4",
         circleStrokeWidth: selected ? 2 : 1,
+        circleSize: 4,
+        ...this.getIconStyle(),
       },
       geometry: {
         type: "Point",

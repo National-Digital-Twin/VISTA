@@ -3,11 +3,10 @@ export const pointAssetLayer = {
   type: "circle",
   source: "point-assets",
   paint: {
-    "circle-radius": 4,
-    "circle-opacity": 0.8,
-    "circle-color": ["get", "circleColor"],
-    "circle-stroke-color": "#C4C4C4",
-    "circle-stroke-width": ["get", "circleStrokeWidth"]
+    "circle-radius": ["get", "circleSize"],
+    "circle-color": ["get", "backgroundColor"],
+    "circle-stroke-color": ["get", "circleStrokeColor"],
+    "circle-stroke-width": ["get", "circleStrokeWidth"],
   },
 };
 
@@ -22,7 +21,7 @@ export const pointAssetCxnLayer = {
   paint: {
     "line-width": 2,
     "line-color": ["get", "lineColor"],
-    "line-opacity": ["get", "lineOpacity"]
+    "line-opacity": ["get", "lineOpacity"],
   },
 };
 
@@ -44,6 +43,9 @@ export const heatmap = {
   id: "assets-heat",
   type: "heatmap",
   source: "assets",
+  layout: {
+    visibility: "none",
+  },
   paint: {
     "heatmap-color": [
       "interpolate",

@@ -1,5 +1,6 @@
+import classNames from "classnames";
 import React, { useContext, useEffect, useMemo, useState } from "react";
-import Map, { Layer, Source, ScaleControl, useMap, AttributionControl } from "react-map-gl";
+import Map, { Layer, Source, ScaleControl, useMap, AttributionControl, Marker } from "react-map-gl";
 import { isEmpty } from "lodash";
 
 import config from "config/app-config";
@@ -7,12 +8,15 @@ import { CytoscapeContext, ElementsContext } from "context";
 import { useLocalStorage } from "hooks";
 import { findElement } from "utils";
 
+import MapToolbar from "./MapToolbar/MapToolbar";
+import PointerCoordinates from "./PointerCoords";
+
 import { heatmap, linearAssetsLayer, pointAssetCxnLayer, pointAssetLayer } from "./layerStyles";
 import { generateFeatures } from "./map-utils";
 import { getMapStyles } from "./mapStyles";
+
+import "@fortawesome/fontawesome-pro/css/all.css";
 import "./mapbox.css";
-import MapToolbar from "./MapToolbar/MapToolbar";
-import PointerCoordinates from "./PointerCoords";
 
 const GEOJSON = "geojson";
 const FEATURE_COLLECTION = "FeatureCollection";
@@ -33,6 +37,7 @@ const TelicentMap = () => {
   const [cursor, setCursor] = useState("auto");
   const [hoverInfo, setHoverInfo] = useState(undefined);
   const [heatmapRadius, setHeatmapRadius] = useState(10);
+  const [iconSize, setIconSize] = useState(12);
   const [showPointerCoords, setShowPointerCoords] = useState(false);
 
   const [linearAssets, setLinearAssets] = useState([]);
@@ -116,14 +121,51 @@ const TelicentMap = () => {
 
   const handleOnZoom = (event) => {
     const { pixelsPerMeter } = event.target.transform;
-    const radius = HEAT_RADIUS * pixelsPerMeter;
+    const { zoom } = event.viewState;
+    let radius = HEAT_RADIUS * pixelsPerMeter;
+    if (radius < 1) radius = 1;
     map.getMap().setPaintProperty(heatmap.id, "heatmap-radius", radius);
     setHeatmapRadius(radius);
+
+    let iconSize = (4 + (zoom - 5) * 2).toFixed(0);
+    setIconSize(iconSize);
+    if (iconSize >= 16) setIconSize(14);
   };
 
   const togglePointerCoords = () => {
-    setShowPointerCoords((prev) => !prev)
-  }
+    setShowPointerCoords((prev) => !prev);
+  };
+
+  const generateSources = (source) => (
+    <Source
+      key={source.id}
+      id={source.id}
+      type={GEOJSON}
+      data={{ type: FEATURE_COLLECTION, features: source.features }}
+    >
+      {source.layers.map((layer) => (
+        <Layer key={layer.id} {...layer} />
+      ))}
+    </Source>
+  )
+
+  const generatePointAssetIcons = ({ geometry, properties }) => (
+    <Marker
+      key={properties.id}
+      longitude={geometry.coordinates[0]}
+      latitude={geometry.coordinates[1]}
+      anchor="bottom"
+      color="#c4c4c4"
+    >
+      {properties?.icon && (
+        <i
+          className={classNames(properties.icon, "marker-icon")}
+          style={{ fontSize: `${iconSize}px` }}
+        />
+      )}
+      {properties?.iconLabel && <p className="marker-icon">{properties.iconLabel}</p>}
+    </Marker>
+  );
 
   return (
     <div className="relative w-full">
@@ -145,18 +187,8 @@ const TelicentMap = () => {
         onZoom={handleOnZoom}
         styleDiffing
       >
-        {sources.map((source) => (
-          <Source
-            key={source.id}
-            id={source.id}
-            type={GEOJSON}
-            data={{ type: FEATURE_COLLECTION, features: source.features }}
-          >
-            {source.layers.map((layer) => (
-              <Layer key={layer.id} {...layer} />
-            ))}
-          </Source>
-        ))}
+        {sources.map(generateSources)}
+        {pointAssets.map(generatePointAssetIcons)}
         <AttributionControl compact />
         <ScaleControl
           position="bottom-right"
@@ -172,7 +204,11 @@ const TelicentMap = () => {
           }}
         />
         <HoverInfo info={hoverInfo?.feature.properties} left={hoverInfo?.x} top={hoverInfo?.y} />
-        <PointerCoordinates show={showPointerCoords} lat={mousePosition?.lat} lng={mousePosition?.lng} />
+        <PointerCoordinates
+          show={showPointerCoords}
+          lat={mousePosition?.lat}
+          lng={mousePosition?.lng}
+        />
         <MapToolbar
           heatmapRadius={heatmapRadius}
           map={map}
