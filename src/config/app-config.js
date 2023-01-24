@@ -14,6 +14,7 @@ const config = {
   },
   api: {
     url: env.API_URL,
+    ontology: env.ONTOLOGY_API_URL
   },
   beta: env.BETA === "true",
 };

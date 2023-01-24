@@ -1,15 +1,16 @@
 import React, { useCallback, useReducer } from "react";
 import elementsReducer, {
+  ADD_ASSETS,
+  ADD_DEPENDENCIES,
   AREA_SELECTION,
   CLEAR_SELECTED,
   DISMISS_ERROR,
   FILTER_SELECTED_ELEMENTS,
   INITIAL_STATE,
   MULTI_SELECT_ELEMENTS,
+  REMOVE_ELEMENTS_BY_TYPE,
   RESET,
   SELECT_ELEMENT,
-  UPDATE_ASSETS,
-  UPDATE_DEPENDENCIES,
   UPDATE_ERRORS,
 } from "./elements-reducer";
 
@@ -30,19 +31,22 @@ export const ElementsProvider = ({ children }) => {
     totalCxnsColorScale,
   } = state;
 
-  const updateAssets = useCallback((assets) => {
-    if (!Array.isArray(assets)) return;
-    dispatch({ type: UPDATE_ASSETS, assets });
+  const filterSelectedElements = useCallback(() => {
+    dispatch({ type: FILTER_SELECTED_ELEMENTS });
   }, []);
 
-  const updateDependencies = useCallback((dependencies) => {
-    if (!Array.isArray(dependencies)) return;
-    dispatch({ type: UPDATE_DEPENDENCIES, dependencies });
-  }, []);
+  const addElements = useCallback((assets, dependencies) => {
+    if (!Array.isArray(assets) || !Array.isArray(dependencies)) return;
+    dispatch({ type: ADD_ASSETS, assets });
+    dispatch({ type: ADD_DEPENDENCIES, dependencies });
+    filterSelectedElements();
+  }, [filterSelectedElements]);
 
-  const filterSelectedElements = useCallback((assets, dependencies) => {
-    dispatch({ type: FILTER_SELECTED_ELEMENTS, assets, dependencies });
-  }, []);
+  const removeElementsByType = useCallback((typeUri) => {
+    if (!typeUri) return;
+    dispatch({ type: REMOVE_ELEMENTS_BY_TYPE, typeUri });
+    filterSelectedElements();
+  }, [filterSelectedElements]);
 
   const reset = useCallback(() => {
     dispatch({ type: RESET });
@@ -85,14 +89,14 @@ export const ElementsProvider = ({ children }) => {
         assetCriticalityColorScale,
         cxnCriticalityColorScale,
         totalCxnsColorScale,
+        addElements,
         clearSelectedElements,
         dismissErrorNotification,
         filterSelectedElements,
         onAreaSelect,
         onElementClick,
         reset,
-        updateAssets,
-        updateDependencies,
+        removeElementsByType,
         updateErrors,
       }}
     >

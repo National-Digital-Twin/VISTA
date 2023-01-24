@@ -1,5 +1,6 @@
 import { screen, render, waitFor } from "@testing-library/react";
 import { rest } from "msw";
+import userEvent from "@testing-library/user-event";
 
 import {
   ASSESSMENTS_ASSETS_ENDPOINT,
@@ -13,6 +14,8 @@ import { PanelProviders } from "test-utils";
 import GroupedTypes from "../GroupedTypes";
 import * as datasetUtils from "../dataset-utils";
 
+const user = userEvent.setup();
+
 const waitForDataToLoad = async () => {
   const spyOnCreateAssets = jest.spyOn(datasetUtils, "createAssets");
   const spyOnCreateDependencies = jest.spyOn(datasetUtils, "createDependencies");
@@ -20,10 +23,16 @@ const waitForDataToLoad = async () => {
   await waitFor(() => {
     expect(spyOnCreateAssets).toHaveReturned();
     expect(spyOnCreateDependencies).toHaveReturned();
-  })
+  });
 };
 
-const renderGroupedTypes = ({ types, selectedTypes }) => {
+const selectTunnelDataset = async () => {
+  const tunnelCheckbox = screen.getByRole("checkbox", { name: "tunnel [2]" });
+  await user.click(tunnelCheckbox);
+  expect(tunnelCheckbox).toBeChecked();
+};
+
+const renderGroupedTypes = ({ types }) => {
   const modalRoot = document.createElement("div");
   modalRoot.setAttribute("id", "root");
   document.body.appendChild(modalRoot);
@@ -35,8 +44,6 @@ const renderGroupedTypes = ({ types, selectedTypes }) => {
         expand
         assessment={ASSESSMENTS[0].uri}
         types={types}
-        selectedTypes={selectedTypes}
-        setSelectedTypes={jest.fn()}
         setIsGeneratingData={jest.fn()}
       />
     </>,
@@ -56,11 +63,10 @@ describe("GroupedTypes component", () => {
           superClass: "other",
         },
       ],
-      selectedTypes: ["http://ies.data.gov.uk/ontology/ies4#Tunnel"],
     });
+    await selectTunnelDataset();
 
     await waitForDataToLoad();
-    expect(screen.getByRole("checkbox", { name: "tunnel [2]" })).toBeChecked();
     expect(
       screen.getByText("Could not add data. Reason: Failed to resolve the data")
     ).toBeInTheDocument();
@@ -77,18 +83,16 @@ describe("GroupedTypes component", () => {
           superClass: "other",
         },
       ],
-      selectedTypes: ["http://ies.data.gov.uk/ontology/ies4#Tunnel"],
     });
+    await selectTunnelDataset();
 
     await waitForDataToLoad();
-    expect(screen.getByRole("checkbox", { name: "tunnel [2]" })).toBeChecked();
     expect(
       screen.getByText("Could not add data. Reason: Failed to resolve the data")
     ).toBeInTheDocument();
   });
 
   test.skip("renders error message when assets/:id/parts api call fails", async () => {
- 
     server.use(rest.get("/assets/:id/parts", mockError));
     renderGroupedTypes({
       types: [

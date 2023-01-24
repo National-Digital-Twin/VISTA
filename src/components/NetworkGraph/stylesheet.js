@@ -1,11 +1,3 @@
-import Fuel from "./assets/gas-station-fill-green.svg";
-import Medical from "./assets/medical_services_green_24dp.svg";
-import Phone from "./assets/phone-fill-coral.svg";
-import Drop from "./assets/drop-fill-blue.svg";
-import Battery from "./assets/battery-charge-fill-teal.svg";
-import Car from "./assets/car-fill-aqua.svg";
-import User3 from "./assets/user-3.svg";
-
 const colors = {
   whiteSmoke: "#F5F5F5",
 };
@@ -18,7 +10,7 @@ const cyStylesheet = [
       height: "60px",
       borderWidth: "4px",
       borderColor: "gray",
-      backgroundColor: "black",
+      backgroundColor: "data(backgroundColor)",
       label: "data(label)",
       "text-halign": "center",
       "text-valign": "bottom",
@@ -52,48 +44,6 @@ const cyStylesheet = [
       fontSize: 12,
       textBackgroundOpacity: 0.7,
       minZoomedFontSize: 8,
-    },
-  },
-  {
-    selector: ".F",
-    style: {
-      backgroundImage: `url(${Fuel})`,
-    },
-  },
-  {
-    selector: ".M",
-    style: {
-      backgroundImage: `url(${Medical})`,
-    },
-  },
-  {
-    selector: ".C",
-    style: {
-      backgroundImage: `url(${Phone})`,
-    },
-  },
-  {
-    selector: ".W",
-    style: {
-      backgroundImage: `url(${Drop})`,
-    },
-  },
-  {
-    selector: ".T",
-    style: {
-      backgroundImage: `url(${Car})`,
-    },
-  },
-  {
-    selector: ".E",
-    style: {
-      backgroundImage: `url(${Battery})`,
-    },
-  },
-  {
-    selector: ".V",
-    style: {
-      backgroundImage: `url(${User3})`,
     },
   },
   {

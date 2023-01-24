@@ -4,15 +4,18 @@ import cytoscape from "cytoscape";
 import { useMap } from "react-map-gl";
 import CytoscapeComponent from "react-cytoscapejs";
 import dagre from "cytoscape-dagre";
+import nodeHtmlLabel from "cytoscape-node-html-label";
 import React, { useCallback, useContext, useEffect, useMemo } from "react";
 
 import { fitMultiToBounds, fitToBounds } from "components/Map/map-utils";
 import { CytoscapeContext, ElementsContext } from "context";
 import { getSelectedElements } from "context/elements-reducer";
 
-import { createEdges, createNode } from "./cytoscapeUtils";
+import { createEdges, createNode, nodeLabels } from "./cytoscapeUtils";
 import cyStylesheet from "./stylesheet";
 import GraphToolbar from "./GraphToolbar";
+
+import "@fortawesome/fontawesome-pro/css/all.css";
 
 const NetworkGraph = () => {
   const { telicentMap: map } = useMap();
@@ -21,11 +24,14 @@ const NetworkGraph = () => {
     useContext(ElementsContext);
 
   const nodes = useMemo(() => createNode(assets), [assets]);
-  const edges = useMemo(() => createEdges(dependencies), [dependencies]);
+  const edges = useMemo(() => createEdges(nodes, dependencies), [nodes, dependencies]);
 
   cytoscape.use(cola);
   cytoscape.use(dagre);
   cytoscape.use(avsdf);
+  if (typeof cytoscape("core", "nodeHtmlLabel") === "undefined") {
+    cytoscape.use(nodeHtmlLabel);
+  }
 
   useEffect(() => {
     runLayout();
@@ -108,6 +114,7 @@ const NetworkGraph = () => {
     (cy) => {
       if (cyRef.current === cy) return;
       cyRef.current = cy;
+      cyRef.current.nodeHtmlLabel(nodeLabels);
     },
     [cyRef]
   );

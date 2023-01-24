@@ -1,10 +1,10 @@
 import { isEmpty } from "lodash";
-import { getColorScale, getHexColor } from "utils";
+import { getColorScale, getHexColor, getShortType, getURIFragment } from "utils";
 
 export default class Asset {
   #countColorScale = {};
   #criticalitySumColorScale = {};
-  constructor({ uri, type, lat, lng, geometry, dependent }) {
+  constructor({ uri, type, lat, lng, geometry, dependent, styles }) {
     this.uri = uri;
     this.id = this.uri.split("#")[1];
     this.type = type;
@@ -12,6 +12,7 @@ export default class Asset {
     this.lng = lng;
     this.geometry = geometry;
     this.dependent = dependent;
+    this.styles = styles;
     this.elementType = "asset";
     Object.preventExtensions(this);
   }
@@ -56,14 +57,39 @@ export default class Asset {
     return this.hasGeometry();
   }
 
+  get shortType() {
+    return getShortType(this.type);
+  }
+
+  get primaryType() {
+    return getURIFragment(this.type);
+  }
+
+  getIconStyle() {
+    if (isEmpty(this.styles)) {
+      return {
+        iconLabel: this.primaryType.substring(0, 3),
+        color: "#F2F2F2",
+        backgroundColor: "#272727",
+      };
+    }
+
+    return {
+      icon: this.styles.faIcon,
+      color: this.styles.color,
+      backgroundColor: this.styles.backgroundColor,
+    };
+  }
+
   toCytoscapeNode() {
     return {
       data: {
         element: this,
         id: this.uri,
         label: this.id,
+        ...this.getIconStyle(),
       },
-      classes: ["label", this.id.charAt(0)],
+      classes: ["nodeElem", "label", this.id.charAt(0)],
     };
   }
 

@@ -19,7 +19,6 @@ const AssessmentTypes = ({ assessment }) => {
   const [loading, setLoading] = useState(false);
   const [types, setTypes] = useState([]);
   const [selectedGroups, setSelectedGroups] = useState([]);
-  const [selectedTypes, setSelectedTypes] = useState([]);
   
   const superClassGroups = useMemo(() => [...new Set(types.map((type) => type.superClass))], [types]);
 
@@ -118,8 +117,6 @@ const AssessmentTypes = ({ assessment }) => {
                 expand={expand}
                 assessment={assessment}
                 types={getTypesInGroup(ontologyGroup)}
-                selectedTypes={selectedTypes}
-                setSelectedTypes={setSelectedTypes}
                 setIsGeneratingData={setIsGeneratingData}
               />
             </AssessmentGroup>

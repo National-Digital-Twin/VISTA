@@ -20,7 +20,7 @@ export const createDependencies = (dependencies) => {
   );
 };
 
-export const createAssets = async (assets, getAssetGeometry) => {
+export const createAssets = async (assets, iconStyle, getAssetGeometry) => {
   if (!assets && !Array.isArray(assets)) return [];
 
   return await Promise.all(
@@ -36,6 +36,7 @@ export const createAssets = async (assets, getAssetGeometry) => {
           count: asset.dependentCount,
           criticalitySum: asset.dependentCriticalitySum,
         },
+        styles: iconStyle,
       });
     })
   );

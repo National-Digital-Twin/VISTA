@@ -12,10 +12,10 @@ jobs:
       contents: read
       packages: write
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
+        run: echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT
       - name: Cache node modules
         uses: actions/cache@v3
         with:
@@ -23,17 +23,18 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
-      - name: configure-node
+      - name: Setup auth for Telicent-DS
         uses: actions/setup-node@v2
         with:
           node-version: 16
-          registry-url: https://npm.pkg.github.com/
-          scope: "@Telicent-io"
-          always-auth: true
+      - name: create .yarnrc file
+        run: |
+          npm config set "@telicent-io:registry" "https://npm.pkg.github.com/"
+          npm config set "//npm.pkg.github.com/:_authToken" ${{ secrets.PACKAGE_PAT }} 
+          npm config set "@fortawesome:registry" https://npm.fontawesome.com/
+          npm config set  "//npm.fontawesome.com/:_authToken" ${{ secrets.FONT_AWESOME_KEY }}
       - name: Install dependencies
         run: yarn install --frozen-lockfile
       - run: mkdir reports
       - name: run integrated tests
         run: yarn test:ci
-    env:
-      NODE_AUTH_TOKEN: ${{ secrets.PACKAGE_PAT }}

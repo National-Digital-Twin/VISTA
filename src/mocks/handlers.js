@@ -16,6 +16,11 @@ export const apiUrl = (path) => {
   return url;
 };
 
+const ontologyServerUrl = (path) => {
+  const url = `${config.api.ontology}/${path}`;
+  return url;
+}
+
 export const handlers = [
   rest.get(ASSESSMENTS_ENDPOINT, assessments),
   rest.get(apiUrl(ASSESSMENTS_ASSET_TYPES_ENDPOINT), assetTypes),
@@ -25,4 +30,5 @@ export const handlers = [
   rest.get(apiUrl("asset"), asset),
   rest.get(apiUrl("asset/dependents"), (req, res, ctx) => res(ctx.status(200), ctx.json([]))),
   rest.get(apiUrl("asset/providers"), (req, res, ctx) => res(ctx.status(200), ctx.json([]))),
+  rest.get(ontologyServerUrl("styles/class"), (req, res, ctx) => res(ctx.status(200), ctx.json([])))
 ];

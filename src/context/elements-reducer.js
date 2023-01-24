@@ -8,8 +8,11 @@ export const FILTER_SELECTED_ELEMENTS = "FILTER_SELECTED_ELEMENTS";
 export const SELECT_ELEMENT = "SELECT_ELEMENT";
 export const MULTI_SELECT_ELEMENTS = "MULTI_SELECT_ELEMENTS";
 export const AREA_SELECTION = "AREA_SELECTION";
-export const UPDATE_ASSETS = "UPDATE_ASSETS";
-export const UPDATE_DEPENDENCIES = "UPDATE_DEPENDENCIES";
+export const ADD_ASSETS = "ADD_ASSETS";
+export const REMOVE_ASSETS_BY_TYPE = "REMOVE ASSETS BY TYPE";
+export const REMOVE_DEPENDENCIES_BY_TYPE = "REMOVE DEPENDENCIES BY TYPE";
+export const REMOVE_ELEMENTS_BY_TYPE = "REMOVE ELEMENTS BY TYPE";
+export const ADD_DEPENDENCIES = "ADD_DEPENDENCIES";
 export const UPDATE_ERRORS = "UPDATE_ERRORS";
 
 const getColorScale = (min, max) => {
@@ -44,8 +47,8 @@ export const getSelectedElements = ({ cachedElements, selectedElement }) => {
 
 const elementsReducer = (state, action) => {
   switch (action.type) {
-    case UPDATE_ASSETS: {
-      const assets = action.assets;
+    case ADD_ASSETS: {
+      const assets = [...state.assets, ...action.assets];
       const minTotalCount = Math.min(...getAllCounts(assets));
       const maxTotalCount = Math.max(...getAllCounts(assets));
       const minCriticalitySum = Math.min(...getAllCriticalitySums(assets));
@@ -58,16 +61,23 @@ const elementsReducer = (state, action) => {
 
       return { ...state, assets };
     }
-    case UPDATE_DEPENDENCIES:
+    case ADD_DEPENDENCIES:
       return {
         ...state,
-        dependencies: action.dependencies,
+        dependencies: [...state.dependencies, ...action.dependencies],
       };
+    case REMOVE_ELEMENTS_BY_TYPE:
+      const { typeUri } = action;
+      const assets = state.assets.filter((asset) => asset.type !== typeUri);
+      const dependencies = state.dependencies.filter(
+        (dependency) => dependency.dependent.type !== typeUri || dependency.provider.type !== typeUri
+      );
+      return { ...state, assets, dependencies };
     case FILTER_SELECTED_ELEMENTS: {
       const selectedElements = state.selectedElements.filter((selectedElement) => {
         return isAsset(selectedElement)
-          ? action.assets.some((asset) => asset.uri === selectedElement.uri)
-          : action.dependencies.some((dependency) => dependency.uri === selectedElement.uri);
+          ? state.assets.some((asset) => asset.uri === selectedElement.uri)
+          : state.dependencies.some((dependency) => dependency.uri === selectedElement.uri);
       });
       return {
         ...state,
