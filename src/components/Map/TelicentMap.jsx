@@ -220,6 +220,7 @@ const TelicentMap = () => {
           setMapStyle={setMapStyle}
           showPointerCoords={showPointerCoords}
           onPointerCoordsClick={togglePointerCoords}
+          setCursor={setCursor}
         />
       </Map>
     </div>

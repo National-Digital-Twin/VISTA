@@ -49,7 +49,7 @@ const getPolygon = (feature) => {
 export const findPointsInPolygon = (polygonFeatures, points) => {
   const pointsInPolygon = [];
 
-  if (isEmpty(polygonFeatures) || isEmpty(points)) return pointsInPolygon;
+  if (isEmpty(polygonFeatures)) return pointsInPolygon;
 
   for (let polygon of polygonFeatures) {
     polygon = getPolygon(polygon);
@@ -64,7 +64,7 @@ export const findPointsInPolygon = (polygonFeatures, points) => {
 export const findLinesIntersectingPolygon = (polygonFeatures, lineStringFeatures) => {
   const intersectingLineStrings = [];
 
-  if (isEmpty(polygonFeatures) || isEmpty(lineStringFeatures)) return intersectingLineStrings;
+  if (isEmpty(polygonFeatures)) return intersectingLineStrings;
 
   for (let polygon of polygonFeatures) {
     polygon = getPolygon(polygon);

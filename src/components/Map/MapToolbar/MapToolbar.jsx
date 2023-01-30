@@ -1,4 +1,3 @@
-/* eslint jsx-a11y/anchor-has-content: 0 */
 import React, { useCallback, useEffect, useState } from "react";
 
 import { ToolbarButton, ToolbarMenu, VerticalDivider } from "lib";
@@ -13,12 +12,12 @@ const MapToolbar = ({
   setMapStyle,
   showPointerCoords,
   onPointerCoordsClick,
+  setCursor
 }) => {
   const [isHeatVisible, setIsHeatVisible] = useState(false);
   const [showLayers, setShowLayers] = useState(false);
   const [showMapStyles, setShowMapStyles] = useState(false);
   const [showMapTools, setShowMapTools] = useState(false);
-
   const mapStyles = getMapStyles();
 
   const handleLayerVisibility = useCallback(
@@ -89,19 +88,20 @@ const MapToolbar = ({
       name: "Coordinates",
       selected: showPointerCoords,
       type: "toggleSwitch",
-      onItemClick: onPointerCoordsClick
-    }
-  ]
+      onItemClick: onPointerCoordsClick,
+    },
+  ];
 
   return (
     <div className="absolute bottom-0 left-0 text-whiteSmoke font-body bg-black-200 bg-opacity-80 flex items-center justify-center gap-x-2 px-2 py-1">
       <a
-        className="mapboxgl-ctrl-logo"
+        className="mapboxgl-ctrl-logo text-transparent"
         target="_blank"
         rel="noopener nofollow noreferrer"
         href="https://www.mapbox.com/"
-        aria-label="Mapbox logo"
-      />
+      >
+        Mapbox logo
+      </a>
       <VerticalDivider />
       <ToolbarButton icon="ri-subtract-line" label="Zoom out" onClick={handleZoomOut} />
       <ToolbarButton icon="ri-add-line" label="Zoom in" onClick={handleZoomIn} />
@@ -132,7 +132,7 @@ const MapToolbar = ({
         }
       />
       <VerticalDivider />
-      <DrawControls map={map} />
+      <DrawControls compact map={map} setCursor={setCursor} />
     </div>
   );
 };

@@ -7,6 +7,7 @@ const ToolbarButton = ({
   label,
   onClick,
   disabled,
+  selected,
   secondaryMenu,
   showSecondaryMenu,
   className: listItemClassName,
@@ -22,13 +23,14 @@ const ToolbarButton = ({
     <div
       className={classNames("w-full h-0.5 bg-whiteSmoke-500", {
         "opacity-0 group-hover:opacity-100": !showSecondaryMenu,
+        "opacity-100": selected
       })}
     />
     <button
       aria-labelledby={kebabCase(label)}
       className={classNames(
         "flex items-center justify-center gap-x-2 rounded-md px-2 group-hover:bg-black-400 h-full",
-        { [buttonClassName]: buttonClassName, "cursor-not-allowed": disabled }
+        { [buttonClassName]: buttonClassName, "cursor-not-allowed": disabled, "bg-black-400": selected }
       )}
       onClick={onClick}
       disabled={disabled}

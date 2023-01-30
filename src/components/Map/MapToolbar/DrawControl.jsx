@@ -7,13 +7,14 @@ import { ToolbarButton } from "lib";
 import { findLinesIntersectingPolygon, findPointsInPolygon } from "../map-utils";
 import { CytoscapeContext, ElementsContext } from "context";
 import { findElement } from "utils";
+import DrawingTools from "./DrawingTools";
 
-const DRAW_CIRCLE = "draw_circle";
+export const DRAW_CIRCLE = "draw_circle";
 
 let modes = MapboxDraw.modes;
 modes = MapboxDrawGeodesic.enable(modes);
 
-const DrawControls = ({ map }) => {
+const DrawControls = ({ compact, map, setCursor }) => {
   const { fit, moveTo } = useContext(CytoscapeContext);
   const {
     assets,
@@ -25,6 +26,8 @@ const DrawControls = ({ map }) => {
 
   const [polygon, setPolygon] = useState(undefined);
 
+  const [selectedTool, setSelectedTool] = useState(undefined);
+
   const draw = useControl(
     () =>
       new MapboxDraw({
@@ -32,6 +35,9 @@ const DrawControls = ({ map }) => {
         modes,
       })
   );
+
+  const SIMPLE_SELECT = draw?.modes?.SIMPLE_SELECT;
+  const DRAW_POLYGON = draw?.modes?.DRAW_POLYGON;
 
   const onUpdate = useCallback(
     (event) => {
@@ -64,26 +70,42 @@ const DrawControls = ({ map }) => {
     [assets, dependencies, cachedSelectedElements, moveTo, onAreaSelect]
   );
 
+  const onModeChange = useCallback(
+    (event) => {
+      const { mode } = event;
+      if (mode === SIMPLE_SELECT) {
+        setCursor("auto");
+        setSelectedTool(undefined);
+        return;
+      }
+    },
+    [SIMPLE_SELECT, setCursor]
+  );
+
   useEffect(() => {
     if (!map) return;
     map.on("draw.create", onUpdate);
     map.on("draw.update", onUpdate);
     map.on("draw.selectionchange", onUpdate);
+    map.on("draw.modechange", onModeChange);
     return () => {
       map.off("draw.create", onUpdate);
       map.off("draw.update", onUpdate);
       map.off("draw.selectionchange", onUpdate);
+      map.off("draw.modechange", onModeChange);
     };
-  }, [map, onUpdate]);
+  }, [map, onModeChange, onUpdate]);
 
-  const SIMPLE_SELECT = draw?.modes?.SIMPLE_SELECT;
-
-  const handlePolygonSelection = () => {
-    draw.changeMode(draw.modes.DRAW_POLYGON);
+  const handleDrawPolygon = () => {
+    draw.changeMode(DRAW_POLYGON);
+    setCursor("crosshair");
+    setSelectedTool(DRAW_POLYGON);
   };
 
-  const handleRadiusSelection = () => {
+  const handleDrawCircle = () => {
     draw.changeMode(DRAW_CIRCLE);
+    setCursor("crosshair");
+    setSelectedTool(DRAW_CIRCLE);
   };
 
   const handleDeleteAllSelections = () => {
@@ -91,6 +113,8 @@ const DrawControls = ({ map }) => {
     clearSelectedElements();
     setPolygon(undefined);
     fit();
+    setCursor("auto");
+    setSelectedTool(undefined);
   };
 
   /**
@@ -112,15 +136,12 @@ const DrawControls = ({ map }) => {
   return (
     <>
       <RadiusSelectionPopup polygon={polygon} setRadius={setRadius} onClose={closePopup} />
-      <ToolbarButton
-        icon="fg-polyline-pt"
-        label="Polygon selection (Beta)"
-        onClick={handlePolygonSelection}
-      />
-      <ToolbarButton
-        icon="fg-circle-o"
-        label="Radius selection (Beta)"
-        onClick={handleRadiusSelection}
+      <DrawingTools
+        DRAW_POLYGON={DRAW_POLYGON}
+        compact={compact}
+        selectedTool={selectedTool}
+        onDrawCircle={handleDrawCircle}
+        onDrawPolygon={handleDrawPolygon}
       />
       <ToolbarButton
         icon="ri-delete-bin-line"
