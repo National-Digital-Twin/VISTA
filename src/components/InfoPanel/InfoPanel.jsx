@@ -33,7 +33,13 @@ const InfoPanel = () => {
         className={classNames({ hidden: showPanel, block: !showPanel })}
         ariaHidden={showPanel}
       />
-      <div className={classNames({ hidden: !showPanel, block: showPanel })} aria-hidden={showPanel}>
+      <div
+        className={classNames("grow min-h-0 overflow-y-auto", {
+          hidden: !showPanel,
+          block: showPanel,
+        })}
+        aria-hidden={showPanel}
+      >
         <SelectedElements selectedElements={selectedElements} onTogglePanel={handleTogglePanel} />
       </div>
     </FloatingPanel>

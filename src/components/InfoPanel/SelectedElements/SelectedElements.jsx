@@ -49,7 +49,7 @@ const SelectedElements = ({ selectedElements, onTogglePanel }) => {
       return <ElementDetails expand element={selected} />;
     },
     [LIST_VIEW]: () => (
-      <ul className="gap-y-3 grow min-h-0 overflow-y-auto">
+      <ul className="gap-y-3">
         {selectedElements.map((selectedElement, index) => (
           <ElementDetails
             key={selectedElement.id}
@@ -62,14 +62,16 @@ const SelectedElements = ({ selectedElements, onTogglePanel }) => {
   };
 
   const renderView = () => {
-    const component = VIEWS[view]
+    const component = VIEWS[view];
     return component();
-  }
+  };
 
-  return <>
-    <SelectedElementsHeader onToggle={onTogglePanel} {...header} />
-    {renderView()}
-  </>
+  return (
+    <>
+      <SelectedElementsHeader onToggle={onTogglePanel} {...header} />
+      {renderView()}
+    </>
+  );
 };
 
 export default SelectedElements;

@@ -22,8 +22,7 @@ const useJSFetch = () => {
       });
     } catch (error) {
       if (error.name === "AbortError") return;
-      console.log(error);
-      setError(error);
+      setError(error.message);
     }
   }, []);
 

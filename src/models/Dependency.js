@@ -6,7 +6,7 @@ export default class Dependency {
 
   constructor({ uri, criticality, dependent, provider, osmID }) {
     this.uri = uri;
-    this.id = `${getURIFragment(dependent.uri)}_depends_on_${getURIFragment(provider.uri)}`;
+    this.id = `${getURIFragment(dependent.uri)} - ${getURIFragment(provider.uri)}`;
     this.criticality = criticality;
     this.criticalityColor = getHexColor(this.#colorScale, criticality);
     this.dependent = dependent;
@@ -71,5 +71,20 @@ export default class Dependency {
         coordinates,
       },
     };
+  }
+
+  getDetails(dependentInfo, providerInfo) {
+    return {
+      title: `${dependentInfo.name} - ${providerInfo.name}`,
+      criticality: this.criticality,
+      id: this.id,
+      icon: {
+        style: {
+          width: "1rem",
+          height: "0.125rem",
+          backgroundColor: this.criticalityColor,
+        },
+      },
+    }
   }
 }

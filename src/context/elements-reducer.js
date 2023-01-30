@@ -25,7 +25,7 @@ export const INITIAL_STATE = {
   dependencies: [],
   errors: [],
   selectedElements: [],
-  selectedDetails: [],
+  iconStyles: {},
   maxAssetCriticality: 0,
   maxAssetTotalCxns: 0,
   assetCriticalityColorScale: {},
@@ -36,7 +36,6 @@ export const INITIAL_STATE = {
 const getAllCounts = (assets) => assets.map((asset) => asset.dependent.count);
 const getAllCriticalitySums = (assets) => assets.map((asset) => asset.dependent.criticalitySum);
 
-// get active elements
 export const getSelectedElements = ({ cachedElements, selectedElement }) => {
   const index = cachedElements.findIndex(
     (cachedElement) => cachedElement.id === selectedElement.id
@@ -70,7 +69,8 @@ const elementsReducer = (state, action) => {
       const { typeUri } = action;
       const assets = state.assets.filter((asset) => asset.type !== typeUri);
       const dependencies = state.dependencies.filter(
-        (dependency) => dependency.dependent.type !== typeUri || dependency.provider.type !== typeUri
+        (dependency) =>
+          dependency.dependent.type !== typeUri || dependency.provider.type !== typeUri
       );
       return { ...state, assets, dependencies };
     case FILTER_SELECTED_ELEMENTS: {

@@ -1,4 +1,5 @@
 import React, { useCallback, useReducer } from "react";
+
 import elementsReducer, {
   ADD_ASSETS,
   ADD_DEPENDENCIES,
@@ -35,18 +36,24 @@ export const ElementsProvider = ({ children }) => {
     dispatch({ type: FILTER_SELECTED_ELEMENTS });
   }, []);
 
-  const addElements = useCallback((assets, dependencies) => {
-    if (!Array.isArray(assets) || !Array.isArray(dependencies)) return;
-    dispatch({ type: ADD_ASSETS, assets });
-    dispatch({ type: ADD_DEPENDENCIES, dependencies });
-    filterSelectedElements();
-  }, [filterSelectedElements]);
+  const addElements = useCallback(
+    (assets, dependencies) => {
+      if (!Array.isArray(assets) || !Array.isArray(dependencies)) return;
+      dispatch({ type: ADD_ASSETS, assets });
+      dispatch({ type: ADD_DEPENDENCIES, dependencies });
+      filterSelectedElements();
+    },
+    [filterSelectedElements]
+  );
 
-  const removeElementsByType = useCallback((typeUri) => {
-    if (!typeUri) return;
-    dispatch({ type: REMOVE_ELEMENTS_BY_TYPE, typeUri });
-    filterSelectedElements();
-  }, [filterSelectedElements]);
+  const removeElementsByType = useCallback(
+    (typeUri) => {
+      if (!typeUri) return;
+      dispatch({ type: REMOVE_ELEMENTS_BY_TYPE, typeUri });
+      filterSelectedElements();
+    },
+    [filterSelectedElements]
+  );
 
   const reset = useCallback(() => {
     dispatch({ type: RESET });

@@ -149,4 +149,25 @@ export default class Asset {
       },
     };
   }
+
+  getDetails(assetInfo) {
+    const iconStyle = this.getIconStyle();
+    return {
+      title: assetInfo?.name,
+      criticality: this.dependent.criticalitySum,
+      type: assetInfo?.assetType,
+      desc: assetInfo?.desc,
+      criticalityColor: this.criticalityColor,
+      id: this.id,
+      icon: {
+        icon: iconStyle?.icon,
+        iconLabel: iconStyle.iconLabel,
+        style: {
+          borderRadius: "9999px",
+          ...iconStyle,
+          border: "3px solid #F2F2F2"
+        },
+      },
+    };
+  }
 }

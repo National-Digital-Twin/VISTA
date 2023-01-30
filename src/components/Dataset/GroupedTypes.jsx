@@ -2,18 +2,16 @@ import { lowerCase } from "lodash";
 import { useFetch } from "use-http";
 import React, { useContext, useEffect, useMemo } from "react";
 
-import config from "config/app-config";
-import { ElementsContext } from "context";
 import { ASSESSMENTS_ENDPOINT, ASSET_PARTS_ENDPOINT } from "constants/endpoints";
+import { ElementsContext } from "context";
 import { getURIFragment } from "utils";
+import { useOntologyServer } from "hooks";
 
 import { createAssets, createDependencies } from "./dataset-utils";
 
 const GroupedTypes = ({ expand, assessment, types, setIsGeneratingData }) => {
   const { get, error, response } = useFetch();
-  const { get: getFromOntologyServer, response: responseFromOntologyServer } = useFetch(
-    config.api.ontology
-  );
+  const { getIconStyle } = useOntologyServer();
   const { addElements, removeElementsByType, updateErrors } = useContext(ElementsContext);
 
   const sortedTypes = useMemo(() => {
@@ -45,12 +43,6 @@ const GroupedTypes = ({ expand, assessment, types, setIsGeneratingData }) => {
       `${ASSET_PARTS_ENDPOINT}?${new URLSearchParams(assetUri).toString()}`
     );
     return response.ok ? linearAssets : [];
-  };
-
-  const getIconStyle = async (type) => {
-    const queryParam = new URLSearchParams({ uri: type }).toString();
-    const style = await getFromOntologyServer(`styles/class?${queryParam}`);
-    return responseFromOntologyServer.ok ? style : undefined;
   };
 
   const handleTypeChange = async (event) => {

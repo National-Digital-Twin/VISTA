@@ -26,6 +26,7 @@ const VIEWSTATE = {
   zoom: 9,
 };
 const HEAT_RADIUS = 1000;
+const ICON_SIZE = 16;
 
 const TelicentMap = () => {
   const { telicentMap: map } = useMap();
@@ -37,7 +38,7 @@ const TelicentMap = () => {
   const [cursor, setCursor] = useState("auto");
   const [hoverInfo, setHoverInfo] = useState(undefined);
   const [heatmapRadius, setHeatmapRadius] = useState(10);
-  const [iconSize, setIconSize] = useState(12);
+  const [iconSize, setIconSize] = useState(ICON_SIZE);
   const [showPointerCoords, setShowPointerCoords] = useState(false);
 
   const [linearAssets, setLinearAssets] = useState([]);
@@ -129,7 +130,7 @@ const TelicentMap = () => {
 
     let iconSize = (4 + (zoom - 5) * 2).toFixed(0);
     setIconSize(iconSize);
-    if (iconSize >= 16) setIconSize(14);
+    if (iconSize >= ICON_SIZE) setIconSize(ICON_SIZE);
   };
 
   const togglePointerCoords = () => {
@@ -147,7 +148,7 @@ const TelicentMap = () => {
         <Layer key={layer.id} {...layer} />
       ))}
     </Source>
-  )
+  );
 
   const generatePointAssetIcons = ({ geometry, properties }) => (
     <Marker
@@ -157,13 +158,16 @@ const TelicentMap = () => {
       anchor="bottom"
       color="#c4c4c4"
     >
-      {properties?.icon && (
+      {properties?.icon ? (
         <i
           className={classNames(properties.icon, "marker-icon")}
           style={{ fontSize: `${iconSize}px` }}
         />
+      ) : (
+        <p className="marker-icon font-body" style={{ fontSize: `${iconSize}px` }}>
+          {properties.iconLabel}
+        </p>
       )}
-      {properties?.iconLabel && <p className="marker-icon">{properties.iconLabel}</p>}
     </Marker>
   );
 

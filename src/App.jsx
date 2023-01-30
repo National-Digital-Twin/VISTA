@@ -6,6 +6,9 @@ import { Dataset, Grid, InfoPanel, NetworkGraph, SponsorsLogos, TelicentMap } fr
 import config from "./config/app-config";
 import { ErrorNotification, ResizableContainer } from "./lib";
 
+import "@fortawesome/fontawesome-pro/css/all.css";
+import "@fortawesome/fontawesome-pro/css/sharp-solid.css"
+
 const App = () => {
   const [showGrid, setShowGrid] = useState(false);
 

@@ -1,11 +1,11 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { camelCase, capitalize, isEmpty } from "lodash";
+import { camelCase, isEmpty, lowerCase } from "lodash";
 import classNames from "classnames";
 
 import config from "config/app-config";
 import { ElementsContext } from "context";
-import { findElement, getShortType, isAsset } from "utils";
-import { useJSFetch, useLocalStorage } from "hooks";
+import { getURIFragment, isAsset, isElementCached } from "utils";
+import { useJSFetch, useLocalStorage, useOntologyServer } from "hooks";
 
 const ElementDetails = ({ element, expand, onViewDetails }) => {
   const { error, get } = useJSFetch();
@@ -33,14 +33,8 @@ const ElementDetails = ({ element, expand, onViewDetails }) => {
         const assetInfo = await getAssetInformation(element.uri);
         if (signal.aborted) return;
 
-        setDetails({
-          title: assetInfo?.name,
-          criticality: element.dependent.criticalitySum,
-          type: assetInfo?.assetType,
-          desc: assetInfo?.desc,
-          criticalityColor: element.criticalityColor,
-          icon: "w-3 h-3 rounded-full border-2 border-whiteSmoke",
-        });
+        const details = element.getDetails(assetInfo);
+        setDetails(details);
         setLoading(false);
         return;
       }
@@ -53,24 +47,19 @@ const ElementDetails = ({ element, expand, onViewDetails }) => {
           })
         );
         if (signal.aborted) return;
-        
-        setDetails({
-          title: `${dependentInfo.name} - ${providerInfo.name}`,
-          criticality: element.criticality,
-          criticalityColor: element.criticalityColor,
-          icon: "w-4 h-0.5 bg-white",
-        });
+
+        const details = element.getDetails(dependentInfo, providerInfo);
+        setDetails(details);
         setLoading(false);
       } catch (error) {
-        console.log(error);
+        console.log(error.message);
       }
     };
 
     getDetails();
-
     return () => {
       controller.abort();
-    }
+    };
   }, [element, get]);
 
   if (loading) return <p>Fetching element information</p>;
@@ -88,7 +77,7 @@ const ElementDetails = ({ element, expand, onViewDetails }) => {
   }
 
   return (
-    <div id="element-details" className="flex flex-col grow min-h-0 overflow-y-auto gap-y-4">
+    <div id="element-details" className="flex flex-col grow min-h-0 overflow-y-auto gap-y-4 pt-2">
       <Details expand {...details} />
       <ConnectedAssets type="dependent" element={element} />
       <ConnectedAssets type="provider" element={element} />
@@ -97,15 +86,26 @@ const ElementDetails = ({ element, expand, onViewDetails }) => {
 };
 export default ElementDetails;
 
-const Details = ({ expand, title, criticality, type, desc, criticalityColor, icon }) => (
+const Details = ({ expand, id, title, criticality, type, desc, icon }) => (
   <div className="grid gap-y-1">
-    <h2 className="text-lg flex gap-x-2 items-center font-medium">
-      <span style={{ backgroundColor: criticalityColor }} className={classNames(icon)} />
-      {title}
-    </h2>
-    {type && <p className="uppercase text-sm">{getShortType(type)}</p>}
+    <div className="flex items-center gap-x-2">
+      <span className="w-12 h-12 flex items-center justify-center" style={{ ...icon.style }}>
+        {icon?.iconLabel ? <span className="text-whiteSmoke">{icon.iconLabel}</span> : <span className={icon.icon} />}
+      </span>
+      <div>
+        <h2 className="text-lg font-medium">{title}</h2>
+        {type && <p className="uppercase text-sm">{lowerCase(getURIFragment(type))}</p>}
+        <p>{id}</p>
+      </div>
+    </div>
     {expand && (
       <>
+        {icon?.iconLabel && (
+          <p className="flex items-center gap-x-2 px-2 rounded-md bg-yellow-600 text-black-100 w-fit">
+            <i className="fa-light fa-diamond-exclamation text-black-100" />
+            Icon styles not found
+          </p>
+        )}
         <p>Criticality: {criticality}</p>
         <Description description={desc} />
       </>
@@ -182,7 +182,12 @@ const DetailsSectionTitle = ({ expand, onToggle, children }) => {
       </button>
     );
   return (
-    <div className="absolute top-0 inset-x-4 z-10 bg-whiteSmoke-900 rounded-lg px-2 flex justify-between items-center py-2">
+    <div
+      className={classNames(
+        "bg-whiteSmoke-900 rounded-lg px-2 flex justify-between items-center py-2",
+        { "absolute top-0 inset-x-4 z-10 ": expand }
+      )}
+    >
       {children}
     </div>
   );
@@ -211,35 +216,62 @@ const DetailsSection = ({ expand, show, onToggle, title, children }) => {
   );
 };
 
+const AssetIcon = ({ backgroundColor, color, icon, iconLabel }) => (
+  <div
+    style={{
+      backgroundColor: backgroundColor ?? "#A3A3A3",
+      color: color ?? "#333",
+    }}
+    className="rounded-full w-10 h-10 flex justify-center items-center"
+  >
+    {icon ? <span className={icon}/> : <span>{iconLabel}</span>}
+  </div>
+);
+
 const ConnectedAssetListItems = ({ connectedAssets }) => {
   const { assets } = useContext(ElementsContext);
 
   if (isEmpty(connectedAssets)) return <p>No assets found</p>;
+  return connectedAssets
+    .sort((a, b) => isElementCached(assets, b.uri) - isElementCached(assets, a.uri))
+    .map((asset) => {
+      const isAdded = isElementCached(assets, asset.uri);
+      const type = getURIFragment(asset.assetType);
 
-  return connectedAssets.map((asset) => {
-    const existingAsset = findElement(assets, asset.uri);
-    return (
-      <li key={asset.uri} className="gap-x-2 bg-black-300 rounded-md p-2 items-center">
-        <div className="flex items-center  gap-x-2">
-          <div
-            style={{ backgroundColor: existingAsset?.criticalityColor ?? "#A3A3A3" }}
-            className="w-2.5 h-2.5 rounded-full"
-          />
-          <h4 className="truncate w-64">{asset.name}</h4>
-        </div>
-        <p className="text-sm">ID: {asset.uri.split("#")[1]}</p>
-        <p className="whitespace-nowrap text-sm">Criticality: {asset.dependentCriticalitySum}</p>
-        <p className="whitespace-nowrap text-sm">Connection Strength: {asset.connectionStrength}</p>
-      </li>
-    );
-  });
+      return (
+        <li key={asset.uri} className="gap-x-2 bg-black-300 rounded-md p-2 items-center">
+          <div className="flex items-center gap-x-2">
+            <AssetIcon
+              backgroundColor={isAdded ? asset.styles?.backgroundColor : "#A3A3A3"}
+              color={isAdded ? asset.styles?.color : "#333"}
+              icon={asset.styles?.faIcon}
+              iconLabel={type.substring(0, 3)}
+            />
+            <div>
+              <h4>{asset.name}</h4>
+              <p className="uppercase" style={{ fontSize: "13px" }}>
+                {lowerCase(type)}
+              </p>
+              <p className="text-sm">{asset.uri.split("#")[1]}</p>
+            </div>
+          </div>
+          <p className="whitespace-nowrap text-sm">
+            Criticality: {asset.dependentCriticalitySum || "N/D"}
+          </p>
+          <p className="whitespace-nowrap text-sm">
+            Connection Strength: {asset.connectionStrength || "N/D"}
+          </p>
+        </li>
+      );
+    });
 };
 
 const ConnectedAssets = ({ type, element }) => {
   const { error, get } = useJSFetch();
+  const { getIconStyle } = useOntologyServer();
   const [expand, setExpand] = useLocalStorage(camelCase(`show${type}`), false);
   const [connectedAssets, setConnectedAssets] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -268,9 +300,11 @@ const ConnectedAssets = ({ type, element }) => {
             const uri = type === "provider" ? dependency.providerNode : dependency.dependentNode;
 
             const asset = await getAssetInformation(uri);
+            const iconStyle = await getIconStyle(asset.assetType);
             return {
               ...asset,
               connectionStrength: dependency.criticalityRating,
+              styles: iconStyle,
             };
           })
         );
@@ -282,35 +316,48 @@ const ConnectedAssets = ({ type, element }) => {
       }
 
       const connectedAsset = await getAssetInformation(element[type].uri);
+      const iconStyle = await getIconStyle(connectedAsset.assetType);
 
       if (signal.aborted) return;
-      setConnectedAssets([{ ...connectedAsset, connectionStrength: element.criticalityRating }]);
+      setConnectedAssets([
+        { ...connectedAsset, connectionStrength: element.criticalityRating, styles: iconStyle },
+      ]);
       setLoading(false);
     };
 
-    getConnectedAssetInfo();
+    try {
+      getConnectedAssetInfo();
+    } catch (error) {
+      console.log(error.message);
+    }
 
     return () => {
       controller.abort();
     };
-  }, [type, element, get]);
+  }, [type, element, get, getIconStyle]);
 
   const handleToggleSection = () => {
     setExpand((prev) => !prev);
   };
 
+  if (loading) {
+    return <DetailsSection expand={false} title={`Loading ${type} assets`} show />;
+  }
+
   return (
     <DetailsSection
       expand={expand}
       onToggle={handleToggleSection}
-      title={`${connectedAssets.length} ${capitalize(type)} Assets`}
+      title={`${connectedAssets.length} ${type} assets`}
       show
     >
-      {loading && <p>Loading providers</p>}
-      {error && <p>Failed to retrieve {type} assets</p>}
-      <ul className="grid gap-y-3">
-        <ConnectedAssetListItems connectedAssets={connectedAssets} />
-      </ul>
+      {error ? (
+        <p>Failed to retrieve {type} assets</p>
+      ) : (
+        <ul className="grid gap-y-3">
+          <ConnectedAssetListItems connectedAssets={connectedAssets} />
+        </ul>
+      )}
     </DetailsSection>
   );
 };

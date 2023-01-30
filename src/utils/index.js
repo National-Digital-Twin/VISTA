@@ -10,11 +10,12 @@ import { prefixLookup } from "../config/uri-prefix";
 export const IsEmpty = (input) => !input || input.length === 0 || Object.keys(input).length === 0;
 
 export const findElement = (assets, uri) => assets?.find((asset) => asset.uri === uri);
+export const isElementCached = (assets, uri) => assets?.some((asset) => asset.uri === uri);
 
 export const getHexColor = (colorScale, value) => {
   if (isEmpty(colorScale)) return undefined;
-  return colorScale.getColor(value).toHexString()
-}
+  return colorScale.getColor(value).toHexString();
+};
 export const isAsset = (element) => element?.elementType === "asset" ?? false;
 
 export const getShortType = (type) => {
@@ -32,12 +33,28 @@ export const getShortType = (type) => {
 
 export const getURIFragment = (uri) => {
   if (uri) {
-    const uriParts = uri.split("#")
+    const uriParts = uri.split("#");
     return uriParts.length > 1 ? uriParts[1] : uri;
   }
   return uri;
-}
+};
 
 export const getColorScale = (min, max) => {
   return new ColorScale(min, max === 0 ? 100 : max, ["#35C035", "#FFB60A", "#FB3737"], 1);
+};
+
+export const getIconStyle = (styles) => {
+  if (isEmpty(this.styles)) {
+    return {
+      iconLabel: this.primaryType.substring(0, 3),
+      color: "#F2F2F2",
+      backgroundColor: "#272727",
+    };
+  }
+
+  return {
+    icon: this.styles?.faIcon || undefined,
+    color: this.styles?.color || "#F2F2F2",
+    backgroundColor: this.styles?.backgroundColor || "#272727",
+  };
 };

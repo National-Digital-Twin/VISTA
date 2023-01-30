@@ -113,6 +113,6 @@ body {
   }
 
   .marker-icon {
-    @apply text-whiteSmoke bg-black-100 bg-opacity-80 rounded-md p-0.5;
+    @apply text-whiteSmoke bg-black-100 bg-opacity-90 rounded-md p-1;
   }
 }

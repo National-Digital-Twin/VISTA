@@ -152,6 +152,7 @@ describe("Selected Elements component", () => {
           count: asset.dependentCount,
           criticalitySum: asset.dependentCriticalitySum,
         },
+        styles: [],
       });
     });
 
@@ -160,11 +161,11 @@ describe("Selected Elements component", () => {
     });
     expandInfoPanel();
 
-    await waitForElementToBeRemoved(() => screen.queryByText(/Fetching element information/i));
-
     expect(
-      screen.getByRole("heading", { name: "Sandown 33kV / 11kV Substation" })
+      await screen.findByRole("heading", { name: "Sandown 33kV / 11kV Substation" })
     ).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: "0 dependent assets", level: 3 }));
+    expect(await screen.findByRole("heading", { name: "0 provider assets", level: 3 }));
 
     selectedElements = new Dependency({
       uri: "https://www.iow.gov.uk/DigitalTwin#_E014_E012_dependency",
@@ -180,12 +181,13 @@ describe("Selected Elements component", () => {
       osmID: null,
     });
     rerender(<SelectedElements selectedElements={[selectedElements]} />);
-    await waitForElementToBeRemoved(() => screen.getByText(/Fetching element information/i));
 
     expect(
-      screen.getByRole("heading", {
+      await screen.findByRole("heading", {
         name: "Sandown 33kV / 11kV Substation - Ventnor 33kV / 11kV Substation",
       })
     ).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: "1 dependent assets", level: 3 }));
+    expect(await screen.findByRole("heading", { name: "1 provider assets", level: 3 }));
   });
 });
