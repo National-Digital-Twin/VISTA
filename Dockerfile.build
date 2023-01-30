@@ -2,13 +2,14 @@ FROM node:16-alpine as installation
 
 WORKDIR /app
 ARG NPM_TOKEN
+ARG FONT_AWESOME_TOKEN
 ENV PATH /app/node_modules/.bin:$PATH
 
 COPY package.json yarn.lock ./
 RUN npm config set @telicent-io:registry=https://npm.pkg.github.com/
 RUN npm config set //npm.pkg.github.com/:_authToken=${NPM_TOKEN}
 RUN npm config set @fortawesome:registry=https://npm.fontawesome.com/
-RUN npm config set  //npm.fontawesome.com/:_authToken=${FONT_AWESOME_KEY}
+RUN npm config set //npm.fontawesome.com/:_authToken=${FONT_AWESOME_TOKEN}
 RUN yarn install --frozen-lockfile --production && yarn cache clean
 
 FROM installation as build

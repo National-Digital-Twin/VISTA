@@ -26,6 +26,7 @@ jobs:
     env:
       APP_NAME: paralog
       NODE_AUTH_TOKEN: ${{ secrets.PACKAGE_PAT }}
+      FONT_AWESOME_TOKEN: ${{ secrets.FONT_AWESOME_KEY }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -37,6 +38,12 @@ jobs:
           registry-url: https://npm.pkg.github.com/
           scope: "@Telicent-io"
           always-auth: true
+      - name: create .yarnrc file
+        run: |
+          npm config set "@telicent-io:registry" "https://npm.pkg.github.com/"
+          npm config set "//npm.pkg.github.com/:_authToken" ${{ secrets.PACKAGE_PAT }} 
+          npm config set "@fortawesome:registry" https://npm.fontawesome.com/
+          npm config set  "//npm.fontawesome.com/:_authToken" ${{ secrets.FONT_AWESOME_KEY }}
       - name: Install dependencies
         run: yarn install --frozen-lockfile
       - run: mkdir reports
@@ -63,6 +70,7 @@ jobs:
       ECR_SUFFIX: -build
     secrets:
       NPM_TOKEN: ${{ secrets.PACKAGE_PAT }}
+      FONT_AWESOME_TOKEN: ${{ secrets.FONT_AWESOME_KEY }}
   publish_offline_image_to_aws:
     needs:
       - integrated_tests
@@ -77,6 +85,7 @@ jobs:
       VERSION_SUFFIX: -offline
     secrets:
       NPM_TOKEN: ${{ secrets.PACKAGE_PAT }}
+      FONT_AWESOME_TOKEN: ${{ secrets.FONT_AWESOME_KEY }}
   publish_deployment_image_to_aws:
     needs:
       - integrated_tests
@@ -90,3 +99,4 @@ jobs:
       VERSION: ${{ needs.get_version.outputs.version }}
     secrets:
       NPM_TOKEN: ${{ secrets.PACKAGE_PAT }}
+      FONT_AWESOME_TOKEN: ${{ secrets.FONT_AWESOME_KEY }}

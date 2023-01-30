@@ -24,6 +24,8 @@ on:
     secrets:
       NPM_TOKEN:
         required: false
+      FONT_AWESOME_TOKEN:
+        required: false
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
@@ -55,5 +57,5 @@ jobs:
         run: |
           cd ${{ inputs.PATH }}
           echo 'version ===> ${{ inputs.VERSION }}${{ inputs.VERSION_SUFFIX }}'
-          docker build -t ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }} -t ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:latest${{ inputs.VERSION_SUFFIX }}  -t ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ inputs.VERSION }}${{ inputs.VERSION_SUFFIX }} --build-arg NPM_TOKEN=${{ secrets.NPM_TOKEN }} --build-arg FONT_AWESOME_KEY=${{ secrets.FONT_AWESOME_KEY}} -f ${{ inputs.DOCKERFILE }} .
+          docker build -t ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }} -t ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:latest${{ inputs.VERSION_SUFFIX }}  -t ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ inputs.VERSION }}${{ inputs.VERSION_SUFFIX }} --build-arg NPM_TOKEN=${{ secrets.NPM_TOKEN }} --build-arg FONT_AWESOME_KEY=${{ secrets.FONT_AWESOME_TOKEN}} -f ${{ inputs.DOCKERFILE }} .
           docker image push --all-tags ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}
