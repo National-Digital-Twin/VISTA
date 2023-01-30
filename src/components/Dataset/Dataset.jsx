@@ -21,7 +21,7 @@ const Dataset = ({ showGrid, toggleView }) => {
       style={{ maxWidth: "13rem", maxHeight: "calc(100% - 50px)" }}
     >
       <DBButton ariaHidden onToggle={togglePanel} className={classNames({ hidden: showPanel, block: !showPanel })} />
-      <div className={classNames({ hidden: !showPanel, block: showPanel })}>
+      <div className={classNames("grow min-h-0 overflow-y-auto", { hidden: !showPanel, block: showPanel })}>
         <div className="inline-flex gap-x-2 border-b border-black-500 pb-1 w-full">
           <DBButton active onToggle={togglePanel} />
           <VerticalDivider height="h-5" />
@@ -39,7 +39,6 @@ const Dataset = ({ showGrid, toggleView }) => {
               width={32}
               uncheckedIcon={false}
               checkedIcon={false}
-              disabled
             />
           </label>
         </div>

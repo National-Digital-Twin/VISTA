@@ -17,7 +17,7 @@ export const generateCarverGrid = (assets, dependencies) => {
       grid[rowIndex][2] = asset.dependent.criticalitySum;
 
       if (rowIndex === colIndex - HEADINGS_COL_SPAN) {
-        grid[rowIndex][colIndex] = { color: "#4B4B4B", value: "" };
+        grid[rowIndex][colIndex] = { color: "#4B4B4B", value: "", element: undefined };
       } else if (
         asset.uri === dependencies[colIndex]?.dependent?.uri ||
         asset.uri === dependencies[colIndex]?.provider?.uri
@@ -25,9 +25,10 @@ export const generateCarverGrid = (assets, dependencies) => {
         grid[rowIndex][colIndex] = {
           color: dependencies[colIndex].criticalityColor,
           value: dependencies[colIndex].criticality,
+          element: dependencies[colIndex]
         };
       } else {
-        grid[rowIndex][colIndex] = { color: "transparent", value: "" };
+        grid[rowIndex][colIndex] = { color: "transparent", value: "", element: undefined };
       }
     }
   }
