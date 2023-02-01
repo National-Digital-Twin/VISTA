@@ -41,9 +41,8 @@ const cyStylesheet = [
       textBackgroundShape: "round-rectangle",
       fontFamily: "Urbanist",
       fontWeight: 300,
-      fontSize: 12,
+      fontSize: 14,
       textBackgroundOpacity: 0.7,
-      minZoomedFontSize: 8,
     },
   },
   {

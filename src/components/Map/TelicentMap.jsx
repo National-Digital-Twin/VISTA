@@ -1,7 +1,6 @@
 import classNames from "classnames";
 import React, { useContext, useEffect, useMemo, useState } from "react";
 import Map, { Layer, Source, ScaleControl, useMap, AttributionControl, Marker } from "react-map-gl";
-import { isEmpty } from "lodash";
 
 import config from "config/app-config";
 import { CytoscapeContext, ElementsContext } from "context";
@@ -26,7 +25,7 @@ const VIEWSTATE = {
   zoom: 9,
 };
 const HEAT_RADIUS = 1000;
-const ICON_SIZE = 16;
+const ICON_SIZE = 14;
 
 const TelicentMap = () => {
   const { telicentMap: map } = useMap();
@@ -85,9 +84,8 @@ const TelicentMap = () => {
 
     const controls = event.target._controls;
     const drawControl = Object.values(controls).find((item) => item.modes);
-    const selectedPolygons = drawControl.getSelected().features;
 
-    if (!clickedFeature && isEmpty(selectedPolygons)) {
+    if (!clickedFeature && drawControl.getMode() === "simple_select") {
       clearSelectedElements();
       fit();
       return;
