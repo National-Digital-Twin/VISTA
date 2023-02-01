@@ -3,7 +3,7 @@ import React, { useState } from "react";
 
 import { ToolbarButton, ToolbarMenu, VerticalDivider } from "../../lib";
 
-const LAYOUTS = ["Cola", "Circle", "Random", "Breadth First", "AVSDF", "Dagre"];
+const LAYOUTS = ["Cola", "Grid", "Random", "Breadth First", "AVSDF", "Dagre"];
 const transformLayoutOptions = (item) => item.replace(/\s/g, "").toLowerCase();
 
 const Toolbar = ({ cyRef, graphLayout, setGraphLayout }) => {

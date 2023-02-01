@@ -26,13 +26,13 @@ const waitForDataToLoad = async () => {
   });
 };
 
-const selectTunnelDataset = async () => {
+const selectTunnelDataset = async (mockSetSelectedTypes) => {
   const tunnelCheckbox = screen.getByRole("checkbox", { name: "tunnel [2]" });
   await user.click(tunnelCheckbox);
-  expect(tunnelCheckbox).toBeChecked();
+  expect(mockSetSelectedTypes).toHaveBeenCalledTimes(1);
 };
 
-const renderGroupedTypes = ({ types }) => {
+const renderGroupedTypes = ({ types, setSelectedTypes, selectedTypes }) => {
   const modalRoot = document.createElement("div");
   modalRoot.setAttribute("id", "root");
   document.body.appendChild(modalRoot);
@@ -44,6 +44,8 @@ const renderGroupedTypes = ({ types }) => {
         expand
         assessment={ASSESSMENTS[0].uri}
         types={types}
+        selectedTypes={selectedTypes}
+        setSelectedTypes={setSelectedTypes}
         setIsGeneratingData={jest.fn()}
       />
     </>,
@@ -53,6 +55,7 @@ const renderGroupedTypes = ({ types }) => {
 
 describe("GroupedTypes component", () => {
   test("renders error message when assessments/assets api call fails", async () => {
+    const mockSetSelectedTypes = jest.fn();
     server.use(rest.get(ASSESSMENTS_ASSETS_ENDPOINT, mockError));
     renderGroupedTypes({
       types: [
@@ -63,8 +66,10 @@ describe("GroupedTypes component", () => {
           superClass: "other",
         },
       ],
+      selectedTypes: [],
+      setSelectedTypes: mockSetSelectedTypes,
     });
-    await selectTunnelDataset();
+    await selectTunnelDataset(mockSetSelectedTypes);
 
     await waitForDataToLoad();
     expect(
@@ -73,6 +78,7 @@ describe("GroupedTypes component", () => {
   });
 
   test("renders error message when assessments/dependencies api call fails", async () => {
+    const mockSetSelectedTypes = jest.fn();
     server.use(rest.get(ASSESSMENTS_DEPENDENCIES_ENDPOINT, mockError));
     renderGroupedTypes({
       types: [
@@ -83,8 +89,10 @@ describe("GroupedTypes component", () => {
           superClass: "other",
         },
       ],
+      selectedTypes: [],
+      setSelectedTypes: mockSetSelectedTypes,
     });
-    await selectTunnelDataset();
+    await selectTunnelDataset(mockSetSelectedTypes);
 
     await waitForDataToLoad();
     expect(

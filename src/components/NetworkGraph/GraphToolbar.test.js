@@ -67,9 +67,9 @@ describe("GraphToolbar component", () => {
     const secondaryMenuItems = within(screen.getByTestId("secondary-menu")).getAllByRole(
       "listitem"
     );
-    await user.click(within(secondaryMenuItems[1]).getByRole("button", { name: "Circle" }));
+    await user.click(within(secondaryMenuItems[1]).getByRole("button", { name: "Grid" }));
 
-    expect(within(secondaryMenuItems[1]).getByRole("button", { name: "Circle" })).toHaveClass(
+    expect(within(secondaryMenuItems[1]).getByRole("button", { name: "Grid" })).toHaveClass(
       "bg-black-500"
     );
     expect(within(secondaryMenuItems[0]).getByRole("button", { name: "Cola" })).not.toHaveClass(

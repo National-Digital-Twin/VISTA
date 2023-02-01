@@ -9,7 +9,14 @@ import { useOntologyServer } from "hooks";
 
 import { createAssets, createDependencies } from "./dataset-utils";
 
-const GroupedTypes = ({ expand, assessment, types, setIsGeneratingData }) => {
+const GroupedTypes = ({
+  expand,
+  assessment,
+  types,
+  selectedTypes,
+  setSelectedTypes,
+  setIsGeneratingData,
+}) => {
   const { get, error, response } = useFetch();
   const { getIconStyle } = useOntologyServer();
   const { addElements, removeElementsByType, updateErrors } = useContext(ElementsContext);
@@ -52,6 +59,7 @@ const GroupedTypes = ({ expand, assessment, types, setIsGeneratingData }) => {
 
     if (!assessment) return;
     if (typeIsChecked) {
+      setSelectedTypes((prevSelectedTypes) => [...prevSelectedTypes, type]);
       const getData = async () => {
         setIsGeneratingData(true);
         const params = new URLSearchParams([
@@ -77,6 +85,9 @@ const GroupedTypes = ({ expand, assessment, types, setIsGeneratingData }) => {
 
     removeElementsByType(type);
     setIsGeneratingData(false);
+    setSelectedTypes((prevSelectedTypes) =>
+      prevSelectedTypes.filter((prevSelectedType) => prevSelectedType !== type)
+    );
   };
 
   const renderType = (type) => {
@@ -84,7 +95,7 @@ const GroupedTypes = ({ expand, assessment, types, setIsGeneratingData }) => {
     const { uri, assetCount } = type;
     return (
       <li key={uri} className="inline-flex gap-x-1 text-xs">
-        <input type="checkbox" value={uri} id={uri} onChange={handleTypeChange} className="w-3.5" />
+        <input type="checkbox" value={uri} id={uri} checked={selectedTypes.includes(uri)} onChange={handleTypeChange} className="w-3.5" />
         <label htmlFor={uri} className="uppercase">
           {lowerCase(getURIFragment(uri))} [{assetCount}]
         </label>
