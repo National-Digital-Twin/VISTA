@@ -47,7 +47,7 @@ export const getSelectedElements = ({ cachedElements, selectedElement }) => {
 const elementsReducer = (state, action) => {
   switch (action.type) {
     case ADD_ASSETS: {
-      const assets = [...state.assets, ...action.assets];
+      const assets = action.assets;
       const minTotalCount = Math.min(...getAllCounts(assets));
       const maxTotalCount = Math.max(...getAllCounts(assets));
       const minCriticalitySum = Math.min(...getAllCriticalitySums(assets));
@@ -63,7 +63,7 @@ const elementsReducer = (state, action) => {
     case ADD_DEPENDENCIES:
       return {
         ...state,
-        dependencies: [...state.dependencies, ...action.dependencies],
+        dependencies: action.dependencies,
       };
     case REMOVE_ELEMENTS_BY_TYPE:
       const { typeUri } = action;

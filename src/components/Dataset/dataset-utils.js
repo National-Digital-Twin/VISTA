@@ -6,7 +6,7 @@ export const createDependencies = (dependencies) => {
     (dependency) =>
       new Dependency({
         uri: dependency.dependencyUri,
-        criticality: dependency.criticalityRating,
+        criticality: dependency?.criticalityRating || 0,
         dependent: {
           uri: dependency.dependentNode,
           type: dependency.dependentNodeType,
@@ -20,21 +20,24 @@ export const createDependencies = (dependencies) => {
   );
 };
 
-export const createAssets = async (assets, iconStyle, getAssetGeometry) => {
+export const createAssets = async (assets, getIconStyle, getAssetGeometry) => {
   if (!assets && !Array.isArray(assets)) return [];
 
   return await Promise.all(
     assets.map(async (asset) => {
-      const geometry = await getAssetGeometry(asset.uri);
+      const uri = asset?.uri;
+      const type = asset?.type;
+      const geometry = await getAssetGeometry(uri);
+      const iconStyle = await getIconStyle(type);
       return new Asset({
-        uri: asset.uri,
-        type: asset.type,
-        lat: asset.lat,
-        lng: asset.lon,
+        uri,
+        type,
+        lat: asset?.lat,
+        lng: asset?.lon,
         geometry,
         dependent: {
-          count: asset.dependentCount,
-          criticalitySum: asset.dependentCriticalitySum,
+          count: asset?.dependentCount || 0,
+          criticalitySum: asset?.dependentCriticalitySum || 0,
         },
         styles: iconStyle,
       });

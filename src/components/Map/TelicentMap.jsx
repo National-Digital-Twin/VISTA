@@ -148,9 +148,9 @@ const TelicentMap = () => {
     </Source>
   );
 
-  const generatePointAssetIcons = ({ geometry, properties }) => (
+  const generatePointAssetIcons = ({ geometry, properties }, index) => (
     <Marker
-      key={properties.id}
+      key={properties.uri}
       longitude={geometry.coordinates[0]}
       latitude={geometry.coordinates[1]}
       anchor="bottom"

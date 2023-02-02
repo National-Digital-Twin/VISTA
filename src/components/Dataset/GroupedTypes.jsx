@@ -59,23 +59,23 @@ const GroupedTypes = ({
 
     if (!assessment) return;
     if (typeIsChecked) {
-      setSelectedTypes((prevSelectedTypes) => [...prevSelectedTypes, type]);
+      const types = [...selectedTypes, type];
+      setSelectedTypes(types);
+
       const getData = async () => {
         setIsGeneratingData(true);
-        const params = new URLSearchParams([
-          ["assessment", assessment],
-          ["types", type],
-        ]).toString();
+        const typeParams = types.map((type) => ["types", type]);
+        const params = new URLSearchParams([["assessment", assessment], ...typeParams]).toString();
 
-        const iconStyle = getIconStyle(type);
-        const assets = getAssets(params);
-        const dependencies = getDepedencies(params);
-        const data = Promise.all([assets, dependencies, iconStyle]);
-        return data;
+        const [assets, dependencies] = await Promise.all([
+          getAssets(params),
+          getDepedencies(params),
+        ]);
+        return { assets, dependencies };
       };
 
-      getData().then(async ([assets, dependencies, iconStyle]) => {
-        const createdAssets = await createAssets(assets, iconStyle, getAssetGeometry);
+      getData().then(async ({ assets, dependencies }) => {
+        const createdAssets = await createAssets(assets, getIconStyle, getAssetGeometry);
         const createdDependencies = createDependencies(dependencies);
         addElements(createdAssets, createdDependencies);
         setIsGeneratingData(false);
@@ -95,7 +95,14 @@ const GroupedTypes = ({
     const { uri, assetCount } = type;
     return (
       <li key={uri} className="inline-flex gap-x-1 text-xs">
-        <input type="checkbox" value={uri} id={uri} checked={selectedTypes.includes(uri)} onChange={handleTypeChange} className="w-3.5" />
+        <input
+          type="checkbox"
+          value={uri}
+          id={uri}
+          checked={selectedTypes.includes(uri)}
+          onChange={handleTypeChange}
+          className="w-3.5"
+        />
         <label htmlFor={uri} className="uppercase">
           {lowerCase(getURIFragment(uri))} [{assetCount}]
         </label>
