@@ -80,7 +80,7 @@ export const fitMultiToBounds = (map, selectedElements, assets) => {
   if (isEmpty(selectedElements) || isEmpty(assets)) return;
 
   const lngLats = selectedElements
-    .filter((element) => element?.isPointAsset)
+    .filter((element) => element?.isPointAsset && element?.hasLatLng)
     .map((element) => [element.lng, element.lat]);
   const pointAssetMPFeature = turf.multiPoint(lngLats);
 
@@ -93,6 +93,13 @@ export const fitMultiToBounds = (map, selectedElements, assets) => {
     .filter((element) => element?.isDependency)
     .map((element) => element.generateCoordinates(assets));
   const dependencyMLSFeature = turf.multiLineString(dependencyGeometry);
+
+  if (
+    isEmpty(pointAssetMPFeature.geometry.coordinates) &&
+    isEmpty(linearAssetMLSFeature.geometry.coordinates) &&
+    isEmpty(dependencyMLSFeature.geometry.coordinates)
+  )
+    return;
 
   const collection = turf.featureCollection([
     pointAssetMPFeature,
@@ -118,7 +125,7 @@ const fitLineStringToBounds = (map, geometry) => {
 };
 
 export const fitToBounds = (map, selectedElement, assets) => {
-  if (selectedElement?.isPointAsset) {
+  if (selectedElement?.isPointAsset && selectedElement?.hasLatLng) {
     map.flyTo({ center: [selectedElement.lng, selectedElement.lat], zoom: 12 });
     return;
   }

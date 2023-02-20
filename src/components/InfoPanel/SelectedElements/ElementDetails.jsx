@@ -6,6 +6,7 @@ import config from "config/app-config";
 import { ElementsContext } from "context";
 import { getURIFragment, isAsset, isElementCached } from "utils";
 import { useJSFetch, useLocalStorage, useOntologyServer } from "hooks";
+import ResidentialInformation from "./ResidentialInformation";
 
 const ElementDetails = ({ element, expand, onViewDetails }) => {
   const { error, get } = useJSFetch();
@@ -79,6 +80,11 @@ const ElementDetails = ({ element, expand, onViewDetails }) => {
   return (
     <div id="element-details" className="flex flex-col grow min-h-0 overflow-y-auto gap-y-4 pt-2">
       <Details expand {...details} />
+      <ResidentialInformation
+        isAsset={isAsset(element)}
+        primaryType={element.primaryType}
+        uri={element.uri}
+      />
       <ConnectedAssets type="dependent" element={element} />
       <ConnectedAssets type="provider" element={element} />
     </div>
@@ -90,7 +96,11 @@ const Details = ({ expand, id, title, criticality, type, desc, icon }) => (
   <div className="grid gap-y-1">
     <div className="flex items-center gap-x-2">
       <span className="w-12 h-12 flex items-center justify-center" style={{ ...icon.style }}>
-        {icon?.iconLabel ? <span className="text-whiteSmoke">{icon.iconLabel}</span> : <span className={icon.icon} />}
+        {icon?.iconLabel ? (
+          <span className="text-whiteSmoke">{icon.iconLabel}</span>
+        ) : (
+          <span className={icon.icon} />
+        )}
       </span>
       <div>
         <h2 className="text-lg font-medium">{title}</h2>
@@ -224,7 +234,7 @@ const AssetIcon = ({ backgroundColor, color, icon, iconLabel }) => (
     }}
     className="rounded-full w-10 h-10 flex justify-center items-center"
   >
-    {icon ? <span className={icon}/> : <span>{iconLabel}</span>}
+    {icon ? <span className={icon} /> : <span>{iconLabel}</span>}
   </div>
 );
 

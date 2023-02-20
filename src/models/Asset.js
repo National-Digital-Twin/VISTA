@@ -4,6 +4,7 @@ import { getColorScale, getHexColor, getShortType, getURIFragment } from "utils"
 export default class Asset {
   #countColorScale = {};
   #criticalitySumColorScale = {};
+  #addresses = [];
   constructor({ uri, type, lat, lng, geometry, dependent, styles }) {
     this.uri = uri;
     this.id = this.uri.split("#")[1];
@@ -65,6 +66,17 @@ export default class Asset {
     return getURIFragment(this.type);
   }
 
+  /**
+   * @param {string[]} addresses
+   */
+  setAddresses(addresses) {
+    this.#addresses = addresses;
+  }
+
+  get addresses() {
+    return this.#addresses;
+  }
+
   getIconStyle() {
     if (isEmpty(this.styles)) {
       return {
@@ -97,8 +109,9 @@ export default class Asset {
     return selectedElements.some((selectedElement) => selectedElement.uri === this.uri);
   }
 
-  hasLatLng() {
-    return Boolean(this.lat && this.lng);
+  get hasLatLng() {
+    const hasCoords = Boolean(this.lat && this.lng);
+    return hasCoords;
   }
 
   hasGeometry() {
@@ -165,7 +178,7 @@ export default class Asset {
         style: {
           borderRadius: "9999px",
           ...iconStyle,
-          border: "3px solid #F2F2F2"
+          border: "3px solid #F2F2F2",
         },
       },
     };

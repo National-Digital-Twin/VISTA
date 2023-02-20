@@ -1041,6 +1041,10 @@ video {
   border-radius: 9999px;
 }
 
+.rounded-sm {
+  border-radius: 0.125rem;
+}
+
 .border {
   border-width: 1px;
 }
@@ -1270,6 +1274,10 @@ video {
   font-weight: 400;
 }
 
+.font-semibold {
+  font-weight: 600;
+}
+
 .uppercase {
   text-transform: uppercase;
 }
@@ -1291,6 +1299,11 @@ video {
 .text-black-100 {
   --tw-text-opacity: 1;
   color: rgb(29 29 29 / var(--tw-text-opacity));
+}
+
+.text-whiteSmoke-300 {
+  --tw-text-opacity: 1;
+  color: rgb(196 196 196 / var(--tw-text-opacity));
 }
 
 .text-transparent {
