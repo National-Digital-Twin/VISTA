@@ -326,7 +326,7 @@ const ConnectedAssets = ({ type, element }) => {
       }
 
       const connectedAsset = await getAssetInformation(element[type].uri);
-      const iconStyle = await getIconStyle(connectedAsset.assetType);
+      const iconStyle = await getIconStyle(element[type].type);
 
       if (signal.aborted) return;
       setConnectedAssets([
