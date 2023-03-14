@@ -131,6 +131,7 @@ export default class Asset {
         circleStrokeColor: selected ? "#F2F2F2" : "#C4C4C4",
         circleStrokeWidth: selected ? 2 : 1,
         circleSize: 4,
+        selected,
         ...this.getIconStyle(),
       },
       geometry: {
@@ -155,6 +156,7 @@ export default class Asset {
         id: this.id,
         criticality: this.dependent.criticalitySum,
         lineColor: selected ? this.criticalityColor : "#7C7C7C",
+        selected,
       },
       geometry: {
         type: "LineString",
@@ -164,6 +166,7 @@ export default class Asset {
   }
 
   getDetails(assetInfo) {
+    if (!assetInfo) return undefined;
     const iconStyle = this.getIconStyle();
     return {
       title: assetInfo?.name,
@@ -172,12 +175,14 @@ export default class Asset {
       desc: assetInfo?.desc,
       criticalityColor: this.criticalityColor,
       id: this.id,
+      uri: this.uri,
       icon: {
         icon: iconStyle?.icon,
         iconLabel: iconStyle.iconLabel,
         style: {
           borderRadius: "9999px",
-          ...iconStyle,
+          backgroundColor: iconStyle.backgroundColor,
+          color: iconStyle.color,
           border: "3px solid #F2F2F2",
         },
       },

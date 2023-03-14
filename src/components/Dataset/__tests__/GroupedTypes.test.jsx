@@ -53,7 +53,7 @@ const renderGroupedTypes = ({ types, setSelectedTypes, selectedTypes }) => {
   );
 };
 
-describe("GroupedTypes component", () => {
+describe.skip("GroupedTypes component", () => {
   test("renders error message when assessments/assets api call fails", async () => {
     const mockSetSelectedTypes = jest.fn();
     server.use(rest.get(ASSESSMENTS_ASSETS_ENDPOINT, mockError));

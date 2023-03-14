@@ -6,7 +6,7 @@ const useOntologyServer = (options) => {
   const { get, response, loading } = useFetch(config.api.ontology, {
     cachePolicy: "cache-first",
     persist: true,
-    ...options
+    ...options,
   });
 
   const getIconStyle = useCallback(

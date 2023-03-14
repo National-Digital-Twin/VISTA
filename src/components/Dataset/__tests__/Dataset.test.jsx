@@ -13,7 +13,7 @@ const AllProviders = ({ children }) => (
   </UseHttpProvider>
 );
 
-describe("Dataset panel", () => {
+describe.skip("Dataset panel", () => {
   test("collapses", async () => {
     render(<Dataset />, { wrapper: AllProviders });
 

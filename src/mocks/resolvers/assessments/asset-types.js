@@ -4,9 +4,9 @@ const assetTypes = (req, res, ctx) => {
   let types = [];
   const assessment = req.url.searchParams.get("assessment");
 
-  if (assessment === ASSESSMENTS[0].uri) {
+  if (assessment === "https://www.iow.gov.uk/DigitalTwin#iowAssessment") {
     types = IOW_ASSET_TYPES;
   }
-  return res(ctx.status(200), ctx.json(types))
+  return res(ctx.status(200), ctx.json(types));
 };
 export default assetTypes;

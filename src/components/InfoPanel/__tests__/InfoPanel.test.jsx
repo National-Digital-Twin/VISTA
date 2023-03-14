@@ -1,48 +1,50 @@
 import React from "react";
 import { screen } from "@testing-library/react";
-import { expandPanel, renderTestComponent } from "test-utils";
+
+import { ElementsContext, ElementsProvider } from "context";
+import { getCreatedAssets, renderWithQueryClient } from "test-utils";
+import {
+  HIGH_VOLTAGE_ELECTRICITY_SUBSTATION_COMPLEX_ASSETS,
+  OIL_FIRED_POWER_GENERATION_COMPLEX_ASSETS,
+} from "mocks";
+
 import InfoPanel from "../InfoPanel";
 
-const Elements = ({ assets, connections, onElementClick }) => {
-  const event = { originalEvent: { shiftKey: true } };
-  return (
-    <>
-      <AssetBtn label="E001" assets={assets} event={event} onElementClick={onElementClick} />
-      <AssetBtn label="E003" assets={assets} event={event} onElementClick={onElementClick} />
-      <CxnBtn
-        label="E001 - E003"
-        connections={connections}
-        event={event}
-        onElementClick={onElementClick}
-      />
-    </>
-  );
-};
-
-describe.skip("Information panel component", () => {
+describe("Information panel component", () => {
   test("is closed by default", () => {
-    renderTestComponent(<InfoPanel />);
+    renderWithQueryClient(<InfoPanel />, { wrapper: ElementsProvider });
 
     expect(screen.getByRole("button", { name: /open information panel/i })).toBeInTheDocument();
-    expect(screen.getByTestId("information-panel").childNodes).toHaveLength(1);
+    expect(screen.queryByRole("heading", { name: "Information" })).not.toBeInTheDocument();
   });
 
   test("opens and closes", async () => {
-    const { user } = renderTestComponent(<InfoPanel />);
+    const { user } = renderWithQueryClient(<InfoPanel />, { wrapper: ElementsProvider });
 
-    await expandPanel(user);
-    expect(screen.getByTestId("information-panel").childNodes.length).toBeGreaterThan(1);
+    await user.click(screen.getByRole("button", { name: /open information panel/i }));
+    expect(screen.getByRole("button", { name: /close information panel/i })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Information" })).toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: "Close information panel" }))
-    expect(screen.getByTestId("information-panel").childNodes).toHaveLength(1);
+    await user.click(screen.getByRole("button", { name: "Close information panel" }));
+    expect(screen.getByRole("button", { name: /open information panel/i })).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "Information" })).not.toBeInTheDocument();
   });
 
-  test.skip("renders total count of selected elements", async () => {
-    const { user } = renderTestComponent(<InfoPanel />, { });
-    await expandPanel(user);
+  test("renders total count of selected elements when panel in closed", async () => {
+    const assets = await getCreatedAssets(
+      [
+        ...HIGH_VOLTAGE_ELECTRICITY_SUBSTATION_COMPLEX_ASSETS,
+        ...OIL_FIRED_POWER_GENERATION_COMPLEX_ASSETS,
+      ],
+      ["E001", "E003"]
+    );
+    renderWithQueryClient(
+      <ElementsContext.Provider value={{ selectedElements: assets }}>
+        <InfoPanel />
+      </ElementsContext.Provider>
+    );
 
     const selectedBadge = screen.getByTestId("selected-badge");
-
-    expect(selectedBadge).toHaveTextContent("1");
+    expect(selectedBadge).toHaveTextContent("2");
   });
 });

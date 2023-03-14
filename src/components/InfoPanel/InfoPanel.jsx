@@ -1,19 +1,18 @@
 import React, { useContext } from "react";
-import classNames from "classnames";
 
 import { ElementsContext } from "context";
 import { useLocalStorage } from "hooks";
 import { FloatingPanel } from "lib";
 
-import InfoBtn from "./InfoBtn";
+import InfoHeader from "./InfoHeader";
 import SelectedElements from "./SelectedElements/SelectedElements";
 
 const InfoPanel = () => {
   const { selectedElements } = useContext(ElementsContext);
-  const [showPanel, setShowPanel] = useLocalStorage("showInformationPanel", false);
+  const [showContent, setShowContent] = useLocalStorage("showInformationContent", false);
 
   const handleTogglePanel = () => {
-    setShowPanel((show) => !show);
+    setShowContent((show) => !show);
   };
 
   return (
@@ -22,28 +21,25 @@ const InfoPanel = () => {
       position="top-0 right-0"
       className="flex flex-col max-h-full"
       style={{
-        width: showPanel ? "26rem" : "fit-content",
+        width: showContent ? "26rem" : "fit-content",
         maxWidth: "26rem",
         maxHeight: "calc(100% - 50px)",
       }}
     >
-      <InfoBtn
-        count={selectedElements.length}
+      <InfoPanelContent
+        show={showContent}
+        totalSelected={selectedElements.length}
         onToggle={handleTogglePanel}
-        className={classNames({ hidden: showPanel, block: !showPanel })}
-        ariaHidden={showPanel}
-      />
-      <div
-        className={classNames("grow min-h-0 overflow-y-auto", {
-          hidden: !showPanel,
-          block: showPanel,
-        })}
-        aria-hidden={showPanel}
       >
         <SelectedElements selectedElements={selectedElements} onTogglePanel={handleTogglePanel} />
-      </div>
+      </InfoPanelContent>
     </FloatingPanel>
   );
 };
 
 export default InfoPanel;
+
+const InfoPanelContent = ({ show, totalSelected, onToggle, children }) => {
+  if (show) return children;
+  return <InfoHeader isExpanded={false} count={totalSelected} onToggle={onToggle} />;
+};

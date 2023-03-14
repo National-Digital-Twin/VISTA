@@ -24,7 +24,10 @@ const SUPER_CLASSES = {
 
 const ontologyClass = (req, res, ctx) => {
   const classUri = req.url.searchParams.get("classUri");
-  return res(ctx.status(200), ctx.json({ [classUri]: SUPER_CLASSES[classUri] }));
+
+  const superClass = SUPER_CLASSES[classUri];
+  if (superClass) return res(ctx.status(200), ctx.json({ [classUri]: SUPER_CLASSES[classUri] }));
+  return res(ctx.status(404), ctx.json({ detail: `Could not retrieve class for ${classUri}` }));
 };
 
 export default ontologyClass;

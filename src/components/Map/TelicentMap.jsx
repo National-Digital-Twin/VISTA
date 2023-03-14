@@ -1,10 +1,11 @@
 import classNames from "classnames";
 import React, { useContext, useEffect, useMemo, useState } from "react";
 import Map, { Layer, Source, ScaleControl, useMap, AttributionControl, Marker } from "react-map-gl";
+import { ErrorBoundary } from "react-error-boundary";
 
-import config from "config/app-config";
 import { CytoscapeContext, ElementsContext } from "context";
 import { useLocalStorage } from "hooks";
+import { ErrorFallback } from "lib";
 import { findElement } from "utils";
 
 import MapToolbar from "./MapToolbar/MapToolbar";
@@ -32,7 +33,9 @@ const TelicentMap = () => {
   const { fit, moveTo } = useContext(CytoscapeContext);
   const { assets, dependencies, selectedElements, clearSelectedElements, onElementClick } =
     useContext(ElementsContext);
-  const [mapStyle, setMapStyle] = useLocalStorage("mapStyle", "mapbox://styles/mapbox/dark-v10");
+
+  const mapStyles = useMemo(() => getMapStyles(), []);
+  const [mapStyle, setMapStyle] = useLocalStorage("mapStyle", mapStyles[0]);
 
   const [cursor, setCursor] = useState("auto");
   const [hoverInfo, setHoverInfo] = useState(undefined);
@@ -62,10 +65,9 @@ const TelicentMap = () => {
   );
 
   useEffect(() => {
-    if (!getMapStyles().some((style) => style.id === mapStyle)) {
-      setMapStyle(getMapStyles()[0].id);
-    }
-  }, [mapStyle, setMapStyle]);
+    const isStyleDefined = mapStyles.some((style) => style.id === mapStyle.id);
+    if (!isStyleDefined) setMapStyle(mapStyles[0]);
+  }, [mapStyles, mapStyle, setMapStyle]);
 
   useEffect(() => {
     const { pointAssets, pointAssetDependencies, linearAssets } = generateFeatures(
@@ -119,13 +121,13 @@ const TelicentMap = () => {
   };
 
   const handleOnZoom = (event) => {
-    const { pixelsPerMeter } = event.target.transform;
-    const { zoom } = event.viewState;
-    let radius = HEAT_RADIUS * pixelsPerMeter;
+    const { _pixelPerMeter } = event.target.transform;
+    let radius = HEAT_RADIUS * _pixelPerMeter;
     if (radius < 1) radius = 1;
     map.getMap().setPaintProperty(heatmap.id, "heatmap-radius", radius);
     setHeatmapRadius(radius);
 
+    const { zoom } = event.viewState;
     let iconSize = (4 + (zoom - 5) * 2).toFixed(0);
     setIconSize(iconSize);
     if (iconSize >= ICON_SIZE) setIconSize(ICON_SIZE);
@@ -148,7 +150,7 @@ const TelicentMap = () => {
     </Source>
   );
 
-  const generatePointAssetIcons = ({ geometry, properties }, index) => (
+  const generatePointAssetIcons = ({ geometry, properties }) => (
     <Marker
       key={properties.uri}
       longitude={geometry.coordinates[0]}
@@ -170,58 +172,60 @@ const TelicentMap = () => {
   );
 
   return (
-    <div className="relative w-full">
-      <Map
-        cursor={cursor}
-        id="telicentMap"
-        interactiveLayerIds={[pointAssetLayer.id, pointAssetCxnLayer.id, linearAssetsLayer.id]}
-        initialViewState={{ ...VIEWSTATE }}
-        mapboxAccessToken={config.mb.token}
-        mapStyle={mapStyle}
-        attributionControl={false}
-        onClick={handleOnClick}
-        onDragStart={() => setCursor("move")}
-        onDragEnd={resetCursor}
-        onMouseEnter={() => setCursor("pointer")}
-        onMouseLeave={resetCursor}
-        onMouseMove={handleOnMouseMove}
-        boxZoom={false}
-        onZoom={handleOnZoom}
-        styleDiffing
-      >
-        {sources.map(generateSources)}
-        {pointAssets.map(generatePointAssetIcons)}
-        <AttributionControl compact />
-        <ScaleControl
-          position="bottom-right"
-          style={{
-            position: "relative",
-            backgroundColor: "#27272780",
-            color: "#F5F5F5",
-            borderColor: "#949494",
-            fontFamily: "Urbanist",
-            letterSpacing: "1.5px",
-            margin: 0,
-            height: "22px",
-          }}
-        />
-        <HoverInfo info={hoverInfo?.feature.properties} left={hoverInfo?.x} top={hoverInfo?.y} />
-        <PointerCoordinates
-          show={showPointerCoords}
-          lat={mousePosition?.lat}
-          lng={mousePosition?.lng}
-        />
-        <MapToolbar
-          heatmapRadius={heatmapRadius}
-          map={map}
-          mapStyle={mapStyle}
-          setMapStyle={setMapStyle}
-          showPointerCoords={showPointerCoords}
-          onPointerCoordsClick={togglePointerCoords}
-          setCursor={setCursor}
-        />
-      </Map>
-    </div>
+    <ErrorBoundary FallbackComponent={ErrorFallback}>
+      <div className="relative w-full">
+        <Map
+          cursor={cursor}
+          id="telicentMap"
+          interactiveLayerIds={[pointAssetLayer.id, pointAssetCxnLayer.id, linearAssetsLayer.id]}
+          initialViewState={{ ...VIEWSTATE }}
+          mapboxAccessToken="MapboxToken"
+          mapStyle={mapStyle.id}
+          attributionControl={false}
+          onClick={handleOnClick}
+          onDragStart={() => setCursor("move")}
+          onDragEnd={resetCursor}
+          onMouseEnter={() => setCursor("pointer")}
+          onMouseLeave={resetCursor}
+          onMouseMove={handleOnMouseMove}
+          boxZoom={false}
+          onZoom={handleOnZoom}
+          styleDiffing
+        >
+          {sources.map(generateSources)}
+          {pointAssets.map(generatePointAssetIcons)}
+          <AttributionControl compact />
+          <ScaleControl
+            position="bottom-right"
+            style={{
+              position: "relative",
+              backgroundColor: "#27272780",
+              color: "#F5F5F5",
+              borderColor: "#949494",
+              fontFamily: "Urbanist",
+              letterSpacing: "1.5px",
+              margin: 0,
+              height: "22px",
+            }}
+          />
+          <HoverInfo info={hoverInfo?.feature.properties} left={hoverInfo?.x} top={hoverInfo?.y} />
+          <PointerCoordinates
+            show={showPointerCoords}
+            lat={mousePosition?.lat}
+            lng={mousePosition?.lng}
+          />
+          <MapToolbar
+            heatmapRadius={heatmapRadius}
+            map={map}
+            mapStyle={mapStyle}
+            setMapStyle={setMapStyle}
+            showPointerCoords={showPointerCoords}
+            onPointerCoordsClick={togglePointerCoords}
+            setCursor={setCursor}
+          />
+        </Map>
+      </div>
+    </ErrorBoundary>
   );
 };
 

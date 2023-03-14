@@ -3,18 +3,19 @@ import React from "react";
 import userEvent from "@testing-library/user-event";
 import { Provider as UseHttpProvider } from "use-http";
 import { MapProvider } from "react-map-gl";
+import { QueryClient, QueryClientProvider } from "react-query";
 
 import { Dataset } from "./components";
 import { CytoscapeProvider, ElementsContext, ElementsProvider } from "./context";
-import * as utils from "./components/Dataset/dataset-utils";
+import { createAssets, createDependencies } from "components/Dataset/dataset-utils";
 
 const user = userEvent.setup();
 
 export const clickLowVoltageElectricity = async () => {
-  await user.click(screen.getByRole("button", { name: /Electrical power distribution complex/i }))
+  await user.click(screen.getByRole("button", { name: /Electrical power distribution complex/i }));
   await user.click(await screen.findByRole("checkbox", { name: "Energy [25]" }));
   expect(screen.getByRole("checkbox", { name: "Energy [25]" })).toBeChecked();
-}
+};
 
 export const clickEnergyDataset = async () => {
   await user.click(await screen.findByRole("checkbox", { name: "Energy [25]" }));
@@ -117,16 +118,38 @@ export const renderTestComponent = (ui, options) => {
   };
 };
 
-export const selectDatasets = async (user, datasets) => {
-  const spyOnCreateData = jest.spyOn(utils, "createData");
+export const renderWithQueryClient = (ui, options) => {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        // ✅ turns retries off
+        retry: false,
+        cacheTime: Infinity,
+      },
+    },
+  });
 
-  for (const dataset of datasets) {
-    await waitFor(() =>
-      expect(screen.getByRole("checkbox", { name: dataset })).toBeInTheDocument()
-    );
-    await user.click(await screen.findByRole("checkbox", { name: dataset }));
-    expect(screen.getByRole("checkbox", { name: dataset })).toBeChecked();
-  }
+  return {
+    user: userEvent.setup(),
+    ...render(<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>, options),
+  };
+};
 
-  await waitFor(() => expect(spyOnCreateData).toHaveReturned());
+export const getCreatedAssets = async (
+  assets,
+  ids,
+  getIconStyle = jest.fn(),
+  getAssetGeometry = jest.fn()
+) => {
+  const createdAssets = (await createAssets(assets, getIconStyle, getAssetGeometry)).filter(
+    (asset) => ids.includes(asset.id)
+  );
+  return createdAssets;
+};
+
+export const getCreatedDependencies = (dependencies, ids) => {
+  const createdDependencies = createDependencies(dependencies).filter((asset) =>
+    ids.includes(asset.id)
+  );
+  return createdDependencies;
 };

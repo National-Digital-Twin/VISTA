@@ -39,7 +39,6 @@ const DrawingTools = ({ DRAW_POLYGON, compact, selectedTool, onDrawPolygon, onDr
         label="Drawing tools"
         onClick={() => setShowDrawingTools(true)}
         showSecondaryMenu={showDrawingTools}
-        className={"pb-1"}
         secondaryMenu={
           <ToolbarMenu menuItems={selectionTools} onClose={() => setShowDrawingTools(false)} />
         }

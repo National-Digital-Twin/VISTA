@@ -1,77 +1,108 @@
-import React, { useEffect, useReducer } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { isEmpty } from "lodash";
 
 import ElementDetails from "./ElementDetails";
-import {
-  LIST_VIEW,
-  MULTIPLE_ITEMS,
-  NOTHING_SELECTED,
-  RESET_STATE,
-  selectedElementsReducer,
-  SELECTED_ELEMENTS_INITIAL_STATE,
-  SINGLE_ELEMENT,
-} from "./selected-elements-reducer";
-import SelectedElementsHeader from "./SelectedElementsHeader";
+import InfoHeader, { InfoTitle, StreetView } from "../InfoHeader";
 
 const SelectedElements = ({ selectedElements, onTogglePanel }) => {
-  const [state, dispatch] = useReducer(selectedElementsReducer, SELECTED_ELEMENTS_INITIAL_STATE);
-  const { index, view, header } = state;
+  const [index, setIndex] = useState(undefined);
+
+  const totalSelected = useMemo(() => selectedElements?.length || 0, [selectedElements]);
 
   useEffect(() => {
+    if (!Array.isArray(selectedElements)) return;
     if (isEmpty(selectedElements)) {
-      dispatch({ type: RESET_STATE });
+      setIndex(undefined);
       return;
     }
-
     if (selectedElements.length === 1) {
-      dispatch({ type: SINGLE_ELEMENT });
-      return;
-    }
-
-    if (selectedElements.length > 1) {
-      dispatch({ type: LIST_VIEW });
+      setIndex(0);
       return;
     }
   }, [selectedElements]);
 
   const handleOnViewDetails = (index) => {
-    dispatch({
-      type: MULTIPLE_ITEMS,
-      index,
-      onViewAll: () => dispatch({ type: LIST_VIEW }),
-    });
+    setIndex(index);
   };
 
-  const VIEWS = {
-    [NOTHING_SELECTED]: () => <p>Click on an asset or connection to view details</p>,
-    [SINGLE_ELEMENT]: () => {
-      const selected = index ? selectedElements[index] : selectedElements[0];
-      return <ElementDetails expand element={selected} />;
-    },
-    [LIST_VIEW]: () => (
-      <ul className="gap-y-3">
-        {selectedElements.map((selectedElement, index) => (
-          <ElementDetails
-            key={selectedElement.id}
-            element={selectedElement}
-            onViewDetails={() => handleOnViewDetails(index)}
-          />
-        ))}
-      </ul>
-    ),
+  const viewAllSelected = () => {
+    setIndex(-1);
   };
 
-  const renderView = () => {
-    const component = VIEWS[view];
-    return component();
-  };
+  if (!Array.isArray(selectedElements)) return null;
+
+  if (index >= 0 && totalSelected !== 0) {
+    return (
+      <SingleElementDetails
+        selected={selectedElements[index]}
+        totalSelected={totalSelected}
+        onTogglePanel={onTogglePanel}
+        onViewAll={viewAllSelected}
+      />
+    );
+  }
+
+  if (totalSelected > 1) {
+    return (
+      <ElementsList
+        selectedElements={selectedElements}
+        totalSelected={totalSelected}
+        onViewDetails={handleOnViewDetails}
+        onTogglePanel={onTogglePanel}
+      />
+    );
+  }
 
   return (
     <>
-      <SelectedElementsHeader onToggle={onTogglePanel} {...header} />
-      {renderView()}
+      <InfoHeader
+        isExpanded
+        count={totalSelected}
+        onToggle={onTogglePanel}
+        className="justify-between"
+      >
+        <InfoTitle>Information</InfoTitle>
+      </InfoHeader>
+      <p>Click on an asset or connection to view details</p>
     </>
   );
 };
 
 export default SelectedElements;
+
+const SingleElementDetails = ({ selected, totalSelected, onTogglePanel, onViewAll }) => (
+  <>
+    <InfoHeader isExpanded count={totalSelected} onToggle={onTogglePanel} className="justify-end">
+      {totalSelected > 1 && (
+        <button onClick={onViewAll} className="flex items-center">
+          <span role="img" className="flex place-content-center ri-arrow-left-s-line" />
+          view all selected
+        </button>
+      )}
+      <StreetView latitude={selected?.lat} longitude={selected?.lng} className="ml-auto" />
+    </InfoHeader>
+    <ElementDetails expand element={selected} />
+  </>
+);
+
+const ElementsList = ({ selectedElements, totalSelected, onViewDetails, onTogglePanel }) => (
+  <>
+    <InfoHeader
+      isExpanded
+      count={totalSelected}
+      onToggle={onTogglePanel}
+      className="justify-between"
+    >
+      <InfoTitle>Selected Elements</InfoTitle>
+    </InfoHeader>
+    <ul className="gap-y-3">
+      {selectedElements.map((selectedElement, index) => (
+        <ElementDetails
+          key={selectedElement.id}
+          element={selectedElement}
+          onViewDetails={() => onViewDetails(index)}
+        />
+      ))}
+    </ul>
+  </>
+);

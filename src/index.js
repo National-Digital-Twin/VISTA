@@ -2,6 +2,8 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { MapProvider } from "react-map-gl";
 import { Provider as UseFetchProvider } from "use-http";
+import { QueryClient, QueryClientProvider } from "react-query";
+import { ReactQueryDevtools } from "react-query/devtools";
 
 import config from "./config/app-config";
 import { CytoscapeProvider, ElementsProvider } from "./context";
@@ -9,12 +11,17 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import "./main.css";
 
+const queryClient = new QueryClient();
+
 ReactDOM.render(
   <UseFetchProvider url={config.api.url}>
     <CytoscapeProvider>
       <ElementsProvider>
         <MapProvider>
-          <App />
+          <QueryClientProvider client={queryClient}>
+            <App />
+            <ReactQueryDevtools />
+          </QueryClientProvider>
         </MapProvider>
       </ElementsProvider>
     </CytoscapeProvider>

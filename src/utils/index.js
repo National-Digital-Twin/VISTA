@@ -17,6 +17,7 @@ export const getHexColor = (colorScale, value) => {
   return colorScale.getColor(value).toHexString();
 };
 export const isAsset = (element) => element?.elementType === "asset" ?? false;
+export const isDependency = (element) => element?.elementType === "dependency" ?? false;
 
 export const getShortType = (type) => {
   if (type) {

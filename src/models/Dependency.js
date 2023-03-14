@@ -34,7 +34,7 @@ export default class Dependency {
   #lookupConnectedAssets(assets) {
     const source = findElement(assets, this.dependent.uri);
     const target = findElement(assets, this.provider.uri);
-    return { source, target }
+    return { source, target };
   }
 
   #hasLatLng(source, target) {
@@ -65,6 +65,7 @@ export default class Dependency {
         criticality: this.criticality,
         lineColor: this.criticalityColor,
         lineOpacity: selected ? 1 : 0.3,
+        selected,
       },
       geometry: {
         type: "LineString",
@@ -73,11 +74,12 @@ export default class Dependency {
     };
   }
 
-  getDetails(dependentInfo, providerInfo) {
+  getDetails(dependentName, providerName) {
     return {
-      title: `${dependentInfo.name} - ${providerInfo.name}`,
+      title: `${dependentName} - ${providerName}`,
       criticality: this.criticality,
       id: this.id,
+      uri: this.uri,
       icon: {
         style: {
           width: "1rem",
@@ -85,6 +87,6 @@ export default class Dependency {
           backgroundColor: this.criticalityColor,
         },
       },
-    }
+    };
   }
 }

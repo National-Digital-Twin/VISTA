@@ -1,27 +1,23 @@
 import { rest } from "msw";
-import { render, screen, waitForElementToBeRemoved, within } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { screen, waitForElementToBeRemoved, within } from "@testing-library/react";
 
+import { ElementsProvider } from "context";
+import { createParalogEndpoint } from "endpoints";
 import server, { ASSESSMENTS } from "mocks";
-import { ASSESSMENTS_ASSET_TYPES_ENDPOINT, ONTOLOGY_CLASS_ENDPOINT } from "constants/endpoints";
-import { mockEmptyResponse, mockError } from "mocks/resolvers";
-import { apiUrl } from "mocks/handlers";
-import { PanelProviders } from "test-utils";
+import { mockEmptyResponse, mock400Error } from "mocks/resolvers";
+import { renderWithQueryClient } from "test-utils";
 
 import AssessmentTypes from "../AssessmentTypes";
 
-const user = userEvent.setup();
-
-const renderAssessmentTypes = () => {
-  render(
+const renderAssessmentTypes = () =>
+  renderWithQueryClient(
     <AssessmentTypes
       assessment={ASSESSMENTS[0].uri}
       selectedTypes={[]}
       setSelectedTypes={jest.fn()}
     />,
-    { wrapper: PanelProviders }
+    { wrapper: ElementsProvider }
   );
-};
 
 const waitForDataToLoad = async () => {
   await waitForElementToBeRemoved(() => screen.queryByText(/fetching data types/i));
@@ -41,7 +37,7 @@ describe("AssessmentTypes component", () => {
   });
 
   test("renders electrical power distribution complex types with total count", async () => {
-    renderAssessmentTypes();
+    const { user } = renderAssessmentTypes();
     await waitForDataToLoad();
 
     await user.click(screen.getByRole("button", { name: "Electrical power distribution complex" }));
@@ -65,31 +61,51 @@ describe("AssessmentTypes component", () => {
   });
 
   test("renders other types with total count", async () => {
-    renderAssessmentTypes();
+    const { user } = renderAssessmentTypes();
     await waitForDataToLoad();
 
     await user.click(screen.getByRole("button", { name: "Other" }));
-    const electicalPowerDistributionComplexListItems = within(
+    const otherListItems = within(
       screen.getByRole("treeitem", {
         name: /other/i,
         expanded: true,
       })
     ).getAllByRole("listitem");
 
+    expect(within(otherListItems[0]).getByLabelText(/tunnel \[2\]/i)).toBeInTheDocument();
+    expect(within(otherListItems[1]).getByLabelText(/underpass \[2\]/i)).toBeInTheDocument();
+  });
+
+  test("adds type to other when super class endpoint errors", async () => {
+    server.use(
+      rest.get(createParalogEndpoint("ontology/class"), (req, res, ctx) => {
+        const classUri = req.url.searchParams.get("classUri");
+        if (
+          classUri === "http://ies.data.gov.uk/ontology/ies4#LowVoltageElectricitySubstationComplex"
+        ) {
+          return res.once(ctx.status(404), ctx.json("Not found"));
+        }
+      })
+    );
+    const { user } = renderAssessmentTypes();
+    await waitForDataToLoad();
+
+    await user.click(screen.getByRole("button", { name: "Other" }));
+    const otherListItems = within(
+      screen.getByRole("treeitem", {
+        name: /other/i,
+        expanded: true,
+      })
+    ).getAllByRole("listitem");
+
+    expect(otherListItems).toHaveLength(3);
     expect(
-      within(electicalPowerDistributionComplexListItems[0]).getByLabelText(
-        /tunnel \[2\]/i
-      )
-    ).toBeInTheDocument();
-    expect(
-      within(electicalPowerDistributionComplexListItems[1]).getByLabelText(
-        /underpass \[2\]/i
-      )
+      within(otherListItems[0]).getByLabelText(/low voltage electricity substation complex \[9\]/i)
     ).toBeInTheDocument();
   });
 
   test("renders message when asset types are not found", async () => {
-    server.use(rest.get(apiUrl(ASSESSMENTS_ASSET_TYPES_ENDPOINT), mockEmptyResponse));
+    server.use(rest.get(createParalogEndpoint("assessments/asset-types"), mockEmptyResponse));
     renderAssessmentTypes();
     await waitForDataToLoad();
 
@@ -97,25 +113,13 @@ describe("AssessmentTypes component", () => {
   });
 
   test("renders error message when /assessments/asset-types api call fails", async () => {
-    server.use(rest.get(apiUrl(ASSESSMENTS_ASSET_TYPES_ENDPOINT), mockError));
+    server.use(rest.get(createParalogEndpoint("assessments/asset-types"), mock400Error));
     renderAssessmentTypes();
     await waitForDataToLoad();
 
     expect(
       screen.getByText(
-        "An error occured while retrieving data types. Please try again. If problem persists contact admin"
-      )
-    ).toBeInTheDocument();
-  });
-
-  test("renders error message when /ontology/class api call fails", async () => {
-    server.use(rest.get(apiUrl(ONTOLOGY_CLASS_ENDPOINT), mockError));
-    renderAssessmentTypes();
-    await waitForDataToLoad();
-
-    expect(
-      screen.getByText(
-        "An error occured while retrieving data types. Please try again. If problem persists contact admin"
+        "An error occured while retrieving data types for https://www.iow.gov.uk/DigitalTwin#iowAssessment"
       )
     ).toBeInTheDocument();
   });

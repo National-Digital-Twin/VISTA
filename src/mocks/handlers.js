@@ -1,34 +1,23 @@
 import { rest } from "msw";
 
-import config from "config/app-config";
+import { createOntologyEndpoint, createParalogEndpoint } from "endpoints";
 import {
   ASSESSMENTS_ASSETS_ENDPOINT,
-  ASSESSMENTS_ASSET_TYPES_ENDPOINT,
   ASSESSMENTS_DEPENDENCIES_ENDPOINT,
-  ASSESSMENTS_ENDPOINT,
-  ONTOLOGY_CLASS_ENDPOINT,
 } from "constants/endpoints";
 
-import { assessments, assetTypes, ontologyClass, mockEmptyResponse, asset } from "./resolvers";
-
-export const apiUrl = (path) => {
-  const url = `${config.api.url}/${path}`;
-  return url;
-};
-
-const ontologyServerUrl = (path) => {
-  const url = `${config.api.ontology}/${path}`;
-  return url;
-}
+import * as resolvers from "./resolvers";
 
 export const handlers = [
-  rest.get(ASSESSMENTS_ENDPOINT, assessments),
-  rest.get(apiUrl(ASSESSMENTS_ASSET_TYPES_ENDPOINT), assetTypes),
-  rest.get(apiUrl(ONTOLOGY_CLASS_ENDPOINT), ontologyClass),
-  rest.get(ASSESSMENTS_ASSETS_ENDPOINT, mockEmptyResponse),
-  rest.get(ASSESSMENTS_DEPENDENCIES_ENDPOINT, mockEmptyResponse),
-  rest.get(apiUrl("asset"), asset),
-  rest.get(apiUrl("asset/dependents"), (req, res, ctx) => res(ctx.status(200), ctx.json([]))),
-  rest.get(apiUrl("asset/providers"), (req, res, ctx) => res(ctx.status(200), ctx.json([]))),
-  rest.get(ontologyServerUrl("styles/class"), (req, res, ctx) => res(ctx.status(200), ctx.json([])))
+  rest.get(createParalogEndpoint("assessments"), resolvers.assessments),
+  rest.get(createParalogEndpoint("assessments/asset-types"), resolvers.assetTypes),
+  rest.get(ASSESSMENTS_ASSETS_ENDPOINT, resolvers.mockEmptyResponse),
+  rest.get(ASSESSMENTS_DEPENDENCIES_ENDPOINT, resolvers.mockEmptyResponse),
+  rest.get(createParalogEndpoint("asset"), resolvers.asset),
+  rest.get(createParalogEndpoint("asset/dependents"), resolvers.dependents),
+  rest.get(createParalogEndpoint("asset/providers"), resolvers.providers),
+  rest.get(createParalogEndpoint("asset/residents"), resolvers.residents),
+  rest.get(createParalogEndpoint("person/residences"), resolvers.personResidences),
+  rest.get(createParalogEndpoint("ontology/class"), resolvers.ontologyClass),
+  rest.get(createOntologyEndpoint("styles/class"), resolvers.iconStyles),
 ];

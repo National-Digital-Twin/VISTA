@@ -26,7 +26,7 @@ const ToolbarMenu = ({ id, menuItems, onClose }) => {
     <ul
       ref={containerRef}
       id={id}
-      className="floating-menu bottom-12 px-2 py-1 flex flex-col items-center gap-y-2 max-h-40 overflow-y-auto overscroll-y-contain scroll-smooth"
+      className="floating-menu bottom-10 px-2 py-1 flex flex-col items-center gap-y-2 max-h-40 overflow-y-auto overscroll-y-contain scroll-smooth"
       style={{ maxWidth: "10rem" }}
     >
       {menuItems.map(generateMenuItems)}

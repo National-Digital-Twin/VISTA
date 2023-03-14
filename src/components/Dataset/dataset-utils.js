@@ -9,16 +9,20 @@ export const createDependencies = (dependencies) => {
         criticality: dependency?.criticalityRating || 0,
         dependent: {
           uri: dependency.dependentNode,
+          name: dependency.dependentName,
           type: dependency.dependentNodeType,
         },
         provider: {
           uri: dependency.providerNode,
+          name: dependency.providerName,
           type: dependency.providerNodeType,
         },
         osmID: dependency.osmID,
       })
   );
 };
+
+const hasParts = (asset) => asset?.partCount > 0;
 
 export const createAssets = async (assets, getIconStyle, getAssetGeometry) => {
   if (!assets && !Array.isArray(assets)) return [];
@@ -27,7 +31,7 @@ export const createAssets = async (assets, getIconStyle, getAssetGeometry) => {
     assets.map(async (asset) => {
       const uri = asset?.uri;
       const type = asset?.type;
-      const geometry = await getAssetGeometry(uri);
+      const geometry = hasParts(asset) ? await getAssetGeometry(asset.uri) : [];
       const iconStyle = await getIconStyle(type);
 
       return new Asset({

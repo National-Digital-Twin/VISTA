@@ -1,111 +1,249 @@
-import { render, screen, within } from "@testing-library/react";
 import React from "react";
-import userEvent from "@testing-library/user-event";
+import { screen, waitForElementToBeRemoved, within } from "@testing-library/react";
 
-import { E001_DETAILS, E001_E003_DETAILS, E003_DETAILS } from "mocks";
+import { ElementsProvider } from "context";
+import {
+  HIGH_VOLTAGE_ELECTRICITY_AND_OIL_FIRED_POWER_GENERATION_SUBSTATION_COMPLEX_DEPENDENCIES,
+  HIGH_VOLTAGE_ELECTRICITY_SUBSTATION_COMPLEX_ASSETS,
+  OIL_FIRED_POWER_GENERATION_COMPLEX_ASSETS,
+} from "mocks";
+import { getCreatedAssets, getCreatedDependencies, renderWithQueryClient } from "test-utils";
+import { createAssets } from "components/Dataset/dataset-utils";
+
 import ElementDetails from "../ElementDetails";
 
-const renderElementDetails = (element) => ({
-  user: userEvent.setup(),
-  ...render(<ElementDetails element={element} expand onViewDetails={jest.fn()} />),
-});
+const renderElementDetails = ({ element, expand }) =>
+  renderWithQueryClient(
+    <ElementDetails element={element} expand={expand} onViewDetails={jest.fn()} />,
+    { wrapper: ElementsProvider }
+  );
 
-describe.skip("Element details component", () => {
-  test("can toggle connected assets section", async () => {
-    const { user } = renderElementDetails(E001_DETAILS);
+const waitForDetailsToLoad = async () => {
+  await waitForElementToBeRemoved(() => screen.queryByText("Fetching element details"));
+};
 
-    expect(screen.getByRole("heading", { name: "1 Connected Assets", level: 3 })).toBeInTheDocument();
-    expect(screen.getByRole("list")).toBeInTheDocument();
+const renderAssetDetails = async ({ assets, ids, expand }) => {
+  const createdAssets = await getCreatedAssets(assets, ids);
+  return renderElementDetails({ element: createdAssets[0], expand });
+};
 
-    await user.click(screen.getByRole("button", { name: "1 Connected Assets" }));
-    expect(screen.queryByRole("list")).not.toBeInTheDocument();
+const renderConnectionDetails = ({ dependencies, ids, expand }) => {
+  const createdDependencies = getCreatedDependencies(dependencies, ids);
+  renderElementDetails({ element: createdDependencies[0], expand });
+};
+
+const renderAndLoadE001Details = async () => {
+  await renderAssetDetails({
+    assets: OIL_FIRED_POWER_GENERATION_COMPLEX_ASSETS,
+    ids: ["E001"],
+    expand: true,
   });
-});
+  await waitForDetailsToLoad();
+};
 
-describe.skip("Element details component: asset", () => {
-  test("renders name", async () => {
-    renderElementDetails(E001_DETAILS);
+const renderAndLoadE003Details = async () => {
+  await renderAssetDetails({
+    assets: HIGH_VOLTAGE_ELECTRICITY_SUBSTATION_COMPLEX_ASSETS,
+    ids: ["E003"],
+    expand: true,
+  });
+  await waitForDetailsToLoad();
+};
+
+const renderAndLoadE001toE003ConnectionDetails = async () => {
+  renderConnectionDetails({
+    dependencies:
+      HIGH_VOLTAGE_ELECTRICITY_AND_OIL_FIRED_POWER_GENERATION_SUBSTATION_COMPLEX_DEPENDENCIES,
+    ids: ["E001 - E003"],
+    expand: true,
+  });
+  await waitForDetailsToLoad();
+};
+
+describe("Element details component", () => {
+  test("renders asset icon label when styles are not defined", async () => {
+    await renderAssetDetails({
+      assets: OIL_FIRED_POWER_GENERATION_COMPLEX_ASSETS,
+      ids: ["E001"],
+      expand: false,
+    });
+    await waitForDetailsToLoad();
+
+    const assetIcon = screen.getByTestId("asset-icon");
+    expect(within(assetIcon).getByText("Oil")).toBeInTheDocument();
+  });
+
+  test("renders asset icon", async () => {
+    const mockGetIconStyle = jest.fn().mockReturnValue({
+      backgroundColor: "#FFFF00",
+      color: "black",
+      icon: "ri-cloudy-fill",
+      faIcon: "fa-regular fa-bolt-lightning",
+      faUnicode: "",
+      faClass: "fa-regular",
+    });
+    const createdAssets = (
+      await createAssets(OIL_FIRED_POWER_GENERATION_COMPLEX_ASSETS, mockGetIconStyle, jest.fn())
+    ).filter((asset) => asset.id === "E001");
+
+    renderElementDetails({ element: createdAssets[0], expand: true });
+    await waitForDetailsToLoad();
+
+    const assetIcon = screen.getByTestId("asset-icon");
+    expect(assetIcon).toHaveStyle({
+      backgroundColor: "rgb(255, 255, 0)",
+      color: "black",
+      border: "3px solid #f2f2f2",
+    });
+    expect(assetIcon.firstElementChild).toHaveClass("fa-regular fa-bolt-lightning");
+
+    // checks dependents are loaded
+    expect(await screen.findByRole("heading", { name: "1 dependent asset" })).toBeInTheDocument();
+
+    // checks providers are loaded
+    expect(await screen.findByRole("heading", { name: "1 provider asset" })).toBeInTheDocument();
+  });
+
+  test("renders summarised asset details", async () => {
+    await renderAssetDetails({
+      assets: OIL_FIRED_POWER_GENERATION_COMPLEX_ASSETS,
+      ids: ["E001"],
+      expand: false,
+    });
+    await waitForDetailsToLoad();
+
+    // checks asset name is present
+    expect(screen.getByRole("heading", { name: "East Cowes Power Station" })).toBeInTheDocument();
+
+    // checks asset type is present
+    expect(screen.getByText("oil fired power generation complex")).toBeInTheDocument();
+
+    // checks asset ID is present
+    expect(screen.getByText("E001")).toBeInTheDocument();
+
+    // checks asset criticality is not present
+    expect(screen.queryByText("Criticality: 3")).not.toBeInTheDocument();
+
+    // check description is not rendered
+    expect(screen.queryByTestId("description")).not.toBeInTheDocument();
+
+    // checks dependents are not present
+    expect(screen.queryByRole("heading", { name: "1 dependent asset" })).not.toBeInTheDocument();
+
+    // checks providers are not present
+    expect(screen.queryByRole("heading", { name: "1 provider asset" })).not.toBeInTheDocument();
+  });
+
+  test("renders summarised connection details", async () => {
+    renderConnectionDetails({
+      dependencies:
+        HIGH_VOLTAGE_ELECTRICITY_AND_OIL_FIRED_POWER_GENERATION_SUBSTATION_COMPLEX_DEPENDENCIES,
+      ids: ["E001 - E003"],
+      expand: false,
+    });
+    await waitForDetailsToLoad();
+
+    // checks connection name is present
     expect(
-      screen.getByRole("heading", { name: "East Cowes Power Station (E001)" })
+      screen.getByRole("heading", {
+        name: "East Cowes Power Station - East Cowes 132/33kV Substation",
+      })
     ).toBeInTheDocument();
+
+    // checks connection ID is present
+    expect(screen.getByText("E001 - E003")).toBeInTheDocument();
+
+    // checks asset criticality is not present
+    expect(screen.queryByText("Criticality: 3")).not.toBeInTheDocument();
+
+    // checks dependents are not present
+    expect(screen.queryByRole("heading", { name: "1 dependent asset" })).not.toBeInTheDocument();
+
+    // checks providers are not present
+    expect(screen.queryByRole("heading", { name: "1 provider asset" })).not.toBeInTheDocument();
   });
 
-  test("renders type", async () => {
-    renderElementDetails(E001_DETAILS);
-    expect(screen.getByText("ies:Facility")).toBeInTheDocument();
-  });
+  test("renders asset details", async () => {
+    await renderAndLoadE001Details();
 
-  test("renders criticality", async () => {
-    renderElementDetails(E001_DETAILS);
+    // checks asset name is present
+    expect(screen.getByRole("heading", { name: "East Cowes Power Station" })).toBeInTheDocument();
+
+    // checks asset type is present
+    expect(screen.getByText("oil fired power generation complex")).toBeInTheDocument();
+
+    // checks asset ID is present
+    expect(screen.getByText("E001")).toBeInTheDocument();
+
+    // checks asset criticality is present
     expect(screen.getByText("Criticality: 3")).toBeInTheDocument();
-  });
 
-  test("renders description", async () => {
-    renderElementDetails(E001_DETAILS);
-    expect(screen.getByTestId("description")).toBeInTheDocument();
+    // checks asset description is present
+    expect(screen.getByTestId("description")).toHaveTextContent(
+      "Cowes power station (or Kingston power station) is a 140MW Open Cycle Gas Turbine station powered by two 70MW units. The station is the Isle of Wight's only conventional power generation source other than power from the mainland. The station was built in 1982 at a cost of ï¿½30 million. The station is owned and operated by RWE Generation UK."
+    );
+
+    // checks dependents are loaded
+    expect(await screen.findByRole("heading", { name: "1 dependent asset" })).toBeInTheDocument();
+
+    // checks providers are loaded
+    expect(await screen.findByRole("heading", { name: "1 provider asset" })).toBeInTheDocument();
   });
 
   test("does NOT render description when asset doesn't have description", async () => {
-    renderElementDetails(E003_DETAILS);
-    expect(screen.queryByTestId("description")).not.toBeInTheDocument();
-  });
+    await renderAndLoadE003Details();
 
-  test("renders connected assets", async () => {
-    renderElementDetails(E003_DETAILS);
-
-    expect(screen.getByRole("heading", { name: "1 Connected Assets", level: 3 })).toBeInTheDocument();
-    expect(screen.getAllByRole("listitem")).toHaveLength(1);
-    const connectedAsset = screen.getByRole("listitem");
+    // checks asset name is present
     expect(
-      within(connectedAsset).getByRole("heading", {
-        name: "East Cowes Power Station (E001)",
-        level: 4,
-      })
+      screen.getByRole("heading", { name: "East Cowes 132/33kV Substation" })
     ).toBeInTheDocument();
-    expect(within(connectedAsset).getByText("Asset criticality: 3")).toBeInTheDocument();
-    expect(within(connectedAsset).getByText("Connection criticality: 3")).toBeInTheDocument();
-  });
-});
 
-describe.skip("Element details component: connection", () => {
-  test("renders name", async () => {
-    renderElementDetails(E001_E003_DETAILS);
+    // check description is not rendered
+    expect(screen.queryByTestId("description")).not.toBeInTheDocument();
+
+    // checks dependents are loaded
+    expect(await screen.findByRole("heading", { name: "4 dependent assets" })).toBeInTheDocument();
+
+    // checks providers are loaded
+    expect(await screen.findByRole("heading", { name: "2 provider assets" })).toBeInTheDocument();
+  });
+
+  test("renders connection details", async () => {
+    await renderAndLoadE001toE003ConnectionDetails();
+
+    // checks connection name is present
     expect(
       screen.getByRole("heading", {
-        name: "East Cowes Power Station (E001) to East Cowes 132/33kV Substation (E003)",
+        name: "East Cowes Power Station - East Cowes 132/33kV Substation",
       })
     ).toBeInTheDocument();
-  });
 
-  test("renders criticality", async () => {
-    renderElementDetails(E001_E003_DETAILS);
+    // checks connection ID is present
+    expect(screen.getByText("E001 - E003")).toBeInTheDocument();
+
+    // checks asset criticality is present
     expect(screen.getByText("Criticality: 3")).toBeInTheDocument();
+
+    // checks dependents are loaded
+    expect(await screen.findByRole("heading", { name: "1 dependent asset" })).toBeInTheDocument();
+
+    // checks providers are loaded
+    expect(await screen.findByRole("heading", { name: "1 provider asset" })).toBeInTheDocument();
   });
 
-  test("renders connected assets", async () => {
-    renderElementDetails(E001_E003_DETAILS);
-
-    expect(screen.getByRole("heading", { name: "2 Connected Assets", level: 3 })).toBeInTheDocument();
-    expect(screen.getAllByRole("listitem")).toHaveLength(2);
-
-    const connectedAsset1 = screen.getAllByRole("listitem")[0];
+  test("renders error message when details are not found", async () => {
+    const uri = "https://www.iow.gov.uk/ReactTests#E001";
+    await renderAssetDetails({ assets: [{ uri }], ids: ["E001"], expand: true });
+    await waitForDetailsToLoad();
     expect(
-      within(connectedAsset1).getByRole("heading", {
-        name: "East Cowes Power Station (E001)",
-        level: 4,
-      })
+      screen.getByText(`An error has occured while fetching information for ${uri}`)
     ).toBeInTheDocument();
-    expect(within(connectedAsset1).getByText("Asset criticality: 3")).toBeInTheDocument();
-    expect(within(connectedAsset1).getByText("Connection criticality: 3")).toBeInTheDocument();
+  });
 
-    const connectedAsset2 = screen.getAllByRole("listitem")[1];
+  test("render error message when an element in not provided", async () => {
+    renderElementDetails({ expand: true });
     expect(
-      within(connectedAsset2).getByRole("heading", {
-        name: "East Cowes 132/33kV Substation (E003)",
-        level: 4,
-      })
+      screen.getByText("Unable to retrieve details for unknown element or details not found")
     ).toBeInTheDocument();
-    expect(within(connectedAsset2).getByText("Asset criticality: 3")).toBeInTheDocument();
-    expect(within(connectedAsset2).getByText("Connection criticality: 3")).toBeInTheDocument();
   });
 });

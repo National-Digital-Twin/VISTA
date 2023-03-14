@@ -1,0 +1,331 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Dependents component can toggle dependents assets: dependents not sorted 1`] = `
+Array [
+  <li
+    class="gap-x-2 bg-black-300 rounded-md p-2 items-center"
+  >
+    <div
+      class="flex items-center gap-x-2"
+    >
+      <div
+        class="rounded-full flex justify-center items-center"
+        id="asset-icon"
+        style="background-color: rgb(163, 163, 163); color: rgb(51, 51, 51);"
+      >
+        <span>
+          Low
+        </span>
+      </div>
+      <div>
+        <h4>
+          Shalfleet 33kV / 11kV Substation
+        </h4>
+        <p
+          class="uppercase"
+          style="font-size: 13px;"
+        >
+          low voltage electricity substation complex
+        </p>
+        <p
+          class="text-sm"
+        >
+          E008
+        </p>
+      </div>
+    </div>
+    <p
+      class="whitespace-nowrap text-sm"
+    >
+      Criticality: 
+      38
+    </p>
+    <p
+      class="whitespace-nowrap text-sm"
+    >
+      Connection Strength: 
+      3
+    </p>
+  </li>,
+  <li
+    class="gap-x-2 bg-black-300 rounded-md p-2 items-center"
+  >
+    <div
+      class="flex items-center gap-x-2"
+    >
+      <div
+        class="rounded-full flex justify-center items-center"
+        id="asset-icon"
+        style="background-color: rgb(163, 163, 163); color: rgb(51, 51, 51);"
+      >
+        <span>
+          Low
+        </span>
+      </div>
+      <div>
+        <h4>
+          East Cowes 33kv /11kV Substation
+        </h4>
+        <p
+          class="uppercase"
+          style="font-size: 13px;"
+        >
+          low voltage electricity substation complex
+        </p>
+        <p
+          class="text-sm"
+        >
+          E002
+        </p>
+      </div>
+    </div>
+    <p
+      class="whitespace-nowrap text-sm"
+    >
+      Criticality: 
+      41
+    </p>
+    <p
+      class="whitespace-nowrap text-sm"
+    >
+      Connection Strength: 
+      3
+    </p>
+  </li>,
+  <li
+    class="gap-x-2 bg-black-300 rounded-md p-2 items-center"
+  >
+    <div
+      class="flex items-center gap-x-2"
+    >
+      <div
+        class="rounded-full flex justify-center items-center"
+        id="asset-icon"
+        style="background-color: rgb(163, 163, 163); color: rgb(51, 51, 51);"
+      >
+        <span>
+          Low
+        </span>
+      </div>
+      <div>
+        <h4>
+          Ventnor 33kV / 11kV Substation
+        </h4>
+        <p
+          class="uppercase"
+          style="font-size: 13px;"
+        >
+          low voltage electricity substation complex
+        </p>
+        <p
+          class="text-sm"
+        >
+          E012
+        </p>
+      </div>
+    </div>
+    <p
+      class="whitespace-nowrap text-sm"
+    >
+      Criticality: 
+      84
+    </p>
+    <p
+      class="whitespace-nowrap text-sm"
+    >
+      Connection Strength: 
+      3
+    </p>
+  </li>,
+  <li
+    class="gap-x-2 bg-black-300 rounded-md p-2 items-center"
+  >
+    <div
+      class="flex items-center gap-x-2"
+    >
+      <div
+        class="rounded-full flex justify-center items-center"
+        id="asset-icon"
+        style="background-color: rgb(163, 163, 163); color: rgb(51, 51, 51);"
+      >
+        <span
+          class="fa-regular fa-bolt-lightning"
+        />
+      </div>
+      <div>
+        <h4>
+          East Cowes Power Station
+        </h4>
+        <p
+          class="uppercase"
+          style="font-size: 13px;"
+        >
+          oil fired power generation complex
+        </p>
+        <p
+          class="text-sm"
+        >
+          E001
+        </p>
+      </div>
+    </div>
+    <p
+      class="whitespace-nowrap text-sm"
+    >
+      Criticality: 
+      3
+    </p>
+    <p
+      class="whitespace-nowrap text-sm"
+    >
+      Connection Strength: 
+      3
+    </p>
+  </li>,
+]
+`;
+
+exports[`Dependents component renders error message when one or more dependents returns an error: dependents with error(s) 1`] = `
+Array [
+  <li
+    class="gap-x-2 bg-black-300 rounded-md p-2 items-center"
+  >
+    <div
+      class="flex items-center gap-x-2"
+    >
+      <div
+        class="rounded-full flex justify-center items-center"
+        id="asset-icon"
+        style="background-color: rgb(255, 255, 0); color: black;"
+      >
+        <span
+          class="fa-regular fa-bolt-lightning"
+        />
+      </div>
+      <div>
+        <h4>
+          East Cowes Power Station
+        </h4>
+        <p
+          class="uppercase"
+          style="font-size: 13px;"
+        >
+          oil fired power generation complex
+        </p>
+        <p
+          class="text-sm"
+        >
+          E001
+        </p>
+      </div>
+    </div>
+    <p
+      class="whitespace-nowrap text-sm"
+    >
+      Criticality: 
+      3
+    </p>
+    <p
+      class="whitespace-nowrap text-sm"
+    >
+      Connection Strength: 
+      3
+    </p>
+  </li>,
+  <li
+    class="gap-x-2 bg-black-300 rounded-md p-2 items-center"
+  >
+    <div
+      class="flex items-center gap-x-2"
+    >
+      <div
+        class="rounded-full flex justify-center items-center"
+        id="asset-icon"
+        style="background-color: rgb(163, 163, 163); color: rgb(51, 51, 51);"
+      >
+        <span>
+          Low
+        </span>
+      </div>
+      <div>
+        <h4>
+          Shalfleet 33kV / 11kV Substation
+        </h4>
+        <p
+          class="uppercase"
+          style="font-size: 13px;"
+        >
+          low voltage electricity substation complex
+        </p>
+        <p
+          class="text-sm"
+        >
+          E008
+        </p>
+      </div>
+    </div>
+    <p
+      class="whitespace-nowrap text-sm"
+    >
+      Criticality: 
+      38
+    </p>
+    <p
+      class="whitespace-nowrap text-sm"
+    >
+      Connection Strength: 
+      3
+    </p>
+  </li>,
+  <li
+    class="bg-red-900 rounded-md p-2"
+  >
+    Failed to retrieve asset information for https://www.iow.gov.uk/DigitalTwin#E002
+  </li>,
+  <li
+    class="gap-x-2 bg-black-300 rounded-md p-2 items-center"
+  >
+    <div
+      class="flex items-center gap-x-2"
+    >
+      <div
+        class="rounded-full flex justify-center items-center"
+        id="asset-icon"
+        style="background-color: rgb(163, 163, 163); color: rgb(51, 51, 51);"
+      >
+        <span>
+          Low
+        </span>
+      </div>
+      <div>
+        <h4>
+          Ventnor 33kV / 11kV Substation
+        </h4>
+        <p
+          class="uppercase"
+          style="font-size: 13px;"
+        >
+          low voltage electricity substation complex
+        </p>
+        <p
+          class="text-sm"
+        >
+          E012
+        </p>
+      </div>
+    </div>
+    <p
+      class="whitespace-nowrap text-sm"
+    >
+      Criticality: 
+      84
+    </p>
+    <p
+      class="whitespace-nowrap text-sm"
+    >
+      Connection Strength: 
+      3
+    </p>
+  </li>,
+]
+`;

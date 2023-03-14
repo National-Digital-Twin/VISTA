@@ -1,41 +1,34 @@
 import { isEmpty } from "lodash";
-import { useFetch } from "use-http";
+import { useQuery } from "react-query";
 import PropTypes from "prop-types";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
+
+import { fetchResidentialInformation } from "endpoints";
 
 const LIMIT = 3;
 
 const ResidentialInformation = ({ isAsset, primaryType, uri }) => {
-  const { get, response, loading, error } = useFetch();
-  const [residences, setResidences] = useState([]);
-
   const isPerson = useMemo(() => primaryType?.toLowerCase() === "person" || false, [primaryType]);
+  const {
+    isIdle,
+    isLoading,
+    isError,
+    error,
+    data: residences,
+  } = useQuery(["person-residences", uri], () => fetchResidentialInformation(uri), {
+    enabled: !!uri && isAsset && isPerson,
+  });
 
-  useEffect(() => {
-    const getResidentialInformation = async (uri) => {
-      const url = `/person/residences?${new URLSearchParams({
-        personUri: uri,
-      }).toString()}`;
+  if (isIdle) return null;
+  const totalResidences = residences?.length || 0;
 
-      const residences = await get(url);
-      response.ok ? setResidences(residences) : setResidences([]);
-    };
-
-    if (isAsset && isPerson && uri) {
-      getResidentialInformation(uri);
-    }
-  }, [get, isAsset, isPerson, uri, response]);
-
-  if (!isPerson && isEmpty(residences)) return null;
   return (
     <div className="flex flex-col gap-y-1">
       <div className="flex justify-between items-center text-whiteSmoke-300">
-        <h4 className="uppercase">Residential Information</h4>
-        {residences.length > LIMIT && (
-          <p className="text-sm">{residences.length} addresses found</p>
-        )}
+        <h3 className="uppercase">Residential Information</h3>
+        {totalResidences > LIMIT && <p className="text-sm">{totalResidences} addresses found</p>}
       </div>
-      <Addresses residences={residences} loading={loading} error={error} />
+      <Addresses residences={residences} isLoading={isLoading} isError={isError} error={error} />
     </div>
   );
 };
@@ -51,7 +44,7 @@ ResidentialInformation.propTypes = {
   uri: PropTypes.string,
 };
 
-const Addresses = ({ residences, loading, error }) => {
+const Addresses = ({ residences, isLoading, isError, error }) => {
   const WRAPPER_CLASSNAMES = "flex flex-col gap-y-2 bg-black-100 p-2 rounded-sm";
 
   const [showAll, setShowAll] = useState(false);
@@ -61,13 +54,8 @@ const Addresses = ({ residences, loading, error }) => {
     return showAll ? residences : residences.slice(0, LIMIT);
   }, [showAll, residences]);
 
-  if (loading) return <p className={WRAPPER_CLASSNAMES}>Fetching residential addresses</p>;
-  if (error)
-    return (
-      <p className={WRAPPER_CLASSNAMES}>
-        An error occured while retrieving residential information
-      </p>
-    );
+  if (isLoading) return <p className={WRAPPER_CLASSNAMES}>Fetching residential addresses</p>;
+  if (isError) return <p className={WRAPPER_CLASSNAMES}>{error.message}</p>;
   if (isEmpty(residences))
     return <p className={WRAPPER_CLASSNAMES}>Residential information not found</p>;
 
@@ -76,17 +64,18 @@ const Addresses = ({ residences, loading, error }) => {
       <ul className={WRAPPER_CLASSNAMES}>
         {items.map((residence, index) => {
           const section = `Address ${index + 1}`;
+          const address = residence?.address;
           return (
-            <li key={residence?.uri || section}>
+            <li key={address ?? residence.uri}>
               <p className="font-semibold text-sm">{section}</p>
-              <p>{residence?.address || "N/D"}</p>
+              <p>{address ?? residence.uri}</p>
             </li>
           );
         })}
       </ul>
       {residences.length > LIMIT && (
         <button className="text-sm" onClick={() => setShowAll((prev) => !prev)}>
-          {showAll ? "minimise" : "see all"}
+          {showAll ? "show less addresses" : "show all addresses"}
         </button>
       )}
     </>
@@ -95,9 +84,10 @@ const Addresses = ({ residences, loading, error }) => {
 Addresses.defaultProps = {
   loading: false,
   error: undefined,
+  residences: [],
 };
 Addresses.propTypes = {
-  residences: PropTypes.array.isRequired,
+  residences: PropTypes.array,
   loading: PropTypes.bool,
-  error: PropTypes.string,
+  error: PropTypes.object,
 };

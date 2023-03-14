@@ -34,7 +34,7 @@
 
 [role="tooltip"],
 .hideTooltip + [role="tooltip"] {
-  @apply absolute -top-8 whitespace-nowrap px-2 py-1 bg-black rounded-md invisible z-10 text-sm;
+  @apply absolute -top-9 whitespace-nowrap px-2 py-1 bg-black-50 rounded-md invisible z-10 text-sm;
 }
 [aria-labelledby]:hover + [role="tooltip"],
 [aria-labelledby]:focus + [role="tooltip"] {
@@ -93,6 +93,14 @@ body {
     shadow-surround-lg shadow-black-50;
   }
 
+  .toolbar {
+    @apply absolute text-whiteSmoke bg-black-200 bg-opacity-80;
+  }
+
+  .toolbar__list {
+    @apply flex items-center gap-x-2 px-2 py-1;
+  }
+
   .tl-input {
     @apply focus:outline-none focus:border-appColor
     focus:ring-1 focus:ring-appColor
@@ -114,5 +122,10 @@ body {
 
   .marker-icon {
     @apply text-whiteSmoke bg-black-100 bg-opacity-90 rounded-md p-1;
+  }
+
+  .asset__details {
+    @apply grid gap-x-2 items-center;
+    grid-template-columns: min-content minmax(0, 1fr);
   }
 }

@@ -1,16 +1,16 @@
 import { isEmpty } from "lodash";
 import React from "react";
-import useFetch from "use-http";
 import PropTypes from "prop-types";
+import { useQuery } from "react-query";
 
-import { ASSESSMENTS_ENDPOINT } from "constants/endpoints";
+import { fetchAssessments } from "endpoints";
 import AssessmentTypes from "./AssessmentTypes";
 
 const Assessments = () => {
-  const { data, error, loading } = useFetch(ASSESSMENTS_ENDPOINT, {}, []);
+  const { isLoading, isError, data } = useQuery("assessments", fetchAssessments);
 
-  if (loading) return <p>Fetching assessments</p>;
-  if (error)
+  if (isLoading) return <p>Fetching assessments</p>;
+  if (isError)
     return (
       <p>
         An error occured while retrieving assessments. Please try again. If problem persists contact
