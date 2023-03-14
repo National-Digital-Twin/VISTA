@@ -6,35 +6,6 @@ on:
 
 jobs:
   quality:
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
-      packages: write
-    steps:
-      - uses: actions/checkout@v3
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT
-      - name: Cache node modules
-        uses: actions/cache@v3
-        with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
-      - name: Setup auth for Telicent-DS
-        uses: actions/setup-node@v2
-        with:
-          node-version: 16
-      - name: create .yarnrc file
-        run: |
-          npm config set "@telicent-io:registry" "https://npm.pkg.github.com/"
-          npm config set "//npm.pkg.github.com/:_authToken" ${{ secrets.PACKAGE_PAT }} 
-          npm config set "@fortawesome:registry" https://npm.fontawesome.com/
-          npm config set  "//npm.fontawesome.com/:_authToken" ${{ secrets.FONT_AWESOME_KEY }}
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
-      - run: mkdir reports
-      - name: run integrated tests
-        run: yarn test:ci
+    name: Run unit tests
+    uses: Telicent-io/telicent-test/.github/workflows/feature-branch-test.yml@main
+    secrets: inherit
