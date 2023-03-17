@@ -3,13 +3,17 @@ import PropTypes from "prop-types";
 import classNames from "classnames";
 import { kebabCase } from "lodash";
 import ReactSwitch from "react-switch";
+import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 
 import { FloatingPanel, VerticalDivider } from "lib";
 import Assessments from "./Assessments";
 import FloodAreas from "components/Dataset/FloodAreas";
 
+import "react-tabs/style/react-tabs.css";
+
 const Dataset = ({ showGrid, toggleView }) => {
   const [showPanel, setShowPanel] = useState(true);
+  const [selectedFloodAreas, setSelectedFloodAreas] = useState([]);
 
   const togglePanel = () => {
     setShowPanel((show) => !show);
@@ -21,13 +25,27 @@ const Dataset = ({ showGrid, toggleView }) => {
       className="flex flex-col gap-y-2 p-2"
       style={{ maxWidth: "20rem", maxHeight: "calc(100% - 50px)" }}
     >
-      {/* <Assets
-        showPanel={showPanel}
-        showGrid={showGrid}
-        togglePanel={togglePanel}
-        toggleView={toggleView}
-      /> */}
-      <FloodAreas />
+      <Tabs>
+        <TabList>
+          <Tab>Assets</Tab>
+          <Tab>Flood Areas</Tab>
+        </TabList>
+
+        <TabPanel>
+          <Assets
+            showPanel={showPanel}
+            showGrid={showGrid}
+            togglePanel={togglePanel}
+            toggleView={toggleView}
+          />
+        </TabPanel>
+        <TabPanel>
+          <FloodAreas
+            selectedFloodAreas={selectedFloodAreas}
+            setSelectedFloodAreas={setSelectedFloodAreas}
+          />
+        </TabPanel>
+      </Tabs>
     </FloatingPanel>
   );
 };

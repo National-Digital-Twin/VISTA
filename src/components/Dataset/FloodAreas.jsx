@@ -1,6 +1,7 @@
 import React, { useContext, useState } from "react";
 import CheckboxTree from "react-checkbox-tree";
 import { useQueries, useQuery } from "react-query";
+import PropTypes from "prop-types";
 
 import { ElementsContext } from "context";
 import { fetchAllFloodAreas, fetchFloodAreaPolygon } from "endpoints";
@@ -9,7 +10,10 @@ import { generateFloodAreaNodes } from "../Map/map-utils";
 import "react-checkbox-tree/lib/react-checkbox-tree.css";
 import "./react-checkbox-tree.css";
 
-const FloodAreas = () => {
+const FloodAreas = ({ selectedFloodAreas, setSelectedFloodAreas }) => {
+  const [expanded, setExpanded] = useState([]);
+  const { addFloodAreas, removeFloodAreas } = useContext(ElementsContext);
+
   const {
     isLoading,
     isError,
@@ -18,28 +22,8 @@ const FloodAreas = () => {
   } = useQuery("flood-areas", () => fetchAllFloodAreas());
   const floodAreaNodes = generateFloodAreaNodes(floodWatchAreas);
 
-  return (
-    <>
-      <h2 className="font-medium text-lg">Flood areas</h2>
-      <FloodWatchAreas
-        isLoading={isLoading}
-        isError={isError}
-        error={error}
-        floodAreaNodes={floodAreaNodes}
-      />
-    </>
-  );
-};
-
-export default FloodAreas;
-
-const FloodWatchAreas = ({ isLoading, isError, error, floodAreaNodes }) => {
-  const [checked, setChecked] = useState([]);
-  const [expanded, setExpanded] = useState([]);
-  const { addFloodAreas, removeFloodAreas } = useContext(ElementsContext);
-
   useQueries(
-    checked.map((polygonUri) => {
+    selectedFloodAreas.map((polygonUri) => {
       return {
         queryKey: ["flood-area-polygon", polygonUri],
         queryFn: () => fetchFloodAreaPolygon(polygonUri),
@@ -55,7 +39,7 @@ const FloodWatchAreas = ({ isLoading, isError, error, floodAreaNodes }) => {
   if (isError) return <p>{error.message}</p>;
 
   const onCheck = async (checked, { value: polygonUri, checked: isChecked }) => {
-    setChecked(checked);
+    setSelectedFloodAreas(checked);
 
     if (!isChecked) {
       removeFloodAreas(polygonUri);
@@ -65,7 +49,7 @@ const FloodWatchAreas = ({ isLoading, isError, error, floodAreaNodes }) => {
   return (
     <CheckboxTree
       nodes={floodAreaNodes}
-      checked={checked}
+      checked={selectedFloodAreas}
       expanded={expanded}
       onCheck={onCheck}
       onExpand={(expanded) => setExpanded(expanded)}
@@ -74,4 +58,13 @@ const FloodWatchAreas = ({ isLoading, isError, error, floodAreaNodes }) => {
       showNodeIcon={false}
     />
   );
+};
+
+export default FloodAreas;
+FloodAreas.defaultProps = {
+  selectedFloodAreas: [],
+};
+FloodAreas.propTypes = {
+  selectedFloodAreas: PropTypes.arrayOf(PropTypes.string),
+  setSelectedFloodAreas: PropTypes.func.isRequired,
 };

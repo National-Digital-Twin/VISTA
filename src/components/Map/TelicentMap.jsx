@@ -60,8 +60,6 @@ const TelicentMap = () => {
   const [pointAssetDependencies, setPointAssetDependencies] = useState([]);
   const [mousePosition, setMousePosition] = useState(undefined);
 
-  // console.log({ floodAreas });
-
   // The order of the array is the order in which the features will appear in the map.
   // index 0 being the lowest level
   const sources = useMemo(
