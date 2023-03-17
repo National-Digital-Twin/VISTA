@@ -6,7 +6,7 @@ import ReactSwitch from "react-switch";
 
 import { FloatingPanel, VerticalDivider } from "lib";
 import Assessments from "./Assessments";
-import FloodAreas from "components/Map/FloodAreas";
+import FloodAreas from "components/Dataset/FloodAreas";
 
 const Dataset = ({ showGrid, toggleView }) => {
   const [showPanel, setShowPanel] = useState(true);

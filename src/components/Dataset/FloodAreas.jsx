@@ -4,7 +4,7 @@ import { useQueries, useQuery } from "react-query";
 
 import { ElementsContext } from "context";
 import { fetchAllFloodAreas, fetchFloodAreaPolygon } from "endpoints";
-import { generateFloodAreaNodes } from "./map-utils";
+import { generateFloodAreaNodes } from "../Map/map-utils";
 
 import "react-checkbox-tree/lib/react-checkbox-tree.css";
 import "./react-checkbox-tree.css";
