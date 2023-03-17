@@ -11,7 +11,13 @@ import { findElement } from "utils";
 import MapToolbar from "./MapToolbar/MapToolbar";
 import PointerCoordinates from "./PointerCoords";
 
-import { heatmap, linearAssetsLayer, pointAssetCxnLayer, pointAssetLayer } from "./layerStyles";
+import {
+  FLOOD_AREA_LAYERS,
+  heatmap,
+  LINEAR_ASSET_LAYER,
+  pointAssetCxnLayer,
+  POINT_ASSET_LAYER,
+} from "./layers";
 import { generateFeatures } from "./map-utils";
 import { getMapStyles } from "./mapStyles";
 
@@ -31,8 +37,14 @@ const ICON_SIZE = 14;
 const TelicentMap = () => {
   const { telicentMap: map } = useMap();
   const { fit, moveTo } = useContext(CytoscapeContext);
-  const { assets, dependencies, selectedElements, clearSelectedElements, onElementClick } =
-    useContext(ElementsContext);
+  const {
+    assets,
+    dependencies,
+    floodAreas,
+    selectedElements,
+    clearSelectedElements,
+    onElementClick,
+  } = useContext(ElementsContext);
 
   const mapStyles = useMemo(() => getMapStyles(), []);
   const [mapStyle, setMapStyle] = useLocalStorage("mapStyle", mapStyles[0]);
@@ -48,20 +60,27 @@ const TelicentMap = () => {
   const [pointAssetDependencies, setPointAssetDependencies] = useState([]);
   const [mousePosition, setMousePosition] = useState(undefined);
 
+  // console.log({ floodAreas });
+
   // The order of the array is the order in which the features will appear in the map.
   // index 0 being the lowest level
   const sources = useMemo(
     () => [
       { id: "heatmap", features: pointAssets, layers: [heatmap] },
       {
+        id: "flood-areas",
+        features: floodAreas,
+        layers: FLOOD_AREA_LAYERS,
+      },
+      {
         id: "point-asset-dependecies",
         features: pointAssetDependencies,
         layers: [pointAssetCxnLayer],
       },
-      { id: "linear-assets", features: linearAssets, layers: [linearAssetsLayer] },
-      { id: "point-assets", features: pointAssets, layers: [pointAssetLayer] },
+      { id: "linear-assets", features: linearAssets, layers: [LINEAR_ASSET_LAYER] },
+      { id: "point-assets", features: pointAssets, layers: [POINT_ASSET_LAYER] },
     ],
-    [linearAssets, pointAssets, pointAssetDependencies]
+    [linearAssets, pointAssets, pointAssetDependencies, floodAreas]
   );
 
   useEffect(() => {
@@ -177,7 +196,7 @@ const TelicentMap = () => {
         <Map
           cursor={cursor}
           id="telicentMap"
-          interactiveLayerIds={[pointAssetLayer.id, pointAssetCxnLayer.id, linearAssetsLayer.id]}
+          interactiveLayerIds={[POINT_ASSET_LAYER.id, pointAssetCxnLayer.id, LINEAR_ASSET_LAYER.id]}
           initialViewState={{ ...VIEWSTATE }}
           mapboxAccessToken="MapboxToken"
           mapStyle={mapStyle.id}

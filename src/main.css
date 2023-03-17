@@ -820,6 +820,10 @@ video {
   margin-right: 0.5rem;
 }
 
+.ml-8 {
+  margin-left: 2rem;
+}
+
 .block {
   display: block;
 }
@@ -846,10 +850,6 @@ video {
 
 .h-full {
   height: 100%;
-}
-
-.h-10 {
-  height: 2.5rem;
 }
 
 .h-0\.5 {
@@ -886,10 +886,6 @@ video {
 
 .w-full {
   width: 100%;
-}
-
-.w-10 {
-  width: 2.5rem;
 }
 
 .w-fit {
@@ -1254,6 +1250,26 @@ video {
   text-align: center;
 }
 
+.text-justify {
+  text-align: justify;
+}
+
+.indent-2 {
+  text-indent: 0.5rem;
+}
+
+.indent-4 {
+  text-indent: 1rem;
+}
+
+.indent-10 {
+  text-indent: 2.5rem;
+}
+
+.indent-8 {
+  text-indent: 2rem;
+}
+
 .text-xl {
   font-size: 1.25rem;
   line-height: 1.75rem;
@@ -1354,6 +1370,10 @@ video {
 
 .opacity-100 {
   opacity: 1;
+}
+
+.outline {
+  outline-style: solid;
 }
 
 .filter {

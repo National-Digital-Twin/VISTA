@@ -1,14 +1,5 @@
-export const pointAssetLayer = {
-  id: "point-assets-layer",
-  type: "circle",
-  source: "point-assets",
-  paint: {
-    "circle-radius": ["get", "circleSize"],
-    "circle-color": ["get", "backgroundColor"],
-    "circle-stroke-color": ["get", "circleStrokeColor"],
-    "circle-stroke-width": ["get", "circleStrokeWidth"],
-  },
-};
+export { default as FLOOD_AREA_LAYERS } from "./flood-areas";
+export * from "./asset-layers";
 
 export const pointAssetCxnLayer = {
   id: "point-asset-connection-layer",
@@ -22,20 +13,6 @@ export const pointAssetCxnLayer = {
     "line-width": 2,
     "line-color": ["get", "lineColor"],
     "line-opacity": ["get", "lineOpacity"],
-  },
-};
-
-export const linearAssetsLayer = {
-  id: "linear-assets-layer",
-  type: "line",
-  source: "linear-assets",
-  layout: {
-    "line-join": "round",
-    "line-cap": "round",
-  },
-  paint: {
-    "line-color": ["get", "lineColor"],
-    "line-width": 3,
   },
 };
 
