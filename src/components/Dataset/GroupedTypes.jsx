@@ -19,7 +19,8 @@ const GroupedTypes = ({
 }) => {
   const { get, error, response } = useFetch();
   const { getIconStyle } = useOntologyServer();
-  const { addElements, removeElementsByType, updateErrors } = useContext(ElementsContext);
+  const { addElements, removeElementsByType, updateErrorNotifications } =
+    useContext(ElementsContext);
 
   const sortedTypes = useMemo(() => {
     const alphabeticallySortedTypes = types.sort((a, b) => {
@@ -31,8 +32,8 @@ const GroupedTypes = ({
   }, [types]);
 
   useEffect(() => {
-    if (error) updateErrors("Could not add data. Reason: Failed to resolve the data");
-  }, [error, updateErrors]);
+    if (error) updateErrorNotifications("Could not add data. Reason: Failed to resolve the data");
+  }, [error, updateErrorNotifications]);
 
   const getAssets = async (params) => {
     const assets = await get(`${ASSESSMENTS_ENDPOINT}/assets?${params}`);

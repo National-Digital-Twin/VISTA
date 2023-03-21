@@ -4,8 +4,8 @@ import Map, { Layer, Source, ScaleControl, useMap, AttributionControl, Marker } 
 import { ErrorBoundary } from "react-error-boundary";
 
 import { CytoscapeContext, ElementsContext } from "context";
-import { useLocalStorage } from "hooks";
-import { ErrorFallback } from "lib";
+import { useFloodAreaPolygons, useLocalStorage } from "hooks";
+import { ErrorFallback, Modal } from "lib";
 import { findElement } from "utils";
 
 import MapToolbar from "./MapToolbar/MapToolbar";
@@ -40,12 +40,14 @@ const TelicentMap = () => {
   const {
     assets,
     dependencies,
-    floodAreas,
+    selectedFloodAreas,
     selectedElements,
     clearSelectedElements,
     onElementClick,
   } = useContext(ElementsContext);
 
+  const { polygonFeatures: floodAreas, isLoading: areFloodAreasLoading } =
+    useFloodAreaPolygons(selectedFloodAreas);
   const mapStyles = useMemo(() => getMapStyles(), []);
   const [mapStyle, setMapStyle] = useLocalStorage("mapStyle", mapStyles[0]);
 
@@ -242,6 +244,9 @@ const TelicentMap = () => {
           />
         </Map>
       </div>
+      <Modal appElement="root" isOpen={areFloodAreasLoading} className="py-2 px-6 rounded-lg">
+        <p>Adding flood areas to map</p>
+      </Modal>
     </ErrorBoundary>
   );
 };

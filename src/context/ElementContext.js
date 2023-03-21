@@ -1,9 +1,8 @@
-import React, { useCallback, useReducer } from "react";
+import React, { useCallback, useReducer, useState } from "react";
 
 import elementsReducer, {
   ADD_ASSETS,
   ADD_DEPENDENCIES,
-  ADD_FLOOD_AREAS,
   AREA_SELECTION,
   CLEAR_SELECTED,
   DISMISS_ERROR,
@@ -11,7 +10,6 @@ import elementsReducer, {
   INITIAL_STATE,
   MULTI_SELECT_ELEMENTS,
   REMOVE_ELEMENTS_BY_TYPE,
-  REMOVE_FLOOD_AREAS,
   RESET,
   SELECT_ELEMENT,
   UPDATE_ERRORS,
@@ -20,12 +18,12 @@ import elementsReducer, {
 export const ElementsContext = React.createContext();
 
 export const ElementsProvider = ({ children }) => {
+  const [selectedFloodAreas, setSelectedFloodAreas] = useState([]);
   const [state, dispatch] = useReducer(elementsReducer, INITIAL_STATE);
 
   const {
     assets,
     dependencies,
-    floodAreas,
     errors,
     selectedElements,
     maxAssetCriticality,
@@ -49,10 +47,6 @@ export const ElementsProvider = ({ children }) => {
     [filterSelectedElements]
   );
 
-  const addFloodAreas = useCallback((floodAreas) => {
-    dispatch({ type: ADD_FLOOD_AREAS, floodAreas });
-  }, []);
-
   const removeElementsByType = useCallback(
     (typeUri) => {
       if (!typeUri) return;
@@ -61,10 +55,6 @@ export const ElementsProvider = ({ children }) => {
     },
     [filterSelectedElements]
   );
-
-  const removeFloodAreas = useCallback((polygonUri) => {
-    dispatch({ type: REMOVE_FLOOD_AREAS, polygonUri });
-  }, []);
 
   const reset = useCallback(() => {
     dispatch({ type: RESET });
@@ -83,7 +73,11 @@ export const ElementsProvider = ({ children }) => {
     dispatch({ type: AREA_SELECTION, selectedElements });
   }, []);
 
-  const updateErrors = useCallback((msg) => {
+  const onFloodAreaSelect = useCallback((polygonUri) => {
+    setSelectedFloodAreas(polygonUri);
+  }, []);
+
+  const updateErrorNotifications = useCallback((msg) => {
     dispatch({ type: UPDATE_ERRORS, error: msg });
   }, []);
 
@@ -100,7 +94,6 @@ export const ElementsProvider = ({ children }) => {
       value={{
         assets,
         dependencies,
-        floodAreas,
         errors,
         selectedElements,
         maxAssetCriticality,
@@ -109,7 +102,6 @@ export const ElementsProvider = ({ children }) => {
         cxnCriticalityColorScale,
         totalCxnsColorScale,
         addElements,
-        addFloodAreas,
         clearSelectedElements,
         dismissErrorNotification,
         filterSelectedElements,
@@ -117,8 +109,9 @@ export const ElementsProvider = ({ children }) => {
         onElementClick,
         reset,
         removeElementsByType,
-        removeFloodAreas,
-        updateErrors,
+        updateErrorNotifications,
+        selectedFloodAreas,
+        onFloodAreaSelect,
       }}
     >
       {children}

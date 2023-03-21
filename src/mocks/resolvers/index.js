@@ -1,5 +1,6 @@
 export * from "./assessments";
 export * from "./asset";
+export * from "./flood-areas";
 export { default as connections } from "./connections";
 export { default as mock400Error } from "./errors";
 export { default as mockEmptyResponse } from "./empty-response";

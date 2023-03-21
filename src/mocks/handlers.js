@@ -17,6 +17,8 @@ export const handlers = [
   rest.get(createParalogEndpoint("asset/dependents"), resolvers.dependents),
   rest.get(createParalogEndpoint("asset/providers"), resolvers.providers),
   rest.get(createParalogEndpoint("asset/residents"), resolvers.residents),
+  rest.get(createParalogEndpoint("flood-watch-areas"), resolvers.allFloodAreas),
+  rest.get(createParalogEndpoint("flood-watch-areas/polygon"), resolvers.floodAreaPolygons),
   rest.get(createParalogEndpoint("person/residences"), resolvers.personResidences),
   rest.get(createParalogEndpoint("ontology/class"), resolvers.ontologyClass),
   rest.get(createOntologyEndpoint("styles/class"), resolvers.iconStyles),

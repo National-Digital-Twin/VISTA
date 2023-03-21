@@ -5,7 +5,6 @@ export const CLEAR_SELECTED = "CLEAR_SELECTED";
 export const RESET = "RESET";
 export const DISMISS_ERROR = "DISMISS_ERROR";
 export const FILTER_SELECTED_ELEMENTS = "FILTER_SELECTED_ELEMENTS";
-export const ADD_FLOOD_AREAS = "ADD FLOOD AREAS";
 export const SELECT_ELEMENT = "SELECT_ELEMENT";
 export const MULTI_SELECT_ELEMENTS = "MULTI_SELECT_ELEMENTS";
 export const AREA_SELECTION = "AREA_SELECTION";
@@ -13,7 +12,6 @@ export const ADD_ASSETS = "ADD_ASSETS";
 export const REMOVE_ASSETS_BY_TYPE = "REMOVE ASSETS BY TYPE";
 export const REMOVE_DEPENDENCIES_BY_TYPE = "REMOVE DEPENDENCIES BY TYPE";
 export const REMOVE_ELEMENTS_BY_TYPE = "REMOVE ELEMENTS BY TYPE";
-export const REMOVE_FLOOD_AREAS = "REMOVE FLOOD AREAS";
 export const ADD_DEPENDENCIES = "ADD_DEPENDENCIES";
 export const UPDATE_ERRORS = "UPDATE_ERRORS";
 
@@ -25,7 +23,6 @@ export const INITIAL_STATE = {
   loading: false,
   assets: [],
   dependencies: [],
-  floodAreas: [],
   errors: [],
   selectedElements: [],
   iconStyles: {},
@@ -68,21 +65,6 @@ const elementsReducer = (state, action) => {
         ...state,
         dependencies: action.dependencies,
       };
-
-    case ADD_FLOOD_AREAS: {
-      const existingFloodAreas = state.floodAreas;
-      const filteredFloodAreas = action.floodAreas.filter((floodAreas) => {
-        const isAdded = existingFloodAreas.some((existingFloodArea) => {
-          return floodAreas.properties.FWS_TACODE === existingFloodArea.properties.FWS_TACODE;
-        });
-        return !isAdded;
-      });
-
-      return {
-        ...state,
-        floodAreas: [...existingFloodAreas, ...filteredFloodAreas],
-      };
-    }
     case REMOVE_ELEMENTS_BY_TYPE: {
       const { typeUri } = action;
       const assets = state.assets.filter((asset) => asset.type !== typeUri);
@@ -91,15 +73,6 @@ const elementsReducer = (state, action) => {
           dependency.dependent.type !== typeUri || dependency.provider.type !== typeUri
       );
       return { ...state, assets, dependencies };
-    }
-    case REMOVE_FLOOD_AREAS: {
-      const filteredFloodAreas = state.floodAreas.filter((existingFloodArea) => {
-        const isAdded = action.polygonUri
-          .split("/")
-          .includes(existingFloodArea.properties.FWS_TACODE);
-        return !isAdded;
-      });
-      return { ...state, floodAreas: filteredFloodAreas };
     }
     case FILTER_SELECTED_ELEMENTS: {
       const selectedElements = state.selectedElements.filter((selectedElement) => {
