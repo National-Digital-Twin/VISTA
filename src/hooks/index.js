@@ -1,6 +1,5 @@
 export * from "./queries";
 export { default as useDependents } from "./useDependents";
-export { default as useFloodAreaPolygons } from "./queries/flood-areas/useFloodAreaPolygons";
 export { default as useLocalStorage } from "./useLocalStorage";
 export { default as useOntologyServer } from "./useOntologyServer";
 export { default as useOutsideAlerter } from "./useOutsideAlerter";

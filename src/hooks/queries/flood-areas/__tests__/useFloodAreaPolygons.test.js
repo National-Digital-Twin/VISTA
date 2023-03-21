@@ -2,14 +2,14 @@ import { renderHook } from "@testing-library/react-hooks";
 import { rest } from "msw";
 import { waitFor } from "@testing-library/react";
 
+import { ElementsContext } from "context";
 import { createParalogEndpoint } from "endpoints";
 import { createQueryClientWrapper } from "test-utils";
 import { server } from "mocks";
 
 import useFloodAreaPolygons from "../useFloodAreaPolygons";
-import { ElementsContext } from "context";
 
-const createWrapper = (updateErrorNotifications) => {
+const createWrapper = (updateErrorNotifications = jest.fn()) => {
   const QueryClientWrapper = createQueryClientWrapper();
   return ({ children }) => (
     <QueryClientWrapper>
@@ -26,7 +26,7 @@ describe("useFloodAreaPolygons hook", () => {
         useFloodAreaPolygons([
           "http://environment.data.gov.uk/flood-monitoring/id/floodAreas/065WAF212/polygon",
         ]),
-      { wrapper: createWrapper(jest.fn()) }
+      { wrapper: createWrapper() }
     );
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
@@ -44,7 +44,7 @@ describe("useFloodAreaPolygons hook", () => {
         useFloodAreaPolygons([
           "http://environment.data.gov.uk/flood-monitoring/id/floodAreas/065WAF212/polygon",
         ]),
-      { wrapper: createWrapper(jest.fn()) }
+      { wrapper: createWrapper() }
     );
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
