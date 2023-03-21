@@ -1,6 +1,5 @@
 import * as turf from "@turf/turf";
 import { isEmpty } from "lodash";
-import * as MapboxDrawGeodesic from "mapbox-gl-draw-geodesic";
 
 export const generateFeatures = (assets, dependencies, selectedElements) => {
   const filterEmptyElements = (element) => !isEmpty(element);
@@ -24,56 +23,6 @@ export const generateFeatures = (assets, dependencies, selectedElements) => {
     .filter(filterEmptyElements);
 
   return { pointAssets, pointAssetDependencies, linearAssets };
-};
-
-const getPolygon = (feature) => {
-  if (MapboxDrawGeodesic.isCircle(feature)) {
-    const center = MapboxDrawGeodesic.getCircleCenter(feature);
-    const radius = parseFloat(Math.fround(feature.properties.circleRadius).toFixed(3));
-    feature.properties = {
-      ...feature.properties,
-      center,
-      radius,
-    };
-
-    const circle = turf.circle(center, radius, {
-      steps: 50,
-      units: "kilometers",
-      properties: { center, radius },
-    });
-    return circle;
-  }
-  return feature;
-};
-
-export const findPointsInPolygon = (polygonFeatures, points) => {
-  const pointsInPolygon = [];
-
-  if (isEmpty(polygonFeatures)) return pointsInPolygon;
-
-  for (let polygon of polygonFeatures) {
-    polygon = getPolygon(polygon);
-    for (const point of points) {
-      const isPointInPolygon = turf.booleanPointInPolygon(point, polygon);
-      if (isPointInPolygon) pointsInPolygon.push(point);
-    }
-  }
-  return pointsInPolygon;
-};
-
-export const findLinesIntersectingPolygon = (polygonFeatures, lineStringFeatures) => {
-  const intersectingLineStrings = [];
-
-  if (isEmpty(polygonFeatures)) return intersectingLineStrings;
-
-  for (let polygon of polygonFeatures) {
-    polygon = getPolygon(polygon);
-    for (const lineString of lineStringFeatures) {
-      const lineIntersectsPolygon = turf.booleanIntersects(polygon, lineString);
-      if (lineIntersectsPolygon) intersectingLineStrings.push(lineString);
-    }
-  }
-  return intersectingLineStrings;
 };
 
 export const fitMultiToBounds = (map, selectedElements, assets) => {

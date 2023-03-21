@@ -14,7 +14,7 @@ const polygonOutline = {
   source: "flood-areas",
   layout: {},
   paint: {
-    "line-color": "#04345c",
+    "line-color": ["case", ["boolean", ["feature-state", "selected"], false], "#D0D0D0", "#04345c"],
     "line-width": 2,
   },
 };
@@ -37,8 +37,12 @@ const labels = {
     "icon-opacity": 0,
     "text-color": "#DDDDDD",
     "icon-color": "#DDDDDD",
+    "text-halo-color": "#1D1D1D",
+    "text-halo-width": 2,
   },
 };
 
 const FLOOD_AREA_LAYERS = [polygon, polygonOutline, labels];
+export const FLOOD_AREA_POLYGON_ID = polygon.id;
+export const FLOOD_AREA_POLYGON_OUTLINE_ID = polygonOutline.id;
 export default FLOOD_AREA_LAYERS;

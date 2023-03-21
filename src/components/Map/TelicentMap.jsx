@@ -3,10 +3,9 @@ import React, { useContext, useEffect, useMemo, useState } from "react";
 import Map, { Layer, Source, ScaleControl, useMap, AttributionControl, Marker } from "react-map-gl";
 import { ErrorBoundary } from "react-error-boundary";
 
-import { CytoscapeContext, ElementsContext } from "context";
-import { useFloodAreaPolygons, useLocalStorage } from "hooks";
+import { ElementsContext } from "context";
+import { useFloodAreaPolygons, useLocalStorage, useMapInteractions } from "hooks";
 import { ErrorFallback, Modal } from "lib";
-import { findElement } from "utils";
 
 import MapToolbar from "./MapToolbar/MapToolbar";
 import PointerCoordinates from "./PointerCoords";
@@ -23,6 +22,7 @@ import { getMapStyles } from "./mapStyles";
 
 import "@fortawesome/fontawesome-pro/css/all.css";
 import "./mapbox.css";
+import { isEmpty } from "lodash";
 
 const GEOJSON = "geojson";
 const FEATURE_COLLECTION = "FeatureCollection";
@@ -36,18 +36,12 @@ const ICON_SIZE = 14;
 
 const TelicentMap = () => {
   const { telicentMap: map } = useMap();
-  const { fit, moveTo } = useContext(CytoscapeContext);
-  const {
-    assets,
-    dependencies,
-    selectedFloodAreas,
-    selectedElements,
-    clearSelectedElements,
-    onElementClick,
-  } = useContext(ElementsContext);
+  const { assets, dependencies, selectedFloodAreas, selectedElements } =
+    useContext(ElementsContext);
 
   const { polygonFeatures: floodAreas, isLoading: areFloodAreasLoading } =
     useFloodAreaPolygons(selectedFloodAreas);
+  const { interactiveLayers, selectedFloodZones, handleOnClick } = useMapInteractions();
   const mapStyles = useMemo(() => getMapStyles(), []);
   const [mapStyle, setMapStyle] = useLocalStorage("mapStyle", mapStyles[0]);
 
@@ -99,32 +93,6 @@ const TelicentMap = () => {
     setLinearAssets(linearAssets);
   }, [assets, dependencies, selectedElements]);
 
-  const handleOnClick = (event) => {
-    const { features } = event;
-    const clickedFeature = features && features[0];
-
-    const controls = event.target._controls;
-    const drawControl = Object.values(controls).find((item) => item.modes);
-
-    if (!clickedFeature && drawControl.getMode() === "simple_select") {
-      clearSelectedElements();
-      fit();
-      return;
-    }
-
-    if (clickedFeature?.type === "Feature") {
-      const { properties } = clickedFeature;
-      event.originalEvent.stopPropagation();
-
-      const multiSelect = event.originalEvent.shiftKey;
-      const element = findElement([...assets, ...dependencies], properties.uri);
-
-      onElementClick(multiSelect, element);
-      moveTo({ multiSelect, cachedElements: selectedElements, selectedElement: element });
-      return;
-    }
-  };
-
   const handleOnMouseMove = (event) => {
     const {
       features,
@@ -162,6 +130,7 @@ const TelicentMap = () => {
       id={source.id}
       type={GEOJSON}
       data={{ type: FEATURE_COLLECTION, features: source.features }}
+      generateId
     >
       {source.layers.map((layer) => (
         <Layer key={layer.id} {...layer} />
@@ -196,7 +165,7 @@ const TelicentMap = () => {
         <Map
           cursor={cursor}
           id="telicentMap"
-          interactiveLayerIds={[POINT_ASSET_LAYER.id, pointAssetCxnLayer.id, LINEAR_ASSET_LAYER.id]}
+          interactiveLayerIds={interactiveLayers}
           initialViewState={{ ...VIEWSTATE }}
           mapboxAccessToken="MapboxToken"
           mapStyle={mapStyle.id}
@@ -228,11 +197,6 @@ const TelicentMap = () => {
             }}
           />
           <HoverInfo info={hoverInfo?.feature.properties} left={hoverInfo?.x} top={hoverInfo?.y} />
-          <PointerCoordinates
-            show={showPointerCoords}
-            lat={mousePosition?.lat}
-            lng={mousePosition?.lng}
-          />
           <MapToolbar
             heatmapRadius={heatmapRadius}
             map={map}
@@ -242,6 +206,14 @@ const TelicentMap = () => {
             onPointerCoordsClick={togglePointerCoords}
             setCursor={setCursor}
           />
+          <div className="absolute top-0 left-0 bg-black-200 p-1 font-body flex flex-col gap-y-2">
+            <PointerCoordinates
+              show={showPointerCoords}
+              lat={mousePosition?.lat}
+              lng={mousePosition?.lng}
+            />
+            <FloodZoneInfo selectedFloodZones={selectedFloodZones} />
+          </div>
         </Map>
       </div>
       <Modal appElement="root" isOpen={areFloodAreasLoading} className="py-2 px-6 rounded-lg">
@@ -254,7 +226,7 @@ const TelicentMap = () => {
 export default TelicentMap;
 
 const HoverInfo = ({ info, left, top }) => {
-  if (!info) return null;
+  if (!info?.id && !info?.criticality) return null;
 
   return (
     <div
@@ -263,6 +235,24 @@ const HoverInfo = ({ info, left, top }) => {
     >
       <p>ID: {info.id}</p>
       <p>Criticality: {info.criticality}</p>
+    </div>
+  );
+};
+
+const FloodZoneInfo = ({ selectedFloodZones }) => {
+  if (isEmpty(selectedFloodZones)) return null;
+  return (
+    <div>
+      <h3 className="text-base">Selected flood zone areas</h3>
+      <ul className="list-disc list-inside text-sm">
+        {selectedFloodZones.map((selectedFloodZone) => {
+          return (
+            <li key={selectedFloodZone.properties.TA_NAME}>
+              {selectedFloodZone.properties.TA_NAME}
+            </li>
+          );
+        })}
+      </ul>
     </div>
   );
 };
