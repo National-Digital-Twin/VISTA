@@ -1,9 +1,8 @@
 import React, { useContext, useState } from "react";
 import CheckboxTree from "react-checkbox-tree";
-import { useQuery } from "react-query";
 
 import { ElementsContext } from "context";
-import { fetchAllFloodAreas } from "endpoints";
+import { useFloodWatchAreas } from "hooks";
 import { generateFloodAreaNodes } from "../Map/map-utils";
 
 import "react-checkbox-tree/lib/react-checkbox-tree.css";
@@ -12,13 +11,7 @@ import "./react-checkbox-tree.css";
 const FloodAreas = () => {
   const [expanded, setExpanded] = useState([]);
   const { selectedFloodAreas, onFloodAreaSelect } = useContext(ElementsContext);
-
-  const {
-    isLoading,
-    isError,
-    error,
-    data: floodWatchAreas,
-  } = useQuery("flood-areas", () => fetchAllFloodAreas());
+  const { isLoading, isError, error, data: floodWatchAreas } = useFloodWatchAreas();
   const floodAreaNodes = generateFloodAreaNodes(floodWatchAreas);
 
   if (isLoading) return <p>Fetching flood areas</p>;
