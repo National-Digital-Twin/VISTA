@@ -59,15 +59,6 @@ Dataset.propTypes = {
   toggleView: PropTypes.func,
 };
 
-const DatasetHeader = () => {
-  return (
-    <ul className="nav nav-tabs">
-      <li>Dataset</li>
-      <li>Flood Areas</li>
-    </ul>
-  );
-};
-
 const Assets = ({ showPanel, togglePanel, showGrid, toggleView }) => {
   return (
     <>
