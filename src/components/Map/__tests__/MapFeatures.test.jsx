@@ -2,7 +2,7 @@ import { render } from "@testing-library/react";
 import React from "react";
 
 import { CytoscapeProvider, ElementsContext, ElementsProvider } from "context";
-import { getCreatedAssets, getCreatedDependencies } from "test-utils";
+import { getCreatedAssets, getCreatedDependencies, renderWithQueryClient } from "test-utils";
 import {
   HIGH_VOLTAGE_ELECTRICITY_AND_OIL_FIRED_POWER_GENERATION_SUBSTATION_COMPLEX_DEPENDENCIES,
   HIGH_VOLTAGE_ELECTRICITY_SUBSTATION_COMPLEX_ASSETS,
@@ -15,13 +15,19 @@ import {
 import TelicentMap from "../TelicentMap";
 import * as mapboxFeatures from "../map-utils";
 
-const MapComponent = ({ assets = [], dependencies = [], selectedElements = [] }) => (
+const MapComponent = ({
+  assets = [],
+  dependencies = [],
+  selectedElements = [],
+  selectedFloodAreas = [],
+}) => (
   <CytoscapeProvider>
     <ElementsContext.Provider
       value={{
         assets,
         dependencies,
         selectedElements,
+        selectedFloodAreas,
         clearSelectedElements: jest.fn(),
         onElementClick: jest.fn(),
       }}
@@ -34,7 +40,7 @@ const MapComponent = ({ assets = [], dependencies = [], selectedElements = [] })
 describe("Map component", () => {
   test("should generate empty features when there are no elements", async () => {
     const spyOnGenerateFeatures = jest.spyOn(mapboxFeatures, "generateFeatures");
-    render(
+    renderWithQueryClient(
       <CytoscapeProvider>
         <ElementsProvider>
           <TelicentMap />
@@ -58,7 +64,7 @@ describe("Map component", () => {
       ],
       ["E001", "E003"]
     );
-    render(<MapComponent assets={createdAssets} />);
+    renderWithQueryClient(<MapComponent assets={createdAssets} />);
 
     expect(spyOnGenerateFeatures).toBeCalledTimes(1);
     expect(spyOnGenerateFeatures.mock.results[0].value.pointAssets).toHaveLength(2);
@@ -73,7 +79,7 @@ describe("Map component", () => {
       jest.fn(),
       jest.fn().mockReturnValue(T034_SEGMENTS)
     );
-    render(<MapComponent assets={createdAssets} />);
+    renderWithQueryClient(<MapComponent assets={createdAssets} />);
 
     expect(spyOnGenerateFeatures).toBeCalledTimes(1);
     expect(spyOnGenerateFeatures.mock.results[0].value.linearAssets).toHaveLength(1);
@@ -93,7 +99,9 @@ describe("Map component", () => {
       HIGH_VOLTAGE_ELECTRICITY_AND_OIL_FIRED_POWER_GENERATION_SUBSTATION_COMPLEX_DEPENDENCIES,
       ["E001 - E003"]
     );
-    render(<MapComponent assets={createdAssets} dependencies={createdDependencies} />);
+    renderWithQueryClient(
+      <MapComponent assets={createdAssets} dependencies={createdDependencies} />
+    );
 
     expect(spyOnGenerateFeatures).toBeCalledTimes(1);
     expect(spyOnGenerateFeatures.mock.results[0].value.pointAssetDependencies).toHaveLength(1);
@@ -106,7 +114,7 @@ describe("Map component", () => {
       HIGH_VOLTAGE_ELECTRICITY_AND_OIL_FIRED_POWER_GENERATION_SUBSTATION_COMPLEX_DEPENDENCIES,
       ["E001 - E003"]
     );
-    render(<MapComponent dependencies={createdDependencies} />);
+    renderWithQueryClient(<MapComponent dependencies={createdDependencies} />);
 
     expect(spyOnGenerateFeatures).toBeCalledTimes(1);
     expect(spyOnGenerateFeatures).toHaveReturnedWith({
@@ -129,7 +137,7 @@ describe("Map component", () => {
       HIGH_VOLTAGE_ELECTRICITY_AND_OIL_FIRED_POWER_GENERATION_SUBSTATION_COMPLEX_DEPENDENCIES,
       ["E001 - E003"]
     );
-    render(
+    renderWithQueryClient(
       <MapComponent
         assets={assets}
         dependencies={dependencies}
@@ -163,7 +171,7 @@ describe("Map component", () => {
     const selectedElements = await getCreatedAssets(OIL_FIRED_POWER_GENERATION_COMPLEX_ASSETS, [
       "E001",
     ]);
-    render(<MapComponent assets={assets} selectedElements={selectedElements} />);
+    renderWithQueryClient(<MapComponent assets={assets} selectedElements={selectedElements} />);
 
     expect(spyOnGenerateFeatures).toBeCalledTimes(1);
     expect(spyOnGenerateFeatures.mock.results[0].value.pointAssets).toHaveLength(2);
@@ -182,7 +190,9 @@ describe("Map component", () => {
       "E003",
       "E025",
     ]);
-    const { rerender } = render(<MapComponent assets={assets} selectedElements={assets} />);
+    const { rerender } = renderWithQueryClient(
+      <MapComponent assets={assets} selectedElements={assets} />
+    );
 
     expect(spyOnGenerateFeatures).toBeCalledTimes(1);
     expect(spyOnGenerateFeatures.mock.results[0].value.pointAssets).toHaveLength(2);
@@ -211,7 +221,9 @@ describe("Map component", () => {
       ],
       ["E001", "E025", "E003"]
     );
-    const { rerender } = render(<MapComponent assets={assets} selectedElements={assets} />);
+    const { rerender } = renderWithQueryClient(
+      <MapComponent assets={assets} selectedElements={assets} />
+    );
 
     expect(spyOnGenerateFeatures).toBeCalledTimes(1);
     expect(spyOnGenerateFeatures.mock.results[0].value.pointAssets).toHaveLength(3);
@@ -247,7 +259,9 @@ describe("Map component", () => {
       jest.fn(),
       jest.fn().mockReturnValue(T034_SEGMENTS)
     );
-    const { rerender } = render(<MapComponent assets={assets} selectedElements={assets} />);
+    const { rerender } = renderWithQueryClient(
+      <MapComponent assets={assets} selectedElements={assets} />
+    );
 
     expect(spyOnGenerateFeatures.mock.results[0].value.linearAssets).toHaveLength(1);
     expect(spyOnGenerateFeatures.mock.results[0].value.linearAssets[0].properties.selected).toBe(
@@ -275,7 +289,9 @@ describe("Map component", () => {
         .mockReturnValueOnce(T020_SEGMENTS)
         .mockReturnValue([])
     );
-    const { rerender } = render(<MapComponent assets={assets} selectedElements={assets} />);
+    const { rerender } = renderWithQueryClient(
+      <MapComponent assets={assets} selectedElements={assets} />
+    );
 
     expect(spyOnGenerateFeatures).toBeCalledTimes(1);
     expect(spyOnGenerateFeatures.mock.results[0].value.linearAssets).toHaveLength(2);
@@ -313,7 +329,7 @@ describe("Map component", () => {
       HIGH_VOLTAGE_ELECTRICITY_AND_OIL_FIRED_POWER_GENERATION_SUBSTATION_COMPLEX_DEPENDENCIES,
       ["E001 - E003"]
     );
-    const { rerender } = render(
+    const { rerender } = renderWithQueryClient(
       <MapComponent assets={assets} dependencies={dependencies} selectedElements={dependencies} />
     );
 
@@ -345,7 +361,7 @@ describe("Map component", () => {
       HIGH_VOLTAGE_ELECTRICITY_AND_OIL_FIRED_POWER_GENERATION_SUBSTATION_COMPLEX_DEPENDENCIES,
       ["E001 - E003", "E003 - E025"]
     );
-    const { rerender } = render(
+    const { rerender } = renderWithQueryClient(
       <MapComponent assets={assets} dependencies={dependencies} selectedElements={dependencies} />
     );
 
@@ -392,7 +408,7 @@ describe("Map component", () => {
       HIGH_VOLTAGE_ELECTRICITY_AND_OIL_FIRED_POWER_GENERATION_SUBSTATION_COMPLEX_DEPENDENCIES,
       ["E001 - E003"]
     );
-    const { rerender } = render(
+    const { rerender } = renderWithQueryClient(
       <MapComponent
         assets={assets}
         dependencies={dependencies}
@@ -440,7 +456,7 @@ describe("Map component", () => {
       HIGH_VOLTAGE_ELECTRICITY_AND_OIL_FIRED_POWER_GENERATION_SUBSTATION_COMPLEX_DEPENDENCIES,
       ["E001 - E003", "E003 - E025"]
     );
-    const { rerender } = render(
+    const { rerender } = renderWithQueryClient(
       <MapComponent
         assets={assets}
         dependencies={dependencies}

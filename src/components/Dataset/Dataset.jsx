@@ -3,12 +3,17 @@ import PropTypes from "prop-types";
 import classNames from "classnames";
 import { kebabCase } from "lodash";
 import ReactSwitch from "react-switch";
+import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 
 import { FloatingPanel, VerticalDivider } from "lib";
 import Assessments from "./Assessments";
+import FloodAreas from "components/Dataset/FloodAreas";
+
+import "react-tabs/style/react-tabs.css";
 
 const Dataset = ({ showGrid, toggleView }) => {
   const [showPanel, setShowPanel] = useState(true);
+  const [selectedFloodAreas, setSelectedFloodAreas] = useState([]);
 
   const togglePanel = () => {
     setShowPanel((show) => !show);
@@ -18,10 +23,56 @@ const Dataset = ({ showGrid, toggleView }) => {
     <FloatingPanel
       position="top-0"
       className="flex flex-col gap-y-2 p-2"
-      style={{ maxWidth: "13rem", maxHeight: "calc(100% - 50px)" }}
+      style={{ maxWidth: "20rem", maxHeight: "calc(100% - 50px)" }}
     >
-      <DBButton ariaHidden onToggle={togglePanel} className={classNames({ hidden: showPanel, block: !showPanel })} />
-      <div className={classNames("grow min-h-0 overflow-y-auto", { hidden: !showPanel, block: showPanel })}>
+      <Tabs>
+        <TabList>
+          <Tab>Assets</Tab>
+          <Tab>Flood Areas</Tab>
+        </TabList>
+
+        <TabPanel>
+          <Assets
+            showPanel={showPanel}
+            showGrid={showGrid}
+            togglePanel={togglePanel}
+            toggleView={toggleView}
+          />
+        </TabPanel>
+        <TabPanel>
+          <FloodAreas
+            selectedFloodAreas={selectedFloodAreas}
+            setSelectedFloodAreas={setSelectedFloodAreas}
+          />
+        </TabPanel>
+      </Tabs>
+    </FloatingPanel>
+  );
+};
+export default Dataset;
+Dataset.defaultProps = {
+  showGrid: false,
+  toggleView: () => {},
+};
+Dataset.propTypes = {
+  showGrid: PropTypes.bool,
+  toggleView: PropTypes.func,
+};
+
+const Assets = ({ showPanel, togglePanel, showGrid, toggleView }) => {
+  return (
+    <>
+      <DBButton
+        ariaHidden
+        onToggle={togglePanel}
+        className={classNames({ hidden: showPanel, block: !showPanel })}
+      />
+      <div
+        className={classNames("grow min-h-0 overflow-y-auto", {
+          hidden: !showPanel,
+          block: showPanel,
+        })}
+      >
         <div className="inline-flex gap-x-2 border-b border-black-500 pb-1 w-full">
           <DBButton active onToggle={togglePanel} />
           <VerticalDivider height="h-5" />
@@ -44,23 +95,17 @@ const Dataset = ({ showGrid, toggleView }) => {
         </div>
         <Assessments />
       </div>
-    </FloatingPanel>
+    </>
   );
-};
-export default Dataset;
-Dataset.defaultProps = {
-  showGrid: false,
-  toggleView: () => {},
-};
-Dataset.propTypes = {
-  showGrid: PropTypes.bool,
-  toggleView: PropTypes.func,
 };
 
 const DBButton = ({ active, onToggle, ariaHidden, className: wrapperClassName }) => {
   const tooltip = `${active ? "Close" : "Open"} dataset panel`;
   return (
-    <div aria-hidden={ariaHidden} className={classNames("relative", { [wrapperClassName]: wrapperClassName })}>
+    <div
+      aria-hidden={ariaHidden}
+      className={classNames("relative", { [wrapperClassName]: wrapperClassName })}
+    >
       <button
         aria-labelledby={kebabCase(tooltip)}
         className="flex items-center justify-center"

@@ -11,6 +11,7 @@ export const fetchOptions = {
 
 export * from "./assessments";
 export * from "./assets";
+export * from "./flood-watch-areas";
 
 export const fetchTypeSuperclass = async (typeUri) => {
   const queryParams = new URLSearchParams({ classUri: typeUri }).toString();

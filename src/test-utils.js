@@ -118,20 +118,37 @@ export const renderTestComponent = (ui, options) => {
   };
 };
 
-export const renderWithQueryClient = (ui, options) => {
+const createTestQueryClient = () => {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
-        // ✅ turns retries off
         retry: false,
-        cacheTime: Infinity,
       },
     },
   });
+  return queryClient;
+};
+export const createQueryClientWrapper = () => {
+  const queryClient = createTestQueryClient();
+  return ({ children }) => (
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+  );
+};
+
+export const renderWithQueryClient = (ui, options) => {
+  const queryClient = createTestQueryClient();
+
+  // https://github.com/testing-library/react-testing-library/issues/218#issuecomment-436730757
+  const rendered = render(
+    <QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>,
+    options
+  );
 
   return {
     user: userEvent.setup(),
-    ...render(<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>, options),
+    ...rendered,
+    rerender: (ui, options) =>
+      renderWithQueryClient(ui, { container: rendered.container, ...options }),
   };
 };
 

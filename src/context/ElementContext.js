@@ -1,4 +1,4 @@
-import React, { useCallback, useReducer } from "react";
+import React, { useCallback, useReducer, useState } from "react";
 
 import elementsReducer, {
   ADD_ASSETS,
@@ -18,6 +18,7 @@ import elementsReducer, {
 export const ElementsContext = React.createContext();
 
 export const ElementsProvider = ({ children }) => {
+  const [selectedFloodAreas, setSelectedFloodAreas] = useState([]);
   const [state, dispatch] = useReducer(elementsReducer, INITIAL_STATE);
 
   const {
@@ -72,7 +73,11 @@ export const ElementsProvider = ({ children }) => {
     dispatch({ type: AREA_SELECTION, selectedElements });
   }, []);
 
-  const updateErrors = useCallback((msg) => {
+  const onFloodAreaSelect = useCallback((polygonUri) => {
+    setSelectedFloodAreas(polygonUri);
+  }, []);
+
+  const updateErrorNotifications = useCallback((msg) => {
     dispatch({ type: UPDATE_ERRORS, error: msg });
   }, []);
 
@@ -104,7 +109,9 @@ export const ElementsProvider = ({ children }) => {
         onElementClick,
         reset,
         removeElementsByType,
-        updateErrors,
+        updateErrorNotifications,
+        selectedFloodAreas,
+        onFloodAreaSelect,
       }}
     >
       {children}

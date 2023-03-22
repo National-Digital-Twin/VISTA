@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useState } from "react";
 
-import { ToolbarButton, ToolbarMenu, VerticalDivider } from "lib";
-import { heatmap } from "../layerStyles";
+import { heatmap } from "../layers";
 import { getMapStyles } from "../mapStyles";
+import { ToolbarButton, ToolbarMenu, VerticalDivider } from "lib";
 import DrawControls from "./DrawControl";
 
 const MapToolbar = ({
