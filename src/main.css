@@ -820,6 +820,10 @@ video {
   margin-right: 0.5rem;
 }
 
+.ml-8 {
+  margin-left: 2rem;
+}
+
 .block {
   display: block;
 }
@@ -1254,6 +1258,26 @@ video {
   text-align: center;
 }
 
+.text-justify {
+  text-align: justify;
+}
+
+.indent-2 {
+  text-indent: 0.5rem;
+}
+
+.indent-4 {
+  text-indent: 1rem;
+}
+
+.indent-10 {
+  text-indent: 2.5rem;
+}
+
+.indent-8 {
+  text-indent: 2rem;
+}
+
 .text-xl {
   font-size: 1.25rem;
   line-height: 1.75rem;
@@ -1359,6 +1383,10 @@ video {
 
 .opacity-100 {
   opacity: 1;
+}
+
+.outline {
+  outline-style: solid;
 }
 
 .filter {

@@ -1,3 +1,4 @@
+export * from "./queries";
 export { default as useDependents } from "./useDependents";
 export { default as useElementsInPolygon } from "./useElementsInPolygon";
 export { default as useLocalStorage } from "./useLocalStorage";
