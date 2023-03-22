@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useMemo, useState } from "react";
 import Map, { Layer, Source, ScaleControl, useMap, AttributionControl, Marker } from "react-map-gl";
 import { ErrorBoundary } from "react-error-boundary";
 
-import { ElementsContext } from "context";
+import { CytoscapeContext, ElementsContext } from "context";
 import { useFloodAreaPolygons, useLocalStorage, useMapInteractions } from "hooks";
 import { ErrorFallback, Modal } from "lib";
 
@@ -36,12 +36,26 @@ const ICON_SIZE = 14;
 
 const TelicentMap = () => {
   const { telicentMap: map } = useMap();
-  const { assets, dependencies, selectedFloodAreas, selectedElements } =
-    useContext(ElementsContext);
+  const { moveTo } = useContext(CytoscapeContext);
+  const {
+    assets,
+    dependencies,
+    selectedFloodAreas,
+    selectedElements,
+    onElementClick,
+    onAreaSelect,
+  } = useContext(ElementsContext);
 
   const { polygonFeatures: floodAreas, isLoading: areFloodAreasLoading } =
     useFloodAreaPolygons(selectedFloodAreas);
-  const { interactiveLayers, selectedFloodZones, handleOnClick } = useMapInteractions();
+  const { interactiveLayers, selectedFloodZones, handleOnClick } = useMapInteractions({
+    assets,
+    dependencies,
+    selectedElements,
+    onElementClick,
+    onAreaSelect,
+    moveTo,
+  });
   const mapStyles = useMemo(() => getMapStyles(), []);
   const [mapStyle, setMapStyle] = useLocalStorage("mapStyle", mapStyles[0]);
 

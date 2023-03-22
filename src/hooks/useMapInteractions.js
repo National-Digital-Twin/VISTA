@@ -1,8 +1,6 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 
-import { CytoscapeContext, ElementsContext } from "context";
 import { findElement } from "utils";
-
 import {
   FLOOD_AREA_POLYGON_ID,
   FLOOD_AREA_POLYGON_OUTLINE_ID,
@@ -12,10 +10,14 @@ import {
 } from "components/Map/layers";
 import useElementsInPolygon from "./useElementsInPolygon";
 
-const useMapInteractions = () => {
-  const { moveTo } = useContext(CytoscapeContext);
-  const { assets, dependencies, selectedElements, onElementClick, onAreaSelect } =
-    useContext(ElementsContext);
+const useMapInteractions = ({
+  assets,
+  dependencies,
+  selectedElements,
+  onElementClick,
+  onAreaSelect,
+  moveTo,
+}) => {
   const { findElementsInPolygons } = useElementsInPolygon();
 
   const [selectedFloodZones, setSelectedFloodZones] = useState([]);
@@ -31,6 +33,7 @@ const useMapInteractions = () => {
     const floodZoneFeatures = target.queryRenderedFeatures({
       layers: [FLOOD_AREA_POLYGON_OUTLINE_ID],
     });
+
     updateSelectedFeatureState({
       target,
       renderedFeatures: floodZoneFeatures,
@@ -85,6 +88,7 @@ const useMapInteractions = () => {
       isMultiSelect: event.originalEvent.shiftKey,
     });
   };
+
   return { interactiveLayers, selectedFloodZones, handleOnClick };
 };
 
