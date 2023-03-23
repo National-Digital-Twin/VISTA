@@ -5,10 +5,11 @@ import { ErrorBoundary } from "react-error-boundary";
 
 import { CytoscapeContext, ElementsContext } from "context";
 import { useFloodAreaPolygons, useLocalStorage, useMapInteractions } from "hooks";
-import { ErrorFallback, Modal } from "lib";
+import { ErrorFallback, FloatingPanel, Modal } from "lib";
 
 import MapToolbar from "./MapToolbar/MapToolbar";
 import PointerCoordinates from "./PointerCoords";
+import FloodZones from "./FloodZones";
 
 import {
   FLOOD_AREA_LAYERS,
@@ -22,7 +23,6 @@ import { getMapStyles } from "./mapStyles";
 
 import "@fortawesome/fontawesome-pro/css/all.css";
 import "./mapbox.css";
-import { isEmpty } from "lodash";
 
 const GEOJSON = "geojson";
 const FEATURE_COLLECTION = "FeatureCollection";
@@ -55,6 +55,7 @@ const TelicentMap = () => {
     onElementClick,
     onAreaSelect,
     moveTo,
+    map,
   });
   const mapStyles = useMemo(() => getMapStyles(), []);
   const [mapStyle, setMapStyle] = useLocalStorage("mapStyle", mapStyles[0]);
@@ -220,15 +221,15 @@ const TelicentMap = () => {
             onPointerCoordsClick={togglePointerCoords}
             setCursor={setCursor}
           />
-          <div className="absolute top-0 left-0 bg-black-200 p-1 font-body flex flex-col gap-y-2">
-            <PointerCoordinates
-              show={showPointerCoords}
-              lat={mousePosition?.lat}
-              lng={mousePosition?.lng}
-            />
-            <FloodZoneInfo selectedFloodZones={selectedFloodZones} />
-          </div>
         </Map>
+        <TopLeftPanel>
+          <PointerCoordinates
+            show={showPointerCoords}
+            lat={mousePosition?.lat}
+            lng={mousePosition?.lng}
+          />
+          <FloodZones selectedFloodZones={selectedFloodZones} />
+        </TopLeftPanel>
       </div>
       <Modal appElement="root" isOpen={areFloodAreasLoading} className="py-2 px-6 rounded-lg">
         <p>Adding flood areas to map</p>
@@ -253,20 +254,6 @@ const HoverInfo = ({ info, left, top }) => {
   );
 };
 
-const FloodZoneInfo = ({ selectedFloodZones }) => {
-  if (isEmpty(selectedFloodZones)) return null;
-  return (
-    <div>
-      <h3 className="text-base">Selected flood zone areas</h3>
-      <ul className="list-disc list-inside text-sm">
-        {selectedFloodZones.map((selectedFloodZone) => {
-          return (
-            <li key={selectedFloodZone.properties.TA_NAME}>
-              {selectedFloodZone.properties.TA_NAME}
-            </li>
-          );
-        })}
-      </ul>
-    </div>
-  );
-};
+const TopLeftPanel = ({ children }) => (
+  <FloatingPanel position="top-0 left-0">{children}</FloatingPanel>
+);

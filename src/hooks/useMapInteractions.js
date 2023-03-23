@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { findElement } from "utils";
 import {
@@ -17,6 +17,7 @@ const useMapInteractions = ({
   onElementClick,
   onAreaSelect,
   moveTo,
+  map,
 }) => {
   const { findElementsInPolygons } = useElementsInPolygon();
 
@@ -29,17 +30,24 @@ const useMapInteractions = ({
     FLOOD_AREA_POLYGON_ID,
   ];
 
-  const onFloodZoneClick = (target, clickedFloodZones) => {
-    const floodZoneFeatures = target.queryRenderedFeatures({
+  useEffect(() => {
+    if (!map) return;
+
+    const polygonOutlineLayer = map.getLayer(FLOOD_AREA_POLYGON_OUTLINE_ID);
+    if (!polygonOutlineLayer) return;
+
+    const floodZoneFeatures = map.getMap().queryRenderedFeatures({
       layers: [FLOOD_AREA_POLYGON_OUTLINE_ID],
     });
 
     updateSelectedFeatureState({
-      target,
+      map: map.getMap(),
       renderedFeatures: floodZoneFeatures,
-      clickedFeatures: clickedFloodZones,
+      clickedFeatures: selectedFloodZones,
     });
+  }, [map, selectedFloodZones]);
 
+  const onFloodZoneClick = ({ target, clickedFloodZones, isMultiSelect }) => {
     const elementsToSelect = findElementsInPolygons({
       target,
       polygons: clickedFloodZones,
@@ -57,6 +65,11 @@ const useMapInteractions = ({
     }, []);
 
     onAreaSelect(uniqueElements);
+
+    if (isMultiSelect) {
+      setSelectedFloodZones((prev) => [...prev, ...clickedFloodZones]);
+      return;
+    }
     setSelectedFloodZones(clickedFloodZones);
   };
 
@@ -73,6 +86,7 @@ const useMapInteractions = ({
     const { originalEvent, target } = event;
     originalEvent.stopPropagation();
 
+    const isMultiSelect = originalEvent.shiftKey;
     const clickedFeatures = event?.features || [];
 
     const clickedFloodZones = clickedFeatures.filter((feature) =>
@@ -82,10 +96,10 @@ const useMapInteractions = ({
       (feature) => !isClickedLayer(feature, FLOOD_AREA_POLYGON_ID)
     );
 
-    onFloodZoneClick(target, clickedFloodZones);
+    onFloodZoneClick({ target, clickedFloodZones, isMultiSelect });
     onOtherElementClick({
       clickedFeature: otherClickedElements[0],
-      isMultiSelect: event.originalEvent.shiftKey,
+      isMultiSelect,
     });
   };
 
@@ -96,12 +110,12 @@ export default useMapInteractions;
 
 const isClickedLayer = (feature, layerId) => feature.layer.id === layerId;
 
-const updateSelectedFeatureState = ({ target, renderedFeatures, clickedFeatures }) => {
+const updateSelectedFeatureState = ({ map, renderedFeatures, clickedFeatures }) => {
   renderedFeatures.forEach((renderedFeature) => {
     const isSelected = clickedFeatures.some(
       (clickedFeature) => clickedFeature.id === renderedFeature.id
     );
-    target.setFeatureState(
+    map.setFeatureState(
       {
         source: "flood-areas",
         id: renderedFeature.id,
