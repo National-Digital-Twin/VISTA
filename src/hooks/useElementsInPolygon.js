@@ -8,17 +8,15 @@ const useElementsInPolygon = () => {
     const pointAssets = target.getSource("point-assets")._data.features;
     const pointsInPolygon = findPointsInPolygon(polygons, pointAssets);
 
-    const pointAssetDependecies = target.getSource("point-asset-dependecies")._data.features;
-    const PADIntersectingPolygon = findLinesIntersectingPolygon(polygons, pointAssetDependecies);
+    // const pointAssetDependecies = target.getSource("point-asset-dependecies")._data.features;
+    // const PADIntersectingPolygon = findLinesIntersectingPolygon(polygons, pointAssetDependecies);
 
     const linearAssets = target.getSource("linear-assets")._data.features;
     const LAIntersectingPolygon = findLinesIntersectingPolygon(polygons, linearAssets);
 
-    const elements = [...pointsInPolygon, ...PADIntersectingPolygon, ...LAIntersectingPolygon].map(
-      (element) => {
-        return findElement([...assets, ...dependencies], element.properties.uri);
-      }
-    );
+    const elements = [...pointsInPolygon, ...LAIntersectingPolygon].map((element) => {
+      return findElement([...assets, ...dependencies], element.properties.uri);
+    });
 
     return elements;
   };
