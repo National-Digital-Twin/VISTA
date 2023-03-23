@@ -64,11 +64,10 @@ const Addresses = ({ residences, isLoading, isError, error }) => {
       <ul className={WRAPPER_CLASSNAMES}>
         {items.map((residence, index) => {
           const section = `Address ${index + 1}`;
-          const address = residence?.address;
           return (
-            <li key={address ?? residence.uri}>
+            <li key={residence.uri}>
               <p className="font-semibold text-sm">{section}</p>
-              <p>{address ?? residence.uri}</p>
+              <p>{residence?.address || residence.uri}</p>
             </li>
           );
         })}
