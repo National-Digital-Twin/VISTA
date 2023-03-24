@@ -1,4 +1,5 @@
 export { default as FLOOD_AREA_LAYERS } from "./flood-areas";
+export * from "./flood-areas";
 export * from "./asset-layers";
 
 export const pointAssetCxnLayer = {

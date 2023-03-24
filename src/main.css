@@ -968,6 +968,14 @@ video {
   resize: both;
 }
 
+.list-inside {
+  list-style-position: inside;
+}
+
+.list-disc {
+  list-style-type: disc;
+}
+
 .auto-rows-min {
   grid-auto-rows: -webkit-min-content;
   grid-auto-rows: min-content;
@@ -1322,6 +1330,11 @@ video {
 .text-xs {
   font-size: 0.75rem;
   line-height: 1rem;
+}
+
+.text-base {
+  font-size: 1rem;
+  line-height: 1.5rem;
 }
 
 .\!text-sm {

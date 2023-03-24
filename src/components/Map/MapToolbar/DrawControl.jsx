@@ -3,10 +3,10 @@ import { Popup, useControl } from "react-map-gl";
 import * as MapboxDrawGeodesic from "mapbox-gl-draw-geodesic";
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 
-import { ToolbarButton } from "lib";
-import { findLinesIntersectingPolygon, findPointsInPolygon } from "../map-utils";
 import { CytoscapeContext, ElementsContext } from "context";
-import { findElement } from "utils";
+import { ToolbarButton } from "lib";
+import { useElementsInPolygons } from "hooks";
+
 import DrawingTools from "./DrawingTools";
 
 export const DRAW_CIRCLE = "draw_circle";
@@ -24,8 +24,9 @@ const DrawControls = ({ compact, map, setCursor }) => {
     onAreaSelect,
   } = useContext(ElementsContext);
 
-  const [polygon, setPolygon] = useState(undefined);
+  const { findElementsInPolygons } = useElementsInPolygons();
 
+  const [polygon, setPolygon] = useState(undefined);
   const [selectedTool, setSelectedTool] = useState(undefined);
 
   const draw = useControl(
@@ -43,31 +44,19 @@ const DrawControls = ({ compact, map, setCursor }) => {
     (event) => {
       const { features: polygons, target } = event;
       setPolygon(undefined);
-
-      const pointAssets = target.getSource("point-assets")._data.features;
-      const pointsInPolygon = findPointsInPolygon(polygons, pointAssets);
-
-      const pointAssetDependecies = target.getSource("point-asset-dependecies")._data.features;
-      const PADIntersectingPolygon = findLinesIntersectingPolygon(polygons, pointAssetDependecies);
-
-      const linearAssets = target.getSource("linear-assets")._data.features;
-      const LAIntersectingPolygon = findLinesIntersectingPolygon(polygons, linearAssets);
-
-      const selectedElements = [
-        ...pointsInPolygon,
-        ...PADIntersectingPolygon,
-        ...LAIntersectingPolygon,
-      ].map((element) => {
-        return findElement([...assets, ...dependencies], element.properties.uri);
-      });
+      const elementsToSelect = findElementsInPolygons({ target, polygons, assets, dependencies });
 
       if (polygons.length === 1) {
         setPolygon(polygons[0]);
       }
-      onAreaSelect(selectedElements);
-      moveTo({ areaSelect: true, cachedElements: cachedSelectedElements, selectedElements });
+      onAreaSelect(elementsToSelect);
+      moveTo({
+        areaSelect: true,
+        cachedElements: cachedSelectedElements,
+        selectedElements: elementsToSelect,
+      });
     },
-    [assets, dependencies, cachedSelectedElements, moveTo, onAreaSelect]
+    [assets, dependencies, findElementsInPolygons, cachedSelectedElements, moveTo, onAreaSelect]
   );
 
   const onModeChange = useCallback(
