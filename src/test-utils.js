@@ -145,10 +145,17 @@ export const renderWithQueryClient = (ui, options) => {
   );
 
   return {
-    user: userEvent.setup(),
+    user,
     ...rendered,
     rerender: (ui, options) =>
       renderWithQueryClient(ui, { container: rendered.container, ...options }),
+  };
+};
+
+export const setup = (ui) => {
+  return {
+    user,
+    ...render(ui),
   };
 };
 

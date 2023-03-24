@@ -10,6 +10,7 @@ import { findElement } from "utils";
 
 import MapToolbar from "./MapToolbar/MapToolbar";
 import PointerCoordinates from "./PointerCoords";
+import FloodWarningWidget from "./FloodAreaWidget";
 
 import {
   FLOOD_AREA_LAYERS,
@@ -22,7 +23,7 @@ import { generateFeatures } from "./map-utils";
 import { getMapStyles } from "./mapStyles";
 
 import "@fortawesome/fontawesome-pro/css/all.css";
-import "./mapbox.css";
+import "./map.css";
 
 const GEOJSON = "geojson";
 const FEATURE_COLLECTION = "FeatureCollection";
@@ -243,6 +244,7 @@ const TelicentMap = () => {
             setCursor={setCursor}
           />
         </Map>
+        <FloodWarningWidget />
       </div>
       <Modal appElement="root" isOpen={areFloodAreasLoading} className="py-2 px-6 rounded-lg">
         <p>Adding flood areas to map</p>
