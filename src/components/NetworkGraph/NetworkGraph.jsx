@@ -17,11 +17,10 @@ import GraphToolbar from "./GraphToolbar";
 
 import "@fortawesome/fontawesome-pro/css/all.css";
 
-const NetworkGraph = () => {
+const NetworkGraph = ({ showGrid }) => {
   const { telicentMap: map } = useMap();
   const { cyRef, layout: graphLayout, runLayout, updateLayout } = useContext(CytoscapeContext);
-  const { assets, dependencies, selectedElements, clearSelectedElements, onElementClick } =
-    useContext(ElementsContext);
+  const { assets, dependencies, selectedElements, clearSelectedElements, onElementClick } = useContext(ElementsContext);
 
   const nodes = useMemo(() => createNode(assets), [assets]);
   const edges = useMemo(() => createEdges(nodes, dependencies), [nodes, dependencies]);
@@ -56,9 +55,7 @@ const NetworkGraph = () => {
     const getSelectedCyElements = () => {
       if (!cyRef.current) return;
 
-      const selected = cyRef.current
-        .elements(":selected")
-        .map((element) => element.data("element"));
+      const selected = cyRef.current.elements(":selected").map((element) => element.data("element"));
       return selected;
     };
 
@@ -119,6 +116,7 @@ const NetworkGraph = () => {
     [cyRef]
   );
 
+  if (showGrid) return null;
   return (
     <>
       <CytoscapeComponent

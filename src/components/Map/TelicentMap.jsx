@@ -11,13 +11,7 @@ import MapToolbar from "./MapToolbar/MapToolbar";
 import PointerCoordinates from "./PointerCoords";
 import FloodZones from "./FloodZones";
 
-import {
-  FLOOD_AREA_LAYERS,
-  heatmap,
-  LINEAR_ASSET_LAYER,
-  pointAssetCxnLayer,
-  POINT_ASSET_LAYER,
-} from "./layers";
+import { FLOOD_AREA_LAYERS, heatmap, LINEAR_ASSET_LAYER, pointAssetCxnLayer, POINT_ASSET_LAYER } from "./layers";
 import { generateFeatures } from "./map-utils";
 import { getMapStyles } from "./mapStyles";
 
@@ -37,17 +31,10 @@ const ICON_SIZE = 14;
 const TelicentMap = () => {
   const { telicentMap: map } = useMap();
   const { moveTo } = useContext(CytoscapeContext);
-  const {
-    assets,
-    dependencies,
-    selectedFloodAreas,
-    selectedElements,
-    onElementClick,
-    onAreaSelect,
-  } = useContext(ElementsContext);
+  const { assets, dependencies, selectedFloodAreas, selectedElements, onElementClick, onAreaSelect } =
+    useContext(ElementsContext);
 
-  const { polygonFeatures: floodAreas, isLoading: areFloodAreasLoading } =
-    useFloodAreaPolygons(selectedFloodAreas);
+  const { polygonFeatures: floodAreas, isLoading: areFloodAreasLoading } = useFloodAreaPolygons(selectedFloodAreas);
   const { interactiveLayers, selectedFloodZones, handleOnClick } = useMapInteractions({
     assets,
     dependencies,
@@ -162,10 +149,7 @@ const TelicentMap = () => {
       color="#c4c4c4"
     >
       {properties?.icon ? (
-        <i
-          className={classNames(properties.icon, "marker-icon")}
-          style={{ fontSize: `${iconSize}px` }}
-        />
+        <i className={classNames(properties.icon, "marker-icon")} style={{ fontSize: `${iconSize}px` }} />
       ) : (
         <p className="marker-icon font-body" style={{ fontSize: `${iconSize}px` }}>
           {properties.iconLabel}
@@ -223,11 +207,7 @@ const TelicentMap = () => {
           />
         </Map>
         <TopLeftPanel>
-          <PointerCoordinates
-            show={showPointerCoords}
-            lat={mousePosition?.lat}
-            lng={mousePosition?.lng}
-          />
+          <PointerCoordinates show={showPointerCoords} lat={mousePosition?.lat} lng={mousePosition?.lng} />
           <FloodZones selectedFloodZones={selectedFloodZones} />
         </TopLeftPanel>
       </div>
@@ -254,6 +234,4 @@ const HoverInfo = ({ info, left, top }) => {
   );
 };
 
-const TopLeftPanel = ({ children }) => (
-  <FloatingPanel position="top-0 left-0">{children}</FloatingPanel>
-);
+const TopLeftPanel = ({ children }) => <FloatingPanel position="top-0 left-0">{children}</FloatingPanel>;

@@ -20,6 +20,18 @@ export const ElementsContext = React.createContext();
 export const ElementsProvider = ({ children }) => {
   const [selectedFloodAreas, setSelectedFloodAreas] = useState([]);
   const [state, dispatch] = useReducer(elementsReducer, INITIAL_STATE);
+  const [selectedTimeline, setSelectedTimeline] = useState(null);
+
+  const onFloodTimelineSelect = (selected) => {
+    if (selected !== selectedTimeline) {
+      setSelectedTimeline(selected);
+    }
+    return;
+  };
+
+  const setTimelineToNull = () => {
+    setSelectedTimeline(null);
+  };
 
   const {
     assets,
@@ -112,6 +124,9 @@ export const ElementsProvider = ({ children }) => {
         updateErrorNotifications,
         selectedFloodAreas,
         onFloodAreaSelect,
+        selectedTimeline,
+        setTimelineToNull,
+        onFloodTimelineSelect,
       }}
     >
       {children}
