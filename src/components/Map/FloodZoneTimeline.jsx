@@ -22,21 +22,37 @@ const FloodZoneTimeline = () => {
     enabled: !!selectedFloodArea,
   });
 
+  const timelineHeader = (
+    <div className="flex items-center">
+      <button onClick={setTimelineToNull}>
+        <i className="ri-close-fill hover:bg-black-400 rounded-md mr-2" title="Close Flood Timeline" />
+      </button>
+      <h6>Flood severity timeline </h6>
+    </div>
+  );
+
   if (isEmpty(selectedTimeline)) return null;
 
-  if (isError) return error.message;
+  if (isLoading)
+    return (
+      <div className="absolute right-0 max-h-full h-fit w-72 bg-black-200">
+        {timelineHeader}
+        <p className="ml-2">fetching timeline...</p>
+      </div>
+    );
 
-  if (isLoading) return <p>fetching timeline...</p>;
+  if (isError)
+    return (
+      <div className="absolute right-0 max-h-full h-fit w-72 bg-black-200">
+        {timelineHeader}
+        <p className="ml-2">{error.message}</p>
+      </div>
+    );
 
   if (isEmpty(data))
     return (
       <div className="absolute right-0 max-h-full h-fit w-72 bg-black-200">
-        <div className="flex items-center">
-          <button onClick={setTimelineToNull}>
-            <i className="ri-close-fill hover:bg-black-400 rounded-md mr-2" title="Close Flood Timeline" />
-          </button>
-          <h6>Flood severity timeline </h6>
-        </div>
+        {timelineHeader}
         <p className="ml-2">No timeline data available</p>
       </div>
     );
@@ -58,12 +74,7 @@ const FloodZoneTimeline = () => {
     return (
       <div className="absolute right-0 max-h-full h-full w-72 bg-black-200">
         <div className="z-50 relative right-0 h-fit bg-black-200">
-          <div className="flex items-center ">
-            <button onClick={setTimelineToNull}>
-              <i className="ri-close-fill hover:bg-black-400 rounded-md mr-2" title="Close Timeline" />
-            </button>
-            <h6>Flood severity timeline </h6>
-          </div>
+          {timelineHeader}
           <p className="ml-2 mb-2">Area: {selectedTimeline.properties.TA_NAME}</p>
           <div className="grid grid-cols-10 items-center">
             <p className="col-end-3 text-sm ml-3">Date</p>
