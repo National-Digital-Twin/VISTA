@@ -7,7 +7,8 @@ import config from "./config/app-config";
 import { ErrorNotification, ResizableContainer } from "./lib";
 
 import "@fortawesome/fontawesome-pro/css/all.css";
-import "@fortawesome/fontawesome-pro/css/sharp-solid.css"
+import "@fortawesome/fontawesome-pro/css/sharp-solid.css";
+import FloodZoneTimeline from "components/Map/FloodZoneTimeline";
 
 const App = () => {
   const [showGrid, setShowGrid] = useState(false);
@@ -29,7 +30,11 @@ const App = () => {
         <Dataset showGrid={showGrid} toggleView={toggleView} />
         <InfoPanel />
         <div className="flex gap-x-2 h-full">
-          <ResizableContainer>{showGrid ? <Grid /> : <NetworkGraph />}</ResizableContainer>
+          <ResizableContainer>
+            <Grid showGrid={showGrid} />
+            <NetworkGraph showGrid={showGrid} />
+            <FloodZoneTimeline />
+          </ResizableContainer>
           <TelicentMap />
         </div>
       </div>

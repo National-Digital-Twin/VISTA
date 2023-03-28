@@ -47,6 +47,16 @@ export const fetchIconStyles = async (typeUri) => {
   return response.json();
 };
 
+export const fetchFloodTimeline = async (floodArea) => {
+  const queryParam = new URLSearchParams({
+    parent_uri: `http://environment.data.gov.uk/flood-monitoring/id/floodAreas/${floodArea}`,
+  }).toString();
+  const response = await fetch(createParalogEndpoint(`states?${queryParam}`), fetchOptions);
+  if (!response.ok) {
+    throw new Error(`An error occured while retrieving flood timeline for Flood Area ${floodArea}`);
+  }
+};
+
 export const fetchFloodMonitoringStations = async () => {
   const response = await fetch(
     "https://environment.data.gov.uk/flood-monitoring/id/stations?catchmentName=Isle%20of%20Wight"

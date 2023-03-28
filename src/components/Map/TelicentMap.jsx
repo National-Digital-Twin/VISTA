@@ -18,7 +18,7 @@ import FloodWarningWidget from "./FloodAreaWidget";
 import FloodZones from "./FloodZones";
 
 import { FLOOD_AREA_LAYERS, heatmap, LINEAR_ASSET_LAYER } from "./layers";
-import { generateFeatures, generateLinearAssetFeatures } from "./map-utils";
+import { generateLinearAssetFeatures } from "./map-utils";
 import { getMapStyles } from "./mapStyles";
 
 import "@fortawesome/fontawesome-pro/css/all.css";
@@ -36,7 +36,7 @@ const HEAT_RADIUS = 1000;
 
 const TelicentMap = () => {
   const { telicentMap: map } = useMap();
-  const { moveTo } = useContext(CytoscapeContext);
+  const { fit, moveTo } = useContext(CytoscapeContext);
   const {
     assets,
     dependencies,
@@ -58,6 +58,7 @@ const TelicentMap = () => {
     moveTo,
   });
   const mapStyles = useMemo(() => getMapStyles(), []);
+
   const [mapStyle, setMapStyle] = useLocalStorage("mapStyle", mapStyles[0]);
   const {
     query,

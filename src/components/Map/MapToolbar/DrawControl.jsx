@@ -132,11 +132,7 @@ const DrawControls = ({ compact, map, setCursor }) => {
         onDrawCircle={handleDrawCircle}
         onDrawPolygon={handleDrawPolygon}
       />
-      <ToolbarButton
-        icon="ri-delete-bin-line"
-        label="Delete all polygons"
-        onClick={handleDeleteAllSelections}
-      />
+      <ToolbarButton icon="ri-delete-bin-line" label="Delete all polygons" onClick={handleDeleteAllSelections} />
     </>
   );
 };

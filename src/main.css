@@ -778,8 +778,24 @@ video {
   z-index: 20;
 }
 
+.z-50 {
+  z-index: 50;
+}
+
 .col-span-12 {
   grid-column: span 12 / span 12;
+}
+
+.col-start-6 {
+  grid-column-start: 6;
+}
+
+.col-end-3 {
+  grid-column-end: 3;
+}
+
+.col-end-10 {
+  grid-column-end: 10;
 }
 
 .float-right {
@@ -811,16 +827,28 @@ video {
   margin-right: 1.5rem;
 }
 
-.mt-3 {
-  margin-top: 0.75rem;
-}
-
 .mr-2 {
   margin-right: 0.5rem;
 }
 
-.block {
-  display: block;
+.ml-2 {
+  margin-left: 0.5rem;
+}
+
+.mb-2 {
+  margin-bottom: 0.5rem;
+}
+
+.ml-3 {
+  margin-left: 0.75rem;
+}
+
+.ml-4 {
+  margin-left: 1rem;
+}
+
+.mt-3 {
+  margin-top: 0.75rem;
 }
 
 .flex {
@@ -859,12 +887,18 @@ video {
   height: 2rem;
 }
 
+.h-12 {
+  height: 3rem;
+}
+
 .h-5 {
   height: 1.25rem;
 }
 
-.h-12 {
-  height: 3rem;
+.h-fit {
+  height: -webkit-fit-content;
+  height: -moz-fit-content;
+  height: fit-content;
 }
 
 .max-h-40 {
@@ -907,6 +941,10 @@ video {
 
 .w-6 {
   width: 1.5rem;
+}
+
+.w-72 {
+  width: 18rem;
 }
 
 .w-12 {
@@ -965,6 +1003,10 @@ video {
 .auto-rows-min {
   grid-auto-rows: -webkit-min-content;
   grid-auto-rows: min-content;
+}
+
+.grid-cols-10 {
+  grid-template-columns: repeat(10, minmax(0, 1fr));
 }
 
 .flex-col {
@@ -1042,6 +1084,10 @@ video {
   overflow-y: auto;
 }
 
+.overflow-y-scroll {
+  overflow-y: scroll;
+}
+
 .overscroll-y-contain {
   overscroll-behavior-y: contain;
 }
@@ -1110,14 +1156,19 @@ video {
   border-color: rgb(172 172 172 / var(--tw-border-opacity));
 }
 
+.border-gray-400 {
+  --tw-border-opacity: 1;
+  border-color: rgb(156 163 175 / var(--tw-border-opacity));
+}
+
 .border-black-500 {
   --tw-border-opacity: 1;
   border-color: rgb(87 87 87 / var(--tw-border-opacity));
 }
 
-.border-gray-400 {
+.border-black-400 {
   --tw-border-opacity: 1;
-  border-color: rgb(156 163 175 / var(--tw-border-opacity));
+  border-color: rgb(68 68 68 / var(--tw-border-opacity));
 }
 
 .border-whiteSmoke-800 {
@@ -1316,12 +1367,12 @@ video {
   font-weight: 700;
 }
 
-.font-medium {
-  font-weight: 500;
-}
-
 .font-normal {
   font-weight: 400;
+}
+
+.font-medium {
+  font-weight: 500;
 }
 
 .font-semibold {
