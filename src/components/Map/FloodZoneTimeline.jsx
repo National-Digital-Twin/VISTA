@@ -1,9 +1,9 @@
 import { Timeline } from "primereact/timeline";
 import React, { useContext } from "react";
-import useFetch from "use-http";
-import config from "config/app-config";
 import { isEmpty } from "lodash";
 import { ElementsContext } from "context";
+import { fetchFloodTimeline } from "endpoints";
+import { useQuery } from "react-query";
 
 const sortByDate = (a, b) => {
   a = a.period.toString().split("/");
@@ -14,12 +14,19 @@ const sortByDate = (a, b) => {
 const FloodZoneTimeline = () => {
   const { selectedTimeline, setTimelineToNull } = useContext(ElementsContext);
 
-  const { data } = useFetch(
-    `${config.api.url}/states?parent_uri=http://environment.data.gov.uk/flood-monitoring/id/floodAreas/${selectedTimeline?.properties.FWS_TACODE}`,
-    [selectedTimeline]
-  );
+  const selectedFloodArea = selectedTimeline?.properties?.FWS_TACODE;
+
+  const { isLoading, isError, error, data } = useQuery({
+    queryKey: ["floodTimeline", selectedFloodArea],
+    queryFn: () => fetchFloodTimeline(selectedFloodArea),
+    enabled: !!selectedFloodArea,
+  });
 
   if (isEmpty(selectedTimeline)) return null;
+
+  if (isError) return error.message;
+
+  if (isLoading) return <p>fetching timeline...</p>;
 
   if (isEmpty(data))
     return (
@@ -53,7 +60,7 @@ const FloodZoneTimeline = () => {
         <div className="z-50 relative right-0 h-fit bg-black-200">
           <div className="flex items-center ">
             <button onClick={setTimelineToNull}>
-              <i className="ri-arrow-right-s-line hover:bg-black-400 rounded-md mr-2" title="Close Timeline" />
+              <i className="ri-close-fill hover:bg-black-400 rounded-md mr-2" title="Close Timeline" />
             </button>
             <h6>Flood severity timeline </h6>
           </div>

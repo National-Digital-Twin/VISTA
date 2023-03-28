@@ -15,10 +15,7 @@ export * from "./flood-watch-areas";
 
 export const fetchTypeSuperclass = async (typeUri) => {
   const queryParams = new URLSearchParams({ classUri: typeUri }).toString();
-  const response = await fetch(
-    createParalogEndpoint(`ontology/class?${queryParams}`),
-    fetchOptions
-  );
+  const response = await fetch(createParalogEndpoint(`ontology/class?${queryParams}`), fetchOptions);
   if (!response.ok) {
     return {};
   }
@@ -27,10 +24,7 @@ export const fetchTypeSuperclass = async (typeUri) => {
 
 export const fetchResidentialInformation = async (personUri) => {
   const queryParams = new URLSearchParams({ personUri }).toString();
-  const response = await fetch(
-    createParalogEndpoint(`person/residences?${queryParams}`),
-    fetchOptions
-  );
+  const response = await fetch(createParalogEndpoint(`person/residences?${queryParams}`), fetchOptions);
   if (!response.ok) {
     throw new Error("An error occured while retrieving residential information");
   }
@@ -43,6 +37,17 @@ export const fetchIconStyles = async (typeUri) => {
 
   if (!response.ok) {
     return undefined;
+  }
+  return response.json();
+};
+
+export const fetchFloodTimeline = async (floodArea) => {
+  const queryParam = new URLSearchParams({
+    parent_uri: `http://environment.data.gov.uk/flood-monitoring/id/floodAreas/${floodArea}`,
+  }).toString();
+  const response = await fetch(createParalogEndpoint(`states?${queryParam}`), fetchOptions);
+  if (!response.ok) {
+    throw new Error(`An error occured while retrieving flood timeline for Flood Area ${floodArea}`);
   }
   return response.json();
 };
