@@ -59,3 +59,15 @@ export const getIconStyle = (styles) => {
     backgroundColor: this.styles?.backgroundColor || "#272727",
   };
 };
+
+export const getUniqueElements = (elements) => {
+  const uniqueElements = elements.reduce((acc, current) => {
+    const isAdded = acc.find((element) => element.uri === current.uri);
+    if (isAdded) {
+      return acc;
+    } else {
+      return acc.concat([current]);
+    }
+  }, []);
+  return uniqueElements;
+};

@@ -1,24 +1,59 @@
 import * as turf from "@turf/turf";
 import { isEmpty } from "lodash";
 import * as MapboxDrawGeodesic from "mapbox-gl-draw-geodesic";
-import { findElement } from "utils";
+import { findElement, getUniqueElements } from "utils";
 
 const useElementsInPolygons = () => {
   const findElementsInPolygons = ({ target, polygons, assets, dependencies }) => {
     const pointAssets = target.getSource("point-assets")._data.features;
-    const pointsInPolygon = findPointsInPolygon(polygons, pointAssets);
+    const points = pointAssets.filter((feature) => feature.geometry.type === "Point");
+    const pointsInPolygon = findPointsInPolygon(polygons, points);
 
+    const connectedDependencies = pointAssets
+      .filter((feature) => feature.geometry.type === "LineString")
+      .filter((feature) => {
+        const isConnected = pointsInPolygon.some((point) => {
+          const isDependent = point.properties.uri === feature.properties.dependent;
+          const isProvider = point.properties.uri === feature.properties.provider;
+          return isDependent || isProvider;
+        });
+        return isConnected;
+      });
+
+    const connectedAssets = connectedDependencies.map((feature) => {
+      const isDependent = pointsInPolygon.some(
+        (pointFeature) => pointFeature.properties.uri === feature.properties.dependent
+      );
+      if (isDependent) {
+        const providerAsset = points.find(
+          (point) => point.properties.uri === feature.properties.provider
+        );
+        return providerAsset;
+      }
+      const dependentAsset = points.find(
+        (point) => point.properties.uri === feature.properties.dependent
+      );
+      return dependentAsset;
+    });
+
+    // Alecs - Leaving this in for now until Tom gives the go ahead to remove this feature
     // const pointAssetDependecies = target.getSource("point-asset-dependecies")._data.features;
     // const PADIntersectingPolygon = findLinesIntersectingPolygon(polygons, pointAssetDependecies);
 
     const linearAssets = target.getSource("linear-assets")._data.features;
     const LAIntersectingPolygon = findLinesIntersectingPolygon(polygons, linearAssets);
 
-    const elements = [...pointsInPolygon, ...LAIntersectingPolygon].map((element) => {
+    const elements = [
+      ...pointsInPolygon,
+      ...connectedAssets,
+      ...LAIntersectingPolygon,
+      ...connectedDependencies,
+    ].map((element) => {
       return findElement([...assets, ...dependencies], element.properties.uri);
     });
 
-    return elements;
+    const uniqueElements = getUniqueElements(elements);
+    return uniqueElements;
   };
   return { findElementsInPolygons };
 };

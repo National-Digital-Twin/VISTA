@@ -60,12 +60,12 @@ export const ElementsProvider = ({ children }) => {
     dispatch({ type: RESET });
   }, []);
 
-  const onElementClick = useCallback((multiSelect, selectedElement) => {
+  const onElementClick = useCallback((multiSelect, selectedElements) => {
     if (multiSelect) {
-      dispatch({ type: MULTI_SELECT_ELEMENTS, selectedElement });
+      dispatch({ type: MULTI_SELECT_ELEMENTS, selectedElements });
       return;
     }
-    dispatch({ type: SELECT_ELEMENT, selectedElement });
+    dispatch({ type: SELECT_ELEMENT, selectedElements });
   }, []);
 
   const onAreaSelect = useCallback((selectedElements) => {

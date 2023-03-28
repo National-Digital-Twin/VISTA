@@ -65,6 +65,8 @@ export default class Dependency {
         criticality: this.criticality,
         lineColor: this.criticalityColor,
         lineOpacity: selected ? 1 : 0.3,
+        dependent: this.dependent.uri,
+        provider: this.provider.uri,
         selected,
       },
       geometry: {

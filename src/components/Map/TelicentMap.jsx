@@ -1,6 +1,5 @@
-import classNames from "classnames";
 import React, { useContext, useEffect, useMemo, useState } from "react";
-import Map, { Layer, Source, ScaleControl, useMap, AttributionControl, Marker } from "react-map-gl";
+import Map, { Layer, Source, ScaleControl, useMap, AttributionControl } from "react-map-gl";
 import { ErrorBoundary } from "react-error-boundary";
 
 import { CytoscapeContext, ElementsContext } from "context";
@@ -18,18 +17,13 @@ import FloodMonitoringStations from "./FloodMonitoringStations";
 import FloodWarningWidget from "./FloodAreaWidget";
 import FloodZones from "./FloodZones";
 
-import {
-  FLOOD_AREA_LAYERS,
-  heatmap,
-  LINEAR_ASSET_LAYER,
-  pointAssetCxnLayer,
-  POINT_ASSET_LAYER,
-} from "./layers";
-import { generateFeatures } from "./map-utils";
+import { FLOOD_AREA_LAYERS, heatmap, LINEAR_ASSET_LAYER } from "./layers";
+import { generateFeatures, generateLinearAssetFeatures } from "./map-utils";
 import { getMapStyles } from "./mapStyles";
 
 import "@fortawesome/fontawesome-pro/css/all.css";
 import "./map.css";
+import PointAssets from "./PointAssets";
 
 export const GEOJSON = "geojson";
 export const FEATURE_COLLECTION = "FeatureCollection";
@@ -39,7 +33,6 @@ const VIEWSTATE = {
   zoom: 9,
 };
 const HEAT_RADIUS = 1000;
-const ICON_SIZE = 14;
 
 const TelicentMap = () => {
   const { telicentMap: map } = useMap();
@@ -56,13 +49,13 @@ const TelicentMap = () => {
   const { polygonFeatures: floodAreas, isLoading: areFloodAreasLoading } =
     useFloodAreaPolygons(selectedFloodAreas);
   const { interactiveLayers, selectedFloodZones, handleOnClick } = useMapInteractions({
+    map,
     assets,
     dependencies,
     selectedElements,
     onElementClick,
     onAreaSelect,
     moveTo,
-    map,
   });
   const mapStyles = useMemo(() => getMapStyles(), []);
   const [mapStyle, setMapStyle] = useLocalStorage("mapStyle", mapStyles[0]);
@@ -73,35 +66,25 @@ const TelicentMap = () => {
   } = useFloodMonitoringStations();
 
   const [cursor, setCursor] = useState("auto");
-  const [hoverInfo, setHoverInfo] = useState(undefined);
   const [heatmapRadius, setHeatmapRadius] = useState(10);
-  const [iconSize, setIconSize] = useState(ICON_SIZE);
   const [showPointerCoords, setShowPointerCoords] = useState(false);
 
   const [linearAssets, setLinearAssets] = useState([]);
-  const [pointAssets, setPointAssets] = useState([]);
-  const [pointAssetDependencies, setPointAssetDependencies] = useState([]);
   const [mousePosition, setMousePosition] = useState(undefined);
 
   // The order of the array is the order in which the features will appear in the map.
   // index 0 being the lowest level
   const sources = useMemo(
     () => [
-      { id: "heatmap", features: pointAssets, layers: [heatmap] },
+      { id: "heatmap", features: [], layers: [heatmap] },
       {
         id: "flood-areas",
         features: floodAreas,
         layers: FLOOD_AREA_LAYERS,
       },
-      {
-        id: "point-asset-dependecies",
-        features: pointAssetDependencies,
-        layers: [pointAssetCxnLayer],
-      },
       { id: "linear-assets", features: linearAssets, layers: [LINEAR_ASSET_LAYER] },
-      { id: "point-assets", features: pointAssets, layers: [POINT_ASSET_LAYER] },
     ],
-    [linearAssets, pointAssets, pointAssetDependencies, floodAreas]
+    [linearAssets, floodAreas]
   );
 
   useEffect(() => {
@@ -110,24 +93,13 @@ const TelicentMap = () => {
   }, [mapStyles, mapStyle, setMapStyle]);
 
   useEffect(() => {
-    const { pointAssets, pointAssetDependencies, linearAssets } = generateFeatures(
-      assets,
-      dependencies,
-      selectedElements
-    );
-    setPointAssets(pointAssets);
-    setPointAssetDependencies(pointAssetDependencies);
+    const linearAssets = generateLinearAssetFeatures(assets, selectedElements);
     setLinearAssets(linearAssets);
-  }, [assets, dependencies, selectedElements]);
+  }, [assets, selectedElements]);
 
   const handleOnMouseMove = (event) => {
-    const {
-      features,
-      point: { x, y },
-    } = event;
-    const hoveredFeature = features && features[0];
-    setHoverInfo(hoveredFeature && { feature: hoveredFeature, x, y });
-    setMousePosition(event.lngLat);
+    const { lngLat } = event;
+    setMousePosition(lngLat);
   };
 
   const resetCursor = () => {
@@ -140,11 +112,6 @@ const TelicentMap = () => {
     if (radius < 1) radius = 1;
     map.getMap().setPaintProperty(heatmap.id, "heatmap-radius", radius);
     setHeatmapRadius(radius);
-
-    const { zoom } = event.viewState;
-    let iconSize = (4 + (zoom - 5) * 2).toFixed(0);
-    setIconSize(iconSize);
-    if (iconSize >= ICON_SIZE) setIconSize(ICON_SIZE);
   };
 
   const togglePointerCoords = () => {
@@ -163,27 +130,6 @@ const TelicentMap = () => {
         <Layer key={layer.id} {...layer} />
       ))}
     </Source>
-  );
-
-  const generatePointAssetIcons = ({ geometry, properties }) => (
-    <Marker
-      key={properties.uri}
-      longitude={geometry.coordinates[0]}
-      latitude={geometry.coordinates[1]}
-      anchor="bottom"
-      color="#c4c4c4"
-    >
-      {properties?.icon ? (
-        <i
-          className={classNames(properties.icon, "marker-icon")}
-          style={{ fontSize: `${iconSize}px` }}
-        />
-      ) : (
-        <p className="marker-icon font-body" style={{ fontSize: `${iconSize}px` }}>
-          {properties.iconLabel}
-        </p>
-      )}
-    </Marker>
   );
 
   return (
@@ -208,7 +154,14 @@ const TelicentMap = () => {
           styleDiffing
         >
           {sources.map(generateSources)}
-          {pointAssets.map(generatePointAssetIcons)}
+          <PointAssets
+            assets={assets}
+            dependencies={dependencies}
+            selectedElements={selectedElements}
+            onElementClick={onElementClick}
+            moveTo={moveTo}
+            onAreaSelect={onAreaSelect}
+          />
           <FloodMonitoringStations query={query} showStations={showStations} />
           <AttributionControl compact />
           <ScaleControl
@@ -224,7 +177,6 @@ const TelicentMap = () => {
               height: "22px",
             }}
           />
-          <HoverInfo info={hoverInfo?.feature.properties} left={hoverInfo?.x} top={hoverInfo?.y} />
           <MapToolbar
             heatmapRadius={heatmapRadius}
             map={map}
@@ -254,20 +206,6 @@ const TelicentMap = () => {
 };
 
 export default TelicentMap;
-
-const HoverInfo = ({ info, left, top }) => {
-  if (!info?.id && !info?.criticality) return null;
-
-  return (
-    <div
-      className="bg-black-50 text-whiteSmoke absolute font-body text-sm px-2 py-1 rounded-md"
-      style={{ left: left + 10, top: top + 8 }}
-    >
-      <p>ID: {info.id}</p>
-      <p>Criticality: {info.criticality}</p>
-    </div>
-  );
-};
 
 const TopLeftPanel = ({ children }) => (
   <FloatingPanel position="top-0 left-0">{children}</FloatingPanel>

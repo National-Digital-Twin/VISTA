@@ -2,7 +2,7 @@
 
 exports[`Selected Elements component renders a list of selected element details: selected elements 1`] = `
 <ul
-  class="gap-y-3"
+  class="flex flex-col gap-y-3 grow min-h-0 overflow-y-auto"
 >
   <li
     class="border-b border-whiteSmoke-800"
