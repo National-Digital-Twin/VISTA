@@ -44,3 +44,15 @@
 .mapboxgl-map.mode-draw_polygon {
   cursor: crosshair;
 }
+
+.flood-warning-widget__btn {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  transform: rotate(180deg);
+}
+
+.flood-warning-widget__iframe {
+  transition-duration: 400ms;
+  transition-property: width, opacity;
+  transition-timing-function: cubic-bezier(0.39, 0.58, 0.57, 1);
+}

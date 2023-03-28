@@ -5,7 +5,7 @@ import MapboxDraw from "@mapbox/mapbox-gl-draw";
 
 import { CytoscapeContext, ElementsContext } from "context";
 import { ToolbarButton } from "lib";
-import { useElementsInPolygon } from "hooks";
+import { useElementsInPolygons } from "hooks";
 
 import DrawingTools from "./DrawingTools";
 
@@ -24,7 +24,7 @@ const DrawControls = ({ compact, map, setCursor }) => {
     onAreaSelect,
   } = useContext(ElementsContext);
 
-  const { findElementsInPolygons } = useElementsInPolygon();
+  const { findElementsInPolygons } = useElementsInPolygons();
 
   const [polygon, setPolygon] = useState(undefined);
   const [selectedTool, setSelectedTool] = useState(undefined);
@@ -132,11 +132,7 @@ const DrawControls = ({ compact, map, setCursor }) => {
         onDrawCircle={handleDrawCircle}
         onDrawPolygon={handleDrawPolygon}
       />
-      <ToolbarButton
-        icon="ri-delete-bin-line"
-        label="Delete all polygons"
-        onClick={handleDeleteAllSelections}
-      />
+      <ToolbarButton icon="ri-delete-bin-line" label="Delete all polygons" onClick={handleDeleteAllSelections} />
     </>
   );
 };

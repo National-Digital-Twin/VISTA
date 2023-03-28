@@ -10,13 +10,14 @@ import { ErrorFallback, FloatingPanel, Modal } from "lib";
 import MapToolbar from "./MapToolbar/MapToolbar";
 import PointerCoordinates from "./PointerCoords";
 import FloodZones from "./FloodZones";
+import FloodWarningWidget from "./FloodAreaWidget";
 
 import { FLOOD_AREA_LAYERS, heatmap, LINEAR_ASSET_LAYER, pointAssetCxnLayer, POINT_ASSET_LAYER } from "./layers";
 import { generateFeatures } from "./map-utils";
 import { getMapStyles } from "./mapStyles";
 
 import "@fortawesome/fontawesome-pro/css/all.css";
-import "./mapbox.css";
+import "./map.css";
 
 const GEOJSON = "geojson";
 const FEATURE_COLLECTION = "FeatureCollection";
@@ -30,20 +31,10 @@ const ICON_SIZE = 14;
 
 const TelicentMap = () => {
   const { telicentMap: map } = useMap();
-  const { moveTo } = useContext(CytoscapeContext);
-  const { assets, dependencies, selectedFloodAreas, selectedElements, onElementClick, onAreaSelect } =
-    useContext(ElementsContext);
+  const { fit, moveTo } = useContext(CytoscapeContext);
+  const { assets, dependencies, selectedElements, onElementClick } = useContext(ElementsContext);
 
   const { polygonFeatures: floodAreas, isLoading: areFloodAreasLoading } = useFloodAreaPolygons(selectedFloodAreas);
-  const { interactiveLayers, selectedFloodZones, handleOnClick } = useMapInteractions({
-    assets,
-    dependencies,
-    selectedElements,
-    onElementClick,
-    onAreaSelect,
-    moveTo,
-    map,
-  });
   const mapStyles = useMemo(() => getMapStyles(), []);
   const [mapStyle, setMapStyle] = useLocalStorage("mapStyle", mapStyles[0]);
 
@@ -210,6 +201,7 @@ const TelicentMap = () => {
           <PointerCoordinates show={showPointerCoords} lat={mousePosition?.lat} lng={mousePosition?.lng} />
           <FloodZones selectedFloodZones={selectedFloodZones} />
         </TopLeftPanel>
+        <FloodWarningWidget />
       </div>
       <Modal appElement="root" isOpen={areFloodAreasLoading} className="py-2 px-6 rounded-lg">
         <p>Adding flood areas to map</p>
