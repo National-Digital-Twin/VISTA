@@ -1,18 +1,12 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext } from "react";
 import PropTypes from "prop-types";
 import { isEmpty } from "lodash";
-import { ElementsContext } from "context";
 import classNames from "classnames";
+
+import { ElementsContext } from "context";
 
 const FloodZones = ({ selectedFloodZones }) => {
   const { onFloodTimelineSelect, selectedTimeline } = useContext(ElementsContext);
-
-  useEffect(() => {
-    if (isEmpty(selectedFloodZones)) {
-      onFloodTimelineSelect(null);
-    }
-    return;
-  }, [onFloodTimelineSelect, selectedFloodZones]);
 
   if (isEmpty(selectedFloodZones)) return null;
 
@@ -20,21 +14,13 @@ const FloodZones = ({ selectedFloodZones }) => {
     <div>
       <h3 className="text-base">Selected flood zone areas</h3>
       <ul className="list-disc list-inside text-sm">
-        {selectedFloodZones.map((selectedFloodZone) => {
-          return (
-            <div className="flex items-center justify-between pt-1">
-              <li key={selectedFloodZone.properties.TA_NAME}>{selectedFloodZone.properties.TA_NAME}</li>
-              <button
-                className={classNames("border border-black-400 rounded-lg ml-2 px-1 text-sm hover:bg-black-400", {
-                  "bg-black-400": selectedFloodZone === selectedTimeline,
-                })}
-                onClick={() => onFloodTimelineSelect(selectedFloodZone)}
-              >
-                view timeline
-              </button>
-            </div>
-          );
-        })}
+        {selectedFloodZones.map((selectedFloodZone) => (
+          <FloodAreaListItem
+            selectedFloodZone={selectedFloodZone}
+            selectedTimeline={selectedTimeline}
+            onTimelineClick={onFloodTimelineSelect}
+          />
+        ))}
       </ul>
     </div>
   );
@@ -47,3 +33,20 @@ FloodZones.propTypes = {
 };
 
 export default FloodZones;
+
+const FloodAreaListItem = ({ selectedFloodZone, selectedTimeline, onTimelineClick }) => (
+  <li key={selectedFloodZone.properties.TA_NAME} className="flex items-center justify-between pt-1">
+    <p>{selectedFloodZone.properties.TA_NAME}</p>
+    <button
+      className={classNames(
+        "border border-black-400 rounded-lg ml-2 px-1 text-sm hover:bg-black-400",
+        {
+          "bg-black-400": selectedFloodZone === selectedTimeline,
+        }
+      )}
+      onClick={() => onTimelineClick(selectedFloodZone)}
+    >
+      view timeline
+    </button>
+  </li>
+);
