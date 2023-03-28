@@ -52,9 +52,12 @@ export const fetchFloodTimeline = async (floodArea) => {
     parent_uri: `http://environment.data.gov.uk/flood-monitoring/id/floodAreas/${floodArea}`,
   }).toString();
   const response = await fetch(createParalogEndpoint(`states?${queryParam}`), fetchOptions);
+
   if (!response.ok) {
     throw new Error(`An error occured while retrieving flood timeline for Flood Area ${floodArea}`);
   }
+
+  return response.json();
 };
 
 export const fetchFloodMonitoringStations = async () => {
