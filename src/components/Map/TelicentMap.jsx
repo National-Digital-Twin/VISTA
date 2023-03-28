@@ -32,10 +32,21 @@ const ICON_SIZE = 14;
 const TelicentMap = () => {
   const { telicentMap: map } = useMap();
   const { fit, moveTo } = useContext(CytoscapeContext);
-  const { assets, dependencies, selectedElements, onElementClick } = useContext(ElementsContext);
+  const { assets, dependencies, selectedFloodAreas, selectedElements, onElementClick, onAreaSelect } =
+    useContext(ElementsContext);
 
   const { polygonFeatures: floodAreas, isLoading: areFloodAreasLoading } = useFloodAreaPolygons(selectedFloodAreas);
+  const { interactiveLayers, selectedFloodZones, handleOnClick } = useMapInteractions({
+    assets,
+    dependencies,
+    selectedElements,
+    onElementClick,
+    onAreaSelect,
+    moveTo,
+    map,
+  });
   const mapStyles = useMemo(() => getMapStyles(), []);
+
   const [mapStyle, setMapStyle] = useLocalStorage("mapStyle", mapStyles[0]);
 
   const [cursor, setCursor] = useState("auto");
