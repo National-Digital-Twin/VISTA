@@ -4,13 +4,19 @@ import Map, { Layer, Source, ScaleControl, useMap, AttributionControl, Marker } 
 import { ErrorBoundary } from "react-error-boundary";
 
 import { CytoscapeContext, ElementsContext } from "context";
-import { useFloodAreaPolygons, useLocalStorage, useMapInteractions } from "hooks";
+import {
+  useFloodAreaPolygons,
+  useFloodMonitoringStations,
+  useMapInteractions,
+  useLocalStorage,
+} from "hooks";
 import { ErrorFallback, FloatingPanel, Modal } from "lib";
 
 import MapToolbar from "./MapToolbar/MapToolbar";
 import PointerCoordinates from "./PointerCoords";
-import FloodZones from "./FloodZones";
+import FloodMonitoringStations from "./FloodMonitoringStations";
 import FloodWarningWidget from "./FloodAreaWidget";
+import FloodZones from "./FloodZones";
 
 import {
   FLOOD_AREA_LAYERS,
@@ -25,8 +31,8 @@ import { getMapStyles } from "./mapStyles";
 import "@fortawesome/fontawesome-pro/css/all.css";
 import "./map.css";
 
-const GEOJSON = "geojson";
-const FEATURE_COLLECTION = "FeatureCollection";
+export const GEOJSON = "geojson";
+export const FEATURE_COLLECTION = "FeatureCollection";
 const VIEWSTATE = {
   latitude: 50.66206632912732,
   longitude: -1.3480234953335598,
@@ -60,6 +66,11 @@ const TelicentMap = () => {
   });
   const mapStyles = useMemo(() => getMapStyles(), []);
   const [mapStyle, setMapStyle] = useLocalStorage("mapStyle", mapStyles[0]);
+  const {
+    query,
+    menuItem: monitoringStationLayerItem,
+    showStations,
+  } = useFloodMonitoringStations();
 
   const [cursor, setCursor] = useState("auto");
   const [hoverInfo, setHoverInfo] = useState(undefined);
@@ -198,6 +209,7 @@ const TelicentMap = () => {
         >
           {sources.map(generateSources)}
           {pointAssets.map(generatePointAssetIcons)}
+          <FloodMonitoringStations query={query} showStations={showStations} />
           <AttributionControl compact />
           <ScaleControl
             position="bottom-right"
@@ -221,6 +233,7 @@ const TelicentMap = () => {
             showPointerCoords={showPointerCoords}
             onPointerCoordsClick={togglePointerCoords}
             setCursor={setCursor}
+            layerItems={[monitoringStationLayerItem]}
           />
         </Map>
         <TopLeftPanel>

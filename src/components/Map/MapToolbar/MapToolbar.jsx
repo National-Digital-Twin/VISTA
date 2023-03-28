@@ -13,6 +13,7 @@ const MapToolbar = ({
   showPointerCoords,
   onPointerCoordsClick,
   setCursor,
+  layerItems,
 }) => {
   const [isHeatVisible, setIsHeatVisible] = useState(false);
   const [showLayers, setShowLayers] = useState(false);
@@ -81,6 +82,7 @@ const MapToolbar = ({
       type: "toggleSwitch",
       onItemClick: () => toggleHeatVisibility(),
     },
+    ...layerItems,
   ];
 
   const mapTools = [
