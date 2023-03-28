@@ -29,7 +29,7 @@ export const ElementsProvider = ({ children }) => {
     return;
   };
 
-  const setTimelineToNull = () => {
+  const closeTimelinePanel = () => {
     setSelectedTimeline(null);
   };
 
@@ -125,7 +125,7 @@ export const ElementsProvider = ({ children }) => {
         selectedFloodAreas,
         onFloodAreaSelect,
         selectedTimeline,
-        setTimelineToNull,
+        closeTimelinePanel,
         onFloodTimelineSelect,
       }}
     >

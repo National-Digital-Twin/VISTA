@@ -4,6 +4,9 @@ import { isEmpty } from "lodash";
 import { ElementsContext } from "context";
 import { fetchFloodTimeline } from "endpoints";
 import { useQuery } from "react-query";
+import "primereact/resources/themes/lara-light-indigo/theme.css";
+import "primereact/resources/primereact.min.css";
+import "primeicons/primeicons.css";
 
 const sortByDate = (a, b) => {
   a = a.period.toString().split("/");
@@ -12,7 +15,7 @@ const sortByDate = (a, b) => {
 };
 
 const FloodZoneTimeline = () => {
-  const { selectedTimeline, setTimelineToNull } = useContext(ElementsContext);
+  const { selectedTimeline, closeTimelinePanel } = useContext(ElementsContext);
 
   const selectedFloodArea = selectedTimeline?.properties?.FWS_TACODE;
 
@@ -24,7 +27,7 @@ const FloodZoneTimeline = () => {
 
   const timelineHeader = (
     <div className="flex items-center">
-      <button onClick={setTimelineToNull}>
+      <button onClick={closeTimelinePanel}>
         <i className="ri-close-fill hover:bg-black-400 rounded-md mr-2" title="Close Flood Timeline" />
       </button>
       <h6>Flood severity timeline </h6>

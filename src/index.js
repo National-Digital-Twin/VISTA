@@ -11,10 +11,6 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import "./main.css";
 
-import "primereact/resources/themes/lara-light-indigo/theme.css";
-import "primereact/resources/primereact.min.css";
-import "primeicons/primeicons.css";
-
 const queryClient = new QueryClient();
 
 ReactDOM.render(
