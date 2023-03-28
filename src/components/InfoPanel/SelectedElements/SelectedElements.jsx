@@ -3,6 +3,7 @@ import { isEmpty } from "lodash";
 
 import ElementDetails from "./ElementDetails";
 import InfoHeader, { InfoTitle, StreetView } from "../InfoHeader";
+import classNames from "classnames";
 
 const SelectedElements = ({ selectedElements, onTogglePanel }) => {
   const [index, setIndex] = useState(undefined);
@@ -70,20 +71,31 @@ const SelectedElements = ({ selectedElements, onTogglePanel }) => {
 
 export default SelectedElements;
 
-const SingleElementDetails = ({ selected, totalSelected, onTogglePanel, onViewAll }) => (
-  <>
-    <InfoHeader isExpanded count={totalSelected} onToggle={onTogglePanel} className="justify-end">
-      {totalSelected > 1 && (
-        <button onClick={onViewAll} className="flex items-center">
-          <span role="img" className="flex place-content-center ri-arrow-left-s-line" />
-          view all selected
-        </button>
-      )}
-      <StreetView latitude={selected?.lat} longitude={selected?.lng} className="ml-auto" />
-    </InfoHeader>
-    <ElementDetails expand element={selected} />
-  </>
-);
+const SingleElementDetails = ({ selected, totalSelected, onTogglePanel, onViewAll }) => {
+  const isMoreThanOneSelected = totalSelected > 1;
+  return (
+    <>
+      <InfoHeader
+        isExpanded
+        count={totalSelected}
+        onToggle={onTogglePanel}
+        className={classNames({
+          "justify-between": isMoreThanOneSelected,
+          "justify-end": !isMoreThanOneSelected,
+        })}
+      >
+        {isMoreThanOneSelected && (
+          <button onClick={onViewAll} className="flex items-center">
+            <span role="img" className="flex place-content-center ri-arrow-left-s-line" />
+            view all selected
+          </button>
+        )}
+        <StreetView latitude={selected?.lat} longitude={selected?.lng} className="ml-auto" />
+      </InfoHeader>
+      <ElementDetails expand element={selected} />
+    </>
+  );
+};
 
 const ElementsList = ({ selectedElements, totalSelected, onViewDetails, onTogglePanel }) => (
   <>
@@ -95,7 +107,7 @@ const ElementsList = ({ selectedElements, totalSelected, onViewDetails, onToggle
     >
       <InfoTitle>Selected Elements</InfoTitle>
     </InfoHeader>
-    <ul className="gap-y-3">
+    <ul className="flex flex-col gap-y-3 grow min-h-0 overflow-y-auto">
       {selectedElements.map((selectedElement, index) => (
         <ElementDetails
           key={selectedElement.id}

@@ -7,9 +7,9 @@ import dagre from "cytoscape-dagre";
 import nodeHtmlLabel from "cytoscape-node-html-label";
 import React, { useCallback, useContext, useEffect, useMemo } from "react";
 
-import { fitMultiToBounds, fitToBounds } from "components/Map/map-utils";
+import { fitMultiToBounds } from "components/Map/map-utils";
 import { CytoscapeContext, ElementsContext } from "context";
-import { getSelectedElements } from "context/elements-reducer";
+import { getUniqueElements } from "utils";
 
 import { createEdges, createNode, nodeLabels } from "./cytoscapeUtils";
 import cyStylesheet from "./stylesheet";
@@ -59,27 +59,32 @@ const NetworkGraph = ({ showGrid }) => {
       return selected;
     };
 
-    const selectNode = (event) => {
-      const { originalEvent, target } = event;
-      const selectedElement = target.data("element");
-      const multiSelect = originalEvent.shiftKey;
+    const selectNode = (elements, isMultiSelect) => {
       const previouslySelected = getSelectedCyElements();
-      const selectedElements = getSelectedElements({
-        cachedElements: previouslySelected,
-        selectedElement,
-      });
+      const selectedElements = getUniqueElements([...previouslySelected, ...elements]);
 
-      if (multiSelect) fitMultiToBounds(map, selectedElements, assets);
-      else fitToBounds(map, selectedElement, assets);
-
-      onElementClick(multiSelect, selectedElement);
+      fitMultiToBounds(map, selectedElements, assets);
+      onElementClick(isMultiSelect, elements);
     };
 
     const onNodeTap = (event) => {
-      selectNode(event);
+      const { originalEvent, target } = event;
+      const isMultiSelect = originalEvent.shiftKey;
+      const connectedEdges = target.connectedEdges();
+      const connectedNodes = connectedEdges.connectedNodes();
+      const elements = [...connectedNodes.jsons(), ...connectedEdges.jsons()].map(
+        (element) => element.data.element
+      );
+
+      selectNode(elements, isMultiSelect);
     };
     const onEdgeTap = (event) => {
-      selectNode(event);
+      const { originalEvent, target } = event;
+      const isMultiSelect = originalEvent.shiftKey;
+      const connectedNodes = target.connectedNodes();
+      const elements = connectedNodes.jsons().map((element) => element.data.element);
+
+      selectNode([target.data("element"), ...elements], isMultiSelect);
     };
     const onTap = (event) => {
       if (event.target === cyRef.current) {
@@ -88,10 +93,16 @@ const NetworkGraph = ({ showGrid }) => {
     };
     const onBoxSelect = (event) => {
       const { target } = event;
-      const selectedElements = getSelectedCyElements();
+      const connectedEdges = target.isEdge() ? target.connectedNodes() : target.connectedEdges();
+      const connectedNodes = target.isNode() ? connectedEdges.connectedNodes() : target;
+      const elements = [...connectedEdges.jsons(), ...connectedNodes.jsons()].map(
+        (element) => element.data.element
+      );
+      const previouslySelected = getSelectedCyElements();
+      const selectedElements = getUniqueElements([...previouslySelected, ...elements]);
 
       fitMultiToBounds(map, selectedElements, assets);
-      onElementClick(true, target.data("element"));
+      onElementClick(true, elements);
     };
 
     cyRef.current.on("boxselect", onBoxSelect);

@@ -6,21 +6,27 @@ import {
   FLOOD_AREA_POLYGON_OUTLINE_ID,
   LINEAR_ASSET_LAYER,
   pointAssetCxnLayer,
-  POINT_ASSET_LAYER,
 } from "components/Map/layers";
 import useElementsInPolygons from "./useElementsInPolygons";
+import { isEmpty } from "lodash";
 
-const useMapInteractions = ({ assets, dependencies, selectedElements, onElementClick, onAreaSelect, moveTo, map }) => {
+const useMapInteractions = ({
+  map,
+  assets,
+  dependencies,
+  selectedElements,
+  onElementClick,
+  onAreaSelect,
+  moveTo,
+}) => {
   const { findElementsInPolygons } = useElementsInPolygons();
 
   const [selectedFloodZones, setSelectedFloodZones] = useState([]);
 
-  const interactiveLayers = [POINT_ASSET_LAYER.id, pointAssetCxnLayer.id, LINEAR_ASSET_LAYER.id, FLOOD_AREA_POLYGON_ID];
+  const interactiveLayers = [pointAssetCxnLayer.id, LINEAR_ASSET_LAYER.id, FLOOD_AREA_POLYGON_ID];
 
   useEffect(() => {
-    if (!map) return;
-
-    const polygonOutlineLayer = map.getLayer(FLOOD_AREA_POLYGON_OUTLINE_ID);
+    const polygonOutlineLayer = map?.getLayer(FLOOD_AREA_POLYGON_OUTLINE_ID);
     if (!polygonOutlineLayer) return;
 
     const floodZoneFeatures = map.getMap().queryRenderedFeatures({
@@ -51,10 +57,12 @@ const useMapInteractions = ({ assets, dependencies, selectedElements, onElementC
       }
     }, []);
 
-    onAreaSelect(uniqueElements);
+    if (!isEmpty(clickedFloodZones)) onAreaSelect(uniqueElements);
 
     if (isMultiSelect) {
-      setSelectedFloodZones((prevSelection) => getAllSelectedPolygons([...prevSelection, ...clickedFloodZones]));
+      setSelectedFloodZones((prevSelection) =>
+        getAllSelectedPolygons([...prevSelection, ...clickedFloodZones])
+      );
       return;
     }
     setSelectedFloodZones(clickedFloodZones);
@@ -65,8 +73,8 @@ const useMapInteractions = ({ assets, dependencies, selectedElements, onElementC
     const { properties } = clickedFeature;
     const element = findElement([...assets, ...dependencies], properties.uri);
 
-    onElementClick(isMultiSelect, element);
-    moveTo({ isMultiSelect, cachedElements: selectedElements, selectedElement: element });
+    onElementClick(isMultiSelect, [element]);
+    moveTo({ cachedElements: selectedElements, selectedElements: [element] });
   };
 
   const handleOnClick = (event) => {
@@ -76,9 +84,16 @@ const useMapInteractions = ({ assets, dependencies, selectedElements, onElementC
     const isMultiSelect = originalEvent.shiftKey;
     const clickedFeatures = event?.features || [];
 
-    const clickedFloodZones = clickedFeatures.filter((feature) => isClickedLayer(feature, FLOOD_AREA_POLYGON_ID));
-    const otherClickedElements = clickedFeatures.filter((feature) => !isClickedLayer(feature, FLOOD_AREA_POLYGON_ID));
+    const clickedFloodZones = clickedFeatures.filter((feature) =>
+      isClickedLayer(feature, FLOOD_AREA_POLYGON_ID)
+    );
+    const otherClickedElements = clickedFeatures.filter(
+      (feature) =>
+        isClickedLayer(feature, pointAssetCxnLayer.id) ||
+        isClickedLayer(feature, LINEAR_ASSET_LAYER.id)
+    );
 
+    if (isEmpty(clickedFeatures)) onElementClick(false, []);
     onFloodZoneClick({ target, clickedFloodZones, isMultiSelect });
     onOtherElementClick({
       clickedFeature: otherClickedElements[0],
@@ -95,7 +110,9 @@ const isClickedLayer = (feature, layerId) => feature.layer.id === layerId;
 
 const updateSelectedFeatureState = ({ map, renderedFeatures, clickedFeatures }) => {
   renderedFeatures.forEach((renderedFeature) => {
-    const isSelected = clickedFeatures.some((clickedFeature) => clickedFeature.id === renderedFeature.id);
+    const isSelected = clickedFeatures.some(
+      (clickedFeature) => clickedFeature.id === renderedFeature.id
+    );
     map.setFeatureState(
       {
         source: "flood-areas",

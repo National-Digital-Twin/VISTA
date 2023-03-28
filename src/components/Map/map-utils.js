@@ -1,9 +1,9 @@
 import * as turf from "@turf/turf";
 import { isEmpty } from "lodash";
 
-export const generateFeatures = (assets, dependencies, selectedElements) => {
-  const filterEmptyElements = (element) => !isEmpty(element);
+const filterEmptyElements = (element) => !isEmpty(element);
 
+export const generatePointAssetFeatures = (assets, dependencies, selectedElements) => {
   const pointAssets = assets
     .filter((asset) => asset.lat && asset.lng)
     .map((asset) => {
@@ -16,13 +16,16 @@ export const generateFeatures = (assets, dependencies, selectedElements) => {
       return dependency.createLineFeature(assets, selectedElements);
     })
     .filter(filterEmptyElements);
+  return [...pointAssetDependencies, ...pointAssets];
+};
 
+export const generateLinearAssetFeatures = (assets, selectedElements) => {
   const linearAssets = assets
     .filter((asset) => !isEmpty(asset.geometry))
     .map((asset) => asset.createLinearAsset(selectedElements))
     .filter(filterEmptyElements);
 
-  return { pointAssets, pointAssetDependencies, linearAssets };
+  return linearAssets;
 };
 
 export const fitMultiToBounds = (map, selectedElements, assets) => {
@@ -58,7 +61,7 @@ export const fitMultiToBounds = (map, selectedElements, assets) => {
   const bbox = turf.bbox(collection);
 
   map.fitBounds(bbox, {
-    padding: { top: 10, bottom: 25, left: 15, right: 5 },
+    padding: { top: 15, bottom: 25, left: 15, right: 55 },
   });
 };
 

@@ -1,5 +1,5 @@
 import ColorScale from "color-scales";
-import { isAsset } from "utils";
+import { getUniqueElements, isAsset } from "utils";
 
 export const CLEAR_SELECTED = "CLEAR_SELECTED";
 export const RESET = "RESET";
@@ -35,14 +35,6 @@ export const INITIAL_STATE = {
 
 const getAllCounts = (assets) => assets.map((asset) => asset.dependent.count);
 const getAllCriticalitySums = (assets) => assets.map((asset) => asset.dependent.criticalitySum);
-
-export const getSelectedElements = ({ cachedElements, selectedElement }) => {
-  const index = cachedElements.findIndex(
-    (cachedElement) => cachedElement.id === selectedElement.id
-  );
-  if (index === -1) return [...cachedElements, selectedElement];
-  return cachedElements.filter((cachedElement) => cachedElement.id !== selectedElement.id);
-};
 
 const elementsReducer = (state, action) => {
   switch (action.type) {
@@ -88,15 +80,16 @@ const elementsReducer = (state, action) => {
     case SELECT_ELEMENT:
       return {
         ...state,
-        selectedElements: [action.selectedElement],
+        selectedElements: action.selectedElements,
       };
     case MULTI_SELECT_ELEMENTS: {
+      const selectedElements = getUniqueElements([
+        ...state.selectedElements,
+        ...action.selectedElements,
+      ]);
       return {
         ...state,
-        selectedElements: getSelectedElements({
-          cachedElements: state.selectedElements,
-          selectedElement: action.selectedElement,
-        }),
+        selectedElements,
       };
     }
     case AREA_SELECTION: {

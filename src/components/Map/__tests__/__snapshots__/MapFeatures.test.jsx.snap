@@ -1,311 +1,45 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Map component should NOT generate features for selected elements which don't exist 1`] = `
-Object {
-  "linearAssets": Array [],
-  "pointAssetDependencies": Array [],
-  "pointAssets": Array [
-    Object {
-      "geometry": Object {
-        "coordinates": Array [
-          -1.2862864,
-          50.745509,
-        ],
-        "type": "Point",
-      },
-      "properties": Object {
-        "backgroundColor": "#272727",
-        "circleSize": 4,
-        "circleStrokeColor": "#C4C4C4",
-        "circleStrokeWidth": 1,
-        "color": "#F2F2F2",
-        "criticality": 12,
-        "iconLabel": "Hig",
-        "id": "E003",
-        "selected": false,
-        "uri": "https://www.iow.gov.uk/DigitalTwin#E003",
-      },
-      "type": "Feature",
-    },
-    Object {
-      "geometry": Object {
-        "coordinates": Array [
-          -1.3292354,
-          50.817705,
-        ],
-        "type": "Point",
-      },
-      "properties": Object {
-        "backgroundColor": "#272727",
-        "circleSize": 4,
-        "circleStrokeColor": "#C4C4C4",
-        "circleStrokeWidth": 1,
-        "color": "#F2F2F2",
-        "criticality": 8,
-        "iconLabel": "Hig",
-        "id": "E025",
-        "selected": false,
-        "uri": "https://www.iow.gov.uk/DigitalTwin#E025",
-      },
-      "type": "Feature",
-    },
-  ],
-}
-`;
-
-exports[`Map component should generate dependencies 1`] = `
-Object {
-  "linearAssets": Array [],
-  "pointAssetDependencies": Array [
-    Object {
-      "geometry": Object {
-        "coordinates": Array [
-          Array [
-            -1.2862509,
-            50.746912,
-          ],
-          Array [
-            -1.2862864,
-            50.745509,
-          ],
-        ],
-        "type": "LineString",
-      },
-      "properties": Object {
-        "criticality": 3,
-        "id": "E001 - E003",
-        "lineColor": "#fb3737",
-        "lineOpacity": 0.3,
-        "selected": false,
-        "uri": "https://www.iow.gov.uk/DigitalTwin#_E001_E003_dependency",
-      },
-      "type": "Feature",
-    },
-  ],
-  "pointAssets": Array [
-    Object {
-      "geometry": Object {
-        "coordinates": Array [
-          -1.2862864,
-          50.745509,
-        ],
-        "type": "Point",
-      },
-      "properties": Object {
-        "backgroundColor": "#272727",
-        "circleSize": 4,
-        "circleStrokeColor": "#C4C4C4",
-        "circleStrokeWidth": 1,
-        "color": "#F2F2F2",
-        "criticality": 12,
-        "iconLabel": "Hig",
-        "id": "E003",
-        "selected": false,
-        "uri": "https://www.iow.gov.uk/DigitalTwin#E003",
-      },
-      "type": "Feature",
-    },
-    Object {
-      "geometry": Object {
-        "coordinates": Array [
-          -1.2862509,
-          50.746912,
-        ],
-        "type": "Point",
-      },
-      "properties": Object {
-        "backgroundColor": "#272727",
-        "circleSize": 4,
-        "circleStrokeColor": "#C4C4C4",
-        "circleStrokeWidth": 1,
-        "color": "#F2F2F2",
-        "criticality": 3,
-        "iconLabel": "Oil",
-        "id": "E001",
-        "selected": false,
-        "uri": "https://www.iow.gov.uk/DigitalTwin#E001",
-      },
-      "type": "Feature",
-    },
-  ],
-}
-`;
-
-exports[`Map component should generate features when elements are selected 1`] = `
-Object {
-  "linearAssets": Array [],
-  "pointAssetDependencies": Array [
-    Object {
-      "geometry": Object {
-        "coordinates": Array [
-          Array [
-            -1.2862509,
-            50.746912,
-          ],
-          Array [
-            -1.2862864,
-            50.745509,
-          ],
-        ],
-        "type": "LineString",
-      },
-      "properties": Object {
-        "criticality": 3,
-        "id": "E001 - E003",
-        "lineColor": "#fb3737",
-        "lineOpacity": 1,
-        "selected": true,
-        "uri": "https://www.iow.gov.uk/DigitalTwin#_E001_E003_dependency",
-      },
-      "type": "Feature",
-    },
-  ],
-  "pointAssets": Array [
-    Object {
-      "geometry": Object {
-        "coordinates": Array [
-          -1.2862864,
-          50.745509,
-        ],
-        "type": "Point",
-      },
-      "properties": Object {
-        "backgroundColor": "#272727",
-        "circleSize": 4,
-        "circleStrokeColor": "#F2F2F2",
-        "circleStrokeWidth": 2,
-        "color": "#F2F2F2",
-        "criticality": 12,
-        "iconLabel": "Hig",
-        "id": "E003",
-        "selected": true,
-        "uri": "https://www.iow.gov.uk/DigitalTwin#E003",
-      },
-      "type": "Feature",
-    },
-    Object {
-      "geometry": Object {
-        "coordinates": Array [
-          -1.2862509,
-          50.746912,
-        ],
-        "type": "Point",
-      },
-      "properties": Object {
-        "backgroundColor": "#272727",
-        "circleSize": 4,
-        "circleStrokeColor": "#F2F2F2",
-        "circleStrokeWidth": 2,
-        "color": "#F2F2F2",
-        "criticality": 3,
-        "iconLabel": "Oil",
-        "id": "E001",
-        "selected": true,
-        "uri": "https://www.iow.gov.uk/DigitalTwin#E001",
-      },
-      "type": "Feature",
-    },
-  ],
-}
-`;
-
 exports[`Map component should generate linear asset features 1`] = `
-Object {
-  "linearAssets": Array [
-    Object {
-      "geometry": Object {
-        "coordinates": Array [
-          Array [
-            -1.25927,
-            50.72414,
-          ],
-          Array [
-            -1.25921,
-            50.72415,
-          ],
-          Array [
-            -1.25927,
-            50.72414,
-          ],
-          Array [
-            -1.25933,
-            50.72414,
-          ],
-          Array [
-            -1.25933,
-            50.72414,
-          ],
-          Array [
-            -1.25939,
-            50.72414,
-          ],
+Array [
+  Object {
+    "geometry": Object {
+      "coordinates": Array [
+        Array [
+          -1.25927,
+          50.72414,
         ],
-        "type": "LineString",
-      },
-      "properties": Object {
-        "criticality": 8352,
-        "id": "T043",
-        "lineColor": "#7C7C7C",
-        "selected": false,
-        "uri": "https://www.iow.gov.uk/DigitalTwin#T043",
-      },
-      "type": "Feature",
-    },
-  ],
-  "pointAssetDependencies": Array [],
-  "pointAssets": Array [],
-}
-`;
-
-exports[`Map component should generate point asset features 1`] = `
-Object {
-  "linearAssets": Array [],
-  "pointAssetDependencies": Array [],
-  "pointAssets": Array [
-    Object {
-      "geometry": Object {
-        "coordinates": Array [
-          -1.2862864,
-          50.745509,
+        Array [
+          -1.25921,
+          50.72415,
         ],
-        "type": "Point",
-      },
-      "properties": Object {
-        "backgroundColor": "#272727",
-        "circleSize": 4,
-        "circleStrokeColor": "#C4C4C4",
-        "circleStrokeWidth": 1,
-        "color": "#F2F2F2",
-        "criticality": 12,
-        "iconLabel": "Hig",
-        "id": "E003",
-        "selected": false,
-        "uri": "https://www.iow.gov.uk/DigitalTwin#E003",
-      },
-      "type": "Feature",
-    },
-    Object {
-      "geometry": Object {
-        "coordinates": Array [
-          -1.2862509,
-          50.746912,
+        Array [
+          -1.25927,
+          50.72414,
         ],
-        "type": "Point",
-      },
-      "properties": Object {
-        "backgroundColor": "#272727",
-        "circleSize": 4,
-        "circleStrokeColor": "#C4C4C4",
-        "circleStrokeWidth": 1,
-        "color": "#F2F2F2",
-        "criticality": 3,
-        "iconLabel": "Oil",
-        "id": "E001",
-        "selected": false,
-        "uri": "https://www.iow.gov.uk/DigitalTwin#E001",
-      },
-      "type": "Feature",
+        Array [
+          -1.25933,
+          50.72414,
+        ],
+        Array [
+          -1.25933,
+          50.72414,
+        ],
+        Array [
+          -1.25939,
+          50.72414,
+        ],
+      ],
+      "type": "LineString",
     },
-  ],
-}
+    "properties": Object {
+      "criticality": 8352,
+      "id": "T043",
+      "lineColor": "#7C7C7C",
+      "selected": false,
+      "uri": "https://www.iow.gov.uk/DigitalTwin#T043",
+    },
+    "type": "Feature",
+  },
+]
 `;

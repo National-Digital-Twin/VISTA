@@ -8,7 +8,7 @@ const AssetIcon = ({ backgroundColor, color, icon, iconLabel, className }) => (
       backgroundColor: backgroundColor ?? "#A3A3A3",
       color: color ?? "#333",
     }}
-    className={classNames("rounded-full flex justify-center items-center", {
+    className={classNames("rounded-full flex justify-center items-center p-2", {
       [className]: className,
     })}
   >
