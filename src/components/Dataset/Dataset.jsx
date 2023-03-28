@@ -23,7 +23,7 @@ const Dataset = ({ showGrid, toggleView }) => {
   return (
     <FloatingPanel
       position="top-0"
-      className="flex flex-col gap-y-2 p-2 overflow-y-auto"
+      className={classNames({ "flex flex-col gap-y-2 p-2 overflow-y-auto": showPanel })}
       style={{ maxWidth: "20rem", maxHeight: "calc(100% - 50px)" }}
     >
       <DatasetContent
@@ -63,7 +63,7 @@ Dataset.propTypes = {
 };
 
 const DatasetContent = ({ expand, showGrid, onToggle, onViewGrid, children }) => {
-  if (!expand) return <DBButton onToggle={onToggle} />;
+  if (!expand) return <DBButton onToggle={onToggle} className="w-fit" />;
   return (
     <>
       <div className="flex">
