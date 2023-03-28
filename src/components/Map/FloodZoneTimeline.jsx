@@ -20,6 +20,20 @@ const FloodZoneTimeline = () => {
   );
 
   if (isEmpty(selectedTimeline)) return null;
+
+  if (isEmpty(data))
+    return (
+      <div className="absolute right-0 max-h-full h-fit w-72 bg-black-200">
+        <div className="flex items-center">
+          <button onClick={setTimelineToNull}>
+            <i className="ri-close-fill hover:bg-black-400 rounded-md mr-2" title="Close Flood Timeline" />
+          </button>
+          <h6>Flood severity timeline </h6>
+        </div>
+        <p className="ml-2">No timeline data available</p>
+      </div>
+    );
+
   if (data) {
     const array = Object.values(data);
     const timelineData = [];
@@ -34,13 +48,12 @@ const FloodZoneTimeline = () => {
     });
 
     const sortedData = timelineData.sort(sortByDate);
-
     return (
       <div className="absolute right-0 max-h-full h-full w-72 bg-black-200">
         <div className="z-50 relative right-0 h-fit bg-black-200">
           <div className="flex items-center ">
             <button onClick={setTimelineToNull}>
-              <i className="ri-arrow-right-s-line hover:bg-black-400 rounded-md mr-2" title="Close Flood Timeline" />
+              <i className="ri-arrow-right-s-line hover:bg-black-400 rounded-md mr-2" title="Close Timeline" />
             </button>
             <h6>Flood severity timeline </h6>
           </div>
@@ -51,12 +64,16 @@ const FloodZoneTimeline = () => {
           </div>
         </div>
         <div className="absolute right-0 h-fit max-h-full w-72 overflow-y-scroll">
-          <Timeline
-            value={sortedData}
-            opposite={(item) => <p className="text-sm">{item.period}</p>}
-            content={(item) => <p className="text-sm">Level: {item.FloodSeverityLevel}</p>}
-            className="w-full md:w-20rem mt-3"
-          />
+          {isEmpty(data) ? (
+            <p>No timeline data to display</p>
+          ) : (
+            <Timeline
+              value={sortedData}
+              opposite={(item) => <p className="text-sm">{item.period}</p>}
+              content={(item) => <p className="text-sm">Level: {item.FloodSeverityLevel}</p>}
+              className="w-full md:w-20rem mt-3"
+            />
+          )}
         </div>
       </div>
     );
