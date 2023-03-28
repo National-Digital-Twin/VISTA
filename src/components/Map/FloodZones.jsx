@@ -16,6 +16,7 @@ const FloodZones = ({ selectedFloodZones }) => {
       <ul className="list-disc list-inside text-sm">
         {selectedFloodZones.map((selectedFloodZone) => (
           <FloodAreaListItem
+            key={selectedFloodZone.properties.TA_NAME}
             selectedFloodZone={selectedFloodZone}
             selectedTimeline={selectedTimeline}
             onTimelineClick={onFloodTimelineSelect}
@@ -35,7 +36,7 @@ FloodZones.propTypes = {
 export default FloodZones;
 
 const FloodAreaListItem = ({ selectedFloodZone, selectedTimeline, onTimelineClick }) => (
-  <li key={selectedFloodZone.properties.TA_NAME} className="flex items-center justify-between pt-1">
+  <li className="flex items-center justify-between pt-1">
     <p>{selectedFloodZone.properties.TA_NAME}</p>
     <button
       className={classNames(

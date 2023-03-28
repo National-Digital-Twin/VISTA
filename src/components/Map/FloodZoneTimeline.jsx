@@ -1,21 +1,13 @@
 import React, { useContext, useRef } from "react";
-import { useQuery } from "react-query";
 import { Timeline as PrimeReactTimeline } from "primereact/timeline";
 import { isEmpty } from "lodash";
 
 import { ElementsContext } from "context";
-import { fetchFloodTimeline } from "endpoints";
-import { useOutsideAlerter } from "hooks";
+import { useFloodTimeline, useOutsideAlerter } from "hooks";
 
 import "primereact/resources/themes/lara-light-indigo/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
-
-const sortByDate = (a, b) => {
-  a = a.period.toString().split("/");
-  b = b.period.toString().split("/");
-  return b[2] - a[2] || b[1] - a[1] || b[0] - a[0];
-};
 
 const FloodZoneTimeline = () => {
   const panelRef = useRef();
@@ -46,30 +38,11 @@ const FloodZoneTimeline = () => {
 export default FloodZoneTimeline;
 
 const Timeline = ({ areaCode, areaName }) => {
-  const { isLoading, isError, error, data } = useQuery({
-    queryKey: ["floodTimeline", areaCode],
-    queryFn: () => fetchFloodTimeline(areaCode),
-    enabled: !!areaCode,
-  });
+  const { isLoading, isError, error, data } = useFloodTimeline(areaCode);
 
   if (isLoading) return <p className="ml-2">fetching timeline...</p>;
   if (isError) return <p className="ml-2">{error.message}</p>;
   if (isEmpty(data)) return <p>No timeline data to display</p>;
-
-  const timelineData = Object.values(data)
-    .map((item) => {
-      const timelineData = {
-        period: item.period.split("-").reverse().join("/"),
-        floodSeverityLevel: item.representations.map(
-          (representation) =>
-            representation[
-              "http://ies.data.gov.uk/ontology/ies4#EnvironmentAgencyFloodSeverityLevel"
-            ]
-        ),
-      };
-      return timelineData;
-    })
-    .sort(sortByDate);
 
   return (
     <>
@@ -82,7 +55,7 @@ const Timeline = ({ areaCode, areaName }) => {
       </div>
       <div className="absolute right-0 h-fit max-h-full w-72 overflow-y-scroll">
         <PrimeReactTimeline
-          value={timelineData}
+          value={data}
           opposite={(item) => <p className="text-sm">{item.period}</p>}
           content={(item) => <p className="text-sm">Level: {item.floodSeverityLevel}</p>}
           className="w-full md:w-20rem mt-3"
