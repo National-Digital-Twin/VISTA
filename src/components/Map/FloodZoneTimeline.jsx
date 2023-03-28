@@ -15,7 +15,7 @@ const FloodZoneTimeline = () => {
   if (isEmpty(selectedTimeline)) return null;
 
   return (
-    <div className="absolute right-0 max-h-full h-full w-72 bg-black-200">
+    <div className="absolute right-0 max-h-full h-full w-72 bg-black-200 z-10">
       <div className="flex items-center">
         <button onClick={closeTimelinePanel}>
           <i className="ri-close-fill hover:bg-black-400 rounded-md mr-2" title="Close Flood Timeline" />
@@ -38,7 +38,7 @@ const Timeline = ({ areaCode, areaName }) => {
 
   return (
     <>
-      <div className="z-50 relative right-0 h-fit bg-black-200">
+      <div className="relative right-0 h-fit bg-black-200">
         <p className="ml-2 mb-2">Area: {areaName}</p>
         <div className="grid grid-cols-10 items-center">
           <p className="col-end-3 text-sm ml-3">Date</p>
