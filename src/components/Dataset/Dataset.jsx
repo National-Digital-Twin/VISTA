@@ -5,7 +5,7 @@ import { kebabCase } from "lodash";
 import ReactSwitch from "react-switch";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 
-import { FloatingPanel, VerticalDivider } from "lib";
+import { FloatingPanel } from "lib";
 import Assessments from "./Assessments";
 import FloodAreas from "components/Dataset/FloodAreas";
 
@@ -14,6 +14,7 @@ import "react-tabs/style/react-tabs.css";
 const Dataset = ({ showGrid, toggleView }) => {
   const [showPanel, setShowPanel] = useState(true);
   const [selectedFloodAreas, setSelectedFloodAreas] = useState([]);
+  const [selectedTypes, setSelectedTypes] = useState([]);
 
   const togglePanel = () => {
     setShowPanel((show) => !show);
@@ -22,30 +23,32 @@ const Dataset = ({ showGrid, toggleView }) => {
   return (
     <FloatingPanel
       position="top-0"
-      className="flex flex-col gap-y-2 p-2"
+      className="flex flex-col gap-y-2 p-2 overflow-y-auto"
       style={{ maxWidth: "20rem", maxHeight: "calc(100% - 50px)" }}
     >
-      <Tabs>
-        <TabList>
-          <Tab>Assets</Tab>
-          <Tab>Flood Areas</Tab>
-        </TabList>
+      <DatasetContent
+        expand={showPanel}
+        showGrid={showGrid}
+        onToggle={togglePanel}
+        onViewGrid={toggleView}
+      >
+        <Tabs>
+          <TabList>
+            <Tab>Assets</Tab>
+            <Tab>Flood Areas</Tab>
+          </TabList>
 
-        <TabPanel>
-          <Assets
-            showPanel={showPanel}
-            showGrid={showGrid}
-            togglePanel={togglePanel}
-            toggleView={toggleView}
-          />
-        </TabPanel>
-        <TabPanel>
-          <FloodAreas
-            selectedFloodAreas={selectedFloodAreas}
-            setSelectedFloodAreas={setSelectedFloodAreas}
-          />
-        </TabPanel>
-      </Tabs>
+          <TabPanel>
+            <Assessments selectedTypes={selectedTypes} setSelectedTypes={setSelectedTypes} />
+          </TabPanel>
+          <TabPanel>
+            <FloodAreas
+              selectedFloodAreas={selectedFloodAreas}
+              setSelectedFloodAreas={setSelectedFloodAreas}
+            />
+          </TabPanel>
+        </Tabs>
+      </DatasetContent>
     </FloatingPanel>
   );
 };
@@ -59,42 +62,29 @@ Dataset.propTypes = {
   toggleView: PropTypes.func,
 };
 
-const Assets = ({ showPanel, togglePanel, showGrid, toggleView }) => {
+const DatasetContent = ({ expand, showGrid, onToggle, onViewGrid, children }) => {
+  if (!expand) return <DBButton onToggle={onToggle} />;
   return (
     <>
-      <DBButton
-        ariaHidden
-        onToggle={togglePanel}
-        className={classNames({ hidden: showPanel, block: !showPanel })}
-      />
-      <div
-        className={classNames("grow min-h-0 overflow-y-auto", {
-          hidden: !showPanel,
-          block: showPanel,
-        })}
-      >
-        <div className="inline-flex gap-x-2 border-b border-black-500 pb-1 w-full">
-          <DBButton active onToggle={togglePanel} />
-          <VerticalDivider height="h-5" />
-          <h2 className="font-medium">Dataset</h2>
-          <label className="flex items-center gap-x-1 text-xs w-fit ml-auto">
-            Grid
-            <ReactSwitch
-              onChange={toggleView}
-              checked={showGrid}
-              offColor="#636363"
-              onColor="#f5f5f5"
-              onHandleColor="#141414"
-              handleDiameter={10}
-              height={16}
-              width={32}
-              uncheckedIcon={false}
-              checkedIcon={false}
-            />
-          </label>
-        </div>
-        <Assessments />
+      <div className="flex">
+        <DBButton active onToggle={onToggle} />
+        <label className="flex items-center gap-x-1 text-xs w-fit ml-auto">
+          Grid
+          <ReactSwitch
+            onChange={onViewGrid}
+            checked={showGrid}
+            offColor="#636363"
+            onColor="#f5f5f5"
+            onHandleColor="#141414"
+            handleDiameter={10}
+            height={16}
+            width={32}
+            uncheckedIcon={false}
+            checkedIcon={false}
+          />
+        </label>
       </div>
+      {children}
     </>
   );
 };
