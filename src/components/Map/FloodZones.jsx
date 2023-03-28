@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import PropTypes from "prop-types";
 import { isEmpty } from "lodash";
 import classNames from "classnames";
@@ -6,7 +6,14 @@ import classNames from "classnames";
 import { ElementsContext } from "context";
 
 const FloodZones = ({ selectedFloodZones }) => {
-  const { onFloodTimelineSelect, selectedTimeline } = useContext(ElementsContext);
+  const { onFloodTimelineSelect, selectedTimeline, closeTimelinePanel } = useContext(ElementsContext);
+
+  useEffect(() => {
+    if (isEmpty(selectedFloodZones)) {
+      closeTimelinePanel();
+    }
+    return null;
+  });
 
   if (isEmpty(selectedFloodZones)) return null;
 
@@ -39,12 +46,9 @@ const FloodAreaListItem = ({ selectedFloodZone, selectedTimeline, onTimelineClic
   <li className="flex items-center justify-between pt-1">
     <p>{selectedFloodZone.properties.TA_NAME}</p>
     <button
-      className={classNames(
-        "border border-black-400 rounded-lg ml-2 px-1 text-sm hover:bg-black-400",
-        {
-          "bg-black-400": selectedFloodZone === selectedTimeline,
-        }
-      )}
+      className={classNames("border border-black-400 rounded-lg ml-2 px-1 text-sm hover:bg-black-400", {
+        "bg-black-400": selectedFloodZone === selectedTimeline,
+      })}
       onClick={() => onTimelineClick(selectedFloodZone)}
     >
       view timeline

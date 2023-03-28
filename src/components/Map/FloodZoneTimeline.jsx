@@ -1,36 +1,28 @@
-import React, { useContext, useRef } from "react";
+import React, { useContext } from "react";
 import { Timeline as PrimeReactTimeline } from "primereact/timeline";
 import { isEmpty } from "lodash";
 
 import { ElementsContext } from "context";
-import { useFloodTimeline, useOutsideAlerter } from "hooks";
+import { useFloodTimeline } from "hooks";
 
 import "primereact/resources/themes/lara-light-indigo/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 
 const FloodZoneTimeline = () => {
-  const panelRef = useRef();
   const { selectedTimeline, closeTimelinePanel } = useContext(ElementsContext);
-  useOutsideAlerter({ ref: panelRef, fn: closeTimelinePanel });
 
   if (isEmpty(selectedTimeline)) return null;
 
   return (
-    <div ref={panelRef} className="absolute right-0 max-h-full h-full w-72 bg-black-200">
+    <div className="absolute right-0 max-h-full h-full w-72 bg-black-200">
       <div className="flex items-center">
         <button onClick={closeTimelinePanel}>
-          <i
-            className="ri-close-fill hover:bg-black-400 rounded-md mr-2"
-            title="Close Flood Timeline"
-          />
+          <i className="ri-close-fill hover:bg-black-400 rounded-md mr-2" title="Close Flood Timeline" />
         </button>
         <h6>Flood severity timeline </h6>
       </div>
-      <Timeline
-        areaCode={selectedTimeline?.properties?.FWS_TACODE}
-        areaName={selectedTimeline?.properties?.TA_NAME}
-      />
+      <Timeline areaCode={selectedTimeline?.properties?.FWS_TACODE} areaName={selectedTimeline?.properties?.TA_NAME} />
     </div>
   );
 };
