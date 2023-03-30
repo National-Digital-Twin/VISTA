@@ -1,31 +1,35 @@
 # Telicent Paralog
 
-## What is Paralog
+**Paralog is a free, open source web application used to evalute high value assets**
 
-Paralog can be used to help identify high value installations or utilities in the event of a disaster.
-Data is ingested via csv and then the criticality of the infrastructure is calculated and compiled in to easy to understand visualisations helping the teams on the ground make quick decisions.
+Paralog is a tool which can be used to get a better understanding of high value assets within regions in the UK. It allows analysits to better understand the impact of high value assets which in turn allows them to make better decisions quickly.
 
-## How to set up Paralog for Development
+## Features
 
-### Set up backend
+- **Role based access control** - manage permissions required to view sensitive data
+- **View assets connectivity** - navigate the network graph to better understand asset connectivity
+- **Geographical locations** - view assets geographical locations
+- **Heatmap** - view of assets on the map for quick understanding of service/capability density
+- **Polygon creation** - understand location based impact rather than direct connection impacts
+- **Flood geometry** - view flood watch areas and flood areas provided to analyse flood impact
+- **Flood monitoring stations** - view real-time monitoring station data
+- **Flood alerts** - get real-time flood alerts
+- **Flood warning timeline** - view previous flood warnings
 
-- clone telicent-deployments
-- Cd in to Telicent-deployments/telicent-local-deploy/core
-- docker-compose up
-- Cd ../smart-cache/jena/config
-- mv config.ttl config.ttl.bkup
-- Mv config-dev.ttl config.ttl
-- cd ..
-- Docker-compose up
-- cd ../data-adder
-- Docker-compose up
-- Select isle of white from localhost:8097
-- Cd ../../apps/paralog
-- docker-compose up
+## Getting started
 
-### Start up paralog frontend
+To run paralog you will need to built docker images yourself
 
-- `yarn install //install node modules`
-- `yarn start // start dev server`
+### Configuration
 
-### TODO
+Enviroment variables configuration
+
+```
+API_URL=
+BETA=
+MAP_TILER_TOKEN=
+OFFLINE_STYLES=
+OFFLINE_STYLES_BASE_URL=
+OFFLINE_STYLES_PATH=
+ONTOLOGY_API_URL=
+```
