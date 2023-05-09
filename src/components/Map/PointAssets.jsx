@@ -6,9 +6,9 @@ import classNames from "classnames";
 import { findElement } from "utils";
 import { FEATURE_COLLECTION, GEOJSON } from "./TelicentMap";
 import { generatePointAssetFeatures } from "./map-utils";
-import { pointAssetCxnLayer } from "./layers";
+import { FLOOD_AREA_LAYERS, heatmap, pointAssetCxnLayer } from "./layers";
 
-const PointAssets = ({ assets, dependencies, selectedElements, onElementClick, moveTo }) => {
+const PointAssets = ({ map, assets, dependencies, selectedElements, onElementClick, moveTo }) => {
   const [features, setFeatures] = useState([]);
   const points = features.filter((feature) => feature.geometry.type === "Point");
 
@@ -16,6 +16,19 @@ const PointAssets = ({ assets, dependencies, selectedElements, onElementClick, m
     const features = generatePointAssetFeatures(assets, dependencies, selectedElements);
     setFeatures(features);
   }, [assets, dependencies, selectedElements]);
+
+  useEffect(() => {
+    if (!map) return;
+    const onLoad = () => {
+      map.getMap().moveLayer(heatmap.id, FLOOD_AREA_LAYERS[0].id);
+    };
+
+    map.on("load", onLoad);
+
+    return () => {
+      map.on("load", onLoad);
+    };
+  }, [map]);
 
   const handleOnAssetClick = (event, clickedFeature) => {
     const { originalEvent } = event;
@@ -68,6 +81,7 @@ const PointAssets = ({ assets, dependencies, selectedElements, onElementClick, m
       data={{ type: FEATURE_COLLECTION, features }}
       generateId
     >
+      <Layer {...heatmap} />
       <Layer {...pointAssetCxnLayer} />
       <AssetIcons features={points} onAssetClick={handleOnAssetClick} isSelected={isSelected} />
     </Source>

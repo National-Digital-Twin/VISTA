@@ -13,7 +13,6 @@ import "react-tabs/style/react-tabs.css";
 
 const Dataset = ({ showGrid, toggleView }) => {
   const [showPanel, setShowPanel] = useState(true);
-  const [selectedFloodAreas, setSelectedFloodAreas] = useState([]);
   const [selectedTypes, setSelectedTypes] = useState([]);
 
   const togglePanel = () => {
@@ -42,10 +41,7 @@ const Dataset = ({ showGrid, toggleView }) => {
             <Assessments selectedTypes={selectedTypes} setSelectedTypes={setSelectedTypes} />
           </TabPanel>
           <TabPanel>
-            <FloodAreas
-              selectedFloodAreas={selectedFloodAreas}
-              setSelectedFloodAreas={setSelectedFloodAreas}
-            />
+            <FloodAreas />
           </TabPanel>
         </Tabs>
       </DatasetContent>

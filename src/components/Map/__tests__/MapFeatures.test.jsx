@@ -22,6 +22,7 @@ const MapComponent = ({
         selectedFloodAreas,
         clearSelectedElements: jest.fn(),
         onElementClick: jest.fn(),
+        closeTimelinePanel: jest.fn(),
       }}
     >
       <TelicentMap />
