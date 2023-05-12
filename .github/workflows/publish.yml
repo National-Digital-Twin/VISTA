@@ -106,7 +106,7 @@ jobs:
 
   trigger_owasp_dependency_check-api:
     needs:
-      - publish_api_image_to_aws
+      # - publish_api_image_to_aws
       - publish_offline_image_to_aws
     uses: Telicent-io/telicent-test/.github/workflows/dependency_tracking.yml@main
     with:
