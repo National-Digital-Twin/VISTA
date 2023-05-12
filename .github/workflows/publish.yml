@@ -17,6 +17,7 @@ jobs:
         uses: martinbeentjes/npm-get-version-action@main
     outputs:
       version: ${{ steps.semver.outputs.current-version }}
+
   integrated_tests:
     permissions:
       id-token: write
@@ -71,12 +72,13 @@ jobs:
     secrets:
       NPM_TOKEN: ${{ secrets.PACKAGE_PAT }}
       FONT_AWESOME_TOKEN: ${{ secrets.FONT_AWESOME_KEY }}
+
   publish_offline_image_to_aws:
     needs:
       - integrated_tests
       - get_version
       - publish_build_image_to_aws
-    uses: ./.github/workflows/push-to-aws.yml
+    uses: Telicent-io/telicent-test/.github/workflows/push-to-aws.yml@main
     with:
       APP_NAME: paralog
       DOCKERFILE: Dockerfile.offline
@@ -86,12 +88,13 @@ jobs:
     secrets:
       NPM_TOKEN: ${{ secrets.PACKAGE_PAT }}
       FONT_AWESOME_TOKEN: ${{ secrets.FONT_AWESOME_KEY }}
+
   publish_deployment_image_to_aws:
     needs:
       - integrated_tests
       - get_version
       - publish_build_image_to_aws
-    uses: ./.github/workflows/push-to-aws.yml
+    uses: Telicent-io/telicent-test/.github/workflows/push-to-aws.yml@main
     with:
       APP_NAME: paralog
       DOCKERFILE: Dockerfile
@@ -99,6 +102,7 @@ jobs:
       VERSION: ${{ needs.get_version.outputs.version }}
     secrets:
       NPM_TOKEN: ${{ secrets.PACKAGE_PAT }}
+
   trigger_owasp_dependency_check-api:
     needs:
       - publish_api_image_to_aws
