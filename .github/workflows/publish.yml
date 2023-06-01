@@ -31,14 +31,28 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
       - name: configure-node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: 16
           registry-url: https://npm.pkg.github.com/
           scope: "@Telicent-io"
           always-auth: true
+      - name: Get node version
+        id: node
+        run: |
+          echo "version=$(node -v)" >> $GITHUB_OUTPUT
+
+      - name: Get node_modules cache
+        uses: actions/cache@v3.0.2
+        id: node_modules
+        with:
+          path: |
+            **/node_modules
+          key: ${{ runner.os }}-node_modules-${{ hashFiles('**/yarn.lock') }}-${{ steps.node.outputs.version }}
+          restore-keys: |
+            ${{ runner.os }}-node_modules-
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: yarn install
       - run: mkdir reports
       - run: yarn test:ci
       - name: Configure AWS credentials from main account
@@ -68,7 +82,7 @@ jobs:
       - integrated_tests
       - get_version
       - publish_build_image_to_aws
-    uses: ./.github/workflows/push-to-aws.yml
+    uses: Telicent-io/telicent-test/.github/workflows/push-to-aws.yml@main
     with:
       APP_NAME: paralog
       DOCKERFILE: Dockerfile.offline
