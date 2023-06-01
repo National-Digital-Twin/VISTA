@@ -49,6 +49,8 @@ jobs:
           path: |
             **/node_modules
           key: ${{ runner.os }}-node_modules-${{ hashFiles('**/yarn.lock') }}-${{ steps.node.outputs.version }}
+          restore-keys: |
+            ${{ runner.os }}-node_modules-
       - name: Install dependencies
         run: yarn install
       - run: mkdir reports
