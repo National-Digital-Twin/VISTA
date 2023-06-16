@@ -15,10 +15,7 @@ export * from "./flood-watch-areas";
 
 export const fetchTypeSuperclass = async (typeUri) => {
   const queryParams = new URLSearchParams({ classUri: typeUri }).toString();
-  const response = await fetch(
-    createParalogEndpoint(`ontology/class?${queryParams}`),
-    fetchOptions
-  );
+  const response = await fetch(createParalogEndpoint(`ontology/class?${queryParams}`), fetchOptions);
   if (!response.ok) {
     return {};
   }
@@ -27,10 +24,7 @@ export const fetchTypeSuperclass = async (typeUri) => {
 
 export const fetchResidentialInformation = async (personUri) => {
   const queryParams = new URLSearchParams({ personUri }).toString();
-  const response = await fetch(
-    createParalogEndpoint(`person/residences?${queryParams}`),
-    fetchOptions
-  );
+  const response = await fetch(createParalogEndpoint(`person/residences?${queryParams}`), fetchOptions);
   if (!response.ok) {
     throw new Error("An error occured while retrieving residential information");
   }
@@ -66,9 +60,16 @@ export const fetchFloodMonitoringStations = async () => {
   );
 
   if (!response.ok) {
-    throw new Error(
-      "An error occured while retrieving flood monitoring stations for the Isle of Wight"
-    );
+    throw new Error("An error occured while retrieving flood monitoring stations for the Isle of Wight");
+  }
+  return response.json();
+};
+
+export const fetchBuildingsEpcRating = async () => {
+  const response = await fetch(createParalogEndpoint("buildings"));
+
+  if (!response.ok) {
+    throw new Error("An error occured while retrieving building epc ratings for the Isle of Wight");
   }
   return response.json();
 };
