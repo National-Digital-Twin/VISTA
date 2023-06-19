@@ -7,4 +7,4 @@ export { default as useOntologyServer } from "./useOntologyServer";
 export { default as useOutsideAlerter } from "./useOutsideAlerter";
 export { default as useProviders } from "./useProviders";
 
-export * from "./queries";
+

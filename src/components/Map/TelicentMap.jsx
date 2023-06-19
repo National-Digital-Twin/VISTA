@@ -3,7 +3,13 @@ import Map, { Layer, Source, ScaleControl, useMap, AttributionControl } from "re
 import { ErrorBoundary } from "react-error-boundary";
 
 import { CytoscapeContext, ElementsContext } from "context";
-import { useFloodAreaPolygons, useFloodMonitoringStations, useMapInteractions, useLocalStorage } from "hooks";
+import {
+  useFloodAreaPolygons,
+  useFloodMonitoringStations,
+  useMapInteractions,
+  useLocalStorage,
+  useBuildingsEpcRating,
+} from "hooks";
 import { ErrorFallback, FloatingPanel, Modal } from "lib";
 
 import MapToolbar from "./MapToolbar/MapToolbar";
@@ -20,7 +26,7 @@ import "@fortawesome/fontawesome-pro/css/all.css";
 import "./map.css";
 import PointAssets from "./PointAssets";
 import BuildingsEpcRating from "./BuildingsEpcRating";
-import useBuildingsEpcRating from "hooks/useBuildingsEpcRating";
+
 
 export const GEOJSON = "geojson";
 export const FEATURE_COLLECTION = "FeatureCollection";
@@ -150,7 +156,7 @@ const TelicentMap = () => {
             moveTo={moveTo}
             onAreaSelect={onAreaSelect}
           />
-          <BuildingsEpcRating query={buildingsEpcQuery} showBuildings={showBuildings} />
+          <BuildingsEpcRating map={map} query={buildingsEpcQuery} showBuildings={showBuildings} />
           <FloodMonitoringStations query={query} showStations={showStations} />
           <AttributionControl compact />
           <ScaleControl

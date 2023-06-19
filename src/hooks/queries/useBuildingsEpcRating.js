@@ -28,10 +28,11 @@ const useBuildingsEpcRating = () => {
         return {
           type: "Feature",
           properties: {
+            cluster: false,
             id: building.uprn,
             label: building.name,
-            epc_letter: getEPCLetter(building.epc_rating),
-            epc: getURIFragment(building.epc_rating),
+            epcLetter: getEPCLetter(building.epc_rating),
+            epcRating: getURIFragment(building.epc_rating),
           },
           geometry: {
             type: "Point",

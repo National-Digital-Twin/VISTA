@@ -4,6 +4,7 @@ import { Marker, Popup, Source } from "react-map-gl";
 
 import { FEATURE_COLLECTION, GEOJSON } from "./TelicentMap";
 import { Modal } from "lib";
+import useSupercluster from "use-supercluster";
 
 const epcColourLookup = {
   A: "text-[#0B8647]",
@@ -15,10 +16,19 @@ const epcColourLookup = {
   G: "text-[#E92731]",
 };
 
-const BuildingsEpcRating = ({ query, showBuildings }) => {
+const BuildingsEpcRating = ({ map, query, showBuildings }) => {
   const [selectedBuilding, setSelectedBuilding] = useState(undefined);
-
   const { data: features, isLoading } = query;
+
+  const bounds = map ? map.getMap().getBounds().toArray().flat() : null;
+  const zoom = map ? map.getZoom() : null;
+
+  const { clusters } = useSupercluster({
+    points: features ?? [],
+    zoom,
+    bounds,
+    options: { radius: 75, maxZoom: 18 },
+  });
 
   const handleOnStationClick = (feature) => setSelectedBuilding(feature);
   const handleOnClosePopup = () => setSelectedBuilding(undefined);
@@ -29,10 +39,10 @@ const BuildingsEpcRating = ({ query, showBuildings }) => {
         <p>Loading data</p>
       </Modal>
     );
-  if (!features || !showBuildings) return null;
+  if (!clusters || !showBuildings) return null;
   return (
-    <Source id="buildings-epc-rating" type={GEOJSON} data={{ type: FEATURE_COLLECTION, features: features }}>
-      <BuildingIcons features={features} onStationClick={handleOnStationClick} />
+    <Source id="buildings-epc-rating" type={GEOJSON} data={{ type: FEATURE_COLLECTION, features }}>
+      <BuildingIcons clusters={clusters} features={features} onStationClick={handleOnStationClick} />
       <BuildingPopup selectedBuilding={selectedBuilding} onClose={handleOnClosePopup} />
     </Source>
   );
@@ -47,18 +57,41 @@ BuildingsEpcRating.propTypes = {
 
 export default BuildingsEpcRating;
 
-const BuildingIcons = ({ features, onStationClick }) =>
-  features.map((feature) => (
-    <Marker
-      key={feature.properties.id}
-      longitude={feature.geometry.coordinates[0]}
-      latitude={feature.geometry.coordinates[1]}
-      onClick={() => onStationClick(feature)}
-      style={{ cursor: "pointer" }}
-    >
-      <i className={`ri-home-3-line ${epcColourLookup[feature.properties.epc_letter]}`} />
-    </Marker>
-  ));
+const BuildingIcons = ({ clusters, features, onStationClick }) => {
+  if (!clusters) return null;
+
+  return clusters.map((cluster) => {
+    const [long, lat] = cluster.geometry.coordinates;
+    const { cluster: isCluster, id, epcLetter } = cluster.properties;
+
+    if (isCluster) {
+      const { point_count: pointCount, cluster_id } = cluster.properties;
+      const size = Math.round(30 + (pointCount / features.length) * 30);
+      return (
+        <Marker key={`cluster-${cluster_id}`} longitude={long} latitude={lat} style={{ cursor: "pointer" }}>
+          <div
+            className="bg-whiteSmoke text-black-50 rounded-full flex justify-center items-center"
+            style={{ width: `${size}px`, height: `${size}px` }}
+          >
+            {pointCount}
+          </div>
+        </Marker>
+      );
+    }
+
+    return (
+      <Marker
+        key={id}
+        longitude={long}
+        latitude={lat}
+        onClick={() => onStationClick(cluster)}
+        style={{ cursor: "pointer" }}
+      >
+        <i className={`ri-home-3-line ${epcColourLookup[epcLetter]}`} />
+      </Marker>
+    );
+  });
+};
 
 const BuildingPopup = ({ selectedBuilding, onClose }) => {
   if (!selectedBuilding) return null;
@@ -80,7 +113,7 @@ const BuildingPopup = ({ selectedBuilding, onClose }) => {
     >
       <h4 className="mr-6 font-medium">Building EPC Details</h4>
       <p>{selectedBuilding.properties.label}</p>
-      <p>EPC: {selectedBuilding.properties.epc_letter}</p>
+      <p>EPC: {selectedBuilding.properties.epcLetter}</p>
     </Popup>
   );
 };
