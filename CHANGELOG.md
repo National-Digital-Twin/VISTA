@@ -1,5 +1,20 @@
 # Changelog
 
+## [2.0.0-rc12](https://github.com/Telicent-io/telicent-paralog/compare/v2.0.0-rc11...v2.0.0-rc12) (2023-06-19)
+
+
+### Features
+
+* add cluster to the epc building ([7a1fe5c](https://github.com/Telicent-io/telicent-paralog/commit/7a1fe5c979fa60acc26b5f39cf4d1a25df62ca01))
+* adding epc data to the map ([ee441d9](https://github.com/Telicent-io/telicent-paralog/commit/ee441d9524f043e40f3dfcfb7853583257e9b87c))
+* updated pop up to include uprn and address pr comments ([5485dd0](https://github.com/Telicent-io/telicent-paralog/commit/5485dd0679b5eabea8471f944c16bc604c63ea79))
+* updated radius and maxZoom of clusters ([27d08e8](https://github.com/Telicent-io/telicent-paralog/commit/27d08e87c82c0cf6f9e627b1abb316a806d30f49))
+
+
+### Miscellaneous Chores
+
+* release 2.0.0-rc-12 ([a785481](https://github.com/Telicent-io/telicent-paralog/commit/a785481e9dc6e0ad758b0575c3711ced050681f9))
+
 ## [2.0.0-rc11](https://github.com/Telicent-io/telicent-paralog/compare/v2.0.0-rc10...v2.0.0-rc11) (2023-05-12)
 
 
