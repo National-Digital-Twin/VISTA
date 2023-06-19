@@ -12,7 +12,7 @@ const FloodMonitoringStations = ({ query, showStations }) => {
 
   const handleOnStationClick = (feature) => setSelectedStation(feature);
   const handleOnClosePopup = () => setSelectedStation(undefined);
-  console.log(features);
+
 
   return (
     <Source id="flood-monitoring-stations" type={GEOJSON} data={{ type: FEATURE_COLLECTION, features: features }}>

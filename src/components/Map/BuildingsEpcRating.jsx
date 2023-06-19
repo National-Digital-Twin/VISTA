@@ -113,6 +113,7 @@ const BuildingPopup = ({ selectedBuilding, onClose }) => {
     >
       <h4 className="mr-6 font-medium">Building EPC Details</h4>
       <p>{selectedBuilding.properties.label}</p>
+      <p>UPRN: {selectedBuilding.properties.id}</p>
       <p>EPC: {selectedBuilding.properties.epcLetter}</p>
     </Popup>
   );

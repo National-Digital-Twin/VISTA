@@ -15,7 +15,7 @@ const useBuildingsEpcRating = () => {
   const [showBuildings, setshowBuildings] = useState(false);
 
   const menuItem = {
-    name: "Buildings Epc Rating",
+    name: "EPC Ratings",
     selected: showBuildings,
     type: "toggleSwitch",
     onItemClick: () => setshowBuildings((show) => !show),
@@ -24,22 +24,20 @@ const useBuildingsEpcRating = () => {
   const query = useQuery("buildings-epc-rating", () => fetchBuildingsEpcRating(), {
     enabled: showBuildings,
     select: (data) => {
-      return data.map((building) => {
-        return {
-          type: "Feature",
-          properties: {
-            cluster: false,
-            id: building.uprn,
-            label: building.name,
-            epcLetter: getEPCLetter(building.epc_rating),
-            epcRating: getURIFragment(building.epc_rating),
-          },
-          geometry: {
-            type: "Point",
-            coordinates: [building.lon, building.lat],
-          },
-        };
-      });
+      return data.map(({ uprn, epc_rating, name, lon, lat }) => ({
+        type: "Feature",
+        properties: {
+          cluster: false,
+          id: uprn,
+          label: name,
+          epcLetter: getEPCLetter(epc_rating),
+          epcRating: getURIFragment(epc_rating),
+        },
+        geometry: {
+          type: "Point",
+          coordinates: [lon, lat],
+        },
+      }));
     },
     onError: (error) => {
       updateErrorNotifications(error.message);
