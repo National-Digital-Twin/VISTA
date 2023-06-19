@@ -27,7 +27,7 @@ const BuildingsEpcRating = ({ map, query, showBuildings }) => {
     points: features ?? [],
     zoom,
     bounds,
-    options: { radius: 75, maxZoom: 18 },
+    options: { radius: 30, maxZoom: 20 },
   });
 
   const handleOnStationClick = (feature) => setSelectedBuilding(feature);
