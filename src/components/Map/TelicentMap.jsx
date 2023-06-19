@@ -8,6 +8,7 @@ import {
   useFloodMonitoringStations,
   useMapInteractions,
   useLocalStorage,
+  useBuildingsEpcRating,
 } from "hooks";
 import { ErrorFallback, FloatingPanel, Modal } from "lib";
 
@@ -24,6 +25,8 @@ import { getMapStyles } from "./mapStyles";
 import "@fortawesome/fontawesome-pro/css/all.css";
 import "./map.css";
 import PointAssets from "./PointAssets";
+import BuildingsEpcRating from "./BuildingsEpcRating";
+
 
 export const GEOJSON = "geojson";
 export const FEATURE_COLLECTION = "FeatureCollection";
@@ -37,17 +40,10 @@ const HEAT_RADIUS = 1000;
 const TelicentMap = () => {
   const { telicentMap: map } = useMap();
   const { moveTo } = useContext(CytoscapeContext);
-  const {
-    assets,
-    dependencies,
-    selectedFloodAreas,
-    selectedElements,
-    onElementClick,
-    onAreaSelect,
-  } = useContext(ElementsContext);
+  const { assets, dependencies, selectedFloodAreas, selectedElements, onElementClick, onAreaSelect } =
+    useContext(ElementsContext);
 
-  const { polygonFeatures: floodAreas, isLoading: areFloodAreasLoading } =
-    useFloodAreaPolygons(selectedFloodAreas);
+  const { polygonFeatures: floodAreas, isLoading: areFloodAreasLoading } = useFloodAreaPolygons(selectedFloodAreas);
   const { interactiveLayers, selectedFloodZones, handleOnClick } = useMapInteractions({
     map,
     assets,
@@ -60,11 +56,8 @@ const TelicentMap = () => {
   const mapStyles = useMemo(() => getMapStyles(), []);
 
   const [mapStyle, setMapStyle] = useLocalStorage("mapStyle", mapStyles[0]);
-  const {
-    query,
-    menuItem: monitoringStationLayerItem,
-    showStations,
-  } = useFloodMonitoringStations();
+  const { query, menuItem: monitoringStationLayerItem, showStations } = useFloodMonitoringStations();
+  const { query: buildingsEpcQuery, menuItem: buildingsEpcLayerItem, showBuildings } = useBuildingsEpcRating();
 
   const [cursor, setCursor] = useState("auto");
   const [heatmapRadius, setHeatmapRadius] = useState(10);
@@ -163,6 +156,7 @@ const TelicentMap = () => {
             moveTo={moveTo}
             onAreaSelect={onAreaSelect}
           />
+          <BuildingsEpcRating map={map} query={buildingsEpcQuery} showBuildings={showBuildings} />
           <FloodMonitoringStations query={query} showStations={showStations} />
           <AttributionControl compact />
           <ScaleControl
@@ -186,15 +180,11 @@ const TelicentMap = () => {
             showPointerCoords={showPointerCoords}
             onPointerCoordsClick={togglePointerCoords}
             setCursor={setCursor}
-            layerItems={[monitoringStationLayerItem]}
+            layerItems={[monitoringStationLayerItem, buildingsEpcLayerItem]}
           />
         </Map>
         <TopLeftPanel>
-          <PointerCoordinates
-            show={showPointerCoords}
-            lat={mousePosition?.lat}
-            lng={mousePosition?.lng}
-          />
+          <PointerCoordinates show={showPointerCoords} lat={mousePosition?.lat} lng={mousePosition?.lng} />
           <FloodZones selectedFloodZones={selectedFloodZones} />
         </TopLeftPanel>
         <FloodWarningWidget />
@@ -208,6 +198,4 @@ const TelicentMap = () => {
 
 export default TelicentMap;
 
-const TopLeftPanel = ({ children }) => (
-  <FloatingPanel position="top-0 left-0">{children}</FloatingPanel>
-);
+const TopLeftPanel = ({ children }) => <FloatingPanel position="top-0 left-0">{children}</FloatingPanel>;
