@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.0-rc13](https://github.com/Telicent-io/telicent-paralog/compare/v2.0.0-rc12...v2.0.0-rc13) (2023-06-29)
+
+
+### Miscellaneous Chores
+
+* release 2.0.0-rc-13 ([90557df](https://github.com/Telicent-io/telicent-paralog/commit/90557df50c08e0a48e0c1f67bbf80a81c30e05ef))
+
 ## [2.0.0-rc12](https://github.com/Telicent-io/telicent-paralog/compare/v2.0.0-rc11...v2.0.0-rc12) (2023-06-19)
 
 
