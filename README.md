@@ -6,7 +6,7 @@ Paralog is a tool which can be used to get a better understanding of high value 
 
 ## Features
 
-- **Role based access control** - manage permissions required to view sensitive data
+- **Attribute based access control** - manage permissions required to view sensitive data
 - **View assets connectivity** - navigate the network graph to better understand asset connectivity
 - **Geographical locations** - view assets geographical locations
 - **Heatmap** - view of assets on the map for quick understanding of service/capability density
@@ -18,7 +18,15 @@ Paralog is a tool which can be used to get a better understanding of high value 
 
 ## Getting started
 
-To run paralog you will need to built docker images yourself
+Paralog is currently requires the Isle of Wight data (iow) but is not limited to it. The following docker images and minimum versions are required.
+- Kafka - Can be run without kafka, can run using kraft or with zookeeper (It's encouraged to use Kafka with Kraft).
+Can be run locally on your machine or as a docker container.
+- Ontology API - 098669589541.dkr.ecr.eu-west-2.amazonaws.com/telicent-smart-cache-ontology:0.0.4
+- Paralog API -  098669589541.dkr.ecr.eu-west-2.amazonaws.com/telicent-smart-cache-paralog-api:1.1.4-rc5
+- Graph smart cache 
+    -  098669589541.dkr.ecr.eu-west-2.amazonaws.com/smart-cache-graph:0.12.0
+    - with volumes - ./config:/fuseki/config
+- Paralog UI - 098669589541.dkr.ecr.eu-west-2.amazonaws.com/telicent-paralog:2.0.0-rc13
 
 ### Configuration
 
