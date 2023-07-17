@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.2](https://github.com/Telicent-io/telicent-paralog/compare/v1.4.1...v1.4.2) (2023-07-17)
+
+
+### Bug Fixes
+
+* **publish.yml:** fix uses path ([8f08f75](https://github.com/Telicent-io/telicent-paralog/commit/8f08f75f34e2be2dd9f4410f1493e15fb2895047))
+
 ## [1.4.1](https://github.com/Telicent-io/telicent-paralog/compare/v1.4.0...v1.4.1) (2023-07-17)
 
 
