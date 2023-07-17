@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.1](https://github.com/Telicent-io/telicent-paralog/compare/v1.4.0...v1.4.1) (2023-07-17)
+
+
+### Bug Fixes
+
+* **publish.yml:** publish docker images to azure as well as aws ([c4f0666](https://github.com/Telicent-io/telicent-paralog/commit/c4f0666dbf3ffd6551f549d750c68b27ece39e30)), closes [#279](https://github.com/Telicent-io/telicent-paralog/issues/279)
+
 ## [1.4.0](https://github.com/Telicent-io/telicent-paralog/compare/v1.3.0...v1.4.0) (2022-11-25)
 
 
