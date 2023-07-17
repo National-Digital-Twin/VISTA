@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.3](https://github.com/Telicent-io/telicent-paralog/compare/v1.4.2...v1.4.3) (2023-07-17)
+
+
+### Bug Fixes
+
+* **publish.yml:** inherit secrets ([c8494da](https://github.com/Telicent-io/telicent-paralog/commit/c8494dab6d4ae05c6d48f43ed0f01230494a80ea))
+
 ## [1.4.2](https://github.com/Telicent-io/telicent-paralog/compare/v1.4.1...v1.4.2) (2023-07-17)
 
 
