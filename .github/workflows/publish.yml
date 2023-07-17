@@ -64,11 +64,11 @@ jobs:
         run: |
           aws s3 cp reports s3://telicent-deployment-${{ env.APP_NAME }}/${{ github.run_id }}-${{ needs.get_version.outputs.version }} --recursive
 
-  publish_build_image_to_aws:
+  publish_build_image_to_registries:
     needs:
       - integrated_tests
       - get_version
-    uses: Telicent-io/telicent-test/.github/workflows/push-to-aws.yml@main
+    uses: Telicent-io/telicent-test/.github/workflows/push-to-registries.yml@main
     with:
       APP_NAME: paralog
       DOCKERFILE: Dockerfile.build
@@ -77,12 +77,12 @@ jobs:
       ECR_SUFFIX: -build
     secrets:
       NPM_TOKEN: ${{ secrets.PACKAGE_PAT }}
-  publish_offline_image_to_aws:
+  publish_offline_image_to_registries:
     needs:
       - integrated_tests
       - get_version
-      - publish_build_image_to_aws
-    uses: Telicent-io/telicent-test/.github/workflows/push-to-aws.yml@main
+      - publish_build_image_to_registries
+    uses: Telicent-io/telicent-test/.github/workflows/push-to-registries.yml@main
     with:
       APP_NAME: paralog
       DOCKERFILE: Dockerfile.offline
@@ -91,12 +91,12 @@ jobs:
       VERSION_SUFFIX: -offline
     secrets:
       NPM_TOKEN: ${{ secrets.PACKAGE_PAT }}
-  publish_deployment_image_to_aws:
+  publish_deployment_image_to_registries:
     needs:
       - integrated_tests
       - get_version
-      - publish_build_image_to_aws
-    uses: ./.github/workflows/push-to-aws.yml
+      - publish_build_image_to_registries
+    uses: ./.github/workflows/push-to-registries.yml
     with:
       APP_NAME: paralog
       DOCKERFILE: Dockerfile
@@ -106,8 +106,8 @@ jobs:
       NPM_TOKEN: ${{ secrets.PACKAGE_PAT }}
   trigger_owasp_dependency_check-api:
     needs:
-      - publish_deployment_image_to_aws
-      - publish_offline_image_to_aws
+      - publish_deployment_image_to_registries
+      - publish_offline_image_to_registries
     uses: Telicent-io/telicent-test/.github/workflows/dependency_tracking.yml@main
     secrets: inherit
     with:
