@@ -96,7 +96,7 @@ jobs:
       - integrated_tests
       - get_version
       - publish_build_image_to_registries
-    uses: ./.github/workflows/push-to-registries.yml
+    uses: Telicent-io/telicent-test/.github/workflows/push-to-registries.yml@main
     with:
       APP_NAME: paralog
       DOCKERFILE: Dockerfile
