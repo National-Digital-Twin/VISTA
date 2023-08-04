@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.4](https://github.com/Telicent-io/telicent-paralog/compare/v1.4.3...v1.4.4) (2023-08-04)
+
+
+### Bug Fixes
+
+* **publish.yml:** set smm parameter for nightly builds ([4299da7](https://github.com/Telicent-io/telicent-paralog/commit/4299da7d07d3dc031dc8336fb3fd442abf137283))
+
 ## [1.4.3](https://github.com/Telicent-io/telicent-paralog/compare/v1.4.2...v1.4.3) (2023-07-17)
 
 
