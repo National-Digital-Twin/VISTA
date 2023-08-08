@@ -109,13 +109,30 @@ jobs:
     needs: 
       - publish_deployment_image_to_registries
     steps:
+      - name: Configure AWS credentials from main account
+        uses: aws-actions/configure-aws-credentials@v1-node16
+        with:
+          role-to-assume: arn:aws:iam::098669589541:role/GitHubDeploymentRole
+          aws-region: eu-west-2
+          mask-aws-account-id: 'no'
+    
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+      - name: get deployment path
+        uses: Telicent-io/get-ecr-tag@v1
+        with:
+          owner: "098669589541"
+          repository: "telicent-access"
+          target: "deployment-ssm-path"
+        id: ssm-parameter
       - name: Configure AWS credentials for SSM   
         uses: aws-actions/configure-aws-credentials@v2
         with:
           role-to-assume: arn:aws:iam::228894611417:role/GitCICD
           aws-region: us-east-1
       - name: update deployment ssm parameter
-        run: aws ssm put-parameter --name "/telicent/paralog/app/ui/Image" --region "us-east-1" --type "String" --value "${{ needs.publish_deployment_image_to_registries.outputs.aws_image }}" --overwrite 
+        run: aws ssm put-parameter --name "${{ steps.ssm-parameter.outputs.tagValue }}" --region "us-east-1" --type "String" --value "${{ needs.publish_deployment_image_to_registries.outputs.aws_image }}" --overwrite 
 
   trigger_owasp_dependency_check-api:
     needs:
