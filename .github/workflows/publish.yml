@@ -115,7 +115,7 @@ jobs:
           role-to-assume: arn:aws:iam::228894611417:role/GitCICD
           aws-region: us-east-1
       - name: update deployment ssm parameter
-        run: aws ssm put-parameter --name "/telicent/access/app/ui/Image" --region "us-east-1" --type "String" --value "${{ needs.publish_deployment_image_to_registries.outputs.aws_image }}" --overwrite 
+        run: aws ssm put-parameter --name "/telicent/paralog/app/ui/Image" --region "us-east-1" --type "String" --value "${{ needs.publish_deployment_image_to_registries.outputs.aws_image }}" --overwrite 
 
   trigger_owasp_dependency_check-api:
     needs:
