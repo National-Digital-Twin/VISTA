@@ -123,7 +123,7 @@ jobs:
         uses: Telicent-io/get-ecr-tag@v1
         with:
           owner: "098669589541"
-          repository: "telicent-access"
+          repository: "telicent-paralog"
           target: "deployment-ssm-path"
         id: ssm-parameter
       - name: Configure AWS credentials for SSM   
