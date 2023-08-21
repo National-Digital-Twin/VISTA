@@ -120,7 +120,7 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
       - name: get deployment path
-        uses: Telicent-io/get-ecr-tag@v1
+        uses: Telicent-io/get-ecr-tag-action@v1
         with:
           owner: "098669589541"
           repository: "telicent-paralog"
