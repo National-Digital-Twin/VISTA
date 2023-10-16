@@ -1,5 +1,5 @@
 import React from "react";
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client"
 import { MapProvider } from "react-map-gl";
 import { Provider as UseFetchProvider } from "use-http";
 import { QueryClient, QueryClientProvider } from "react-query";
@@ -12,8 +12,9 @@ import reportWebVitals from "./reportWebVitals";
 import "./main.css";
 
 const queryClient = new QueryClient();
-
-ReactDOM.render(
+const container = document.getElementById("root")
+const root = createRoot(container);
+root.render(
   <UseFetchProvider url={config.api.url}>
     <CytoscapeProvider>
       <ElementsProvider>
@@ -25,8 +26,7 @@ ReactDOM.render(
         </MapProvider>
       </ElementsProvider>
     </CytoscapeProvider>
-  </UseFetchProvider>,
-  document.getElementById("root")
+  </UseFetchProvider>
 );
 
 // If you want to start measuring performance in your app, pass a function

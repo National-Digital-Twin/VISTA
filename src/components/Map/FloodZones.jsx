@@ -12,7 +12,6 @@ const FloodZones = ({ selectedFloodZones }) => {
     if (isEmpty(selectedFloodZones)) {
       closeTimelinePanel();
     }
-    return null;
   });
 
   if (isEmpty(selectedFloodZones)) return null;
