@@ -38,7 +38,9 @@ export const fetchIconStyles = async (typeUri) => {
   if (!response.ok) {
     return undefined;
   }
-  return response.json();
+  const style = await response.json();
+  const keys = Object.keys(style)
+  return keys.length > 0 ? style[keys[0]] : undefined;
 };
 
 export const fetchFloodTimeline = async (floodArea) => {

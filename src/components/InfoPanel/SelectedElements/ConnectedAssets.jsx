@@ -8,6 +8,7 @@ import AssetDetails from "./AssetDetails";
 const ConnectedAssets = ({ connectedAssets }) => {
   const { assets } = useContext(ElementsContext);
 
+
   return (
     <ul className="grid gap-y-3">
       {Array.isArray(connectedAssets) &&
@@ -25,9 +26,9 @@ const ConnectedAssets = ({ connectedAssets }) => {
                 type={getURIFragment(asset?.assetType)}
                 criticality={asset?.dependentCriticalitySum}
                 connectionStrength={asset?.connectionStrength}
-                backgroundColor={isAdded ? asset.styles?.backgroundColor : "#A3A3A3"}
-                color={isAdded ? asset.styles?.color : "#333"}
-                icon={asset.styles?.faIcon}
+                backgroundColor={isAdded ? asset.styles?.defaultStyles?.dark?.backgroundColor : "#A3A3A3"}
+                color={isAdded ? asset.styles?.defaultStyles?.dark?.color : "#333"}
+                icon={asset.styles?.defaultIcons?.faIcon}
               />
             );
           })}

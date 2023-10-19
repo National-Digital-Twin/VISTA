@@ -63,7 +63,7 @@ describe("Providers component", () => {
     expect(screen.queryByRole("list")).not.toBeInTheDocument();
 
     await toggleProviders(user);
-    expect(screen.queryByRole("list")).toBeInTheDocument();
+    expect(screen.getByRole("list")).toBeInTheDocument();
 
     const providers = screen.getAllByRole("listitem");
     expect(providers).toHaveLength(2);

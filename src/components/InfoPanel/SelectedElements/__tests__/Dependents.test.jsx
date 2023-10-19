@@ -47,6 +47,11 @@ const toggleDependents = async (user) => {
 };
 
 describe("Dependents component", () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+    jest.resetAllMocks()
+  })
+
   test("does NOT render dependent assets when element is not defined", async () => {
     await renderE003AssetDetails([]);
     expect(screen.queryByTestId("dependent-assets")).not.toBeInTheDocument();
