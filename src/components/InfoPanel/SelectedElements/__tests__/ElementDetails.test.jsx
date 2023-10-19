@@ -75,12 +75,22 @@ describe("Element details component", () => {
 
   test("renders asset icon", async () => {
     const mockGetIconStyle = jest.fn().mockReturnValue({
-      backgroundColor: "#FFFF00",
-      color: "black",
-      icon: "ri-cloudy-fill",
-      faIcon: "fa-regular fa-bolt-lightning",
-      faUnicode: "",
-      faClass: "fa-regular",
+      defaultStyles: {
+        dark: {
+          backgroundColor: "#FFFF00",
+          color: "black",
+        },
+        light: {
+          backgroundColor: "#FFFF00",
+          color: "black",
+        }
+      },
+      defaultIcons: {
+        icon: "ri-cloudy-fill",
+        faIcon: "fa-regular fa-bolt-lightning",
+        faUnicode: "",
+        faClass: "fa-regular",
+      }
     });
     const createdAssets = (
       await createAssets(OIL_FIRED_POWER_GENERATION_COMPLEX_ASSETS, mockGetIconStyle, jest.fn())

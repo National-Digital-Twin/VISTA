@@ -1,6 +1,7 @@
 const env = process.env.JEST_WORKER_ID ? process.env : window._env_;
 const OFFLINE_ENABLED =
   env.OFFLINE_STYLES && env.OFFLINE_STYLES_BASE_URL && env.OFFLINE_STYLES_PATH;
+
 const config = {
   map: {
     maptilerToken: env.MAP_TILER_TOKEN

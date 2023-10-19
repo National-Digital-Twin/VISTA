@@ -1,5 +1,5 @@
 import { useFetch } from "use-http";
-import config from "config/app-config";
+import config from "../config/app-config";
 import { useCallback } from "react";
 
 const useOntologyServer = (options) => {
@@ -13,7 +13,10 @@ const useOntologyServer = (options) => {
     async (type) => {
       const queryParam = new URLSearchParams({ uri: type }).toString();
       const style = await get(`styles/class?${queryParam}`);
-      return response.ok ? style : undefined;
+      if (response.ok) {
+        const keys = Object.keys(style)
+        return keys.length > 0 ? style[keys[0]] : undefined;
+      }
     },
     [get, response]
   );

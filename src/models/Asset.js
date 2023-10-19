@@ -1,6 +1,11 @@
 import { isEmpty } from "lodash";
 import { getColorScale, getHexColor, getShortType, getURIFragment } from "utils";
 
+const extractIconsAndStyles = (iconStyles) => {
+    const {defaultStyles: styles, defaultIcons: icons} = iconStyles
+    return {styles, icons}
+}
+
 export default class Asset {
   #countColorScale = {};
   #criticalitySumColorScale = {};
@@ -78,6 +83,7 @@ export default class Asset {
   }
 
   getIconStyle() {
+
     if (isEmpty(this.styles)) {
       return {
         iconLabel: this.primaryType.substring(0, 3),
@@ -86,10 +92,12 @@ export default class Asset {
       };
     }
 
+    const {icons, styles} = extractIconsAndStyles(this.styles)
+
     return {
-      icon: this.styles.faIcon,
-      color: this.styles.color,
-      backgroundColor: this.styles.backgroundColor,
+      icon: icons.faIcon,
+      color: styles.dark.color,
+      backgroundColor: styles.dark.backgroundColor,
     };
   }
 

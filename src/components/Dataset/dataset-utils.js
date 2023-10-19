@@ -24,6 +24,7 @@ export const createDependencies = (dependencies) => {
 
 const hasParts = (asset) => asset?.partCount > 0;
 
+
 export const createAssets = async (assets, getIconStyle, getAssetGeometry) => {
   if (!assets && !Array.isArray(assets)) return [];
 
@@ -33,7 +34,6 @@ export const createAssets = async (assets, getIconStyle, getAssetGeometry) => {
       const type = asset?.type;
       const geometry = hasParts(asset) ? await getAssetGeometry(asset.uri) : [];
       const iconStyle = await getIconStyle(type);
-
       return new Asset({
         uri,
         type,

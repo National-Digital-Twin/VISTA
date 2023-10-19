@@ -11,6 +11,7 @@ const useDependents = (isAsset, isDependency, assetUri, dependent) => {
     enabled: isAsset,
   });
 
+
   const dependetDetailQueries = useQueries([
     ...(assetDependents || []).map((dependent) => {
       const assetUri = dependent?.dependentNode;
