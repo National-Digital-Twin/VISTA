@@ -9,11 +9,13 @@ import { getURIFragment } from "utils";
 
 import GroupedTypes from "./GroupedTypes";
 import { fetchAssetTypes, fetchTypeSuperclass } from "endpoints";
+import { TeliTextField } from "@telicent-io/ds";
 
 const AssessmentTypes = ({ assessment }) => {
   const [isGeneratingData, setIsGeneratingData] = useState(false);
   const [selectedGroups, setSelectedGroups] = useState([]);
   const [selectedTypes, setSelectedTypes] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const {
     isLoading: isTypesLoading,
@@ -72,14 +74,27 @@ const AssessmentTypes = ({ assessment }) => {
   if (isError) return <p>{error.message}</p>;
   if (isEmpty(types)) return <p>Dataset types not found</p>;
 
+  const isFiltered = searchQuery.length > 0;
+
+  const filteredClassGroups = !isFiltered ? superClassGroups :
+  superClassGroups.filter((group) =>
+    group.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <>
+      <TeliTextField 
+        label="Search"
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        className="w-full"
+        fullWidth
+      />
       <div
         role="tree"
         aria-labelledby="assetTypesTree"
-        className="flex flex-col grow min-h-0 overflow-y-auto gap-y-2"
-      >
-        {superClassGroups.sort().map((ontologyGroup) => {
+        className="flex flex-col grow min-h-0 overflow-y-auto gap-y-2 mt-2">
+        {filteredClassGroups.sort().map((ontologyGroup) => {
           const expand = selectedGroups.includes(ontologyGroup);
           return (
             <AssessmentGroup
@@ -100,6 +115,9 @@ const AssessmentTypes = ({ assessment }) => {
             </AssessmentGroup>
           );
         })}
+        {isFiltered && filteredClassGroups.length === 0 && (
+          <p className="text-center">No results found</p>
+        )}  
       </div>
       <Modal appElement="root" isOpen={isGeneratingData} className="py-2 px-6 rounded-lg">
         <p>Loading data</p>
