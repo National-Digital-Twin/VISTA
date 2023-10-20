@@ -70,6 +70,12 @@ const AssessmentTypes = ({ assessment }) => {
     return typeWithSuperClass.filter((type) => type.superClass === selectedGroup);
   };
 
+  const getFilteredTypesInGroup = (selectedGroup, query) => {
+    return getTypesInGroup(selectedGroup).filter((type) =>
+      type.label.toLowerCase().includes(query.toLowerCase())  
+    );
+  };
+
   if (isLoading) return <p>Fetching data types</p>;
   if (isError) return <p>{error.message}</p>;
   if (isEmpty(types)) return <p>Dataset types not found</p>;
@@ -107,7 +113,7 @@ const AssessmentTypes = ({ assessment }) => {
               <GroupedTypes
                 expand={expand}
                 assessment={assessment}
-                types={getTypesInGroup(ontologyGroup)}
+                types={getFilteredTypesInGroup(ontologyGroup, searchQuery)}
                 selectedTypes={selectedTypes}
                 setSelectedTypes={setSelectedTypes}
                 setIsGeneratingData={setIsGeneratingData}
