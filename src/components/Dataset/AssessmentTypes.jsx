@@ -72,7 +72,7 @@ const AssessmentTypes = ({ assessment }) => {
 
   const getFilteredTypesInGroup = (selectedGroup, query) => {
     return getTypesInGroup(selectedGroup).filter((type) =>
-      type.label.toLowerCase().includes(query.toLowerCase())  
+      type.uri.toLowerCase().includes(query.toLowerCase())  
     );
   };
 
