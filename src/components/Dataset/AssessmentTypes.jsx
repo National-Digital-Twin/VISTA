@@ -93,7 +93,7 @@ const AssessmentTypes = ({ assessment }) => {
       <div
         role="tree"
         aria-labelledby="assetTypesTree"
-        className="flex flex-col grow min-h-0 overflow-y-auto gap-y-2">
+        className="flex flex-col grow min-h-0 overflow-y-auto gap-y-2 mt-2">
         {filteredClassGroups.sort().map((ontologyGroup) => {
           const expand = selectedGroups.includes(ontologyGroup);
           return (
