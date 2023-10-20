@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StandardLayout } from "@telicent-io/ds";
+import { TeliStandardLayout } from "@telicent-io/ds";
 import "../node_modules/@telicent-io/ds/dist/style.css";
 
 import { Dataset, Grid, InfoPanel, NetworkGraph, SponsorsLogos, TelicentMap } from "./components";
@@ -22,7 +22,7 @@ const App = () => {
   }
 
   return (
-    <StandardLayout appName="paralog" beta={true}>
+    <TeliStandardLayout appName="paralog" beta={true}>
       <SponsorsLogos />
       <div className="relative h-full">
         <ErrorNotification />
@@ -38,7 +38,7 @@ const App = () => {
           <TelicentMap />
         </div>
       </div>
-    </StandardLayout>
+    </TeliStandardLayout>
   );
 };
 

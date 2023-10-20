@@ -9,6 +9,7 @@ import { getURIFragment } from "utils";
 
 import GroupedTypes from "./GroupedTypes";
 import { fetchAssetTypes, fetchTypeSuperclass } from "endpoints";
+import { TeliTextField } from "@telicent-io/ds";
 
 const AssessmentTypes = ({ assessment }) => {
   const [isGeneratingData, setIsGeneratingData] = useState(false);
@@ -82,12 +83,17 @@ const AssessmentTypes = ({ assessment }) => {
 
   return (
     <>
-      <input placeholder="Search" className="w-full p-2 rounded-lg" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
+      <TeliTextField 
+        label="Search"
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        className="w-full"
+        fullWidth
+      />
       <div
         role="tree"
         aria-labelledby="assetTypesTree"
-        className="flex flex-col grow min-h-0 overflow-y-auto gap-y-2"
-      >
+        className="flex flex-col grow min-h-0 overflow-y-auto gap-y-2">
         {filteredClassGroups.sort().map((ontologyGroup) => {
           const expand = selectedGroups.includes(ontologyGroup);
           return (
@@ -111,7 +117,7 @@ const AssessmentTypes = ({ assessment }) => {
         })}
         {isFiltered && filteredClassGroups.length === 0 && (
           <p className="text-center">No results found</p>
-        )}
+        )}  
       </div>
       <Modal appElement="root" isOpen={isGeneratingData} className="py-2 px-6 rounded-lg">
         <p>Loading data</p>
