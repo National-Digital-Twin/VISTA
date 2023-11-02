@@ -71,7 +71,7 @@ const AssessmentTypes = ({ assessment }) => {
   };
 
   const getFilteredTypesInGroup = (selectedGroup, query) => {
-    return getTypesInGroup(selectedGroup).filter((type) =>
+    return getTypesInGroup(selectedGroup).filter((type) =>  
       type.uri.toLowerCase().includes(query.toLowerCase())  
     );
   };
@@ -82,10 +82,20 @@ const AssessmentTypes = ({ assessment }) => {
 
   const isFiltered = searchQuery.length > 0;
 
-  const filteredClassGroups = !isFiltered ? superClassGroups :
+  const formattedQuery = searchQuery.toLowerCase().replace(' ', '');
+
+  const filteredClassGroups = isFiltered ?
   superClassGroups.filter((group) =>
-    group.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+    getFilteredTypesInGroup(group, formattedQuery).length >= 1 || group.toLowerCase().includes(formattedQuery)
+  ) : superClassGroups;
+
+  const getTypesInGroupWithFilter = (ontologyGroup) => {
+    const typesInGroup = getTypesInGroup(ontologyGroup);
+    if (ontologyGroup.toLowerCase().includes(formattedQuery)) {
+      return typesInGroup;
+    }
+    return typesInGroup.filter((type) => type.uri.toLowerCase().includes(formattedQuery));
+  };
 
   return (
     <>
@@ -113,7 +123,7 @@ const AssessmentTypes = ({ assessment }) => {
               <GroupedTypes
                 expand={expand}
                 assessment={assessment}
-                types={getFilteredTypesInGroup(ontologyGroup, searchQuery)}
+                types={getTypesInGroupWithFilter(ontologyGroup)}
                 selectedTypes={selectedTypes}
                 setSelectedTypes={setSelectedTypes}
                 setIsGeneratingData={setIsGeneratingData}
