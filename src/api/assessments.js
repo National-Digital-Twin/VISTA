@@ -1,53 +1,73 @@
-import { createParalogEndpoint, fetchOptions } from "endpoints";
+import { createParalogEndpoint, fetchOptions } from "./utils";
+import API from "./index";
 
 export const fetchAssessments = async () => {
-  const response = await fetch(createParalogEndpoint("assessments"), fetchOptions);
+  const response = await API.fetchWrapper(
+    createParalogEndpoint("assessments"),
+    fetchOptions
+  );
+
   if (!response.ok) {
     throw new Error(`Failed to retrieve assessments`);
   }
+
   return response.json();
 };
 
 export const fetchAssetTypes = async (assessment) => {
   const queryParams = new URLSearchParams({ assessment }).toString();
-  const response = await fetch(
+  const response = await API.fetchWrapper(
     createParalogEndpoint(`assessments/asset-types?${queryParams}`),
     fetchOptions
   );
+
   if (!response.ok) {
-    throw new Error(`An error occured while retrieving data types for ${assessment}`);
+    throw new Error(
+      `An error occured while retrieving data types for ${assessment}`
+    );
   }
+
   return response.json();
 };
 
 export const fetchAssessmentAssets = async (assessment, types) => {
   const typeParams = types.map((type) => ["types", type]);
-  const queryParams = new URLSearchParams([["assessment", assessment], ...typeParams]).toString();
+  const queryParams = new URLSearchParams([
+    ["assessment", assessment],
+    ...typeParams,
+  ]).toString();
 
-  const response = await fetch(
+  const response = await API.fetchWrapper(
     createParalogEndpoint(`assessments/assets?${queryParams}`),
     fetchOptions
   );
+
   if (!response.ok) {
     throw new Error(
       `An error occured while retrieving assets for assessment ${assessment} and types ${types.toString()}`
     );
   }
+
   return response.json();
 };
 
 export const fetchAssessmentDependencies = async (assessment, types) => {
   const typeParams = types.map((type) => ["types", type]);
-  const queryParams = new URLSearchParams([["assessment", assessment], ...typeParams]).toString();
+  const queryParams = new URLSearchParams([
+    ["assessment", assessment],
+    ...typeParams,
+  ]).toString();
 
-  const response = await fetch(
+  const response = await API.fetchWrapper(
     createParalogEndpoint(`assessments/dependencies?${queryParams}`),
     fetchOptions
   );
+
   if (!response.ok) {
     throw new Error(
       `An error occured while retrieving dependencies for assessment ${assessment} and types ${typeParams.toString()}`
     );
   }
+
   return response.json();
 };

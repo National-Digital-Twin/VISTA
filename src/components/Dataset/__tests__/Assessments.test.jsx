@@ -6,7 +6,7 @@ import { mockEmptyResponse, mockError } from "mocks/resolvers";
 import { renderWithQueryClient } from "test-utils";
 
 import Assessments from "../Assessments";
-import { createParalogEndpoint } from "endpoints";
+import { createParalogEndpoint } from "api/utils";
 
 const assessmentsURL = createParalogEndpoint("assessments");
 

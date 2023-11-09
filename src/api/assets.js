@@ -1,8 +1,12 @@
-import { createParalogEndpoint, fetchOptions } from "endpoints";
+import { createParalogEndpoint, fetchOptions } from "./utils";
+import API from "./index";
 
 export const fetchAssetInfo = async (assetUri) => {
   const queryParams = new URLSearchParams({ assetUri }).toString();
-  const response = await fetch(createParalogEndpoint(`asset?${queryParams}`), fetchOptions);
+  const response = await API.fetchWrapper(
+    createParalogEndpoint(`asset?${queryParams}`),
+    fetchOptions
+  );
   if (!response.ok) {
     throw new Error(`Failed to retrieve asset information for ${assetUri}`);
   }
@@ -11,7 +15,10 @@ export const fetchAssetInfo = async (assetUri) => {
 
 export const fetchAssetParts = async (assetUri) => {
   const queryParams = new URLSearchParams({ assetUri }).toString();
-  const response = await fetch(createParalogEndpoint(`asset/parts?${queryParams}`), fetchOptions);
+  const response = await API.fetchWrapper(
+    createParalogEndpoint(`asset/parts?${queryParams}`),
+    fetchOptions
+  );
   if (!response.ok) {
     throw new Error(`Failed to retrieve asset parts for ${assetUri}`);
   }
@@ -20,7 +27,7 @@ export const fetchAssetParts = async (assetUri) => {
 
 export const fetchDependents = async (assetUri) => {
   const queryParams = new URLSearchParams({ assetUri }).toString();
-  const response = await fetch(
+  const response = await API.fetchWrapper(
     createParalogEndpoint(`asset/dependents?${queryParams}`),
     fetchOptions
   );
@@ -32,7 +39,7 @@ export const fetchDependents = async (assetUri) => {
 
 export const fetchProviders = async (assetUri) => {
   const queryParams = new URLSearchParams({ assetUri }).toString();
-  const response = await fetch(
+  const response = await API.fetchWrapper(
     createParalogEndpoint(`asset/providers?${queryParams}`),
     fetchOptions
   );
@@ -44,7 +51,7 @@ export const fetchProviders = async (assetUri) => {
 
 export const fetchResidents = async (assetUri) => {
   const queryParams = new URLSearchParams({ assetUri }).toString();
-  const response = await fetch(
+  const response = await API.fetchWrapper(
     createParalogEndpoint(`asset/residents?${queryParams}`),
     fetchOptions
   );

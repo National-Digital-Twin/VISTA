@@ -2,7 +2,7 @@ import { screen, waitForElementToBeRemoved, within } from "@testing-library/reac
 import { rest } from "msw";
 
 import { server } from "mocks";
-import { createParalogEndpoint } from "endpoints";
+import { createParalogEndpoint } from "../../../../api/utils";
 import { renderWithQueryClient } from "test-utils";
 import { R013_RESIDENTS } from "mocks/resolvers/asset/residents";
 import { mockEmptyResponse } from "mocks/resolvers";

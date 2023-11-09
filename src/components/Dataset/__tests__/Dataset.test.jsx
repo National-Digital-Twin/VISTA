@@ -1,23 +1,32 @@
-import { screen, render } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
-import { Provider as UseHttpProvider } from "use-http";
+import { rest } from "msw";
+import { screen, waitForElementToBeRemoved } from "@testing-library/react";
+import server from "mocks";
+import { mockEmptyResponse, mockError } from "mocks/resolvers";
+import { renderWithQueryClient } from "test-utils";
 
-import { ElementsProvider } from "context";
 import Dataset from "../Dataset";
+import { createParalogEndpoint } from "api/utils";
 
-const user = userEvent.setup();
+const datasetURL = createParalogEndpoint("dataset");
 
-const AllProviders = ({ children }) => (
-  <UseHttpProvider options={{ cacheLife: 0, cachePolicy: "no-cache" }}>
-    <ElementsProvider>{children}</ElementsProvider>
-  </UseHttpProvider>
-);
-
-describe.skip("Dataset panel", () => {
+describe("Dataset panel", () => {
   test("collapses", async () => {
-    render(<Dataset />, { wrapper: AllProviders });
+    server.use(rest.get(datasetURL, mockEmptyResponse));
+    renderWithQueryClient(<Dataset />);
 
-    await user.click(screen.getByRole("button", { name: "Close dataset panel" }));
+    await waitForElementToBeRemoved(() => screen.queryByText(/fetching dataset/i));
     expect(screen.queryByRole("checkbox", { name: "Energy [25]" })).not.toBeInTheDocument();
+  });
+
+  test("renders error message when /dataset api call fails", async () => {
+    server.use(rest.get(datasetURL, mockError));
+    renderWithQueryClient(<Dataset />);
+
+    await waitForElementToBeRemoved(() => screen.queryByText(/fetching dataset/i));
+    expect(
+      screen.getByText(
+        "An error occured while retrieving dataset. Please try again. If problem persists contact admin"
+      )
+    ).toBeInTheDocument();
   });
 });

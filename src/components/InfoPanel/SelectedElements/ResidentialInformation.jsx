@@ -3,11 +3,13 @@ import { useQuery } from "react-query";
 import PropTypes from "prop-types";
 import React, { useMemo, useState } from "react";
 
-import { fetchResidentialInformation } from "endpoints";
+import api from "../../../api";
 
 const LIMIT = 3;
 
 const ResidentialInformation = ({ isAsset, primaryType, uri }) => {
+  const { fetchResidentialInformation } = api.common;
+  
   const isPerson = useMemo(() => primaryType?.toLowerCase() === "person" || false, [primaryType]);
   const {
     isIdle,

@@ -1,5 +1,5 @@
 import { useQuery } from "react-query";
-import { fetchFloodTimeline } from "endpoints";
+import api from "../../../api";
 
 const sortByDate = (a, b) => {
   a = a.period.toString().split("/");
@@ -8,6 +8,8 @@ const sortByDate = (a, b) => {
 };
 
 const useFloodTimeline = (areaCode) => {
+  const { fetchFloodTimeline } = api.floodWatchAreas;
+
   return useQuery({
     queryKey: ["floodTimeline", areaCode],
     queryFn: () => fetchFloodTimeline(areaCode),

@@ -2,7 +2,7 @@ import { rest } from "msw";
 import { waitFor, renderHook } from "@testing-library/react";
 
 import { ElementsContext } from "context";
-import { createParalogEndpoint } from "endpoints";
+import { createParalogEndpoint } from "../../../../api/utils";
 import { createQueryClientWrapper } from "test-utils";
 import { server } from "mocks";
 
@@ -34,9 +34,12 @@ describe("useFloodAreaPolygons hook", () => {
 
   test("returns empty array when flood area are not selected", async () => {
     server.use(
-      rest.get(createParalogEndpoint("flood-watch-areas/polygon"), (req, res, ctx) => {
-        return res.once(ctx.status(200), ctx.json({}));
-      })
+      rest.get(
+        createParalogEndpoint("flood-watch-areas/polygon"),
+        (req, res, ctx) => {
+          return res.once(ctx.status(200), ctx.json({}));
+        }
+      )
     );
     const { result } = renderHook(
       () =>
@@ -52,11 +55,16 @@ describe("useFloodAreaPolygons hook", () => {
 
   test("calls onError when an error occurs", async () => {
     const mockErrorNotificationHandler = jest.fn();
-    const { result } = renderHook(() => useFloodAreaPolygons(["http://invalid.polygon.uri"]), {
-      wrapper: createWrapper(mockErrorNotificationHandler),
-    });
+    const { result } = renderHook(
+      () => useFloodAreaPolygons(["http://invalid.polygon.uri"]),
+      {
+        wrapper: createWrapper(mockErrorNotificationHandler),
+      }
+    );
 
-    await waitFor(() => expect(mockErrorNotificationHandler).toHaveBeenCalledTimes(1));
+    await waitFor(() =>
+      expect(mockErrorNotificationHandler).toHaveBeenCalledTimes(1)
+    );
     expect(mockErrorNotificationHandler).toHaveBeenCalledWith(
       "Polygon http://invalid.polygon.uri is not found"
     );

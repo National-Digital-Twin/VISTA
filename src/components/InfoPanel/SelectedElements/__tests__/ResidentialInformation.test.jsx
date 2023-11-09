@@ -3,7 +3,7 @@ import { screen, waitForElementToBeRemoved, within } from "@testing-library/reac
 
 import { renderWithQueryClient } from "test-utils";
 import { server } from "mocks";
-import { createParalogEndpoint } from "endpoints";
+import { createParalogEndpoint } from "../../../../api/utils";
 import { V013_RESIDENCES } from "mocks/resolvers/person-residences";
 
 import ResidentialInformation from "../ResidentialInformation";

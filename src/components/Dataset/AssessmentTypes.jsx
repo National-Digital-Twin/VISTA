@@ -1,14 +1,14 @@
+import { useEffect } from "react";
 import { capitalize, isEmpty, lowerCase } from "lodash";
 import classNames from "classnames";
 import React, { useMemo, useState } from "react";
 import PropTypes from "prop-types";
 import { useQueries, useQuery } from "react-query";
 
-import { Modal } from "lib";
 import { getURIFragment } from "utils";
+import api from "../../api"
 
 import GroupedTypes from "./GroupedTypes";
-import { fetchAssetTypes, fetchTypeSuperclass } from "endpoints";
 import { TeliTextField } from "@telicent-io/ds";
 
 const AssessmentTypes = ({ assessment }) => {
@@ -17,14 +17,22 @@ const AssessmentTypes = ({ assessment }) => {
   const [selectedTypes, setSelectedTypes] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
 
+  const [fetchTypes, setFetchTypes] = useState(true);
+
   const {
     isLoading: isTypesLoading,
     isError,
     error,
     data: types,
-  } = useQuery(["asset-types", assessment], () => fetchAssetTypes(assessment), {
-    enabled: !!assessment,
+  } = useQuery(["asset-types", assessment], () => api.assessments.fetchAssetTypes(assessment), {
+    enabled: fetchTypes,
   });
+
+  useEffect(() => {
+    if (fetchTypes) {
+      setFetchTypes(false);
+    }
+  }, [fetchTypes]);
 
   const typeSuperClassQueries = useQueries(
     types?.map((type) => {
@@ -32,7 +40,7 @@ const AssessmentTypes = ({ assessment }) => {
       return {
         queryKey: ["type-super-class", typeUri],
         queryFn: async () => {
-          const superClass = await fetchTypeSuperclass(typeUri);
+          const superClass = await api.common.fetchTypeSuperclass(typeUri);
           return {
             ...type,
             superClass: superClass[typeUri]?.superClass[0] ?? "other",
@@ -125,9 +133,6 @@ const AssessmentTypes = ({ assessment }) => {
           <p className="text-center">No results found</p>
         )}  
       </div>
-      <Modal appElement="root" isOpen={isGeneratingData} className="py-2 px-6 rounded-lg">
-        <p>Loading data</p>
-      </Modal>
     </>
   );
 };

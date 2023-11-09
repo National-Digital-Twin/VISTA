@@ -1,16 +1,22 @@
 import { useQueries, useQuery } from "react-query";
-import { fetchAssetInfo, fetchDependents, fetchIconStyles } from "endpoints";
+
+import api from "../api";
 
 const useDependents = (isAsset, isDependency, assetUri, dependent) => {
+  const { fetchDependents } = api.assets;
+
   const {
     isLoading: isAssetDependentsLoading,
     isError,
     error,
     data: assetDependents,
-  } = useQuery(["asset-dependents", assetUri], () => fetchDependents(assetUri), {
-    enabled: isAsset,
-  });
-
+  } = useQuery(
+    ["asset-dependents", assetUri],
+    () => fetchDependents(assetUri),
+    {
+      enabled: isAsset,
+    }
+  );
 
   const dependetDetailQueries = useQueries([
     ...(assetDependents || []).map((dependent) => {
@@ -43,7 +49,8 @@ const useDependents = (isAsset, isDependency, assetUri, dependent) => {
   ]);
 
   const isLoading =
-    isAssetDependentsLoading || dependetDetailQueries.some((query) => query.isLoading);
+    isAssetDependentsLoading ||
+    dependetDetailQueries.some((query) => query.isLoading);
   const data = dependetDetailQueries
     .filter((query) => !query.isIdle && !query.isLoading)
     .map((query) => {
@@ -57,6 +64,8 @@ const useDependents = (isAsset, isDependency, assetUri, dependent) => {
 export default useDependents;
 
 const getDependentDetails = async (assetUri, assetType, connectionStrength) => {
+  const { fetchAssetInfo, fetchIconStyles } = api.assets;
+
   const assetInfo = await fetchAssetInfo(assetUri);
   const iconStyle = await fetchIconStyles(assetType);
   return {

@@ -1,7 +1,9 @@
 import { useQueries, useQuery } from "react-query";
-import { fetchAssetInfo, fetchIconStyles, fetchProviders } from "endpoints";
+import api from "../api";
 
 const useProviders = (isAsset, isDependency, assetUri, provider) => {
+  const { fetchProviders } = api.assets;
+
   const {
     isLoading: isAssetProvidersLoading,
     isError,
@@ -42,7 +44,8 @@ const useProviders = (isAsset, isDependency, assetUri, provider) => {
   ]);
 
   const isLoading =
-    isAssetProvidersLoading || providerDetailQueries.some((query) => query.isLoading);
+    isAssetProvidersLoading ||
+    providerDetailQueries.some((query) => query.isLoading);
   const data = providerDetailQueries
     .filter((query) => !query.isIdle && !query.isLoading)
     .map((query) => {
@@ -56,8 +59,11 @@ const useProviders = (isAsset, isDependency, assetUri, provider) => {
 export default useProviders;
 
 const getProviderDetails = async (assetUri, typeUri, connectionStrength) => {
+  const { fetchAssetInfo, fetchIconStyles } = api.assets;
+
   const assetInfo = await fetchAssetInfo(assetUri);
   const iconStyle = await fetchIconStyles(typeUri);
+
   return {
     ...assetInfo,
     connectionStrength,

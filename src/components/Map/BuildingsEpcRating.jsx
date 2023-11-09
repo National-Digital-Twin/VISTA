@@ -33,13 +33,18 @@ const BuildingsEpcRating = ({ map, query, showBuildings }) => {
   const handleOnStationClick = (feature) => setSelectedBuilding(feature);
   const handleOnClosePopup = () => setSelectedBuilding(undefined);
 
-  if (isLoading)
+  if (isLoading) {
     return (
       <Modal appElement="root" isOpen={isLoading} className="py-2 px-6 rounded-lg">
         <p>Loading data</p>
       </Modal>
     );
-  if (!clusters || !showBuildings) return null;
+  }
+
+  if (!clusters || !showBuildings) {
+    return null;
+  }
+
   return (
     <Source id="buildings-epc-rating" type={GEOJSON} data={{ type: FEATURE_COLLECTION, features }}>
       <BuildingIcons clusters={clusters} features={features} onStationClick={handleOnStationClick} />

@@ -2,11 +2,13 @@ import { useContext, useMemo } from "react";
 import { useQueries } from "react-query";
 
 import { ElementsContext } from "context";
-import { fetchFloodAreaPolygon } from "endpoints";
+import api from "../../../api";
 
 const useFloodAreaPolygons = (selectedFloodAreas) => {
   const { updateErrorNotifications } = useContext(ElementsContext);
   const getFeatures = (data) => data.features;
+
+  const { fetchFloodAreaPolygon } = api.floodWatchAreas;
 
   const queries = useQueries(
     selectedFloodAreas.map((polygonUri) => {
@@ -21,8 +23,14 @@ const useFloodAreaPolygons = (selectedFloodAreas) => {
     })
   );
 
-  const isLoading = useMemo(() => queries.some((query) => query.isLoading), [queries]);
-  const isSuccess = useMemo(() => queries.some((query) => query.isSuccess), [queries]);
+  const isLoading = useMemo(
+    () => queries.some((query) => query.isLoading),
+    [queries]
+  );
+  const isSuccess = useMemo(
+    () => queries.some((query) => query.isSuccess),
+    [queries]
+  );
   const polygonFeatures = useMemo(
     () => queries.filter((query) => query.data).flatMap((query) => query.data),
     [queries]
