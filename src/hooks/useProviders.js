@@ -59,7 +59,8 @@ const useProviders = (isAsset, isDependency, assetUri, provider) => {
 export default useProviders;
 
 const getProviderDetails = async (assetUri, typeUri, connectionStrength) => {
-  const { fetchAssetInfo, fetchIconStyles } = api.assets;
+  const { fetchAssetInfo } = api.assets;
+  const { fetchIconStyles } = api.common;   
 
   const assetInfo = await fetchAssetInfo(assetUri);
   const iconStyle = await fetchIconStyles(typeUri);

@@ -18,7 +18,7 @@ class API {
     return fetchWithMiddleware(url, options);
   }
 
-  static getInstance() {
+  static getInstance() {      
     if (!API.instance) {
       API.instance = new API();
     }

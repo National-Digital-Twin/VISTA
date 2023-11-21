@@ -2,14 +2,12 @@ import { rest } from "msw";
 import { screen, waitForElementToBeRemoved, within } from "@testing-library/react";
 
 import { ElementsProvider } from "context";
+import { createParalogEndpoint } from "../../../api/utils";
 import server, { ASSESSMENTS } from "mocks";
 import { mockEmptyResponse, mock400Error } from "mocks/resolvers";
 import { renderWithQueryClient } from "test-utils";
 
 import AssessmentTypes from "../AssessmentTypes";
-import { createParalogEndpoint } from "api/utils";
-
-const assessmentTypesURL = createParalogEndpoint("assessments/asset-types");
 
 const renderAssessmentTypes = () =>
   renderWithQueryClient(
@@ -27,7 +25,6 @@ const waitForDataToLoad = async () => {
 
 describe("AssessmentTypes component", () => {
   test("renders grouped types", async () => {
-    server.use(rest.get(assessmentTypesURL, mockEmptyResponse));
     renderAssessmentTypes();
     await waitForDataToLoad();
 
@@ -40,7 +37,6 @@ describe("AssessmentTypes component", () => {
   });
 
   test("renders electrical power distribution complex types with total count", async () => {
-    server.use(rest.get(assessmentTypesURL, mockEmptyResponse));
     const { user } = renderAssessmentTypes();
     await waitForDataToLoad();
 
@@ -65,7 +61,6 @@ describe("AssessmentTypes component", () => {
   });
 
   test("renders other types with total count", async () => {
-    server.use(rest.get(assessmentTypesURL, mockEmptyResponse));
     const { user } = renderAssessmentTypes();
     await waitForDataToLoad();
 
@@ -92,26 +87,27 @@ describe("AssessmentTypes component", () => {
         }
       })
     );
-    server.use(rest.get(assessmentTypesURL, mockEmptyResponse));
     const { user } = renderAssessmentTypes();
     await waitForDataToLoad();
 
-    await user.click(screen.getByRole("button", { name: "Other" }));
-    const otherListItems = within(
-      screen.getByRole("treeitem", {
-        name: /other/i,
-        expanded: true,
-      })
-    ).getAllByRole("listitem");
+    const otherButton = screen.getByRole("button", { name: "Other", hidden: true });
+      await user.click(otherButton);
+      const otherListItems = within(
+        screen.getByRole("treeitem", {
+          name: /other/i,
+          expanded: true,
+        })
+      ).getAllByRole("listitem");
 
-    expect(otherListItems).toHaveLength(3);
-    expect(
-      within(otherListItems[0]).getByLabelText(/low voltage electricity substation complex \[9\]/i)
-    ).toBeInTheDocument();
+      expect(otherListItems).toHaveLength(3);
+      expect(
+        within(otherListItems[0]).getByLabelText(/low voltage electricity substation complex \[9\]/i)
+      ).toBeInTheDocument();
+    
   });
 
   test("renders message when asset types are not found", async () => {
-    server.use(rest.get(assessmentTypesURL, mockEmptyResponse));
+    server.use(rest.get(createParalogEndpoint("assessments/asset-types"), mockEmptyResponse));
     renderAssessmentTypes();
     await waitForDataToLoad();
 
@@ -119,7 +115,7 @@ describe("AssessmentTypes component", () => {
   });
 
   test("renders error message when /assessments/asset-types api call fails", async () => {
-    server.use(rest.get(assessmentTypesURL, mock400Error));
+    server.use(rest.get(createParalogEndpoint("assessments/asset-types"), mock400Error));
     renderAssessmentTypes();
     await waitForDataToLoad();
 

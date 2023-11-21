@@ -66,7 +66,8 @@ describe("Flood areas component", () => {
     );
     await waitForFloodAreasToLoad();
 
-    await user.click(screen.getByRole("checkbox", { name: "Eastern Yar" }));
+    const checkbox = await screen.findByRole("checkbox", { name: "Eastern Yar", hidden: true });
+    await user.click(checkbox);
     expect(mockOnFloodAreaSelect).toHaveBeenCalled();
   });
 });

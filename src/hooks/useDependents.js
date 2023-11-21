@@ -64,7 +64,8 @@ const useDependents = (isAsset, isDependency, assetUri, dependent) => {
 export default useDependents;
 
 const getDependentDetails = async (assetUri, assetType, connectionStrength) => {
-  const { fetchAssetInfo, fetchIconStyles } = api.assets;
+  const { fetchAssetInfo } = api.assets;
+  const { fetchIconStyles } = api.common;
 
   const assetInfo = await fetchAssetInfo(assetUri);
   const iconStyle = await fetchIconStyles(assetType);

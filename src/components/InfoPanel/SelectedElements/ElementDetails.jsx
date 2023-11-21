@@ -16,7 +16,7 @@ import api from "../../../api";
 const ElementDetails = ({ element, expand, onViewDetails }) => {
   const elemIsAsset = isAsset(element);
   const elemIsDependency = isDependency(element);
-  const { fetchAssetInfo } = api.common;
+  const { fetchAssetInfo } = api.assets;
 
   const assetInfo = useQuery(["asset-info", element?.uri], () => fetchAssetInfo(element?.uri), {
     enabled: elemIsAsset,

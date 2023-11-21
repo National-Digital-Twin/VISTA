@@ -13,6 +13,9 @@ const measureFetch = (fetchFunction) => {
     const duration = end - start;
     const size = response.headers.get("content-length");
     const url = args[0];
+
+    const data = await response.json();
+
     if (config.logLevel === LOG_LEVEL.DEBUG) {
       console.log(
         `Fetch to ${url} took ${duration} milliseconds and returned ${size} bytes of data`
