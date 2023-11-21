@@ -2,7 +2,7 @@ import { rest } from "msw";
 import { screen, waitForElementToBeRemoved, within } from "@testing-library/react";
 
 import { ElementsProvider } from "context";
-import { createParalogEndpoint } from "../../../api/utils";
+import { createParalogEndpoint } from "api/combined";
 import server, { ASSESSMENTS } from "mocks";
 import { mockEmptyResponse, mock400Error } from "mocks/resolvers";
 import { renderWithQueryClient } from "test-utils";
@@ -90,20 +90,18 @@ describe("AssessmentTypes component", () => {
     const { user } = renderAssessmentTypes();
     await waitForDataToLoad();
 
-    const otherButton = screen.getByRole("button", { name: "Other", hidden: true });
-      await user.click(otherButton);
-      const otherListItems = within(
-        screen.getByRole("treeitem", {
-          name: /other/i,
-          expanded: true,
-        })
-      ).getAllByRole("listitem");
+    await user.click(screen.getByRole("button", { name: "Other" }));
+    const otherListItems = within(
+      screen.getByRole("treeitem", {
+        name: /other/i,
+        expanded: true,
+      })
+    ).getAllByRole("listitem");
 
-      expect(otherListItems).toHaveLength(3);
-      expect(
-        within(otherListItems[0]).getByLabelText(/low voltage electricity substation complex \[9\]/i)
-      ).toBeInTheDocument();
-    
+    expect(otherListItems).toHaveLength(3);
+    expect(
+      within(otherListItems[0]).getByLabelText(/low voltage electricity substation complex \[9\]/i)
+    ).toBeInTheDocument();
   });
 
   test("renders message when asset types are not found", async () => {

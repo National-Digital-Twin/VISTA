@@ -4,13 +4,11 @@ import { useQuery } from "react-query";
 import PropTypes from "prop-types";
 
 import { DetailsSection } from "lib";
-import api from "../../../api";
+import { fetchResidents } from "api/combined";
 
 const TYPES = ["residential building"];
 
 const Residents = ({ isAsset, assetUri, primaryType }) => {
-  const { fetchResidents } = api.assets;
-
   const hasResidents = TYPES.some((type) => type === lowerCase(primaryType));
   const {
     isIdle,

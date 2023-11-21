@@ -1,14 +1,15 @@
-import { useEffect } from "react";
 import { capitalize, isEmpty, lowerCase } from "lodash";
+import { useEffect } from "react";
 import classNames from "classnames";
 import React, { useMemo, useState } from "react";
 import PropTypes from "prop-types";
 import { useQueries, useQuery } from "react-query";
 
+import { Modal } from "lib";
 import { getURIFragment } from "utils";
-import api from "../../api"
 
 import GroupedTypes from "./GroupedTypes";
+import { fetchAssetTypes, fetchTypeSuperclass } from "api/combined";
 import { TeliTextField } from "@telicent-io/ds";
 
 const AssessmentTypes = ({ assessment }) => {
@@ -17,14 +18,14 @@ const AssessmentTypes = ({ assessment }) => {
   const [selectedTypes, setSelectedTypes] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const [fetchTypes, setFetchTypes] = useState(true);
+  const [fetchTypes, setFetchTypes] = useState(true); 
 
   const {
     isLoading: isTypesLoading,
     isError,
     error,
     data: types,
-  } = useQuery(["asset-types", assessment], () => api.assessments.fetchAssetTypes(assessment), {
+  } = useQuery(["asset-types", assessment], () => fetchAssetTypes(assessment), {
     enabled: fetchTypes,
   });
 
@@ -40,7 +41,7 @@ const AssessmentTypes = ({ assessment }) => {
       return {
         queryKey: ["type-super-class", typeUri],
         queryFn: async () => {
-          const superClass = await api.common.fetchTypeSuperclass(typeUri);
+          const superClass = await fetchTypeSuperclass(typeUri);
           return {
             ...type,
             superClass: superClass[typeUri]?.superClass[0] ?? "other",
@@ -79,7 +80,7 @@ const AssessmentTypes = ({ assessment }) => {
   };
 
   const getFilteredTypesInGroup = (selectedGroup, query) => {
-    return getTypesInGroup(selectedGroup).filter((type) =>
+    return getTypesInGroup(selectedGroup).filter((type) =>  
       type.uri.toLowerCase().includes(query.toLowerCase())  
     );
   };
@@ -90,10 +91,20 @@ const AssessmentTypes = ({ assessment }) => {
 
   const isFiltered = searchQuery.length > 0;
 
-  const filteredClassGroups = !isFiltered ? superClassGroups :
+  const formattedQuery = searchQuery.toLowerCase().replace(' ', '');
+
+  const filteredClassGroups = isFiltered ?
   superClassGroups.filter((group) =>
-    group.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+    getFilteredTypesInGroup(group, formattedQuery).length >= 1 || group.toLowerCase().includes(formattedQuery)
+  ) : superClassGroups;
+
+  const getTypesInGroupWithFilter = (ontologyGroup) => {
+    const typesInGroup = getTypesInGroup(ontologyGroup);
+    if (ontologyGroup.toLowerCase().includes(formattedQuery)) {
+      return typesInGroup;
+    }
+    return typesInGroup.filter((type) => type.uri.toLowerCase().includes(formattedQuery));
+  };
 
   return (
     <>
@@ -121,7 +132,7 @@ const AssessmentTypes = ({ assessment }) => {
               <GroupedTypes
                 expand={expand}
                 assessment={assessment}
-                types={getFilteredTypesInGroup(ontologyGroup, searchQuery)}
+                types={getTypesInGroupWithFilter(ontologyGroup)}
                 selectedTypes={selectedTypes}
                 setSelectedTypes={setSelectedTypes}
                 setIsGeneratingData={setIsGeneratingData}

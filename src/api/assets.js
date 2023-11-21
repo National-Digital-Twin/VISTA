@@ -3,7 +3,7 @@ import API from "./index";
 
 export const fetchAssetInfo = async (assetUri) => {
   const queryParams = new URLSearchParams({ assetUri }).toString();
-  const response = await API.fetchWrapper(
+  const response = await fetch(
     createParalogEndpoint(`asset?${queryParams}`),
     fetchOptions
   );
@@ -15,7 +15,7 @@ export const fetchAssetInfo = async (assetUri) => {
 
 export const fetchAssetParts = async (assetUri) => {
   const queryParams = new URLSearchParams({ assetUri }).toString();
-  const response = await API.fetchWrapper(
+  const response = await fetch(
     createParalogEndpoint(`asset/parts?${queryParams}`),
     fetchOptions
   );
@@ -27,7 +27,7 @@ export const fetchAssetParts = async (assetUri) => {
 
 export const fetchDependents = async (assetUri) => {
   const queryParams = new URLSearchParams({ assetUri }).toString();
-  const response = await API.fetchWrapper(
+  const response = await fetch(
     createParalogEndpoint(`asset/dependents?${queryParams}`),
     fetchOptions
   );
@@ -39,7 +39,7 @@ export const fetchDependents = async (assetUri) => {
 
 export const fetchProviders = async (assetUri) => {
   const queryParams = new URLSearchParams({ assetUri }).toString();
-  const response = await API.fetchWrapper(
+  const response = await fetch(
     createParalogEndpoint(`asset/providers?${queryParams}`),
     fetchOptions
   );
@@ -51,7 +51,7 @@ export const fetchProviders = async (assetUri) => {
 
 export const fetchResidents = async (assetUri) => {
   const queryParams = new URLSearchParams({ assetUri }).toString();
-  const response = await API.fetchWrapper(
+  const response = await fetch(
     createParalogEndpoint(`asset/residents?${queryParams}`),
     fetchOptions
   );

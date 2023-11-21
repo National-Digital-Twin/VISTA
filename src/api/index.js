@@ -2,7 +2,6 @@ import * as assessments from "./assessments";
 import * as assets from "./assets";
 import * as floodWatchAreas from "./flood-watch-areas";
 import * as common from "./common";
-import { measureFetch } from "./utils";
 
 class API {
   constructor() {
@@ -12,11 +11,6 @@ class API {
     this.common = common;
   }
 
-  fetchWrapper(url, options) {
-    const fetchFunction = () => fetch(url, options);
-    const fetchWithMiddleware = measureFetch(fetchFunction);
-    return fetchWithMiddleware(url, options);
-  }
 
   static getInstance() {      
     if (!API.instance) {

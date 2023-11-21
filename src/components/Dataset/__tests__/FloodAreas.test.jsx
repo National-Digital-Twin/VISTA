@@ -2,7 +2,7 @@ import { screen, waitForElementToBeRemoved, within } from "@testing-library/reac
 import { rest } from "msw";
 
 import { ElementsContext, ElementsProvider } from "context";
-import { createParalogEndpoint } from "../../../api/utils";
+import { createParalogEndpoint } from "api/combined";
 import { server } from "mocks";
 import { renderWithQueryClient } from "test-utils";
 
@@ -66,8 +66,7 @@ describe("Flood areas component", () => {
     );
     await waitForFloodAreasToLoad();
 
-    const checkbox = await screen.findByRole("checkbox", { name: "Eastern Yar", hidden: true });
-    await user.click(checkbox);
+    await user.click(screen.getByRole("checkbox", { name: "Eastern Yar" }));
     expect(mockOnFloodAreaSelect).toHaveBeenCalled();
   });
 });

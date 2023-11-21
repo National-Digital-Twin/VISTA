@@ -4,6 +4,7 @@ import classNames from "classnames";
 import { useQuery } from "react-query";
 import PropTypes from "prop-types";
 
+import { fetchAssetInfo } from "api/combined";
 import { getURIFragment, isAsset, isDependency } from "utils";
 
 import Dependents from "./Dependents";
@@ -11,12 +12,9 @@ import Providers from "./Providers";
 import ResidentialInformation from "./ResidentialInformation";
 import Residents from "./Residents";
 
-import api from "../../../api";
-
 const ElementDetails = ({ element, expand, onViewDetails }) => {
   const elemIsAsset = isAsset(element);
   const elemIsDependency = isDependency(element);
-  const { fetchAssetInfo } = api.assets;
 
   const assetInfo = useQuery(["asset-info", element?.uri], () => fetchAssetInfo(element?.uri), {
     enabled: elemIsAsset,

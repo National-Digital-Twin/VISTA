@@ -21,7 +21,6 @@ const config = {
     ontology: env.ONTOLOGY_API_URL,
   },
   beta: env.BETA === "true",
-  logLevel: env.LOG_LEVEL,
 };
 
 export default config;

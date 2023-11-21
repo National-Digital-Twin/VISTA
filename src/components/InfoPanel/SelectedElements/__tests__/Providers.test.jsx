@@ -1,9 +1,9 @@
 import React from "react";
-import { screen, waitForElementToBeRemoved, within } from "@testing-library/react";
+import { screen, waitForElementToBeRemoved, within } from "@testing-library/dom";
 import { rest } from "msw";
 
 import { ElementsContext } from "context";
-import { createParalogEndpoint } from "../../../../api/utils";
+import { createParalogEndpoint } from "api/combined";
 import {
   HIGH_VOLTAGE_ELECTRICITY_SUBSTATION_COMPLEX_ASSETS,
   OIL_FIRED_POWER_GENERATION_COMPLEX_ASSETS,
@@ -44,7 +44,7 @@ const waitForProvidersToLoad = async () => {
 };
 
 const toggleProviders = async (user) => {
-  await user.click(screen.getByRole("button", { name: /provider asset/i, hidden: true }));
+  await user.click(screen.getByRole("button", { name: /provider assets/i }));
 };
 
 describe("Providers component", () => {
@@ -76,7 +76,7 @@ describe("Providers component", () => {
       backgroundColor: "rgb(163, 163, 163)",
       color: "rgb(51, 51, 51)",
     });
-    expect(within(providers[0]).getByTestId("asset-icon").querySelector('svg')).toHaveClass(
+    expect(within(providers[0]).getByTestId("asset-icon").firstElementChild).toHaveClass(
       "fa-solid fa-utility-pole-double"
     );
 
@@ -88,7 +88,7 @@ describe("Providers component", () => {
       backgroundColor: "rgb(163, 163, 163)",
       color: "rgb(51, 51, 51)",
     });
-    expect(within(providers[1]).getByTestId("asset-icon").querySelector('svg')).toHaveClass(
+    expect(within(providers[1]).getByTestId("asset-icon").firstElementChild).toHaveClass(
       "fa-regular fa-bolt-lightning"
     );
   });
@@ -148,9 +148,17 @@ describe("Providers component", () => {
     );
 
     const { user } = await renderE003ProviderDetails(["E001", "E003"]);
-
     await waitForProvidersToLoad();
 
-    expect(document.body.textContent).toContain("Unexpected end of JSON input");
+    await toggleProviders(user);
+    const providers = screen.getAllByRole("listitem");
+    expect(providers).toHaveLength(2);
+
+    expect(
+      within(providers[1]).getByText(
+        "Failed to retrieve asset information for https://www.iow.gov.uk/DigitalTwin#E001"
+      )
+    ).toBeInTheDocument();
+    expect(providers).toMatchSnapshot("providers with error(s)");
   });
 });

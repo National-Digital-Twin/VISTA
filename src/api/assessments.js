@@ -1,8 +1,7 @@
 import { createParalogEndpoint, fetchOptions } from "./utils";
-import API from "./index";
 
 export const fetchAssessments = async () => {
-  const response = await API.fetchWrapper(
+  const response = await fetch(
     createParalogEndpoint("assessments"),
     fetchOptions
   );
@@ -16,7 +15,7 @@ export const fetchAssessments = async () => {
 
 export const fetchAssetTypes = async (assessment) => {
   const queryParams = new URLSearchParams({ assessment }).toString();
-  const response = await API.fetchWrapper(
+  const response = await fetch(
     createParalogEndpoint(`assessments/asset-types?${queryParams}`),
     fetchOptions
   );
@@ -37,7 +36,7 @@ export const fetchAssessmentAssets = async (assessment, types) => {
     ...typeParams,
   ]).toString();
 
-  const response = await API.fetchWrapper(
+  const response = await fetch(
     createParalogEndpoint(`assessments/assets?${queryParams}`),
     fetchOptions
   );
@@ -58,7 +57,7 @@ export const fetchAssessmentDependencies = async (assessment, types) => {
     ...typeParams,
   ]).toString();
 
-  const response = await API.fetchWrapper(
+  const response = await fetch(
     createParalogEndpoint(`assessments/dependencies?${queryParams}`),
     fetchOptions
   );
