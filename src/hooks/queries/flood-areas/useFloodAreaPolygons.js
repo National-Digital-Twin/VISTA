@@ -2,7 +2,7 @@ import { useContext, useMemo } from "react";
 import { useQueries } from "react-query";
 
 import { ElementsContext } from "context";
-import { fetchFloodAreaPolygon } from "endpoints";
+import { fetchFloodAreaPolygon } from "api/combined";
 
 const useFloodAreaPolygons = (selectedFloodAreas) => {
   const { updateErrorNotifications } = useContext(ElementsContext);

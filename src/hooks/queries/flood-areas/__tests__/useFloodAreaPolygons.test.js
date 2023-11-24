@@ -2,7 +2,7 @@ import { rest } from "msw";
 import { waitFor, renderHook } from "@testing-library/react";
 
 import { ElementsContext } from "context";
-import { createParalogEndpoint } from "endpoints";
+import { createParalogEndpoint } from "api/combined";
 import { createQueryClientWrapper } from "test-utils";
 import { server } from "mocks";
 

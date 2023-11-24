@@ -1,6 +1,6 @@
 import { rest } from "msw";
 
-import { createOntologyEndpoint, createParalogEndpoint } from "endpoints";
+import { createOntologyEndpoint, createParalogEndpoint } from "api/combined";
 import {
   ASSESSMENTS_ASSETS_ENDPOINT,
   ASSESSMENTS_DEPENDENCIES_ENDPOINT,

@@ -2,7 +2,7 @@ import { useContext, useState } from "react";
 import { useQuery } from "react-query";
 
 import { ElementsContext } from "context";
-import { fetchFloodMonitoringStations } from "endpoints";
+import { fetchFloodMonitoringStations } from "api/combined";
 
 const useFloodMonitoringStations = () => {
   const { updateErrorNotifications } = useContext(ElementsContext);

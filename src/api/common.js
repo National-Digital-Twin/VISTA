@@ -1,21 +1,15 @@
-import config from "config/app-config";
-
-export const createParalogEndpoint = (path) => `${config.api.url}/${path}`;
-export const createOntologyEndpoint = (path) => `${config.api.ontology}/${path}`;
-
-export const fetchOptions = {
-  headers: {
-    "Content-Type": "application/json",
-  },
-};
-
-export * from "./assessments";
-export * from "./assets";
-export * from "./flood-watch-areas";
+import {
+  createParalogEndpoint,
+  createOntologyEndpoint,
+  fetchOptions,
+} from "./utils";
 
 export const fetchTypeSuperclass = async (typeUri) => {
   const queryParams = new URLSearchParams({ classUri: typeUri }).toString();
-  const response = await fetch(createParalogEndpoint(`ontology/class?${queryParams}`), fetchOptions);
+  const response = await fetch(
+    createParalogEndpoint(`ontology/class?${queryParams}`),
+    fetchOptions
+  );
   if (!response.ok) {
     return {};
   }
@@ -24,22 +18,30 @@ export const fetchTypeSuperclass = async (typeUri) => {
 
 export const fetchResidentialInformation = async (personUri) => {
   const queryParams = new URLSearchParams({ personUri }).toString();
-  const response = await fetch(createParalogEndpoint(`person/residences?${queryParams}`), fetchOptions);
+  const response = await fetch(
+    createParalogEndpoint(`person/residences?${queryParams}`),
+    fetchOptions
+  );
   if (!response.ok) {
-    throw new Error("An error occured while retrieving residential information");
+    throw new Error(
+      "An error occured while retrieving residential information"
+    );
   }
   return response.json();
 };
 
 export const fetchIconStyles = async (typeUri) => {
   const queryParam = new URLSearchParams({ uri: typeUri }).toString();
-  const response = await fetch(createOntologyEndpoint(`styles/class?${queryParam}`), fetchOptions);
+  const response = await fetch(
+    createOntologyEndpoint(`styles/class?${queryParam}`),
+    fetchOptions
+  );
 
   if (!response.ok) {
     return undefined;
   }
   const style = await response.json();
-  const keys = Object.keys(style)
+  const keys = Object.keys(style);
   return keys.length > 0 ? style[keys[0]] : undefined;
 };
 
@@ -47,10 +49,15 @@ export const fetchFloodTimeline = async (floodArea) => {
   const queryParam = new URLSearchParams({
     parent_uri: `http://environment.data.gov.uk/flood-monitoring/id/floodAreas/${floodArea}`,
   }).toString();
-  const response = await fetch(createParalogEndpoint(`states?${queryParam}`), fetchOptions);
+  const response = await fetch(
+    createParalogEndpoint(`states?${queryParam}`),
+    fetchOptions
+  );
 
   if (!response.ok) {
-    throw new Error(`An error occured while retrieving flood timeline for Flood Area ${floodArea}`);
+    throw new Error(
+      `An error occured while retrieving flood timeline for Flood Area ${floodArea}`
+    );
   }
 
   return response.json();
@@ -62,7 +69,9 @@ export const fetchFloodMonitoringStations = async () => {
   );
 
   if (!response.ok) {
-    throw new Error("An error occured while retrieving flood monitoring stations for the Isle of Wight");
+    throw new Error(
+      "An error occured while retrieving flood monitoring stations for the Isle of Wight"
+    );
   }
   return response.json();
 };
@@ -71,7 +80,9 @@ export const fetchBuildingsEpcRating = async () => {
   const response = await fetch(createParalogEndpoint("buildings"));
 
   if (!response.ok) {
-    throw new Error("An error occured while retrieving building epc ratings for the Isle of Wight");
+    throw new Error(
+      "An error occured while retrieving building epc ratings for the Isle of Wight"
+    );
   }
   return response.json();
 };

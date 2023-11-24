@@ -3,7 +3,7 @@ import { useQuery } from "react-query";
 import PropTypes from "prop-types";
 import React, { useMemo, useState } from "react";
 
-import { fetchResidentialInformation } from "endpoints";
+import { fetchResidentialInformation } from "api/combined";
 
 const LIMIT = 3;
 

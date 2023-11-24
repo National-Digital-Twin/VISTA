@@ -1,5 +1,5 @@
 import { useQueries, useQuery } from "react-query";
-import { fetchAssetInfo, fetchDependents, fetchIconStyles } from "endpoints";
+import { fetchAssetInfo, fetchDependents, fetchIconStyles } from "api/combined";
 
 const useDependents = (isAsset, isDependency, assetUri, dependent) => {
   const {

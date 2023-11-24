@@ -1,5 +1,5 @@
 import { useQuery } from "react-query";
-import { fetchAllFloodAreas } from "endpoints";
+import { fetchAllFloodAreas } from "api/combined";
 
 const useFloodWatchAreas = () => {
   const { isLoading, isError, error, data } = useQuery("flood-watch-areas", () =>

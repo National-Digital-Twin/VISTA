@@ -3,11 +3,21 @@ import React from "react";
 import PropTypes from "prop-types";
 import { useQuery } from "react-query";
 
-import { fetchAssessments } from "endpoints";
+import { fetchAssessments } from "api/assessments";
 import AssessmentTypes from "./AssessmentTypes";
 
 const Assessments = () => {
-  const { isLoading, isError, data } = useQuery("assessments", fetchAssessments);
+  const [fetch, setFetch] = React.useState(true); 
+
+  const { isLoading, isError, data } = useQuery("assessments", fetchAssessments, {
+    enabled: fetch,
+  });
+
+  React.useEffect(() => {
+    if (fetch) {
+      setFetch(false);
+    }
+  }, [fetch]);  
 
   if (isLoading) return <p>Fetching assessments</p>;
   if (isError)

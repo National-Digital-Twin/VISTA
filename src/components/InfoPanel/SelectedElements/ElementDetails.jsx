@@ -4,7 +4,7 @@ import classNames from "classnames";
 import { useQuery } from "react-query";
 import PropTypes from "prop-types";
 
-import { fetchAssetInfo } from "endpoints";
+import { fetchAssetInfo } from "api/combined";
 import { getURIFragment, isAsset, isDependency } from "utils";
 
 import Dependents from "./Dependents";

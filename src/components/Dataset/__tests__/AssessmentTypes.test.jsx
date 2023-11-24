@@ -2,7 +2,7 @@ import { rest } from "msw";
 import { screen, waitForElementToBeRemoved, within } from "@testing-library/react";
 
 import { ElementsProvider } from "context";
-import { createParalogEndpoint } from "endpoints";
+import { createParalogEndpoint } from "api/combined";
 import server, { ASSESSMENTS } from "mocks";
 import { mockEmptyResponse, mock400Error } from "mocks/resolvers";
 import { renderWithQueryClient } from "test-utils";

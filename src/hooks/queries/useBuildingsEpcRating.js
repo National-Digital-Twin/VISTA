@@ -2,7 +2,7 @@ import { useContext, useState } from "react";
 import { useQuery } from "react-query";
 
 import { ElementsContext } from "context";
-import { fetchBuildingsEpcRating } from "endpoints";
+import { fetchBuildingsEpcRating } from "api/combined";
 import { getURIFragment } from "utils";
 
 const getEPCLetter = (str) => {

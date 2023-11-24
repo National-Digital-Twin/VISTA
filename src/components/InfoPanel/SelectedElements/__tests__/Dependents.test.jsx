@@ -3,7 +3,7 @@ import { screen, waitForElementToBeRemoved, within } from "@testing-library/reac
 import { rest } from "msw";
 
 import { ElementsContext } from "context";
-import { createParalogEndpoint } from "endpoints";
+import { createParalogEndpoint } from "api/combined";
 import {
   HIGH_VOLTAGE_ELECTRICITY_SUBSTATION_COMPLEX_ASSETS,
   OIL_FIRED_POWER_GENERATION_COMPLEX_ASSETS,

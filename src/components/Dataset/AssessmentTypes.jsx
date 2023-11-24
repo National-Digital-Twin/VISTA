@@ -1,4 +1,5 @@
 import { capitalize, isEmpty, lowerCase } from "lodash";
+import { useEffect } from "react";
 import classNames from "classnames";
 import React, { useMemo, useState } from "react";
 import PropTypes from "prop-types";
@@ -8,7 +9,7 @@ import { Modal } from "lib";
 import { getURIFragment } from "utils";
 
 import GroupedTypes from "./GroupedTypes";
-import { fetchAssetTypes, fetchTypeSuperclass } from "endpoints";
+import { fetchAssetTypes, fetchTypeSuperclass } from "api/combined";
 import { TeliTextField } from "@telicent-io/ds";
 
 const AssessmentTypes = ({ assessment }) => {
@@ -17,14 +18,22 @@ const AssessmentTypes = ({ assessment }) => {
   const [selectedTypes, setSelectedTypes] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
 
+  const [fetchTypes, setFetchTypes] = useState(true); 
+
   const {
     isLoading: isTypesLoading,
     isError,
     error,
     data: types,
   } = useQuery(["asset-types", assessment], () => fetchAssetTypes(assessment), {
-    enabled: !!assessment,
+    enabled: fetchTypes,
   });
+
+  useEffect(() => {
+    if (fetchTypes) {
+      setFetchTypes(false);
+    }
+  }, [fetchTypes]);
 
   const typeSuperClassQueries = useQueries(
     types?.map((type) => {
@@ -135,9 +144,6 @@ const AssessmentTypes = ({ assessment }) => {
           <p className="text-center">No results found</p>
         )}  
       </div>
-      <Modal appElement="root" isOpen={isGeneratingData} className="py-2 px-6 rounded-lg">
-        <p>Loading data</p>
-      </Modal>
     </>
   );
 };

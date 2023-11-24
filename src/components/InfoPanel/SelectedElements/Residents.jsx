@@ -4,7 +4,7 @@ import { useQuery } from "react-query";
 import PropTypes from "prop-types";
 
 import { DetailsSection } from "lib";
-import { fetchResidents } from "endpoints";
+import { fetchResidents } from "api/combined";
 
 const TYPES = ["residential building"];
 
