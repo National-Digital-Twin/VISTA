@@ -11,27 +11,9 @@ const ToolbarTestComponent = ({ cyRef }) => {
   return <Toolbar cyRef={cyRef} graphLayout={layout} setGraphLayout={updateLayout} />;
 };
 
-const expandToolbar = async () => {
-  await user.click(screen.getByRole("button", { name: "Toolbar" }));
-};
-
 describe("GraphToolbar component", () => {
-  test("is not expanded by default", () => {
-    render(<ToolbarTestComponent />, { wrapper: CytoscapeProvider });
-    expect(screen.getByRole("button", { name: "Toolbar" })).toBeInTheDocument();
-  });
-
-  test("minimises toolbar", async () => {
-    render(<ToolbarTestComponent />, { wrapper: CytoscapeProvider });
-    await expandToolbar();
-    await user.click(screen.getByRole("button", { name: "minimise toolbar" }));
-
-    expect(screen.getByRole("button", { name: "Toolbar" })).toBeInTheDocument();
-  });
-
   test("renders all layout options", async () => {
     render(<ToolbarTestComponent />, { wrapper: CytoscapeProvider });
-    await expandToolbar();
     const layoutBtn = screen.getByRole("button", { name: /layout/i });
     await user.hover(layoutBtn);
     expect(screen.getByText("Layout")).toBeVisible();
@@ -48,7 +30,6 @@ describe("GraphToolbar component", () => {
 
   test("renders Cola as the default graph layout", async () => {
     render(<ToolbarTestComponent />, { wrapper: CytoscapeProvider });
-    await expandToolbar();
     await user.click(screen.getByRole("button", { name: /layout/i }));
 
     const secondaryMenuItems = within(screen.getByTestId("secondary-menu")).getAllByRole(
@@ -61,15 +42,14 @@ describe("GraphToolbar component", () => {
 
   test("renders updated graph layout", async () => {
     render(<ToolbarTestComponent />, { wrapper: CytoscapeProvider });
-    await expandToolbar();
     await user.click(screen.getByRole("button", { name: /layout/i }));
 
     const secondaryMenuItems = within(screen.getByTestId("secondary-menu")).getAllByRole(
       "listitem"
     );
-    await user.click(within(secondaryMenuItems[1]).getByRole("button", { name: "Circle" }));
+    await user.click(within(secondaryMenuItems[1]).getByRole("button", { name: "Grid" }));
 
-    expect(within(secondaryMenuItems[1]).getByRole("button", { name: "Circle" })).toHaveClass(
+    expect(within(secondaryMenuItems[1]).getByRole("button", { name: "Grid" })).toHaveClass(
       "bg-black-500"
     );
     expect(within(secondaryMenuItems[0]).getByRole("button", { name: "Cola" })).not.toHaveClass(
@@ -81,7 +61,7 @@ describe("GraphToolbar component", () => {
     const mockFit = jest.fn();
     const cy = { current: { fit: mockFit } };
     render(<ToolbarTestComponent cyRef={cy} />, { wrapper: CytoscapeProvider });
-    await expandToolbar();
+
     const fitBtn = screen.getByRole("button", { name: /fit/i });
     await user.hover(fitBtn);
     expect(screen.getByText("Fit")).toBeVisible();
@@ -94,7 +74,7 @@ describe("GraphToolbar component", () => {
     const mockCenter = jest.fn();
     const cy = { current: { center: mockCenter } };
     render(<ToolbarTestComponent cyRef={cy} />, { wrapper: CytoscapeProvider });
-    await expandToolbar();
+
     const centerBtn = screen.getByRole("button", { name: /center/i });
     await user.hover(centerBtn);
     expect(screen.getByText("Center")).toBeVisible();
@@ -112,7 +92,6 @@ describe("GraphToolbar component", () => {
     global.window.URL.revokeObjectURL = mockRevokeObjectURL;
     HTMLAnchorElement.prototype.click = jest.fn();
     render(<ToolbarTestComponent cyRef={cy} />, { wrapper: CytoscapeProvider });
-    await expandToolbar();
 
     const exportBtn = screen.getByRole("button", { name: /export/i });
     await user.hover(exportBtn);

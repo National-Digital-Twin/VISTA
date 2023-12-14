@@ -1,103 +1,50 @@
-import React, { useContext, useEffect, useState } from "react";
-import useFetch from "use-http";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 import classNames from "classnames";
-import { isEmpty, kebabCase } from "lodash";
+import { kebabCase } from "lodash";
 import ReactSwitch from "react-switch";
+import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 
-import { ElementsContext } from "context";
-import { FloatingPanel, VerticalDivider } from "lib";
-import { createData } from "./utils";
+import { FloatingPanel } from "lib";
 import Assessments from "./Assessments";
+import FloodAreas from "components/Dataset/FloodAreas";
+
+import "react-tabs/style/react-tabs.css";
 
 const Dataset = ({ showGrid, toggleView }) => {
-  const { get, response, error } = useFetch();
-  const { updateErrors, filterSelectedElements, reset, updateAssets, updateConnections } =
-    useContext(ElementsContext);
-
-  const [selected, setSelected] = useState([]);
   const [showPanel, setShowPanel] = useState(true);
+  const [selectedTypes, setSelectedTypes] = useState([]);
 
   const togglePanel = () => {
     setShowPanel((show) => !show);
   };
 
-  const handleAssessmentsChange = (event) => {
-    const {
-      target: { value },
-    } = event;
-    setSelected(
-      selected.some((filter) => filter === value)
-        ? selected.filter((filter) => filter !== value)
-        : [...selected, value]
-    );
-  };
-
-  useEffect(() => {
-    if (error) updateErrors("Failed to resolve the data");
-  }, [error, updateErrors]);
-
-  useEffect(() => {
-    if (isEmpty(selected)) {
-      reset();
-      return;
-    }
-
-    const paramsArray = selected.map((item) => ["assessments", item]);
-    const params = new URLSearchParams(paramsArray).toString();
-
-    const getAssets = async () => {
-      const assets = await get(`assessments/assets?${params}`);
-      if (response.ok) return assets;
-    };
-
-    const getConnections = async () => {
-      const connections = await get(`assessments/connections?${params}`);
-      if (response.ok) return connections;
-    };
-
-    const generateData = async () => {
-      const assets = await getAssets();
-      const connections = await getConnections();
-
-      const data = await createData(assets, connections, get, response);
-      updateAssets(data.assets);
-      updateConnections(data.connections);
-      filterSelectedElements(data.assets, data.connections);
-    };
-
-    generateData();
-  }, [get, response, filterSelectedElements, reset, selected, updateAssets, updateConnections]);
-
   return (
     <FloatingPanel
-      collapsedComponent={<DBButton onToggle={togglePanel} />}
-      show={showPanel}
       position="top-0"
-      className="flex flex-col gap-y-2 p-2"
-      style={{ maxWidth: "13rem" }}
+      className={classNames({ "flex flex-col gap-y-2 p-2 overflow-y-auto": showPanel })}
+      style={{ maxWidth: "20rem", maxHeight: "calc(100% - 50px)" }}
     >
-      <div className="inline-flex gap-x-2 border-b border-black-500 pb-1">
-        <DBButton active onToggle={togglePanel} />
-        <VerticalDivider height="h-5" />
-        <h2 className="font-medium">Dataset</h2>
-        <label className="flex items-center gap-x-1 text-xs w-fit ml-auto">
-          Grid
-          <ReactSwitch
-            onChange={toggleView}
-            checked={showGrid}
-            offColor="#636363"
-            onColor="#f5f5f5"
-            onHandleColor="#141414"
-            handleDiameter={10}
-            height={16}
-            width={32}
-            uncheckedIcon={false}
-            checkedIcon={false}
-          />
-        </label>
-      </div>
-      <Assessments selected={selected} onChange={handleAssessmentsChange} />
+      <DatasetContent
+        expand={showPanel}
+        showGrid={showGrid}
+        onToggle={togglePanel}
+        onViewGrid={toggleView}
+      >
+        <Tabs>
+          <TabList>
+            <Tab>Assets</Tab>
+            <Tab>Flood Areas</Tab>
+          </TabList>
+
+          <TabPanel>
+            <Assessments selectedTypes={selectedTypes} setSelectedTypes={setSelectedTypes} />
+          </TabPanel>
+          <TabPanel>
+            <FloodAreas />
+          </TabPanel>
+        </Tabs>
+      </DatasetContent>
     </FloatingPanel>
   );
 };
@@ -111,10 +58,40 @@ Dataset.propTypes = {
   toggleView: PropTypes.func,
 };
 
-const DBButton = ({ active, onToggle }) => {
+const DatasetContent = ({ expand, showGrid, onToggle, onViewGrid, children }) => {
+  if (!expand) return <DBButton onToggle={onToggle} className="w-fit" />;
+  return (
+    <>
+      <div className="flex">
+        <DBButton active onToggle={onToggle} />
+        <label className="flex items-center gap-x-1 text-xs w-fit ml-auto">
+          Grid
+          <ReactSwitch
+            onChange={onViewGrid}
+            checked={showGrid}
+            offColor="#636363"
+            onColor="#f5f5f5"
+            onHandleColor="#141414"
+            handleDiameter={10}
+            height={16}
+            width={32}
+            uncheckedIcon={false}
+            checkedIcon={false}
+          />
+        </label>
+      </div>
+      {children}
+    </>
+  );
+};
+
+const DBButton = ({ active, onToggle, ariaHidden, className: wrapperClassName }) => {
   const tooltip = `${active ? "Close" : "Open"} dataset panel`;
   return (
-    <div className="relative">
+    <div
+      aria-hidden={ariaHidden}
+      className={classNames("relative", { [wrapperClassName]: wrapperClassName })}
+    >
       <button
         aria-labelledby={kebabCase(tooltip)}
         className="flex items-center justify-center"

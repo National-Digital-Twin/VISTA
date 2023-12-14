@@ -1,66 +1,45 @@
-import { Spinner } from '@telicent-io/ds';
+import { isEmpty } from "lodash";
 import React from "react";
-import useFetch from "use-http";
+import PropTypes from "prop-types";
+import { useQuery } from "react-query";
 
-import { IsEmpty } from "utils";
+import { fetchAssessments } from "api/assessments";
+import AssessmentTypes from "./AssessmentTypes";
 
-const Assessments = ({ selected, onChange }) => {
-  const { data, loading, error } = useFetch('/assessments', {}, []);
+const Assessments = () => {
+  const [fetch, setFetch] = React.useState(true); 
 
-  if (loading) return <Loader label="Fetching assessments" />;
+  const { isLoading, isError, data } = useQuery("assessments", fetchAssessments, {
+    enabled: fetch,
+  });
 
-  if (error) {
+  React.useEffect(() => {
+    if (fetch) {
+      setFetch(false);
+    }
+  }, [fetch]);  
+
+  if (isLoading) return <p>Fetching assessments</p>;
+  if (isError)
     return (
-      <p id="errorMsg" className='text-fluorescentRed'>
-        Unable to retrieve categories. Please try again, if the problem persists contact admin.
+      <p>
+        An error occured while retrieving assessments. Please try again. If problem persists contact
+        admin
       </p>
     );
-  }
+  if (isEmpty(data)) return <p>Assessments not found</p>;
 
-  const assessments = data
-    .filter((assessment) => assessment.assCount > 0)
-    .map((assessment) => ({
-      label: `${assessment.name} [${assessment.assCount}]`,
-      value: assessment.uri,
-    }));
-
-  if (IsEmpty(assessments)) return <p className="text-center">Assessments not found</p>;
-
-  return (
-    <ul id="dataset" className="flex flex-col gap-y-2">
-      {assessments.map(({ label, value }) => (
-        <CheckListItem
-          key={value}
-          value={value}
-          label={label}
-          selected={selected.includes(value)}
-          onChange={onChange}
-        />
-      ))}
-    </ul>
-  );
+  return <AssessmentTypes assessment={data[0].uri} />;
 };
+
 export default Assessments;
 
-const Loader = ({ label }) => (
-  <div className="flex flex-col items-center gap-y-2">
-    <Spinner size="sm" />
-    {label && <p id='loader' className="lowercase">{label}</p>}
-  </div>
-);
+Assessments.defaultProps = {
+  selectedTypes: [],
+  setSelectedTypes: () => {},
+};
 
-const CheckListItem = ({ value, label, onChange, selected }) => (
-  <li className="inline-flex gap-x-1 text-xs">
-    <input
-      type="checkbox"
-      value={value}
-      id={value}
-      defaultChecked={selected}
-      onChange={onChange}
-      className="w-3.5"
-    />
-    <label htmlFor={value} className="uppercase">
-      {label}
-    </label>
-  </li>
-);
+Assessments.propTypes = {
+  selectedTypes: PropTypes.arrayOf(PropTypes.string),
+  setSelectedTypes: PropTypes.func,
+};

@@ -1,10 +1,14 @@
 import React, { useState } from "react";
-import { StandardLayout } from "@telicent-io/ds";
+import { TeliStandardLayout } from "@telicent-io/ds";
 import "../node_modules/@telicent-io/ds/dist/style.css";
 
 import { Dataset, Grid, InfoPanel, NetworkGraph, SponsorsLogos, TelicentMap } from "./components";
 import config from "./config/app-config";
 import { ErrorNotification, ResizableContainer } from "./lib";
+
+import "@fortawesome/fontawesome-pro/css/all.css";
+import "@fortawesome/fontawesome-pro/css/sharp-solid.css";
+import FloodZoneTimeline from "components/Map/FloodZoneTimeline";
 
 const App = () => {
   const [showGrid, setShowGrid] = useState(false);
@@ -18,7 +22,7 @@ const App = () => {
   }
 
   return (
-    <StandardLayout appName="paralog" beta={true}>
+    <TeliStandardLayout appName="paralog" beta={true}>
       <SponsorsLogos />
       <div className="relative h-full">
         <ErrorNotification />
@@ -26,11 +30,15 @@ const App = () => {
         <Dataset showGrid={showGrid} toggleView={toggleView} />
         <InfoPanel />
         <div className="flex gap-x-2 h-full">
-          <ResizableContainer>{showGrid ? <Grid /> : <NetworkGraph />}</ResizableContainer>
+          <ResizableContainer>
+            <Grid showGrid={showGrid} />
+            <NetworkGraph showGrid={showGrid} />
+            <FloodZoneTimeline />
+          </ResizableContainer>
           <TelicentMap />
         </div>
       </div>
-    </StandardLayout>
+    </TeliStandardLayout>
   );
 };
 

@@ -8,15 +8,15 @@ const ToolbarMenu = ({ id, menuItems, onClose }) => {
   const containerRef = useRef();
   useOutsideAlerter({ ref: containerRef, fn: onClose });
 
-  const generateMenuItems = ({ name, selected, type, onItemClick }) => {
-    const typeProps = { name, selected, onItemClick };
+  const generateMenuItems = ({ id, name, selected, type, onItemClick, children }) => {
+    const typeProps = { name, selected, onItemClick, children };
     const menuItemTypes = {
       button: <MenuBtn {...typeProps} />,
       toggleSwitch: <MenuToggle {...typeProps} />,
     };
 
     return (
-      <li key={name} className="w-full">
+      <li key={id || name} className="w-full">
         {menuItemTypes[type]}
       </li>
     );
@@ -26,7 +26,7 @@ const ToolbarMenu = ({ id, menuItems, onClose }) => {
     <ul
       ref={containerRef}
       id={id}
-      className="absolute bottom-12 bg-black-200 px-2 py-1 rounded-md flex flex-col items-center gap-y-2 max-h-40 overflow-y-auto overscroll-y-contain scroll-smooth text-base"
+      className="floating-menu bottom-10 px-2 py-1 flex flex-col items-center gap-y-2 max-h-40 overflow-y-auto overscroll-y-contain scroll-smooth"
       style={{ maxWidth: "10rem" }}
     >
       {menuItems.map(generateMenuItems)}
@@ -35,14 +35,14 @@ const ToolbarMenu = ({ id, menuItems, onClose }) => {
 };
 export default ToolbarMenu;
 
-const MenuBtn = ({ name, selected, onItemClick }) => (
+const MenuBtn = ({ name, selected, onItemClick, children }) => (
   <button
     className={classNames("hover:bg-black-400 px-2 rounded-md w-full h-full whitespace-nowrap", {
       "bg-black-500": selected,
     })}
     onClick={onItemClick}
   >
-    {name}
+    {children || name}
   </button>
 );
 

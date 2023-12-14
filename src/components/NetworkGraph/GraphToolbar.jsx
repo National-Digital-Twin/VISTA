@@ -1,13 +1,11 @@
-import { kebabCase } from "lodash";
 import React, { useState } from "react";
 
-import { ToolbarButton, ToolbarMenu, VerticalDivider } from "../../lib";
+import { ToolbarButton, ToolbarMenu } from "../../lib";
 
-const LAYOUTS = ["Cola", "Circle", "Random", "Breadth First", "AVSDF", "Dagre"];
+const LAYOUTS = ["Cola", "Grid", "Random", "Breadth First", "AVSDF", "Dagre"];
 const transformLayoutOptions = (item) => item.replace(/\s/g, "").toLowerCase();
 
 const Toolbar = ({ cyRef, graphLayout, setGraphLayout }) => {
-  const [expand, setExpand] = useState(false);
   const [showLayoutOptions, setShowLayoutOptions] = useState(false);
 
   const hangleLayoutChange = (event) => {
@@ -47,27 +45,9 @@ const Toolbar = ({ cyRef, graphLayout, setGraphLayout }) => {
     link.remove();
   };
 
-  if (!expand) {
-    return (
-      <Wrapper>
-        <button
-          className="flex items-center gap-x-2 px-2 py-[7px] bg-black-200"
-          onClick={() => setExpand(true)}
-        >
-          Toolbar
-          <i className="ri-arrow-right-s-line flex items-center" />
-        </button>
-      </Wrapper>
-    );
-  }
-
   return (
-    <Wrapper className="absolute bottom-0 left-0 text-whiteSmoke font-body">
-      <ul className="bg-black-200 px-2 py-1 flex items-center gap-x-2">
-        <li>
-          <MinimiseBtn label="minimise toolbar" onMinimise={() => setExpand(false)} />
-        </li>
-        <VerticalDivider />
+    <div className="toolbar bottom-0 left-0 font-body">
+      <ul className="toolbar__list">
         <ToolbarButton icon="ri-file-download-line" label="Export" onClick={onExportToPNG} />
         <ToolbarButton icon="ri-focus-3-line" label="Center" onClick={onCenterClick} />
         <ToolbarButton icon="ri-aspect-ratio-line" label="Fit" onClick={onFitClick} />
@@ -77,31 +57,16 @@ const Toolbar = ({ cyRef, graphLayout, setGraphLayout }) => {
           onClick={() => setShowLayoutOptions(true)}
           showSecondaryMenu={showLayoutOptions}
           secondaryMenu={
-            <ToolbarMenu id="secondary-menu" menuItems={layoutMenuItems} onClose={() => setShowLayoutOptions(false)} />
+            <ToolbarMenu
+              id="secondary-menu"
+              menuItems={layoutMenuItems}
+              onClose={() => setShowLayoutOptions(false)}
+            />
           }
         />
       </ul>
-    </Wrapper>
+    </div>
   );
 };
 
 export default Toolbar;
-
-const Wrapper = ({ children }) => (
-  <div className="absolute bottom-0 left-0 text-whiteSmoke font-body">{children}</div>
-);
-
-const MinimiseBtn = ({ label, onMinimise }) => (
-  <>
-    <button
-      aria-labelledby={kebabCase(label)}
-      className="flex items-center px-3 w-fit"
-      onClick={onMinimise}
-    >
-      <span aria-hidden={true} role="img" className="ri-indeterminate-circle-fill !text-base" />
-    </button>
-    <div role="tooltip" id={kebabCase(label)}>
-      {label}
-    </div>
-  </>
-);

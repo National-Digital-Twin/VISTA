@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - main
+      - "api-v2"
     paths:
       - CHANGELOG.md
 
@@ -17,6 +18,7 @@ jobs:
         uses: martinbeentjes/npm-get-version-action@main
     outputs:
       version: ${{ steps.semver.outputs.current-version }}
+
   integrated_tests:
     permissions:
       id-token: write
@@ -26,6 +28,7 @@ jobs:
     env:
       APP_NAME: paralog
       NODE_AUTH_TOKEN: ${{ secrets.PACKAGE_PAT }}
+      FONT_AWESOME_TOKEN: ${{ secrets.FONT_AWESOME_KEY }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -37,6 +40,12 @@ jobs:
           registry-url: https://npm.pkg.github.com/
           scope: "@Telicent-io"
           always-auth: true
+      - name: create .yarnrc file
+        run: |
+          npm config set "@telicent-io:registry" "https://npm.pkg.github.com/"
+          npm config set "//npm.pkg.github.com/:_authToken" ${{ secrets.PACKAGE_PAT }} 
+          npm config set "@fortawesome:registry" https://npm.fontawesome.com/
+          npm config set  "//npm.fontawesome.com/:_authToken" ${{ secrets.FONT_AWESOME_KEY }}
       - name: Get node version
         id: node
         run: |
@@ -75,7 +84,18 @@ jobs:
       PATH: .
       VERSION: ${{ needs.get_version.outputs.version }}
       ECR_SUFFIX: -build
+    secrets:
+      NPM_TOKEN: ${{ secrets.PACKAGE_PAT }}
+      FONT_AWESOME_TOKEN: ${{ secrets.FONT_AWESOME_KEY }}
+
+  publish_offline_image_to_aws:
+    needs:
+      - integrated_tests
+      - get_version
+      - publish_build_image_to_aws
+    uses: Telicent-io/telicent-test/.github/workflows/push-to-aws.yml@main
     secrets: inherit
+
   publish_offline_image_to_registries:
     needs:
       - integrated_tests
@@ -88,6 +108,16 @@ jobs:
       PATH: .
       VERSION: ${{ needs.get_version.outputs.version }}
       VERSION_SUFFIX: -offline
+    secrets:
+      NPM_TOKEN: ${{ secrets.PACKAGE_PAT }}
+      FONT_AWESOME_TOKEN: ${{ secrets.FONT_AWESOME_KEY }}
+
+  publish_deployment_image_to_aws:
+    needs:
+      - integrated_tests
+      - get_version
+      - publish_build_image_to_aws
+    uses: Telicent-io/telicent-test/.github/workflows/push-to-aws.yml@main
     secrets: inherit
   publish_deployment_image_to_registries:
     needs:
@@ -100,6 +130,13 @@ jobs:
       DOCKERFILE: Dockerfile
       PATH: .
       VERSION: ${{ needs.get_version.outputs.version }}
+    secrets:
+      NPM_TOKEN: ${{ secrets.PACKAGE_PAT }}
+
+  trigger_owasp_dependency_check-api:
+    needs:
+      - publish_deployment_image_to_aws
+      - publish_offline_image_to_aws
     secrets: inherit
   update_nightly_build:
     permissions:

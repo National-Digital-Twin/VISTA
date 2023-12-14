@@ -1,5 +1,109 @@
 # Changelog
 
+## [2.0.0-rc13](https://github.com/Telicent-io/telicent-paralog/compare/v2.0.0-rc12...v2.0.0-rc13) (2023-06-29)
+
+
+### Miscellaneous Chores
+
+* release 2.0.0-rc-13 ([90557df](https://github.com/Telicent-io/telicent-paralog/commit/90557df50c08e0a48e0c1f67bbf80a81c30e05ef))
+
+## [2.0.0-rc12](https://github.com/Telicent-io/telicent-paralog/compare/v2.0.0-rc11...v2.0.0-rc12) (2023-06-19)
+
+
+### Features
+
+* add cluster to the epc building ([7a1fe5c](https://github.com/Telicent-io/telicent-paralog/commit/7a1fe5c979fa60acc26b5f39cf4d1a25df62ca01))
+* adding epc data to the map ([ee441d9](https://github.com/Telicent-io/telicent-paralog/commit/ee441d9524f043e40f3dfcfb7853583257e9b87c))
+* updated pop up to include uprn and address pr comments ([5485dd0](https://github.com/Telicent-io/telicent-paralog/commit/5485dd0679b5eabea8471f944c16bc604c63ea79))
+* updated radius and maxZoom of clusters ([27d08e8](https://github.com/Telicent-io/telicent-paralog/commit/27d08e87c82c0cf6f9e627b1abb316a806d30f49))
+
+
+### Miscellaneous Chores
+
+* release 2.0.0-rc-12 ([a785481](https://github.com/Telicent-io/telicent-paralog/commit/a785481e9dc6e0ad758b0575c3711ced050681f9))
+
+## [2.0.0-rc11](https://github.com/Telicent-io/telicent-paralog/compare/v2.0.0-rc10...v2.0.0-rc11) (2023-05-12)
+
+
+### Miscellaneous Chores
+
+* release 2.0.0-rc11 ([9e08fc7](https://github.com/Telicent-io/telicent-paralog/commit/9e08fc7af3ab53479a0e968149944f2e6b6fbfd8))
+
+## [2.0.0-rc10](https://github.com/Telicent-io/telicent-paralog/compare/v1.4.0...v2.0.0-rc10) (2023-05-12)
+
+
+### ⚠ BREAKING CHANGES
+
+* **info panel:** part of api v2 changes
+* part of api v2 changes
+* part of api v2 changes
+* part of api v2 changes
+* part of api changes
+* api changes
+* **info panel:** api changes
+* **info panel:** api changes
+* **info panel:** api changes
+* api changes
+* **network:** chaning to api v2
+* api changing to v2
+
+### Features
+
+* added ability to multi select flood areas ([4a0fb60](https://github.com/Telicent-io/telicent-paralog/commit/4a0fb60110ebefff4f2926afa3e96b8ddb528a83)), closes [#256](https://github.com/Telicent-io/telicent-paralog/issues/256)
+* added text when there is no timeline data for selected area ([35cc1df](https://github.com/Telicent-io/telicent-paralog/commit/35cc1df1c9d5c30055d873249b4c8934b1a8bc89))
+* **flood areas:** added flood areas ([deab43f](https://github.com/Telicent-io/telicent-paralog/commit/deab43f5c0c81f6d4dda5a50ee2262762aa1ef1e))
+* **flood-timeline:** add flood timeline ([5e4d426](https://github.com/Telicent-io/telicent-paralog/commit/5e4d4262a13935e41ba0aadede6f1187ba07685c))
+* **floodmonitoringstations:** added flood monitoring stations to the… ([#264](https://github.com/Telicent-io/telicent-paralog/issues/264)) ([f302389](https://github.com/Telicent-io/telicent-paralog/commit/f30238981438b374fe78fe0109d1201b6af0f009))
+* **info panel:** showing asset dependents and providers ([1711704](https://github.com/Telicent-io/telicent-paralog/commit/1711704a781fa42c928de36f33d0b2d8c040440f)), closes [#190](https://github.com/Telicent-io/telicent-paralog/issues/190)
+* **info panel:** showing dependecy information ([94642fa](https://github.com/Telicent-io/telicent-paralog/commit/94642fa9cd11d211b38c42c18da2951f9e6cffeb)), closes [#190](https://github.com/Telicent-io/telicent-paralog/issues/190)
+* **network:** on click events on graph are updating selected elements ([d760c5f](https://github.com/Telicent-io/telicent-paralog/commit/d760c5ffa856aadb3e7882d960ca577da973b506)), closes [#190](https://github.com/Telicent-io/telicent-paralog/issues/190)
+* rendering error and loading ([6c9ca2f](https://github.com/Telicent-io/telicent-paralog/commit/6c9ca2fee4a9edcf70e294e6fcc6673cd98c0381))
+* showing linear assets on map ([723de7f](https://github.com/Telicent-io/telicent-paralog/commit/723de7f0dc2a8a99dde73c96d8d516cf3a5d478f)), closes [#190](https://github.com/Telicent-io/telicent-paralog/issues/190)
+* swapping to v2 of api, components are now rendering assets ([78675e0](https://github.com/Telicent-io/telicent-paralog/commit/78675e04d282361b93ede1f0c18c65c4a3d4d43c)), closes [#190](https://github.com/Telicent-io/telicent-paralog/issues/190)
+* **telicentmap:** added pointer coords to map tools ([a39a07d](https://github.com/Telicent-io/telicent-paralog/commit/a39a07d465b5a062f7d4503c3cc92b8a6fc352d2)), closes [#188](https://github.com/Telicent-io/telicent-paralog/issues/188)
+* tidies up dataset panel by grouping types byt their super class types ([92ae55e](https://github.com/Telicent-io/telicent-paralog/commit/92ae55e99f3dd5feb6c643758a4dd1122956e0d0)), closes [#190](https://github.com/Telicent-io/telicent-paralog/issues/190)
+* **usemapinteractions:** added flood zone interactivity ([5f5c40e](https://github.com/Telicent-io/telicent-paralog/commit/5f5c40e4db0dfaab714f039cdad2fec21cabe03b))
+* **usemapinteractions:** added flood zone interactivity ([#261](https://github.com/Telicent-io/telicent-paralog/issues/261)) ([0b1cc2e](https://github.com/Telicent-io/telicent-paralog/commit/0b1cc2eaa2fcb16425b3c29892477d4784dd87ed))
+
+
+### Bug Fixes
+
+* add table footer & truncate text ([#218](https://github.com/Telicent-io/telicent-paralog/issues/218)) ([5128a63](https://github.com/Telicent-io/telicent-paralog/commit/5128a633e14038cd7d345e8e119da0af0970eae5))
+* adding drawing tools to submenu ([#214](https://github.com/Telicent-io/telicent-paralog/issues/214)) ([dc940e4](https://github.com/Telicent-io/telicent-paralog/commit/dc940e442c78922b390a503bb89fb89edda50abb))
+* bugs fixes ([9ae5e65](https://github.com/Telicent-io/telicent-paralog/commit/9ae5e6565750fa9c7d43c475afd7ab6cad70802b)), closes [#190](https://github.com/Telicent-io/telicent-paralog/issues/190)
+* demo fixes ([#269](https://github.com/Telicent-io/telicent-paralog/issues/269)) ([c2020d8](https://github.com/Telicent-io/telicent-paralog/commit/c2020d8718555c45a620b7995447e955c4c91ccd))
+* **element details:** fixed undefined uri when connection is selected ([#247](https://github.com/Telicent-io/telicent-paralog/issues/247)) ([ea36264](https://github.com/Telicent-io/telicent-paralog/commit/ea362643e2f44a137cadac51232fb20c2ed5dbad))
+* filtering empty features ([908c9e0](https://github.com/Telicent-io/telicent-paralog/commit/908c9e077fd6ac25cad9449e1c3bc74b0f8149fe))
+* fixed dependecies not showing on graph and map ([#243](https://github.com/Telicent-io/telicent-paralog/issues/243)) ([d9eb583](https://github.com/Telicent-io/telicent-paralog/commit/d9eb583439e57d3026a1fe65117f45b7646ebc70))
+* fixed font issue on network graph ([#242](https://github.com/Telicent-io/telicent-paralog/issues/242)) ([ba2ad0c](https://github.com/Telicent-io/telicent-paralog/commit/ba2ad0c7bba96819600cee90ed043181aa258149)), closes [#107](https://github.com/Telicent-io/telicent-paralog/issues/107)
+* hotfix: fixed z index of timeline panel ([cff5c05](https://github.com/Telicent-io/telicent-paralog/commit/cff5c0554c134b22aaafcd5aa0ade03f1417131d))
+* hotfix: noq returning response for timeline states ([7501333](https://github.com/Telicent-io/telicent-paralog/commit/7501333bcb0e2b7a4195119a5077af5e58332fee))
+* hotfix: timeline panel was closing when moving the map ([b89f36a](https://github.com/Telicent-io/telicent-paralog/commit/b89f36a9e627537e5cf292ee231c9bd8065b64bd))
+* hotfix: updated dataset panel style when closed ([0673006](https://github.com/Telicent-io/telicent-paralog/commit/067300670e89f285a0135574056edd321233bbd2))
+* **info panel:** fixed react memory leak warning ([8ed2d66](https://github.com/Telicent-io/telicent-paralog/commit/8ed2d6603c3c6762761c0ff9b50a4a76b73eedc0)), closes [#190](https://github.com/Telicent-io/telicent-paralog/issues/190)
+* **info panel:** passed on toggle prop to header ([7a4bd15](https://github.com/Telicent-io/telicent-paralog/commit/7a4bd15c786c64a7f03778912d89aafe743ef7c3))
+* **NetworkGraph:** fixes selection coordination bugs ... ([#215](https://github.com/Telicent-io/telicent-paralog/issues/215)) ([a027b0c](https://github.com/Telicent-io/telicent-paralog/commit/a027b0ca43e9c16195677e088028512d98367c69))
+* replaced circle layout with grid ([#241](https://github.com/Telicent-io/telicent-paralog/issues/241)) ([5918899](https://github.com/Telicent-io/telicent-paralog/commit/59188999924b2cadb93b24f3b5b8cb4918a14dff)), closes [#240](https://github.com/Telicent-io/telicent-paralog/issues/240)
+* **residentialinformation:** using uri as key for addresses ([68196f4](https://github.com/Telicent-io/telicent-paralog/commit/68196f4fad057c7abd1fa94368bcba00e83767ae))
+* show connected assets when an element is selected ([#265](https://github.com/Telicent-io/telicent-paralog/issues/265)) ([c149ca4](https://github.com/Telicent-io/telicent-paralog/commit/c149ca4d3ae9cd373c3dd5a2af6743a98779904f))
+
+
+### Code Refactoring
+
+* created grouped types component ([0bdad73](https://github.com/Telicent-io/telicent-paralog/commit/0bdad7307197f369abcedd0df967750cef426b3a)), closes [#190](https://github.com/Telicent-io/telicent-paralog/issues/190)
+* **info panel:** clean up info panel ([df58c7a](https://github.com/Telicent-io/telicent-paralog/commit/df58c7a7fb597b913f1b358ca81e9e4be9cb6a5e)), closes [#190](https://github.com/Telicent-io/telicent-paralog/issues/190)
+* skipping tests and omitting grid view for now ([df43388](https://github.com/Telicent-io/telicent-paralog/commit/df433886d4fcd7a7846efc1c2c10feefcaaf55d1)), closes [#190](https://github.com/Telicent-io/telicent-paralog/issues/190)
+
+
+### Tests
+
+* added testing around dataset panel ([2c25b53](https://github.com/Telicent-io/telicent-paralog/commit/2c25b5353eddb7af45903f043b80719946605904)), closes [#190](https://github.com/Telicent-io/telicent-paralog/issues/190)
+
+
+### Miscellaneous Chores
+
+* release 2.0.0-rc10 ([a5c57a7](https://github.com/Telicent-io/telicent-paralog/commit/a5c57a70a2003433a6edc348c4816387723baee3))
+
 ## [1.4.4](https://github.com/Telicent-io/telicent-paralog/compare/v1.4.3...v1.4.4) (2023-08-04)
 
 

@@ -1,0 +1,19 @@
+name: Create prerelease pull request
+
+on:
+  push:
+    branches:
+      - "feature/*"
+      - "api-v2"
+
+jobs:
+  create-prerelease-pr:
+    if: startsWith(github.event.head_commit.message, 'chore:')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: google-github-actions/release-please-action@v3
+        with:
+          release-type: node
+          package-name: release-please-action
+          prerelease: true
+          default-branch: ${{ github.ref_name }}

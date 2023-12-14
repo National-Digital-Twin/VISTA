@@ -1,47 +1,45 @@
+import React, { useContext } from "react";
+
+import { ElementsContext } from "context";
 import { useLocalStorage } from "hooks";
-import React, { useCallback, useContext, useState } from "react";
-import { ElementsContext } from "../../context";
-import { FloatingPanel } from "../../lib";
-import InfoBtn from "./InfoBtn";
-import InfoPanelHeader from "./InfoPanelHeader";
-import SelectedElements from "./SelectedElements";
+import { FloatingPanel } from "lib";
+
+import InfoHeader from "./InfoHeader";
+import SelectedElements from "./SelectedElements/SelectedElements";
 
 const InfoPanel = () => {
-  const { assets, selectedElements, assetCriticalityColorScale, cxnCriticalityColorScale } =
-    useContext(ElementsContext);
-  const [showPanel, setShowPanel] = useLocalStorage("showInformationPanel", false);
-  const [headerProps, setHeaderProps] = useState(undefined);
-
-  const getDetails = (element) => element.generateDetails(assets, assetCriticalityColorScale, cxnCriticalityColorScale);
-
-  const selectedCount = selectedElements.length;
+  const { selectedElements } = useContext(ElementsContext);
+  const [showContent, setShowContent] = useLocalStorage("showInformationContent", false);
 
   const handleTogglePanel = () => {
-    setShowPanel((show) => !show);
+    setShowContent((show) => !show);
   };
-
-  const updateHeaderProps = useCallback((headerProps) => {
-    setHeaderProps({ ...headerProps });
-  }, []);
 
   return (
     <FloatingPanel
       id="information-panel"
-      position="top-0 right-0 max-h-full flex flex-col"
-      show={showPanel}
-      collapsedComponent={<InfoBtn count={selectedCount} onToggle={handleTogglePanel} />}
-      style={{ width: showPanel ? "26rem" : "fit-content", maxWidth: "26rem", maxHeight: "calc(100% - 50px)" }}
+      position="top-0 right-0"
+      className="flex flex-col max-h-full"
+      style={{
+        width: showContent ? "26rem" : "fit-content",
+        maxWidth: "26rem",
+        maxHeight: "calc(100% - 50px)",
+      }}
     >
-      <InfoPanelHeader count={selectedCount} onToggle={handleTogglePanel} {...headerProps} />
-      <SelectedElements
-        headerProps={headerProps}
-        getDetails={getDetails}
-        selectedElements={selectedElements}
+      <InfoPanelContent
+        show={showContent}
+        totalSelected={selectedElements.length}
         onToggle={handleTogglePanel}
-        updateHeaderProps={updateHeaderProps}
-      />
+      >
+        <SelectedElements selectedElements={selectedElements} onTogglePanel={handleTogglePanel} />
+      </InfoPanelContent>
     </FloatingPanel>
   );
 };
 
 export default InfoPanel;
+
+const InfoPanelContent = ({ show, totalSelected, onToggle, children }) => {
+  if (show) return children;
+  return <InfoHeader isExpanded={false} count={totalSelected} onToggle={onToggle} />;
+};

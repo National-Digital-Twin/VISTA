@@ -17,7 +17,7 @@ Array [
     <button
       class="hover:bg-black-400 px-2 rounded-md w-full h-full whitespace-nowrap"
     >
-      Circle
+      Grid
     </button>
   </li>,
   <li

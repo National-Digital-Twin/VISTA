@@ -1,0 +1,58 @@
+.mapboxgl-ctrl > .mapboxgl-ctrl-logo {
+  @apply hidden m-0;
+}
+
+.mapboxgl-popup-close-button {
+  @apply px-2 text-xl;
+}
+
+.mapboxgl-popup-content {
+  @apply bg-black-50 text-whiteSmoke p-2;
+}
+.mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip {
+  @apply border-t-black-50;
+}
+.mapboxgl-popup-anchor-top .mapboxgl-popup-tip {
+  @apply border-b-black-50;
+}
+.mapboxgl-popup-anchor-left .mapboxgl-popup-tip {
+  @apply border-r-black-50;
+}
+.mapboxgl-popup-anchor-right .mapboxgl-popup-tip {
+  @apply border-l-black-50;
+}
+
+.mapboxgl-ctrl-bottom-right {
+  @apply flex items-center gap-x-2 bg-black-200 bg-opacity-50;
+}
+.mapboxgl-ctrl.mapboxgl-ctrl-attrib {
+  @apply bg-transparent flex items-center;
+}
+.mapboxgl-ctrl-attrib a {
+  @apply text-whiteSmoke;
+}
+.mapboxgl-ctrl-attrib.mapboxgl-compact {
+  @apply m-0.5;
+  min-height: 24px;
+}
+
+.mapboxgl-ctrl-attrib-button {
+  @apply !bg-whiteSmoke-200;
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg width='24' height='24' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg' fill-rule='evenodd'%3E %3Cpath d='M4 10a6 6 0 1 0 12 0 6 6 0 1 0-12 0m5-3a1 1 0 1 0 2 0 1 1 0 1 0-2 0m0 3a1 1 0 1 1 2 0v3a1 1 0 1 1-2 0'/%3E %3C/svg%3E") !important;
+}
+
+.mapboxgl-map.mode-draw_polygon {
+  cursor: crosshair;
+}
+
+.flood-warning-widget__btn {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  transform: rotate(180deg);
+}
+
+.flood-warning-widget__iframe {
+  transition-duration: 400ms;
+  transition-property: width, opacity;
+  transition-timing-function: cubic-bezier(0.39, 0.58, 0.57, 1);
+}

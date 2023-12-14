@@ -1,0 +1,45 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Map component should generate linear asset features 1`] = `
+Array [
+  Object {
+    "geometry": Object {
+      "coordinates": Array [
+        Array [
+          -1.25927,
+          50.72414,
+        ],
+        Array [
+          -1.25921,
+          50.72415,
+        ],
+        Array [
+          -1.25927,
+          50.72414,
+        ],
+        Array [
+          -1.25933,
+          50.72414,
+        ],
+        Array [
+          -1.25933,
+          50.72414,
+        ],
+        Array [
+          -1.25939,
+          50.72414,
+        ],
+      ],
+      "type": "LineString",
+    },
+    "properties": Object {
+      "criticality": 8352,
+      "id": "T043",
+      "lineColor": "#7C7C7C",
+      "selected": false,
+      "uri": "https://www.iow.gov.uk/DigitalTwin#T043",
+    },
+    "type": "Feature",
+  },
+]
+`;

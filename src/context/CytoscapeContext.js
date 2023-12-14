@@ -2,6 +2,7 @@ import { isEmpty } from "lodash";
 import React, { createContext, useCallback, useRef } from "react";
 
 import { useLocalStorage } from "hooks";
+import { getUniqueElements } from "utils";
 
 export const CytoscapeContext = createContext();
 
@@ -9,15 +10,26 @@ export const CytoscapeProvider = ({ children }) => {
   const cyRef = useRef({});
   const [layout, setLayout] = useLocalStorage("graphLayout", "cola");
 
-  const getSelected = () => {
+  const moveTo = ({ areaSelect, cachedElements, selectedElements }) => {
     if (!cyRef.current) return;
-    return cyRef.current.elements(":selected");
+    const padding = 20;
+    const selected = areaSelect
+      ? selectedElements
+      : getUniqueElements([...cachedElements, ...selectedElements]);
+
+    const elements = cyRef.current.elements().filter((element) => {
+      return selected.some((selectedElement) => {
+        const data = element.data("element");
+        return selectedElement.uri === data.uri;
+      });
+    });
+
+    fit(elements, padding);
   };
 
-  const clearSelected = () => {
+  const fit = (elements, padding) => {
     if (!cyRef.current) return;
-    const selected = getSelected();
-    selected.unselect();
+    cyRef.current.fit(elements, padding);
   };
 
   const updateLayout = (layout) => {
@@ -37,7 +49,7 @@ export const CytoscapeProvider = ({ children }) => {
 
   return (
     <CytoscapeContext.Provider
-      value={{ cyRef, layout, clearSelected, resize, runLayout, updateLayout }}
+      value={{ cyRef, layout, fit, moveTo, resize, runLayout, updateLayout }}
     >
       {children}
     </CytoscapeContext.Provider>

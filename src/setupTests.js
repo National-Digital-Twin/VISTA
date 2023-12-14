@@ -6,6 +6,7 @@ import "@testing-library/jest-dom";
 import "jest-canvas-mock";
 import { configure } from "@testing-library/react";
 import { toMatchImageSnapshot } from "jest-image-snapshot";
+import { setLogger } from "react-query";
 
 import server from "./mocks";
 
@@ -16,9 +17,17 @@ global.ResizeObserver = require("resize-observer-polyfill");
 process.env = {
   ...process.env,
   API_URL: "http://localhost:5051",
-  MAPBOX_TOKEN: "test_key",
+  MAP_TILER_TOKEN: "test_key",
   MAP_URL: "http://map.com",
+  ONTOLOGY_API_URL: "http://localhost:5007",
 };
+
+setLogger({
+  log: console.log,
+  warn: console.warn,
+  // ✅ no more errors on the console
+  error: () => {},
+});
 
 beforeAll(() => server.listen());
 beforeEach(() => {
@@ -39,6 +48,8 @@ jest.mock("react-map-gl", () => ({
   ),
   Layer: (props) => <div {...props}></div>,
   MapProvider: ({ children }) => <div>{children}</div>,
+  Marker: (props) => <div {...props}>{props.children}</div>,
+  AttributionControl: () => <div>attribute control</div>,
   ScaleControl: () => <div>scale control</div>,
   useControl: () => ({}),
   useMap: () =>

@@ -1,17 +1,18 @@
 import ColorScale from "color-scales";
-import { isEmpty } from "lodash";
-import { Asset, Connection } from "models";
-import { isAsset } from "utils";
+import { getUniqueElements, isAsset } from "utils";
 
 export const CLEAR_SELECTED = "CLEAR_SELECTED";
 export const RESET = "RESET";
 export const DISMISS_ERROR = "DISMISS_ERROR";
-export const FILTER_SELECTED = "FILTER_SELECTED";
+export const FILTER_SELECTED_ELEMENTS = "FILTER_SELECTED_ELEMENTS";
 export const SELECT_ELEMENT = "SELECT_ELEMENT";
 export const MULTI_SELECT_ELEMENTS = "MULTI_SELECT_ELEMENTS";
 export const AREA_SELECTION = "AREA_SELECTION";
-export const UPDATE_ASSETS = "UPDATE_ASSETS";
-export const UPDATE_CONNECTIONS = "UPDATE_CONNECTIONS";
+export const ADD_ASSETS = "ADD_ASSETS";
+export const REMOVE_ASSETS_BY_TYPE = "REMOVE ASSETS BY TYPE";
+export const REMOVE_DEPENDENCIES_BY_TYPE = "REMOVE DEPENDENCIES BY TYPE";
+export const REMOVE_ELEMENTS_BY_TYPE = "REMOVE ELEMENTS BY TYPE";
+export const ADD_DEPENDENCIES = "ADD_DEPENDENCIES";
 export const UPDATE_ERRORS = "UPDATE_ERRORS";
 
 const getColorScale = (min, max) => {
@@ -19,11 +20,12 @@ const getColorScale = (min, max) => {
 };
 
 export const INITIAL_STATE = {
+  loading: false,
   assets: [],
-  connections: [],
+  dependencies: [],
   errors: [],
   selectedElements: [],
-  selectedDetails: [],
+  iconStyles: {},
   maxAssetCriticality: 0,
   maxAssetTotalCxns: 0,
   assetCriticalityColorScale: {},
@@ -31,42 +33,44 @@ export const INITIAL_STATE = {
   totalCxnsColorScale: {},
 };
 
-const getAllTotalCxns = (assets) => assets.map((asset) => asset.totalCxns);
-const getAllCriticalities = (assets) => assets.map((asset) => asset.criticality);
-const createElement = (elem) => (isAsset(elem) ? new Asset(elem) : new Connection(elem));
+const getAllCounts = (assets) => assets.map((asset) => asset.dependent.count);
+const getAllCriticalitySums = (assets) => assets.map((asset) => asset.dependent.criticalitySum);
 
 const elementsReducer = (state, action) => {
   switch (action.type) {
-    case UPDATE_ASSETS: {
+    case ADD_ASSETS: {
       const assets = action.assets;
-      const maxAssetCriticality = Math.max(...getAllCriticalities(assets));
-      const minAssetCriticality = Math.min(...getAllCriticalities(assets));
-      const maxAssetTotalCxns = Math.max(...getAllTotalCxns(assets));
-      const minAssetTotalCxns = Math.min(...getAllTotalCxns(assets));
+      const minTotalCount = Math.min(...getAllCounts(assets));
+      const maxTotalCount = Math.max(...getAllCounts(assets));
+      const minCriticalitySum = Math.min(...getAllCriticalitySums(assets));
+      const maxCriticalitySum = Math.max(...getAllCriticalitySums(assets));
 
-      return {
-        ...state,
-        assets,
-        maxAssetCriticality,
-        maxAssetTotalCxns,
-        assetCriticalityColorScale: isEmpty(assets)
-          ? {}
-          : getColorScale(minAssetCriticality, maxAssetCriticality),
-        totalCxnsColorScale: isEmpty(assets)
-          ? {}
-          : getColorScale(minAssetTotalCxns, maxAssetTotalCxns),
-      };
+      assets.forEach((asset) => {
+        asset.setCountColorScale(minTotalCount, maxTotalCount);
+        asset.setCriticalitySumColorScale(minCriticalitySum, maxCriticalitySum);
+      });
+
+      return { ...state, assets };
     }
-    case UPDATE_CONNECTIONS:
+    case ADD_DEPENDENCIES:
       return {
         ...state,
-        connections: action.connections,
+        dependencies: action.dependencies,
       };
-    case FILTER_SELECTED: {
-      const selectedElements = state.selectedElements.filter((elem) => {
-        return isAsset(elem)
-          ? action.assets.some((asset) => asset.id === elem.id)
-          : action.connections.some((connection) => connection.id === elem.id);
+    case REMOVE_ELEMENTS_BY_TYPE: {
+      const { typeUri } = action;
+      const assets = state.assets.filter((asset) => asset.type !== typeUri);
+      const dependencies = state.dependencies.filter(
+        (dependency) =>
+          dependency.dependent.type !== typeUri || dependency.provider.type !== typeUri
+      );
+      return { ...state, assets, dependencies };
+    }
+    case FILTER_SELECTED_ELEMENTS: {
+      const selectedElements = state.selectedElements.filter((selectedElement) => {
+        return isAsset(selectedElement)
+          ? state.assets.some((asset) => asset.uri === selectedElement.uri)
+          : state.dependencies.some((dependency) => dependency.uri === selectedElement.uri);
       });
       return {
         ...state,
@@ -76,27 +80,20 @@ const elementsReducer = (state, action) => {
     case SELECT_ELEMENT:
       return {
         ...state,
-        selectedElements: [createElement(action.selectedElement)],
+        selectedElements: action.selectedElements,
       };
     case MULTI_SELECT_ELEMENTS: {
-      const getSelected = () => {
-        const index = state.selectedElements.findIndex(
-          (selectedElement) => selectedElement.id === action.selectedElement.id
-        );
-        if (index === -1) return [...state.selectedElements, createElement(action.selectedElement)];
-        return state.selectedElements.filter(
-          (selectedElement) => selectedElement.id !== action.selectedElement.id
-        );
-      };
-
+      const selectedElements = getUniqueElements([
+        ...state.selectedElements,
+        ...action.selectedElements,
+      ]);
       return {
         ...state,
-        selectedElements: getSelected(),
+        selectedElements,
       };
     }
     case AREA_SELECTION: {
-      const selectedElements = action.selectedElements.map((selected) => createElement(selected));
-      return { ...state, selectedElements };
+      return { ...state, selectedElements: action.selectedElements };
     }
     case CLEAR_SELECTED:
       return { ...state, selectedElements: [] };

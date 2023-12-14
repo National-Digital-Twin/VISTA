@@ -1,30 +1,35 @@
 import React, { useContext, useEffect, useMemo, useState } from "react";
-import Map, { Layer, Source, ScaleControl, useMap } from "react-map-gl";
-import { isEmpty } from "lodash";
+import Map, { Layer, Source, ScaleControl, useMap, AttributionControl } from "react-map-gl";
+import { ErrorBoundary } from "react-error-boundary";
 
-import config from "config/app-config";
 import { CytoscapeContext, ElementsContext } from "context";
-import { useLocalStorage } from "hooks";
+import {
+  useFloodAreaPolygons,
+  useFloodMonitoringStations,
+  useMapInteractions,
+  useLocalStorage,
+  useBuildingsEpcRating,
+} from "hooks";
+import { ErrorFallback, FloatingPanel, Modal } from "lib";
 
-import {
-  allAssetsLayerStyle,
-  heatmap,
-  highlightedAssets,
-  lineStyle,
-  segmentStyle,
-} from "./layerStyles";
-import {
-  createSelectedAssetFeatures,
-  createSelectedConnectionFeatures,
-  createSelectedSegmentFeatures,
-  generateAssetFeatures,
-} from "./mapboxFeatures";
+import MapToolbar from "./MapToolbar/MapToolbar";
+import PointerCoordinates from "./PointerCoords";
+import FloodMonitoringStations from "./FloodMonitoringStations";
+import FloodWarningWidget from "./FloodAreaWidget";
+import FloodZones from "./FloodZones";
+
+import { FLOOD_AREA_LAYERS, heatmap, LINEAR_ASSET_LAYER } from "./layers";
+import { generateLinearAssetFeatures } from "./map-utils";
 import { getMapStyles } from "./mapStyles";
-import MapConfig from "./MapConfig";
-import "./mapbox.css";
 
-const GEOJSON = "geojson";
-const FEATURE_COLLECTION = "FeatureCollection";
+import "@fortawesome/fontawesome-pro/css/all.css";
+import "./map.css";
+import PointAssets from "./PointAssets";
+import BuildingsEpcRating from "./BuildingsEpcRating";
+
+
+export const GEOJSON = "geojson";
+export const FEATURE_COLLECTION = "FeatureCollection";
 const VIEWSTATE = {
   latitude: 50.66206632912732,
   longitude: -1.3480234953335598,
@@ -34,93 +39,60 @@ const HEAT_RADIUS = 1000;
 
 const TelicentMap = () => {
   const { telicentMap: map } = useMap();
-  const { clearSelected } = useContext(CytoscapeContext);
-  const {
+  const { moveTo } = useContext(CytoscapeContext);
+  const { assets, dependencies, selectedFloodAreas, selectedElements, onElementClick, onAreaSelect } =
+    useContext(ElementsContext);
+
+  const { polygonFeatures: floodAreas, isLoading: areFloodAreasLoading } = useFloodAreaPolygons(selectedFloodAreas);
+  const { interactiveLayers, selectedFloodZones, handleOnClick } = useMapInteractions({
+    map,
     assets,
+    dependencies,
     selectedElements,
-    assetCriticalityColorScale,
-    cxnCriticalityColorScale,
-    maxAssetCriticality,
-    clearSelectedElements,
     onElementClick,
-  } = useContext(ElementsContext);
-  const [mapStyle, setMapStyle] = useLocalStorage("mapStyle", "mapbox://styles/mapbox/dark-v10");
+    onAreaSelect,
+    moveTo,
+  });
+  const mapStyles = useMemo(() => getMapStyles(), []);
+
+  const [mapStyle, setMapStyle] = useLocalStorage("mapStyle", mapStyles[0]);
+  const { query, menuItem: monitoringStationLayerItem, showStations } = useFloodMonitoringStations();
+  const { query: buildingsEpcQuery, menuItem: buildingsEpcLayerItem, showBuildings } = useBuildingsEpcRating();
 
   const [cursor, setCursor] = useState("auto");
-  const [hoverInfo, setHoverInfo] = useState(undefined);
   const [heatmapRadius, setHeatmapRadius] = useState(10);
-  const [selectedAssetCxns, setSelectedAssetCxns] = useState([]);
-  const [selectedAssets, setSelectedAssets] = useState([]);
-  const [selectedSegments, setSelectedSegments] = useState([]);
+  const [showPointerCoords, setShowPointerCoords] = useState(false);
 
-  const assetFeatures = useMemo(() => generateAssetFeatures(assets), [assets]);
+  const [linearAssets, setLinearAssets] = useState([]);
+  const [mousePosition, setMousePosition] = useState(undefined);
 
   // The order of the array is the order in which the features will appear in the map.
   // index 0 being the lowest level
-  const sources = [
-    { id: "assets", features: assetFeatures, layers: [heatmap, allAssetsLayerStyle] },
-    { id: "selected-connections", features: selectedAssetCxns, layers: [lineStyle] },
-    { id: "selected-segments", features: selectedSegments, layers: [segmentStyle] },
-    { id: "selected-assets", features: selectedAssets, layers: [highlightedAssets] },
-  ];
+  const sources = useMemo(
+    () => [
+      {
+        id: "flood-areas",
+        features: floodAreas,
+        layers: FLOOD_AREA_LAYERS,
+      },
+      { id: "linear-assets", features: linearAssets, layers: [LINEAR_ASSET_LAYER] },
+    ],
+    [linearAssets, floodAreas]
+  );
 
   useEffect(() => {
-    if (!getMapStyles().some((style) => style.id === mapStyle)) {
-      setMapStyle(getMapStyles()[0].id);
-    }
-  }, [mapStyle, setMapStyle]);
+    const isStyleDefined = mapStyles.some((style) => style.id === mapStyle.id);
+    if (!isStyleDefined) setMapStyle(mapStyles[0]);
+  }, [mapStyles, mapStyle, setMapStyle]);
 
   useEffect(() => {
-    if (isEmpty(assets) && isEmpty(selectedElements)) return;
-    const selectedAssetFeatures = createSelectedAssetFeatures(
-      assets,
-      assetCriticalityColorScale,
-      maxAssetCriticality,
-      selectedElements
-    );
-    setSelectedAssets(selectedAssetFeatures);
-
-    const selectedSegmentFeatures = createSelectedSegmentFeatures(selectedElements, assetCriticalityColorScale, assets);
-    setSelectedSegments(selectedSegmentFeatures);
-
-    const selectedAssetCxnFeatures = createSelectedConnectionFeatures(
-      assets,
-      cxnCriticalityColorScale,
-      selectedElements
-    );
-    setSelectedAssetCxns(selectedAssetCxnFeatures);
-  }, [assets, cxnCriticalityColorScale, assetCriticalityColorScale, maxAssetCriticality, selectedElements]);
-
-  const handleOnClick = (event) => {
-    const { features } = event;
-    const clickedFeature = features && features[0];
-    clearSelected();
-
-    const controls = event.target._controls;
-    const drawControl = Object.values(controls).find((item) => item.modes);
-    const polygons = drawControl.getAll().features;
-
-    if (!clickedFeature && isEmpty(polygons)) {
-      clearSelectedElements();
-      return;
-    }
-
-    if (clickedFeature?.type === "Feature") {
-      const { properties } = clickedFeature;
-      event.originalEvent.stopPropagation();
-      const element = JSON.parse(properties.element);
-      onElementClick(event.originalEvent.shiftKey, element);
-      return;
-    }
-  };
+    const linearAssets = generateLinearAssetFeatures(assets, selectedElements);
+    setLinearAssets(linearAssets);
+  }, [assets, selectedElements]);
 
   const handleOnMouseMove = (event) => {
-    const {
-      features,
-      point: { x, y },
-    } = event;
-    const hoveredFeature = features && features[0];
-    setHoverInfo(hoveredFeature && { feature: hoveredFeature, x, y });
+    const { lngLat } = event;
+    setMousePosition(lngLat);
   };
 
   const resetCursor = () => {
@@ -128,82 +100,102 @@ const TelicentMap = () => {
   };
 
   const handleOnZoom = (event) => {
-    const { pixelsPerMeter } = event.target.transform;
-    const radius = HEAT_RADIUS * pixelsPerMeter;
+    const { _pixelPerMeter } = event.target.transform;
+    let radius = HEAT_RADIUS * _pixelPerMeter;
+    if (radius < 1) radius = 1;
     map.getMap().setPaintProperty(heatmap.id, "heatmap-radius", radius);
     setHeatmapRadius(radius);
   };
 
+  const togglePointerCoords = () => {
+    setShowPointerCoords((prev) => !prev);
+  };
+
+  const generateSources = (source) => (
+    <Source
+      key={source.id}
+      id={source.id}
+      type={GEOJSON}
+      data={{ type: FEATURE_COLLECTION, features: source.features }}
+      generateId
+    >
+      {source.layers.map((layer) => (
+        <Layer key={layer.id} {...layer} />
+      ))}
+    </Source>
+  );
+
   return (
-    <div className="relative w-full">
-      <Map
-        cursor={cursor}
-        id="telicentMap"
-        interactiveLayerIds={[allAssetsLayerStyle.id]}
-        initialViewState={{ ...VIEWSTATE }}
-        mapboxAccessToken={config.mb.token}
-        mapStyle={mapStyle}
-        onClick={handleOnClick}
-        onDragStart={() => setCursor("move")}
-        onDragEnd={resetCursor}
-        onMouseEnter={() => setCursor("pointer")}
-        onMouseLeave={resetCursor}
-        onMouseMove={handleOnMouseMove}
-        boxZoom={false}
-        onZoom={handleOnZoom}
-      >
-        {sources.map((source) => (
-          <Source
-            key={source.id}
-            id={source.id}
-            type={GEOJSON}
-            data={{ type: FEATURE_COLLECTION, features: source.features }}
-          >
-            {source.layers.map((layer) => (
-              <Layer key={layer.id} {...layer} />
-            ))}
-          </Source>
-        ))}
-        <ScaleControl
-          position="top-left"
-          style={{
-            backgroundColor: "#27272780",
-            color: "#F5F5F5",
-            borderColor: "#949494",
-            fontFamily: "Urbanist",
-            letterSpacing: "1.5px",
-          }}
-        />
-        <HoverInfo
-          info={hoverInfo?.feature.properties.element}
-          left={hoverInfo?.x}
-          top={hoverInfo?.y}
-        />
-        <MapConfig
-          heatmapRadius={heatmapRadius}
-          map={map}
-          mapStyle={mapStyle}
-          setMapStyle={setMapStyle}
-        />
-      </Map>
-    </div>
+    <ErrorBoundary FallbackComponent={ErrorFallback}>
+      <div className="relative w-full">
+        <Map
+          cursor={cursor}
+          id="telicentMap"
+          interactiveLayerIds={interactiveLayers}
+          initialViewState={{ ...VIEWSTATE }}
+          mapboxAccessToken="MapboxToken"
+          mapStyle={mapStyle.id}
+          attributionControl={false}
+          onClick={handleOnClick}
+          onDragStart={() => setCursor("move")}
+          onDragEnd={resetCursor}
+          onMouseEnter={() => setCursor("pointer")}
+          onMouseLeave={resetCursor}
+          onMouseMove={handleOnMouseMove}
+          boxZoom={false}
+          onZoom={handleOnZoom}
+          styleDiffing
+        >
+          {sources.map(generateSources)}
+          <PointAssets
+            map={map}
+            assets={assets}
+            dependencies={dependencies}
+            selectedElements={selectedElements}
+            onElementClick={onElementClick}
+            moveTo={moveTo}
+            onAreaSelect={onAreaSelect}
+          />
+          <BuildingsEpcRating map={map} query={buildingsEpcQuery} showBuildings={showBuildings} />
+          <FloodMonitoringStations query={query} showStations={showStations} />
+          <AttributionControl compact />
+          <ScaleControl
+            position="bottom-right"
+            style={{
+              position: "relative",
+              backgroundColor: "#27272780",
+              color: "#F5F5F5",
+              borderColor: "#949494",
+              fontFamily: "Urbanist",
+              letterSpacing: "1.5px",
+              margin: 0,
+              height: "22px",
+            }}
+          />
+          <MapToolbar
+            heatmapRadius={heatmapRadius}
+            map={map}
+            mapStyle={mapStyle}
+            setMapStyle={setMapStyle}
+            showPointerCoords={showPointerCoords}
+            onPointerCoordsClick={togglePointerCoords}
+            setCursor={setCursor}
+            layerItems={[monitoringStationLayerItem, buildingsEpcLayerItem]}
+          />
+        </Map>
+        <TopLeftPanel>
+          <PointerCoordinates show={showPointerCoords} lat={mousePosition?.lat} lng={mousePosition?.lng} />
+          <FloodZones selectedFloodZones={selectedFloodZones} />
+        </TopLeftPanel>
+        <FloodWarningWidget />
+      </div>
+      <Modal appElement="root" isOpen={areFloodAreasLoading} className="py-2 px-6 rounded-lg">
+        <p>Adding flood areas to map</p>
+      </Modal>
+    </ErrorBoundary>
   );
 };
 
 export default TelicentMap;
 
-const HoverInfo = ({ info, left, top }) => {
-  if (!info) return null;
-  const assetInfo = JSON.parse(info);
-
-  return (
-    <div
-      className="bg-black-50 text-whiteSmoke absolute font-body text-sm px-2 py-1 rounded-md"
-      style={{ left: left + 10, top: top + 8 }}
-    >
-      <p>ID: {assetInfo.label}</p>
-      <p>Name: {assetInfo.name}</p>
-      <p>Criticality: {assetInfo.criticality}</p>
-    </div>
-  );
-};
+const TopLeftPanel = ({ children }) => <FloatingPanel position="top-0 left-0">{children}</FloatingPanel>;

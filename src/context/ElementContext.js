@@ -1,26 +1,41 @@
-import React, { useCallback, useReducer } from "react";
+import React, { useCallback, useReducer, useState } from "react";
+
 import elementsReducer, {
+  ADD_ASSETS,
+  ADD_DEPENDENCIES,
   AREA_SELECTION,
   CLEAR_SELECTED,
   DISMISS_ERROR,
-  FILTER_SELECTED,
+  FILTER_SELECTED_ELEMENTS,
   INITIAL_STATE,
   MULTI_SELECT_ELEMENTS,
+  REMOVE_ELEMENTS_BY_TYPE,
   RESET,
   SELECT_ELEMENT,
-  UPDATE_ASSETS,
-  UPDATE_CONNECTIONS,
   UPDATE_ERRORS,
 } from "./elements-reducer";
 
 export const ElementsContext = React.createContext();
 
 export const ElementsProvider = ({ children }) => {
+  const [selectedFloodAreas, setSelectedFloodAreas] = useState([]);
   const [state, dispatch] = useReducer(elementsReducer, INITIAL_STATE);
+  const [selectedTimeline, setSelectedTimeline] = useState(null);
+
+  const onFloodTimelineSelect = (selected) => {
+    if (selected !== selectedTimeline) {
+      setSelectedTimeline(selected);
+    }
+    return;
+  };
+
+  const closeTimelinePanel = () => {
+    setSelectedTimeline(null);
+  };
 
   const {
     assets,
-    connections,
+    dependencies,
     errors,
     selectedElements,
     maxAssetCriticality,
@@ -30,38 +45,51 @@ export const ElementsProvider = ({ children }) => {
     totalCxnsColorScale,
   } = state;
 
-  const updateAssets = useCallback((assets) => {
-    if (!Array.isArray(assets)) return;
-    dispatch({ type: UPDATE_ASSETS, assets });
+  const filterSelectedElements = useCallback(() => {
+    dispatch({ type: FILTER_SELECTED_ELEMENTS });
   }, []);
 
-  const updateConnections = useCallback((connections) => {
-    if (!Array.isArray(connections)) return;
-    dispatch({ type: UPDATE_CONNECTIONS, connections });
-  }, []);
+  const addElements = useCallback(
+    (assets, dependencies) => {
+      if (!Array.isArray(assets) || !Array.isArray(dependencies)) return;
+      dispatch({ type: ADD_ASSETS, assets });
+      dispatch({ type: ADD_DEPENDENCIES, dependencies });
+      filterSelectedElements();
+    },
+    [filterSelectedElements]
+  );
 
-  const filterSelectedElements = useCallback((assets, connections) => {
-    dispatch({ type: FILTER_SELECTED, assets, connections });
-  }, []);
+  const removeElementsByType = useCallback(
+    (typeUri) => {
+      if (!typeUri) return;
+      dispatch({ type: REMOVE_ELEMENTS_BY_TYPE, typeUri });
+      filterSelectedElements();
+    },
+    [filterSelectedElements]
+  );
 
   const reset = useCallback(() => {
     dispatch({ type: RESET });
   }, []);
 
-  const onElementClick = useCallback((multiSelect, selectedElement) => {
+  const onElementClick = useCallback((multiSelect, selectedElements) => {
     if (multiSelect) {
-      dispatch({ type: MULTI_SELECT_ELEMENTS, selectedElement });
+      dispatch({ type: MULTI_SELECT_ELEMENTS, selectedElements });
       return;
     }
-    dispatch({ type: SELECT_ELEMENT, selectedElement });
+    dispatch({ type: SELECT_ELEMENT, selectedElements });
   }, []);
 
-  const onAreaSelect = (selectedElements) => {
+  const onAreaSelect = useCallback((selectedElements) => {
     if (!Array.isArray(selectedElements)) return;
     dispatch({ type: AREA_SELECTION, selectedElements });
-  };
+  }, []);
 
-  const updateErrors = useCallback((msg) => {
+  const onFloodAreaSelect = useCallback((polygonUri) => {
+    setSelectedFloodAreas(polygonUri);
+  }, []);
+
+  const updateErrorNotifications = useCallback((msg) => {
     dispatch({ type: UPDATE_ERRORS, error: msg });
   }, []);
 
@@ -69,15 +97,15 @@ export const ElementsProvider = ({ children }) => {
     dispatch({ type: DISMISS_ERROR, error });
   };
 
-  const clearSelectedElements = () => {
+  const clearSelectedElements = useCallback(() => {
     dispatch({ type: CLEAR_SELECTED });
-  };
+  }, []);
 
   return (
     <ElementsContext.Provider
       value={{
         assets,
-        connections,
+        dependencies,
         errors,
         selectedElements,
         maxAssetCriticality,
@@ -85,15 +113,20 @@ export const ElementsProvider = ({ children }) => {
         assetCriticalityColorScale,
         cxnCriticalityColorScale,
         totalCxnsColorScale,
+        addElements,
         clearSelectedElements,
         dismissErrorNotification,
         filterSelectedElements,
         onAreaSelect,
         onElementClick,
         reset,
-        updateAssets,
-        updateConnections,
-        updateErrors,
+        removeElementsByType,
+        updateErrorNotifications,
+        selectedFloodAreas,
+        onFloodAreaSelect,
+        selectedTimeline,
+        closeTimelinePanel,
+        onFloodTimelineSelect,
       }}
     >
       {children}

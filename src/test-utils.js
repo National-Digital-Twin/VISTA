@@ -1,12 +1,22 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import React from "react";
 import userEvent from "@testing-library/user-event";
+import { Provider as UseHttpProvider } from "use-http";
+import { MapProvider } from "react-map-gl";
+import { QueryClient, QueryClientProvider } from "react-query";
+
 import { Dataset } from "./components";
 import { CytoscapeProvider, ElementsContext, ElementsProvider } from "./context";
-import * as utils from "./components/Dataset/utils";
-import { MapProvider } from "react-map-gl";
+import { createAssets, createDependencies } from "components/Dataset/dataset-utils";
 
 const user = userEvent.setup();
+
+export const clickLowVoltageElectricity = async () => {
+  await user.click(screen.getByRole("button", { name: /Electrical power distribution complex/i }));
+  await user.click(await screen.findByRole("checkbox", { name: "Energy [25]" }));
+  expect(screen.getByRole("checkbox", { name: "Energy [25]" })).toBeChecked();
+};
+
 export const clickEnergyDataset = async () => {
   await user.click(await screen.findByRole("checkbox", { name: "Energy [25]" }));
   expect(screen.getByRole("checkbox", { name: "Energy [25]" })).toBeChecked();
@@ -20,8 +30,8 @@ export const clickMedicalDataset = async () => {
   await user.click(await screen.findByRole("checkbox", { name: "Medical [32]" }));
 };
 
-export const expandPanel = async (user) =>
-  await user.click(screen.getByRole("button", { name: "Open information panel" }));
+export const expandPanel = async (panelName) =>
+  await user.click(screen.getByRole("button", { name: panelName }));
 
 export const AssetBtn = ({ label, assets, event, onElementClick }) => (
   <button
@@ -47,6 +57,12 @@ export const CxnBtn = ({ label, connections, event, onElementClick }) => (
   >
     {label}
   </button>
+);
+
+export const PanelProviders = ({ children, elementsProviderValue }) => (
+  <UseHttpProvider options={{ cacheLife: 0, cachePolicy: "no-cache" }}>
+    <ElementsProvider value={elementsProviderValue}>{children}</ElementsProvider>
+  </UseHttpProvider>
 );
 
 const LoadDataWrapper = ({ testComponent, children }) => (
@@ -102,16 +118,62 @@ export const renderTestComponent = (ui, options) => {
   };
 };
 
-export const selectDatasets = async (user, datasets) => {
-  const spyOnCreateData = jest.spyOn(utils, "createData");
+const createTestQueryClient = () => {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+      },
+    },
+  });
+  return queryClient;
+};
+export const createQueryClientWrapper = () => {
+  const queryClient = createTestQueryClient();
+  return ({ children }) => (
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+  );
+};
 
-  for (const dataset of datasets) {
-    await waitFor(() =>
-      expect(screen.getByRole("checkbox", { name: dataset })).toBeInTheDocument()
-    );
-    await user.click(await screen.findByRole("checkbox", { name: dataset }));
-    expect(screen.getByRole("checkbox", { name: dataset })).toBeChecked();
-  }
+export const renderWithQueryClient = (ui, options) => {
+  const queryClient = createTestQueryClient();
 
-  await waitFor(() => expect(spyOnCreateData).toHaveReturned());
+  // https://github.com/testing-library/react-testing-library/issues/218#issuecomment-436730757
+  const rendered = render(
+    <QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>,
+    options
+  );
+
+  return {
+    user,
+    ...rendered,
+    rerender: (ui, options) =>
+      renderWithQueryClient(ui, { container: rendered.container, ...options }),
+  };
+};
+
+export const setup = (ui) => {
+  return {
+    user,
+    ...render(ui),
+  };
+};
+
+export const getCreatedAssets = async (
+  assets,
+  ids,
+  getIconStyle = jest.fn(),
+  getAssetGeometry = jest.fn()
+) => {
+  const createdAssets = (await createAssets(assets, getIconStyle, getAssetGeometry)).filter(
+    (asset) => ids.includes(asset.id)
+  );
+  return createdAssets;
+};
+
+export const getCreatedDependencies = (dependencies, ids) => {
+  const createdDependencies = createDependencies(dependencies).filter((asset) =>
+    ids.includes(asset.id)
+  );
+  return createdDependencies;
 };
