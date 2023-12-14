@@ -104,6 +104,34 @@
 
 * release 2.0.0-rc10 ([a5c57a7](https://github.com/Telicent-io/telicent-paralog/commit/a5c57a70a2003433a6edc348c4816387723baee3))
 
+## [1.4.4](https://github.com/Telicent-io/telicent-paralog/compare/v1.4.3...v1.4.4) (2023-08-04)
+
+
+### Bug Fixes
+
+* **publish.yml:** set smm parameter for nightly builds ([4299da7](https://github.com/Telicent-io/telicent-paralog/commit/4299da7d07d3dc031dc8336fb3fd442abf137283))
+
+## [1.4.3](https://github.com/Telicent-io/telicent-paralog/compare/v1.4.2...v1.4.3) (2023-07-17)
+
+
+### Bug Fixes
+
+* **publish.yml:** inherit secrets ([c8494da](https://github.com/Telicent-io/telicent-paralog/commit/c8494dab6d4ae05c6d48f43ed0f01230494a80ea))
+
+## [1.4.2](https://github.com/Telicent-io/telicent-paralog/compare/v1.4.1...v1.4.2) (2023-07-17)
+
+
+### Bug Fixes
+
+* **publish.yml:** fix uses path ([8f08f75](https://github.com/Telicent-io/telicent-paralog/commit/8f08f75f34e2be2dd9f4410f1493e15fb2895047))
+
+## [1.4.1](https://github.com/Telicent-io/telicent-paralog/compare/v1.4.0...v1.4.1) (2023-07-17)
+
+
+### Bug Fixes
+
+* **publish.yml:** publish docker images to azure as well as aws ([c4f0666](https://github.com/Telicent-io/telicent-paralog/commit/c4f0666dbf3ffd6551f549d750c68b27ece39e30)), closes [#279](https://github.com/Telicent-io/telicent-paralog/issues/279)
+
 ## [1.4.0](https://github.com/Telicent-io/telicent-paralog/compare/v1.3.0...v1.4.0) (2022-11-25)
 
 
