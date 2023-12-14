@@ -1,5 +1,25 @@
 # Changelog
 
+## [1.5.0](https://github.com/Telicent-io/telicent-paralog/compare/v1.4.4...v1.5.0) (2023-12-14)
+
+
+### Features
+
+* **search input on left:** allow user to search assets ([297bcfa](https://github.com/Telicent-io/telicent-paralog/commit/297bcfa8c92b51747dac9aa19e06c84bfd0614cf))
+
+
+### Bug Fixes
+
+* **add vertical spacing to search:** serarch spacing ([f2f1cb7](https://github.com/Telicent-io/telicent-paralog/commit/f2f1cb7b3274a1ae100130da171299a8a46d9d93))
+* css ([a174ce0](https://github.com/Telicent-io/telicent-paralog/commit/a174ce0f962523f6e7b4e4cbb09faf34d52a8501))
+* **fix fetch efficieny,  refactor api:** fix fetch efficieny,  refactor api ([2ec9001](https://github.com/Telicent-io/telicent-paralog/commit/2ec9001f8515572354f391442cdb8eacd01cedd6)), closes [#301](https://github.com/Telicent-io/telicent-paralog/issues/301)
+* **fix label bug:** asset search via uri prop ([61788e6](https://github.com/Telicent-io/telicent-paralog/commit/61788e67c7053f4a752e9c71aa498c8af66241d5))
+* **Icons:** updated components to work with the new ontology schema ([d4b9ba5](https://github.com/Telicent-io/telicent-paralog/commit/d4b9ba51716e17921037d923cab0f07367aa500a)), closes [#297](https://github.com/Telicent-io/telicent-paralog/issues/297)
+* **refactor api, increase speed of queries, reduce heavy fetches, add logging:** api speed fixes etc ([20eda5a](https://github.com/Telicent-io/telicent-paralog/commit/20eda5a6c882bfa68df017ed96bfd539ad2a253b)), closes [#301](https://github.com/Telicent-io/telicent-paralog/issues/301)
+* **search bugs:** fix search bugs ([e57d331](https://github.com/Telicent-io/telicent-paralog/commit/e57d331a7d79ac959a7d5563643930f74a2cd5d0))
+* **search subtypes:** search subtyps ([82ee2f9](https://github.com/Telicent-io/telicent-paralog/commit/82ee2f9ba38bbfe0baa170ff33c1b4fcb042e210))
+* use component lib ([c0f9113](https://github.com/Telicent-io/telicent-paralog/commit/c0f91130faf69719498043d5d86f9536dd1b1aac))
+
 ## [2.0.0-rc13](https://github.com/Telicent-io/telicent-paralog/compare/v2.0.0-rc12...v2.0.0-rc13) (2023-06-29)
 
 
