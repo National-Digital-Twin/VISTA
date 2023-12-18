@@ -85,9 +85,7 @@ jobs:
       PATH: .
       VERSION: ${{ needs.get_version.outputs.version }}
       ECR_SUFFIX: -build
-    secrets:
-      NPM_TOKEN: ${{ secrets.PACKAGE_PAT }}
-      FONT_AWESOME_TOKEN: ${{ secrets.FONT_AWESOME_KEY }}
+    secrets: inherit
 
   publish_offline_image_to_registries:
     needs:
@@ -101,9 +99,7 @@ jobs:
       PATH: .
       VERSION: ${{ needs.get_version.outputs.version }}
       VERSION_SUFFIX: -offline
-    secrets:
-      NPM_TOKEN: ${{ secrets.PACKAGE_PAT }}
-      FONT_AWESOME_TOKEN: ${{ secrets.FONT_AWESOME_KEY }}
+    secrets: inherit
 
   publish_deployment_image_to_registries:
     needs:
@@ -116,8 +112,7 @@ jobs:
       DOCKERFILE: Dockerfile
       PATH: .
       VERSION: ${{ needs.get_version.outputs.version }}
-    secrets:
-      NPM_TOKEN: ${{ secrets.PACKAGE_PAT }}
+    secrets: inherit
 
   update_nightly_build:
     permissions:
