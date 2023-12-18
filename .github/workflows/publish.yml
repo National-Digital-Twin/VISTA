@@ -89,14 +89,6 @@ jobs:
       NPM_TOKEN: ${{ secrets.PACKAGE_PAT }}
       FONT_AWESOME_TOKEN: ${{ secrets.FONT_AWESOME_KEY }}
 
-  publish_offline_image_to_aws:
-    needs:
-      - integrated_tests
-      - get_version
-      - publish_build_image_to_aws
-    uses: Telicent-io/telicent-test/.github/workflows/push-to-aws.yml@main
-    secrets: inherit
-
   publish_offline_image_to_registries:
     needs:
       - integrated_tests
@@ -113,13 +105,6 @@ jobs:
       NPM_TOKEN: ${{ secrets.PACKAGE_PAT }}
       FONT_AWESOME_TOKEN: ${{ secrets.FONT_AWESOME_KEY }}
 
-  publish_deployment_image_to_aws:
-    needs:
-      - integrated_tests
-      - get_version
-      - publish_build_image_to_aws
-    uses: Telicent-io/telicent-test/.github/workflows/push-to-aws.yml@main
-    secrets: inherit
   publish_deployment_image_to_registries:
     needs:
       - integrated_tests
