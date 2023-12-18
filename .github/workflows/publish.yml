@@ -6,7 +6,7 @@ on:
       - "api-v2"
     paths:
       - CHANGELOG.md
-  dispatch_workflow:
+  workflow_dispatch:
 
 jobs:
   get_version:
