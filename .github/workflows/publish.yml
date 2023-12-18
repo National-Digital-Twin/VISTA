@@ -6,6 +6,7 @@ on:
       - "api-v2"
     paths:
       - CHANGELOG.md
+  dispatch_workflow:
 
 jobs:
   get_version:
@@ -133,11 +134,6 @@ jobs:
     secrets:
       NPM_TOKEN: ${{ secrets.PACKAGE_PAT }}
 
-  trigger_owasp_dependency_check-api:
-    needs:
-      - publish_deployment_image_to_aws
-      - publish_offline_image_to_aws
-    secrets: inherit
   update_nightly_build:
     permissions:
       id-token: write
