@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.1](https://github.com/Telicent-io/telicent-paralog/compare/v1.5.0...v1.5.1) (2024-01-10)
+
+
+### Bug Fixes
+
+* **fix issue selecting nodes:** issue 317 fix ([464a8ef](https://github.com/Telicent-io/telicent-paralog/commit/464a8ef89567a1ac907ae4f6f7e9e67646a5c3a5))
+
 ## [1.5.0](https://github.com/Telicent-io/telicent-paralog/compare/v1.4.4...v1.5.0) (2023-12-14)
 
 
