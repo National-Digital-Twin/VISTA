@@ -60,10 +60,7 @@ const NetworkGraph = ({ showGrid }) => {
     };
 
     const selectNode = (elements, isMultiSelect) => {
-      const previouslySelected = getSelectedCyElements();
-      const selectedElements = getUniqueElements([...previouslySelected, ...elements]);
-
-      fitMultiToBounds(map, selectedElements, assets);
+      fitMultiToBounds(map, elements, assets);
       onElementClick(isMultiSelect, elements);
     };
 
@@ -72,9 +69,10 @@ const NetworkGraph = ({ showGrid }) => {
       const isMultiSelect = originalEvent.shiftKey;
       const connectedEdges = target.connectedEdges();
       const connectedNodes = connectedEdges.connectedNodes();
-      const elements = [...connectedNodes.jsons(), ...connectedEdges.jsons()].map(
-        (element) => element.data.element
-      );
+      const targetElement = target;
+      const elements = [targetElement, ...connectedNodes.jsons(), ...connectedEdges.jsons()]
+        .map((element) => element.data.element || element._private.data.element)
+        .filter((element, index, self) => self.findIndex(e => e.uri === element.uri) === index);
 
       selectNode(elements, isMultiSelect);
     };
