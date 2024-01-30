@@ -8,7 +8,7 @@ const SponsorLogos = () => {
   const medium = 180;
   return (
     <div className="sponsor-logos">
-      <img src={BEIS} width={medium} alt="beis logo" />
+      <img src={BEIS} width={medium} height={45} alt="beis logo" />
       <img src={RoyalEng} width={small} alt="royal engineers logo" />
     </div>
   );

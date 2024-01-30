@@ -27,7 +27,7 @@ const labels = {
     "text-variable-anchor": ["top", "bottom", "left", "right"],
     "text-radial-offset": 0.4,
     "text-justify": "auto",
-    "text-font": ["Urbanist"],
+    "text-font": ["Figtree"],
     "text-size": 14,
     "icon-image": "circle",
     "icon-size": 0,
