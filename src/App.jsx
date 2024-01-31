@@ -1,14 +1,13 @@
 import React, { useState } from "react";
 import { TeliStandardLayout } from "@telicent-io/ds";
-import "../node_modules/@telicent-io/ds/dist/style.css";
 
 import { Dataset, Grid, InfoPanel, NetworkGraph, SponsorsLogos, TelicentMap } from "./components";
+import FloodZoneTimeline from "components/Map/FloodZoneTimeline";
 import config from "./config/app-config";
 import { ErrorNotification, ResizableContainer } from "./lib";
 
-import "@fortawesome/fontawesome-pro/css/all.css";
-import "@fortawesome/fontawesome-pro/css/sharp-solid.css";
-import FloodZoneTimeline from "components/Map/FloodZoneTimeline";
+import "@telicent-io/ds/dist/fontawesome.css";
+import "@telicent-io/ds/dist/style.css";
 
 const App = () => {
   const [showGrid, setShowGrid] = useState(false);
@@ -22,23 +21,25 @@ const App = () => {
   }
 
   return (
-    <TeliStandardLayout appName="paralog" beta={true}>
+    <>
       <SponsorsLogos />
-      <div className="relative h-full">
-        <ErrorNotification />
-        <link href="https://viglino.github.io/font-gis/css/font-gis.css" rel="stylesheet" />
-        <Dataset showGrid={showGrid} toggleView={toggleView} />
-        <InfoPanel />
-        <div className="flex gap-x-2 h-full">
-          <ResizableContainer>
-            <Grid showGrid={showGrid} />
-            <NetworkGraph showGrid={showGrid} />
-            <FloodZoneTimeline />
-          </ResizableContainer>
-          <TelicentMap />
+      <TeliStandardLayout appName="paralog" beta={true}>
+        <div className="relative h-full">
+          <ErrorNotification />
+          <link href="https://viglino.github.io/font-gis/css/font-gis.css" rel="stylesheet" />
+          <Dataset showGrid={showGrid} toggleView={toggleView} />
+          <InfoPanel />
+          <div className="flex h-full gap-x-2">
+            <ResizableContainer>
+              <Grid showGrid={showGrid} />
+              <NetworkGraph showGrid={showGrid} />
+              <FloodZoneTimeline />
+            </ResizableContainer>
+            <TelicentMap />
+          </div>
         </div>
-      </div>
-    </TeliStandardLayout>
+      </TeliStandardLayout>
+    </>
   );
 };
 

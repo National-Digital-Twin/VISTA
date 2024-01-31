@@ -39,7 +39,7 @@ const cyStylesheet = [
       textBackgroundColor: "rgb(26, 26, 26)",
       textBackgroundPadding: "2px",
       textBackgroundShape: "round-rectangle",
-      fontFamily: "Urbanist",
+      fontFamily: "Figtree",
       fontWeight: 300,
       fontSize: 14,
       textBackgroundOpacity: 0.7,
