@@ -17,6 +17,8 @@ import PointerCoordinates from "./PointerCoords";
 import FloodMonitoringStations from "./FloodMonitoringStations";
 import FloodWarningWidget from "./FloodAreaWidget";
 import FloodZones from "./FloodZones";
+import PointAssets from "./PointAssets";
+import BuildingsEpcRating from "./BuildingsEpcRating";
 
 import { FLOOD_AREA_LAYERS, heatmap, LINEAR_ASSET_LAYER } from "./layers";
 import { generateLinearAssetFeatures } from "./map-utils";
@@ -24,8 +26,6 @@ import { getMapStyles } from "./mapStyles";
 
 import "@fortawesome/fontawesome-pro/css/all.css";
 import "./map.css";
-import PointAssets from "./PointAssets";
-import BuildingsEpcRating from "./BuildingsEpcRating";
 
 export const GEOJSON = "geojson";
 export const FEATURE_COLLECTION = "FeatureCollection";
