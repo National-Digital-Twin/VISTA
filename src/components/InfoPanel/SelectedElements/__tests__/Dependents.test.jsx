@@ -48,9 +48,9 @@ const toggleDependents = async (user) => {
 
 describe("Dependents component", () => {
   beforeEach(() => {
-    jest.clearAllMocks()
-    jest.resetAllMocks()
-  })
+    jest.clearAllMocks();
+    jest.resetAllMocks();
+  });
 
   test("does NOT render dependent assets when element is not defined", async () => {
     await renderE003AssetDetails([]);
@@ -67,7 +67,7 @@ describe("Dependents component", () => {
     expect(screen.queryByRole("list")).not.toBeInTheDocument();
 
     await toggleDependents(user);
-    expect(screen.queryByRole("list")).toBeInTheDocument();
+    expect(screen.getByRole("list")).toBeInTheDocument();
 
     const dependents = screen.getAllByRole("listitem");
     expect(dependents).toHaveLength(4);
@@ -80,6 +80,7 @@ describe("Dependents component", () => {
       backgroundColor: "rgb(163, 163, 163)",
       color: "rgb(51, 51, 51)",
     });
+
     expect(within(dependents[0]).getByTestId("asset-icon").firstElementChild).toHaveTextContent(
       "Low"
     );

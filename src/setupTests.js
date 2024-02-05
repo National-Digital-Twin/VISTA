@@ -6,7 +6,6 @@ import "@testing-library/jest-dom";
 import "jest-canvas-mock";
 import { configure } from "@testing-library/react";
 import { toMatchImageSnapshot } from "jest-image-snapshot";
-import { setLogger } from "react-query";
 
 import server from "./mocks";
 
@@ -21,13 +20,6 @@ process.env = {
   MAP_URL: "http://map.com",
   ONTOLOGY_API_URL: "http://localhost:5007",
 };
-
-setLogger({
-  log: console.log,
-  warn: console.warn,
-  // ✅ no more errors on the console
-  error: () => {},
-});
 
 beforeAll(() => server.listen());
 beforeEach(() => {

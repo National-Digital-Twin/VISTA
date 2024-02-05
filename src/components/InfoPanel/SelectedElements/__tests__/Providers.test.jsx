@@ -1,5 +1,5 @@
 import React from "react";
-import { screen, waitForElementToBeRemoved, within } from "@testing-library/dom";
+import { screen, waitForElementToBeRemoved, within } from "@testing-library/react";
 import { rest } from "msw";
 
 import { ElementsContext } from "context";
