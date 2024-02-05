@@ -1,5 +1,5 @@
 import { isEmpty } from "lodash";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 import PropTypes from "prop-types";
 import React, { useMemo, useState } from "react";
 
@@ -9,22 +9,26 @@ const LIMIT = 3;
 
 const ResidentialInformation = ({ isAsset, primaryType, uri }) => {
   const isPerson = useMemo(() => primaryType?.toLowerCase() === "person" || false, [primaryType]);
+  const show = Boolean(uri) && isAsset && isPerson;
+
   const {
-    isIdle,
     isLoading,
     isError,
     error,
     data: residences,
-  } = useQuery(["person-residences", uri], () => fetchResidentialInformation(uri), {
-    enabled: !!uri && isAsset && isPerson,
+  } = useQuery({
+    enabled: show,
+    queryKey: ["person-residences", uri],
+    queryFn: () => fetchResidentialInformation(uri),
   });
 
-  if (isIdle) return null;
+  if (!show) return null;
+
   const totalResidences = residences?.length || 0;
 
   return (
     <div className="flex flex-col gap-y-1">
-      <div className="flex justify-between items-center text-whiteSmoke-300">
+      <div className="flex items-center justify-between text-whiteSmoke-300">
         <h3 className="uppercase">Residential Information</h3>
         {totalResidences > LIMIT && <p className="text-sm">{totalResidences} addresses found</p>}
       </div>
@@ -66,7 +70,7 @@ const Addresses = ({ residences, isLoading, isError, error }) => {
           const section = `Address ${index + 1}`;
           return (
             <li key={residence.uri}>
-              <p className="font-semibold text-sm">{section}</p>
+              <p className="text-sm font-semibold">{section}</p>
               <p>{residence?.address || residence.uri}</p>
             </li>
           );

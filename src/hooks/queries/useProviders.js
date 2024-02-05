@@ -1,4 +1,4 @@
-import { useQueries, useQuery } from "react-query";
+import { useQueries, useQuery } from "@tanstack/react-query";
 import { fetchAssetInfo, fetchIconStyles, fetchProviders } from "api/combined";
 
 const useProviders = (isAsset, isDependency, assetUri, provider) => {
@@ -7,50 +7,33 @@ const useProviders = (isAsset, isDependency, assetUri, provider) => {
     isError,
     error,
     data: assetProviders,
-  } = useQuery(["asset-providers", assetUri], () => fetchProviders(assetUri), {
+  } = useQuery({
     enabled: isAsset,
+    queryKey: ["asset-providers", assetUri],
+    queryFn: () => fetchProviders(assetUri),
   });
 
-  const providerDetailQueries = useQueries([
-    ...(assetProviders || []).map((provider) => {
-      const assetUri = provider?.providerNode;
-      return {
-        queryKey: ["provider-details", assetUri],
-        queryFn: async () => {
-          const providerDetails = await getProviderDetails(
-            assetUri,
-            provider?.providerNodeType,
-            provider.criticalityRating
-          );
-          return providerDetails;
-        },
-        enabled: !!assetUri,
-      };
+  const providerDetailQueries = useQueries({
+    queries: getProviderDetailQueriesConfig({
+      assetProviders: assetProviders ?? [],
+      isDependency,
+      provider,
     }),
-    {
-      queryKey: ["provider-details", provider?.uri],
-      queryFn: async () => {
-        const providerDetails = await getProviderDetails(
-          provider?.uri,
-          provider?.type,
-          provider?.criticality
-        );
-        return providerDetails;
-      },
-      enabled: isDependency,
-    },
-  ]);
+    combine: (results) => ({
+      data: results.map((result) => {
+        if (result.isError) return { error: result.error };
+        return result.data;
+      }),
+      isLoading: results.some((result) => result.isLoading),
+    }),
+  });
 
-  const isLoading =
-    isAssetProvidersLoading || providerDetailQueries.some((query) => query.isLoading);
-  const data = providerDetailQueries
-    .filter((query) => !query.isIdle && !query.isLoading)
-    .map((query) => {
-      if (query.isError) return { error: query.error };
-      return query.data;
-    });
-
-  return { isLoading, isError, error, data };
+  return {
+    isLoading: isAssetProvidersLoading || providerDetailQueries.isLoading,
+    isError,
+    error,
+    data: providerDetailQueries.data,
+  };
 };
 
 export default useProviders;
@@ -63,4 +46,39 @@ const getProviderDetails = async (assetUri, typeUri, connectionStrength) => {
     connectionStrength,
     styles: iconStyle,
   };
+};
+
+const getProviderDetailQueriesConfig = ({ assetProviders, isDependency, provider }) => {
+  if (isDependency) {
+    return [
+      {
+        queryKey: ["provider-details", provider?.uri],
+        queryFn: async () => {
+          const providerDetails = await getProviderDetails(
+            provider?.uri,
+            provider?.type,
+            provider?.criticality
+          );
+          return providerDetails;
+        },
+        enabled: isDependency,
+      },
+    ];
+  }
+
+  return assetProviders.map((provider) => {
+    const assetUri = provider?.providerNode;
+    return {
+      queryKey: ["provider-details", assetUri],
+      queryFn: async () => {
+        const providerDetails = await getProviderDetails(
+          assetUri,
+          provider?.providerNodeType,
+          provider.criticalityRating
+        );
+        return providerDetails;
+      },
+      enabled: !!assetUri,
+    };
+  });
 };

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { isEmpty, lowerCase } from "lodash";
 import classNames from "classnames";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 import PropTypes from "prop-types";
 
 import { fetchAssetInfo } from "api/combined";
@@ -16,8 +16,10 @@ const ElementDetails = ({ element, expand, onViewDetails }) => {
   const elemIsAsset = isAsset(element);
   const elemIsDependency = isDependency(element);
 
-  const assetInfo = useQuery(["asset-info", element?.uri], () => fetchAssetInfo(element?.uri), {
+  const assetInfo = useQuery({
     enabled: elemIsAsset,
+    queryKey: ["asset-info", element?.uri],
+    queryFn: () => fetchAssetInfo(element?.uri),
   });
 
   const dependentInfo = useQuery({
@@ -51,7 +53,7 @@ const ElementDetails = ({ element, expand, onViewDetails }) => {
   if (!expand) {
     return (
       <li className="border-b border-whiteSmoke-800">
-        <button aria-label={details.title} onClick={onViewDetails} className="text-left pb-3">
+        <button aria-label={details.title} onClick={onViewDetails} className="pb-3 text-left">
           <Details expand={false} details={details} />
         </button>
       </li>
@@ -59,13 +61,14 @@ const ElementDetails = ({ element, expand, onViewDetails }) => {
   }
 
   return (
-    <div id="element-details" className="flex flex-col grow min-h-0 overflow-y-auto gap-y-4 pt-2">
+    <div id="element-details" className="flex flex-col min-h-0 pt-2 overflow-y-auto grow gap-y-4">
       <Details expand details={details} />
       <ResidentialInformation
         isAsset={elemIsAsset}
         primaryType={element.primaryType}
         uri={element.uri}
       />
+      <Residents isAsset={elemIsAsset} assetUri={element.uri} primaryType={element.primaryType} />
       <Dependents
         isAsset={elemIsAsset}
         isDependency={elemIsDependency}
@@ -78,7 +81,6 @@ const ElementDetails = ({ element, expand, onViewDetails }) => {
         assetUri={element.uri}
         provider={element?.provider}
       />
-      <Residents isAsset={elemIsAsset} assetUri={element.uri} primaryType={element.primaryType} />
     </div>
   );
 };
@@ -96,7 +98,7 @@ const Details = ({ expand, details }) => {
       <div className="asset__details">
         <span
           id="asset-icon"
-          className="w-12 h-12 flex items-center justify-center"
+          className="flex items-center justify-center w-12 h-12"
           style={{ ...icon.style }}
         >
           {icon?.iconLabel ? (
@@ -107,14 +109,14 @@ const Details = ({ expand, details }) => {
         </span>
         <div>
           <h2 className="text-lg font-medium">{title}</h2>
-          {type && <p className="uppercase text-sm">{lowerCase(getURIFragment(type))}</p>}
+          {type && <p className="text-sm uppercase">{lowerCase(getURIFragment(type))}</p>}
           <p>{id}</p>
         </div>
       </div>
       {expand && (
         <>
           {icon?.iconLabel && (
-            <p className="flex items-center gap-x-2 px-2 rounded-md bg-yellow-600 text-black-100 w-fit">
+            <p className="flex items-center px-2 bg-yellow-600 rounded-md gap-x-2 text-black-100 w-fit">
               <i className="fa-light fa-diamond-exclamation text-black-100" />
               Icon styles not found
             </p>
@@ -156,7 +158,7 @@ const Description = ({ description }) => {
       </p>
       {isLineClampApplied && showMore ? null : (
         <button
-          className="w-fit float-right flex items-center gap-x-1 text-sm"
+          className="flex items-center float-right text-sm w-fit gap-x-1"
           onClick={handleShowMore}
         >
           show {showMore ? "more" : "less"}

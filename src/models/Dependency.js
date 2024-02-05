@@ -1,5 +1,5 @@
 import { isEmpty } from "lodash";
-import { findElement, getColorScale, getHexColor, getURIFragment } from "utils";
+import { findElement, getColorScale, getHexColor, getURIFragment } from "../utils";
 
 export default class Dependency {
   #colorScale = getColorScale(1, 3);

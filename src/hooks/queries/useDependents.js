@@ -1,4 +1,4 @@
-import { useQueries, useQuery } from "react-query";
+import { useQueries, useQuery } from "@tanstack/react-query";
 import { fetchAssetInfo, fetchDependents, fetchIconStyles } from "api/combined";
 
 const useDependents = (isAsset, isDependency, assetUri, dependent) => {
@@ -7,51 +7,33 @@ const useDependents = (isAsset, isDependency, assetUri, dependent) => {
     isError,
     error,
     data: assetDependents,
-  } = useQuery(["asset-dependents", assetUri], () => fetchDependents(assetUri), {
+  } = useQuery({
+    queryKey: ["asset-dependents", assetUri],
+    queryFn: () => fetchDependents(assetUri),
     enabled: isAsset,
   });
 
-
-  const dependetDetailQueries = useQueries([
-    ...(assetDependents || []).map((dependent) => {
-      const assetUri = dependent?.dependentNode;
-      return {
-        queryKey: ["dependent-details", assetUri],
-        queryFn: async () => {
-          const dependentDetails = await getDependentDetails(
-            assetUri,
-            dependent?.dependentNodeType,
-            dependent?.criticalityRating
-          );
-          return dependentDetails;
-        },
-        enabled: !!assetUri,
-      };
+  const dependentDetailQueries = useQueries({
+    queries: getDependentDetailQueriesConfig({
+      assetDependents: assetDependents ?? [],
+      isDependency,
+      dependent,
     }),
-    {
-      queryKey: ["dependent-details", dependent?.uri],
-      queryFn: async () => {
-        const dependentDetails = await getDependentDetails(
-          dependent?.uri,
-          dependent?.type,
-          dependent?.criticality
-        );
-        return dependentDetails;
-      },
-      enabled: isDependency,
-    },
-  ]);
+    combine: (results) => ({
+      data: results.map((result) => {
+        if (result.isError) return { error: result.error };
+        return result.data;
+      }),
+      isLoading: results.some((result) => result.isLoading),
+    }),
+  });
 
-  const isLoading =
-    isAssetDependentsLoading || dependetDetailQueries.some((query) => query.isLoading);
-  const data = dependetDetailQueries
-    .filter((query) => !query.isIdle && !query.isLoading)
-    .map((query) => {
-      if (query.isError) return { error: query.error };
-      return query.data;
-    });
-
-  return { isLoading, isError, error, data };
+  return {
+    isLoading: isAssetDependentsLoading || dependentDetailQueries.isLoading,
+    isError,
+    error,
+    data: dependentDetailQueries.data,
+  };
 };
 
 export default useDependents;
@@ -64,4 +46,39 @@ const getDependentDetails = async (assetUri, assetType, connectionStrength) => {
     connectionStrength,
     styles: iconStyle,
   };
+};
+
+const getDependentDetailQueriesConfig = ({ assetDependents, isDependency, dependent }) => {
+  if (isDependency) {
+    return [
+      {
+        queryKey: ["dependent-details", dependent?.uri],
+        queryFn: async () => {
+          const dependentDetails = await getDependentDetails(
+            dependent?.uri,
+            dependent?.type,
+            dependent?.criticality
+          );
+          return dependentDetails;
+        },
+        enabled: isDependency,
+      },
+    ];
+  }
+
+  return assetDependents.map((dependent) => {
+    const assetUri = dependent?.dependentNode;
+    return {
+      queryKey: ["dependent-details", dependent?.dependentNode],
+      queryFn: async () => {
+        const dependentDetails = await getDependentDetails(
+          dependent?.dependentNode,
+          dependent?.dependentNodeType,
+          dependent?.criticalityRating
+        );
+        return dependentDetails;
+      },
+      enabled: !!assetUri,
+    };
+  });
 };
