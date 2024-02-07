@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 
 import { ElementsContext } from "context";
 import { fetchFloodMonitoringStations } from "api/combined";
@@ -15,8 +15,10 @@ const useFloodMonitoringStations = () => {
     onItemClick: () => setShowStations((show) => !show),
   };
 
-  const query = useQuery("flood-monitoring-stations", () => fetchFloodMonitoringStations(), {
+  const query = useQuery({
     enabled: showStations,
+    queryKey: ["flood-monitoring-stations"],
+    queryFn: () => fetchFloodMonitoringStations(),
     select: (data) => {
       return data.items.map((monitoringStation) => {
         return {

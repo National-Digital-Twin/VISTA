@@ -1,23 +1,16 @@
 import { isEmpty } from "lodash";
 import React from "react";
 import PropTypes from "prop-types";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 
 import { fetchAssessments } from "api/assessments";
 import AssessmentTypes from "./AssessmentTypes";
 
 const Assessments = () => {
-  const [fetch, setFetch] = React.useState(true); 
-
-  const { isLoading, isError, data } = useQuery("assessments", fetchAssessments, {
-    enabled: fetch,
+  const { isLoading, isError, data } = useQuery({
+    queryKey: ["assessments"],
+    queryFn: fetchAssessments,
   });
-
-  React.useEffect(() => {
-    if (fetch) {
-      setFetch(false);
-    }
-  }, [fetch]);  
 
   if (isLoading) return <p>Fetching assessments</p>;
   if (isError)

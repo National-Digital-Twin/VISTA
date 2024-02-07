@@ -1,5 +1,5 @@
 import { waitFor } from "@testing-library/react";
-import { act, renderHook } from "@testing-library/react-hooks";
+import { act, renderHook } from "@testing-library/react";
 import { EASTERN_YAR_FEATURE, SANDOWN_BRANDING_AND_BREMBRIDGE_ON_EASTERN_YAR } from "mocks";
 import useMapInteractions from "../useMapInteractions";
 

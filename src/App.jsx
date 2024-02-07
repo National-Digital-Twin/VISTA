@@ -26,7 +26,6 @@ const App = () => {
       <TeliStandardLayout appName="paralog" beta={true}>
         <div className="relative h-full">
           <ErrorNotification />
-          <link href="https://viglino.github.io/font-gis/css/font-gis.css" rel="stylesheet" />
           <Dataset showGrid={showGrid} toggleView={toggleView} />
           <InfoPanel />
           <div className="flex h-full gap-x-2">

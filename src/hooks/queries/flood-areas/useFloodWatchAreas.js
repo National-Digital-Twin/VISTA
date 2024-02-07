@@ -1,13 +1,9 @@
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 import { fetchAllFloodAreas } from "api/combined";
 
 const useFloodWatchAreas = () => {
-  const { isLoading, isError, error, data } = useQuery("flood-watch-areas", () =>
-    fetchAllFloodAreas()
-  );
-
-  const generateFloodAreaNodes = () => {
-    const nodes = (data || []).map((floodWatchArea) => {
+  const generateFloodAreaNodes = (data) => {
+    const nodes = data.map((floodWatchArea) => {
       const floodWatchAreaUri = floodWatchArea?.uri;
       const floodWatchAreaPolygonUri = floodWatchArea?.polygon_uri;
       const floodWatchAreaName = floodWatchArea?.name || floodWatchArea?.uri;
@@ -35,7 +31,13 @@ const useFloodWatchAreas = () => {
     });
     return nodes;
   };
-  return { isLoading, isError, error, generateFloodAreaNodes };
+
+  const { isLoading, isError, error, data } = useQuery({
+    queryKey: ["flood-watch-areas"],
+    queryFn: fetchAllFloodAreas,
+    select: generateFloodAreaNodes,
+  });
+  return { isLoading, isError, error, data };
 };
 
 export default useFloodWatchAreas;

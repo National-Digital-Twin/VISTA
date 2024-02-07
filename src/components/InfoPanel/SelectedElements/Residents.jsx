@@ -1,6 +1,6 @@
 import { isEmpty, lowerCase } from "lodash";
 import React, { useState } from "react";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 import PropTypes from "prop-types";
 
 import { DetailsSection } from "lib";
@@ -16,8 +16,10 @@ const Residents = ({ isAsset, assetUri, primaryType }) => {
     isError,
     error,
     data: residents,
-  } = useQuery(["residents", assetUri], () => fetchResidents(assetUri), {
+  } = useQuery({
     enabled: !!assetUri && isAsset && hasResidents,
+    queryKey: ["residents", assetUri],
+    queryFn: () => fetchResidents(assetUri),
   });
 
   const [expand, setExpand] = useState(false);
@@ -30,9 +32,9 @@ const Residents = ({ isAsset, assetUri, primaryType }) => {
 
   if (isIdle) return null;
   if (isLoading) {
-    return <p className="bg-black-100 rounded-lg px-4 py-3">Fetching residents information</p>;
+    return <p className="px-4 py-3 rounded-lg bg-black-100">Fetching residents information</p>;
   }
-  if (isError) return <p className="bg-red-900 rounded-lg px-4 py-3">{error.message}</p>;
+  if (isError) return <p className="px-4 py-3 bg-red-900 rounded-lg">{error.message}</p>;
   if (isEmpty(residents)) return null;
 
   return (

@@ -1,9 +1,9 @@
 import React from "react";
-import { createRoot } from "react-dom/client"
+import { createRoot } from "react-dom/client";
 import { MapProvider } from "react-map-gl";
 import { Provider as UseFetchProvider } from "use-http";
-import { QueryClient, QueryClientProvider } from "react-query";
-import { ReactQueryDevtools } from "react-query/devtools";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 import config from "./config/app-config";
 import { CytoscapeProvider, ElementsProvider } from "./context";
@@ -11,8 +11,19 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import "./main.css";
 
-const queryClient = new QueryClient();
-const container = document.getElementById("root")
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      refetchOnMount: false,
+      refetchOnReconnect: false,
+      retry: false,
+      staleTime: Infinity,
+    },
+  },
+});
+
+const container = document.getElementById("root");
 const root = createRoot(container);
 root.render(
   <UseFetchProvider url={config.api.url}>

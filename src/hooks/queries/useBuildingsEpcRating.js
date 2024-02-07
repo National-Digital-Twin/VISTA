@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 
 import { ElementsContext } from "context";
 import { fetchBuildingsEpcRating } from "api/combined";
@@ -21,8 +21,10 @@ const useBuildingsEpcRating = () => {
     onItemClick: () => setshowBuildings((show) => !show),
   };
 
-  const query = useQuery("buildings-epc-rating", () => fetchBuildingsEpcRating(), {
+  const query = useQuery({
     enabled: showBuildings,
+    queryKey: ["buildings-epc-rating"],
+    queryFn: fetchBuildingsEpcRating,
     select: (data) => {
       return data.map(({ uprn, epc_rating, name, lon, lat }) => ({
         type: "Feature",

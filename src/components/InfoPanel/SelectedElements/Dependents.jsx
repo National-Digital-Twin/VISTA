@@ -22,8 +22,8 @@ const Dependents = ({ assetUri, dependent, isAsset, isDependency }) => {
   };
 
   if (isLoading)
-    return <p className="bg-black-100 rounded-lg px-4 py-3">Loading dependent assets</p>;
-  if (isError) return <p className="bg-black-100 rounded-lg px-4 py-3">{error.message}</p>;
+    return <p className="px-4 py-3 rounded-lg bg-black-100">Loading dependent assets</p>;
+  if (isError) return <p className="px-4 py-3 rounded-lg bg-black-100">{error.message}</p>;
   if (isEmpty(dependents)) return null;
 
   return (
