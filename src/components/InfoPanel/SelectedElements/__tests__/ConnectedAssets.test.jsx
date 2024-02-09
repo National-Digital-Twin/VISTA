@@ -64,42 +64,4 @@ describe("Connected assets component", () => {
       "East Cowes Power Station"
     );
   });
-
-  test("renders colored asset icon when asset has been added", () => {
-    renderConnectedAssets({
-      connectedAssets: CONNECTED_ASSETS,
-      assets: [{ uri: "https://www.iow.gov.uk/DigitalTwin#E001" }],
-    });
-
-    const listItems = screen.getAllByRole("listitem");
-    expect(within(listItems[0]).getByRole("heading", { level: 4 })).toHaveTextContent(
-      "Fawley 132 kV Substation - Hants"
-    );
-    expect(within(listItems[0]).getByText("E025")).toBeInTheDocument();
-    /*   
-  Alecs - Improve telitypeicon accessibility
-  expect(
-      within(listItems[0]).getByTitle("HighVoltageElectricitySubstationComplex-icon")
-    ).toBeInTheDocument(); */
-  });
-
-  test("renders greyscale asset icon when asset has not been added", () => {
-    renderConnectedAssets({
-      connectedAssets: CONNECTED_ASSETS,
-      assets: [{ uri: "https://www.iow.gov.uk/DigitalTwin#E001" }],
-    });
-
-    const listItems = screen.getAllByRole("listitem");
-    expect(within(listItems[1]).getByRole("heading", { level: 4 })).toHaveTextContent(
-      "East Cowes Power Station"
-    );
-    expect(within(listItems[1]).getByText("E001")).toBeInTheDocument();
-    /* expect(within(listItems[1]).getByTestId("asset-icon")).toHaveStyle({
-      backgroundColor: "rgb(163, 163, 163)",
-      color: "rgb(51, 51, 51)",
-    });
-    expect(within(listItems[1]).getByTestId("asset-icon").firstElementChild).toHaveClass(
-      "fa-solid fa-utility-pole-double"
-    ); */
-  });
 });
