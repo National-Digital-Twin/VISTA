@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { TeliStandardLayout } from "@telicent-io/ds";
+import { DSProviders, TeliStandardLayout } from "@telicent-io/ds";
+import OntologyService from "@telicent-io/ontologyservice";
 
 import { Dataset, Grid, InfoPanel, NetworkGraph, SponsorsLogos, TelicentMap } from "./components";
 import FloodZoneTimeline from "components/Map/FloodZoneTimeline";
@@ -8,6 +9,8 @@ import { ErrorNotification, ResizableContainer } from "./lib";
 
 import "@telicent-io/ds/dist/fontawesome.css";
 import "@telicent-io/ds/dist/style.css";
+
+const ontologyService = new OntologyService(config.services.ontology, "/ontology");
 
 const App = () => {
   const [showGrid, setShowGrid] = useState(false);
@@ -21,7 +24,7 @@ const App = () => {
   }
 
   return (
-    <>
+    <DSProviders ontologyService={ontologyService}>
       <SponsorsLogos />
       <TeliStandardLayout appName="paralog" beta={true}>
         <div className="relative h-full">
@@ -38,7 +41,7 @@ const App = () => {
           </div>
         </div>
       </TeliStandardLayout>
-    </>
+    </DSProviders>
   );
 };
 

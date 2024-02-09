@@ -1,46 +1,38 @@
-import { lowerCase } from "lodash";
 import React from "react";
+import { lowerCase } from "lodash";
+import { TeliTypeIcon } from "@telicent-io/ds";
 
-import { AssetIcon } from "lib";
+import { getURIFragment } from "utils";
 
-const AssetDetails = ({
+const ConnectedAssetDetails = ({
   error,
   uri,
   name,
   type,
   criticality,
   connectionStrength,
-  backgroundColor,
-  color,
-  icon,
+  isAdded,
 }) => {
   if (error) {
-    return <li className="bg-red-900 rounded-md p-2">{error.message}</li>;
+    return <li className="p-2 bg-red-900 rounded-md">{error.message}</li>;
   }
 
   return (
-    <li className="gap-x-2 bg-black-300 rounded-md p-2 items-center">
+    <li className="items-center p-2 rounded-md gap-x-2 bg-black-300">
       <div className="flex items-center gap-x-2">
-        <AssetIcon
-          backgroundColor={backgroundColor}
-          color={color}
-          icon={icon}
-          iconLabel={type.substring(0, 3)}
-        />
+        <TeliTypeIcon size="sm" type={type} disabled={!isAdded} />
         <div>
           <h4>{name || uri}</h4>
-          <p className="uppercase" style={{ fontSize: "13px" }}>
-            {type.includes("http") ? type : lowerCase(type)}
-          </p>
+          <p className="text-sm uppercase">{lowerCase(getURIFragment(type))}</p>
           <p className="text-sm">{uri.split("#")[1]}</p>
         </div>
       </div>
-      <p className="whitespace-nowrap text-sm">Criticality: {criticality || "N/D"}</p>
-      <p className="whitespace-nowrap text-sm">
+      <p className="text-sm whitespace-nowrap">Criticality: {criticality || "N/D"}</p>
+      <p className="text-sm whitespace-nowrap">
         Connection Strength: {connectionStrength || "N/D"}
       </p>
     </li>
   );
 };
 
-export default AssetDetails;
+export default ConnectedAssetDetails;

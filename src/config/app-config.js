@@ -18,9 +18,11 @@ const config = {
   },
   api: {
     url: env.API_URL,
-    ontology: env.ONTOLOGY_API_URL,
   },
   beta: env.BETA === "true",
+  services: {
+    ontology: env?.ONTOLOGY_SERVICE,
+  },
 };
 
 export default config;

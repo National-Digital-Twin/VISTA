@@ -5,7 +5,7 @@ export const createNode = (assets) => {
 };
 
 export const createEdges = (nodes, dependencies) => {
-  if (isEmpty(nodes)) return []
+  if (isEmpty(nodes)) return [];
   return dependencies.map((dependency) => dependency.toCytoscapeEdge());
 };
 
@@ -17,7 +17,7 @@ export const nodeLabels = [
     valignBox: "center",
     halignBox: "center",
     tpl: (data) => {
-      let label = "<i class='" + data.icon + "'></i>";
+      let label = "<i class='fa-xl " + data.icon + "' style=></i>";
       if (!data.icon) {
         label = data.iconLabel;
       }

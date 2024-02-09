@@ -2587,11 +2587,6 @@
     "@svgr/plugin-svgo" "^5.5.0"
     loader-utils "^2.0.0"
 
-"@tanstack/query-core@4.36.1":
-  version "4.36.1"
-  resolved "https://registry.yarnpkg.com/@tanstack/query-core/-/query-core-4.36.1.tgz#79f8c1a539d47c83104210be2388813a7af2e524"
-  integrity sha512-DJSilV5+ytBP1FbFcEJovv4rnnm/CokuVvrBEtW/Va9DvuJ3HksbXUJEpI0aV1KtuL4ZoO9AVE6PyNLzF7tLeA==
-
 "@tanstack/query-core@5.18.1":
   version "5.18.1"
   resolved "https://registry.yarnpkg.com/@tanstack/query-core/-/query-core-5.18.1.tgz#b653ee354b7f4712d53565ccc5c6d8fb83ec866c"
@@ -2609,25 +2604,17 @@
   dependencies:
     "@tanstack/query-devtools" "5.18.1"
 
-"@tanstack/react-query@^4.35.3":
-  version "4.36.1"
-  resolved "https://registry.yarnpkg.com/@tanstack/react-query/-/react-query-4.36.1.tgz#acb589fab4085060e2e78013164868c9c785e5d2"
-  integrity sha512-y7ySVHFyyQblPl3J3eQBWpXZkliroki3ARnBKsdJchlgt7yJLRDUcf4B8soufgiYt3pEQIkBWBx1N9/ZPIeUWw==
-  dependencies:
-    "@tanstack/query-core" "4.36.1"
-    use-sync-external-store "^1.2.0"
-
-"@tanstack/react-query@^5.18.1":
+"@tanstack/react-query@^5.18.0", "@tanstack/react-query@^5.18.1":
   version "5.18.1"
   resolved "https://registry.yarnpkg.com/@tanstack/react-query/-/react-query-5.18.1.tgz#fd4e7b87260e82c5277355ad64f0e431a9302e02"
   integrity sha512-PdI07BbsahZ+04PxSuDQsQvBWe008eWFk/YYWzt8fvzt2sALUM0TpAJa/DFpqa7+SSo7j1EQR6Jx6znXNHyaXw==
   dependencies:
     "@tanstack/query-core" "5.18.1"
 
-"@telicent-io/ds@^3.3.1":
-  version "3.3.1"
-  resolved "https://npm.pkg.github.com/download/@Telicent-io/ds/3.3.1/32480cdfcb572752dc762229fb572f989860c6eb#32480cdfcb572752dc762229fb572f989860c6eb"
-  integrity sha512-qltdUb7WQIa1N0qm+3V/vYz/2rvWEuAlsC9E/IlU4W3v25Q3QzX5or24mpWLcT/YBImE2hNlqVOWEg7yCdb+WQ==
+"@telicent-io/ds@^3.7.0":
+  version "3.7.0"
+  resolved "https://npm.pkg.github.com/download/@Telicent-io/ds/3.7.0/27fb59b69a48d5bf25cb06dc70ba482498ad10c8#27fb59b69a48d5bf25cb06dc70ba482498ad10c8"
+  integrity sha512-eklonUkrpvGC3AmbQ7MDcXoa/sS8bmGUsPHuF6jeRzkwi3JrC2vSLQ20mQsCXzTG+Ee8+NBcaB4F4QHBJIiWrw==
   dependencies:
     "@emotion/react" "^11.10.6"
     "@emotion/styled" "^11.10.6"
@@ -2637,13 +2624,27 @@
     "@fortawesome/pro-solid-svg-icons" "^6.4.2"
     "@fortawesome/react-fontawesome" "^0.2.0"
     "@mui/material" "^5.14.16"
-    "@tanstack/react-query" "^4.35.3"
+    "@tanstack/react-query" "^5.18.0"
+    "@telicent-io/ontologyservice" "^0.0.14-rc36"
     classnames "^2.3.1"
     lodash "^4.17.21"
     react "^18.2.0"
     react-dom "^18.2.0"
     typescript "*"
     zod "^3.21.4"
+
+"@telicent-io/ontologyservice@^0.0.14-rc36", "@telicent-io/ontologyservice@^0.0.14-rc41":
+  version "0.0.14-rc41"
+  resolved "https://npm.pkg.github.com/download/@telicent-io/ontologyservice/0.0.14-rc41/923db3b2fdc79ed411d17615d5fd74f0f0963c0a#923db3b2fdc79ed411d17615d5fd74f0f0963c0a"
+  integrity sha512-fyNm8YpZNAHlp9BeJnd+3jpcdSCTUsARm97TWTYGKffYlUxeKl7MJxfEIzpz8XNbHfZGMvG/vdoXG3J+8te9QQ==
+  dependencies:
+    "@telicent-io/rdfservice" "*"
+    zod "^3.22.4"
+
+"@telicent-io/rdfservice@*":
+  version "0.0.13"
+  resolved "https://npm.pkg.github.com/download/@telicent-io/rdfservice/0.0.13/c0411cbf1f02b69cd238acfeddf45ffe3fc920d9#c0411cbf1f02b69cd238acfeddf45ffe3fc920d9"
+  integrity sha512-LgOxb2jH1bJeuMMSjplG++FJc2fHEe51pUlKG64TEoTXAHrY7iJgvL/DP221E9sA+Lrj2AAg09JwdbzBfjKgLg==
 
 "@testing-library/dom@^9.0.0":
   version "9.3.3"
@@ -13042,11 +13043,6 @@ use-supercluster@^0.4.0:
     dequal "^2.0.2"
     use-deep-compare-effect "^1.8.1"
 
-use-sync-external-store@^1.2.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/use-sync-external-store/-/use-sync-external-store-1.2.0.tgz#7dbefd6ef3fe4e767a0cf5d7287aacfb5846928a"
-  integrity sha512-eEgnFxGQ1Ife9bzYs6VLi8/4X6CObHMw9Qr9tPY43iKwsPw8xE8+EFsf/2cFZ5S3esXgpWgtSCtLNS41F+sKPA==
-
 util-deprecate@^1.0.1, util-deprecate@^1.0.2, util-deprecate@~1.0.1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/util-deprecate/-/util-deprecate-1.0.2.tgz#450d4dc9fa70de732762fbd2d4a28981419a0ccf"
@@ -13800,7 +13796,7 @@ yocto-queue@^0.1.0:
   resolved "https://registry.yarnpkg.com/yocto-queue/-/yocto-queue-0.1.0.tgz#0294eb3dee05028d31ee1a5fa2c556a6aaf10a1b"
   integrity sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==
 
-zod@^3.21.4:
+zod@^3.21.4, zod@^3.22.4:
   version "3.22.4"
   resolved "https://registry.yarnpkg.com/zod/-/zod-3.22.4.tgz#f31c3a9386f61b1f228af56faa9255e845cf3fff"
   integrity sha512-iC+8Io04lddc+mVqQ9AZ7OQ2MrUKGN+oIQyq1vemgt46jwCwLfhq7/pwnBnNXXXZb8VTVLKwp9EDkx+ryxIWmg==

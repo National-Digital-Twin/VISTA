@@ -1,12 +1,8 @@
 import { createParalogEndpoint, fetchOptions } from "./utils";
-import API from "./index";
 
 export const fetchAssetInfo = async (assetUri) => {
   const queryParams = new URLSearchParams({ assetUri }).toString();
-  const response = await fetch(
-    createParalogEndpoint(`asset?${queryParams}`),
-    fetchOptions
-  );
+  const response = await fetch(createParalogEndpoint(`asset?${queryParams}`), fetchOptions);
   if (!response.ok) {
     throw new Error(`Failed to retrieve asset information for ${assetUri}`);
   }
@@ -15,10 +11,7 @@ export const fetchAssetInfo = async (assetUri) => {
 
 export const fetchAssetParts = async (assetUri) => {
   const queryParams = new URLSearchParams({ assetUri }).toString();
-  const response = await fetch(
-    createParalogEndpoint(`asset/parts?${queryParams}`),
-    fetchOptions
-  );
+  const response = await fetch(createParalogEndpoint(`asset/parts?${queryParams}`), fetchOptions);
   if (!response.ok) {
     throw new Error(`Failed to retrieve asset parts for ${assetUri}`);
   }

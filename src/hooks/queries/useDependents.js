@@ -1,5 +1,5 @@
 import { useQueries, useQuery } from "@tanstack/react-query";
-import { fetchAssetInfo, fetchDependents, fetchIconStyles } from "api/combined";
+import { fetchAssetInfo, fetchDependents } from "api/combined";
 
 const useDependents = (isAsset, isDependency, assetUri, dependent) => {
   const {
@@ -38,13 +38,11 @@ const useDependents = (isAsset, isDependency, assetUri, dependent) => {
 
 export default useDependents;
 
-const getDependentDetails = async (assetUri, assetType, connectionStrength) => {
+const getDependentDetails = async (assetUri, connectionStrength) => {
   const assetInfo = await fetchAssetInfo(assetUri);
-  const iconStyle = await fetchIconStyles(assetType);
   return {
     ...assetInfo,
     connectionStrength,
-    styles: iconStyle,
   };
 };
 
@@ -56,7 +54,6 @@ const getDependentDetailQueriesConfig = ({ assetDependents, isDependency, depend
         queryFn: async () => {
           const dependentDetails = await getDependentDetails(
             dependent?.uri,
-            dependent?.type,
             dependent?.criticality
           );
           return dependentDetails;
@@ -73,7 +70,6 @@ const getDependentDetailQueriesConfig = ({ assetDependents, isDependency, depend
       queryFn: async () => {
         const dependentDetails = await getDependentDetails(
           dependent?.dependentNode,
-          dependent?.dependentNodeType,
           dependent?.criticalityRating
         );
         return dependentDetails;

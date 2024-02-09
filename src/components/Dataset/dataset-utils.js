@@ -24,8 +24,7 @@ export const createDependencies = (dependencies) => {
 
 const hasParts = (asset) => asset?.partCount > 0;
 
-
-export const createAssets = async (assets, getIconStyle, getAssetGeometry) => {
+export const createAssets = async (assets, findIcon, getAssetGeometry) => {
   if (!assets && !Array.isArray(assets)) return [];
 
   return await Promise.all(
@@ -33,7 +32,7 @@ export const createAssets = async (assets, getIconStyle, getAssetGeometry) => {
       const uri = asset?.uri;
       const type = asset?.type;
       const geometry = hasParts(asset) ? await getAssetGeometry(asset.uri) : [];
-      const iconStyle = await getIconStyle(type);
+
       return new Asset({
         uri,
         type,
@@ -44,7 +43,7 @@ export const createAssets = async (assets, getIconStyle, getAssetGeometry) => {
           count: asset?.dependentCount || 0,
           criticalitySum: asset?.dependentCriticalitySum || 0,
         },
-        styles: iconStyle,
+        styles: findIcon(type),
       });
     })
   );

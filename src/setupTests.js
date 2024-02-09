@@ -18,7 +18,7 @@ process.env = {
   API_URL: "http://localhost:5051",
   MAP_TILER_TOKEN: "test_key",
   MAP_URL: "http://map.com",
-  ONTOLOGY_API_URL: "http://localhost:5007",
+  ONTOLOGY_SERVICE: "http://localhost:3030",
 };
 
 beforeAll(() => server.listen());

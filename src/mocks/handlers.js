@@ -22,4 +22,5 @@ export const handlers = [
   rest.get(createParalogEndpoint("person/residences"), resolvers.personResidences),
   rest.get(createParalogEndpoint("ontology/class"), resolvers.ontologyClass),
   rest.get(createOntologyEndpoint("styles/class"), resolvers.iconStyles),
+  rest.get(createOntologyEndpoint("ontology/query"), resolvers.ontologyStyles),
 ];

@@ -1,13 +1,12 @@
 import React, { useContext } from "react";
 
 import { ElementsContext } from "context";
-import { getURIFragment, isElementCached } from "utils";
+import { isElementCached } from "utils";
 
-import AssetDetails from "./AssetDetails";
+import ConnectedAssetDetails from "./ConnectedAssetDetails";
 
 const ConnectedAssets = ({ connectedAssets }) => {
   const { assets } = useContext(ElementsContext);
-
 
   return (
     <ul className="grid gap-y-3">
@@ -18,17 +17,15 @@ const ConnectedAssets = ({ connectedAssets }) => {
             const isAdded = isElementCached(assets, asset.uri);
             const uri = asset?.uri;
             return (
-              <AssetDetails
+              <ConnectedAssetDetails
                 key={uri || asset.error.message}
                 error={asset?.error}
                 uri={uri}
                 name={asset?.name}
-                type={getURIFragment(asset?.assetType)}
+                type={asset?.assetType}
                 criticality={asset?.dependentCriticalitySum}
                 connectionStrength={asset?.connectionStrength}
-                backgroundColor={isAdded ? asset.styles?.defaultStyles?.dark?.backgroundColor : "#A3A3A3"}
-                color={isAdded ? asset.styles?.defaultStyles?.dark?.color : "#333"}
-                icon={asset.styles?.defaultIcons?.faIcon}
+                isAdded={isAdded}
               />
             );
           })}

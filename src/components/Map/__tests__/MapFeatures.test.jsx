@@ -1,7 +1,7 @@
 import React from "react";
 
-import { CytoscapeProvider, ElementsContext, ElementsProvider } from "context";
-import { getCreatedAssets, renderWithQueryClient } from "test-utils";
+import { CytoscapeProvider, ElementsContext } from "context";
+import { DSProvidersWrapper, getCreatedAssets, renderWithQueryClient } from "test-utils";
 import { T020_SEGMENTS, T034_SEGMENTS, TRANSPORT_ASSETS } from "mocks";
 
 import TelicentMap from "../TelicentMap";
@@ -13,21 +13,23 @@ const MapComponent = ({
   selectedElements = [],
   selectedFloodAreas = [],
 }) => (
-  <CytoscapeProvider>
-    <ElementsContext.Provider
-      value={{
-        assets,
-        dependencies,
-        selectedElements,
-        selectedFloodAreas,
-        clearSelectedElements: jest.fn(),
-        onElementClick: jest.fn(),
-        closeTimelinePanel: jest.fn(),
-      }}
-    >
-      <TelicentMap />
-    </ElementsContext.Provider>
-  </CytoscapeProvider>
+  <DSProvidersWrapper>
+    <CytoscapeProvider>
+      <ElementsContext.Provider
+        value={{
+          assets,
+          dependencies,
+          selectedElements,
+          selectedFloodAreas,
+          clearSelectedElements: jest.fn(),
+          onElementClick: jest.fn(),
+          closeTimelinePanel: jest.fn(),
+        }}
+      >
+        <TelicentMap />
+      </ElementsContext.Provider>
+    </CytoscapeProvider>
+  </DSProvidersWrapper>
 );
 
 describe("Map component", () => {
@@ -36,13 +38,7 @@ describe("Map component", () => {
       mapboxFeatures,
       "generateLinearAssetFeatures"
     );
-    renderWithQueryClient(
-      <CytoscapeProvider>
-        <ElementsProvider>
-          <TelicentMap />
-        </ElementsProvider>
-      </CytoscapeProvider>
-    );
+    renderWithQueryClient(<MapComponent />);
 
     expect(spyOnGenerateLinearAssetFeatures).toHaveReturnedWith([]);
   });

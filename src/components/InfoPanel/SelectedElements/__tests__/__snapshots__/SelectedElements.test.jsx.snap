@@ -17,17 +17,14 @@ exports[`Selected Elements component renders a list of selected element details:
         <div
           class="asset__details"
         >
-          <span
-            class="flex items-center justify-center w-12 h-12"
-            id="asset-icon"
-            style="border-radius: 9999px; background-color: rgb(39, 39, 39); color: rgb(242, 242, 242); border: 3px solid #f2f2f2;"
+          <div
+            class="MuiAvatar-root MuiAvatar-circular MuiAvatar-colorDefault css-pxqnux-MuiAvatar-root"
           >
-            <span
-              class="text-whiteSmoke"
-            >
-              Hig
-            </span>
-          </span>
+            <i
+              class="fa-solid fa-utility-pole-double"
+              title="HighVoltageElectricitySubstationComplex-icon"
+            />
+          </div>
           <div>
             <h2
               class="text-lg font-medium"
@@ -60,17 +57,14 @@ exports[`Selected Elements component renders a list of selected element details:
         <div
           class="asset__details"
         >
-          <span
-            class="flex items-center justify-center w-12 h-12"
-            id="asset-icon"
-            style="border-radius: 9999px; background-color: rgb(39, 39, 39); color: rgb(242, 242, 242); border: 3px solid #f2f2f2;"
+          <div
+            class="MuiAvatar-root MuiAvatar-circular MuiAvatar-colorDefault css-pxqnux-MuiAvatar-root"
           >
-            <span
-              class="text-whiteSmoke"
-            >
-              Oil
-            </span>
-          </span>
+            <i
+              class="fa-regular fa-bolt-lightning"
+              title="OilFiredPowerGenerationComplex-icon"
+            />
+          </div>
           <div>
             <h2
               class="text-lg font-medium"
@@ -105,11 +99,9 @@ exports[`Selected Elements component renders a list of selected element details:
         >
           <span
             class="flex items-center justify-center w-12 h-12"
-            id="asset-icon"
+            id="dependent-icon"
             style="width: 1rem; height: 0.125rem; background-color: rgb(251, 55, 55);"
-          >
-            <span />
-          </span>
+          />
           <div>
             <h2
               class="text-lg font-medium"

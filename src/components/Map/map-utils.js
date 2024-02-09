@@ -7,7 +7,7 @@ export const generatePointAssetFeatures = (assets, dependencies, selectedElement
   const pointAssets = assets
     .filter((asset) => asset.lat && asset.lng)
     .map((asset) => {
-      return asset.createPointAsset(selectedElements);
+      return asset.createPointAsset();
     })
     .filter(filterEmptyElements);
 

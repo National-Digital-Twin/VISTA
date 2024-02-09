@@ -1,29 +1,27 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Dependents component can toggle dependents assets: dependents not sorted 1`] = `
+exports[`Dependents component can toggle dependents assets: dependents list 1`] = `
 Array [
   <li
-    class="gap-x-2 bg-black-300 rounded-md p-2 items-center"
+    class="items-center p-2 rounded-md gap-x-2 bg-black-300"
   >
     <div
       class="flex items-center gap-x-2"
     >
       <div
-        class="rounded-full flex justify-center items-center p-2"
-        id="asset-icon"
-        style="background-color: rgb(163, 163, 163); color: rgb(51, 51, 51);"
+        class="MuiAvatar-root MuiAvatar-circular MuiAvatar-colorDefault css-fpaued-MuiAvatar-root"
       >
-        <span>
-          Low
-        </span>
+        <i
+          class="fa-solid fa-utility-pole"
+          title="LowVoltageElectricitySubstationComplex-icon"
+        />
       </div>
       <div>
         <h4>
           Shalfleet 33kV / 11kV Substation
         </h4>
         <p
-          class="uppercase"
-          style="font-size: 13px;"
+          class="text-sm uppercase"
         >
           low voltage electricity substation complex
         </p>
@@ -35,40 +33,38 @@ Array [
       </div>
     </div>
     <p
-      class="whitespace-nowrap text-sm"
+      class="text-sm whitespace-nowrap"
     >
       Criticality: 
       38
     </p>
     <p
-      class="whitespace-nowrap text-sm"
+      class="text-sm whitespace-nowrap"
     >
       Connection Strength: 
       3
     </p>
   </li>,
   <li
-    class="gap-x-2 bg-black-300 rounded-md p-2 items-center"
+    class="items-center p-2 rounded-md gap-x-2 bg-black-300"
   >
     <div
       class="flex items-center gap-x-2"
     >
       <div
-        class="rounded-full flex justify-center items-center p-2"
-        id="asset-icon"
-        style="background-color: rgb(163, 163, 163); color: rgb(51, 51, 51);"
+        class="MuiAvatar-root MuiAvatar-circular MuiAvatar-colorDefault css-fpaued-MuiAvatar-root"
       >
-        <span>
-          Low
-        </span>
+        <i
+          class="fa-solid fa-utility-pole"
+          title="LowVoltageElectricitySubstationComplex-icon"
+        />
       </div>
       <div>
         <h4>
           East Cowes 33kv /11kV Substation
         </h4>
         <p
-          class="uppercase"
-          style="font-size: 13px;"
+          class="text-sm uppercase"
         >
           low voltage electricity substation complex
         </p>
@@ -80,40 +76,38 @@ Array [
       </div>
     </div>
     <p
-      class="whitespace-nowrap text-sm"
+      class="text-sm whitespace-nowrap"
     >
       Criticality: 
       41
     </p>
     <p
-      class="whitespace-nowrap text-sm"
+      class="text-sm whitespace-nowrap"
     >
       Connection Strength: 
       3
     </p>
   </li>,
   <li
-    class="gap-x-2 bg-black-300 rounded-md p-2 items-center"
+    class="items-center p-2 rounded-md gap-x-2 bg-black-300"
   >
     <div
       class="flex items-center gap-x-2"
     >
       <div
-        class="rounded-full flex justify-center items-center p-2"
-        id="asset-icon"
-        style="background-color: rgb(163, 163, 163); color: rgb(51, 51, 51);"
+        class="MuiAvatar-root MuiAvatar-circular MuiAvatar-colorDefault css-fpaued-MuiAvatar-root"
       >
-        <span>
-          Low
-        </span>
+        <i
+          class="fa-solid fa-utility-pole"
+          title="LowVoltageElectricitySubstationComplex-icon"
+        />
       </div>
       <div>
         <h4>
           Ventnor 33kV / 11kV Substation
         </h4>
         <p
-          class="uppercase"
-          style="font-size: 13px;"
+          class="text-sm uppercase"
         >
           low voltage electricity substation complex
         </p>
@@ -125,31 +119,30 @@ Array [
       </div>
     </div>
     <p
-      class="whitespace-nowrap text-sm"
+      class="text-sm whitespace-nowrap"
     >
       Criticality: 
       84
     </p>
     <p
-      class="whitespace-nowrap text-sm"
+      class="text-sm whitespace-nowrap"
     >
       Connection Strength: 
       3
     </p>
   </li>,
   <li
-    class="gap-x-2 bg-black-300 rounded-md p-2 items-center"
+    class="items-center p-2 rounded-md gap-x-2 bg-black-300"
   >
     <div
       class="flex items-center gap-x-2"
     >
       <div
-        class="rounded-full flex justify-center items-center p-2"
-        id="asset-icon"
-        style="background-color: rgb(163, 163, 163); color: rgb(51, 51, 51);"
+        class="MuiAvatar-root MuiAvatar-circular MuiAvatar-colorDefault css-fpaued-MuiAvatar-root"
       >
-        <span
+        <i
           class="fa-regular fa-bolt-lightning"
+          title="OilFiredPowerGenerationComplex-icon"
         />
       </div>
       <div>
@@ -157,8 +150,7 @@ Array [
           East Cowes Power Station
         </h4>
         <p
-          class="uppercase"
-          style="font-size: 13px;"
+          class="text-sm uppercase"
         >
           oil fired power generation complex
         </p>
@@ -170,13 +162,13 @@ Array [
       </div>
     </div>
     <p
-      class="whitespace-nowrap text-sm"
+      class="text-sm whitespace-nowrap"
     >
       Criticality: 
       3
     </p>
     <p
-      class="whitespace-nowrap text-sm"
+      class="text-sm whitespace-nowrap"
     >
       Connection Strength: 
       3
@@ -188,72 +180,25 @@ Array [
 exports[`Dependents component renders error message when one or more dependents returns an error: dependents with error(s) 1`] = `
 Array [
   <li
-    class="gap-x-2 bg-black-300 rounded-md p-2 items-center"
+    class="items-center p-2 rounded-md gap-x-2 bg-black-300"
   >
     <div
       class="flex items-center gap-x-2"
     >
       <div
-        class="rounded-full flex justify-center items-center p-2"
-        id="asset-icon"
-        style="background-color: rgb(255, 255, 0); color: black;"
+        class="MuiAvatar-root MuiAvatar-circular MuiAvatar-colorDefault css-fpaued-MuiAvatar-root"
       >
-        <span
-          class="fa-regular fa-bolt-lightning"
+        <i
+          class="fa-solid fa-utility-pole"
+          title="LowVoltageElectricitySubstationComplex-icon"
         />
-      </div>
-      <div>
-        <h4>
-          East Cowes Power Station
-        </h4>
-        <p
-          class="uppercase"
-          style="font-size: 13px;"
-        >
-          oil fired power generation complex
-        </p>
-        <p
-          class="text-sm"
-        >
-          E001
-        </p>
-      </div>
-    </div>
-    <p
-      class="whitespace-nowrap text-sm"
-    >
-      Criticality: 
-      3
-    </p>
-    <p
-      class="whitespace-nowrap text-sm"
-    >
-      Connection Strength: 
-      3
-    </p>
-  </li>,
-  <li
-    class="gap-x-2 bg-black-300 rounded-md p-2 items-center"
-  >
-    <div
-      class="flex items-center gap-x-2"
-    >
-      <div
-        class="rounded-full flex justify-center items-center p-2"
-        id="asset-icon"
-        style="background-color: rgb(163, 163, 163); color: rgb(51, 51, 51);"
-      >
-        <span>
-          Low
-        </span>
       </div>
       <div>
         <h4>
           Shalfleet 33kV / 11kV Substation
         </h4>
         <p
-          class="uppercase"
-          style="font-size: 13px;"
+          class="text-sm uppercase"
         >
           low voltage electricity substation complex
         </p>
@@ -265,45 +210,81 @@ Array [
       </div>
     </div>
     <p
-      class="whitespace-nowrap text-sm"
+      class="text-sm whitespace-nowrap"
     >
       Criticality: 
       38
     </p>
     <p
-      class="whitespace-nowrap text-sm"
+      class="text-sm whitespace-nowrap"
     >
       Connection Strength: 
       3
     </p>
   </li>,
   <li
-    class="bg-red-900 rounded-md p-2"
-  >
-    Failed to retrieve asset information for https://www.iow.gov.uk/DigitalTwin#E002
-  </li>,
-  <li
-    class="gap-x-2 bg-black-300 rounded-md p-2 items-center"
+    class="items-center p-2 rounded-md gap-x-2 bg-black-300"
   >
     <div
       class="flex items-center gap-x-2"
     >
       <div
-        class="rounded-full flex justify-center items-center p-2"
-        id="asset-icon"
-        style="background-color: rgb(163, 163, 163); color: rgb(51, 51, 51);"
+        class="MuiAvatar-root MuiAvatar-circular MuiAvatar-colorDefault css-fpaued-MuiAvatar-root"
       >
-        <span>
-          Low
-        </span>
+        <i
+          class="fa-solid fa-utility-pole"
+          title="LowVoltageElectricitySubstationComplex-icon"
+        />
+      </div>
+      <div>
+        <h4>
+          East Cowes 33kv /11kV Substation
+        </h4>
+        <p
+          class="text-sm uppercase"
+        >
+          low voltage electricity substation complex
+        </p>
+        <p
+          class="text-sm"
+        >
+          E002
+        </p>
+      </div>
+    </div>
+    <p
+      class="text-sm whitespace-nowrap"
+    >
+      Criticality: 
+      41
+    </p>
+    <p
+      class="text-sm whitespace-nowrap"
+    >
+      Connection Strength: 
+      3
+    </p>
+  </li>,
+  <li
+    class="items-center p-2 rounded-md gap-x-2 bg-black-300"
+  >
+    <div
+      class="flex items-center gap-x-2"
+    >
+      <div
+        class="MuiAvatar-root MuiAvatar-circular MuiAvatar-colorDefault css-fpaued-MuiAvatar-root"
+      >
+        <i
+          class="fa-solid fa-utility-pole"
+          title="LowVoltageElectricitySubstationComplex-icon"
+        />
       </div>
       <div>
         <h4>
           Ventnor 33kV / 11kV Substation
         </h4>
         <p
-          class="uppercase"
-          style="font-size: 13px;"
+          class="text-sm uppercase"
         >
           low voltage electricity substation complex
         </p>
@@ -315,17 +296,22 @@ Array [
       </div>
     </div>
     <p
-      class="whitespace-nowrap text-sm"
+      class="text-sm whitespace-nowrap"
     >
       Criticality: 
       84
     </p>
     <p
-      class="whitespace-nowrap text-sm"
+      class="text-sm whitespace-nowrap"
     >
       Connection Strength: 
       3
     </p>
+  </li>,
+  <li
+    class="p-2 bg-red-900 rounded-md"
+  >
+    Failed to retrieve asset information for https://www.iow.gov.uk/DigitalTwin#E001
   </li>,
 ]
 `;
