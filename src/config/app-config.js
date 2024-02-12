@@ -1,27 +1,26 @@
-const env = process.env.JEST_WORKER_ID ? process.env : window._env_;
+const env = window._env_;
+
 const OFFLINE_ENABLED =
-  env.OFFLINE_STYLES && env.OFFLINE_STYLES_BASE_URL && env.OFFLINE_STYLES_PATH;
+  env?.OFFLINE_STYLES && env?.OFFLINE_STYLES_BASE_URL && env?.OFFLINE_STYLES_PATH;
+
+const OFFLINE_MODE = OFFLINE_ENABLED ?? false;
 
 const config = {
   map: {
-    maptilerToken: env.MAP_TILER_TOKEN
-      ? env.MAP_TILER_TOKEN
-      : OFFLINE_ENABLED
-      ? "offline_enabled"
-      : undefined,
+    maptilerToken: env?.MAP_TILER_TOKEN && !OFFLINE_MODE ? env.MAP_TILER_TOKEN : "offline_enabled",
     offline: {
-      enabled: OFFLINE_ENABLED,
-      styles: env.OFFLINE_STYLES ? env.OFFLINE_STYLES.split(",") : undefined,
-      base_url: env.OFFLINE_STYLES_BASE_URL,
-      styles_path: env.OFFLINE_STYLES_PATH,
+      enabled: OFFLINE_MODE,
+      styles: OFFLINE_MODE ? env?.OFFLINE_STYLES.split(",") : undefined,
+      base_url: env?.OFFLINE_STYLES_BASE_URL,
+      styles_path: env?.OFFLINE_STYLES_PATH,
     },
   },
   api: {
-    url: env.API_URL,
+    url: env?.API_URL,
   },
-  beta: env.BETA === "true",
+  beta: env?.BETA ? Boolean(env.BETA) : false,
   services: {
-    ontology: env?.ONTOLOGY_SERVICE,
+    ontology: env?.ONTOLOGY_SERVICE_URL,
   },
 };
 
