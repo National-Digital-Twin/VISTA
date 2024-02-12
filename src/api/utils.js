@@ -1,7 +1,7 @@
 import config from "config/app-config";
 
 const createParalogEndpoint = (path) => `${config.api.url}/${path}`;
-const createOntologyEndpoint = (path) => `${config.services.ontology}/${path}`;
+const createOntologyServiceEndpoint = (path) => `${config.services.ontology}/${path}`;
 
 const fetchOptions = {
   headers: {
@@ -9,4 +9,4 @@ const fetchOptions = {
   },
 };
 
-export { createParalogEndpoint, createOntologyEndpoint, fetchOptions };
+export { createParalogEndpoint, createOntologyServiceEndpoint, fetchOptions };
