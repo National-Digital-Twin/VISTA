@@ -17,7 +17,7 @@ export const nodeLabels = [
     valignBox: "center",
     halignBox: "center",
     tpl: (data) => {
-      let label = "<i class=" + data.icon + "></i>";
+    let label = "<i class='" + data.icon + "'></i>";
       if (!data.icon) {
         label = data.iconLabel;
       }
