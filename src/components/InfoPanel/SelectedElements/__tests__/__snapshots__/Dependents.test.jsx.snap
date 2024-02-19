@@ -9,7 +9,8 @@ Array [
       class="flex items-center gap-x-2"
     >
       <div
-        class="MuiAvatar-root MuiAvatar-circular MuiAvatar-colorDefault css-fpaued-MuiAvatar-root"
+        aria-label="LowVoltageElectricitySubstationComplex"
+        class="MuiAvatar-root MuiAvatar-circular MuiAvatar-colorDefault css-1bc90xp-MuiAvatar-root"
       >
         <i
           class="fa-solid fa-utility-pole"
@@ -52,7 +53,8 @@ Array [
       class="flex items-center gap-x-2"
     >
       <div
-        class="MuiAvatar-root MuiAvatar-circular MuiAvatar-colorDefault css-fpaued-MuiAvatar-root"
+        aria-label="LowVoltageElectricitySubstationComplex"
+        class="MuiAvatar-root MuiAvatar-circular MuiAvatar-colorDefault css-1bc90xp-MuiAvatar-root"
       >
         <i
           class="fa-solid fa-utility-pole"
@@ -95,7 +97,8 @@ Array [
       class="flex items-center gap-x-2"
     >
       <div
-        class="MuiAvatar-root MuiAvatar-circular MuiAvatar-colorDefault css-fpaued-MuiAvatar-root"
+        aria-label="LowVoltageElectricitySubstationComplex"
+        class="MuiAvatar-root MuiAvatar-circular MuiAvatar-colorDefault css-1bc90xp-MuiAvatar-root"
       >
         <i
           class="fa-solid fa-utility-pole"
@@ -138,7 +141,8 @@ Array [
       class="flex items-center gap-x-2"
     >
       <div
-        class="MuiAvatar-root MuiAvatar-circular MuiAvatar-colorDefault css-fpaued-MuiAvatar-root"
+        aria-label="OilFiredPowerGenerationComplex"
+        class="MuiAvatar-root MuiAvatar-circular MuiAvatar-colorDefault css-1bc90xp-MuiAvatar-root"
       >
         <i
           class="fa-regular fa-bolt-lightning"
@@ -186,7 +190,8 @@ Array [
       class="flex items-center gap-x-2"
     >
       <div
-        class="MuiAvatar-root MuiAvatar-circular MuiAvatar-colorDefault css-fpaued-MuiAvatar-root"
+        aria-label="LowVoltageElectricitySubstationComplex"
+        class="MuiAvatar-root MuiAvatar-circular MuiAvatar-colorDefault css-1bc90xp-MuiAvatar-root"
       >
         <i
           class="fa-solid fa-utility-pole"
@@ -229,7 +234,8 @@ Array [
       class="flex items-center gap-x-2"
     >
       <div
-        class="MuiAvatar-root MuiAvatar-circular MuiAvatar-colorDefault css-fpaued-MuiAvatar-root"
+        aria-label="LowVoltageElectricitySubstationComplex"
+        class="MuiAvatar-root MuiAvatar-circular MuiAvatar-colorDefault css-1bc90xp-MuiAvatar-root"
       >
         <i
           class="fa-solid fa-utility-pole"
@@ -272,7 +278,8 @@ Array [
       class="flex items-center gap-x-2"
     >
       <div
-        class="MuiAvatar-root MuiAvatar-circular MuiAvatar-colorDefault css-fpaued-MuiAvatar-root"
+        aria-label="LowVoltageElectricitySubstationComplex"
+        class="MuiAvatar-root MuiAvatar-circular MuiAvatar-colorDefault css-1bc90xp-MuiAvatar-root"
       >
         <i
           class="fa-solid fa-utility-pole"

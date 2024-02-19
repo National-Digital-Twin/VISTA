@@ -18,7 +18,8 @@ exports[`Selected Elements component renders a list of selected element details:
           class="asset__details"
         >
           <div
-            class="MuiAvatar-root MuiAvatar-circular MuiAvatar-colorDefault css-pxqnux-MuiAvatar-root"
+            aria-label="HighVoltageElectricitySubstationComplex"
+            class="MuiAvatar-root MuiAvatar-circular MuiAvatar-colorDefault css-zd96tt-MuiAvatar-root"
           >
             <i
               class="fa-solid fa-utility-pole-double"
@@ -58,7 +59,8 @@ exports[`Selected Elements component renders a list of selected element details:
           class="asset__details"
         >
           <div
-            class="MuiAvatar-root MuiAvatar-circular MuiAvatar-colorDefault css-pxqnux-MuiAvatar-root"
+            aria-label="OilFiredPowerGenerationComplex"
+            class="MuiAvatar-root MuiAvatar-circular MuiAvatar-colorDefault css-zd96tt-MuiAvatar-root"
           >
             <i
               class="fa-regular fa-bolt-lightning"
