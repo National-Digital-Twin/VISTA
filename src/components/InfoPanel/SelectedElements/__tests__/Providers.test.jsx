@@ -2,28 +2,30 @@ import React from "react";
 import { screen, waitForElementToBeRemoved, within } from "@testing-library/react";
 import { rest } from "msw";
 
-import { ElementsContext } from "context";
+import { ElementsProvider } from "context";
 import { createParalogEndpoint } from "api/combined";
 import {
   HIGH_VOLTAGE_ELECTRICITY_SUBSTATION_COMPLEX_ASSETS,
   OIL_FIRED_POWER_GENERATION_COMPLEX_ASSETS,
   server,
 } from "mocks";
-import { getCreatedAssets, renderWithQueryClient } from "test-utils";
+import { DSProvidersWrapper, getCreatedAssets, renderWithQueryClient } from "test-utils";
 import { isAsset, isDependency } from "utils";
 
 import Providers from "../Providers";
 
 const renderAssetProviders = async ({ assets, element }) => {
   return renderWithQueryClient(
-    <ElementsContext.Provider value={{ assets }}>
-      <Providers
-        assetUri={element?.uri}
-        provider={element?.provider}
-        isAsset={isAsset(element)}
-        isDependency={isDependency(element)}
-      />
-    </ElementsContext.Provider>
+    <DSProvidersWrapper>
+      <ElementsProvider assets={assets}>
+        <Providers
+          assetUri={element?.uri}
+          provider={element?.provider}
+          isAsset={isAsset(element)}
+          isDependency={isDependency(element)}
+        />
+      </ElementsProvider>
+    </DSProvidersWrapper>
   );
 };
 
@@ -72,25 +74,13 @@ describe("Providers component", () => {
       within(providers[0]).getByRole("heading", { name: "Fawley 132 kV Substation - Hants" })
     ).toBeInTheDocument();
     expect(within(providers[0]).getByText("E025")).toBeInTheDocument();
-    expect(within(providers[0]).getByTestId("asset-icon")).toHaveStyle({
-      backgroundColor: "rgb(163, 163, 163)",
-      color: "rgb(51, 51, 51)",
-    });
-    expect(within(providers[0]).getByTestId("asset-icon").firstElementChild).toHaveClass(
-      "fa-solid fa-utility-pole-double"
-    );
 
     expect(
       within(providers[1]).getByRole("heading", { name: "East Cowes Power Station" })
     ).toBeInTheDocument();
     expect(within(providers[1]).getByText("E001")).toBeInTheDocument();
-    expect(within(providers[1]).getByTestId("asset-icon")).toHaveStyle({
-      backgroundColor: "rgb(163, 163, 163)",
-      color: "rgb(51, 51, 51)",
-    });
-    expect(within(providers[1]).getByTestId("asset-icon").firstElementChild).toHaveClass(
-      "fa-regular fa-bolt-lightning"
-    );
+
+    expect(providers).toMatchSnapshot("providers list");
   });
 
   test("does NOT show providers when none are found", async () => {

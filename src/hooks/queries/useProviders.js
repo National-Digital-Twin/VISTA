@@ -1,5 +1,5 @@
 import { useQueries, useQuery } from "@tanstack/react-query";
-import { fetchAssetInfo, fetchIconStyles, fetchProviders } from "api/combined";
+import { fetchAssetInfo, fetchProviders } from "api/combined";
 
 const useProviders = (isAsset, isDependency, assetUri, provider) => {
   const {
@@ -38,13 +38,11 @@ const useProviders = (isAsset, isDependency, assetUri, provider) => {
 
 export default useProviders;
 
-const getProviderDetails = async (assetUri, typeUri, connectionStrength) => {
+const getProviderDetails = async (assetUri, connectionStrength) => {
   const assetInfo = await fetchAssetInfo(assetUri);
-  const iconStyle = await fetchIconStyles(typeUri);
   return {
     ...assetInfo,
     connectionStrength,
-    styles: iconStyle,
   };
 };
 
@@ -54,11 +52,7 @@ const getProviderDetailQueriesConfig = ({ assetProviders, isDependency, provider
       {
         queryKey: ["provider-details", provider?.uri],
         queryFn: async () => {
-          const providerDetails = await getProviderDetails(
-            provider?.uri,
-            provider?.type,
-            provider?.criticality
-          );
+          const providerDetails = await getProviderDetails(provider?.uri, provider?.criticality);
           return providerDetails;
         },
         enabled: isDependency,
@@ -71,11 +65,7 @@ const getProviderDetailQueriesConfig = ({ assetProviders, isDependency, provider
     return {
       queryKey: ["provider-details", assetUri],
       queryFn: async () => {
-        const providerDetails = await getProviderDetails(
-          assetUri,
-          provider?.providerNodeType,
-          provider.criticalityRating
-        );
+        const providerDetails = await getProviderDetails(assetUri, provider.criticalityRating);
         return providerDetails;
       },
       enabled: !!assetUri,

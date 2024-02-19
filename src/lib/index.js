@@ -1,4 +1,3 @@
-export { default as AssetIcon } from "./AssetIcon";
 export { default as DetailsSection } from "./DetailsSection";
 export { default as ErrorNotification } from "./ErrorNotification";
 export { default as ErrorFallback } from "./ErrorFallback";

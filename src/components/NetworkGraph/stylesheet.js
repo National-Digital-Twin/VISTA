@@ -9,7 +9,7 @@ const cyStylesheet = [
       width: "60px",
       height: "60px",
       borderWidth: "4px",
-      borderColor: "#C4C4C4",
+      borderColor: "data(color)",
       backgroundColor: "data(backgroundColor)",
       label: "data(label)",
       "text-halign": "center",

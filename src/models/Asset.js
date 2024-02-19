@@ -1,10 +1,5 @@
 import { isEmpty } from "lodash";
-import { getColorScale, getHexColor, getShortType, getURIFragment } from "utils";
-
-const extractIconsAndStyles = (iconStyles) => {
-    const {defaultStyles: styles, defaultIcons: icons} = iconStyles
-    return {styles, icons}
-}
+import { getColorScale, getHexColor, getShortType, getURIFragment } from "../utils";
 
 export default class Asset {
   #countColorScale = {};
@@ -83,21 +78,11 @@ export default class Asset {
   }
 
   getIconStyle() {
-
-    if (isEmpty(this.styles)) {
-      return {
-        iconLabel: this.primaryType.substring(0, 3),
-        color: "#F2F2F2",
-        backgroundColor: "#272727",
-      };
-    }
-
-    const {icons, styles} = extractIconsAndStyles(this.styles)
-
     return {
-      icon: icons.faIcon,
-      color: styles.dark.color,
-      backgroundColor: styles.dark.backgroundColor,
+      icon: this.styles?.faIcon,
+      color: this.styles.color,
+      backgroundColor: this.styles.backgroundColor,
+      iconLabel: this.styles.iconFallbackText,
     };
   }
 
@@ -126,21 +111,16 @@ export default class Asset {
     return !isEmpty(this.geometry);
   }
 
-  createPointAsset(selectedElements) {
+  createPointAsset() {
     if (!this.lat && !this.lng) return {};
 
-    const selected = this.#isSelected(selectedElements);
     return {
       type: "Feature",
       properties: {
         uri: this.uri,
         id: this.id,
         criticality: this.dependent.criticalitySum,
-        circleStrokeColor: selected ? "#F2F2F2" : "#C4C4C4",
-        circleStrokeWidth: selected ? 2 : 1,
-        circleSize: 4,
-        selected,
-        ...this.getIconStyle(),
+        type: this.type,
       },
       geometry: {
         type: "Point",
@@ -175,7 +155,6 @@ export default class Asset {
 
   getDetails(assetInfo) {
     if (!assetInfo) return undefined;
-    const iconStyle = this.getIconStyle();
     return {
       title: assetInfo?.name,
       criticality: this.dependent.criticalitySum,
@@ -184,16 +163,7 @@ export default class Asset {
       criticalityColor: this.criticalityColor,
       id: this.id,
       uri: this.uri,
-      icon: {
-        icon: iconStyle?.icon,
-        iconLabel: iconStyle.iconLabel,
-        style: {
-          borderRadius: "9999px",
-          backgroundColor: iconStyle.backgroundColor,
-          color: iconStyle.color,
-          border: "3px solid #F2F2F2",
-        },
-      },
+      elementType: this.elementType,
     };
   }
 }

@@ -82,6 +82,7 @@ export default class Dependency {
       criticality: this.criticality,
       id: this.id,
       uri: this.uri,
+      elementType: this.elementType,
       icon: {
         style: {
           width: "1rem",

@@ -18,14 +18,14 @@ Paralog is a tool which can be used to get a better understanding of high value 
 
 ## Getting started
 
-Paralog is currently requires the Isle of Wight data (iow) but is not limited to it. The following docker images and minimum versions are required.
+Paralog currently requires the Isle of Wight data (iow) but is not limited to it. The following docker images and minimum versions are required.
+
 - Kafka - Can be run without kafka, can run using kraft or with zookeeper (It's encouraged to use Kafka with Kraft).
-Can be run locally on your machine or as a docker container.
-- Ontology API - 098669589541.dkr.ecr.eu-west-2.amazonaws.com/telicent-smart-cache-ontology:0.0.4
-- Paralog API -  098669589541.dkr.ecr.eu-west-2.amazonaws.com/telicent-smart-cache-paralog-api:1.1.4-rc5
-- Graph smart cache 
-    -  098669589541.dkr.ecr.eu-west-2.amazonaws.com/smart-cache-graph:0.12.0
-    - with volumes - ./config:/fuseki/config
+  Can be run locally on your machine or as a docker container.
+- Paralog API - 098669589541.dkr.ecr.eu-west-2.amazonaws.com/telicent-smart-cache-paralog-api:1.1.4-rc5
+- Graph smart cache
+  - 098669589541.dkr.ecr.eu-west-2.amazonaws.com/smart-cache-graph:0.12.0
+  - with volumes - ./config:/fuseki/config
 - Paralog UI - 098669589541.dkr.ecr.eu-west-2.amazonaws.com/telicent-paralog:2.0.0-rc13
 
 ### Configuration
@@ -39,5 +39,5 @@ MAP_TILER_TOKEN=
 OFFLINE_STYLES=
 OFFLINE_STYLES_BASE_URL=
 OFFLINE_STYLES_PATH=
-ONTOLOGY_API_URL=
+ONTOLOGY_SERVICE_URL=
 ```

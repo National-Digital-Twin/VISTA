@@ -1,6 +1,5 @@
-import { screen } from "@testing-library/react";
 import React from "react";
-import { waitForElementToBeRemoved } from "@testing-library/dom";
+import { screen, waitForElementToBeRemoved } from "@testing-library/react";
 
 import { ElementsProvider } from "context";
 import {
@@ -8,13 +7,20 @@ import {
   HIGH_VOLTAGE_ELECTRICITY_SUBSTATION_COMPLEX_ASSETS,
   OIL_FIRED_POWER_GENERATION_COMPLEX_ASSETS,
 } from "mocks";
-import { getCreatedAssets, getCreatedDependencies, renderWithQueryClient } from "test-utils";
+import {
+  DSProvidersWrapper,
+  getCreatedAssets,
+  getCreatedDependencies,
+  renderWithQueryClient,
+} from "test-utils";
 
 import SelectedElements from "../SelectedElements";
 
 const renderSelectedDetails = (selected) =>
   renderWithQueryClient(
-    <SelectedElements selectedElements={selected} onTogglePanel={jest.fn()} />,
+    <DSProvidersWrapper>
+      <SelectedElements selectedElements={selected} onTogglePanel={jest.fn()} />
+    </DSProvidersWrapper>,
     {
       wrapper: ElementsProvider,
     }
@@ -26,7 +32,13 @@ const renderSelectedElementsList = async () => {
       ...HIGH_VOLTAGE_ELECTRICITY_SUBSTATION_COMPLEX_ASSETS,
       ...OIL_FIRED_POWER_GENERATION_COMPLEX_ASSETS,
     ],
-    ["E001", "E003"]
+    ["E001", "E003"],
+    jest.fn().mockReturnValue({
+      backgroundColor: "#272727",
+      color: "#F2F2F2",
+      iconFallbackText: "D",
+      alt: "default",
+    })
   );
   const selectedDependencies = getCreatedDependencies(
     HIGH_VOLTAGE_ELECTRICITY_AND_OIL_FIRED_POWER_GENERATION_SUBSTATION_COMPLEX_DEPENDENCIES,
@@ -41,8 +53,8 @@ const waitForElementDetailsToLoad = async () => {
 
 describe("Selected Elements component", () => {
   test("does NOT render component when selected elements are not an array", () => {
-    renderSelectedDetails({});
-    expect(document.querySelector("body").firstElementChild).toBeEmptyDOMElement();
+    const { container } = renderSelectedDetails({});
+    expect(container).toBeEmptyDOMElement();
   });
 
   test("renders message when an element(s) aren't selected", () => {
@@ -150,9 +162,16 @@ describe("Selected Elements component", () => {
   });
 
   test("renders element details when one element is selected", async () => {
-    const selectedAssets = await getCreatedAssets(OIL_FIRED_POWER_GENERATION_COMPLEX_ASSETS, [
-      "E001",
-    ]);
+    const selectedAssets = await getCreatedAssets(
+      OIL_FIRED_POWER_GENERATION_COMPLEX_ASSETS,
+      ["E001"],
+      jest.fn().mockReturnValue({
+        backgroundColor: "#272727",
+        color: "#F2F2F2",
+        iconFallbackText: "D",
+        alt: "default",
+      })
+    );
 
     renderSelectedDetails(selectedAssets);
     await waitForElementDetailsToLoad();

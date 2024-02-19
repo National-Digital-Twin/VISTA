@@ -3,6 +3,7 @@ import { isEmpty, lowerCase } from "lodash";
 import classNames from "classnames";
 import { useQuery } from "@tanstack/react-query";
 import PropTypes from "prop-types";
+import { TeliTypeIcon } from "@telicent-io/ds";
 
 import { fetchAssetInfo } from "api/combined";
 import { getURIFragment, isAsset, isDependency } from "utils";
@@ -92,21 +93,20 @@ ElementDetails.propTypes = {
 };
 
 const Details = ({ expand, details }) => {
-  const { id, title, criticality, type, desc, icon } = details;
+  const { id, title, criticality, type, desc, icon, elementType } = details;
+
   return (
     <div className="grid gap-y-1">
       <div className="asset__details">
-        <span
-          id="asset-icon"
-          className="flex items-center justify-center w-12 h-12"
-          style={{ ...icon.style }}
-        >
-          {icon?.iconLabel ? (
-            <span className="text-whiteSmoke">{icon.iconLabel}</span>
-          ) : (
-            <span className={icon.icon} />
-          )}
-        </span>
+        {elementType === "asset" ? (
+          <TeliTypeIcon size="sm" type={type} />
+        ) : (
+          <span
+            id="dependent-icon"
+            className="flex items-center justify-center w-12 h-12"
+            style={{ ...icon.style }}
+          />
+        )}
         <div>
           <h2 className="text-lg font-medium">{title}</h2>
           {type && <p className="text-sm uppercase">{lowerCase(getURIFragment(type))}</p>}
@@ -115,7 +115,7 @@ const Details = ({ expand, details }) => {
       </div>
       {expand && (
         <>
-          {icon?.iconLabel && (
+          {icon?.icon && (
             <p className="flex items-center px-2 bg-yellow-600 rounded-md gap-x-2 text-black-100 w-fit">
               <i className="fa-light fa-diamond-exclamation text-black-100" />
               Icon styles not found

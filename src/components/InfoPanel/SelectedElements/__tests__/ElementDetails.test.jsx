@@ -7,14 +7,21 @@ import {
   HIGH_VOLTAGE_ELECTRICITY_SUBSTATION_COMPLEX_ASSETS,
   OIL_FIRED_POWER_GENERATION_COMPLEX_ASSETS,
 } from "mocks";
-import { getCreatedAssets, getCreatedDependencies, renderWithQueryClient } from "test-utils";
+import {
+  DSProvidersWrapper,
+  getCreatedAssets,
+  getCreatedDependencies,
+  renderWithQueryClient,
+} from "test-utils";
 import { createAssets } from "components/Dataset/dataset-utils";
 
 import ElementDetails from "../ElementDetails";
 
 const renderElementDetails = ({ element, expand }) =>
   renderWithQueryClient(
-    <ElementDetails element={element} expand={expand} onViewDetails={jest.fn()} />,
+    <DSProvidersWrapper>
+      <ElementDetails element={element} expand={expand} onViewDetails={jest.fn()} />
+    </DSProvidersWrapper>,
     { wrapper: ElementsProvider }
   );
 
@@ -23,7 +30,14 @@ const waitForDetailsToLoad = async () => {
 };
 
 const renderAssetDetails = async ({ assets, ids, expand }) => {
-  const createdAssets = await getCreatedAssets(assets, ids);
+  const mockFindIcon = jest.fn().mockReturnValue({
+    classUri: "http://telicent/test/ontology#elementDetails",
+    color: "#DDDDDD",
+    backgroundColor: "#121212",
+    iconFallbackText: "ED",
+    alt: "ElementDetailsIcon",
+  });
+  const createdAssets = await getCreatedAssets(assets, ids, mockFindIcon);
   return renderElementDetails({ element: createdAssets[0], expand });
 };
 
@@ -61,18 +75,6 @@ const renderAndLoadE001toE003ConnectionDetails = async () => {
 };
 
 describe("Element details component", () => {
-  test("renders asset icon label when styles are not defined", async () => {
-    await renderAssetDetails({
-      assets: OIL_FIRED_POWER_GENERATION_COMPLEX_ASSETS,
-      ids: ["E001"],
-      expand: false,
-    });
-    await waitForDetailsToLoad();
-
-    const assetIcon = screen.getByTestId("asset-icon");
-    expect(within(assetIcon).getByText("Oil")).toBeInTheDocument();
-  });
-
   test("renders asset icon", async () => {
     const mockGetIconStyle = jest.fn().mockReturnValue({
       defaultStyles: {
@@ -83,14 +85,14 @@ describe("Element details component", () => {
         light: {
           backgroundColor: "#FFFF00",
           color: "black",
-        }
+        },
       },
       defaultIcons: {
         icon: "ri-cloudy-fill",
         faIcon: "fa-regular fa-bolt-lightning",
         faUnicode: "",
         faClass: "fa-regular",
-      }
+      },
     });
     const createdAssets = (
       await createAssets(OIL_FIRED_POWER_GENERATION_COMPLEX_ASSETS, mockGetIconStyle, jest.fn())
@@ -99,13 +101,7 @@ describe("Element details component", () => {
     renderElementDetails({ element: createdAssets[0], expand: true });
     await waitForDetailsToLoad();
 
-    const assetIcon = screen.getByTestId("asset-icon");
-    expect(assetIcon).toHaveStyle({
-      backgroundColor: "rgb(255, 255, 0)",
-      color: "black",
-      border: "3px solid #f2f2f2",
-    });
-    expect(assetIcon.firstElementChild).toHaveClass("fa-regular fa-bolt-lightning");
+    expect(screen.getByTitle("OilFiredPowerGenerationComplex-icon")).toBeInTheDocument();
 
     // checks dependents are loaded
     expect(await screen.findByRole("heading", { name: "1 dependent asset" })).toBeInTheDocument();

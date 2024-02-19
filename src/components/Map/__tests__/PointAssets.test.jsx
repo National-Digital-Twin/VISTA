@@ -4,17 +4,28 @@ import {
   HIGH_VOLTAGE_ELECTRICITY_SUBSTATION_COMPLEX_ASSETS,
   OIL_FIRED_POWER_GENERATION_COMPLEX_ASSETS,
 } from "mocks";
-import { getCreatedAssets, getCreatedDependencies, renderWithQueryClient } from "test-utils";
+import {
+  DSProvidersWrapper,
+  getCreatedAssets,
+  getCreatedDependencies,
+  renderWithQueryClient,
+} from "test-utils";
 import * as mapUtils from "../map-utils";
 import PointAssets from "../PointAssets";
 
 const getLineStringFeatures = (feature) => feature.geometry.type === "LineString";
 const getPointFeatures = (feature) => feature.geometry.type === "Point";
 
+const renderPointAssets = (pointAssetProps) => {
+  return renderWithQueryClient(<PointAssets {...pointAssetProps} />, {
+    wrapper: DSProvidersWrapper,
+  });
+};
+
 describe("Point asset component", () => {
   test("should generate empty features when there are no elements", () => {
     const spyOnGeneratePointAssetFeatures = jest.spyOn(mapUtils, "generatePointAssetFeatures");
-    renderWithQueryClient(<PointAssets />);
+    renderPointAssets();
 
     expect(spyOnGeneratePointAssetFeatures).toHaveReturnedWith([]);
   });
@@ -26,11 +37,10 @@ describe("Point asset component", () => {
         ...HIGH_VOLTAGE_ELECTRICITY_SUBSTATION_COMPLEX_ASSETS,
         ...OIL_FIRED_POWER_GENERATION_COMPLEX_ASSETS,
       ],
-      ["E001", "E003"],
-      jest.fn().mockResolvedValue({}),
-      jest.fn()
+      ["E001", "E003"]
     );
-    renderWithQueryClient(<PointAssets assets={createdAssets} />);
+
+    renderPointAssets({ assets: createdAssets });
 
     expect(spyOnGeneratePointAssetFeatures).toBeCalledTimes(1);
     expect(spyOnGeneratePointAssetFeatures.mock.results[0].value).toHaveLength(2);
@@ -48,13 +58,12 @@ describe("Point asset component", () => {
       ],
       ["E001", "E003"]
     );
+
     const createdDependencies = getCreatedDependencies(
       HIGH_VOLTAGE_ELECTRICITY_AND_OIL_FIRED_POWER_GENERATION_SUBSTATION_COMPLEX_DEPENDENCIES,
       ["E001 - E003"]
     );
-    renderWithQueryClient(
-      <PointAssets assets={createdAssets} dependencies={createdDependencies} />
-    );
+    renderPointAssets({ assets: createdAssets, dependencies: createdDependencies });
 
     expect(spyOnGeneratePointAssetFeatures).toBeCalledTimes(1);
     expect(spyOnGeneratePointAssetFeatures.mock.results[0].value).toHaveLength(3);
@@ -67,39 +76,10 @@ describe("Point asset component", () => {
       HIGH_VOLTAGE_ELECTRICITY_AND_OIL_FIRED_POWER_GENERATION_SUBSTATION_COMPLEX_DEPENDENCIES,
       ["E001 - E003"]
     );
-    renderWithQueryClient(<PointAssets dependencies={createdDependencies} />);
+    renderPointAssets({ dependencies: createdDependencies });
 
     expect(spyOnGeneratePointAssetFeatures).toBeCalledTimes(1);
     expect(spyOnGeneratePointAssetFeatures).toHaveReturnedWith([]);
-  });
-
-  test("should generate features when elements are selected", async () => {
-    const spyOnGeneratePointAssetFeatures = jest.spyOn(mapUtils, "generatePointAssetFeatures");
-    const assets = await getCreatedAssets(
-      [
-        ...HIGH_VOLTAGE_ELECTRICITY_SUBSTATION_COMPLEX_ASSETS,
-        ...OIL_FIRED_POWER_GENERATION_COMPLEX_ASSETS,
-      ],
-      ["E001", "E003"]
-    );
-    const dependencies = getCreatedDependencies(
-      HIGH_VOLTAGE_ELECTRICITY_AND_OIL_FIRED_POWER_GENERATION_SUBSTATION_COMPLEX_DEPENDENCIES,
-      ["E001 - E003"]
-    );
-    renderWithQueryClient(
-      <PointAssets
-        assets={assets}
-        dependencies={dependencies}
-        selectedElements={[...assets, ...dependencies]}
-      />
-    );
-
-    expect(spyOnGeneratePointAssetFeatures).toBeCalledTimes(1);
-    expect(spyOnGeneratePointAssetFeatures.mock.results[0].value).toHaveLength(3);
-    expect(spyOnGeneratePointAssetFeatures.mock.results[0].value[0].properties.selected).toBe(true);
-    expect(spyOnGeneratePointAssetFeatures.mock.results[0].value[1].properties.selected).toBe(true);
-    expect(spyOnGeneratePointAssetFeatures.mock.results[0].value[2].properties.selected).toBe(true);
-    expect(spyOnGeneratePointAssetFeatures.mock.results[0].value).toMatchSnapshot();
   });
 
   test("should NOT generate features for selected elements which don't exist", async () => {
@@ -111,16 +91,10 @@ describe("Point asset component", () => {
     const selectedElements = await getCreatedAssets(OIL_FIRED_POWER_GENERATION_COMPLEX_ASSETS, [
       "E001",
     ]);
-    renderWithQueryClient(<PointAssets assets={assets} selectedElements={selectedElements} />);
+    renderPointAssets({ assets, selectedElements });
 
     expect(spyOnGeneratePointAssetFeatures).toBeCalledTimes(1);
     expect(spyOnGeneratePointAssetFeatures.mock.results[0].value).toHaveLength(2);
-    expect(spyOnGeneratePointAssetFeatures.mock.results[0].value[0].properties.selected).toBe(
-      false
-    );
-    expect(spyOnGeneratePointAssetFeatures.mock.results[0].value[1].properties.selected).toBe(
-      false
-    );
     expect(spyOnGeneratePointAssetFeatures.mock.results[0].value).toMatchSnapshot();
   });
 
@@ -130,16 +104,15 @@ describe("Point asset component", () => {
       "E003",
       "E025",
     ]);
-    const { rerender } = renderWithQueryClient(
-      <PointAssets assets={assets} selectedElements={assets} />
-    );
+
+    const { rerender } = renderPointAssets({ assets, selectedElements: assets });
 
     expect(spyOnGeneratePointAssetFeatures).toBeCalledTimes(1);
     expect(spyOnGeneratePointAssetFeatures.mock.results[0].value).toHaveLength(2);
-    expect(spyOnGeneratePointAssetFeatures.mock.results[0].value[0].properties.selected).toBe(true);
-    expect(spyOnGeneratePointAssetFeatures.mock.results[0].value[1].properties.selected).toBe(true);
 
-    rerender(<PointAssets assets={[]} selectedElements={assets} />);
+    rerender(<PointAssets assets={[]} selectedElements={assets} />, {
+      wrapper: DSProvidersWrapper,
+    });
     expect(spyOnGeneratePointAssetFeatures).toBeCalledTimes(2);
     expect(spyOnGeneratePointAssetFeatures).toHaveReturnedWith([]);
   });
@@ -153,26 +126,22 @@ describe("Point asset component", () => {
       ],
       ["E001", "E025", "E003"]
     );
-    const { rerender } = renderWithQueryClient(
-      <PointAssets assets={assets} selectedElements={assets} />
-    );
+    const { rerender } = renderPointAssets({ assets, selectedElements: assets });
 
     expect(spyOnGeneratePointAssetFeatures).toBeCalledTimes(1);
     expect(spyOnGeneratePointAssetFeatures.mock.results[0].value).toHaveLength(3);
-    expect(spyOnGeneratePointAssetFeatures.mock.results[0].value[0].properties.selected).toBe(true);
-    expect(spyOnGeneratePointAssetFeatures.mock.results[0].value[1].properties.selected).toBe(true);
-    expect(spyOnGeneratePointAssetFeatures.mock.results[0].value[2].properties.selected).toBe(true);
 
     const filteredAssets = assets.filter((asset) => {
       const typeFilter = "http://ies.data.gov.uk/ontology/ies4#OilFiredPowerGenerationComplex";
       const isOilFiredAsset = asset.type === typeFilter;
       return isOilFiredAsset;
     });
-    rerender(<PointAssets assets={filteredAssets} selectedElements={assets} />);
+    rerender(<PointAssets assets={filteredAssets} selectedElements={assets} />, {
+      wrapper: DSProvidersWrapper,
+    });
 
     expect(spyOnGeneratePointAssetFeatures).toBeCalledTimes(2);
     expect(spyOnGeneratePointAssetFeatures.mock.results[1].value).toHaveLength(1);
-    expect(spyOnGeneratePointAssetFeatures.mock.results[1].value[0].properties.selected).toBe(true);
   });
 
   test("should NOT generate dependency features when previously dependencies when assets are removed", async () => {
@@ -188,9 +157,11 @@ describe("Point asset component", () => {
       HIGH_VOLTAGE_ELECTRICITY_AND_OIL_FIRED_POWER_GENERATION_SUBSTATION_COMPLEX_DEPENDENCIES,
       ["E001 - E003"]
     );
-    const { rerender } = renderWithQueryClient(
-      <PointAssets assets={assets} dependencies={dependencies} selectedElements={dependencies} />
-    );
+    const { rerender } = renderPointAssets({
+      assets,
+      dependencies,
+      selectedElements: dependencies,
+    });
 
     expect(spyOnGeneratePointAssetFeatures).toBeCalledTimes(1);
     const results =
@@ -198,7 +169,9 @@ describe("Point asset component", () => {
     expect(results).toHaveLength(1);
     expect(results[0].properties.selected).toBe(true);
 
-    rerender(<PointAssets assets={[]} dependencies={[]} selectedElements={dependencies} />);
+    rerender(<PointAssets assets={[]} dependencies={[]} selectedElements={dependencies} />, {
+      wrapper: DSProvidersWrapper,
+    });
     expect(spyOnGeneratePointAssetFeatures).toBeCalledTimes(2);
     expect(spyOnGeneratePointAssetFeatures).toHaveReturnedWith([]);
   });
@@ -216,9 +189,11 @@ describe("Point asset component", () => {
       HIGH_VOLTAGE_ELECTRICITY_AND_OIL_FIRED_POWER_GENERATION_SUBSTATION_COMPLEX_DEPENDENCIES,
       ["E001 - E003", "E003 - E025"]
     );
-    const { rerender } = renderWithQueryClient(
-      <PointAssets assets={assets} dependencies={dependencies} selectedElements={dependencies} />
-    );
+    const { rerender } = renderPointAssets({
+      assets,
+      dependencies,
+      selectedElements: dependencies,
+    });
 
     expect(spyOnGeneratePointAssetFeatures).toBeCalledTimes(1);
     let results =
@@ -239,7 +214,8 @@ describe("Point asset component", () => {
         assets={filteredAssets}
         dependencies={dependencies}
         selectedElements={dependencies}
-      />
+      />,
+      { wrapper: DSProvidersWrapper }
     );
     expect(spyOnGeneratePointAssetFeatures).toBeCalledTimes(2);
     results = spyOnGeneratePointAssetFeatures.mock.results[1].value.filter(getLineStringFeatures);
@@ -260,13 +236,11 @@ describe("Point asset component", () => {
       HIGH_VOLTAGE_ELECTRICITY_AND_OIL_FIRED_POWER_GENERATION_SUBSTATION_COMPLEX_DEPENDENCIES,
       ["E001 - E003"]
     );
-    const { rerender } = renderWithQueryClient(
-      <PointAssets
-        assets={assets}
-        dependencies={dependencies}
-        selectedElements={[...assets, ...dependencies]}
-      />
-    );
+    const { rerender } = renderPointAssets({
+      assets,
+      dependencies,
+      selectedElements: [...assets, ...dependencies],
+    });
 
     expect(spyOnGeneratePointAssetFeatures).toBeCalledTimes(1);
     const assetFeatures =
@@ -275,15 +249,14 @@ describe("Point asset component", () => {
       spyOnGeneratePointAssetFeatures.mock.results[0].value.filter(getLineStringFeatures);
     // Point assets
     expect(assetFeatures).toHaveLength(2);
-    expect(assetFeatures[0].properties.selected).toBe(true);
-    expect(assetFeatures[1].properties.selected).toBe(true);
 
     // Point asset dependencies
     expect(dependenciesFeatures).toHaveLength(1);
     expect(dependenciesFeatures[0].properties.selected).toBe(true);
 
     rerender(
-      <PointAssets assets={[]} dependencies={[]} selectedElements={[...assets, ...dependencies]} />
+      <PointAssets assets={[]} dependencies={[]} selectedElements={[...assets, ...dependencies]} />,
+      { wrapper: DSProvidersWrapper }
     );
     expect(spyOnGeneratePointAssetFeatures).toBeCalledTimes(2);
     expect(spyOnGeneratePointAssetFeatures).toHaveReturnedWith([]);
@@ -302,13 +275,11 @@ describe("Point asset component", () => {
       HIGH_VOLTAGE_ELECTRICITY_AND_OIL_FIRED_POWER_GENERATION_SUBSTATION_COMPLEX_DEPENDENCIES,
       ["E001 - E003", "E003 - E025"]
     );
-    const { rerender } = renderWithQueryClient(
-      <PointAssets
-        assets={assets}
-        dependencies={dependencies}
-        selectedElements={[...assets, ...dependencies]}
-      />
-    );
+    const { rerender } = renderPointAssets({
+      assets,
+      dependencies,
+      selectedElements: [...assets, ...dependencies],
+    });
 
     let assetFeatures =
       spyOnGeneratePointAssetFeatures.mock.results[0].value.filter(getPointFeatures);
@@ -319,9 +290,6 @@ describe("Point asset component", () => {
 
     // Point assets
     expect(assetFeatures).toHaveLength(3);
-    expect(assetFeatures[0].properties.selected).toBe(true);
-    expect(assetFeatures[1].properties.selected).toBe(true);
-    expect(assetFeatures[2].properties.selected).toBe(true);
 
     // Point asset dependencies
     expect(dependenciesFeatures).toHaveLength(2);
@@ -343,7 +311,8 @@ describe("Point asset component", () => {
         assets={filteredAssets}
         dependencies={filteredDependencies}
         selectedElements={[...assets, ...dependencies]}
-      />
+      />,
+      { wrapper: DSProvidersWrapper }
     );
 
     assetFeatures = spyOnGeneratePointAssetFeatures.mock.results[1].value.filter(getPointFeatures);
@@ -353,8 +322,7 @@ describe("Point asset component", () => {
     expect(spyOnGeneratePointAssetFeatures).toBeCalledTimes(2);
     // Point assets
     expect(assetFeatures).toHaveLength(2);
-    expect(assetFeatures[0].properties.selected).toBe(true);
-    expect(assetFeatures[1].properties.selected).toBe(true);
+
     // Point asset dependencies
     expect(dependenciesFeatures).toHaveLength(1);
     expect(dependenciesFeatures[0].properties.selected).toBe(true);
