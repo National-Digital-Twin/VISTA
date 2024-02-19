@@ -18,7 +18,7 @@ Paralog is a tool which can be used to get a better understanding of high value 
 
 ## Getting started
 
-Paralog is currently requires the Isle of Wight data (iow) but is not limited to it. The following docker images and minimum versions are required.
+Paralog currently requires the Isle of Wight data (iow) but is not limited to it. The following docker images and minimum versions are required.
 
 - Kafka - Can be run without kafka, can run using kraft or with zookeeper (It's encouraged to use Kafka with Kraft).
   Can be run locally on your machine or as a docker container.
