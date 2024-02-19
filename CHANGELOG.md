@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.6.0](https://github.com/Telicent-io/telicent-paralog/compare/v1.5.1...v1.6.0) (2024-02-19)
+
+
+### Features
+
+* branding updates ([6f0b8db](https://github.com/Telicent-io/telicent-paralog/commit/6f0b8db04142e556b8dec974ca4b7957b2f0c36c)), closes [#311](https://github.com/Telicent-io/telicent-paralog/issues/311)
+* moved away from ontology-api to the ontology service ([ea56c51](https://github.com/Telicent-io/telicent-paralog/commit/ea56c51ee62f9860e297dc200da4caff37c9ef0c)), closes [#323](https://github.com/Telicent-io/telicent-paralog/issues/323)
+
+
+### Bug Fixes
+
+* **setuptests:** change from process.env to window._env_ ([343e007](https://github.com/Telicent-io/telicent-paralog/commit/343e007e829e7f31c278c0e946186074a891376e))
+* updated jest config to include setupFiles in craco.config.js ([655dbaf](https://github.com/Telicent-io/telicent-paralog/commit/655dbaf6ce23857029dba199b9afef0eb7e80a22))
+
 ## [1.5.1](https://github.com/Telicent-io/telicent-paralog/compare/v1.5.0...v1.5.1) (2024-01-10)
 
 
