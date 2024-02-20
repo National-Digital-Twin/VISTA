@@ -12,8 +12,6 @@ quickly.
 
 - [Build](#build)
 - [Usage](#usage)
-  - [With Telicent CLI](#with-telicent-cli)
-  - [Environment Configuration](#environment-configuration)
 - [Features](#features)
 - [Related repositories](#related-repositories)
 
