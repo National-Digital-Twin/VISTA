@@ -128,7 +128,7 @@ required.
 
 - **MAP_TILER_TOKEN** (string) - Token for getting map tiles.
 
-- **ONTOLOGY_SERVICE_URL** (string) - Smart cache graph api endpoint.
+- **ONTOLOGY_SERVICE_URL** (string) - Smart Cache Graph API endpoint.
 
 - **BETA** (Boolean) - Is the application at the beta stage
   <br/>Defaults to false
