@@ -1,5 +1,5 @@
 import { isEmpty } from "lodash";
-import { findElement, getColorScale, getHexColor, getURIFragment } from "utils";
+import { findElement, getColorScale, getHexColor, getURIFragment } from "../utils";
 
 export default class Dependency {
   #colorScale = getColorScale(1, 3);
@@ -82,6 +82,7 @@ export default class Dependency {
       criticality: this.criticality,
       id: this.id,
       uri: this.uri,
+      elementType: this.elementType,
       icon: {
         style: {
           width: "1rem",

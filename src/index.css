@@ -3,7 +3,18 @@
 @tailwind utilities;
 
 :root {
-  --app-Colour: #2efa8d !important;
+  --app-color: 157, 221, 49;
+  --app-color-50: 245, 252, 234;
+  --app-color-100: 214, 241, 186;
+  --app-color-200: 214, 241, 186;
+  --app-color-300: 196, 234, 153;
+  --app-color-400: 175, 227, 86;
+  --app-color-500: 157, 221, 49;
+  --app-color-600: 134, 199, 38;
+  --app-color-700: 111, 177, 26;
+  --app-color-800: 56, 102, 22;
+  --app-color-900: 33, 59, 11;
+  --app-color-950: 6, 22, 5;
 }
 
 ::-webkit-scrollbar {

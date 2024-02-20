@@ -5,17 +5,19 @@ import { ElementsProvider } from "context";
 import { createParalogEndpoint } from "api/combined";
 import server, { ASSESSMENTS } from "mocks";
 import { mockEmptyResponse, mock400Error } from "mocks/resolvers";
-import { renderWithQueryClient } from "test-utils";
+import { DSProvidersWrapper, renderWithQueryClient } from "test-utils";
 
 import AssessmentTypes from "../AssessmentTypes";
 
 const renderAssessmentTypes = () =>
   renderWithQueryClient(
-    <AssessmentTypes
-      assessment={ASSESSMENTS[0].uri}
-      selectedTypes={[]}
-      setSelectedTypes={jest.fn()}
-    />,
+    <DSProvidersWrapper>
+      <AssessmentTypes
+        assessment={ASSESSMENTS[0].uri}
+        selectedTypes={[]}
+        setSelectedTypes={jest.fn()}
+      />
+    </DSProvidersWrapper>,
     { wrapper: ElementsProvider }
   );
 

@@ -10,8 +10,7 @@ import "./react-checkbox-tree.css";
 const FloodAreas = () => {
   const [expanded, setExpanded] = useState([]);
   const { selectedFloodAreas, onFloodAreaSelect } = useContext(ElementsContext);
-  const { isLoading, isError, error, generateFloodAreaNodes } = useFloodWatchAreas();
-  const floodAreaNodes = generateFloodAreaNodes();
+  const { isLoading, isError, error, data: floodAreaNodes } = useFloodWatchAreas();
 
   if (isLoading) return <p>Fetching flood areas</p>;
   if (isError) return <p>{error.message}</p>;

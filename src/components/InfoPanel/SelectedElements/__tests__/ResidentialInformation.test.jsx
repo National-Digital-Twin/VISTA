@@ -14,25 +14,29 @@ const waitForResidencesToLoad = async () => {
 
 describe("Residential information component", () => {
   test("does NOT render when element is not an asset", () => {
-    renderWithQueryClient(<ResidentialInformation isAsset={false} />);
-    expect(document.querySelector("body").firstElementChild).toBeEmptyDOMElement();
+    const { container } = renderWithQueryClient(<ResidentialInformation isAsset={false} />);
+    expect(container).toBeEmptyDOMElement();
   });
 
   test("does NOT render when primaryType is not defined", () => {
-    renderWithQueryClient(
+    const { container } = renderWithQueryClient(
       <ResidentialInformation isAsset uri="https://www.iow.gov.uk/DigitalTwin%23V013" />
     );
-    expect(document.querySelector("body").firstElementChild).toBeEmptyDOMElement();
+    expect(container).toBeEmptyDOMElement();
   });
 
   test("does NOT render when uri is not defined", () => {
-    renderWithQueryClient(<ResidentialInformation isAsset primaryType="Person" />);
-    expect(document.querySelector("body").firstElementChild).toBeEmptyDOMElement();
+    const { container } = renderWithQueryClient(
+      <ResidentialInformation isAsset primaryType="Person" />
+    );
+    expect(container).toBeEmptyDOMElement();
   });
 
   test("does NOT render when primaryType is not person", () => {
-    renderWithQueryClient(<ResidentialInformation isAsset primaryType="Road" />);
-    expect(document.querySelector("body").firstElementChild).toBeEmptyDOMElement();
+    const { container } = renderWithQueryClient(
+      <ResidentialInformation isAsset primaryType="Road" />
+    );
+    expect(container).toBeEmptyDOMElement();
   });
 
   test("renders residences address", async () => {

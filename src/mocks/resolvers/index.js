@@ -7,3 +7,4 @@ export { default as mockEmptyResponse } from "./empty-response";
 export { default as ontologyClass } from "./ontology-class";
 export { default as personResidences } from "./person-residences";
 export { default as iconStyles } from "./icon-styles";
+export { default as ontologyStyles } from "./ontology-styles";

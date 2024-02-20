@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Layer, Marker, Source } from "react-map-gl";
 import PropTypes from "prop-types";
 import classNames from "classnames";
+import { useOntologyStyles } from "@telicent-io/ds";
 
 import { findElement } from "utils";
 import { FEATURE_COLLECTION, GEOJSON } from "./TelicentMap";
@@ -19,6 +20,7 @@ const PointAssets = ({ map, assets, dependencies, selectedElements, onElementCli
 
   useEffect(() => {
     if (!map) return;
+
     const onLoad = () => {
       map.getMap().moveLayer(heatmap.id, FLOOD_AREA_LAYERS[0].id);
     };
@@ -26,7 +28,7 @@ const PointAssets = ({ map, assets, dependencies, selectedElements, onElementCli
     map.on("load", onLoad);
 
     return () => {
-      map.on("load", onLoad);
+      map.off("load", onLoad);
     };
   }, [map]);
 
@@ -107,8 +109,11 @@ PointAssets.propTypes = {
 export default PointAssets;
 
 const AssetIcons = ({ features, isSelected, onAssetClick }) => {
+  const { findIcon } = useOntologyStyles();
+
   return features.map((feature) => {
     const { geometry, properties } = feature;
+    const iconStyles = findIcon(properties.type);
     return (
       <Marker
         key={properties.uri}
@@ -117,18 +122,18 @@ const AssetIcons = ({ features, isSelected, onAssetClick }) => {
         latitude={geometry.coordinates[1]}
         onClick={(event) => onAssetClick(event, feature)}
         style={{
-          backgroundColor: properties.backgroundColor,
-          color: properties.color,
-          borderColor: isSelected(feature) ? "#fff" : properties.borderColor,
+          backgroundColor: iconStyles.backgroundColor,
+          color: iconStyles.color,
+          borderColor: isSelected(feature) ? "#fff" : iconStyles.color,
           borderRadius: "9999px",
           cursor: "pointer",
           borderWidth: "2px",
         }}
       >
-        {properties?.icon ? (
-          <i className={classNames(properties.icon, "px-1")} />
+        {iconStyles?.faIcon ? (
+          <i className={classNames(iconStyles.faIcon, "px-1")} />
         ) : (
-          <p className="font-body p-1">{properties.iconLabel}</p>
+          <p className="p-1 font-body">{iconStyles.iconFallbackText}</p>
         )}
       </Marker>
     );

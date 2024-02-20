@@ -1,11 +1,11 @@
+import React, { useContext, useEffect, useMemo } from "react";
 import { lowerCase } from "lodash";
 import { useFetch } from "use-http";
-import React, { useContext, useEffect, useMemo } from "react";
+import { useOntologyStyles } from "@telicent-io/ds";
 
 import { ASSESSMENTS_ENDPOINT, ASSET_PARTS_ENDPOINT } from "constants/endpoints";
 import { ElementsContext } from "context";
 import { getURIFragment } from "utils";
-import { useOntologyServer } from "hooks";
 
 import { createAssets, createDependencies } from "./dataset-utils";
 
@@ -18,7 +18,7 @@ const GroupedTypes = ({
   setIsGeneratingData,
 }) => {
   const { get, error, response } = useFetch();
-  const { getIconStyle } = useOntologyServer();
+  const { findIcon } = useOntologyStyles();
   const { addElements, removeElementsByType, updateErrorNotifications } =
     useContext(ElementsContext);
 
@@ -76,7 +76,7 @@ const GroupedTypes = ({
       };
 
       getData().then(async ({ assets, dependencies }) => {
-        const createdAssets = await createAssets(assets, getIconStyle, getAssetGeometry);
+        const createdAssets = await createAssets(assets, findIcon, getAssetGeometry);
         const createdDependencies = createDependencies(dependencies);
         addElements(createdAssets, createdDependencies);
         setIsGeneratingData(false);
@@ -95,7 +95,7 @@ const GroupedTypes = ({
     if (!type?.uri || !type.assetCount) return null;
     const { uri, assetCount } = type;
     return (
-      <li key={uri} className="inline-flex gap-x-1 text-xs">
+      <li key={uri} className="inline-flex text-xs gap-x-1">
         <input
           type="checkbox"
           value={uri}

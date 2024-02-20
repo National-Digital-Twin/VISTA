@@ -1,6 +1,6 @@
 import { rest } from "msw";
 
-import { createOntologyEndpoint, createParalogEndpoint } from "api/combined";
+import { createOntologyServiceEndpoint, createParalogEndpoint } from "api/combined";
 import {
   ASSESSMENTS_ASSETS_ENDPOINT,
   ASSESSMENTS_DEPENDENCIES_ENDPOINT,
@@ -21,5 +21,5 @@ export const handlers = [
   rest.get(createParalogEndpoint("flood-watch-areas/polygon"), resolvers.floodAreaPolygons),
   rest.get(createParalogEndpoint("person/residences"), resolvers.personResidences),
   rest.get(createParalogEndpoint("ontology/class"), resolvers.ontologyClass),
-  rest.get(createOntologyEndpoint("styles/class"), resolvers.iconStyles),
+  rest.get(createOntologyServiceEndpoint("ontology/query"), resolvers.ontologyStyles),
 ];

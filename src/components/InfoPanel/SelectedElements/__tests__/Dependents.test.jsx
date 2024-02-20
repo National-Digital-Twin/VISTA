@@ -2,28 +2,30 @@ import React from "react";
 import { screen, waitForElementToBeRemoved, within } from "@testing-library/react";
 import { rest } from "msw";
 
-import { ElementsContext } from "context";
+import { ElementsProvider } from "context";
 import { createParalogEndpoint } from "api/combined";
 import {
   HIGH_VOLTAGE_ELECTRICITY_SUBSTATION_COMPLEX_ASSETS,
   OIL_FIRED_POWER_GENERATION_COMPLEX_ASSETS,
   server,
 } from "mocks";
-import { getCreatedAssets, renderWithQueryClient } from "test-utils";
+import { DSProvidersWrapper, getCreatedAssets, renderWithQueryClient } from "test-utils";
 import { isAsset, isDependency } from "utils";
 
 import Dependents from "../Dependents";
 
 const renderAssetDependents = async ({ assets, element }) =>
   renderWithQueryClient(
-    <ElementsContext.Provider value={{ assets }}>
-      <Dependents
-        assetUri={element?.uri}
-        dependent={element?.dependent}
-        isAsset={isAsset(element)}
-        isDependency={isDependency(element)}
-      />
-    </ElementsContext.Provider>
+    <DSProvidersWrapper>
+      <ElementsProvider assets={assets}>
+        <Dependents
+          assetUri={element?.uri}
+          dependent={element?.dependent}
+          isAsset={isAsset(element)}
+          isDependency={isDependency(element)}
+        />
+      </ElementsProvider>
+    </DSProvidersWrapper>
   );
 
 const renderE003AssetDetails = async (assets) => {
@@ -48,9 +50,9 @@ const toggleDependents = async (user) => {
 
 describe("Dependents component", () => {
   beforeEach(() => {
-    jest.clearAllMocks()
-    jest.resetAllMocks()
-  })
+    jest.clearAllMocks();
+    jest.resetAllMocks();
+  });
 
   test("does NOT render dependent assets when element is not defined", async () => {
     await renderE003AssetDetails([]);
@@ -67,7 +69,7 @@ describe("Dependents component", () => {
     expect(screen.queryByRole("list")).not.toBeInTheDocument();
 
     await toggleDependents(user);
-    expect(screen.queryByRole("list")).toBeInTheDocument();
+    expect(screen.getByRole("list")).toBeInTheDocument();
 
     const dependents = screen.getAllByRole("listitem");
     expect(dependents).toHaveLength(4);
@@ -76,27 +78,13 @@ describe("Dependents component", () => {
       within(dependents[0]).getByRole("heading", { name: "Shalfleet 33kV / 11kV Substation" })
     ).toBeInTheDocument();
     expect(within(dependents[0]).getByText("E008")).toBeInTheDocument();
-    expect(within(dependents[0]).getByTestId("asset-icon")).toHaveStyle({
-      backgroundColor: "rgb(163, 163, 163)",
-      color: "rgb(51, 51, 51)",
-    });
-    expect(within(dependents[0]).getByTestId("asset-icon").firstElementChild).toHaveTextContent(
-      "Low"
-    );
 
     expect(
       within(dependents[3]).getByRole("heading", { name: "East Cowes Power Station" })
     ).toBeInTheDocument();
     expect(within(dependents[3]).getByText("E001")).toBeInTheDocument();
-    expect(within(dependents[3]).getByTestId("asset-icon")).toHaveStyle({
-      backgroundColor: "rgb(163, 163, 163)",
-      color: "rgb(51, 51, 51)",
-    });
-    expect(within(dependents[3]).getByTestId("asset-icon").firstElementChild).toHaveClass(
-      "fa-regular fa-bolt-lightning"
-    );
 
-    expect(dependents).toMatchSnapshot("dependents not sorted");
+    expect(dependents).toMatchSnapshot("dependents list");
   });
 
   test("does NOT show dependents when none are found", async () => {
@@ -142,11 +130,11 @@ describe("Dependents component", () => {
     server.use(
       rest.get(createParalogEndpoint("asset"), (req, res, ctx) => {
         const assetUri = req.url.searchParams.get("assetUri");
-        if (assetUri === "https://www.iow.gov.uk/DigitalTwin#E002") {
+        if (assetUri === "https://www.iow.gov.uk/DigitalTwin#E001") {
           return res.once(
             ctx.status(404),
             ctx.json({
-              message: "Asset information for https://www.iow.gov.uk/DigitalTwin#E002 not found",
+              message: "Asset information for https://www.iow.gov.uk/DigitalTwin#E001 not found",
             })
           );
         }
@@ -161,8 +149,8 @@ describe("Dependents component", () => {
     expect(dependents).toHaveLength(4);
 
     expect(
-      within(dependents[2]).getByText(
-        "Failed to retrieve asset information for https://www.iow.gov.uk/DigitalTwin#E002"
+      within(dependents[3]).getByText(
+        "Failed to retrieve asset information for https://www.iow.gov.uk/DigitalTwin#E001"
       )
     ).toBeInTheDocument();
     expect(dependents).toMatchSnapshot("dependents with error(s)");

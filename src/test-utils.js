@@ -3,13 +3,18 @@ import React from "react";
 import userEvent from "@testing-library/user-event";
 import { Provider as UseHttpProvider } from "use-http";
 import { MapProvider } from "react-map-gl";
-import { QueryClient, QueryClientProvider } from "react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { DSProviders } from "@telicent-io/ds";
+import OntologyService from "@telicent-io/ontologyservice";
 
+import { createAssets, createDependencies } from "components/Dataset/dataset-utils";
+import config from "config/app-config";
 import { Dataset } from "./components";
 import { CytoscapeProvider, ElementsContext, ElementsProvider } from "./context";
-import { createAssets, createDependencies } from "components/Dataset/dataset-utils";
 
 const user = userEvent.setup();
+
+const ontologyService = new OntologyService(config.services.ontology, "/ontology");
 
 export const clickLowVoltageElectricity = async () => {
   await user.click(screen.getByRole("button", { name: /Electrical power distribution complex/i }));
@@ -162,11 +167,11 @@ export const setup = (ui) => {
 export const getCreatedAssets = async (
   assets,
   ids,
-  getIconStyle = jest.fn(),
+  findIcon = jest.fn(),
   getAssetGeometry = jest.fn()
 ) => {
-  const createdAssets = (await createAssets(assets, getIconStyle, getAssetGeometry)).filter(
-    (asset) => ids.includes(asset.id)
+  const createdAssets = (await createAssets(assets, findIcon, getAssetGeometry)).filter((asset) =>
+    ids.includes(asset.id)
   );
   return createdAssets;
 };
@@ -177,3 +182,7 @@ export const getCreatedDependencies = (dependencies, ids) => {
   );
   return createdDependencies;
 };
+
+export const DSProvidersWrapper = ({ children }) => (
+  <DSProviders ontologyService={ontologyService}>{children}</DSProviders>
+);

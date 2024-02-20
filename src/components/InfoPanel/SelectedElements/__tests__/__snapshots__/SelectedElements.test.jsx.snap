@@ -9,7 +9,7 @@ exports[`Selected Elements component renders a list of selected element details:
   >
     <button
       aria-label="East Cowes 132/33kV Substation"
-      class="text-left pb-3"
+      class="pb-3 text-left"
     >
       <div
         class="grid gap-y-1"
@@ -17,17 +17,15 @@ exports[`Selected Elements component renders a list of selected element details:
         <div
           class="asset__details"
         >
-          <span
-            class="w-12 h-12 flex items-center justify-center"
-            id="asset-icon"
-            style="border-radius: 9999px; background-color: rgb(39, 39, 39); color: rgb(242, 242, 242); border: 3px solid #f2f2f2;"
+          <div
+            aria-label="HighVoltageElectricitySubstationComplex"
+            class="MuiAvatar-root MuiAvatar-circular MuiAvatar-colorDefault css-zd96tt-MuiAvatar-root"
           >
-            <span
-              class="text-whiteSmoke"
-            >
-              Hig
-            </span>
-          </span>
+            <i
+              class="fa-solid fa-utility-pole-double"
+              title="HighVoltageElectricitySubstationComplex-icon"
+            />
+          </div>
           <div>
             <h2
               class="text-lg font-medium"
@@ -35,7 +33,7 @@ exports[`Selected Elements component renders a list of selected element details:
               East Cowes 132/33kV Substation
             </h2>
             <p
-              class="uppercase text-sm"
+              class="text-sm uppercase"
             >
               high voltage electricity substation complex
             </p>
@@ -52,7 +50,7 @@ exports[`Selected Elements component renders a list of selected element details:
   >
     <button
       aria-label="East Cowes Power Station"
-      class="text-left pb-3"
+      class="pb-3 text-left"
     >
       <div
         class="grid gap-y-1"
@@ -60,17 +58,15 @@ exports[`Selected Elements component renders a list of selected element details:
         <div
           class="asset__details"
         >
-          <span
-            class="w-12 h-12 flex items-center justify-center"
-            id="asset-icon"
-            style="border-radius: 9999px; background-color: rgb(39, 39, 39); color: rgb(242, 242, 242); border: 3px solid #f2f2f2;"
+          <div
+            aria-label="OilFiredPowerGenerationComplex"
+            class="MuiAvatar-root MuiAvatar-circular MuiAvatar-colorDefault css-zd96tt-MuiAvatar-root"
           >
-            <span
-              class="text-whiteSmoke"
-            >
-              Oil
-            </span>
-          </span>
+            <i
+              class="fa-regular fa-bolt-lightning"
+              title="OilFiredPowerGenerationComplex-icon"
+            />
+          </div>
           <div>
             <h2
               class="text-lg font-medium"
@@ -78,7 +74,7 @@ exports[`Selected Elements component renders a list of selected element details:
               East Cowes Power Station
             </h2>
             <p
-              class="uppercase text-sm"
+              class="text-sm uppercase"
             >
               oil fired power generation complex
             </p>
@@ -95,7 +91,7 @@ exports[`Selected Elements component renders a list of selected element details:
   >
     <button
       aria-label="East Cowes Power Station - East Cowes 132/33kV Substation"
-      class="text-left pb-3"
+      class="pb-3 text-left"
     >
       <div
         class="grid gap-y-1"
@@ -104,12 +100,10 @@ exports[`Selected Elements component renders a list of selected element details:
           class="asset__details"
         >
           <span
-            class="w-12 h-12 flex items-center justify-center"
-            id="asset-icon"
+            class="flex items-center justify-center w-12 h-12"
+            id="dependent-icon"
             style="width: 1rem; height: 0.125rem; background-color: rgb(251, 55, 55);"
-          >
-            <span />
-          </span>
+          />
           <div>
             <h2
               class="text-lg font-medium"

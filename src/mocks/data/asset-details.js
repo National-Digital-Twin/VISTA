@@ -12,28 +12,6 @@ export const E025_DETAILS = {
   dependentCount: 3,
   dependentCriticalitySum: 8,
   connectionStrength: 3,
-  styles: {
-   defaultIcons: {
-     icon: "ri-cloudy-fill",
-     faIcon: "fa-solid fa-utility-pole-double",
-     faUnicode: "",
-     faClass: "fa-solid",
-   },
-   defaultStyles: {
-     borderRadius: "9999px",
-     borderWidth: "2px",
-     selectedBorderWidth: "3px",
-     shape: "circle",
-     dark: {
-       backgroundColor: "#FFFF00",
-       color: "black",
-     },
-     light: {
-         backgroundColor: "#CCCC00",
-         color: "white",
-     }
-   }
- }
 };
 
 export const E001_DETAILS = {
@@ -50,26 +28,4 @@ export const E001_DETAILS = {
   dependentCount: 1,
   dependentCriticalitySum: 3,
   connectionStrength: 3,
-  styles: {
-    defaultIcons: {
-      icon: "ri-cloudy-fill",
-      faIcon: "fa-regular fa-bolt-lightning",
-      faUnicode: "",
-      faClass: "fa-regular",
-    },
-    defaultStyles: {
-      borderRadius: "9999px",
-      borderWidth: "2px",
-      selectedBorderWidth: "3px",
-      shape: "circle",
-      dark: {
-        backgroundColor: "#FFFF00",
-        color: "black",
-      },
-      light: {
-        backgroundColor: "#FFFF00",
-        color: "black",
-      }
-   }
-  }
 };
