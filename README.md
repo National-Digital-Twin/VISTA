@@ -124,7 +124,7 @@ required.
 
 > Note: From version 1.6.0 Telicent Paralog no longer requires ONTOLOGY_API_URL
 
-- **PARALOG_API_URL** (string) - Smart cache paralog api endpoint.
+- **PARALOG_API_URL** (string) - Smart Cache Paralog API endpoint.
 
 - **MAP_TILER_TOKEN** (string) - Token for getting map tiles.
 
