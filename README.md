@@ -30,7 +30,7 @@ it.
 
 > Note: Ensure you are using version 0.5.0 or higher.
 
-1. **Install telicent cli.** (If you don't have it installed already)
+1. **Install Telicent CLI.** (If you don't have it installed already)
 
    Follow the steps documented in the
    [telicent-cli](https://github.com/Telicent-io/telicent-cli#install-the-cli)
