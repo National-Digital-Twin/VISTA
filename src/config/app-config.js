@@ -17,10 +17,12 @@ const config = {
     },
   },
   api: {
-    url: env.API_URL,
-    ontology: env.ONTOLOGY_API_URL,
+    url: env?.PARALOG_API_URL,
   },
-  beta: env.BETA === "true",
+  beta: env?.BETA ? Boolean(env.BETA) : false,
+  services: {
+    ontology: env?.ONTOLOGY_SERVICE_URL,
+  },
 };
 
 export default config;
