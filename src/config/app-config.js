@@ -16,7 +16,7 @@ const config = {
     },
   },
   api: {
-    url: env?.API_URL,
+    url: env?.PARALOG_API_URL,
   },
   beta: env?.BETA ? Boolean(env.BETA) : false,
   services: {
