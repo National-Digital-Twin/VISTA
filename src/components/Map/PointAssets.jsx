@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Layer, Marker, Source } from "react-map-gl";
 import PropTypes from "prop-types";
-import classNames from "classnames";
 import { useOntologyStyles } from "@telicent-io/ds";
 
 import { findElement } from "utils";
@@ -130,11 +129,12 @@ const AssetIcons = ({ features, isSelected, onAssetClick }) => {
           borderWidth: "2px",
         }}
       >
-        {iconStyles?.faIcon ? (
+        {/* Need to add this back in once the icon data is fixed */}
+        {/* {iconStyles?.faIcon ? (
           <i className={classNames(iconStyles.faIcon, "px-1")} />
-        ) : (
+        ) : ( */}
           <p className="p-1 font-body">{iconStyles.iconFallbackText}</p>
-        )}
+        {/* )} */}
       </Marker>
     );
   });

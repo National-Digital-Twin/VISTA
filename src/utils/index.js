@@ -54,7 +54,8 @@ export const getIconStyle = (styles) => {
   }
 
   return {
-    icon: this.styles?.faIcon || undefined,
+    iconLabel: this.styles.iconFallbackText,
+    // icon: this.styles?.faIcon || undefined,
     color: this.styles?.color || "#F2F2F2",
     backgroundColor: this.styles?.backgroundColor || "#272727",
   };

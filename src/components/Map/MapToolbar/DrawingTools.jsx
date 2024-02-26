@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { ToolbarButton, ToolbarMenu } from "lib";
 import { DRAW_CIRCLE } from "./DrawControl";
-
 const DrawingTools = ({ DRAW_POLYGON, compact, selectedTool, onDrawPolygon, onDrawCircle }) => {
   const [showDrawingTools, setShowDrawingTools] = useState(false);
 
@@ -10,7 +9,7 @@ const DrawingTools = ({ DRAW_POLYGON, compact, selectedTool, onDrawPolygon, onDr
       id: "Polygon Tool",
       children: (
         <>
-          <span className="fa-light fa-draw-polygon mr-2" />
+          <span className="fa-solid fa-draw-polygon mr-2" />
           Polygon tool
         </>
       ),
@@ -22,7 +21,7 @@ const DrawingTools = ({ DRAW_POLYGON, compact, selectedTool, onDrawPolygon, onDr
       id: "Circle Tool",
       children: (
         <>
-          <span className="fa-light fa-draw-circle mr-2" />
+          <span className="fa-regular fa-circle mr-2" />
           Circle tool
         </>
       ),
@@ -49,13 +48,13 @@ const DrawingTools = ({ DRAW_POLYGON, compact, selectedTool, onDrawPolygon, onDr
   return (
     <>
       <ToolbarButton
-        icon="fa-light fa-draw-polygon"
+        icon="fa-solid fa-draw-polygon"
         label="Polygon tool"
         selected={selectedTool === DRAW_POLYGON}
         onClick={onDrawPolygon}
       />
       <ToolbarButton
-        icon="fa-light fa-draw-circle"
+        icon="fa-regular fa-circle"
         label="Radius tool"
         selected={selectedTool === DRAW_CIRCLE}
         onClick={onDrawCircle}

@@ -7,7 +7,7 @@ import FloodZoneTimeline from "components/Map/FloodZoneTimeline";
 import config from "./config/app-config";
 import { ErrorNotification, ResizableContainer } from "./lib";
 
-import "@telicent-io/ds/dist/fontawesome.css";
+import "@telicent-io/ds/dist/fontawesome.css"
 import "@telicent-io/ds/dist/style.css";
 
 const ontologyService = new OntologyService(config.services.ontology, "/ontology");

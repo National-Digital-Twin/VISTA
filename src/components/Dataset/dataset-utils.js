@@ -32,7 +32,6 @@ export const createAssets = async (assets, findIcon, getAssetGeometry) => {
       const uri = asset?.uri;
       const type = asset?.type;
       const geometry = hasParts(asset) ? await getAssetGeometry(asset.uri) : [];
-
       return new Asset({
         uri,
         type,

@@ -15,7 +15,6 @@ import { createEdges, createNode, nodeLabels } from "./cytoscapeUtils";
 import cyStylesheet from "./stylesheet";
 import GraphToolbar from "./GraphToolbar";
 
-import "@fortawesome/fontawesome-pro/css/all.css";
 
 const NetworkGraph = ({ showGrid }) => {
   const { telicentMap: map } = useMap();
