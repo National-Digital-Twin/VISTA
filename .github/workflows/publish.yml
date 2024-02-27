@@ -45,8 +45,6 @@ jobs:
         run: |
           npm config set "@telicent-io:registry" "https://npm.pkg.github.com/"
           npm config set "//npm.pkg.github.com/:_authToken" ${{ secrets.PACKAGE_PAT }} 
-          npm config set "@fortawesome:registry" https://npm.fontawesome.com/
-          npm config set  "//npm.fontawesome.com/:_authToken" ${{ secrets.FONT_AWESOME_KEY }}
       - name: Get node version
         id: node
         run: |

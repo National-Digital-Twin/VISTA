@@ -24,7 +24,6 @@ import { FLOOD_AREA_LAYERS, heatmap, LINEAR_ASSET_LAYER } from "./layers";
 import { generateLinearAssetFeatures } from "./map-utils";
 import { getMapStyles } from "./mapStyles";
 
-import "@fortawesome/fontawesome-pro/css/all.css";
 import "./map.css";
 
 export const GEOJSON = "geojson";

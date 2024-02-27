@@ -117,7 +117,7 @@ const Details = ({ expand, details }) => {
         <>
           {icon?.icon && (
             <p className="flex items-center px-2 bg-yellow-600 rounded-md gap-x-2 text-black-100 w-fit">
-              <i className="fa-light fa-diamond-exclamation text-black-100" />
+              <i className="fa-solid fa-triangle-exclamation text-black-100" />
               Icon styles not found
             </p>
           )}

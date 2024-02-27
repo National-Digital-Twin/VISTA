@@ -79,7 +79,8 @@ export default class Asset {
 
   getIconStyle() {
     return {
-      icon: this.styles?.faIcon,
+      // Need to add this back in once the icon data is fixed
+      // icon: this.styles?.faIcon,
       color: this.styles.color,
       backgroundColor: this.styles.backgroundColor,
       iconLabel: this.styles.iconFallbackText,
@@ -164,6 +165,7 @@ export default class Asset {
       id: this.id,
       uri: this.uri,
       elementType: this.elementType,
+
     };
   }
 }

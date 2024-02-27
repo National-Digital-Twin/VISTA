@@ -40,7 +40,7 @@ const StationIcons = ({ features, onStationClick }) =>
       onClick={() => onStationClick(feature)}
       style={{ cursor: "pointer" }}
     >
-      <i className="fa-regular fa-arrow-up-from-ground-water fa-xl text-whiteSmoke" />
+      <i className="fa-solid fa-arrow-up-from-ground-water fa-xl text-whiteSmoke" />
     </Marker>
   ));
 
@@ -72,7 +72,7 @@ const StationPopup = ({ selectedStation, onClose }) => {
         rel="noreferrer"
         className="text-appColor flex items-center gap-x-1"
       >
-        <i className="fa-regular fa-arrow-right fa-xs pt-1" />
+        <i className="fa-solid fa-arrow-right fa-xs pt-1" />
         <span className="underline underline-offset-4">view details</span>
       </a>
     </Popup>
