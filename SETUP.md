@@ -1,0 +1,121 @@
+# Paralog Setup Guide
+
+This guide provides instructions for setting up the Paralog project, which consists of frontend, backend, deploy, and transparent-proxy components.
+
+## Table of Contents
+
+1. [Prerequisites](#prerequisites)
+2. [Frontend Setup](#frontend-setup)
+3. [Backend Setup](#backend-setup)
+4. [Deploy Setup](#deploy-setup)
+5. [Transparent Proxy Setup](#transparent-proxy-setup)
+
+## Prerequisites
+
+Ensure you have the following installed:
+
+- Node.js and npm
+- Yarn
+- Python ^3.12.5
+- Poetry
+- Docker
+- AWS CLI
+
+## Frontend Setup
+
+Full instructions can be found [here](./frontend/README.md)
+
+1. Navigate to the `frontend` directory.
+
+2. Create an `.npmrc` file in the project's root directory or your home directory with the following content:
+
+   ```ini
+   @coefficientsystems:registry=https://npm.pkg.github.com
+   //npm.pkg.github.com/:_authToken=YOUR_GITHUB_TOKEN
+   ```
+
+   Replace `YOUR_GITHUB_TOKEN` with a GitHub token that has `read:packages` and `write:packages` scopes.
+
+3. Verify your `package.json` configuration. Add the `publishConfig` section if it doesn't already exist:
+
+   ```json
+   "publishConfig": {
+     "registry": "https://npm.pkg.github.com/"
+   }
+   ```
+
+4. Login to the npm registry to configure it to use your GitHub token:
+
+   ```sh
+   npm login --registry=https://npm.pkg.github.com
+   ```
+
+5. Configure Yarn to use the token:
+
+   ```sh
+   yarn config set npmScopes.coefficientsystems.npmAuthToken YOUR_GITHUB_TOKEN
+   ```
+
+6. Install dependencies:
+
+   ```sh
+   yarn install
+   ```
+
+7. Start the application:
+   ```sh
+   yarn start
+   ```
+
+## Backend Setup
+
+Full instructions can be found [here](./backend/README.md)
+
+1. Navigate to the `backend` directory.
+
+2. Set up AWS credentials in `~/.aws/credentials`:
+
+   ```
+   [c477]
+   aws_access_key_id=SECRET_KEY
+   aws_secret_access_key=SECRET_ACCESS_KEY
+   ```
+
+3. Login to AWS ECR:
+
+   ```sh
+   aws ecr --profile=c477 get-login-password --region eu-west-2 | docker login --username AWS --password-stdin 098669589541.dkr.ecr.eu-west-2.amazonaws.com
+   ```
+
+4. Follow the instructions in the `backend/paralog-python-api/README.md` file for setting up the Python API.
+
+## Deploy Setup
+
+Full instructions can be found [here](./deploy/README.md)
+
+1. Navigate to the `deploy` directory.
+
+2. Follow the instructions in the `deploy/README.md` file for environment-specific setup and deployment procedures.
+
+## Transparent Proxy Setup
+
+Full instructions can be found [here](./transparent-proxy/README.md)
+
+1. Navigate to the `transparent-proxy` directory.
+
+2. Build the Docker image:
+
+   ```sh
+   docker build --tag paralog-transparent-proxy:latest .
+   ```
+
+3. Run the container with required environment variables:
+   ```sh
+   docker run -ti -p 5013:80 --env ADMIRALTY_API_KEY=... --env REALTIME_TRAINS_API_KEY=... paralog-transparent-proxy:latest
+   ```
+
+## Additional Notes
+
+- For updating Python requirements, refer to `docs/updating_requirements.md`.
+- To create a towncrier entry: `towncrier create 123.added --edit`.
+- For more detailed setup information, refer to their respective README files in their directories.

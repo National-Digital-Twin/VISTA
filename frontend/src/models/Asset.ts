@@ -1,0 +1,217 @@
+import type { Feature } from "geojson";
+import type ColorScale from "color-scales";
+import type { FoundIcon } from "@/hooks/useFindIcon";
+
+import type { ElementLike } from "@/utils";
+import { isEmpty } from "@/utils/isEmpty";
+import {
+  getColorScale,
+  getHexColor,
+  getShortType,
+  getURIFragment,
+} from "@/utils";
+
+export interface AssetGeometryNode {
+  uri: string;
+  type: string;
+  /* The following are all numbers stored as strings */
+  lat1: string;
+  lon1: string;
+  lat2: string;
+  lon2: string;
+}
+
+export default class Asset {
+  #countColorScale: ColorScale | null = null;
+  #criticalitySumColorScale: ColorScale | null = null;
+  #addresses: string[] = [];
+
+  uri: string;
+  id: string;
+  type: string;
+  lat: number;
+  lng: number;
+  geometry: AssetGeometryNode[];
+  dependent: any;
+  styles: FoundIcon;
+  elementType: "asset";
+  primaryCategory?: string;
+  secondaryCategory?: string;
+
+  constructor({
+    uri,
+    type,
+    lat,
+    lng,
+    geometry,
+    dependent,
+    styles,
+    primaryCategory,
+    secondaryCategory,
+  }: {
+    uri: string;
+    type: string;
+    lat: number;
+    lng: number;
+    geometry: AssetGeometryNode[];
+    dependent: any;
+    styles: FoundIcon;
+    primaryCategory?: string;
+    secondaryCategory?: string;
+  }) {
+    this.uri = uri;
+    this.id = this.uri.split("#")[1];
+    this.type = type;
+    this.lat = lat;
+    this.lng = lng;
+    this.geometry = geometry;
+    this.dependent = dependent;
+    this.styles = styles;
+    this.elementType = "asset";
+    this.primaryCategory = primaryCategory;
+    this.secondaryCategory = secondaryCategory;
+    Object.preventExtensions(this);
+  }
+
+  setCountColorScale(min: number, max: number) {
+    if (min === max) {
+      this.#countColorScale = getColorScale(0, 1);
+      return;
+    }
+    this.#countColorScale = getColorScale(min, max);
+  }
+
+  get countColor() {
+    return getHexColor(this.#countColorScale, this.dependent.count);
+  }
+
+  setCriticalitySumColorScale(min: number, max: number) {
+    if (min === max) {
+      this.#criticalitySumColorScale = getColorScale(0, 1);
+      return;
+    }
+    this.#criticalitySumColorScale = getColorScale(min, max);
+  }
+
+  get criticalityColor() {
+    return getHexColor(
+      this.#criticalitySumColorScale,
+      this.dependent.criticalitySum,
+    );
+  }
+
+  get isPointAsset() {
+    return !this.hasGeometry();
+  }
+
+  get isLinearAsset() {
+    return this.hasGeometry();
+  }
+
+  get shortType() {
+    return getShortType(this.type);
+  }
+
+  get primaryType() {
+    return getURIFragment(this.type);
+  }
+
+  /**
+   * @param {string[]} addresses
+   */
+  setAddresses(addresses: string[]) {
+    this.#addresses = addresses;
+  }
+
+  get addresses() {
+    return this.#addresses;
+  }
+
+  getIconStyle() {
+    return {
+      // Need to add this back in once the icon data is fixed
+      // icon: this.styles?.faIcon,
+      color: this.styles.color,
+      backgroundColor: this.styles.backgroundColor,
+      iconLabel: this.styles.iconFallbackText,
+    };
+  }
+
+  #isSelected<T extends ElementLike>(selectedElements: T[]) {
+    return selectedElements.some(
+      (selectedElement) => selectedElement.uri === this.uri,
+    );
+  }
+
+  get hasLatLng() {
+    const hasCoords = Boolean(this.lat && this.lng);
+    return hasCoords;
+  }
+
+  hasGeometry() {
+    return !isEmpty(this.geometry);
+  }
+
+  createPointAsset(): Feature | null {
+    if (!this.lat && !this.lng) {
+      return null;
+    }
+
+    return {
+      type: "Feature",
+      properties: {
+        uri: this.uri,
+        id: this.id,
+        criticality: this.dependent.criticalitySum,
+        type: this.type,
+      },
+      geometry: {
+        type: "Point",
+        coordinates: [this.lng, this.lat],
+      },
+    };
+  }
+
+  createSegmentCoords() {
+    const lats = this.geometry.map((segment) => parseFloat(segment.lat1));
+    const lngs = this.geometry.map((segment) => parseFloat(segment.lon1));
+    return lngs.map((lng, index) => [lng, lats[index]]);
+  }
+
+  createLinearAsset<T extends ElementLike>(
+    selectedElements: T[],
+  ): Feature | null {
+    const selected = this.#isSelected(selectedElements);
+    return {
+      type: "Feature",
+      properties: {
+        uri: this.uri,
+        id: this.id,
+        criticality: this.dependent.criticalitySum,
+        lineColor: this.criticalityColor,
+        lineWidth: selected ? 4 : 3,
+        selected,
+      },
+      geometry: {
+        type: "LineString",
+        coordinates: this.createSegmentCoords(),
+      },
+    };
+  }
+
+  getDetails(assetInfo) {
+    if (!assetInfo) {
+      return undefined;
+    }
+    return {
+      title: assetInfo?.name,
+      criticality: this.dependent.criticalitySum,
+      type: assetInfo?.assetType,
+      desc: assetInfo?.desc,
+      criticalityColor: this.criticalityColor,
+      id: this.id,
+      uri: this.uri,
+      elementType: this.elementType,
+    };
+  }
+}

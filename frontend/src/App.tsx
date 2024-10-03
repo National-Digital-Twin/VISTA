@@ -1,0 +1,58 @@
+import { useLayoutEffect } from "react";
+import { useDarkMode } from "usehooks-ts";
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { fas } from "@fortawesome/free-solid-svg-icons";
+import PageHeader from "@/components/PageHeader";
+import AppBody from "@/components/AppBody";
+import config from "@/config/app-config";
+
+library.add(fas);
+
+export default function App() {
+  // Propagate dark mode to the dark/light class and data attributes on the root
+  // element. This is done through an effect because the `html` element itself
+  // is outside of React's management.
+
+  // We're using useLayoutEffect here rather than useEffect because we want to
+  // be quite sure this happens _before_ the browser has the chance to repaint.
+  const { isDarkMode } = useDarkMode();
+
+  useLayoutEffect(() => {
+    const html = document.documentElement;
+
+    if (isDarkMode) {
+      html.classList.add("dark");
+      html.classList.remove("light");
+    } else {
+      html.classList.add("light");
+      html.classList.remove("dark");
+    }
+    html.setAttribute("data-color-scheme", isDarkMode ? "dark" : "light");
+  }, [isDarkMode]);
+
+  if (config.configErrors.length > 0) {
+    // This doesn't violate the rules of React vis a vis the hooks below because
+    // this value is a constant.
+    console.log(config.configErrors);
+    return (
+      <p className="mx-5 my-2">
+        Paralog encountered errors on boot:
+        <ul>
+          {config.configErrors.map((error) => (
+            <li className="ml-2" key={error}>
+              — {error}
+            </li>
+          ))}
+        </ul>
+      </p>
+    );
+  }
+
+  return (
+    <>
+      <PageHeader appName="Paralog" />
+
+      <AppBody />
+    </>
+  );
+}

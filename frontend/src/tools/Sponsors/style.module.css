@@ -1,0 +1,7 @@
+.logoPosition {
+  position: absolute;
+
+  inset-inline-start: 0.2rem;
+  inset-block-end: 0.2rem;
+  z-index: 10;
+}

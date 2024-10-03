@@ -1,0 +1,345 @@
+name: Paralog continuous deployment
+
+permissions:
+  pull-requests: write
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+    secrets:
+      MAP_TILER_TOKEN:
+        required: true
+      ORDNANCE_SURVEY_API_KEY:
+        required: true
+      ADMIRALTY_API_KEY:
+        required: true
+      DJANGO_SECRET_KEY:
+        required: true
+      POSTGRES_PASSWORD:
+        required: true
+      SERVICE_AWS_ACCESS_KEY_ID:
+        required: true
+      SERVICE_AWS_SECRET_ACCESS_KEY:
+        required: true
+      AUTHORIZATION_TOKEN:
+        required: true
+      REALTIME_TRAINS_API_KEY:
+        required: true
+      MET_OFFICE_GLOBAL_SPOT_API_KEY:
+        required: true
+      CANNY_APP_ID:
+        required: true
+      CANNY_BOARD_TOKEN:
+        required: true
+
+env:
+  AWS_REGION: eu-west-2
+  ENVIRONMENT: ${{ inputs.environment }}
+
+jobs:
+  call-backend-ci-workflow:
+    name: Backend CI
+    uses: ./.github/workflows/backend-ci.yml
+    permissions:
+      packages: read
+      contents: read
+
+  call-frontend-ci-workflow:
+    name: Frontend CI
+    uses: ./.github/workflows/frontend-ci.yml
+    permissions:
+      packages: read
+      contents: read
+
+  transparent-proxy-cd:
+    name: Transparent proxy CD
+    runs-on: ubuntu-20.04
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Set ecr repo name
+        run: echo "ECR_REPOSITORY=paralog/${{ env.ENVIRONMENT }}-transparent-proxy" >> $GITHUB_ENV
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-session-name: test
+          retry-max-attempts: 5
+          audience: sts.amazonaws.com
+          aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: arn:aws:iam::122610484203:role/deploy-cd
+
+      - name: Create ECR repo if necessary
+        id: ecr-repo-transparent-proxy
+        run: |
+          aws ecr describe-repositories --repository-names ${{ env.ECR_REPOSITORY }} || aws ecr create-repository --repository-name ${{ env.ECR_REPOSITORY }}
+
+      - name: Amazon ECR "Login" Action for GitHub Actions
+        uses: aws-actions/amazon-ecr-login@v2.0.1
+        id: login-ecr
+
+      - name: Build, tag, and push docker image to Amazon ECR
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPOSITORY: ${{ env.ECR_REPOSITORY }}
+          IMAGE_TAG: latest
+        run: |
+          cd transparent-proxy
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+
+  backend-cd:
+    name: Build Backend Docker image and push
+    needs: call-backend-ci-workflow
+    runs-on: ubuntu-20.04
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Set ecr repo name
+        run: echo "ECR_REPOSITORY=paralog/${{ env.ENVIRONMENT }}-paralog-python-api" >> $GITHUB_ENV
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-session-name: test
+          retry-max-attempts: 5
+          audience: sts.amazonaws.com
+          aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: arn:aws:iam::122610484203:role/deploy-cd
+
+      - name: Create ECR repo if necessary
+        id: ecr-repo-python-api
+        run: |
+          aws ecr describe-repositories --repository-names ${{ env.ECR_REPOSITORY }} || aws ecr create-repository --repository-name ${{ env.ECR_REPOSITORY }}
+
+      - name: Amazon ECR "Login" Action for GitHub Actions
+        uses: aws-actions/amazon-ecr-login@v2.0.1
+        id: login-ecr
+
+      - name: Build, tag, and push docker image to Amazon ECR
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPOSITORY: ${{ env.ECR_REPOSITORY }}
+          IMAGE_TAG: latest
+        run: |
+          cd backend
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+
+  frontend-cd:
+    name: Build Frontend Docker image and push
+    needs: call-frontend-ci-workflow
+    runs-on: ubuntu-20.04
+
+    permissions:
+      id-token: write
+      contents: read
+      packages: read
+
+    steps:
+      - name: Set ecr repo name
+        run: echo "ECR_REPOSITORY=paralog/${{ env.ENVIRONMENT }}-frontend" >> $GITHUB_ENV
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-session-name: test
+          retry-max-attempts: 5
+          audience: sts.amazonaws.com
+          aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: arn:aws:iam::122610484203:role/deploy-cd
+
+      - name: Create ECR repo if necessary
+        id: ecr-repo-frontend
+        run: |
+          aws ecr describe-repositories --repository-names ${{ env.ECR_REPOSITORY }} || aws ecr create-repository --repository-name ${{ env.ECR_REPOSITORY }}
+
+      - name: Amazon ECR "Login" Action for GitHub Actions
+        uses: aws-actions/amazon-ecr-login@v2.0.1
+        id: login-ecr
+
+      - name: Populate environment variables.
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MAP_TILER_TOKEN: ${{ secrets.MAP_TILER_TOKEN }}
+          ORDNANCE_SURVEY_API_KEY: ${{ secrets.ORDNANCE_SURVEY_API_KEY }}
+          VITE_ADMIRALTY_TIDES_API_KEY: ${{ secrets.ADMIRALTY_API_KEY }}
+          MET_OFFICE_GLOBAL_SPOT_API_KEY: ${{ secrets.MET_OFFICE_GLOBAL_SPOT_API_KEY }}
+          CANNY_APP_ID: ${{ secrets.CANNY_APP_ID }}
+          CANNY_BOARD_TOKEN: ${{ secrets.CANNY_BOARD_TOKEN }}
+        run: |
+          echo 'MAP_TILER_TOKEN=${{ env.MAP_TILER_TOKEN }}' >> $GITHUB_ENV
+          echo 'ORDNANCE_SURVEY_API_KEY=${{ env.ORDNANCE_SURVEY_API_KEY }}' >> $GITHUB_ENV
+          echo 'MET_OFFICE_GLOBAL_SPOT_API_KEY=${{ env.MET_OFFICE_GLOBAL_SPOT_API_KEY }}' >> $GITHUB_ENV
+          echo 'CANNY_APP_ID=${{ env.CANNY_APP_ID }}' >> $GITHUB_ENV
+          echo 'CANNY_BOARD_TOKEN=${{ env.CANNY_BOARD_TOKEN }}' >> $GITHUB_ENV
+          echo 'VITE_ADMIRALTY_TIDES_API_KEY=${{ env.VITE_ADMIRALTY_TIDES_API_KEY }}' | tr -d '\n' >> $GITHUB_ENV
+        working-directory: ./frontend/
+
+      - name: Build, tag, and push docker image to Amazon ECR
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPOSITORY: ${{ env.ECR_REPOSITORY }}
+          IMAGE_TAG: latest
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Build vars"
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG \
+            --build-arg MAP_TILER_TOKEN=$MAP_TILER_TOKEN \
+            --build-arg ORDNANCE_SURVEY_API_KEY=$ORDNANCE_SURVEY_API_KEY \
+            --build-arg NPM_TOKEN=$GITHUB_TOKEN \
+            --build-arg MET_OFFICE_GLOBAL_SPOT_API_KEY=$MET_OFFICE_GLOBAL_SPOT_API_KEY \
+            --build-arg VITE_ADMIRALTY_TIDES_API_KEY=$VITE_ADMIRALTY_TIDES_API_KEY \
+            --build-arg CANNY_APP_ID=$CANNY_APP_ID \
+            --build-arg CANNY_BOARD_TOKEN=$CANNY_BOARD_TOKEN \
+            .
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+        working-directory: ./frontend/
+
+  deploy:
+    name: Deploy to aws.
+    needs:
+      - backend-cd
+      - frontend-cd
+      - transparent-proxy-cd
+    runs-on: ubuntu-20.04
+
+    permissions:
+      id-token: write
+      contents: read
+      packages: read
+
+    timeout-minutes: 30
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-session-name: test
+          retry-max-attempts: 5
+          audience: sts.amazonaws.com
+          aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: arn:aws:iam::122610484203:role/deploy-cd
+
+      - uses: opentofu/setup-opentofu@v1
+        with:
+          tofu_version: 1.8.1
+
+      - name: Populate deploy.tfvars
+        id: populate-tfvars
+        env:
+          ENVIRONMENT: ${{ env.ENVIRONMENT }}
+          DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY}}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          SERVICE_AWS_ACCESS_KEY_ID: ${{ secrets.SERVICE_AWS_ACCESS_KEY_ID }}
+          SERVICE_AWS_SECRET_ACCESS_KEY: ${{ secrets.SERVICE_AWS_SECRET_ACCESS_KEY }}
+          AUTHORIZATION_TOKEN: ${{ secrets.AUTHORIZATION_TOKEN }}
+          ADMIRALTY_API_KEY: ${{ secrets.ADMIRALTY_API_KEY }}
+          REALTIME_TRAINS_API_KEY: ${{ secrets.REALTIME_TRAINS_API_KEY }}
+          s3_state_file: "${{ env.ENVIRONMENT }}-stage1-tfstate"
+        run: |
+          echo 's3_state_file = "${{ env.s3_state_file }}"' >> deploy.tfvars
+          echo 'environment = "${{ env.ENVIRONMENT }}"' >> deploy.tfvars
+          echo 'POSTGRES_PASSWORD = "${{ env.POSTGRES_PASSWORD }}"' >> deploy.tfvars
+          echo 'AUTHORIZATION_TOKEN = "${{ env.AUTHORIZATION_TOKEN }}"' >> deploy.tfvars
+        working-directory: ./deploy/01-init/
+
+      - name: Stage 1 - OpenTofu Init
+        id: init
+        run: |
+          echo "cat deploy.tfvars:"
+          cat deploy.tfvars
+          tofu init -var-file="./deploy.tfvars"
+        working-directory: ./deploy/01-init/
+
+      - name: Stage 1 - OpenTofu Plan
+        id: plan-init
+        run: |
+          echo "cat deploy.tfvars:"
+          cat deploy.tfvars
+          tofu plan -input=false -var-file="./deploy.tfvars" -no-color -out=plan.tfplan
+        working-directory: ./deploy/01-init/
+
+      - name: Stage 1 - OpenTofu Apply
+        id: apply-init
+        run: |
+          tofu apply -input=false -auto-approve "plan.tfplan"
+        working-directory: ./deploy/01-init/
+
+      - name: Stage 1 - Set output variables
+        id: vars
+        run: |
+          echo "AWS_SUBNET_PRIVATE_EU_WEST_2A_ID=`tofu output -var-file="./deploy.tfvars" -state=plan.tfplan -raw aws_subnet_private_eu_west_2a_id`" >> $GITHUB_OUTPUT
+          echo "AWS_SUBNET_PRIVATE_EU_WEST_2B_ID=`tofu output -var-file="./deploy.tfvars" -state=plan.tfplan -raw aws_subnet_private_eu_west_2b_id`" >> $GITHUB_OUTPUT
+          echo "VPC_ID=`tofu output -var-file="./deploy.tfvars" -state=plan.tfplan -raw vpc_id`" >> $GITHUB_OUTPUT
+        working-directory: ./deploy/01-init/
+
+      - name: Stage 2 - Populate deploy.tfvars
+        id: populate-tfvars-stage2
+        env:
+          ENVIRONMENT: ${{ env.ENVIRONMENT }}
+          DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY}}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          SERVICE_AWS_ACCESS_KEY_ID: ${{ secrets.SERVICE_AWS_ACCESS_KEY_ID }}
+          SERVICE_AWS_SECRET_ACCESS_KEY: ${{ secrets.SERVICE_AWS_SECRET_ACCESS_KEY }}
+          AUTHORIZATION_TOKEN: ${{ secrets.AUTHORIZATION_TOKEN }}
+          ADMIRALTY_API_KEY: ${{ secrets.ADMIRALTY_API_KEY }}
+          REALTIME_TRAINS_API_KEY: ${{ secrets.REALTIME_TRAINS_API_KEY }}
+          s3_state_file: "${{ env.ENVIRONMENT }}-stage2-tfstate"
+        run: |
+          echo 'ADMIRALTY_API_KEY = "${{ env.ADMIRALTY_API_KEY }}"'
+          echo 's3_state_file = "${{ env.s3_state_file }}"' >> deploy.tfvars
+          echo 'environment = "${{ env.ENVIRONMENT }}"' >> deploy.tfvars
+          echo 'POSTGRES_PASSWORD = "${{ env.POSTGRES_PASSWORD }}"' >> deploy.tfvars
+          echo 'AUTHORIZATION_TOKEN = "${{ env.AUTHORIZATION_TOKEN }}"' >> deploy.tfvars
+          echo 'aws_subnet_private_eu_west_2a_id = "${{ steps.vars.outputs.AWS_SUBNET_PRIVATE_EU_WEST_2A_ID }}"' >> deploy.tfvars
+          echo 'aws_subnet_private_eu_west_2b_id = "${{ steps.vars.outputs.AWS_SUBNET_PRIVATE_EU_WEST_2B_ID }}"' >> deploy.tfvars
+          echo 'vpc_id = "${{ steps.vars.outputs.VPC_ID }}"' >> deploy.tfvars
+          echo 'SERVICE_AWS_ACCESS_KEY_ID = "${{ env.SERVICE_AWS_ACCESS_KEY_ID }}"' >> deploy.tfvars
+          echo 'SERVICE_AWS_SECRET_ACCESS_KEY = "${{ env.SERVICE_AWS_SECRET_ACCESS_KEY }}"' >> deploy.tfvars
+          echo 'DJANGO_SECRET_KEY = "${{ env.DJANGO_SECRET_KEY }}"' >> deploy.tfvars
+          echo 'REALTIME_TRAINS_API_KEY = "${{ env.REALTIME_TRAINS_API_KEY }}"' >> deploy.tfvars
+          echo 'ADMIRALTY_API_KEY = "${{ env.ADMIRALTY_API_KEY }}"' | tr -d '\n' >> deploy.tfvars
+        working-directory: ./deploy/02-k8-setup/
+
+      - name: Stage 2 - OpenTofu Init
+        id: init-infra
+        run: |
+          echo "cat deploy.tfvars:"
+          cat deploy.tfvars
+          tofu init -var-file="./deploy.tfvars" -migrate-state
+        working-directory: ./deploy/02-k8-setup/
+
+      - name: Stage 2 - OpenTofu Plan
+        id: plan-infra
+        run: |
+          echo "cat deploy.tfvars:"
+          cat deploy.tfvars
+          tofu plan -input=false -var-file="./deploy.tfvars" -no-color -out=plan.tfplan
+        working-directory: ./deploy/02-k8-setup/
+
+      - name: Stage 2 - OpenTofu Apply
+        id: apply-infra
+        run: |
+          tofu apply -input=false -auto-approve "plan.tfplan"
+        working-directory: ./deploy/02-k8-setup/

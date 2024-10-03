@@ -1,0 +1,15 @@
+mutation deleteSandbagPlacement($name: String!) {
+  deleteSandbagPlacement(name: $name) {
+    sandbagPlacement {
+      id
+      name
+      latitude
+      longitude
+    }
+    errors {
+      field
+      messages
+    }
+    success
+  }
+}

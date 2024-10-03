@@ -1,0 +1,8 @@
+query sandbagPlacements {
+  sandbagPlacements {
+    id
+    name
+    latitude
+    longitude
+  }
+}

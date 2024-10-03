@@ -1,0 +1,8 @@
+query sandbagPlacement {
+  sandbagPlacement(name: "Sandown SP") {
+    id
+    name
+    latitude
+    longitude
+  }
+}

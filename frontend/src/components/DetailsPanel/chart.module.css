@@ -1,0 +1,75 @@
+.chartContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height: 400px;
+  min-height: 150px;
+  background-color: var(--col-bg-card);
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+}
+
+.summaryInfo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  border-bottom: 1px solid var(--col-neutral-outline);
+  font-size: 0.9rem;
+  color: var(--col-fg-secondary);
+}
+
+.summaryInfoItem {
+  margin: 0 12px;
+  white-space: nowrap;
+}
+
+.summaryInfoItem strong {
+  color: var(--col-fg);
+  font-weight: 600;
+}
+
+.chartBody {
+  width: 100%;
+  height: 100%;
+}
+
+.tooltip {
+  background-color: var(--col-bg-card);
+  border: 1px solid var(--col-neutral-outline);
+  border-radius: 4px;
+  padding: 8px 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.tooltipLabel {
+  color: var(--col-fg-secondary);
+  font-size: 0.8rem;
+  margin-bottom: 4px;
+}
+
+.tooltipContent {
+  color: var(--col-fg);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.zoomOutButton {
+  position: absolute;
+  right: 16px;
+  top: 16px;
+  background-color: var(--col-bg-button);
+  color: var(--col-fg-button);
+  border: none;
+  border-radius: 4px;
+  padding: 6px 12px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.zoomOutButton:hover {
+  background-color: var(--col-bg-button-hover);
+}

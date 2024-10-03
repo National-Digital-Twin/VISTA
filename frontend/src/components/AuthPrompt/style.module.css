@@ -1,0 +1,47 @@
+.authPromptContainer {
+  /* Place over all other content */
+  position: fixed;
+  inset: 0;
+
+  /* Explicitly create a new stacking context */
+  isolation: isolate;
+
+  /* Dark background to hide other items */
+  background-color: rgb(0 0 0 / 0.4);
+
+  /* Dismiss pointer events (except to children) */
+  pointer-events: none;
+
+  & > * {
+    pointer-events: auto;
+  }
+
+  /* Position contents centrally */
+  display: block grid;
+  place-items: center;
+}
+
+.authPrompt {
+  padding: 2rem;
+
+  background: var(--col-bg);
+  color: var(--col-fg);
+  border-radius: 0.5rem;
+}
+
+.title {
+  display: block flow;
+  color: color-bg;
+}
+
+.authForm {
+  display: block grid;
+}
+
+.authForm > * + * {
+  margin-block-start: 1rem;
+}
+
+.error {
+  color: var(--col-danger);
+}

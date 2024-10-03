@@ -1,0 +1,60 @@
+.complexLayerContainer {
+  /* This serves no real layout purpose other than to hold the expanded attribute,
+  but it also makes the hierarchy more obvious in the DOM for debugging */
+  display: contents;
+}
+
+.complexLayer {
+  display: block grid;
+
+  grid-column: layer;
+
+  grid-template-columns: subgrid;
+
+  align-items: baseline;
+  justify-items: center;
+}
+
+.toggle {
+  grid-row: 1;
+  grid-column: toggle;
+
+  cursor: pointer;
+  user-select: none;
+}
+
+.icon {
+  grid-row: 1;
+  grid-column: icon;
+}
+
+.body {
+  grid-row: 1;
+  grid-column: body;
+
+  justify-self: start;
+}
+
+.content {
+  grid-column: panel;
+}
+
+.complexLayerContainer[data-expanded="false"] .content {
+  display: none;
+}
+
+.divider {
+  margin-block: 0;
+  grid-column: panel;
+}
+
+.complexLayerContainer[data-expanded="false"] .divider {
+  display: none;
+}
+
+/* Hide the complex layer if the content is empty */
+.complexLayerContainer[data-auto-show-hide="true"]:not(
+    :has([data-show-layer="true"])
+  ) {
+  display: none;
+}

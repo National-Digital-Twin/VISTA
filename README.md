@@ -1,53 +1,50 @@
-## Telicent Paralog
+## Paralog 2.0.1
 
-**Paralog is a free, open source web application used to evaluate high value
-assets**
+**Paralog is a web application used to evaluate high value assets**
 
 Paralog is a tool which can be used to get a better understanding of high value
 assets within regions in the UK. It allows analysts to better understand the
 impact of high value assets which in turn allows them to make better decisions
 quickly.
 
-### Contents
+Paralog was originally developed by [Telicent][telicent], now being developed by
+[Coefficient][coefficient].
 
-- [Build](#build)
-- [Usage](#usage)
-- [Features](#features)
-- [Related repositories](#related-repositories)
+## Components
 
-## Build
+Paralog comprises four main components:
 
-Run `yarn build` to build the application.
+1. **Frontend**: A React application found in [`frontend`](frontend).
+2. **Backend**: A Python API used to provide or proxy various APIs outside the security perimeter, found in [`backend`](backend).
+3. **Deploy**: Deployment configurations and scripts, located in [`deploy`](deploy).
+4. **Transparent Proxy**: A proxy component for handling API requests, found in [`transparent-proxy`](transparent-proxy).
 
-## Usage
+## Setup Overview
 
-1. Run `yarn install` to install dependencies
-2. Run `yarn start` to start the application
+For detailed setup instructions, please refer to the [SETUP.md](SETUP.md) file. Here's a brief overview:
 
-## Features
+1. **Prerequisites**: Ensure you have Node.js, npm, Yarn, Python ^3.12.5, Poetry, Docker, and AWS CLI installed.
 
-- **Attribute Based Access Control (ABAC)** - manage permissions required to
-  view sensitive data
-- **View assets connectivity** - navigate the network graph to better understand
-  asset connectivity
-- **Geographical locations** - view assets' geographical locations
-- **Heatmap** - view of assets on the map for quick understanding of
-  service/capability density
-- **Polygon creation [BETA]** - understand location based impact rather than
-  direct connection impacts
-- **Flood geometry** - view flood watch areas and flood areas provided to
-  analyse flood impact
-- **Flood monitoring stations** - view real-time monitoring station data
-- **Flood alerts** - get real-time flood alerts
-- **Flood warning timeline** - view previous flood warnings
+2. **Frontend Setup**: Navigate to the `frontend` directory, configure npm and Yarn with GitHub packages, install dependencies, and start the application.
 
-## Related repositories
+3. **Backend Setup**: Set up AWS credentials, login to AWS ECR, and follow the instructions in `backend/paralog-python-api/README.md`.
 
-- [Smart Cache Paralog (SCP)
-  API](https://github.com/Telicent-io/smart-cache-paralog-api) is a REST API
-  used by Telicent Paralog to get data from the IES Triplestore.
-- [RDF Libraries](https://github.com/Telicent-io/rdf-libraries), specifically
-  the Ontology Service is used to provide the ontology iconography to Telicent
-  Paralog.
-- [Smart Cache Graph (SCG) API](https://github.com/Telicent-io/smart-cache-graph-api)
-  is used as a datastore for SCP and RDF Libraries.
+4. **Deployment Nodes**: Follow the instructions in [deploy/README.md](deploy/README.md) for environment-specific setup and deployment procedures.
+
+5. **Transparent Proxy Setup**: Build the Docker image and run the container with required environment variables.
+
+For more detailed information on each component, please refer to their respective README files in their directories.
+
+# Telicent Integration Architecture
+
+Telicent provides an implementation of the IA, called [Telicent Core][telicent-core],
+although for now there is a thin wrapper which we used for limited purposes from
+the frontend. [telicent-core]: https://telicent.io/the-core-platform/
+
+## Additional Notes
+
+- For updating Python requirements, refer to `docs/updating_requirements.md`.
+- To create a towncrier entry: `towncrier create 123.added --edit`.
+
+[telicent]: https://telicent.io/
+[coefficient]: https://coefficient.ai

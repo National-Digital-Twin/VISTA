@@ -1,0 +1,19 @@
+.assetTableHeader {
+  display: block flex;
+  align-items: center;
+
+  /* Even in fallback-mode, we want a minimum size here */
+  min-inline-size: 40ch;
+
+  /* Add space before the table */
+  margin-block-end: 1rem;
+}
+
+.assetTableHeader button {
+  margin-inline-start: 0.5rem;
+}
+
+.assetTableHeader button:first-of-type {
+  /* Push the buttons to the end */
+  margin-inline-start: auto;
+}

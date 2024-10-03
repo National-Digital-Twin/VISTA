@@ -1,0 +1,14 @@
+query {
+  roadSegment(
+    roadSegmentInput: {
+      coordinates: "50.65949, -1.14091"
+      direction: "Westbound"
+      day_of_week: "Tue"
+      time: "08:00"
+    }
+  ) {
+    volume
+    averageSpeed
+    busyness
+  }
+}

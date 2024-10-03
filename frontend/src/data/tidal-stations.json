@@ -1,0 +1,411 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+
+        "coordinates": [-1.55, 50.7]
+      },
+      "properties": {
+        "Id": "0039",
+        "Name": "Hurst Point",
+        "StationType": "TidalPortNonHarmonic",
+        "Country": "England",
+        "ContinuousHeightsAvailable": true,
+        "Footnote": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-1.416666, 50.8]
+      },
+      "properties": {
+        "Id": "0042",
+        "Name": "Bucklers Hard",
+        "StationType": "TidalPortNonHarmonic",
+        "Country": "England",
+        "ContinuousHeightsAvailable": true,
+        "Footnote": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-1.333333, 50.783333]
+      },
+      "properties": {
+        "Id": "0043",
+        "Name": "Stansore Point",
+        "StationType": "TidalPortNonHarmonic",
+        "Country": "England",
+        "ContinuousHeightsAvailable": true,
+        "Footnote": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-1.5, 50.7]
+      },
+      "properties": {
+        "Id": "0045",
+        "Name": "Yarmouth",
+        "StationType": "TidalPortNonHarmonic",
+        "Country": "England",
+        "ContinuousHeightsAvailable": true,
+        "Footnote": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-1.55, 50.683333]
+      },
+      "properties": {
+        "Id": "0046",
+        "Name": "Totland Bay",
+        "StationType": "TidalPortHarmonic",
+        "Country": "England",
+        "ContinuousHeightsAvailable": true,
+        "Footnote": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-1.516666, 50.666666]
+      },
+      "properties": {
+        "Id": "0048",
+        "Name": "Freshwater Bay",
+        "StationType": "TidalPortHarmonic",
+        "Country": "England",
+        "ContinuousHeightsAvailable": true,
+        "Footnote": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-1.2, 50.6]
+      },
+      "properties": {
+        "Id": "0051",
+        "Name": "Ventnor",
+        "StationType": "TidalPortNonHarmonic",
+        "Country": "England",
+        "ContinuousHeightsAvailable": true,
+        "Footnote": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-1.15, 50.65]
+      },
+      "properties": {
+        "Id": "0053",
+        "Name": "Sandown",
+        "StationType": "TidalPortNonHarmonic",
+        "Country": "England",
+        "ContinuousHeightsAvailable": true,
+        "Footnote": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-1.066666, 50.683333]
+      },
+      "properties": {
+        "Id": "0053A",
+        "Name": "Foreland (Lifeboat Slip)",
+        "StationType": "TidalPortNonHarmonic",
+        "Country": "England",
+        "ContinuousHeightsAvailable": true,
+        "Footnote": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-1.1, 50.7]
+      },
+      "properties": {
+        "Id": "0053B",
+        "Name": "Bembridge Approaches",
+        "StationType": "TidalPortNonHarmonic",
+        "Country": "England",
+        "ContinuousHeightsAvailable": true,
+        "Footnote": "ML inferred"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-1.116666, 50.7]
+      },
+      "properties": {
+        "Id": "0054",
+        "Name": "Bembridge Harbour",
+        "StationType": "TidalPortNonHarmonic",
+        "Country": "England",
+        "ContinuousHeightsAvailable": true,
+        "Footnote": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-1.166666, 50.733333]
+      },
+      "properties": {
+        "Id": "0058",
+        "Name": "Ryde",
+        "StationType": "TidalPortNonHarmonic",
+        "Country": "England",
+        "ContinuousHeightsAvailable": true,
+        "Footnote": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-1.3, 50.766666]
+      },
+      "properties": {
+        "Id": "0060",
+        "Name": "COWES",
+        "StationType": "TidalPortHarmonic",
+        "Country": "England",
+        "ContinuousHeightsAvailable": true,
+        "Footnote": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-1.283333, 50.733333]
+      },
+      "properties": {
+        "Id": "0060A",
+        "Name": "Folly Inn",
+        "StationType": "TidalPortNonHarmonic",
+        "Country": "England",
+        "ContinuousHeightsAvailable": true,
+        "Footnote": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-1.3, 50.816666]
+      },
+      "properties": {
+        "Id": "0061",
+        "Name": "Calshot Castle",
+        "StationType": "TidalPortHarmonic",
+        "Country": "England",
+        "ContinuousHeightsAvailable": true,
+        "Footnote": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-1.466666, 50.916666]
+      },
+      "properties": {
+        "Id": "0063",
+        "Name": "Redbridge",
+        "StationType": "TidalPortNonHarmonic",
+        "Country": "England",
+        "ContinuousHeightsAvailable": true,
+        "Footnote": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-1.3, 50.883333]
+      },
+      "properties": {
+        "Id": "0063B",
+        "Name": "Bursledon",
+        "StationType": "TidalPortNonHarmonic",
+        "Country": "England",
+        "ContinuousHeightsAvailable": true,
+        "Footnote": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-1.016666, 50.8]
+      },
+      "properties": {
+        "Id": "0066",
+        "Name": "Langstone Harbour",
+        "StationType": "TidalPortHarmonic",
+        "Country": "England",
+        "ContinuousHeightsAvailable": true,
+        "Footnote": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-0.966666, 50.833333]
+      },
+      "properties": {
+        "Id": "0068A",
+        "Name": "Northney",
+        "StationType": "TidalPortNonHarmonic",
+        "Country": "England",
+        "ContinuousHeightsAvailable": true,
+        "Footnote": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-0.866666, 50.833333]
+      },
+      "properties": {
+        "Id": "0068B",
+        "Name": "Bosham",
+        "StationType": "TidalPortNonHarmonic",
+        "Country": "England",
+        "ContinuousHeightsAvailable": false,
+        "Footnote": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-0.866666, 50.8]
+      },
+      "properties": {
+        "Id": "0068C",
+        "Name": "Itchenor",
+        "StationType": "TidalPortNonHarmonic",
+        "Country": "England",
+        "ContinuousHeightsAvailable": true,
+        "Footnote": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-0.816666, 50.816666]
+      },
+      "properties": {
+        "Id": "0068D",
+        "Name": "Dell Quay",
+        "StationType": "TidalPortNonHarmonic",
+        "Country": "England",
+        "ContinuousHeightsAvailable": false,
+        "Footnote": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-0.783333, 50.733333]
+      },
+      "properties": {
+        "Id": "0069",
+        "Name": "Selsey Bill",
+        "StationType": "TidalPortHarmonic",
+        "Country": "England",
+        "ContinuousHeightsAvailable": true,
+        "Footnote": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-0.95, 50.666666]
+      },
+      "properties": {
+        "Id": "0070",
+        "Name": "Nab Tower",
+        "StationType": "TidalPortHarmonic",
+        "Country": "England",
+        "ContinuousHeightsAvailable": true,
+        "Footnote": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-0.716666, 50.766666]
+      },
+      "properties": {
+        "Id": "0072",
+        "Name": "Pagham",
+        "StationType": "TidalPortNonHarmonic",
+        "Country": "England",
+        "ContinuousHeightsAvailable": true,
+        "Footnote": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-0.666666, 50.783333]
+      },
+      "properties": {
+        "Id": "0073",
+        "Name": "Bognor Regis",
+        "StationType": "TidalPortNonHarmonic",
+        "Country": "England",
+        "ContinuousHeightsAvailable": true,
+        "Footnote": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [1.75, 52.6]
+      },
+      "properties": {
+        "Id": "0142A",
+        "Name": "Great Yarmouth (Britannia Pier)",
+        "StationType": "TidalPortNonHarmonic",
+        "Country": "England",
+        "ContinuousHeightsAvailable": true,
+        "Footnote": null
+      }
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+.warningCount {
+  position: absolute;
+  inset-block-start: -0.5rem;
+  inset-inline-end: -0.5rem;
+  background-color: var(--col-danger);
+  color: var(--col-fg-button);
+  border-radius: 50%;
+  padding-block: 0.25rem;
+  padding-inline: 0.5rem;
+  font-size: 0.75rem;
+  min-inline-size: 1.5rem;
+  block-size: 1.5rem;
+  display: block flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.warningAlert {
+  background-color: color-mix(
+    in oklab,
+    var(--col-warning) 15%,
+    var(--col-bg-card)
+  );
+  border: 1px solid var(--col-warning);
+  border-radius: 0.25rem;
+  padding: 0.5rem;
+  margin-block-start: 0.5rem;
+}

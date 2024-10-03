@@ -1,0 +1,227 @@
+###########
+# 📜 Poetry
+###########
+[tool.poetry]
+name = "paralog_python_api"
+version = "2.0.1"
+description = "Provides Data to the paralog app."
+authors = ["Jamie Coombes <jamie@coefficient.ai>"]
+license = "UNLICENSED"
+classifiers = ["Private :: Do Not Upload"]
+packages = [
+  { include = "paralog_python_api", from = "paralog_python_api" },
+  # Add more packages here, e.g.
+  # { include = "module_name", from = "paralog_python_api" },
+]
+
+[tool.poetry.dependencies]
+python = ">=3.12.5,<3.13"
+
+# Everything below here is alphabetically sorted
+ariadne = "^0.23.0"
+ariadne-django = "^0.3.0"
+django = "^5.1"
+osmnx = "^1.9.4"
+uvicorn = "^0.30.3"
+matplotlib = "^3.9.2"
+ipykernel = "^6.29.5"
+scipy = "^1.14.1"
+folium = "^0.17.0"
+scikit-learn = "^1.5.1"
+loguru = "^0.7.2"
+mapclassify = "^2.8.0"
+geopy = "^2.4.1"
+gunicorn = "^23.0.0"
+fiona = ">=1.10.0rc1"
+django-environ = "^0.11.2"
+cryptography = "43.0.1"
+boto3 = "^1.35.12"
+psycopg2-binary = "^2.9.9"
+
+[tool.poetry.dev-dependencies]
+# Everything below here is alphabetically sorted
+detect-secrets = "1.2.0"
+ipdb = "^0.13.13"
+pip-audit = "^2.7.3"
+pre-commit = "^3.8.0"
+pytest = "^8.3.2"
+pytest-cov = "^5.0.0"
+ruff = "^0.1.14"
+towncrier = "^24.8.0"
+pytest-django = "^4.9.0"
+model-bakery = "^1.19.5"
+cattrs = "^24.1.2"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+############
+# ✅ Linters
+############
+[tool.ruff]
+line-length = 100
+indent-width = 4
+target-version = "py312"
+extend-include = ["*.ipynb"]
+
+[tool.ruff.lint]
+select = [
+  "A",
+  "AIR",
+  "ARG",
+  "B",
+  "C4",
+  "C90",
+  # "COM",  # Specifically COM812 overlaps with ISC001
+  # "CPY",
+  "D",
+  "DJ",
+  "DTZ",
+  "E",
+  # "E4", "E7", "E9",
+  "ERA",
+  "EXE",
+  "F",
+  "FA",
+  "FIX",
+  "FLY",
+  # "FURB",
+  "G",
+  "I",
+  "ICN",
+  "INP",
+  "INT",
+  # "ISC",
+  # "LOG",
+  "N",
+  "NPY",
+  "PD",
+  "PERF",
+  "PGH",
+  "PIE",
+  "PL",
+  "PT",
+  "PTH",
+  "PYI",
+  "Q",
+  "RET",
+  "RSE",
+  "RUF",
+  "SIM",
+  "SLF",
+  "SLOT",
+  "T10",
+  "T20",
+  "TCH",
+  "TD",
+  "TID",
+  # "TRY", # https://github.com/astral-sh/ruff/issues/2246#issuecomment-1458328722
+  "UP",
+  "W",
+]
+ignore = ["ISC001", "COM812"]
+fixable = ["ALL"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "pep257"
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.ruff.lint.per-file-ignores]
+"osmnx.py" = ["N803"]             # Let me call my graph big G.
+"resolvers.py" = ["N803", "N806"]
+"routing.py" = ["N803", "N806"]
+
+##############
+# 📣 Towncrier
+##############
+[tool.towncrier]
+package = "paralog_python_api"
+package_dir = "."
+filename = "CHANGELOG.md"
+directory = ".changelog/"
+template = ".changelog/template.md"
+title_format = "## [{version}] - {project_date}"
+issue_format = "[#{issue}](https://github.com/coefficientsystems/telicent-paralog{issue})"
+start_string = "<!-- TOWNCRIER -->\n"
+underlines = ["", ""]
+
+# .added for new features
+# .changed for changes in existing functionality
+# .deprecated for soon-to-be removed features
+# .removed for now removed features
+# .fixed for any bug fixes
+# .security in case of vulnerabilities
+# .analysis for data analyses
+# .docs for documentation improvements
+# .maintenance for maintenance tasks & upgrades
+[[tool.towncrier.type]]
+directory = "added"
+name = "Added"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "changed"
+name = "Changed"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "deprecated"
+name = "Deprecated"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "removed"
+name = "Removed"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "fixed"
+name = "Bug Fixes"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "security"
+name = "Security"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "analysis"
+name = "Analyses"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "docs"
+name = "Improved Documentation"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "maintenance"
+name = "Maintenance Changes"
+showcontent = true
+
+[tool.pytest.ini_options]
+pythonpath = "paralog-python-api/core"
+addopts = [
+  "--strict-config",
+  "--strict-markers",
+  "--cov-report=term-missing:skip-covered",
+  "--cov-config=pyproject.toml",
+  "--cov=core",
+  "--cov=api",
+]
+DJANGO_SETTINGS_MODULE = "core.settings"
+xfail_strict = true
+filterwarnings = [
+  "error",
+  '''ignore:'typing\.ByteString' is deprecated and slated for removal in Python 3.14:DeprecationWarning''',
+]
+
+[tool.coverage.run]
+branch = true
+source_pkgs = ["core", "api"]
+[tool.coverage.report]
+exclude_also = ["if TYPE_CHECKING:"]

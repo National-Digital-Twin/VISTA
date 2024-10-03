@@ -1,0 +1,44 @@
+proxy_cache_path /tmp/nginx_cache levels=1:2 keys_zone=tp_cache:100m max_size=200m inactive=10000s use_temp_path=off;
+
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+
+    # Proxy config
+    proxy_cache_valid any 1d;
+    proxy_cache_use_stale error timeout invalid_header updating http_500 http_502 http_503 http_504;
+    proxy_cache_revalidate on;
+    proxy_cache_background_update on;
+    proxy_http_version 1.1;
+    proxy_cache tp_cache;
+
+    # Don't allow through cookies
+    proxy_hide_header Set-Cookie;
+    proxy_set_header Cookie "";
+
+    # Don't pass on Authorization headers if we receive them
+    proxy_set_header Authorization "";
+
+    ## BEGIN UPSTREAM DEFINITIONS
+
+    # Admiralty
+    location /admiralty-tidal-foundation/ {
+        proxy_pass https://admiraltyapi.azure-api.net/uktidalapi-foundation/api/;
+
+        proxy_set_header Ocp-Apim-Subscription-Key $ADMIRALTY_API_KEY;
+    }
+
+    # Realtime Trains
+    location /realtime-trains/ {
+        proxy_pass https://secure.realtimetrains.co.uk/api/;
+
+        proxy_set_header Authorization "Basic $REALTIME_TRAINS_API_KEY";
+    }
+
+    ## END UPSTREAM DEFINITIONS
+
+    if ($upstream_http_content_type ~* "(text/html|application/xhtml+xml|text/javascript|application/javascript)") {
+        # Block upstreams ever serving us "dangerous" content
+        return 502;
+    }
+}

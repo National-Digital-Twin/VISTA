@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: paralog
+  annotations:
+    kompose.cmd: kompose convert -f ../docker_build/docker-compose.yaml
+    kompose.version: 1.34.0 (HEAD)
+  labels:
+    io.kompose.service: ${ENVIRONMENT}-smart-cache-paralog-api
+  name: smart-cache-paralog-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: ${ENVIRONMENT}-smart-cache-paralog-api
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -f ../docker_build/docker-compose.yaml
+        kompose.version: 1.34.0 (HEAD)
+      labels:
+        io.kompose.service: ${ENVIRONMENT}-smart-cache-paralog-api
+    spec:
+      containers:
+        - env:
+            - name: IMAGE_DIGEST
+              value: ${IMAGE_DIGEST}
+            - name: JENA_DATASET
+              value: knowledge
+            - name: JENA_PORT
+              value: "3030"
+            - name: JENA_URL
+              value: ${ENVIRONMENT}-graph-smart-cache
+            - name: PORT
+              value: "4001"
+          image: 122610484203.dkr.ecr.eu-west-2.amazonaws.com/${repository_name}:${image_tag}
+          livenessProbe:
+            exec:
+              command:
+                - curl -X GET "http://localhost:4001/" || exit 1
+            failureThreshold: 5
+            periodSeconds: 30
+            timeoutSeconds: 10
+          name: ${ENVIRONMENT}-smart-cache-paralog-api
+          ports:
+            - containerPort: 4001
+              protocol: TCP
+      restartPolicy: Always

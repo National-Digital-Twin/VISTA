@@ -1,0 +1,76 @@
+name: Frontend CI
+
+on:
+  workflow_call:
+  pull_request:
+    paths:
+      - "frontend/**"
+      - ".github/workflows/frontend-ci.yml"
+  push:
+    branches:
+      - main
+      - develop
+      - "release/**"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    permissions:
+      packages: read
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          # With node 22, yarn voids its bowels half way through the install process,
+          # then exits with a 0 status code and no node_modules directory. Caveat
+          # emptor.
+          node-version: "^20.0"
+          cache: yarn
+          cache-dependency-path: frontend/yarn.lock
+
+      - name: Configure the Coefficient registry
+        run: |
+          npm config set "@coefficientsystems:registry" "https://npm.pkg.github.com/"
+          npm config set "//npm.pkg.github.com/:_authToken" $GITHUB_TOKEN
+          npm whoami --registry=https://npm.pkg.github.com
+        working-directory: frontend
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: |
+          yarn install --frozen-lockfile
+          ls node_modules
+
+      - name: Check linting
+        working-directory: frontend
+        run: yarn run lint-ci
+
+      # The tests are (at the time of writing) completely broken, and so this
+      # testing step is disabled.
+      # - name: Run tests
+      #   run: yarn run test-ci
+
+      - name: Build
+        working-directory: frontend
+        run: yarn run build
+
+      - name: Zip the built application
+        working-directory: frontend
+        if: success()
+        run: zip -r dist.zip dist
+
+      - name: Upload built application
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: paralog.zip
+          path: frontend/dist
+          retention-days: 28

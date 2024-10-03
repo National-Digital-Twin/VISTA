@@ -1,0 +1,73 @@
+{
+  // General editor settings
+  "editor.bracketPairColorization.enabled": true,
+  "editor.formatOnSave": true,
+  "editor.guides.bracketPairs": "active",
+  "editor.trimAutoWhitespace": true,
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true,
+  // Enable Prettier globally
+  "prettier.enable": true,
+  // Python-specific settings
+  "python.languageServer": "Pylance",
+  "python.analysis.extraPaths": [
+    "paralog_python_api",
+    "./paralog-python-api/core"
+  ],
+  "python.analysis.typeCheckingMode": "off",
+  "python.testing.unittestEnabled": false,
+  "python.testing.pytestEnabled": true,
+  "python.testing.pytestArgs": ["tests"],
+  // Python files only
+  "[python]": {
+    // isort on save
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit"
+    },
+    // Stop the 'Black does not support "Format Selection"' message every time you paste something
+    "editor.formatOnPaste": false,
+    "editor.defaultFormatter": "charliermarsh.ruff"
+  },
+  // Use the TypeScript from node_modules so we get plugins
+  "typescript.tsdk": "./frontend/node_modules/typescript/lib",
+  // TypeScript files only
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": "explicit"
+    },
+    "editor.tabSize": 2
+  },
+  // TypeScript + React files
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": "explicit"
+    },
+    "editor.tabSize": 2
+  },
+  // JavaScript files only
+  // We're migrating everything to Typescript, so we don't format old .js code.
+  "[javascript]": {
+    "editor.defaultFormatter": null,
+    "editor.tabSize": 2
+  },
+  "[javascriptreact]": {
+    "editor.defaultFormatter": null,
+    "editor.tabSize": 2
+  },
+  // CSS Module files only
+  "[css]": {
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": "explicit",
+      "source.fixAll.prettier": "explicit"
+    },
+    "editor.tabSize": 2
+  },
+  // Git settings
+  "git.enabled": true,
+  // File associations
+  "files.associations": {
+    "**/requirements{/**,*}.{txt,in}": "pip-requirements"
+  }
+}

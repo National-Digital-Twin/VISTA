@@ -1,0 +1,59 @@
+.controlsOverlay {
+  display: grid;
+  inline-size: 100%;
+  block-size: 100%;
+  max-block-size: calc(100lvb - 50px);
+
+  padding: 0.5rem;
+
+  grid:
+    "toolbar toolbar" 1fr
+    ". buttons" auto
+    ". ." 2rem /
+    1fr auto;
+
+  column-gap: 0.5rem;
+
+  pointer-events: none;
+
+  isolation: isolate;
+  position: absolute;
+  z-index: 20;
+}
+
+.controlsOverlay:has(.controlPanel) {
+  grid:
+    "control-panel toolbar toolbar" 1fr
+    "control-panel . buttons" auto
+    "control-panel . ." 2rem /
+    minmax(30rem, 35%) 1fr auto;
+}
+
+.buttons {
+  grid-area: buttons;
+  pointer-events: auto;
+}
+
+.controlsContainer {
+  grid-area: toolbar;
+
+  display: block flex;
+  align-items: center;
+  flex-flow: row wrap;
+  align-content: start;
+  gap: 1.5rem;
+
+  /* The toolbar should not eat pointer events which should be passed to the map,
+  only its children should do that (i.e. the toolbar items). This makes sure that
+  clicking on the gap between toolbar items is always treated as a map click. */
+  pointer-events: none;
+
+  :where(&) > * {
+    pointer-events: auto;
+  }
+}
+
+.controlPanel {
+  grid-area: control-panel;
+  pointer-events: auto;
+}

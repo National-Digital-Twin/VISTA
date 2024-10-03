@@ -1,0 +1,116 @@
+.sideDropdown {
+  margin-top: 1rem;
+  z-index: 100;
+
+  padding-inline: 0.25rem;
+  padding-block-end: 0.25rem;
+
+  max-block-size: 80vh;
+  overflow-block: auto;
+  @supports not (overflow-block: auto) {
+    overflow-y: auto;
+  }
+}
+
+:root {
+  --search-bar-width: 25%;
+}
+
+@media (width >= 1024px) {
+  :root {
+    --search-bar-width: 30%;
+  }
+}
+
+.searchBarContainer {
+  position: relative;
+  isolation: isolate;
+  width: var(--search-bar-width);
+  min-width: 18rem;
+  z-index: 10;
+}
+
+.searchBarWrapper {
+  z-index: 2;
+  position: relative;
+  width: 90%;
+}
+
+@media (width >= 1024px) {
+  .searchBarContainer {
+    width: 30%;
+  }
+}
+
+.searchBarInput {
+  inline-size: 100%;
+}
+
+.sidebar {
+  @apply flex flex-col;
+  position: fixed;
+  inset-inline-start: 0;
+  inset-block-start: 50px;
+  inset-block-end: 0;
+  z-index: 1;
+  width: var(--search-bar-width);
+  min-width: 18rem;
+  max-width: 100%;
+  background-color: var(--col-bg-card);
+  color: var(--col-fg);
+  transition:
+    transform 300ms ease-in-out,
+    width 300ms ease-in-out;
+}
+
+.sidebarVisible {
+  @apply translate-x-0;
+}
+
+.sidebarHidden {
+  @apply -translate-x-full;
+  width: 0;
+}
+
+.sidebarHeader {
+  @apply p-4 flex justify-end items-center;
+}
+
+.sidebarCloseButton {
+  @apply hover:text-gray-300 focus:outline-none;
+  position: absolute;
+  inset-inline-end: -40px;
+  inset-block-start: 10px;
+  background-color: var(--color-card);
+  padding: 8px;
+  border-start-end-radius: 8px;
+  border-end-end-radius: 8px;
+}
+
+.sidebarTitle {
+  @apply p-4 text-xl font-semibold;
+  color: var(--col-fg);
+}
+
+.sidebarContent {
+  @apply flex-grow overflow-y-auto;
+  background-color: var(--col-bg-card);
+}
+
+.sidebarToggleButton {
+  position: absolute;
+  inset-inline-end: -40px;
+  inset-block-start: 50%;
+  transform: translateY(-50%);
+  background-color: var(--col-bg-button);
+  color: var(--col-fg-button);
+  padding: 8px;
+  border-start-end-radius: 8px;
+  border-end-end-radius: 8px;
+  z-index: 30;
+  transition: all 300 ease-in-out;
+}
+
+.sidebarToggleButton:hover {
+  background-color: var(--col-bg-button-hover);
+}

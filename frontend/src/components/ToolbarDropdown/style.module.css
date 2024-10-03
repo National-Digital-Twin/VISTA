@@ -1,0 +1,41 @@
+.toolbarDropdown {
+  /* We position the dropdown absolutely, so make this the container */
+  position: relative;
+
+  /* The main button is in flow layout */
+  display: block flow-root;
+}
+
+.toolbarDropdownButton {
+  @apply focus:outline-none;
+}
+
+.toolbarDropdownButtonIcon {
+  margin-inline-end: 0.5rem;
+}
+
+.toolbarDropdownButtonDisclosureTriangle {
+  margin-inline: 0.5rem -0.25rem;
+  transition: transform 200ms;
+  transform: rotate(-90deg);
+}
+
+.toolbarDropdown[data-dropdown-open="true"]
+  > .toolbarDropdownButton
+  > .toolbarDropdownButtonDisclosureTriangle {
+  transform: rotate(0);
+}
+
+.dropdown {
+  /* Position relative to the toolbar */
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block-start: 3rem;
+  inline-size: 18rem;
+
+  @apply rounded-md;
+}
+
+.toolbarDropdown[data-dropdown-open="false"] > .dropdown {
+  visibility: hidden;
+}

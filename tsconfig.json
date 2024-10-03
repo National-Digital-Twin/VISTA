@@ -1,0 +1,7 @@
+{
+  /* As far as the frontend is concerned, the top-level of the project does not
+     exist; however VS code is dead keen on assuming the tsconfig could only
+     be at the top-level. As a workaround, this file just copies in from the
+     frontend so VS code knows what's up. */
+  "extends": "./frontend/tsconfig"
+}

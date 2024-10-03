@@ -1,0 +1,30 @@
+.simpleLayer {
+  display: block grid;
+
+  grid-column: layer;
+
+  grid-template-columns: subgrid;
+
+  align-items: baseline;
+  justify-items: center;
+}
+
+.toggle {
+  grid-row: 1;
+  grid-column: toggle;
+
+  cursor: pointer;
+  user-select: none;
+}
+
+.icon {
+  grid-row: 1;
+  grid-column: icon;
+}
+
+.body {
+  grid-row: 1;
+  grid-column: body;
+
+  justify-self: start;
+}

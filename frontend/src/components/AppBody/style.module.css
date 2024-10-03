@@ -1,0 +1,20 @@
+.appBody {
+  grid-area: body;
+
+  /* Make this the container for absolute positioning */
+  position: relative;
+  display: block grid;
+  grid:
+    "content" 1fr
+    / 1fr;
+  grid-auto-rows: auto;
+  justify-items: end;
+}
+
+.detailPanels {
+  display: contents;
+}
+
+.detailPanels > * {
+  inline-size: 100%;
+}
