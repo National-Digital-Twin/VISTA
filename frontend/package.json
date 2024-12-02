@@ -13,7 +13,7 @@
     "@fortawesome/free-solid-svg-icons": "^6.6.0",
     "@fortawesome/react-fontawesome": "^0.2.2",
     "@mapbox/mapbox-gl-draw": "^1.4.3",
-    "@tanstack/react-query": "^5.53.2",
+    "@tanstack/react-query": "^5.62.0",
     "@tanstack/react-query-devtools": "^5.56.2",
     "@turf/helpers": "^7.1.0",
     "@turf/turf": "^7.1.0",
