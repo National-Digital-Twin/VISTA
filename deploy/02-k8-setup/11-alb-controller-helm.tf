@@ -40,7 +40,7 @@ resource "helm_release" "aws-load-balancer-controller" {
 
   set {
     name  = "vpcId"
-    value = var.vpc_id
+    value = data.terraform_remote_state.init.outputs.vpc-id
   }
 
   depends_on = [

@@ -45,7 +45,7 @@ PREFIX graphql: <https://telicent.io/fuseki/modules/graphql#>
     .
 
 ####
-:ontologyService rdf:type fuseki:Service ;
+    :ontologyService rdf:type fuseki:Service ;
     fuseki:name "/ontology" ;
     fuseki:endpoint [ fuseki:operation fuseki:query ] ;
     fuseki:endpoint [ fuseki:operation fuseki:update ] ;

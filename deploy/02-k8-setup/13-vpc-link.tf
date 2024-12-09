@@ -1,6 +1,6 @@
 resource "aws_security_group" "vpc_link" {
   name   = "${var.environment}-vpc-link"
-  vpc_id = var.vpc_id
+  vpc_id = data.terraform_remote_state.init.outputs.vpc-id
 
   egress {
     from_port   = 0
@@ -18,7 +18,7 @@ resource "aws_apigatewayv2_vpc_link" "paralog_vpc_link" {
   name               = "${var.environment}_paralog_vpc_link"
   security_group_ids = [aws_security_group.vpc_link.id]
   subnet_ids = [
-    var.aws_subnet_private_eu_west_2a_id,
-    var.aws_subnet_private_eu_west_2b_id
+    data.terraform_remote_state.init.outputs.public-private-subnet-2a_id,
+    data.terraform_remote_state.init.outputs.public-private-subnet-2b_id
   ]
 }

@@ -4,10 +4,11 @@ resource "aws_apigatewayv2_api" "main" {
 }
 
 resource "aws_apigatewayv2_stage" "dev" {
-  api_id = aws_apigatewayv2_api.main.id
+    api_id = aws_apiga  tewayv2_api.main.id
 
   name        = "${var.environment}-dev"
   auto_deploy = true
+
 }
 
 output "aws_apigatewayv2_api_main_id" {

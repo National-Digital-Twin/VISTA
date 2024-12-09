@@ -1,6 +1,6 @@
 data "aws_ecr_image" "frontend_image" {
   repository_name = "paralog/${var.environment}-frontend"
-  image_tag       = "latest"
+  image_tag       = "01"
 }
 
 resource "kubernetes_manifest" "frontend_deployment" {

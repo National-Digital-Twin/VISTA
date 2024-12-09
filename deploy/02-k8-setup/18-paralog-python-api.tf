@@ -65,7 +65,7 @@ resource "kubernetes_deployment" "paralog_python_api_deployment" {
       spec {
         container {
           name  = "${var.environment}-paralog-python-api"
-          image = "122610484203.dkr.ecr.eu-west-2.amazonaws.com/${data.aws_ecr_image.paralog_python_api_image.repository_name}:${data.aws_ecr_image.paralog_python_api_image.image_tag}"
+          image = "503561419905.dkr.ecr.eu-west-2.amazonaws.com/${data.aws_ecr_image.paralog_python_api_image.repository_name}:${data.aws_ecr_image.paralog_python_api_image.image_tag}"
 
           image_pull_policy = "Always"
 
@@ -155,7 +155,7 @@ resource "kubernetes_job" "paralog_python_api_job" {
       spec {
         container {
           name  = "${var.environment}-paralog-python-api-job"
-          image = "122610484203.dkr.ecr.eu-west-2.amazonaws.com/${data.aws_ecr_image.paralog_python_api_image.repository_name}:${data.aws_ecr_image.paralog_python_api_image.image_tag}"
+          image = "503561419905.dkr.ecr.eu-west-2.amazonaws.com/${data.aws_ecr_image.paralog_python_api_image.repository_name}:${data.aws_ecr_image.paralog_python_api_image.image_tag}"
           command = ["./entrypoint.sh"]
 
           env {

@@ -33,7 +33,7 @@ spec:
               value: file
             - name: ONTO_PORT
               value: "5007"
-          image: 122610484203.dkr.ecr.eu-west-2.amazonaws.com/paralog/telicent-smart-cache-ontology:0.0.5-rc1
+          image: 503561419905.dkr.ecr.eu-west-2.amazonaws.com/paralog/telicent-smart-cache-ontology:0.0.5-rc1
           livenessProbe:
             exec:
               command:

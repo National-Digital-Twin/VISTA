@@ -7,7 +7,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@apollo/client": "^3.11.5",
-    "@coefficientsystems/ontologyservice": "^0.0.14-rc36",
+    "@telicent-oss/ontologyservice": "^0.30.0-dev3",
     "@fortawesome/fontawesome-common-types": "^6.6.0",
     "@fortawesome/fontawesome-svg-core": "^6.6.0",
     "@fortawesome/free-solid-svg-icons": "^6.6.0",

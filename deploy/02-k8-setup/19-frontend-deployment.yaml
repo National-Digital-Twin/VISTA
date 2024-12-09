@@ -22,7 +22,7 @@ spec:
         io.kompose.service: ${ENVIRONMENT}-frontend
     spec:
       containers:
-        - image: 122610484203.dkr.ecr.eu-west-2.amazonaws.com/${repository_name}:${image_tag}
+        - image: 503561419905.dkr.ecr.eu-west-2.amazonaws.com/${repository_name}:${image_tag}
           env:
             - name: IMAGE_DIGEST
               value: ${IMAGE_DIGEST}

@@ -3,7 +3,6 @@ FROM node:20-alpine AS builder
 # Set the working directory in the container
 WORKDIR /app
 
-ARG NPM_TOKEN
 ARG MAP_TILER_TOKEN
 ARG ORDNANCE_SURVEY_API_KEY
 ARG MET_OFFICE_GLOBAL_SPOT_API_KEY
@@ -11,12 +10,9 @@ ARG ADMIRALTY_TIDES_API_KEY
 ARG CANNY_APP_ID
 ARG CANNY_BOARD_TOKEN
 
-RUN echo "@coefficientsystems:registry=https://npm.pkg.github.com/" > .npmrc && \
-    echo "//npm.pkg.github.com/:_authToken=$NPM_TOKEN" >> .npmrc
 
 COPY package.json yarn.lock .
 RUN yarn install
-RUN rm -f .npmrc
 
 ENV VITE_ONTOLOGY_SERVICE_URL="/ontology"
 ENV VITE_PARALOG_API_URL="/paralog"

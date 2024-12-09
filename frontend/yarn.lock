@@ -1100,23 +1100,6 @@
     "@babel/helper-validator-identifier" "^7.24.7"
     to-fast-properties "^2.0.0"
 
-"@coefficientsystems/ontologyservice@^0.0.14-rc36":
-  version "0.0.14-rc36"
-  resolved "https://npm.pkg.github.com/download/@coefficientsystems/ontologyservice/0.0.14-rc36/ef5481cfa173b1a62a3f30d9c3c26557ff5e1574#ef5481cfa173b1a62a3f30d9c3c26557ff5e1574"
-  integrity sha512-UWm36mdMo0xhsRuU9288GM3SzdgZgB7///x+T4t39S2a6iYzW7w9Bbl4atIg5EauHQvxKe8Vy8xWTMuUkTsB9Q==
-  dependencies:
-    "@coefficientsystems/rdfservice" "*"
-    zod "^3.22.4"
-
-"@coefficientsystems/rdfservice@*":
-  version "0.0.13"
-  resolved "https://npm.pkg.github.com/download/@coefficientsystems/rdfservice/0.0.13/2abe5fc01887925deb08c78330e95d919cd9f98f#2abe5fc01887925deb08c78330e95d919cd9f98f"
-  integrity sha512-61YtNGwQskcZXBn+X6EEuHZrEkzZyoZwzvavhohkUb/0NLpd89nkdiVwzUPFuNk+SCOdslPaZa0tre9tllgVog==
-  dependencies:
-    global "^4.4.0"
-    pnpm "^8.15.1"
-    zod "^3.22.4"
-
 "@esbuild/aix-ppc64@0.21.5":
   version "0.21.5"
   resolved "https://registry.yarnpkg.com/@esbuild/aix-ppc64/-/aix-ppc64-0.21.5.tgz#c7184a326533fcdf1b8ee0733e21c713b975575f"
@@ -1640,6 +1623,21 @@
   integrity sha512-ZxG/rspElkfqg2LElnNtsNgPtiCZ4Wl2XY43bATQqPvNgyrhzbCFzCjDwSQy9fJhSiDVALSlxYS8YOIiToqQmg==
   dependencies:
     "@tanstack/query-core" "5.53.2"
+
+"@telicent-oss/ontologyservice@^0.30.0-dev3":
+  version "0.30.0-dev3"
+  resolved "https://registry.yarnpkg.com/@telicent-oss/ontologyservice/-/ontologyservice-0.30.0-dev3.tgz#8a4a51310e444c04a18554d17f29df163451d3a3"
+  integrity sha512-5bt8T5na0D/rWSFOO1+SWHzGBRYVzS7CbDuGzlukm+l3VgvLBc8lk8JfYHYWLZ7618aJxndCo4y7NpV7inxb/Q==
+  dependencies:
+    "@telicent-oss/rdfservice" "0.30.0-dev3"
+
+"@telicent-oss/rdfservice@0.30.0-dev3":
+  version "0.30.0-dev3"
+  resolved "https://registry.yarnpkg.com/@telicent-oss/rdfservice/-/rdfservice-0.30.0-dev3.tgz#5b3aca5855f85ada3259d1f8cefa021bff1d2c99"
+  integrity sha512-Mz3v5U5ak2QmNXBofMTPQL+1kmPHZgLnnPV+L0Ynn6KZmJ9slMLcGSi/ojqE+FwnoOELzhPSSchBMS0HW67z+A==
+  dependencies:
+    global "^4.4.0"
+    zod "^3.22.4"
 
 "@turf/along@^7.1.0":
   version "7.1.0"
@@ -6126,11 +6124,6 @@ pirates@^4.0.1:
   version "4.0.6"
   resolved "https://registry.yarnpkg.com/pirates/-/pirates-4.0.6.tgz#3018ae32ecfcff6c29ba2267cbf21166ac1f36b9"
   integrity sha512-saLsH7WeYYPiD25LDuLRRY/i+6HaPYr6G1OUlN39otzkSTxKnubR9RTxS3/Kk50s1g2JTgFwWQDQyplC5/SHZg==
-
-pnpm@^8.15.1:
-  version "8.15.9"
-  resolved "https://registry.yarnpkg.com/pnpm/-/pnpm-8.15.9.tgz#aa4bc353b5f59fe1f1df5d802ce049ddf7f3c60e"
-  integrity sha512-SZQ0ydj90aJ5Tr9FUrOyXApjOrzuW7Fee13pDzL0e1E6ypjNXP0AHDHw20VLw4BO3M1XhQHkyik6aBYWa72fgQ==
 
 point-in-polygon-hao@^1.1.0:
   version "1.1.0"
