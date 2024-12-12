@@ -21,6 +21,13 @@ server {
 
     ## BEGIN UPSTREAM DEFINITIONS
 
+    # OS vector
+    location /os-vector/ {
+        proxy_pass https://api.os.uk/maps/vector/v1/vts/;
+
+        proxy_set_header key $OS_API_KEY;
+    }
+
     # Admiralty
     location /admiralty-tidal-foundation/ {
         proxy_pass https://admiraltyapi.azure-api.net/uktidalapi-foundation/api/;

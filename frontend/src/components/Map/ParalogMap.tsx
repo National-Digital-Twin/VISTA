@@ -162,6 +162,25 @@ function BuiltinSources() {
   return <>{sources.map(generateSources)}</>;
 }
 
+function TransformUrl(url : string, resourceType) {
+  let transformedUrl = url;
+
+  if (url.includes("/vector/v1/vts")) {
+    let urlParts = url.split("/vector/v1/vts");
+    let routeParams = urlParts[urlParts.length - 1];
+
+    if (routeParams.startsWith("/"))
+    {
+      transformedUrl = `${window.location.origin}/transparent-proxy/os-vector/${routeParams.substring(1)}`;
+    }
+    else {
+      transformedUrl = `${window.location.origin}/transparent-proxy/os-vector/${routeParams}`;
+    }
+  }
+
+  return { url: transformedUrl };
+}
+
 const MBuiltinSources = memo(BuiltinSources);
 
 export default function ParalogMap() {
@@ -233,6 +252,7 @@ export default function ParalogMap() {
             onMouseMove={handleOnMouseMove}
             boxZoom={false}
             styleDiffing
+            transformRequest={function(url, resourceType) { return TransformUrl(url, resourceType) }}
           >
             <DrawingModeContextProvider>
               <ControlsOverlay />
