@@ -34,8 +34,7 @@ DEBUG = env("DEBUG", default=not IS_PROD)
 
 ALLOWED_HOSTS = (
     [
-        "stagingparalog.coefficient.dev",
-        "paralog.coefficient.dev",
+        "paralog.demo.ndtp.co.uk",
     ]
     if IS_PROD
     else ["*"]
