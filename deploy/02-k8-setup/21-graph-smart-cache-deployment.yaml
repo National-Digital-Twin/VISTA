@@ -25,12 +25,14 @@ spec:
         - args:
             - --ping
             - --config
-              - /fuseki/config/config.ttl
+            - /fuseki/config/config.ttl
           env:
             - name: IMAGE_DIGEST
               value: ${IMAGE_DIGEST}
             - name: JAVA_OPTIONS
               value: -XX:MaxRAMPercentage=70.0
+            - name: JWKS_URL
+              value: disabled
           image: 503561419905.dkr.ecr.eu-west-2.amazonaws.com/paralog/smart-cached-graph:latest
           name: ${ENVIRONMENT}-graph-smart-cache
           ports:
