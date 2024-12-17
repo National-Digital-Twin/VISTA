@@ -4,6 +4,8 @@ server {
     listen 80 default_server;
     listen [::]:80 default_server;
 
+    resolver 8.8.8.8 valid=30s;
+
     # Proxy config
     proxy_cache_valid any 1d;
     proxy_cache_use_stale error timeout invalid_header updating http_500 http_502 http_503 http_504;
@@ -22,10 +24,20 @@ server {
     ## BEGIN UPSTREAM DEFINITIONS
 
     # OS vector
-    location /os-vector/ {
-        proxy_pass https://api.os.uk/maps/vector/v1/vts/;
+    location /os/ {
+        set $delimeter "?";
 
-        proxy_set_header key $OS_API_KEY;
+        if ($is_args) {
+            set $delimeter "&";
+        }
+
+        set $api_key_qs ${delimeter}key=$OS_API_KEY;
+
+        if ($request_uri ~ ^/os/(.*)) {
+            set $requested_path $1;
+        }
+
+        proxy_pass https://api.os.uk/$requested_path$api_key_qs;
     }
 
     # Admiralty

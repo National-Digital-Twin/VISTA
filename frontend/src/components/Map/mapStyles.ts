@@ -19,7 +19,7 @@ export interface MapStyle {
 function getMapTilerStyles(darkMode: boolean): MapStyle[] {
   const darkLight = darkMode ? "-dark" : "";
   return [
-    config.map.ordnanceSurveyToken && {
+    {
       id: "https://api.os.uk/maps/vector/v1/vts/resources/styles?srs=3857",
       name: "Ordnance Survey",
       key: "os",

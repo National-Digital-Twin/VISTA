@@ -40,6 +40,7 @@ import { ElementsContext } from "@/context/ElementContext";
 import { DrawingModeContextProvider } from "@/context/DrawingMode";
 import { MapStyleContextProvider } from "@/context/MapStyle";
 import { ShowPointerCoordsContextProvider } from "@/context/ShowPointerCoords";
+import provider from "../../auth/provider";
 
 const FloodMonitoringStations = lazy(() => import("./FloodMonitoringStations"));
 const PointAssets = lazy(() => import("./PointAssets"));
@@ -162,23 +163,25 @@ function BuiltinSources() {
   return <>{sources.map(generateSources)}</>;
 }
 
-function TransformUrl(url : string, resourceType) {
+function TransformUrl(url : string) {
   let transformedUrl = url;
 
-  if (url.includes("/vector/v1/vts")) {
-    let urlParts = url.split("/vector/v1/vts");
+  if (url.includes("api.os.uk")) {
+    let urlParts = url.split("api.os.uk");
     let routeParams = urlParts[urlParts.length - 1];
 
     if (routeParams.startsWith("/"))
     {
-      transformedUrl = `${window.location.origin}/transparent-proxy/os-vector/${routeParams.substring(1)}`;
+      transformedUrl = `${window.location.origin}/transparent-proxy/os/${routeParams.substring(1)}`;
     }
     else {
-      transformedUrl = `${window.location.origin}/transparent-proxy/os-vector/${routeParams}`;
+      transformedUrl = `${window.location.origin}/transparent-proxy/os/${routeParams}`;
     }
   }
 
-  return { url: transformedUrl };
+  transformedUrl = transformedUrl.replace(/\?key=.+&/, "?");
+
+  return { url: transformedUrl, headers: { Authorization: `Bearer ${provider.bearerToken()}` } };
 }
 
 const MBuiltinSources = memo(BuiltinSources);
@@ -252,7 +255,7 @@ export default function ParalogMap() {
             onMouseMove={handleOnMouseMove}
             boxZoom={false}
             styleDiffing
-            transformRequest={function(url, resourceType) { return TransformUrl(url, resourceType) }}
+            transformRequest={function(url, _resourceType) { return TransformUrl(url) }}
           >
             <DrawingModeContextProvider>
               <ControlsOverlay />
