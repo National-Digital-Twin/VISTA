@@ -35,6 +35,7 @@ server {
 
         set $rewritten "false";
 
+        # rewrite the url to place the fonts query string in correct place in the route.
         if ($request_uri ~ ^/os/(.*)/fonts/(.*)(&fonts=.*)(.*)) {
             rewrite ^ $request_uri;
             rewrite ^/os/(.*)/fonts/(.*)(&fonts=.*)(.*) $1/fonts/$arg_fonts/$2$4 break;
