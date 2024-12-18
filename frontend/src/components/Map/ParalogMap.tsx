@@ -166,20 +166,38 @@ function BuiltinSources() {
 function TransformUrl(url : string) {
   let transformedUrl = url;
 
-  if (url.includes("api.os.uk")) {
-    let urlParts = url.split("api.os.uk");
+  if (transformedUrl.includes("api.os.uk")) {
+    let urlParts = transformedUrl.split("api.os.uk");
     let routeParams = urlParts[urlParts.length - 1];
+    let requestedFont = "";
+    let encodedRequestedFont = "";
 
-    if (routeParams.startsWith("/"))
-    {
+    // transform the from the os maps api to the transparent proxy.
+    if (routeParams.startsWith("/")) {
       transformedUrl = `${window.location.origin}/transparent-proxy/os/${routeParams.substring(1)}`;
     }
     else {
       transformedUrl = `${window.location.origin}/transparent-proxy/os/${routeParams}`;
     }
+
+    // pick out the request font from the path parameters, encode it and include it in the query string parameters.
+    if (routeParams.includes("fonts")) {
+      requestedFont = routeParams.match(/fonts\/(.*)\//)[1];
+      encodedRequestedFont = encodeURIComponent(requestedFont);
+
+      if (routeParams.includes("?")) {
+        transformedUrl += `&fonts=${encodedRequestedFont}`;
+      }
+      else {
+        transformedUrl += `&fonts=${encodedRequestedFont}`;
+      }
+
+      transformedUrl = transformedUrl.replace(`/${requestedFont}/`, "/");
+    }
   }
 
-  transformedUrl = transformedUrl.replace(/\?key=.+&/, "?");
+  // remove the api key query string parameter from the transformed url.
+  transformedUrl = transformedUrl.replace(/\?key=[^&]+/, "?");
 
   return { url: transformedUrl, headers: { Authorization: `Bearer ${provider.bearerToken()}` } };
 }
