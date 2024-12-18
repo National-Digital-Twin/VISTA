@@ -66,13 +66,13 @@ resource "aws_apigatewayv2_integration" "paralog_transparent_proxy_admiralty_tid
   connection_type    = "VPC_LINK"
   connection_id      = aws_apigatewayv2_vpc_link.paralog_vpc_link.id
   request_parameters = {
-    "overwrite:path" = "/admiralty-tidal-foundation/$request.path.proxy"
+    "overwrite:path" = "/admiralty-tidal-discovery/$request.path.proxy"
   }
 }
 
 resource "aws_apigatewayv2_route" "paralog_transparent_proxy_admiralty_tidal" {
   api_id             = aws_apigatewayv2_api.main.id
-  route_key          = "ANY /transparent-proxy/admiralty-tidal-foundation/{proxy+}"
+  route_key          = "ANY /transparent-proxy/admiralty-tidal-discovery/{proxy+}"
   target             = "integrations/${aws_apigatewayv2_integration.paralog_transparent_proxy_admiralty_tidal_integration.id}"
   authorization_type = "CUSTOM"
   authorizer_id      = aws_apigatewayv2_authorizer.request_authorizer.id

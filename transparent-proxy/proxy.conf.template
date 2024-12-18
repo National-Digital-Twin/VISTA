@@ -53,8 +53,8 @@ server {
     }
 
     # Admiralty
-    location /admiralty-tidal-foundation/ {
-        proxy_pass https://admiraltyapi.azure-api.net/uktidalapi-foundation/api/;
+    location /admiralty-tidal-discovery/ {
+        proxy_pass https://admiraltyapi.azure-api.net/uktidalapi/api/;
 
         proxy_set_header Ocp-Apim-Subscription-Key $ADMIRALTY_API_KEY;
     }
