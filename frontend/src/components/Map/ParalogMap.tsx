@@ -165,6 +165,7 @@ function BuiltinSources() {
 
 function TransformUrl(url : string) {
   let transformedUrl = url;
+  let headers = {};
 
   if (transformedUrl.includes("api.os.uk")) {
     let urlParts = transformedUrl.split("api.os.uk");
@@ -194,12 +195,14 @@ function TransformUrl(url : string) {
 
       transformedUrl = transformedUrl.replace(`/${requestedFont}/`, "/");
     }
+
+    // remove the api key query string parameter from the transformed url.
+    transformedUrl = transformedUrl.replace(/\?key=[^&]+/, "?");
+
+    headers = { Authorization: `Bearer ${provider.bearerToken()}` };
   }
 
-  // remove the api key query string parameter from the transformed url.
-  transformedUrl = transformedUrl.replace(/\?key=[^&]+/, "?");
-
-  return { url: transformedUrl, headers: { Authorization: `Bearer ${provider.bearerToken()}` } };
+  return { url: transformedUrl, headers: headers };
 }
 
 const MBuiltinSources = memo(BuiltinSources);
