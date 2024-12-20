@@ -3,6 +3,21 @@ proxy_cache_path /tmp/nginx_cache levels=1:2 keys_zone=tp_cache:100m max_size=20
 server {
     listen 80 default_server;
     listen [::]:80 default_server;
+    return 444;
+    server_name _;
+}
+
+map $http_host $host_allowed {
+    "~*\.ndtp\.co\.uk" 1;
+    "localhost:3001" 1;
+    default 0;
+}
+
+server {
+    listen 80;
+    listen [::]:80;
+
+    server_name localhost *.ndtp.co.uk;
 
     resolver 8.8.8.8 valid=30s;
 
@@ -20,6 +35,10 @@ server {
 
     # Don't pass on Authorization headers if we receive them
     proxy_set_header Authorization "";
+
+    if ($host_allowed = 0) {
+        return 403;
+    }
 
     ## BEGIN UPSTREAM DEFINITIONS
 
