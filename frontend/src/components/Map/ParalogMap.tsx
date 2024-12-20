@@ -197,7 +197,7 @@ function TransformUrl(url : string) {
     }
 
     // remove the api key query string parameter from the transformed url.
-    transformedUrl = transformedUrl.replace(/\?key=[^&]+/, "?");
+    transformedUrl = transformedUrl.replace(/\?key=[^&]+&/, "?");
 
     headers = { Authorization: `Bearer ${provider.bearerToken()}` };
   }
