@@ -1482,6 +1482,24 @@
     sort-object "^3.0.3"
     tinyqueue "^3.0.0"
 
+"@national-digital-twin/ontologyservice@0.31.3-TELFE654.0":
+  version "0.31.3-TELFE654.0"
+  resolved "https://npm.pkg.github.com/download/@national-digital-twin/ontologyservice/0.31.3-TELFE654.0/886462bdaef59dfd22578d4bfbef93473795b89c#886462bdaef59dfd22578d4bfbef93473795b89c"
+  integrity sha512-8u40bCxYboSBmlD3+zggCBk4gBlZM8dDfMgsgFnRPR+Y0I60piSIZmFYf7ZxOT3kH9SpONl1YgAlsgVzYtrTqA==
+  dependencies:
+    "@national-digital-twin/rdfservice" "0.0.6-TELFE654.0"
+    "@types/lodash" "^4.17.13"
+    lodash "^4.17.21"
+    zod "^3.23.8"
+
+"@national-digital-twin/rdfservice@0.0.6-TELFE654.0":
+  version "0.0.6-TELFE654.0"
+  resolved "https://npm.pkg.github.com/download/@national-digital-twin/rdfservice/0.0.6-TELFE654.0/397ede22bc941b934a2140de5fe1ef51dbf2104c#397ede22bc941b934a2140de5fe1ef51dbf2104c"
+  integrity sha512-/wBjC0JDzSwj5wHm7bBTKNeAwiFkflOuoK58ze0lQtQaPaiTBbb5Ou2AvUzZaBow6X/aBD4a/Qf4qw/YkXEZIg==
+  dependencies:
+    global "^4.4.0"
+    zod "^3.22.4"
+
 "@nicolo-ribaudo/eslint-scope-5-internals@5.1.1-v1":
   version "5.1.1-v1"
   resolved "https://registry.yarnpkg.com/@nicolo-ribaudo/eslint-scope-5-internals/-/eslint-scope-5-internals-5.1.1-v1.tgz#dbf733a965ca47b1973177dc0bb6c889edcfb129"
@@ -1623,21 +1641,6 @@
   integrity sha512-ZxG/rspElkfqg2LElnNtsNgPtiCZ4Wl2XY43bATQqPvNgyrhzbCFzCjDwSQy9fJhSiDVALSlxYS8YOIiToqQmg==
   dependencies:
     "@tanstack/query-core" "5.53.2"
-
-"@telicent-oss/ontologyservice@^0.30.0-dev3":
-  version "0.30.0-dev3"
-  resolved "https://registry.yarnpkg.com/@telicent-oss/ontologyservice/-/ontologyservice-0.30.0-dev3.tgz#8a4a51310e444c04a18554d17f29df163451d3a3"
-  integrity sha512-5bt8T5na0D/rWSFOO1+SWHzGBRYVzS7CbDuGzlukm+l3VgvLBc8lk8JfYHYWLZ7618aJxndCo4y7NpV7inxb/Q==
-  dependencies:
-    "@telicent-oss/rdfservice" "0.30.0-dev3"
-
-"@telicent-oss/rdfservice@0.30.0-dev3":
-  version "0.30.0-dev3"
-  resolved "https://registry.yarnpkg.com/@telicent-oss/rdfservice/-/rdfservice-0.30.0-dev3.tgz#5b3aca5855f85ada3259d1f8cefa021bff1d2c99"
-  integrity sha512-Mz3v5U5ak2QmNXBofMTPQL+1kmPHZgLnnPV+L0Ynn6KZmJ9slMLcGSi/ojqE+FwnoOELzhPSSchBMS0HW67z+A==
-  dependencies:
-    global "^4.4.0"
-    zod "^3.22.4"
 
 "@turf/along@^7.1.0":
   version "7.1.0"
@@ -3204,6 +3207,11 @@
   version "0.0.29"
   resolved "https://registry.yarnpkg.com/@types/json5/-/json5-0.0.29.tgz#ee28707ae94e11d2b827bcbe5270bcea7f3e71ee"
   integrity sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==
+
+"@types/lodash@^4.17.13":
+  version "4.17.13"
+  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.17.13.tgz#786e2d67cfd95e32862143abe7463a7f90c300eb"
+  integrity sha512-lfx+dftrEZcdBPczf9d0Qv0x+j/rfNCMuC6OcfXmO8gkfeNAY88PgKUbvG56whcN23gc27yenwF6oJZXGFpYxg==
 
 "@types/mapbox-gl@>=1.0.0":
   version "3.4.0"
@@ -7547,6 +7555,11 @@ zod@^3.22.4:
   version "3.23.8"
   resolved "https://registry.yarnpkg.com/zod/-/zod-3.23.8.tgz#e37b957b5d52079769fb8097099b592f0ef4067d"
   integrity sha512-XBx9AXhXktjUqnepgTiE5flcKIYWi/rme0Eaj+5Y0lftuGBq+jyRu/md4WnuxqgP1ubdpNCsYEYPxrzVHD8d6g==
+
+zod@^3.23.8:
+  version "3.24.1"
+  resolved "https://registry.yarnpkg.com/zod/-/zod-3.24.1.tgz#27445c912738c8ad1e9de1bea0359fa44d9d35ee"
+  integrity sha512-muH7gBL9sI1nciMZV67X5fTKKBLtwpZ5VBp1vsOQzj1MhrBZ4wlVCm3gedKZWLp0Oyel8sIGfeiz54Su+OVT+A==
 
 zustand@^4.5.4:
   version "4.5.5"

@@ -1,4 +1,4 @@
-import { OntologyService } from "@telicent-oss/ontologyservice";
+import { OntologyService } from "@national-digital-twin/ontologyservice";
 import config from "@/config/app-config";
 
-export default new OntologyService(config.services.ontology, "/ontology");
+export default new OntologyService(config.services.ontology, "ontology");
