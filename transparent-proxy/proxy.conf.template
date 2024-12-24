@@ -7,9 +7,9 @@ server {
     server_name _;
 }
 
-map $http_host $host_allowed {
+map $host $host_allowed {
     "~*\.ndtp\.co\.uk" 1;
-    "localhost:3001" 1;
+    "~localhost*" 1;
     default 0;
 }
 
