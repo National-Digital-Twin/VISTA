@@ -7,7 +7,7 @@ spec:
   template:
     spec:
       containers:
-        - image: 122610484203.dkr.ecr.eu-west-2.amazonaws.com/${repository_name}:${image_tag}
+        - image: 503561419905.dkr.ecr.eu-west-2.amazonaws.com/${repository_name}:${image_tag}
           command: ["./entrypoint.sh"]
           name: ${NAME}
           env:

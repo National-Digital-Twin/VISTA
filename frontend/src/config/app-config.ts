@@ -4,8 +4,7 @@ import featureFlags from "./feature-flags";
 
 const config = {
   map: {
-    maptilerToken: import.meta.env.VITE_MAP_TILER_TOKEN,
-    ordnanceSurveyToken: import.meta.env.VITE_ORDNANCE_SURVEY_API_KEY || "",
+    maptilerToken: import.meta.env.VITE_MAP_TILER_TOKEN
   },
   api: {
     url: import.meta.env.VITE_PARALOG_API_URL,

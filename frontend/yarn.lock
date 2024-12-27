@@ -1100,23 +1100,6 @@
     "@babel/helper-validator-identifier" "^7.24.7"
     to-fast-properties "^2.0.0"
 
-"@coefficientsystems/ontologyservice@^0.0.14-rc36":
-  version "0.0.14-rc36"
-  resolved "https://npm.pkg.github.com/download/@coefficientsystems/ontologyservice/0.0.14-rc36/ef5481cfa173b1a62a3f30d9c3c26557ff5e1574#ef5481cfa173b1a62a3f30d9c3c26557ff5e1574"
-  integrity sha512-UWm36mdMo0xhsRuU9288GM3SzdgZgB7///x+T4t39S2a6iYzW7w9Bbl4atIg5EauHQvxKe8Vy8xWTMuUkTsB9Q==
-  dependencies:
-    "@coefficientsystems/rdfservice" "*"
-    zod "^3.22.4"
-
-"@coefficientsystems/rdfservice@*":
-  version "0.0.13"
-  resolved "https://npm.pkg.github.com/download/@coefficientsystems/rdfservice/0.0.13/2abe5fc01887925deb08c78330e95d919cd9f98f#2abe5fc01887925deb08c78330e95d919cd9f98f"
-  integrity sha512-61YtNGwQskcZXBn+X6EEuHZrEkzZyoZwzvavhohkUb/0NLpd89nkdiVwzUPFuNk+SCOdslPaZa0tre9tllgVog==
-  dependencies:
-    global "^4.4.0"
-    pnpm "^8.15.1"
-    zod "^3.22.4"
-
 "@esbuild/aix-ppc64@0.21.5":
   version "0.21.5"
   resolved "https://registry.yarnpkg.com/@esbuild/aix-ppc64/-/aix-ppc64-0.21.5.tgz#c7184a326533fcdf1b8ee0733e21c713b975575f"
@@ -1498,6 +1481,24 @@
     rw "^1.3.3"
     sort-object "^3.0.3"
     tinyqueue "^3.0.0"
+
+"@national-digital-twin/ontologyservice@0.31.3-TELFE654.0":
+  version "0.31.3-TELFE654.0"
+  resolved "https://npm.pkg.github.com/download/@national-digital-twin/ontologyservice/0.31.3-TELFE654.0/886462bdaef59dfd22578d4bfbef93473795b89c#886462bdaef59dfd22578d4bfbef93473795b89c"
+  integrity sha512-8u40bCxYboSBmlD3+zggCBk4gBlZM8dDfMgsgFnRPR+Y0I60piSIZmFYf7ZxOT3kH9SpONl1YgAlsgVzYtrTqA==
+  dependencies:
+    "@national-digital-twin/rdfservice" "0.0.6-TELFE654.0"
+    "@types/lodash" "^4.17.13"
+    lodash "^4.17.21"
+    zod "^3.23.8"
+
+"@national-digital-twin/rdfservice@0.0.6-TELFE654.0":
+  version "0.0.6-TELFE654.0"
+  resolved "https://npm.pkg.github.com/download/@national-digital-twin/rdfservice/0.0.6-TELFE654.0/397ede22bc941b934a2140de5fe1ef51dbf2104c#397ede22bc941b934a2140de5fe1ef51dbf2104c"
+  integrity sha512-/wBjC0JDzSwj5wHm7bBTKNeAwiFkflOuoK58ze0lQtQaPaiTBbb5Ou2AvUzZaBow6X/aBD4a/Qf4qw/YkXEZIg==
+  dependencies:
+    global "^4.4.0"
+    zod "^3.22.4"
 
 "@nicolo-ribaudo/eslint-scope-5-internals@5.1.1-v1":
   version "5.1.1-v1"
@@ -3206,6 +3207,11 @@
   version "0.0.29"
   resolved "https://registry.yarnpkg.com/@types/json5/-/json5-0.0.29.tgz#ee28707ae94e11d2b827bcbe5270bcea7f3e71ee"
   integrity sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==
+
+"@types/lodash@^4.17.13":
+  version "4.17.13"
+  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.17.13.tgz#786e2d67cfd95e32862143abe7463a7f90c300eb"
+  integrity sha512-lfx+dftrEZcdBPczf9d0Qv0x+j/rfNCMuC6OcfXmO8gkfeNAY88PgKUbvG56whcN23gc27yenwF6oJZXGFpYxg==
 
 "@types/mapbox-gl@>=1.0.0":
   version "3.4.0"
@@ -6127,11 +6133,6 @@ pirates@^4.0.1:
   resolved "https://registry.yarnpkg.com/pirates/-/pirates-4.0.6.tgz#3018ae32ecfcff6c29ba2267cbf21166ac1f36b9"
   integrity sha512-saLsH7WeYYPiD25LDuLRRY/i+6HaPYr6G1OUlN39otzkSTxKnubR9RTxS3/Kk50s1g2JTgFwWQDQyplC5/SHZg==
 
-pnpm@^8.15.1:
-  version "8.15.9"
-  resolved "https://registry.yarnpkg.com/pnpm/-/pnpm-8.15.9.tgz#aa4bc353b5f59fe1f1df5d802ce049ddf7f3c60e"
-  integrity sha512-SZQ0ydj90aJ5Tr9FUrOyXApjOrzuW7Fee13pDzL0e1E6ypjNXP0AHDHw20VLw4BO3M1XhQHkyik6aBYWa72fgQ==
-
 point-in-polygon-hao@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/point-in-polygon-hao/-/point-in-polygon-hao-1.1.0.tgz#37f5f4fbe14e89fa8a3bb7f67c9158079d2ede7c"
@@ -7554,6 +7555,11 @@ zod@^3.22.4:
   version "3.23.8"
   resolved "https://registry.yarnpkg.com/zod/-/zod-3.23.8.tgz#e37b957b5d52079769fb8097099b592f0ef4067d"
   integrity sha512-XBx9AXhXktjUqnepgTiE5flcKIYWi/rme0Eaj+5Y0lftuGBq+jyRu/md4WnuxqgP1ubdpNCsYEYPxrzVHD8d6g==
+
+zod@^3.23.8:
+  version "3.24.1"
+  resolved "https://registry.yarnpkg.com/zod/-/zod-3.24.1.tgz#27445c912738c8ad1e9de1bea0359fa44d9d35ee"
+  integrity sha512-muH7gBL9sI1nciMZV67X5fTKKBLtwpZ5VBp1vsOQzj1MhrBZ4wlVCm3gedKZWLp0Oyel8sIGfeiz54Su+OVT+A==
 
 zustand@^4.5.4:
   version "4.5.5"

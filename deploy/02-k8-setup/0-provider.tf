@@ -1,6 +1,6 @@
 terraform {
   backend "s3" {
-    bucket = "paralog-state"
+    bucket = var.s3_state_bucket
     key    = var.s3_state_file
     region = "eu-west-2"
   }
@@ -11,6 +11,18 @@ terraform {
     }
   }
 }
+
+data "terraform_remote_state" "init" {
+  backend = "s3"
+
+  config = {
+    bucket = var.s3_state_bucket
+    key    = "init/demo-terraform.tfstate"
+    region = "eu-west-2"
+  }
+}
+
+
 
 provider "aws" {
   region = "eu-west-2"
@@ -44,20 +56,14 @@ variable "s3_state_file" {
 }
 
 locals {
-  cluster_name = "paralog-${var.environment}"
+  cluster_name = "${var.application}-${var.environment}"
 }
 
 # variable "aws_security_group_vpc_link_id" {
 #   description = "VPC Link id from init stage."
 # }
 
-variable "aws_subnet_private_eu_west_2a_id" {
-  description = "aws_subnet.private-eu-west-2a.id from previous stage output."
-}
 
-variable "aws_subnet_private_eu_west_2b_id" {
-  description = "aws_subnet.private-eu-west-2b.id from previous stage output."
-}
 
 # variable "aws_apigatewayv2_api_main_id" {
 #   description = "aws_apigatewayv2_api.main.id from previous stage output."
@@ -66,4 +72,11 @@ variable "aws_subnet_private_eu_west_2b_id" {
 # variable "aws_apigatewayv2_authorizer_request_authorizer_id" {
 #   description = "aws_apigatewayv2_authorizer.request_authorizer.id from previous stage output."
 # }
-variable "vpc_id" {}
+
+variable "s3_state_bucket" {
+  description = "State file name for the env."
+}
+
+variable "application" {
+  description = "Application Name"
+}

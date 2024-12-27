@@ -7,11 +7,11 @@ variable "POSTGRES_PASSWORD" {
 }
 
 data "aws_vpc" "vpc" {
-  id = var.vpc_id
+  id =    data.terraform_remote_state.init.outputs.vpc-id
 }
 
 resource "aws_security_group" "rds_sg" {
-  vpc_id = var.vpc_id
+  vpc_id = data.terraform_remote_state.init.outputs.vpc-id
 
   ingress {
     from_port   = 5432
@@ -34,7 +34,8 @@ resource "aws_security_group" "rds_sg" {
 
 resource "aws_db_subnet_group" "paralog_db_subnet_group" {
   name       = "${var.environment}-main"
-  subnet_ids = [var.aws_subnet_private_eu_west_2a_id, var.aws_subnet_private_eu_west_2b_id]
+  subnet_ids = [   data.terraform_remote_state.init.outputs.public-private-subnet-2a_id,
+    data.terraform_remote_state.init.outputs.public-private-subnet-2b_id]
 
   tags = {
     Name = "Paralog DB subnet group"

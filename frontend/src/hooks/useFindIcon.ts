@@ -81,7 +81,7 @@ function useStyles(): Record<string, FoundIcon> {
             };
           };
         }
-      > = await ontologyService.getStyles();
+      > = await ontologyService.getStyles([]);
       return Object.fromEntries(
         Object.keys(iconEntries).map((classUri) => {
           const value = iconEntries[classUri];

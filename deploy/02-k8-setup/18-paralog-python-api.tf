@@ -65,7 +65,7 @@ resource "kubernetes_deployment" "paralog_python_api_deployment" {
       spec {
         container {
           name  = "${var.environment}-paralog-python-api"
-          image = "122610484203.dkr.ecr.eu-west-2.amazonaws.com/${data.aws_ecr_image.paralog_python_api_image.repository_name}:${data.aws_ecr_image.paralog_python_api_image.image_tag}"
+          image = "503561419905.dkr.ecr.eu-west-2.amazonaws.com/${data.aws_ecr_image.paralog_python_api_image.repository_name}:${data.aws_ecr_image.paralog_python_api_image.image_tag}"
 
           image_pull_policy = "Always"
 
@@ -90,7 +90,7 @@ resource "kubernetes_deployment" "paralog_python_api_deployment" {
 
           env {
             name  = "ENVIRONMENT"
-            value = var.environment
+            value = "production"
           }
 
           env {
@@ -123,7 +123,7 @@ resource "kubernetes_deployment" "paralog_python_api_deployment" {
 #       AWS_ACCESS_KEY_ID     = var.SERVICE_AWS_ACCESS_KEY_ID,
 #       AWS_SECRET_ACCESS_KEY = var.SERVICE_AWS_SECRET_ACCESS_KEY,
 #       AWS_DEFAULT_REGION    = "eu-west-2",
-#       ENVIRONMENT           = var.environment,
+#       ENVIRONMENT           = "production",
 #       NAME                  = "${var.environment}-paralog-python-api-job"
 #       IMAGE_DIGEST          = data.aws_ecr_image.paralog_python_api_image.image_digest
 #       repository_name       = data.aws_ecr_image.paralog_python_api_image.repository_name,
@@ -155,7 +155,7 @@ resource "kubernetes_job" "paralog_python_api_job" {
       spec {
         container {
           name  = "${var.environment}-paralog-python-api-job"
-          image = "122610484203.dkr.ecr.eu-west-2.amazonaws.com/${data.aws_ecr_image.paralog_python_api_image.repository_name}:${data.aws_ecr_image.paralog_python_api_image.image_tag}"
+          image = "503561419905.dkr.ecr.eu-west-2.amazonaws.com/${data.aws_ecr_image.paralog_python_api_image.repository_name}:${data.aws_ecr_image.paralog_python_api_image.image_tag}"
           command = ["./entrypoint.sh"]
 
           env {

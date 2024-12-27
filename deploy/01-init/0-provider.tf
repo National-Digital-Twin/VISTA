@@ -1,6 +1,6 @@
 terraform {
   backend "s3" {
-    bucket = "paralog-state"
+    bucket = var.s3_state_bucket
     key    = var.s3_state_file
     region = "eu-west-2"
   }
@@ -21,6 +21,7 @@ variable "cluster_version" {
 }
 
 variable "environment" {
+
   description = "Prefix for resource names."
 }
 
@@ -28,6 +29,14 @@ variable "s3_state_file" {
   description = "State file name for the env."
 }
 
+variable "s3_state_bucket" {
+  description = "State file name for the env."
+}
+
+variable "application" {
+  description = "Application Name"
+}
+
 locals {
-  cluster_name = "paralog-${var.environment}"
+  cluster_name = "${var.application}-${var.environment}"
 }

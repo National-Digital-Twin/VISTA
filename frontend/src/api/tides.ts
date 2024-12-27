@@ -1,6 +1,6 @@
 import fetchWithAuth from "@/auth/fetchAuth";
 
-const TIDES_URL = "transparent-proxy/admiralty-tidal-foundation/";
+const TIDES_URL = "transparent-proxy/admiralty-tidal-discovery/";
 
 export interface TideStation {
   id: string;
@@ -23,7 +23,7 @@ export interface TideData {
 }
 
 export async function fetchTideStations(): Promise<TideStation[]> {
-  const response = await fetchWithAuth(TIDES_URL + "V2/Stations", {});
+  const response = await fetchWithAuth(TIDES_URL + "V1/Stations", {});
 
   if (!response.ok) {
     throw new Error("Failed to fetch tidal stations from Admiralty API");
@@ -55,7 +55,7 @@ export async function fetchTideStations(): Promise<TideStation[]> {
 
 export const fetchTideData = async (stationId: string): Promise<TideData> => {
   const response = await fetchWithAuth(
-    TIDES_URL + "V2/Stations/" + stationId + "/TidalEvents?duration=2",
+    TIDES_URL + "V1/Stations/" + stationId + "/TidalEvents?duration=2",
     {},
   );
 

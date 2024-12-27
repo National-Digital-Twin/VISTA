@@ -9,7 +9,7 @@ const featureFlags = {
   // Next-generation UI with a control panel
   uiNext: true,
   pageHeader: false,
-  feedbackWidget: true,
+  feedbackWidget: false,
   /**
    * Enables showing markers for the position of vulnerable people within a drawn area
    */

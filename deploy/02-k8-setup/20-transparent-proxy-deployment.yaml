@@ -29,7 +29,9 @@ spec:
               value: ${ADMIRALTY_API_KEY}
             - name: REALTIME_TRAINS_API_KEY
               value: ${REALTIME_TRAINS_API_KEY}
-          image: 122610484203.dkr.ecr.eu-west-2.amazonaws.com/${repository_name}:${image_tag}
+            - name: OS_API_KEY
+              value: ${OS_API_KEY}
+          image: 503561419905.dkr.ecr.eu-west-2.amazonaws.com/${repository_name}:${image_tag}
           name: ${ENVIRONMENT}-transparent-proxy
           ports:
             - containerPort: 80

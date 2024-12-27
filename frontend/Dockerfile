@@ -3,19 +3,21 @@ FROM node:20-alpine AS builder
 # Set the working directory in the container
 WORKDIR /app
 
-ARG NPM_TOKEN
 ARG MAP_TILER_TOKEN
 ARG ORDNANCE_SURVEY_API_KEY
 ARG MET_OFFICE_GLOBAL_SPOT_API_KEY
-ARG ADMIRALTY_TIDES_API_KEY
-ARG CANNY_APP_ID
-ARG CANNY_BOARD_TOKEN
+# ARG CANNY_APP_ID
+# ARG CANNY_BOARD_TOKEN
+ARG NPM_TOKEN
 
-RUN echo "@coefficientsystems:registry=https://npm.pkg.github.com/" > .npmrc && \
-    echo "//npm.pkg.github.com/:_authToken=$NPM_TOKEN" >> .npmrc
+RUN echo "registry=https://registry.yarnpkg.com/" > .npmrc && \
+    echo "@national-digital-twin:registry=https://npm.pkg.github.com/" >> .npmrc && \
+    echo "//npm.pkg.github.com/:_authToken=${NPM_TOKEN}" >> .npmrc
 
-COPY package.json yarn.lock .
-RUN yarn install
+RUN yarn cache clean
+
+COPY package.json yarn.lock ./
+RUN yarn install --frozen-lockfile
 RUN rm -f .npmrc
 
 ENV VITE_ONTOLOGY_SERVICE_URL="/ontology"
@@ -25,9 +27,8 @@ ENV VITE_MAP_TILER_TOKEN=$MAP_TILER_TOKEN
 ENV VITE_ORDNANCE_SURVEY_API_KEY=$ORDNANCE_SURVEY_API_KEY
 ENV VITE_AUTH_TEST_URL="/coefficient-python/ping/"
 ENV VITE_MET_OFFICE_GLOBAL_SPOT_API_KEY=$MET_OFFICE_GLOBAL_SPOT_API_KEY
-ENV VITE_ADMIRALTY_TIDES_API_KEY=$ADMIRALTY_TIDES_API_KEY
-ENV VITE_CANNY_APP_ID=$CANNY_APP_ID
-ENV VITE_CANNY_BOARD_TOKEN=$CANNY_BOARD_TOKEN
+# ENV VITE_CANNY_APP_ID=$CANNY_APP_ID
+# ENV VITE_CANNY_BOARD_TOKEN=$CANNY_BOARD_TOKEN
 
 COPY . .
 RUN yarn build

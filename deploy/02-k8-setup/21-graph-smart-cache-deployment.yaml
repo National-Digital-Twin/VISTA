@@ -31,7 +31,9 @@ spec:
               value: ${IMAGE_DIGEST}
             - name: JAVA_OPTIONS
               value: -XX:MaxRAMPercentage=70.0
-          image: 122610484203.dkr.ecr.eu-west-2.amazonaws.com/paralog/smart-cached-graph:latest
+            - name: JWKS_URL
+              value: disabled
+          image: 503561419905.dkr.ecr.eu-west-2.amazonaws.com/paralog/smart-cached-graph:latest
           name: ${ENVIRONMENT}-graph-smart-cache
           ports:
             - containerPort: 3030
