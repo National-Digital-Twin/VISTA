@@ -90,7 +90,7 @@ resource "kubernetes_deployment" "paralog_python_api_deployment" {
 
           env {
             name  = "ENVIRONMENT"
-            value = var.environment
+            value = "production"
           }
 
           env {
@@ -123,7 +123,7 @@ resource "kubernetes_deployment" "paralog_python_api_deployment" {
 #       AWS_ACCESS_KEY_ID     = var.SERVICE_AWS_ACCESS_KEY_ID,
 #       AWS_SECRET_ACCESS_KEY = var.SERVICE_AWS_SECRET_ACCESS_KEY,
 #       AWS_DEFAULT_REGION    = "eu-west-2",
-#       ENVIRONMENT           = var.environment,
+#       ENVIRONMENT           = "production",
 #       NAME                  = "${var.environment}-paralog-python-api-job"
 #       IMAGE_DIGEST          = data.aws_ecr_image.paralog_python_api_image.image_digest
 #       repository_name       = data.aws_ecr_image.paralog_python_api_image.repository_name,
