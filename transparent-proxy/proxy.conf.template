@@ -80,7 +80,7 @@ server {
 
     # Realtime Trains
     location /realtime-trains/ {
-        proxy_pass https://secure.realtimetrains.co.uk/api/;
+        proxy_pass https://api.rtt.io/api/v1/;
 
         proxy_set_header Authorization "Basic $REALTIME_TRAINS_API_KEY";
     }
