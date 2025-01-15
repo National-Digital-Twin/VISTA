@@ -40,7 +40,6 @@ interface ImportMetaEnv {
   readonly VITE_ONTOLOGY_SERVICE_URL?: string;
   readonly VITE_AUTH_TEST_URL?: string;
   readonly VITE_MAP_TILER_TOKEN?: string;
-  readonly VITE_ORDNANCE_SURVEY_API_KEY?: string;
   readonly VITE_CANNY_APP_ID?: string;
   readonly VITE_CANNY_BOARD_TOKEN?: string;
   readonly VITE_MET_OFFICE_GLOBAL_SPOT_API_KEY?: string;
@@ -48,7 +47,6 @@ interface ImportMetaEnv {
    * @deprecated Use VITE_MET_OFFICE_GLOBAL_SPOT_API_KEY instead
    */
   readonly VITE_GLOBAL_SPOT_MET_OFFICE_API_KEY?: string;
-  readonly VITE_REAL_TIME_TRAINS_API_KEY?: string;
 }
 
 interface ImportMeta {
