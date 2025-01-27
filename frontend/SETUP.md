@@ -20,7 +20,7 @@ The `.npmrc` file is used to configure npm and Yarn. You need to create this fil
 
 3. **Add the following to the `.npmrc` file**:
    ```ini
-   @coefficientsystems:registry=https://npm.pkg.github.com
+   @national-digital-twin:registry=https://npm.pkg.github.com
    //npm.pkg.github.com/:_authToken=YOUR_GITHUB_TOKEN
    ```
    Replace `YOUR_GITHUB_TOKEN` with the token you copied from GitHub.
@@ -55,7 +55,7 @@ If you want to configure Yarn to use the token directly, you can set it up using
 
 1. Run:
    ```sh
-   yarn config set npmScopes.coefficientsystems.npmAuthToken YOUR_GITHUB_TOKEN
+   yarn config set npmScopes.national-digital-twin.npmAuthToken YOUR_GITHUB_TOKEN
    ```
    Replace `YOUR_GITHUB_TOKEN` with the token you copied from GitHub.
 
@@ -78,26 +78,3 @@ yarn install
 ### Build
 
 Run `yarn build` to build the application.
-
-### Usage
-
-1. Run `yarn install` to install dependencies
-2. Run `yarn start` to start the application
-
----
-
-## Backend
-
-Set `~/.aws/credentials` to the following:
-
-```
-[c477]
-aws_access_key_id=SECRET_KEY
-aws_secret_access_key=SECRET_ACCESS_KEY
-```
-
-Then run this:
-
-```sh
-aws ecr --profile=c477 get-login-password --region eu-west-2 | docker login --username AWS --password-stdin 098669589541.dkr.ecr.eu-west-2.amazonaws.com
-```
