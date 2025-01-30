@@ -12,6 +12,7 @@ repos:
         exclude: |
           (?x)^(
               repository-configuration/.*|
+              deploy/.*|
               \.github/.*|
           )$
       - id: trailing-whitespace
