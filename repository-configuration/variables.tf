@@ -16,8 +16,13 @@ variable "repository_description" {
   default     = "Paralog is a geospatial visualisation tool for exploring and analysing data through a map interface. Originally developed by Telicent, it has been significantly expanded and developed by Coefficient. Paralog supports the visualisation of spatial relationships and enables data-driven decision-making across various sectors."
 }
 
-variable "jira_project_id" {
-  description = "Atlassian JIRA project identifier to be used for autolinking commit messages. This ID should match those which prefix issue identifiers, for example DPAV."
+variable "requirement_tracking_url_base" {
+  description = "Requirement tracking system URL base to be used for autolinking commit messages."
+  type        = string
+}
+
+variable "requirement_tracking_id" {
+  description = "Requirement identifier to be used for autolinking commit messages. This ID should match those which prefix issue identifiers, for example DPAV."
   type        = string
   default     = "DPAV"
 }
