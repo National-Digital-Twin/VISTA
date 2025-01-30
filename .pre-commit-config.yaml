@@ -9,6 +9,11 @@ repos:
     hooks:
       - id: end-of-file-fixer
         name: Check for a blank line at the end of scripts (auto-fixes)
+        exclude: |
+          (?x)^(
+              repository-configuration/.*|
+              \.github/.*|
+          )$
       - id: trailing-whitespace
       - id: fix-byte-order-marker
       - id: check-case-conflict
