@@ -32,16 +32,24 @@ PREFIX graphql: <https://telicent.io/fuseki/modules/graphql#>
         fuseki:operation fuseki:gsp-r ;
         fuseki:name "get"
     ] ;
+
+    # Disable when deploying to the smart cache graph for Paralog
     fuseki:endpoint [
-        fuseki:operation authz:upload ;
+        fuseki:operation fuseki:upload ;
         fuseki:name "upload"
     ] ;
+
+    # Enable only when deploying as AuthZ is a module of the smart cache graph
+    #fuseki:endpoint [
+    #    fuseki:operation authz:upload ;
+    #    fuseki:name "upload"
+    #] ;
 
     fuseki:dataset :dataset ;
     .
 
 :dataset rdf:type ja:MemoryDataset ;
-    ja:data <file:/fuseki/data/iow.ttl> ;
+    ja:data <file:/fuseki/databases/iow.ttl> ;
     .
 
 ####
@@ -80,5 +88,5 @@ PREFIX graphql: <https://telicent.io/fuseki/modules/graphql#>
 
 
 :ontologyDataset rdf:type ja:MemoryDataset ;
-    ja:data <file:/fuseki/data/ontology.ttl> ;
+    ja:data <file:/fuseki/databases/ontology.ttl> ;
     .

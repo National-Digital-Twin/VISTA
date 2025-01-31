@@ -33,10 +33,9 @@ yarn install
 # 2. Start the application
 yarn start
 
-# Terminal 2 (Paralog Server):
-cd dev
-docker-compose up
-```
+## Setup services required by paralog
+
+See [RUN_SERVICES.md](dev/RUN_SERVICES.md) for instructions.
 
 ## Features
 
@@ -65,3 +64,4 @@ docker-compose up
   Paralog.
 - [Smart Cache Graph (SCG) API](https://github.com/Telicent-io/smart-cache-graph-api)
   is used as a datastore for SCP and RDF Libraries.
+```
