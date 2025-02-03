@@ -2,6 +2,8 @@
 
 Listed below are the steps to run a Sonar scan locally for this repository
 
+:large_blue_circle: All of the Make commands given below can be run without using Make by copying the relevant command in the make file and running it in a terminal.
+
 ### Setting up Sonarqube
 
 First you are going to need to setup Sonarqube locally to do this run the following command
@@ -46,4 +48,4 @@ To generate a new token navigate to Administration > Security > Users. Then clic
 
 The current quality gate is set to the Sonarqube default which is the "clean code as you go" approach more information about it can be found [here](https://docs.sonarsource.com/sonarqube-community-build/core-concepts/clean-as-you-code/introduction/).
 
-:warning: Please be aware that with this approach the scan will pass if your new code itself does not introduce issue. For the purpose of the project a code coverage and quality of 80% is to be followed.
+:warning: Please be aware that with this approach the scan will pass if your new code itself does not introduce issues. For the purpose of the project a code coverage and quality of 80% is to be followed.
