@@ -48,7 +48,7 @@ the frontend. [telicent-core]: https://telicent.io/the-core-platform/
 
 ## Running local code development tools
 
-See [RUNNING_CODE_DEV_TOOLS.md](RUNNING_CODE_DEV_TOOLS.md) for more information.
+See [RUNNING_CODE_DEV_TOOLS.md](./developer_docs/RUNNING_CODE_DEV_TOOLS.md) for more information.
 
 [telicent]: https://telicent.io/
 [coefficient]: https://coefficient.ai
