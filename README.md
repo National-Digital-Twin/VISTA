@@ -46,5 +46,9 @@ the frontend. [telicent-core]: https://telicent.io/the-core-platform/
 - For updating Python requirements, refer to `docs/updating_requirements.md`.
 - To create a towncrier entry: `towncrier create 123.added --edit`.
 
+## Running local code development tools
+
+See [RUNNING_CODE_DEV_TOOLS.md](./developer_docs/RUNNING_CODE_DEV_TOOLS.md) for more information.
+
 [telicent]: https://telicent.io/
 [coefficient]: https://coefficient.ai
