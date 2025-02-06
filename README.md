@@ -52,3 +52,6 @@ See [RUNNING_CODE_DEV_TOOLS.md](./developer_docs/RUNNING_CODE_DEV_TOOLS.md) for 
 
 [telicent]: https://telicent.io/
 [coefficient]: https://coefficient.ai
+
+## Contributors
+The development of these works has been made possible with thanks to our [contributors](https://github.com/National-Digital-Twin/Paralog/graphs/contributors).
