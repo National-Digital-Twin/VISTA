@@ -60,10 +60,14 @@ jobs:
           cd backend
           poetry install --no-root
 
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+
       - name: PIP AUDIT
         run: |
           source venv/bin/activate
-          pip-audit >> $GITHUB_STEP_SUMMARY
+          pip-audit
+          pip-audit --format json | jq '.vulnerabilities' >> $GITHUB_STEP_SUMMARY
 
       - name: POETRY LOCK CHECK
         run: |
@@ -76,7 +80,7 @@ jobs:
         run: |
           source venv/bin/activate
           cd backend
-          poetry show --outdated  >> $GITHUB_STEP_SUMMARY
+          poetry show --outdated
 
   linting:
     name: Code Linting
@@ -111,17 +115,20 @@ jobs:
       - name: Run RUFF
         run: |
           source venv/bin/activate
+          echo "running ruff"  >> $GITHUB_STEP_SUMMARY
           ruff format backend  >> $GITHUB_STEP_SUMMARY
 
       - name: Run ISORT (import sorting)
         run: |
           source venv/bin/activate
+          echo "running isort"  >> $GITHUB_STEP_SUMMARY
           isort --check-only backend  >> $GITHUB_STEP_SUMMARY
         continue-on-error: true
 
       - name: Run BANDIT (security linter)
         run: |
           source venv/bin/activate
+          echo "running bandit"  >> $GITHUB_STEP_SUMMARY
           bandit -r -q backend -lll  >> $GITHUB_STEP_SUMMARY
 
   testing:
@@ -200,7 +207,7 @@ jobs:
 
       - name: Run Trivy Scan
         run: |
-          trivy -q fs --severity HIGH,CRITICAL backend  >> $GITHUB_STEP_SUMMARY
+          trivy fs --severity HIGH,CRITICAL backend  >> $GITHUB_STEP_SUMMARY
 
   docker-build-test:
     name: Docker Build & Test
@@ -224,11 +231,11 @@ jobs:
 
       - name: Run Docker image
         run: |
-          docker images  >> $GITHUB_STEP_SUMMARY
+          docker images
           docker run --rm -d -p 8000:8000 --name backend paralog/demo-paralog-python-api:latest
-          docker ps  >> $GITHUB_STEP_SUMMARY
+          docker ps
           sleep 10
-          docker logs backend  >> $GITHUB_STEP_SUMMARY
+          docker logs backend
 
       - name: Ping App
         run: |
