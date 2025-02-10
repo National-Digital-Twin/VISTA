@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { faPlus, faMinus } from "@fortawesome/free-solid-svg-icons";
-import { useMap } from "react-map-gl";
+import { useMap } from "react-map-gl/maplibre";
 
 import ToolbarButton from "@/components/Map/SideButtons/ToolbarButton";
 

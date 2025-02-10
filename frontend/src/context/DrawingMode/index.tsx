@@ -12,7 +12,7 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import { useControl, useMap } from "react-map-gl";
+import { useControl, useMap } from "react-map-gl/maplibre";
 import type { Feature } from "geojson";
 import { useShallow } from "zustand/react/shallow";
 import RectangleMode from "mapbox-gl-draw-rectangle-mode";
@@ -27,12 +27,10 @@ import "./maplibre-gl-draw.css";
 import useSharedStore, { State } from "@/hooks/useSharedStore";
 
 export interface DrawingModeContextProviderProps {
-  /** Children */
   children: React.ReactNode;
 }
 
 interface DrawingModeContextValue {
-  /** The draw instance */
   draw: MapboxDraw;
   isMapLoaded: boolean;
 }
@@ -42,9 +40,6 @@ const DrawingModeContext = createContext<DrawingModeContextValue | null>(null);
 const modes = {
   ...MapboxDraw.modes,
   draw_rectangle: RectangleMode,
-  /**
-   * Passing draw_circle mode to enable appears to break initial radius
-   */
   draw_circle: CircleMode,
   drag_circle: DragCircleMode,
   direct_select: DirectMode,
@@ -60,7 +55,6 @@ export function DrawingModeContextProvider({
   children,
 }: DrawingModeContextProviderProps) {
   const { paralogMap: map } = useMap();
-
   const [isMapLoaded, setIsMapLoaded] = useState(map.loaded());
 
   const draw = useControl(
@@ -73,10 +67,7 @@ export function DrawingModeContextProvider({
   );
 
   useEffect(() => {
-    const handleLoadChange = () => {
-      setIsMapLoaded(true);
-    };
-
+    const handleLoadChange = () => setIsMapLoaded(true);
     map.on("load", handleLoadChange);
 
     return () => {
@@ -85,12 +76,8 @@ export function DrawingModeContextProvider({
     };
   }, [map]);
 
-  const contextValue: DrawingModeContextValue = useMemo(
-    () => ({
-      draw,
-      map,
-      isMapLoaded,
-    }),
+  const contextValue = useMemo(
+    () => ({ draw, map, isMapLoaded }),
     [draw, map, isMapLoaded],
   );
 
@@ -108,19 +95,8 @@ interface DrawShapeCallbacks {
 }
 
 type UseDrawShapeOptions =
-  | {
-      drawingMode: "draw_polygon" | "draw_rectangle";
-      options?: never;
-    }
-  | {
-      drawingMode: "draw_circle";
-      options?: {
-        /**
-         * @default 2
-         */
-        initialRadiusInKm?: number;
-      };
-    };
+  | { drawingMode: "draw_polygon" | "draw_rectangle"; options?: never }
+  | { drawingMode: "draw_circle"; options?: { initialRadiusInKm?: number } };
 
 export const useDrawingMode = <T extends Feature>(
   selector: (
@@ -139,9 +115,7 @@ export const useDrawingMode = <T extends Feature>(
   }
 
   const { draw, isMapLoaded } = context;
-
   const { paralogMap: map } = useMap();
-
   const features = useSharedStore(useShallow(selector));
 
   const startDrawing = useCallback(
@@ -171,51 +145,43 @@ export const useDrawingMode = <T extends Feature>(
     [draw, map, onAddFeatures],
   );
 
-  useEffect(
-    function registerUpdateAndDeleteEventHandlers() {
-      const handleDrawEvent = (event: DrawUpdateEvent | DrawDeleteEvent) => {
-        const relevantFeatures = event.features.filter((eventFeature) =>
-          features.find((feature) => eventFeature.id === feature.id),
-        );
-        if (relevantFeatures.length > 0) {
-          switch (event.type) {
-            case "draw.update":
-              onUpdateFeatures(relevantFeatures);
-              break;
-            case "draw.delete":
-              onDeleteFeatures(relevantFeatures.map(({ id }) => id));
-              break;
-            default:
-              console.warn("Unhandled event:", event);
-          }
+  useEffect(() => {
+    const handleDrawEvent = (event: DrawUpdateEvent | DrawDeleteEvent) => {
+      const relevantFeatures = event.features.filter((eventFeature) =>
+        features.find((feature) => eventFeature.id === feature.id),
+      );
+
+      if (relevantFeatures.length > 0) {
+        switch (event.type) {
+          case "draw.update":
+            onUpdateFeatures(relevantFeatures);
+            break;
+          case "draw.delete":
+            onDeleteFeatures(relevantFeatures.map(({ id }) => id));
+            break;
+          default:
+            console.warn("Unhandled event:", event);
         }
-      };
-
-      map.on("draw.update", handleDrawEvent);
-      map.on("draw.delete", handleDrawEvent);
-
-      return () => {
-        map.off("draw.update", handleDrawEvent);
-        map.off("draw.delete", handleDrawEvent);
-      };
-    },
-    [features, map, onDeleteFeatures, onUpdateFeatures],
-  );
-
-  useEffect(
-    function redraw() {
-      if (!isMapLoaded) {
-        return;
       }
+    };
 
-      features.forEach(draw.add);
+    map.on("draw.update", handleDrawEvent);
+    map.on("draw.delete", handleDrawEvent);
 
-      return () => {
-        draw.delete(features.map(({ id }) => id as string));
-      };
-    },
-    [draw, features, isMapLoaded],
-  );
+    return () => {
+      map.off("draw.update", handleDrawEvent);
+      map.off("draw.delete", handleDrawEvent);
+    };
+  }, [features, map, onDeleteFeatures, onUpdateFeatures]);
+
+  useEffect(() => {
+    if (!isMapLoaded) return;
+
+    features.forEach(draw.add);
+    return () => {
+      draw.delete(features.map(({ id }) => id as string));
+    };
+  }, [draw, features, isMapLoaded]);
 
   return { startDrawing, features };
 };

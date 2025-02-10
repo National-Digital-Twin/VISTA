@@ -1,4 +1,4 @@
-import { Marker } from "react-map-gl";
+import { Marker } from "react-map-gl/maplibre";
 import { useTideData } from "./useTideData";
 import useHydroTidesWeatherStore from "@/components/DetailsPanel/useHydroTidesWeatherStore";
 import { TideStation } from "@/api/tides";

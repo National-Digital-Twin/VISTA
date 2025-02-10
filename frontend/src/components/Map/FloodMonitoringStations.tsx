@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Marker, Popup, Source } from "react-map-gl";
+import { Marker, Popup, Source } from "react-map-gl/maplibre";
 import type { MapboxGeoJSONFeature } from "react-map-gl";
 
 import { FEATURE_COLLECTION, GEOJSON } from "./ParalogMap";
