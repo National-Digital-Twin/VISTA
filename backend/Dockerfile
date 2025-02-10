@@ -1,5 +1,8 @@
 FROM python:3.12 AS base
 
+# Create a non-root user and group
+RUN groupadd -r appuser && useradd -r -g appuser appuser
+
 # build and load all requirements
 FROM base AS builder
 WORKDIR /paralog-python-api/core
@@ -35,6 +38,12 @@ RUN apt-get update && apt-get -y install bash  && rm -rf /var/lib/apt/lists/*
 COPY /paralog-python-api/core .
 
 COPY ./entrypoint.sh .
+
+# Change ownership of necessary files and directories to the non-root user
+RUN chown -R appuser:appuser /paralog-python-api/core /venv ./entrypoint.sh
+
+# Switch to the non-root user
+USER appuser
 
 EXPOSE 8000
 ENTRYPOINT ["/venv/bin/gunicorn", "--config=python:core.gunicorn"]

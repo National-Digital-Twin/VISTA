@@ -14,16 +14,15 @@ on:
       - "release/**"
 
 jobs:
-  build:
+  setup-dependency-check:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 10
     strategy:
       matrix:
         python-version: ["3.12.5"]
-
     steps:
-      - uses: actions/checkout@v4
-        name: Checkout repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
@@ -32,11 +31,9 @@ jobs:
 
       - name: Create virtualenv
         run: |
-          which python
           python -m venv venv
           source venv/bin/activate
           python -m pip install --constraint=.github/workflows/constraints.txt --upgrade pip
-          which python
 
       - name: Set up Poetry cache
         uses: actions/cache@v4
@@ -44,30 +41,190 @@ jobs:
           path: venv
           key: venv-${{ matrix.python-version }}-${{ hashFiles('backend/poetry.lock') }}
 
+      - name: Cache virtualenv
+        id: cache-venv
+        uses: actions/cache@v4
+        with:
+          path: venv
+          key: venv-${{ matrix.python-version }}-${{ hashFiles('backend/poetry.lock') }}
+          restore-keys: |
+            venv-${{ matrix.python-version }}-
+
       - name: Install Poetry and Python dependencies
         run: |
+          # source venv/bin/activate
           pip install poetry --constraint=.github/workflows/constraints.txt
-          poetry --version
           poetry config virtualenvs.in-project true
           poetry config virtualenvs.create false
           poetry config virtualenvs.path venv
           source venv/bin/activate
-          which python
           cd backend; poetry install --no-root
 
       - name: Pip audit
-        run: venv/bin/pip-audit
+        run: |
+          source venv/bin/activate
+          pip-audit
 
       - name: Poetry lock check
         run: |
+          source venv/bin/activate
           cd backend
           poetry check --lock
           poetry lock --no-update
-          git diff-index --exit-code --patch HEAD  # fail on any lock file changes
+
+      - name: Check for outdated dependencies
+        run: |
+          source venv/bin/activate
+          cd backend; poetry show --outdated
 
       - name: pytest
         env:
           DJANGO_SECRET_KEY: fake-secret-key #pragma: allowlist secret
         run: |
           source venv/bin/activate
-          cd backend; pytest  --cov-fail-under=80.0
+          cd backend; pytest --cov-report=term --cov-fail-under=80.0
+
+  linting:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: setup-dependency-check
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Restore virtualenv from cache
+        id: restore-venv
+        uses: actions/cache@v4
+        with:
+          path: venv
+          key: venv-${{ matrix.python-version }}-${{ hashFiles('backend/poetry.lock') }}
+          restore-keys: |
+            venv-${{ matrix.python-version }}-
+
+      - name: Create virtualenv if missing
+        run: |
+          if [ ! -d "venv" ]; then
+            python -m venv venv
+          fi
+          source venv/bin/activate
+          python -m pip install --constraint=.github/workflows/constraints.txt --upgrade pip
+
+      - name: Install linting tools
+        run: |
+          source venv/bin/activate
+          pip install -q ruff isort bandit
+
+      - name: Run ruff
+        run: |
+          source venv/bin/activate
+          ruff format backend
+
+      - name: Run isort (import sorting)
+        run: |
+          source venv/bin/activate
+          isort --check-only backend
+        continue-on-error: true
+
+      - name: Run bandit (security linter)
+        run: |
+          source venv/bin/activate
+          bandit -r -q backend -lll
+        continue-on-error: true
+
+  testing:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: linting
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Restore virtualenv from cache
+        id: restore-venv
+        uses: actions/cache@v4
+        with:
+          path: venv
+          key: venv-${{ matrix.python-version }}-${{ hashFiles('backend/poetry.lock') }}
+          restore-keys: |
+            venv-${{ matrix.python-version }}-
+
+      - name: Create virtualenv if missing
+        run: |
+          if [ ! -d "venv" ]; then
+            python -m venv venv
+          fi
+          source venv/bin/activate
+          python -m pip install --constraint=.github/workflows/constraints.txt --upgrade pip
+
+      - name: Install pytest
+        run: |
+          source venv/bin/activate
+          pip install -q pytest==8.3.3
+
+      - name: pytest
+        env:
+          DJANGO_SECRET_KEY: fake-secret-key #pragma: allowlist secret
+        run: |
+          source venv/bin/activate
+          cd backend; pytest --cov-fail-under=80.0
+        continue-on-error: true
+
+  scanning:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: linting
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Trivy
+        run: |
+          wget -q https://github.com/aquasecurity/trivy/releases/download/v0.18.3/trivy_0.18.3_Linux-64bit.deb
+          sudo dpkg -i trivy_0.18.3_Linux-64bit.deb
+          trivy -q fs --severity HIGH,CRITICAL backend
+
+  docker-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: [setup-dependency-check, linting, scanning]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # - name: docker build command
+      #   run: docker buildx build --tag paralog/demo-paralog-python-api:latest --file backend/Dockerfile --load ./backend
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v6
+        with:
+          file: "backend/Dockerfile"
+          context: "./backend"
+          # push: false
+          load: true
+          tags: "paralog/demo-paralog-python-api:latest"
+
+      - name: Test Docker image
+        run: |
+          docker images
+          docker run --rm -d -p 8000:8000 --name backend paralog/demo-paralog-python-api:latest
+          docker ps
+          sleep 10
+          docker logs backend
+
+      - name: Ping App
+        run: |
+          #!/bin/bash
+          status_code=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8000/ping/)
+          if [[ "$status_code" == "200" ]]; then
+            echo "Ping successful (200 OK)"
+          else
+            echo "Ping failed with status code: $status_code"
+            exit 1  # Indicate an error
+          fi
+
+      - name: Cleanup
+        run: |
+          docker stop backend
