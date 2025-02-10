@@ -1,0 +1,37 @@
+resources:
+  - ../../base
+
+namespace: paralog-pro
+patches:
+  - path: patches/gateway.yaml
+    target:
+      kind: Gateway
+  - path: patches/allow-ingress.yaml
+    target:
+      kind: AuthorizationPolicy
+  - path: patches/requestAuthentication.yaml
+    target:
+      kind: RequestAuthentication
+      name: cognito-authentication-request
+  - path: patches/virtualService.yaml
+    target:
+      kind: VirtualService
+      name: paralog-transparent-proxy
+  - path: patches/service-account.yaml
+    target:
+      kind: ServiceAccount
+      name: paralog-transparent-proxy-sa
+
+
+
+labels:
+  - pairs:
+      env: demo
+
+
+images:
+  - name: paralog-transparent-proxy-image
+    newName: 503561419905.dkr.ecr.eu-west-2.amazonaws.com/paralog/demo-transparent-proxy
+    newTag: 'latest'
+
+
