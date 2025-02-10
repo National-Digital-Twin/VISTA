@@ -63,7 +63,7 @@ jobs:
       - name: PIP AUDIT
         run: |
           source venv/bin/activate
-          pip-audit
+          pip-audit >> $GITHUB_STEP_SUMMARY
 
       - name: POETRY LOCK CHECK
         run: |
@@ -76,7 +76,7 @@ jobs:
         run: |
           source venv/bin/activate
           cd backend
-          poetry show --outdated
+          poetry show --outdated  >> $GITHUB_STEP_SUMMARY
 
   linting:
     name: Code Linting
@@ -111,18 +111,18 @@ jobs:
       - name: Run RUFF
         run: |
           source venv/bin/activate
-          ruff format backend
+          ruff format backend  >> $GITHUB_STEP_SUMMARY
 
       - name: Run ISORT (import sorting)
         run: |
           source venv/bin/activate
-          isort --check-only backend
+          isort --check-only backend  >> $GITHUB_STEP_SUMMARY
         continue-on-error: true
 
       - name: Run BANDIT (security linter)
         run: |
           source venv/bin/activate
-          bandit -r -q backend -lll
+          bandit -r -q backend -lll  >> $GITHUB_STEP_SUMMARY
 
   testing:
     name: Unit Testing
@@ -181,7 +181,7 @@ jobs:
         run: |
           source venv/bin/activate
           cd backend
-          pytest --cov-fail-under=80.0
+          pytest --cov-fail-under=80.0  >> $GITHUB_STEP_SUMMARY
         continue-on-error: true
 
   security-scanning:
@@ -200,7 +200,7 @@ jobs:
 
       - name: Run Trivy Scan
         run: |
-          trivy -q fs --severity HIGH,CRITICAL backend
+          trivy -q fs --severity HIGH,CRITICAL backend  >> $GITHUB_STEP_SUMMARY
 
   docker-build-test:
     name: Docker Build & Test
@@ -224,20 +224,20 @@ jobs:
 
       - name: Run Docker image
         run: |
-          docker images
+          docker images  >> $GITHUB_STEP_SUMMARY
           docker run --rm -d -p 8000:8000 --name backend paralog/demo-paralog-python-api:latest
-          docker ps
+          docker ps  >> $GITHUB_STEP_SUMMARY
           sleep 10
-          docker logs backend
+          docker logs backend  >> $GITHUB_STEP_SUMMARY
 
       - name: Ping App
         run: |
           #!/bin/bash
           status_code=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8000/ping/)
           if [[ "$status_code" == "200" ]]; then
-            echo "Ping successful (200 OK)"
+            echo "Ping successful (200 OK)"  >> $GITHUB_STEP_SUMMARY
           else
-            echo "Ping failed with status code: $status_code"
+            echo "Ping failed with status code: $status_code"  >> $GITHUB_STEP_SUMMARY
             exit 1  # Indicate an error
           fi
 
