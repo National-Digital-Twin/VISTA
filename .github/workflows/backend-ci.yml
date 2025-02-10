@@ -12,6 +12,7 @@ on:
       - develop
       - main
       - "release/**"
+  workflow_dispatch:
 
 jobs:
   setup-dependency-check:
