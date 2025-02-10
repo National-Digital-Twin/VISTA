@@ -1,4 +1,4 @@
-name: Backend CI
+name: Backend CI on PR
 
 on:
   workflow_call:
@@ -7,11 +7,6 @@ on:
       - "backend/**"
       - ".github/workflows/backend-ci.yml"
       - ".github/workflows/constraints.txt"
-  push:
-    branches:
-      - develop
-      - main
-      - "release/**"
   workflow_dispatch:
 
 jobs:
@@ -40,8 +35,7 @@ jobs:
           restore-keys: |
             venv-${{ matrix.python-version }}-
 
-      - name: Create virtualenv (if not cached)
-        if: steps.venv-cache.outcome!= 'restored'
+      - name: Create virtualenv
         run: |
           python -m venv venv
           source venv/bin/activate
@@ -54,7 +48,6 @@ jobs:
           pip install poetry --constraint=.github/workflows/constraints.txt
 
       - name: Configure Poetry
-        if: steps.venv-cache.outcome!= 'restored'
         run: |
           source venv/bin/activate
           poetry config virtualenvs.in-project true
@@ -62,44 +55,28 @@ jobs:
           poetry config virtualenvs.path venv
 
       - name: Install Python Dependencies
-        if: steps.venv-cache.outcome!= 'restored'
         run: |
           source venv/bin/activate
           cd backend
           poetry install --no-root
 
-      - name: Install Testing Dependencies
-        if: steps.venv-cache.outcome!= 'restored'
+      - name: PIP AUDIT
         run: |
           source venv/bin/activate
-          pip install pytest==8.3.3 pytest-cov==5.0.0
+          pip-audit
 
-      # - name: PIP AUDIT
-      #   run: |
-      #     source venv/bin/activate
-      #     pip-audit
-
-      # - name: POETRY LOCK CHECK
-      #   run: |
-      #     source venv/bin/activate
-      #     cd backend
-      #     poetry check --lock
-      #     poetry lock --no-update
-
-      # - name: Check for Outdated Dependencies
-      #   run: |
-      #     source venv/bin/activate
-      #     cd backend
-      #     poetry show --outdated
-
-      - name: PYTEST
-        env:
-          DJANGO_SECRET_KEY: fake-secret-key #pragma: allowlist secret
+      - name: POETRY LOCK CHECK
         run: |
           source venv/bin/activate
           cd backend
-          pytest --cov-fail-under=80.0
-        continue-on-error: true
+          poetry check --lock
+          poetry lock --no-update
+
+      - name: Check for Outdated Dependencies
+        run: |
+          source venv/bin/activate
+          cd backend
+          poetry show --outdated
 
   linting:
     name: Code Linting
@@ -127,7 +104,6 @@ jobs:
           python -m pip install --constraint=.github/workflows/constraints.txt --upgrade pip
 
       - name: Install linting tools
-        if: steps.restore-venv.outcome!= 'restored'
         run: |
           source venv/bin/activate
           pip install -q ruff isort bandit
@@ -149,32 +125,63 @@ jobs:
           bandit -r -q backend -lll
 
   testing:
-    name: Testing
+    name: Unit Testing
     runs-on: ubuntu-latest
-    timeout-minutes: 10
     needs: dependencies
+    timeout-minutes: 10
+    strategy:
+      matrix:
+        python-version: ["3.12.5"]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Restore virtualenv from cache
-        id: restore-venv
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Set up Virtual Environment
+        id: venv-cache
         uses: actions/cache@v4
         with:
           path: venv
-          key: venv-${{ matrix.python-version }}-${{ hashFiles('backend/poetry.lock', '.github/workflows/constraints.txt') }} #Consistent key
+          key: venv-${{ matrix.python-version }}-${{ hashFiles('backend/poetry.lock', '.github/workflows/constraints.txt') }}
           restore-keys: |
             venv-${{ matrix.python-version }}-
 
-      - name: Activate Virtual Environment
-        run: source venv/bin/activate
+      - name: Create virtualenv
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+          python -m pip install --constraint=.github/workflows/constraints.txt --upgrade pip
 
-      - name: pytest
+      - name: Install Poetry
+        if: steps.venv-cache.outcome!= 'restored'
+        run: |
+          source venv/bin/activate
+          pip install poetry --constraint=.github/workflows/constraints.txt
+
+      - name: Configure Poetry
+        run: |
+          source venv/bin/activate
+          poetry config virtualenvs.in-project true
+          poetry config virtualenvs.create false
+          poetry config virtualenvs.path venv
+
+      - name: Install Python Dependencies
+        run: |
+          source venv/bin/activate
+          cd backend
+          poetry install --no-root
+
+      - name: PYTEST
         env:
           DJANGO_SECRET_KEY: fake-secret-key #pragma: allowlist secret
         run: |
           source venv/bin/activate
-          cd backend; pytest --cov-fail-under=80.0
+          cd backend
+          pytest --cov-fail-under=80.0
         continue-on-error: true
 
   security-scanning:
@@ -195,8 +202,8 @@ jobs:
         run: |
           trivy -q fs --severity HIGH,CRITICAL backend
 
-  docker-build:
-    name: Docker Build
+  docker-build-test:
+    name: Docker Build & Test
     runs-on: ubuntu-latest
     timeout-minutes: 10
     needs: [dependencies, linting, security-scanning, testing]
@@ -214,15 +221,6 @@ jobs:
           context: "./backend"
           load: true
           tags: "paralog/demo-paralog-python-api:latest"
-
-  docker-test:
-    name: Docker Test
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    needs: docker-build
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
 
       - name: Run Docker image
         run: |

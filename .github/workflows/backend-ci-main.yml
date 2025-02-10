@@ -1,0 +1,95 @@
+name: Backend CI on PR merge
+
+on:
+  push:
+    branches:
+      - develop
+      - main
+      - "release/**"
+  workflow_dispatch:
+    inputs:
+      major:
+        description: "Major version (default: 1)"
+        required: false
+        default: "1"
+        type: string
+      minor:
+        description: "Minor version (default: 0)"
+        required: false
+        default: "0"
+        type: string
+
+jobs:
+  versioning:
+    name: Semantic Versioning
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.generate-version.outputs.version }}
+    steps:
+      - name: Generate Patch Version (Timestamp)
+        id: generate-patch
+        run: |
+          PATCH=$(date -u +"%Y%m%d%H%M%S")
+          echo "patch_version=${PATCH}" >> $GITHUB_OUTPUT
+
+      - name: Generate Full Semantic Version
+        id: generate-version
+        run: |
+          MAJOR=${{ inputs.major || '1' }}
+          MINOR=${{ inputs.minor || '0' }}
+          PATCH=${{ steps.generate-patch.outputs.patch_version }}
+          echo "version=${MAJOR}.${MINOR}.${PATCH}" >> $GITHUB_OUTPUT
+
+      - name: Print Version
+        run: |
+          echo "Generated Version: ${{ steps.generate-version.outputs.version }}"
+
+  trigger-backend-ci:
+    uses: ./.github/workflows/backend-ci-pr.yml
+
+  docker-build-push:
+    name: Docker Build & Push
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: [versioning, trigger-backend-ci]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::503561419905:role/ecs-access-for-github
+          aws-region: "eu-west-2"
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v6
+        with:
+          file: "backend/Dockerfile"
+          context: "./backend"
+          push: true
+          tags: |
+            paralog/demo-paralog-python-api:${{ needs.versioning.outputs.version }}
+            503561419905.dkr.ecr.eu-west-2.amazonaws.com/paralog/demo-paralog-python-api:${{ needs.versioning.outputs.version }}
+
+  tag-repository:
+    name: Tag Repository
+    runs-on: ubuntu-latest
+    needs: docker-build-push
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create Git Tag
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git tag ${{ needs.versioning.outputs.version }}
+          git push origin ${{ needs.versioning.outputs.version }}
