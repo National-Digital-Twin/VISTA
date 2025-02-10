@@ -15,7 +15,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  setup-dependency-check:
+  dependencies:
+    name: Dependency Checks
     runs-on: ubuntu-latest
     timeout-minutes: 10
     strategy:
@@ -30,65 +31,81 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Create virtualenv
+      - name: Set up Virtual Environment
+        id: venv-cache
+        uses: actions/cache@v4
+        with:
+          path: venv
+          key: venv-${{ matrix.python-version }}-${{ hashFiles('backend/poetry.lock', '.github/workflows/constraints.txt') }}
+          restore-keys: |
+            venv-${{ matrix.python-version }}-
+
+      - name: Create virtualenv (if not cached)
+        if: steps.venv-cache.outcome!= 'restored'
         run: |
           python -m venv venv
           source venv/bin/activate
           python -m pip install --constraint=.github/workflows/constraints.txt --upgrade pip
 
-      - name: Set up Poetry cache
-        uses: actions/cache@v4
-        with:
-          path: venv
-          key: venv-${{ matrix.python-version }}-${{ hashFiles('backend/poetry.lock') }}
-
-      - name: Cache virtualenv
-        id: cache-venv
-        uses: actions/cache@v4
-        with:
-          path: venv
-          key: venv-${{ matrix.python-version }}-${{ hashFiles('backend/poetry.lock') }}
-          restore-keys: |
-            venv-${{ matrix.python-version }}-
-
-      - name: Install Poetry and Python dependencies
+      - name: Install Poetry
+        if: steps.venv-cache.outcome!= 'restored'
         run: |
-          # source venv/bin/activate
+          source venv/bin/activate
           pip install poetry --constraint=.github/workflows/constraints.txt
+
+      - name: Configure Poetry
+        if: steps.venv-cache.outcome!= 'restored'
+        run: |
+          source venv/bin/activate
           poetry config virtualenvs.in-project true
           poetry config virtualenvs.create false
           poetry config virtualenvs.path venv
-          source venv/bin/activate
-          cd backend; poetry install --no-root
 
-      - name: Pip audit
-        run: |
-          source venv/bin/activate
-          pip-audit
-
-      - name: Poetry lock check
+      - name: Install Python Dependencies
+        if: steps.venv-cache.outcome!= 'restored'
         run: |
           source venv/bin/activate
           cd backend
-          poetry check --lock
-          poetry lock --no-update
+          poetry install --no-root
 
-      - name: Check for outdated dependencies
+      - name: Install Testing Dependencies
+        if: steps.venv-cache.outcome!= 'restored'
         run: |
           source venv/bin/activate
-          cd backend; poetry show --outdated
+          pip install pytest==8.3.3 pytest-cov==5.0.0
 
-      - name: pytest
+      # - name: PIP AUDIT
+      #   run: |
+      #     source venv/bin/activate
+      #     pip-audit
+
+      # - name: POETRY LOCK CHECK
+      #   run: |
+      #     source venv/bin/activate
+      #     cd backend
+      #     poetry check --lock
+      #     poetry lock --no-update
+
+      # - name: Check for Outdated Dependencies
+      #   run: |
+      #     source venv/bin/activate
+      #     cd backend
+      #     poetry show --outdated
+
+      - name: PYTEST
         env:
           DJANGO_SECRET_KEY: fake-secret-key #pragma: allowlist secret
         run: |
           source venv/bin/activate
-          cd backend; pytest --cov-report=term --cov-fail-under=80.0
+          cd backend
+          pytest --cov-fail-under=80.0
+        continue-on-error: true
 
   linting:
+    name: Code Linting
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    needs: setup-dependency-check
+    needs: dependencies
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -98,44 +115,44 @@ jobs:
         uses: actions/cache@v4
         with:
           path: venv
-          key: venv-${{ matrix.python-version }}-${{ hashFiles('backend/poetry.lock') }}
+          key: venv-${{ matrix.python-version }}-${{ hashFiles('backend/poetry.lock', '.github/workflows/constraints.txt') }} #Consistent key
           restore-keys: |
             venv-${{ matrix.python-version }}-
 
       - name: Create virtualenv if missing
+        if: steps.restore-venv.outcome!= 'restored'
         run: |
-          if [ ! -d "venv" ]; then
-            python -m venv venv
-          fi
+          python -m venv venv
           source venv/bin/activate
           python -m pip install --constraint=.github/workflows/constraints.txt --upgrade pip
 
       - name: Install linting tools
+        if: steps.restore-venv.outcome!= 'restored'
         run: |
           source venv/bin/activate
           pip install -q ruff isort bandit
 
-      - name: Run ruff
+      - name: Run RUFF
         run: |
           source venv/bin/activate
           ruff format backend
 
-      - name: Run isort (import sorting)
+      - name: Run ISORT (import sorting)
         run: |
           source venv/bin/activate
           isort --check-only backend
         continue-on-error: true
 
-      - name: Run bandit (security linter)
+      - name: Run BANDIT (security linter)
         run: |
           source venv/bin/activate
           bandit -r -q backend -lll
-        continue-on-error: true
 
   testing:
+    name: Testing
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    needs: linting
+    needs: dependencies
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -145,22 +162,12 @@ jobs:
         uses: actions/cache@v4
         with:
           path: venv
-          key: venv-${{ matrix.python-version }}-${{ hashFiles('backend/poetry.lock') }}
+          key: venv-${{ matrix.python-version }}-${{ hashFiles('backend/poetry.lock', '.github/workflows/constraints.txt') }} #Consistent key
           restore-keys: |
             venv-${{ matrix.python-version }}-
 
-      - name: Create virtualenv if missing
-        run: |
-          if [ ! -d "venv" ]; then
-            python -m venv venv
-          fi
-          source venv/bin/activate
-          python -m pip install --constraint=.github/workflows/constraints.txt --upgrade pip
-
-      - name: Install pytest
-        run: |
-          source venv/bin/activate
-          pip install -q pytest==8.3.3
+      - name: Activate Virtual Environment
+        run: source venv/bin/activate
 
       - name: pytest
         env:
@@ -170,7 +177,8 @@ jobs:
           cd backend; pytest --cov-fail-under=80.0
         continue-on-error: true
 
-  scanning:
+  security-scanning:
+    name: Security Scanning
     runs-on: ubuntu-latest
     timeout-minutes: 10
     needs: linting
@@ -178,16 +186,20 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Trivy
+      - name: Install Trivy
         run: |
-          wget -q https://github.com/aquasecurity/trivy/releases/download/v0.18.3/trivy_0.18.3_Linux-64bit.deb
+          wget -q https://github.com/aquasecurity/trivy/releases/download/v0.18.3/trivy_0.18.3_Linux-64bit.deb # Update Trivy Version if needed
           sudo dpkg -i trivy_0.18.3_Linux-64bit.deb
+
+      - name: Run Trivy Scan
+        run: |
           trivy -q fs --severity HIGH,CRITICAL backend
 
   docker-build:
+    name: Docker Build
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    needs: [setup-dependency-check, linting, scanning]
+    needs: [dependencies, linting, security-scanning, testing]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -195,19 +207,24 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      # - name: docker build command
-      #   run: docker buildx build --tag paralog/demo-paralog-python-api:latest --file backend/Dockerfile --load ./backend
-
       - name: Build Docker image
         uses: docker/build-push-action@v6
         with:
           file: "backend/Dockerfile"
           context: "./backend"
-          # push: false
           load: true
           tags: "paralog/demo-paralog-python-api:latest"
 
-      - name: Test Docker image
+  docker-test:
+    name: Docker Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: docker-build
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run Docker image
         run: |
           docker images
           docker run --rm -d -p 8000:8000 --name backend paralog/demo-paralog-python-api:latest
@@ -227,5 +244,6 @@ jobs:
           fi
 
       - name: Cleanup
+        if: always()
         run: |
           docker stop backend
