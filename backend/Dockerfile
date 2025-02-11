@@ -8,8 +8,8 @@ FROM base AS builder
 WORKDIR /paralog-python-api/core
 
 # upgrade pip to the latest version
-RUN apt-get update \
-    && apt-get install -y build-essential libstdc++6 libgdal-dev gdal-bin linux-libc-dev=6.1.128-1 \
+RUN apt-get update && apt-get upgrade -y \
+    && apt-get install -y build-essential libstdc++6 libgdal-dev gdal-bin \
     && rm -rf /var/lib/apt/lists/*
 
 # Set environment variables for GDAL
