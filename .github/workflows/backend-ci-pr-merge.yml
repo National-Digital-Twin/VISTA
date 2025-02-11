@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - develop
-      - main
-      - "release/**"
   workflow_dispatch:
     inputs:
       major:
@@ -74,10 +72,15 @@ jobs:
         with:
           file: "backend/Dockerfile"
           context: "./backend"
+          load: true
           push: true
           tags: |
             paralog/demo-paralog-python-api:${{ needs.versioning.outputs.version }}
             503561419905.dkr.ecr.eu-west-2.amazonaws.com/paralog/demo-paralog-python-api:${{ needs.versioning.outputs.version }}
+
+      - name: Run Docker image
+        run: |
+          docker images
 
   tag-repository:
     name: Tag Repository

@@ -5,7 +5,8 @@ on:
   pull_request:
     paths:
       - "backend/**"
-      - ".github/workflows/backend-ci.yml"
+      - ".github/workflows/backend-ci-pr.yml"
+      - ".github/workflows/backend-ci-pr-merge.yml"
       - ".github/workflows/constraints.txt"
   workflow_dispatch:
 
@@ -247,6 +248,16 @@ jobs:
             echo "Ping failed with status code: $status_code"  >> $GITHUB_STEP_SUMMARY
             exit 1  # Indicate an error
           fi
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: "paralog/demo-paralog-python-api:latest"
+          format: "table"
+          exit-code: "1"
+          ignore-unfixed: true
+          vuln-type: "os,library"
+          severity: "CRITICAL,HIGH"
 
       - name: Cleanup
         if: always()
