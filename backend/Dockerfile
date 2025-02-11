@@ -32,7 +32,7 @@ WORKDIR /paralog-python-api/core
 COPY --from=builder /venv /venv
 
 # bash is installed for more convenient debugging.
-RUN apt-get update && apt-get -y install bash  && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get upgrade -y && apt-get -y install bash linux-libc-dev=6.1.128-1 && rm -rf /var/lib/apt/lists/*
 
 # copy payload code only
 COPY /paralog-python-api/core .
