@@ -210,10 +210,10 @@ jobs:
         run: |
           trivy fs --severity HIGH,CRITICAL backend  >> $GITHUB_STEP_SUMMARY
 
-  docker-build-test:
-    name: Docker Build & Test
+  docker-build-test-scan:
+    name: Docker Build, Test & Scan
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
     needs: [dependencies, linting, security-scanning, testing]
     steps:
       - name: Checkout repository
