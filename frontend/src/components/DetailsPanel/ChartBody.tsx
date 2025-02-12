@@ -29,7 +29,7 @@ const CustomTooltip = ({
   param,
   unit,
 }: CustomTooltipProps) => {
-  if (active && payload && payload.length) {
+  if (active && payload?.length) {
     return (
       <div className={styles.tooltip}>
         <p className={styles.tooltipLabel}>{labelFormatter(label)}</p>

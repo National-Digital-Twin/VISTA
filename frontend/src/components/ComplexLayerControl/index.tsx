@@ -10,13 +10,13 @@ import styles from "./style.module.css";
 
 export interface ComplexLayerControlProps {
   /** Icon for the layer */
-  icon: IconProp;
+  readonly icon: IconProp;
   /** Title of the layer */
-  title: string;
+  readonly title: string;
   /** Children */
-  children: ReactNode;
+  readonly children: ReactNode;
   /** Automatic show and hide for search */
-  autoShowHide?: boolean;
+  readonly autoShowHide?: boolean;
 }
 
 export default function ComplexLayerControl({

@@ -28,7 +28,7 @@ export interface AccountInfo {
 
 /** Dummy authenticator (relevant for local development) */
 class DummyAuthProvider implements AuthProvider {
-  #account: AccountInfo | null;
+  readonly #account: AccountInfo | null;
 
   constructor(account: AccountInfo | null) {
     this.#account = account;
@@ -72,9 +72,9 @@ class DummyAuthProvider implements AuthProvider {
 
 class KeyAuthProvider implements AuthProvider {
   #bearerToken: string | null = null;
-  #observers: Set<() => void> = new Set();
-  #testURI: string;
-  #accountInfo: AccountInfo | null = null;
+  readonly #observers: Set<() => void> = new Set();
+  readonly #testURI: string;
+  readonly #accountInfo: AccountInfo | null = null;
 
   constructor(testURI: string) {
     this.#testURI = testURI;

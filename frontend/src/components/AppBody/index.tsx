@@ -8,7 +8,7 @@ const AppBodyLoadedContents = lazy(() => import("./AppBodyLoadedContents"));
 
 export interface AppBodyProps {
   /** Additional classes to add to the top-level element */
-  className?: string;
+  readonly className?: string;
 }
 
 /** Body of the Paralog app, everything below the header */
