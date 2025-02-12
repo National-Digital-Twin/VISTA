@@ -88,11 +88,8 @@ jobs:
           load: true
           push: true
           tags: |
-            paralog/demo-paralog-python-api:${{ env.VERSION }}
             503561419905.dkr.ecr.eu-west-2.amazonaws.com/paralog/demo-paralog-python-api:${{ env.VERSION }}
-            paralog/demo-paralog-python-api:${{ github.sha }}
             503561419905.dkr.ecr.eu-west-2.amazonaws.com/paralog/demo-paralog-python-api:${{ github.sha }}
-            paralog/demo-paralog-python-api:latest
             503561419905.dkr.ecr.eu-west-2.amazonaws.com/paralog/demo-paralog-python-api:latest
 
       - name: Verify Docker Image
