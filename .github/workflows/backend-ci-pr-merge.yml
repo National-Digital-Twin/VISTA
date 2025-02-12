@@ -45,7 +45,8 @@ jobs:
           echo "version=${VERSION}" >> $GITHUB_OUTPUT  # Ensure output is set correctly
 
       - name: Print Generated Version
-        run: echo "Generated Version: ${{ env.VERSION }}"
+        run: |
+          echo "Generated Version: ${{ env.VERSION }}"
 
   trigger-backend-ci:
     uses: ./.github/workflows/backend-ci-pr.yml
@@ -76,7 +77,8 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Debug Version Output
-        run: echo "Version used for tagging: $VERSION"
+        run: |
+          echo "Version used for tagging: $VERSION"
 
       - name: Build & Push Docker image
         uses: docker/build-push-action@v6
