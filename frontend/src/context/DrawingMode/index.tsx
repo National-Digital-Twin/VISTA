@@ -28,13 +28,13 @@ import useSharedStore, { State } from "@/hooks/useSharedStore";
 
 export interface DrawingModeContextProviderProps {
   /** Children */
-  children: React.ReactNode;
+  readonly children: React.ReactNode;
 }
 
 interface DrawingModeContextValue {
   /** The draw instance */
-  draw: MapboxDraw;
-  isMapLoaded: boolean;
+  readonly draw: MapboxDraw;
+  readonly isMapLoaded: boolean;
 }
 
 const DrawingModeContext = createContext<DrawingModeContextValue | null>(null);
@@ -156,13 +156,10 @@ export const useDrawingMode = <T extends Feature>(
         map.off("draw.modechange", handleModeChange);
       };
 
-      switch (drawingMode) {
-        case "draw_circle":
-          draw.changeMode(drawingMode, options);
-          break;
-        default:
-          draw.changeMode(drawingMode as "draw_polygon");
-          break;
+      if (drawingMode === "draw_circle") {
+        draw.changeMode(drawingMode, options);
+      } else {
+        draw.changeMode(drawingMode as "draw_polygon");
       }
 
       map.on("draw.create", handleDrawCreateEvent);
@@ -171,36 +168,38 @@ export const useDrawingMode = <T extends Feature>(
     [draw, map, onAddFeatures],
   );
 
-  useEffect(
-    function registerUpdateAndDeleteEventHandlers() {
-      const handleDrawEvent = (event: DrawUpdateEvent | DrawDeleteEvent) => {
-        const relevantFeatures = event.features.filter((eventFeature) =>
-          features.find((feature) => eventFeature.id === feature.id),
-        );
-        if (relevantFeatures.length > 0) {
-          switch (event.type) {
-            case "draw.update":
-              onUpdateFeatures(relevantFeatures);
-              break;
-            case "draw.delete":
-              onDeleteFeatures(relevantFeatures.map(({ id }) => id));
-              break;
-            default:
-              console.warn("Unhandled event:", event);
-          }
-        }
-      };
+  useEffect(() => {
+    const getRelevantFeatures = (event: DrawUpdateEvent | DrawDeleteEvent) =>
+      event.features.filter((eventFeature) =>
+        features.some((feature) => eventFeature.id === feature.id)
+      );
 
-      map.on("draw.update", handleDrawEvent);
-      map.on("draw.delete", handleDrawEvent);
+    const handleDrawEvent = (event: DrawUpdateEvent | DrawDeleteEvent) => {
+      const relevantFeatures = getRelevantFeatures(event);
+      if (relevantFeatures.length === 0) return;
 
-      return () => {
-        map.off("draw.update", handleDrawEvent);
-        map.off("draw.delete", handleDrawEvent);
-      };
-    },
-    [features, map, onDeleteFeatures, onUpdateFeatures],
-  );
+      processDrawEvent(event, relevantFeatures);
+    };
+
+    const processDrawEvent = (event: DrawUpdateEvent | DrawDeleteEvent, relevantFeatures: any[]) => {
+      if (event.type === "draw.update") {
+        onUpdateFeatures(relevantFeatures);
+      } else if (event.type === "draw.delete") {
+        onDeleteFeatures(relevantFeatures.map(({ id }) => id));
+      } else {
+        console.warn("Unhandled event:", event);
+      }
+    };
+
+    map.on("draw.update", handleDrawEvent);
+    map.on("draw.delete", handleDrawEvent);
+
+    return () => {
+      map.off("draw.update", handleDrawEvent);
+      map.off("draw.delete", handleDrawEvent);
+    };
+  }, [features, map, onDeleteFeatures, onUpdateFeatures]);
+  res, map, onDeleteFeatures, onUpdateFeatures]);
 
   useEffect(
     function redraw() {

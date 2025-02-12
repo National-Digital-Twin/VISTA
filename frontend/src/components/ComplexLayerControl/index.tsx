@@ -33,7 +33,15 @@ export default function ComplexLayerControl({
       data-expanded={expanded}
       data-auto-show-hide={autoShowHide}
     >
-      <div onClick={toggle} className={styles.complexLayer}>
+      <div
+        onClick={toggle}
+        className={styles.complexLayer}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            toggle();
+          }
+        }}
+      >
         <FontAwesomeIcon icon={icon} className={styles.icon} />
         <FontAwesomeIcon
           icon={expanded ? faChevronDown : faChevronRight}

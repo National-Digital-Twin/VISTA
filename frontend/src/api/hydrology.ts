@@ -23,10 +23,6 @@ const STATION_TYPES_MAP = {
     STATION_TYPES.RiverFlow,
   "http://environment.data.gov.uk/flood-monitoring/def/core/RiverLevel":
     STATION_TYPES.RiverLevel,
-  // // NOTE the below are also present in IoW data. TODO check whether they might be included:
-  // "http://environment.data.gov.uk/flood-monitoring/def/core/Station": STATION_TYPES.Station,
-  // "http://environment.data.gov.uk/reference/def/core/SamplingLocation": STATION_TYPES.SamplingLocation,
-  // "http://environment.data.gov.uk/flood-monitoring/def/core/RiverStation": STATION_TYPES.RiverStation,
 };
 
 export interface HydrologyMeasure {

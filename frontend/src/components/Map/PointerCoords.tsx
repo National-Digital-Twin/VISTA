@@ -1,11 +1,11 @@
 export interface PointerCoordinatesProps {
   /** Whether the coördinates should be shown */
-  show: boolean;
+  readonly show: boolean;
 
   /** Decimal latitude */
-  lat: number;
+  readonly lat: number;
   /** Decimal longitude */
-  lng: number;
+  readonly lng: number;
 }
 
 export default function PointerCoordinates({

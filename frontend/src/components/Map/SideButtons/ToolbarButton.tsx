@@ -4,11 +4,11 @@ import type { IconProp } from "@fortawesome/fontawesome-svg-core";
 
 export interface ToolbarButtonProps {
   /** The title shown on hover for the button */
-  title: string;
+  readonly title: string;
   /** The FontAwesome icon to be shown (preferred) */
-  icon: IconProp;
+  readonly icon: IconProp;
   /** Action on click */
-  onClick: () => void;
+  readonly onClick: () => void;
 }
 
 export default function ToolbarButton({

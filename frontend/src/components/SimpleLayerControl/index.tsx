@@ -8,15 +8,15 @@ import useLayer from "@/hooks/useLayer";
 
 export interface SimpleLayerControlProps {
   /** Layer being controlled */
-  layerName: string;
+  readonly layerName: string;
   /** Icon for the layer */
-  icon: IconProp;
+  readonly icon: IconProp;
   /** Title of the layer */
-  title: string;
+  readonly title: string;
   /** Current search query */
-  searchQuery: string;
+  readonly searchQuery: string;
   /** Additional terms to match in search, if any */
-  terms?: string[];
+  readonly terms?: string[];
 }
 
 export default function SimpleLayerControl({
@@ -38,7 +38,15 @@ export default function SimpleLayerControl({
 
   return (
     <SearchConditional searchQuery={searchQuery} terms={fullTerms}>
-      <div onClick={toggle} className={styles.simpleLayer}>
+      <div
+        onClick={toggle}
+        className={styles.simpleLayer}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            toggle();
+          }
+        }}
+      >
         <FontAwesomeIcon icon={icon} className={styles.icon} />
         <FontAwesomeIcon
           icon={enabled ? faEye : faEyeSlash}

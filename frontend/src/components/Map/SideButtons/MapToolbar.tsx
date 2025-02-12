@@ -5,7 +5,7 @@ import { useTools } from "@/tools/useTools";
 
 export interface MapToolbarProps {
   /** Additional classes to add to the top-level element */
-  className?: string;
+  readonly className?: string;
 }
 
 function ToolSideButtons() {

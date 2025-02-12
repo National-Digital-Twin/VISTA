@@ -11,15 +11,15 @@ import styles from "./style.module.css";
 
 export interface ToolbarDropdownProps {
   /** Dropdown icon */
-  icon?: IconDefinition;
+  readonly icon?: IconDefinition;
   /** Title */
-  title: string;
+  readonly title: string;
   /** Children */
-  children:
+  readonly children:
     | React.ReactNode
     | ((props: { toggle: () => void }) => React.ReactNode);
   /** Is this a large menu? */
-  large?: boolean;
+  readonly large?: boolean;
 }
 
 export default function ToolbarDropdown({
@@ -78,10 +78,10 @@ export default function ToolbarDropdown({
 }
 
 interface ToolbarDropdownButtonProps {
-  id: string;
-  onClick: () => void;
-  icon?: IconDefinition;
-  title: string;
+  readonly id: string;
+  readonly onClick: () => void;
+  readonly icon?: IconDefinition;
+  readonly title: string;
 }
 
 function ToolbarDropdownButton({

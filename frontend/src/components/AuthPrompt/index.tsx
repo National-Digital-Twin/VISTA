@@ -9,7 +9,7 @@ export interface AuthPromptProps {
   /** Error from the last login, if any */
   readonly error?: string;
   /** How to perform a login. If missing, this is disabled */
-  onLogIn?: (key: string) => void;
+  readonly onLogIn?: (key: string) => void;
 }
 
 /** Top-level authentication prompt */
