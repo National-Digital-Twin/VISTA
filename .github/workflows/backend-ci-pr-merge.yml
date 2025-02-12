@@ -90,8 +90,8 @@ jobs:
           tags: |
             paralog/demo-paralog-python-api:${{ env.VERSION }}
             503561419905.dkr.ecr.eu-west-2.amazonaws.com/paralog/demo-paralog-python-api:${{ env.VERSION }}
-            paralog/demo-paralog-python-api:${GITHUB_SHA}
-            503561419905.dkr.ecr.eu-west-2.amazonaws.com/paralog/demo-paralog-python-api:${GITHUB_SHA}
+            paralog/demo-paralog-python-api:${{ github.sha }}
+            503561419905.dkr.ecr.eu-west-2.amazonaws.com/paralog/demo-paralog-python-api:${{ github.sha }}
             paralog/demo-paralog-python-api:latest
             503561419905.dkr.ecr.eu-west-2.amazonaws.com/paralog/demo-paralog-python-api:latest
 
@@ -112,7 +112,11 @@ jobs:
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
-          git tag "$VERSION"
-          git push origin "$VERSION"
-          git tag "${GITHUB_SHA}"
-          git push origin "${GITHUB_SHA}"
+
+          echo "Tagging commit with version: $VERSION"
+          git tag -f "$VERSION"
+          git push -f origin "$VERSION"
+
+          echo "Tagging commit with SHA: ${{ github.sha }}"
+          git tag -f "${{ github.sha }}"
+          git push -f origin "${{ github.sha }}"
