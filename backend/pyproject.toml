@@ -5,6 +5,7 @@
 name = "paralog_python_api"
 version = "2.0.1"
 description = "Provides Data to the paralog app."
+authors = ["NDTP <digitaltwins@dft.gov.uk>"]
 license = "UNLICENSED"
 classifiers = ["Private :: Do Not Upload"]
 packages = [
