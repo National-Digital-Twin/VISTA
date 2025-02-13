@@ -1,7 +1,5 @@
 # paralog-python-api
 
-[![CI](https://github.com/coefficientsystems/telicent-paralog/actions/workflows/main.yaml/badge.svg)](https://github.com/coefficientsystems/telicent-paralog/actions/workflows/main.yaml)
-
 Provides Data to the paralog app.
 
 ## Project cheatsheet

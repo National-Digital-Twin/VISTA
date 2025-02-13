@@ -5,7 +5,6 @@
 name = "paralog_python_api"
 version = "2.0.1"
 description = "Provides Data to the paralog app."
-authors = ["Jamie Coombes <jamie@coefficient.ai>"]
 license = "UNLICENSED"
 classifiers = ["Private :: Do Not Upload"]
 packages = [
@@ -149,7 +148,7 @@ filename = "CHANGELOG.md"
 directory = ".changelog/"
 template = ".changelog/template.md"
 title_format = "## [{version}] - {project_date}"
-issue_format = "[#{issue}](https://github.com/coefficientsystems/telicent-paralog{issue})"
+issue_format = "[#{issue}](https://github.com/national-digital-twin/Paralog/issues/{issue})"
 start_string = "<!-- TOWNCRIER -->\n"
 underlines = ["", ""]
 
