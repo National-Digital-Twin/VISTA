@@ -3,15 +3,15 @@ import { fetchWeatherStation, WeatherStation } from "@/api/weather";
 import Chart from "@/components/DetailsPanel/Chart";
 
 export interface WeatherChartProps {
-  name: string;
-  latitude: string;
-  longitude: string;
-  className?: string;
+  readonly name: string;
+  readonly latitude: string;
+  readonly longitude: string;
+  readonly className?: string;
 }
 
 interface TimeSeriesItem {
-  time: string;
-  screenTemperature: number;
+  readonly time: string;
+  readonly screenTemperature: number;
 }
 
 export default function WeatherChart({

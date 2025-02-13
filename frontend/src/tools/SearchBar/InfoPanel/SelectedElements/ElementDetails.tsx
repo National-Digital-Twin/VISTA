@@ -15,15 +15,15 @@ import { isEmpty } from "@/utils/isEmpty";
 
 export interface ElementDefaultsProps {
   /** Element for which we're showing details */
-  element: any;
+  readonly element: any;
   /** Whether the details should be fully expanded */
-  expand?: boolean;
+  readonly expand?: boolean;
 }
 
 export default function ElementDetails({
   element,
   expand,
-}: ElementDefaultsProps) {
+}: Readonly<ElementDefaultsProps>) {
   const elemIsAsset = isAsset(element);
   const elemIsDependency = isDependency(element);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -161,8 +161,8 @@ export default function ElementDetails({
 }
 
 interface DetailsProps {
-  expand: boolean;
-  details: {
+  readonly expand: boolean;
+  readonly details: {
     id: string;
     title: string;
     criticality: number;
@@ -176,7 +176,7 @@ interface DetailsProps {
   };
 }
 
-function Details({ expand, details }: DetailsProps) {
+function Details({ expand, details }: Readonly<DetailsProps>) {
   const { id, title, criticality, type, desc, icon, elementType } = details;
 
   return (
@@ -201,7 +201,7 @@ function Details({ expand, details }: DetailsProps) {
         <>
           {icon?.icon && (
             <p className={styles.assetDetailsCriticality}>
-              <i className="fa-solid fa-triangle-exclamation" />
+            <i className="fa-solid fa-triangle-exclamation" />
               Icon styles not found
             </p>
           )}
@@ -214,10 +214,10 @@ function Details({ expand, details }: DetailsProps) {
 }
 
 interface DescriptionProps {
-  description: string;
+  readonly description: string;
 }
 
-function Description({ description }: DescriptionProps) {
+function Description({ description }: Readonly<DescriptionProps>) {
   if (!description) {
     return null;
   }

@@ -1,7 +1,6 @@
 import { Source, Layer, Marker, MarkerDragEvent } from "react-map-gl/maplibre";
 import type { LngLat } from "react-map-gl";
 import { useCallback, useEffect, useMemo } from "react";
-import type { Polygon, FeatureCollection } from "geojson";
 import { useRoadRouteSharedStore } from "./useStore";
 import useFloodExtents from "./useFloodExtents";
 import { useRoadRouteLazyQuery } from "@/api/paralog-python";
@@ -47,7 +46,8 @@ export default function RoadRouteMapElements() {
       startLon: startPosition.lng,
       endLat: endPosition.lat,
       endLon: endPosition.lng,
-      floodExtent: floodExtent as FeatureCollection<Polygon>,
+
+      floodExtent: floodExtent,
       vehicle: vehicleType,
     };
   }, [startPosition, endPosition, floodExtent, vehicleType, enabled]);

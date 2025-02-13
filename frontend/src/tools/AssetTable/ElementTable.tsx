@@ -8,15 +8,15 @@ import usePaginated from "./usePaginated";
 import styles from "./ElementTable.module.css";
 import type { Table } from "./format-assets";
 
-export interface ElementTableProps<T> {
+export interface ElementTableProps<T extends { id?: string }> {
   /** Table definition */
-  table: Table<T>;
+  readonly table: Table<T>;
   /** Elements being displayed */
-  elements: T[];
+  readonly elements: T[];
   /** Number of elements per page */
-  elementsPerPage: number;
+  readonly elementsPerPage: number;
   /** What to display if there are no elements */
-  fallback?: ReactNode;
+  readonly fallback?: ReactNode;
 }
 
 export default function ElementTable<T>({
@@ -44,15 +44,21 @@ export default function ElementTable<T>({
             </tr>
           </thead>
           <tbody>
-            {current.map((asset, index) => (
-              <tr key={index}>
-                {table.formatNodes(asset).map((value, index) => (
-                  <td key={index} className="truncate max-w-xs">
-                    {value}
-                  </td>
-                ))}
-              </tr>
-            ))}
+            {current.map((asset) => {
+              const assetKey = asset?.id ?? JSON.stringify(asset); // Use a unique ID or fallback to a stringified object
+              return (
+                <tr key={assetKey}>
+                  {table.formatNodes(asset).map((value, idx) => {
+                    const valueKey = `${assetKey}-${idx}`; // Ensure uniqueness across columns
+                    return (
+                      <td key={valueKey} className="truncate max-w-xs">
+                        {value}
+                      </td>
+                    );
+                  })}
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>

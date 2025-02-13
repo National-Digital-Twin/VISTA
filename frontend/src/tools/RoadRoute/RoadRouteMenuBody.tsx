@@ -9,64 +9,52 @@ import featureFlags from "@/config/feature-flags";
 import SearchConditional from "@/components/SearchConditional";
 
 export interface RoadRouteMenuBodyProps {
-  searchQuery?: string;
+  readonly searchQuery?: string;
 }
 
 export function RoadRouteMenuBody({ searchQuery }: RoadRouteMenuBodyProps) {
   const { enabled, toggle } = useLayer("road-route");
 
-  const startPosition = useRoadRouteSharedStore((state) => state.startPosition);
-  const endPosition = useRoadRouteSharedStore((state) => state.endPosition);
+  const {
+    startPosition,
+    endPosition,
+    setStartPosition,
+    setEndPosition,
+    vehicleType,
+    setVehicleType,
+  } = useRoadRouteSharedStore();
 
-  const setStartPosition = useRoadRouteSharedStore(
-    (state) => state.setStartPosition,
-  );
-  const setEndPosition = useRoadRouteSharedStore(
-    (state) => state.setEndPosition,
-  );
-
-  const vehicleType = useRoadRouteSharedStore((state) => state.vehicleType);
-  const setVehicleType = useRoadRouteSharedStore(
-    (state) => state.setVehicleType,
-  );
-
-  const handleSelectStartPosition = useCallback(
-    (position: LngLat | null) => {
+  // ✅ FIX: Ensure this function doesn't cause infinite re-renders
+  const handleSelectPosition = useCallback(
+    (position: LngLat | null, setPosition: (pos: LngLat | null) => void) => {
       if (!enabled) {
-        toggle();
+        toggle(); // ⚠️ Make sure `toggle` doesn’t cause unnecessary updates
       }
-
-      setStartPosition(position);
+      setPosition(position);
     },
-    [setStartPosition, enabled, toggle],
-  );
-
-  const handleSelectEndPosition = useCallback(
-    (position: LngLat | null) => {
-      if (!enabled) {
-        toggle();
-      }
-
-      setEndPosition(position);
-    },
-    [setEndPosition, enabled, toggle],
+    [enabled, toggle],
   );
 
   const handleSelectVehicleType = useCallback(
     (event: ChangeEvent<HTMLSelectElement>) => {
-      if (["HGV", "EmergencyVehicle", "Car"].includes(event.target.value)) {
-        setVehicleType(event.target.value as VehicleType);
+      const value = event.target.value as VehicleType;
+      if (["HGV", "EmergencyVehicle", "Car"].includes(value)) {
+        setVehicleType(value);
       }
     },
     [setVehicleType],
   );
 
+  // ✅ FIX: Memoize marker handlers to prevent unnecessary re-renders
   const {
     startAddMarker: addStartMarker,
     abortMousePositioning: abortAddStartMarker,
     isSelectingPosition: isSelectingStartPosition,
   } = useAddMarker({
-    onSelectMarkerPosition: handleSelectStartPosition,
+    onSelectMarkerPosition: useCallback(
+      (pos) => handleSelectPosition(pos, setStartPosition),
+      [handleSelectPosition, setStartPosition],
+    ),
   });
 
   const {
@@ -74,22 +62,19 @@ export function RoadRouteMenuBody({ searchQuery }: RoadRouteMenuBodyProps) {
     abortMousePositioning: abortAddEndMarker,
     isSelectingPosition: isSelectingEndPosition,
   } = useAddMarker({
-    onSelectMarkerPosition: handleSelectEndPosition,
+    onSelectMarkerPosition: useCallback(
+      (pos) => handleSelectPosition(pos, setEndPosition),
+      [handleSelectPosition, setEndPosition],
+    ),
   });
 
-  useEffect(
-    function endMarkerPositioningWhenLayerIsDisabled() {
-      if (!featureFlags.routing) {
-        return;
-      }
-
-      if (!enabled) {
-        abortAddStartMarker();
-        abortAddEndMarker();
-      }
-    },
-    [enabled, abortAddEndMarker, abortAddStartMarker],
-  );
+  // ✅ FIX: Only run this effect when absolutely necessary
+  useEffect(() => {
+    if (featureFlags.routing && !enabled) {
+      abortAddStartMarker();
+      abortAddEndMarker();
+    }
+  }, [enabled, featureFlags.routing, abortAddStartMarker, abortAddEndMarker]);
 
   const kindDropdownID = useId();
 
@@ -103,7 +88,7 @@ export function RoadRouteMenuBody({ searchQuery }: RoadRouteMenuBodyProps) {
         selected={false}
         label={enabled ? "Hide Road Route" : "Show Road Route"}
       />
-      {enabled ? (
+      {enabled && (
         <>
           <div className="menu-info">
             <label htmlFor={kindDropdownID}>Vehicle type: </label>
@@ -118,46 +103,48 @@ export function RoadRouteMenuBody({ searchQuery }: RoadRouteMenuBodyProps) {
               <option value="Car">Cars</option>
             </select>
           </div>
-          {!startPosition ? (
+          <MenuButton
+            onClick={
+              !isSelectingStartPosition ? addStartMarker : abortAddStartMarker
+            }
+            selected={isSelectingStartPosition}
+            label={
+              isSelectingStartPosition
+                ? "Choose the start location on the map (click here to cancel)"
+                : "Select Start Location"
+            }
+          />
+          {startPosition && (
             <MenuButton
-              onClick={
-                !isSelectingStartPosition ? addStartMarker : abortAddStartMarker
-              }
-              selected={isSelectingStartPosition}
-              label={
-                isSelectingStartPosition
-                  ? "Choose the start location on the map (click here to cancel)"
-                  : "Select start location"
-              }
-            />
-          ) : (
-            <MenuButton
-              onClick={() => handleSelectStartPosition(null)}
+              onClick={() => handleSelectPosition(null, setStartPosition)}
               selected={false}
-              label="Delete start position"
+              label="Delete Start Position"
             />
           )}
-          {startPosition && !endPosition ? (
-            <MenuButton
-              onClick={
-                !isSelectingEndPosition ? addEndMarker : abortAddEndMarker
-              }
-              selected={isSelectingEndPosition}
-              label={
-                isSelectingEndPosition
-                  ? "Choose the end location on the map (click here to cancel)"
-                  : "Select end location"
-              }
-            />
-          ) : endPosition ? (
-            <MenuButton
-              onClick={() => handleSelectEndPosition(null)}
-              selected={false}
-              label="Delete end position"
-            />
-          ) : null}
+          {startPosition && (
+            <>
+              <MenuButton
+                onClick={
+                  !isSelectingEndPosition ? addEndMarker : abortAddEndMarker
+                }
+                selected={isSelectingEndPosition}
+                label={
+                  isSelectingEndPosition
+                    ? "Choose the end location on the map (click here to cancel)"
+                    : "Select End Location"
+                }
+              />
+              {endPosition && (
+                <MenuButton
+                  onClick={() => handleSelectPosition(null, setEndPosition)}
+                  selected={false}
+                  label="Delete End Position"
+                />
+              )}
+            </>
+          )}
         </>
-      ) : null}
+      )}
     </SearchConditional>
   );
 }

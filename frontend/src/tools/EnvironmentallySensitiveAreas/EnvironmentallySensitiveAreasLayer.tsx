@@ -9,7 +9,7 @@ const layerPaint = {
 } satisfies FillLayerSpecification["paint"];
 
 interface EnvironmentallySensitiveAreasLayerProps {
-  layerId: keyof typeof layers;
+  readonly layerId: keyof typeof layers;
 }
 
 export function EnvironmentallySensitiveAreasLayer({

@@ -7,7 +7,7 @@ import ComplexLayerControl from "@/components/ComplexLayerControl";
 
 export default function FloodAreaLayerControl({
   searchQuery,
-}: LayerControlProps) {
+}: Readonly<LayerControlProps>) {
   return (
     <ComplexLayerControl
       icon={faDrawPolygon}

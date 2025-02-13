@@ -20,7 +20,7 @@ function formatAltText(altText: string) {
   return altText.replace(/([A-Z])/g, " $1").trim();
 }
 
-export default function AssetLayerControl({ searchQuery }: LayerControlProps) {
+export default function AssetLayerControl({ searchQuery }: Readonly<LayerControlProps>) {
   const { isError: isErrorAssessments, data: assessmentsData } =
     useSuspenseQuery({
       queryKey: ["assessments"],
@@ -45,8 +45,8 @@ export default function AssetLayerControl({ searchQuery }: LayerControlProps) {
 }
 
 interface AssessmentAssetLayerControlsProps {
-  assessment: string;
-  searchQuery: string;
+  readonly assessment: string;
+  readonly searchQuery: string;
 }
 
 function AssessmentAssetLayerControls({
@@ -106,14 +106,14 @@ function AssessmentAssetLayerControls({
 }
 
 interface AssessmentCategoryLayerControlsProps {
-  category: string;
-  assets: Asset[];
+  readonly category: string;
+  readonly assets: Asset[];
 }
 
 function AssessmentCategoryLayerControls({
   category,
   assets,
-}: AssessmentCategoryLayerControlsProps) {
+}: Readonly<AssessmentCategoryLayerControlsProps>) {
   const selectedAssetTypes = useSharedStore(
     (state) => state.selectedAssetTypes,
   );
@@ -230,7 +230,7 @@ function AssessmentCategoryLayerControls({
 }
 
 interface SecondaryCategoryControlsProps {
-  types: {
+  readonly types: {
     [category: string]: {
       count: number;
       maxCriticality: number;
@@ -239,8 +239,8 @@ interface SecondaryCategoryControlsProps {
     };
   };
 
-  onClickType: (typeURI: string) => void;
-  onClickAll: (typeURIs: string[]) => void;
+  readonly onClickType: (typeURI: string) => void;
+  readonly onClickAll: (typeURIs: string[]) => void;
 }
 
 function SecondaryCategoryControls({
@@ -295,15 +295,15 @@ function SecondaryCategoryControls({
 }
 
 interface AssetTypeControlsProps {
-  asset: {
+  readonly asset: {
     count: number;
     maxCriticality: number;
     type: string;
     styles: FoundIcon;
   };
 
-  isSelected: boolean;
-  onClickType: (assetType: string) => void;
+  readonly isSelected: boolean;
+  readonly onClickType: (assetType: string) => void;
 }
 
 function AssetTypeControls({

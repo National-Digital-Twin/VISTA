@@ -66,10 +66,12 @@ if (!import.meta.env.VITE_CANNY_BOARD_TOKEN) {
 }
 
 if (!import.meta.env.VITE_MET_OFFICE_GLOBAL_SPOT_API_KEY) {
+  if (import.meta.env.VITE_MET_OFFICE_GLOBAL_SPOT_API_KEY) {
     config.configErrors.push(
       "No VITE_MET_OFFICE_GLOBAL_SPOT_API_KEY but VITE_GLOBAL_SPOT_MET_OFFICE_API_KEY is defined. " +
         "Update the name in your .env - note the order of 'global spot' and 'met office'.",
     );
+  }
 }
 
 export default config;
