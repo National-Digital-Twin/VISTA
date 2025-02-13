@@ -28,7 +28,7 @@ import useSharedStore, { State } from "@/hooks/useSharedStore";
 
 export interface DrawingModeContextProviderProps {
   /** Children */
-  readonly children: React.ReactNode;
+  children: React.ReactNode;
 }
 
 interface DrawingModeContextValue {
@@ -171,7 +171,7 @@ export const useDrawingMode = <T extends Feature>(
   useEffect(() => {
     const getRelevantFeatures = (event: DrawUpdateEvent | DrawDeleteEvent) =>
       event.features.filter((eventFeature) =>
-        features.some((feature) => eventFeature.id === feature.id)
+        features.some((feature) => eventFeature.id === feature.id),
       );
 
     const handleDrawEvent = (event: DrawUpdateEvent | DrawDeleteEvent) => {
@@ -181,7 +181,10 @@ export const useDrawingMode = <T extends Feature>(
       processDrawEvent(event, relevantFeatures);
     };
 
-    const processDrawEvent = (event: DrawUpdateEvent | DrawDeleteEvent, relevantFeatures: any[]) => {
+    const processDrawEvent = (
+      event: DrawUpdateEvent | DrawDeleteEvent,
+      relevantFeatures: any[],
+    ) => {
       if (event.type === "draw.update") {
         onUpdateFeatures(relevantFeatures);
       } else if (event.type === "draw.delete") {
@@ -199,7 +202,6 @@ export const useDrawingMode = <T extends Feature>(
       map.off("draw.delete", handleDrawEvent);
     };
   }, [features, map, onDeleteFeatures, onUpdateFeatures]);
-  res, map, onDeleteFeatures, onUpdateFeatures]);
 
   useEffect(
     function redraw() {

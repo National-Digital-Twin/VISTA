@@ -45,8 +45,8 @@ export default function AssetLayerControl({ searchQuery }: LayerControlProps) {
 }
 
 interface AssessmentAssetLayerControlsProps {
-  assessment: string;
-  searchQuery: string;
+  readonly assessment: string;
+  readonly searchQuery: string;
 }
 
 function AssessmentAssetLayerControls({
@@ -295,7 +295,7 @@ function SecondaryCategoryControls({
 }
 
 interface AssetTypeControlsProps {
-  asset: {
+  readonly asset: {
     count: number;
     maxCriticality: number;
     type: string;
