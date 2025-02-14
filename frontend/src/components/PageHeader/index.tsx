@@ -7,7 +7,7 @@ const styles = (theme) => ({
   },
   logo: {
     width: 200,
-    height: 100,
+    height: 75,
   },
   text: {
     color: "#f0f2f2", // Custom text color
