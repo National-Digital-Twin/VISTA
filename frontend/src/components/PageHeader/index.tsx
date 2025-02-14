@@ -1,26 +1,51 @@
-import classNames from "classnames";
+import React from "react";
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Grid,
+  withStyles,
+} from "@material-ui/core";
 
-import styles from "./style.module.css";
-import featureFlags from "@/config/feature-flags";
+const styles = (theme) => ({
+  appBar: {
+    backgroundColor: "#333333", // Custom background color for AppBar
+  },
+  logo: {
+    width: 40,
+    height: 40,
+  },
+  text: {
+    color: "#ffffff", // Custom text color
+    marginLeft: theme.spacing(1), // Adds space between logo and text
+  },
+});
 
-export interface PageHeaderProps {
-  /** Primary name of the application, as it appears in the header */
-  appName: string;
-  /** Additional classes to add to the top-level element */
-  className?: string;
-}
-
-/** Overall header of the application */
-export default function PageHeader({ appName, className }: PageHeaderProps) {
-  const srOnly = featureFlags.pageHeader ? null : "sr-only";
-
+const PageHeader = ({ classes }) => {
   return (
-    <header className={classNames(styles.pageHeader, className, srOnly)}>
-      <h1 className={styles.title}>
-        <a href="/" className={styles.noLinkStyle}>
-          {appName}
-        </a>
-      </h1>
-    </header>
+    <AppBar position="static" className={classes.appBar}>
+      <Toolbar>
+        <Grid container alignItems="center">
+          {/* Logo on the far left */}
+          <Grid item>
+            <img
+              src="path-to-your-logo.png"
+              alt="Logo"
+              className={classes.logo}
+            />
+          </Grid>
+
+          {/* Text next to logo */}
+          <Grid item>
+            <Typography variant="h6" className={classes.text}>
+              Your Text Here
+            </Typography>
+          </Grid>
+        </Grid>
+      </Toolbar>
+    </AppBar>
   );
-}
+};
+
+// Export the component with styles applied
+export default withStyles(styles)(PageHeader);
