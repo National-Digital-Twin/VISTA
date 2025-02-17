@@ -60,17 +60,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: arn:aws:iam::503561419905:role/ecs-access-for-github
-          aws-region: eu-west-2
-          role-session-name: githubsession
-
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v2
-
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -82,20 +71,45 @@ jobs:
         run: |
           echo "Version used for tagging: $VERSION"
 
-      - name: Build & Push Docker image
-        uses: docker/build-push-action@v6
+      - name: Build Docker Image
+        run: |
+          docker build --load \
+                        -t 503561419905.dkr.ecr.eu-west-2.amazonaws.com/paralog/demo-paralog-python-api:${{ github.sha }} \
+                        -t 503561419905.dkr.ecr.eu-west-2.amazonaws.com/paralog/demo-paralog-python-api:${{ env.VERSION }} \
+                        -t 503561419905.dkr.ecr.eu-west-2.amazonaws.com/paralog/demo-paralog-python-api:latest \
+                        -f backend/Dockerfile ./backend
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
         with:
-          file: "backend/Dockerfile"
-          context: "./backend"
-          load: true
-          push: true
-          tags: |
-            503561419905.dkr.ecr.eu-west-2.amazonaws.com/paralog/demo-paralog-python-api:${{ env.VERSION }}
-            503561419905.dkr.ecr.eu-west-2.amazonaws.com/paralog/demo-paralog-python-api:${{ github.sha }}
-            503561419905.dkr.ecr.eu-west-2.amazonaws.com/paralog/demo-paralog-python-api:latest
+          role-to-assume: arn:aws:iam::503561419905:role/ecs-access-for-github
+          aws-region: eu-west-2
+          role-session-name: githubsession
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Push Docker Image to ECR
+        run: |
+          docker image push --all-tags 503561419905.dkr.ecr.eu-west-2.amazonaws.com/paralog/demo-paralog-python-api
+
+      # - name: Build & Push Docker image
+      #   uses: docker/build-push-action@v6
+      #   with:
+      #     file: "backend/Dockerfile"
+      #     context: "./backend"
+      #     load: true
+      #     push: true
+      #     tags: |
+      #       503561419905.dkr.ecr.eu-west-2.amazonaws.com/paralog/demo-paralog-python-api:${{ env.VERSION }}
+      #       503561419905.dkr.ecr.eu-west-2.amazonaws.com/paralog/demo-paralog-python-api:${{ github.sha }}
+      #       503561419905.dkr.ecr.eu-west-2.amazonaws.com/paralog/demo-paralog-python-api:latest
 
       - name: Verify Docker Image
-        run: docker images
+        run: |
+          docker images
+          aws ecr describe-images --repository-name paralog/demo-paralog-python-api --query 'sort_by(imageDetails, &imagePushedAt)[-1]' --output table
 
   tag-repository:
     name: Tag Repository
@@ -119,15 +133,15 @@ jobs:
         run: |
           echo "Final Version: $VERSION"
 
-      - name: Create Git Tag
-        run: |
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@github.com"
+      # - name: Create Git Tag
+      #   run: |
+      #     git config --global user.name "GitHub Actions"
+      #     git config --global user.email "actions@github.com"
 
-          echo "✅ Tagging commit with version: ${VERSION}"
-          git tag -f ${VERSION}
-          git push -f origin ${VERSION}
+      #     echo "✅ Tagging commit with version: ${VERSION}"
+      #     git tag -f ${VERSION}
+      #     git push -f origin ${VERSION}
 
-          echo "✅ Tagging commit with SHA: ${{ github.sha }}"
-          git tag -f ${{ github.sha }}
-          git push -f origin ${{ github.sha }}
+      #     echo "✅ Tagging commit with SHA: ${{ github.sha }}"
+      #     git tag -f ${{ github.sha }}
+      #     git push -f origin ${{ github.sha }}

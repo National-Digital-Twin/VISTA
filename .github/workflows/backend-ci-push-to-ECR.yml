@@ -1,0 +1,69 @@
+name: Backend CI push to ECR
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  docker-build-push:
+    name: Docker Build & Push
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Set VERSION from versioning job
+        run: |
+          echo "VERSION=${{ needs.versioning.outputs.version }}" >> $GITHUB_ENV
+
+      - name: Debug Version Output
+        run: |
+          echo "Version used for tagging: $VERSION"
+
+      - name: Build Docker Image
+        run: |
+          docker build --load \
+                        -t 503561419905.dkr.ecr.eu-west-2.amazonaws.com/paralog/demo-paralog-python-api:${{ github.sha }} \
+                        -t 503561419905.dkr.ecr.eu-west-2.amazonaws.com/paralog/demo-paralog-python-api:${{ env.VERSION }} \
+                        -t 503561419905.dkr.ecr.eu-west-2.amazonaws.com/paralog/demo-paralog-python-api:latest \
+                        -f backend/Dockerfile ./backend
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::503561419905:role/ecs-access-for-github
+          aws-region: eu-west-2
+          role-session-name: githubsession
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Push Docker Image to ECR
+        run: |
+          docker image push --all-tags 503561419905.dkr.ecr.eu-west-2.amazonaws.com/paralog/demo-paralog-python-api
+
+      # - name: Build & Push Docker image
+      #   uses: docker/build-push-action@v6
+      #   with:
+      #     file: "backend/Dockerfile"
+      #     context: "./backend"
+      #     load: true
+      #     push: true
+      #     tags: |
+      #       503561419905.dkr.ecr.eu-west-2.amazonaws.com/paralog/demo-paralog-python-api:${{ env.VERSION }}
+      #       503561419905.dkr.ecr.eu-west-2.amazonaws.com/paralog/demo-paralog-python-api:${{ github.sha }}
+      #       503561419905.dkr.ecr.eu-west-2.amazonaws.com/paralog/demo-paralog-python-api:latest
+
+      - name: Verify Docker Image
+        run: |
+          docker images
+          aws ecr describe-images --repository-name paralog/demo-paralog-python-api --query 'sort_by(imageDetails, &imagePushedAt)[-1]' --output table
