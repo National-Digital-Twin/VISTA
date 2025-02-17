@@ -76,7 +76,7 @@ Full instructions can be found [here](./backend/README.md)
 2. Set up AWS credentials in `~/.aws/credentials`:
 
    ```
-   [c477]
+   [paralog]
    aws_access_key_id=SECRET_KEY
    aws_secret_access_key=SECRET_ACCESS_KEY
    ```
@@ -84,7 +84,7 @@ Full instructions can be found [here](./backend/README.md)
 3. Login to AWS ECR:
 
    ```sh
-   aws ecr --profile=c477 get-login-password --region eu-west-2 | docker login --username AWS --password-stdin 098669589541.dkr.ecr.eu-west-2.amazonaws.com
+   aws ecr --profile=paralog get-login-password --region eu-west-2 | docker login --username AWS --password-stdin 098669589541.dkr.ecr.eu-west-2.amazonaws.com
    ```
 
 4. Follow the instructions in the `backend/paralog-python-api/README.md` file for setting up the Python API.
