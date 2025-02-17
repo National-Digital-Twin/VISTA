@@ -14,7 +14,7 @@ const config = {
   },
   services: {
     ontology: import.meta.env.VITE_ONTOLOGY_SERVICE_URL,
-    coefficientPython: "/coefficient-python/api/graphql/",
+    ndtpPython: "/ndtp-python/api/graphql/",
   },
   canny: {
     appId: import.meta.env.VITE_CANNY_APP_ID,
