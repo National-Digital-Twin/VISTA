@@ -1,33 +1,24 @@
-import React from "react";
-import { AppBar, Toolbar, Grid, withStyles } from "@material-ui/core";
+import { AppBar, Toolbar, Grid2 } from "@mui/material";
 
-const styles = (theme) => ({
-  appBar: {
-    backgroundColor: "#002244", // Custom background color for AppBar
-  },
-  logo: {
-    width: 200,
-    height: 75,
-  },
-  text: {
-    color: "#f0f2f2", // Custom text color
-  },
-});
+const PageHeader = ({ appName }) => {
+  // const classes = useStyles();
 
-const PageHeader = ({ appName, classes }) => {
   return (
-    <AppBar position="static" className={classes.appBar}>
+    <AppBar position="static" sx={{ backgroundColor: "#002244" }}>
       <Toolbar>
-        <Grid container alignItems="center">
+        <Grid2 container alignItems="center">
           {/* Logo on the far left */}
-          <Grid item>
-            <img src="/logo.svg" alt="Logo" className={classes.logo} />
-          </Grid>
-        </Grid>
+          <Grid2>
+            <img
+              src="/logo.svg"
+              alt={`${appName} Logo`}
+              style={{ width: 200, height: 75 }}
+            />
+          </Grid2>
+        </Grid2>
       </Toolbar>
     </AppBar>
   );
 };
 
-// Export the component with styles applied
-export default withStyles(styles)(PageHeader);
+export default PageHeader;
