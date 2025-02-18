@@ -19,9 +19,7 @@ export default function FloodNotifDropdown() {
   const { data: floodWarnings } = useQuery({
     queryKey: ["floodWarnings"],
     queryFn: async () => {
-      console.log("fetching flood warnings");
       const geoJsonData = await fetchAllLiveStations();
-      console.log("fetched flood warnings:", geoJsonData.features.length);
       return geoJsonData.features;
     },
   });

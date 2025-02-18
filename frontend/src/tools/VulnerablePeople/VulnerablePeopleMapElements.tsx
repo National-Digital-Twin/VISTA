@@ -22,8 +22,6 @@ export default function VulnerablePeopleMapElements() {
     useVulnerablePeopleLazyQuery();
 
   useEffect(() => {
-    console.log("VulnerablePeopleMapElements useEffect");
-
     if (!enabled) {
       return;
     }
@@ -35,7 +33,6 @@ export default function VulnerablePeopleMapElements() {
     setSelected(null);
 
     const [lonMin, latMin, lonMax, latMax] = bbox(feature);
-    console.log("bbox: ", [lonMin, latMin, lonMax, latMax]);
 
     executeVulnerablePeopleQuery({
       variables: {
@@ -48,10 +45,6 @@ export default function VulnerablePeopleMapElements() {
       },
     });
   }, [feature, executeVulnerablePeopleQuery, setSelected, enabled]);
-
-  useEffect(() => {
-    console.log("Data: ", data);
-  }, [data]);
 
   if (!enabled) {
     return null;
