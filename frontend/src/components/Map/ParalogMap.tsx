@@ -55,7 +55,7 @@ const VIEWSTATE = {
 };
 
 interface CustomMapElementsProps {
-  tool: Tool;
+  readonly tool: Tool;
 }
 
 function CustomMapElements({ tool }: CustomMapElementsProps) {
@@ -181,15 +181,12 @@ function TransformUrl(url: string) {
     }
 
     // pick out the request font from the path parameters, encode it and include it in the query string parameters.
-    if (routeParams.includes("fonts")) {
-      requestedFont = routeParams.match(/fonts\/(.*)\//)[1];
+    const fontMatch = /fonts\/(.*?)\//.exec(routeParams); // ✅ Use RegExp.exec()
+    if (fontMatch) {
+      requestedFont = fontMatch[1];
       encodedRequestedFont = encodeURIComponent(requestedFont);
 
-      if (routeParams.includes("?")) {
-        transformedUrl += `&fonts=${encodedRequestedFont}`;
-      } else {
-        transformedUrl += `&fonts=${encodedRequestedFont}`;
-      }
+      transformedUrl += `&fonts=${encodedRequestedFont}`;
 
       transformedUrl = transformedUrl.replace(`/${requestedFont}/`, "/");
     }

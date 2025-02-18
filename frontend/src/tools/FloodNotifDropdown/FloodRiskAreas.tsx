@@ -1,7 +1,7 @@
 import styles from "./style.module.css";
 
 interface FloodRiskAreasProps {
-  atRiskAreas: any[];
+  readonly atRiskAreas: any[];
 }
 
 export default function FloodRiskAreas({ atRiskAreas }: FloodRiskAreasProps) {

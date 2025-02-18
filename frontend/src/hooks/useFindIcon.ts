@@ -17,7 +17,7 @@ export interface FoundIcon {
   faIcon?: string;
 }
 
-// These utilities are taken from the Telicent design system
+// These utilities are taken from the ontology service
 function hasFragment(uri: string) {
   return uri && uri.startsWith("http") && uri.includes("#");
 }

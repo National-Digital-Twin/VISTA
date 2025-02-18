@@ -4,11 +4,11 @@ import styles from "./style.module.css";
 
 export interface SearchConditionalProps {
   /** Current search query being used */
-  searchQuery: string | undefined;
+  readonly searchQuery: string | undefined;
   /** Search terms which we purport to match */
-  terms: string[];
+  readonly terms: string[];
   /** Children to include if we're matching */
-  children: React.ReactNode;
+  readonly children: React.ReactNode;
 }
 
 /** Component which is conditionally included if it matches search */

@@ -7,7 +7,7 @@ import featureFlags from "@/config/feature-flags";
 
 export default function RoadRouteLayerControl({
   searchQuery,
-}: LayerControlProps) {
+}: Readonly<LayerControlProps>) {
   if (!featureFlags.routing) {
     return null;
   }

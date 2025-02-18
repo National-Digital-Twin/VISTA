@@ -52,9 +52,9 @@ export default function Monitoring() {
 }
 
 interface MonitoringStationTypeButtonProps {
-  type: StationType;
-  icon: IconDefinition;
-  label: string;
+  readonly type: StationType;
+  readonly icon: IconDefinition;
+  readonly label: string;
 }
 
 function MonitoringStationTypeButton({

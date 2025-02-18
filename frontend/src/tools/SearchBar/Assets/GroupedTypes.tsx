@@ -13,11 +13,11 @@ const formatAltText = (altText: string) => {
 
 export interface GroupedTypesProps {
   /** Whether the group is expanded */
-  expand: boolean;
+  readonly expand: boolean;
   /** Assets in the group */
-  assets: Asset[];
+  readonly assets: Asset[];
   /** Additional classes to add to the top-level element */
-  className?: string;
+  readonly className?: string;
 }
 
 export default function GroupedTypes({

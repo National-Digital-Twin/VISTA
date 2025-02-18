@@ -1,4 +1,4 @@
-## Telicent Paralog
+## Paralog
 
 **Paralog is a free, open source web application used to evaluate high value
 assets**

@@ -3,11 +3,11 @@ import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import SearchConditional from "@/components/SearchConditional";
 
 interface MenuButtonProps {
-  onClick: () => void;
-  selected: boolean;
-  label: string;
-  icon?: IconProp;
-  searchQuery?: string;
+  readonly onClick: () => void;
+  readonly selected: boolean;
+  readonly label: string;
+  readonly icon?: IconProp;
+  readonly searchQuery?: string;
 }
 
 export function MenuButton({

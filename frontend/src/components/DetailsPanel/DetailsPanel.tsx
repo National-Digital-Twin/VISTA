@@ -5,9 +5,9 @@ import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import styles from "./style.module.css";
 
 interface DetailsPanelProps {
-  children: React.ReactNode;
-  onClose?: () => void;
-  isOpen: boolean;
+  readonly children: React.ReactNode;
+  readonly onClose?: () => void;
+  readonly isOpen: boolean;
 }
 
 export default function DetailsPanel({

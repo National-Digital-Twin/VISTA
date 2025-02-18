@@ -3,7 +3,7 @@ import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import styles from "./style.module.css";
 
 interface TabsContainerProps {
-  tabs: {
+  readonly tabs: {
     label: string;
     content: React.ReactNode;
   }[];
@@ -13,9 +13,9 @@ export default function TabsContainer({ tabs }: TabsContainerProps) {
   return (
     <Tabs className={styles.tabsContainer}>
       <TabList className={styles.tabList}>
-        {tabs.map((tab, i) => (
+        {tabs.map((tab) => (
           <Tab
-            key={i}
+            key={tab.label} // Use label as the unique identifier
             className={styles.tabButton}
             selectedClassName={styles.active}
           >
@@ -23,8 +23,8 @@ export default function TabsContainer({ tabs }: TabsContainerProps) {
           </Tab>
         ))}
       </TabList>
-      {tabs.map((tab, i) => (
-        <TabPanel key={i} className={styles.tabContent}>
+      {tabs.map((tab) => (
+        <TabPanel key={tab.label} className={styles.tabContent}>
           {tab.content}
         </TabPanel>
       ))}

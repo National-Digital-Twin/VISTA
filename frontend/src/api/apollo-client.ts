@@ -11,7 +11,7 @@ import getVulnerablePeople from "./graphql-queries/vulnerablePeople.graphql";
 import config from "@/config/app-config";
 import apolloMiddleware from "@/auth/apolloMiddleware";
 
-const PARALOG_PYTHON_BASE_URL = config.services.coefficientPython;
+const PARALOG_PYTHON_BASE_URL = config.services.ndtpPython;
 
 const httpLink = new HttpLink({ uri: PARALOG_PYTHON_BASE_URL });
 const authedLink = concat(apolloMiddleware, httpLink);

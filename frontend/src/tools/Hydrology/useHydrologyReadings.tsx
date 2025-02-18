@@ -44,13 +44,6 @@ export function useHydrologyReadings(
   });
 }
 
-// export const useStationDetail = (id,skip) => useQuery({
-//   queryKey: ["station-detail", id],
-//   enabled:!skip,
-//   queryFn: async () => {
-//     return await fetchStationDetail(id);
-//   }
-// });
 export function useStationRiverLevelGeoJson(skip: boolean) {
   return useQuery({
     queryKey: ["station-river-level-detail"],

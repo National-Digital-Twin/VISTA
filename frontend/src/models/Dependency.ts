@@ -10,7 +10,7 @@ import {
 import type { ElementLike } from "@/utils";
 
 export default class Dependency {
-  #colorScale = getColorScale(1, 3);
+  readonly #colorScale = getColorScale(1, 3);
 
   uri: string;
   id: string;

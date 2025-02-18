@@ -5,9 +5,9 @@ import featureFlags from "@/config/feature-flags";
 
 export interface PageHeaderProps {
   /** Primary name of the application, as it appears in the header */
-  appName: string;
+  readonly appName: string;
   /** Additional classes to add to the top-level element */
-  className?: string;
+  readonly className?: string;
 }
 
 /** Overall header of the application */

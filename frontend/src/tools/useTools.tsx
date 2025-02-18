@@ -25,7 +25,7 @@ function sortToolsByOrderIndex(
   tools: Tool[],
   orderIndex: (tool: Tool) => number,
 ): Tool[] {
-  // TODO: Consider using `.toSorted` since it's in Baseline 2023
+  // Consider using `.toSorted` since it's in Baseline 2023
   const sortedTools = [...tools];
   // Array.prototype.sort is stable under ECMAScript 2019, so where we have
   // equal orderIndices this preserves definition order.

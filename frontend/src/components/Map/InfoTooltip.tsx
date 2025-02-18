@@ -5,7 +5,7 @@ import { fetchAssetInfo } from "@/api/combined";
 
 export interface InfoTooltipProps {
   /** Map element for which this is the tooltip */
-  element: any;
+  readonly element: any;
 }
 
 export default function InfoTooltip({ element }: InfoTooltipProps) {
@@ -41,7 +41,7 @@ export default function InfoTooltip({ element }: InfoTooltipProps) {
 }
 
 interface DetailsProps {
-  details: {
+  readonly details: {
     id: string;
     title: string;
     type: string;
