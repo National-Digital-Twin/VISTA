@@ -16,7 +16,9 @@ export interface ConnectedAssetsProps {
   }[];
 }
 
-export default function ConnectedAssets({ connectedAssets }: ConnectedAssetsProps) {
+export default function ConnectedAssets({
+  connectedAssets,
+}: ConnectedAssetsProps) {
   const { assets } = useContext(ElementsContext);
 
   const sortedAssets = connectedAssets.toSorted(

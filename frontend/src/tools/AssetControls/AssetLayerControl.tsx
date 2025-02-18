@@ -20,7 +20,9 @@ function formatAltText(altText: string) {
   return altText.replace(/([A-Z])/g, " $1").trim();
 }
 
-export default function AssetLayerControl({ searchQuery }: Readonly<LayerControlProps>) {
+export default function AssetLayerControl({
+  searchQuery,
+}: Readonly<LayerControlProps>) {
   const { isError: isErrorAssessments, data: assessmentsData } =
     useSuspenseQuery({
       queryKey: ["assessments"],

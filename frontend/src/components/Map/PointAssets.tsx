@@ -28,7 +28,10 @@ export interface PointAssetsProps {
   /** Those elements currently selected */
   readonly selectedElements?: Element[];
   /** Callback when an element is clicked */
-  readonly onElementClick?: (isMultiSelect: boolean, elements: Element[]) => void;
+  readonly onElementClick?: (
+    isMultiSelect: boolean,
+    elements: Element[],
+  ) => void;
 }
 
 export default function PointAssets({

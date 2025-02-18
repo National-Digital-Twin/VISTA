@@ -24,7 +24,6 @@ export function RoadRouteMenuBody({ searchQuery }: RoadRouteMenuBodyProps) {
     setVehicleType,
   } = useRoadRouteSharedStore();
 
-  // ✅ FIX: Ensure this function doesn't cause infinite re-renders
   const handleSelectPosition = useCallback(
     (position: LngLat | null, setPosition: (pos: LngLat | null) => void) => {
       if (!enabled) {
@@ -45,7 +44,6 @@ export function RoadRouteMenuBody({ searchQuery }: RoadRouteMenuBodyProps) {
     [setVehicleType],
   );
 
-  // ✅ FIX: Memoize marker handlers to prevent unnecessary re-renders
   const {
     startAddMarker: addStartMarker,
     abortMousePositioning: abortAddStartMarker,
@@ -68,7 +66,6 @@ export function RoadRouteMenuBody({ searchQuery }: RoadRouteMenuBodyProps) {
     ),
   });
 
-  // ✅ FIX: Only run this effect when absolutely necessary
   useEffect(() => {
     if (featureFlags.routing && !enabled) {
       abortAddStartMarker();

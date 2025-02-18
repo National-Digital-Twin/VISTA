@@ -61,7 +61,6 @@ function FloodAreaListItem({
   return (
     <li className="flex items-center justify-between pt-1">
       <p>{selectedFloodZone.properties?.TA_NAME}</p>{" "}
-      {/* ✅ Added optional chaining */}
       <button
         className={classNames(
           "border border-black-400 rounded-lg ml-2 px-1 text-sm hover:bg-black-400",

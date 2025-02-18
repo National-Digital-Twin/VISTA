@@ -70,14 +70,16 @@ export function DrawingModeContextProvider({
     };
   }, [map]);
 
- // ✅ Memoizing the context value to avoid re-creation on every render
- const contextValue = useMemo(() => ({ draw, isMapLoaded }), [draw, isMapLoaded]);
+  const contextValue = useMemo(
+    () => ({ draw, isMapLoaded }),
+    [draw, isMapLoaded],
+  );
 
- return (
-   <DrawingModeContext.Provider value={contextValue}>
-     {children}
-   </DrawingModeContext.Provider>
- );
+  return (
+    <DrawingModeContext.Provider value={contextValue}>
+      {children}
+    </DrawingModeContext.Provider>
+  );
 }
 
 /** Callback Types */
