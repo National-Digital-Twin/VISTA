@@ -3,7 +3,7 @@ name: Release on New Release Branch
 on:
   push:
     branches:
-      - "release-*"
+      - "release/*"
 
 permissions:
   id-token: write
