@@ -11,7 +11,7 @@ from model_bakery import baker
 from api import models
 
 
-@pytest.mark.django_db()
+@pytest.mark.django_db
 def test_low_bridges_query(client):
     """Test vulnerable people query."""
     baker.make(
