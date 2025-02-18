@@ -8,13 +8,13 @@ from model_bakery import baker
 from api import models
 
 
-@pytest.mark.django_db
+@pytest.mark.django_db()
 def test_sandbag_placement():
     """Test SandbagPlacement.__str__."""
     assert f"{baker.make(models.SandbagPlacement, name="example")}" == "example"
 
 
-@pytest.mark.django_db
+@pytest.mark.django_db()
 def test_sandbag_float_to_decimal():
     """Test that a float lat/lon gets quantized."""
     sandbag = baker.make(models.SandbagPlacement)
@@ -25,7 +25,7 @@ def test_sandbag_float_to_decimal():
     assert sandbag.longitude == Decimal("-1.123456")
 
 
-@pytest.mark.django_db
+@pytest.mark.django_db()
 def test_sandbag_decimal_to_decimal():
     """Test that a decimal lat/lon gets quantized."""
     sandbag = baker.make(models.SandbagPlacement)
@@ -36,7 +36,7 @@ def test_sandbag_decimal_to_decimal():
     assert sandbag.longitude == Decimal("-1.123456")
 
 
-@pytest.mark.django_db
+@pytest.mark.django_db()
 def test_sandbag_str_to_decimal():
     """Test that a str lat/lon gets quantized."""
     sandbag = baker.make(models.SandbagPlacement)
@@ -47,7 +47,7 @@ def test_sandbag_str_to_decimal():
     assert sandbag.longitude == Decimal("-1.123456")
 
 
-@pytest.mark.django_db
+@pytest.mark.django_db()
 def test_traffic_data():
     """Test TrafficData.__str__."""
     assert (
@@ -64,7 +64,7 @@ def test_traffic_data():
     )
 
 
-@pytest.mark.django_db
+@pytest.mark.django_db()
 def test_vulerable_person():
     """Test VulnerablePerson.__str__."""
     assert (
@@ -80,7 +80,7 @@ def test_vulerable_person():
     )
 
 
-@pytest.mark.django_db
+@pytest.mark.django_db()
 def test_low_bridge():
     """Test LowBridge.__str__."""
     assert (
@@ -98,7 +98,7 @@ def test_low_bridge():
     )
 
 
-@pytest.mark.django_db
+@pytest.mark.django_db()
 def test_narrow_road():
     """Test NarrowRoad.__str__."""
     assert (

@@ -12,7 +12,7 @@ from model_bakery import baker
 from api import models
 
 
-@pytest.mark.django_db
+@pytest.mark.django_db()
 def test_sandbag_list(client):
     """Test sandbag bulk query."""
     sandbag = baker.make(
@@ -49,7 +49,7 @@ def test_sandbag_list(client):
     }
 
 
-@pytest.mark.django_db
+@pytest.mark.django_db()
 def test_sandbag_by_name(client):
     """Test individual lookup."""
     sandbag = baker.make(
@@ -86,7 +86,7 @@ def test_sandbag_by_name(client):
     }
 
 
-@pytest.mark.django_db
+@pytest.mark.django_db()
 def test_sandbag_create(client):
     """Test sandbag creation."""
     query = """
@@ -142,7 +142,7 @@ def _sandbag_to_dict(sandbag):
     }
 
 
-@pytest.mark.django_db
+@pytest.mark.django_db()
 def test_sandbag_update(client):
     """Test sandbag creation."""
     sandbag = baker.make(
@@ -201,7 +201,7 @@ def test_sandbag_update(client):
     }
 
 
-@pytest.mark.django_db
+@pytest.mark.django_db()
 def test_sandbag_update_does_not_exist(client):
     """Test sandbag creation does not exist."""
     query = """
@@ -250,7 +250,7 @@ def test_sandbag_update_does_not_exist(client):
     }
 
 
-@pytest.mark.django_db
+@pytest.mark.django_db()
 def test_sandbag_delete(client):
     """Test sandbag deletion."""
     sandbag = baker.make(models.SandbagPlacement, name="example")
@@ -291,7 +291,7 @@ def test_sandbag_delete(client):
         sandbag.refresh_from_db()
 
 
-@pytest.mark.django_db
+@pytest.mark.django_db()
 def test_sandbag_delete_not_found(client):
     """Test sandbag deletion for when not found."""
     query = """
