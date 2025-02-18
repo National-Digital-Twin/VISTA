@@ -46,7 +46,7 @@ class TrafficData(models.Model):
     volume = models.IntegerField(null=True, blank=True)  # Allow null values
     busyness = models.IntegerField(null=True, blank=True)
     average_speed = models.IntegerField(null=True, blank=True)  # Allow null values
-    coordinates = models.CharField(max_length=255, null=True, blank=True)  # noqa: DJ001
+    coordinates = models.CharField(max_length=255, blank=True)  # noqa: DJ001
 
     class Meta:
         """Fields that are unique together."""
