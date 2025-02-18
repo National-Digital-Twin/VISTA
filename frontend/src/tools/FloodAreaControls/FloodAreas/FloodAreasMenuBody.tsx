@@ -34,7 +34,7 @@ const useFloodAreaSharedStore = () =>
 
 export interface FloodAreasMenuBodyProps {
   /** Search query */
-  searchQuery?: string;
+  readonly searchQuery?: string;
 }
 
 export default function FloodAreasMenuBody({

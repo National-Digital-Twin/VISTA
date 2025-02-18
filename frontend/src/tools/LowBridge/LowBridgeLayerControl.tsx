@@ -4,7 +4,7 @@ import type { LayerControlProps } from "@/tools/Tool";
 
 export default function LowBridgeLayerControl({
   searchQuery,
-}: LayerControlProps) {
+}: Readonly<LayerControlProps>) {
   return (
     <SimpleLayerControl
       layerName="low-bridges"

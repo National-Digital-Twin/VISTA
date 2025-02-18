@@ -3,13 +3,13 @@ import { useHydrologyReadings } from "@/tools/Hydrology/useHydrologyReadings";
 import Chart from "@/components/DetailsPanel/Chart";
 
 export interface RiverLevelChartProps {
-  name: string;
-  parameter: string;
-  param: string;
-  uri: string;
-  startDate: Date;
-  endDate: Date;
-  className?: string;
+  readonly name: string;
+  readonly parameter: string;
+  readonly param: string;
+  readonly uri: string;
+  readonly startDate: Date;
+  readonly endDate: Date;
+  readonly className?: string;
 }
 
 const getUnit = (param: string) => {

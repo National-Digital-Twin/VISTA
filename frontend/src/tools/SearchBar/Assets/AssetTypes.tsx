@@ -13,9 +13,9 @@ import type { Asset } from "@/models";
 
 export interface AssetTypesProps {
   /** Assessment from which we're drawing analysis */
-  assessment: string;
+  readonly assessment: string;
   /** Search query into assets */
-  searchQuery: string;
+  readonly searchQuery: string;
 }
 
 export default function AssetTypes({
@@ -94,10 +94,10 @@ export default function AssetTypes({
 }
 
 interface AssetTypeCategoryProps {
-  category: string;
-  selectedCategory?: string;
-  assets: Asset[];
-  onCategoryClick: (category: string) => void;
+  readonly category: string;
+  readonly selectedCategory?: string;
+  readonly assets: Asset[];
+  readonly onCategoryClick: (category: string) => void;
 }
 
 function AssetTypeCategory({

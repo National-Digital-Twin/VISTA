@@ -11,7 +11,7 @@ import ControlPanel from "@/components/Map/ControlPanel";
 import MapToolbar from "@/components/Map/SideButtons/MapToolbar";
 
 interface ToolbarProps {
-  onOpenControlPanel?: () => void;
+  readonly onOpenControlPanel?: () => void;
 }
 
 function Toolbar({ onOpenControlPanel }: ToolbarProps) {

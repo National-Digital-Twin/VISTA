@@ -4,10 +4,10 @@ import ChartBody from "@/components/DetailsPanel/ChartBody";
 export interface RiverLevelChartBodyProps<
   Data extends { time: string; value: number },
 > {
-  data: Data[];
-  param: string;
-  unit: string;
-  className?: string;
+  readonly data: Data[];
+  readonly param: string;
+  readonly unit: string;
+  readonly className?: string;
 }
 
 export default function RiverLevelChartBody<
@@ -15,7 +15,7 @@ export default function RiverLevelChartBody<
 >({ data, param, unit, className }: RiverLevelChartBodyProps<Data>) {
   const additionalChartElements = (
     <ReferenceLine
-      y={0.4} // TODO fetch value or remove reference line
+      y={0.4} // fetch value or remove reference line
       stroke="var(--col-danger)"
       strokeDasharray="3 3"
       label={{

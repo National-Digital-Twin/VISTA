@@ -29,20 +29,18 @@ export function ControlPanelContent() {
   });
 
   return (
-    <>
-      <div className={styles.layerPanel}>
-        <SearchControl searchQuery={searchQuery} onSearch={setSearchQuery} />
-        {layerControls.map(([toolName, Control]) => (
-          <Control key={toolName} searchQuery={searchQuery} />
-        ))}
-      </div>
-    </>
+    <div className={styles.layerPanel}>
+      <SearchControl searchQuery={searchQuery} onSearch={setSearchQuery} />
+      {layerControls.map(([toolName, Control]) => (
+        <Control key={toolName} searchQuery={searchQuery} />
+      ))}
+    </div>
   );
 }
 
 interface SearchControlProps {
-  searchQuery: string;
-  onSearch: (query: string) => void;
+  readonly searchQuery: string;
+  readonly onSearch: (query: string) => void;
 }
 
 function SearchControl({ searchQuery, onSearch }: SearchControlProps) {

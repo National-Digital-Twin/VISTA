@@ -3,7 +3,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 export interface DevToolsContainerProps {
   /** Children */
-  children: React.ReactNode;
+  readonly children: React.ReactNode;
 }
 
 export default function DevToolsContainer({

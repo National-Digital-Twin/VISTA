@@ -33,11 +33,11 @@ export function useTogglePointerCoords(): () => void {
 
 export interface ShowPointerCoordsContextProviderProps {
   /** Is currently showing pointer coördinates */
-  showPointerCoords: boolean;
+  readonly showPointerCoords: boolean;
   /** Set whether we are showing pointer coördinates */
-  setShowPointerCoords: (showPointerCoords: boolean) => void;
+  readonly setShowPointerCoords: (showPointerCoords: boolean) => void;
   /** Children */
-  children: React.ReactNode;
+  readonly children: React.ReactNode;
 }
 
 export function ShowPointerCoordsContextProvider({
