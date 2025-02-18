@@ -1,8 +1,6 @@
 import { AppBar, Toolbar, Grid2 } from "@mui/material";
 
 const PageHeader = ({ appName }) => {
-  // const classes = useStyles();
-
   return (
     <AppBar position="static" sx={{ backgroundColor: "#002244" }}>
       <Toolbar>
