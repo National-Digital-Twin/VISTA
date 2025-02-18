@@ -1,4 +1,4 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useCallback } from "react";
 import type Tool from "./Tool";
 
@@ -41,7 +41,11 @@ function sortToolsInOrder(tools: Tool[], order: ToolOrder): Tool[] {
 }
 
 export function useTools(): (order: ToolOrder) => Tool[] {
-  const { data: tools } = useSuspenseQuery({
+  const {
+    data: tools,
+    error,
+    isLoading,
+  } = useQuery({
     queryKey: ["tools"],
     queryFn: async () => {
       const selectedTools = TOOLS.filter(
@@ -51,12 +55,17 @@ export function useTools(): (order: ToolOrder) => Tool[] {
     },
   });
 
-  const toolsInOrder = useCallback(
-    (order: ToolOrder) => {
-      return sortToolsInOrder(tools, order);
-    },
-    [tools],
-  );
+  if (isLoading) {
+    return () => []; // Return an empty array or handle loading state if needed
+  }
 
-  return toolsInOrder;
+  if (error) {
+    console.error("Error fetching tools:", error);
+    return () => []; // Return an empty array or handle error state if needed
+  }
+
+  // Return a function that orders the tools (implementation not shown)
+  return (order: ToolOrder) => {
+    return sortToolsInOrder(tools, order);
+  };
 }

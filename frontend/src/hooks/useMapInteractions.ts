@@ -1,4 +1,5 @@
-import type { MapboxGeoJSONFeature } from "react-map-gl";
+// import type { MapboxGeoJSONFeature } from "react-map-gl";
+import MapboxGeoJSONFeature from "react-map-gl";
 import { useEffect, useState } from "react";
 
 import { findElement } from "@/utils";

@@ -19,6 +19,7 @@ import Map, {
 } from "react-map-gl/maplibre";
 import { ErrorBoundary } from "react-error-boundary";
 
+import provider from "../../auth/provider";
 import { FLOOD_AREA_LAYERS, LINEAR_ASSET_LAYER } from "./layers";
 import { generateLinearAssetFeatures } from "./map-utils";
 import { useMapStyles } from "./mapStyles";
@@ -40,7 +41,6 @@ import { ElementsContext } from "@/context/ElementContext";
 import { DrawingModeContextProvider } from "@/context/DrawingMode";
 import { MapStyleContextProvider } from "@/context/MapStyle";
 import { ShowPointerCoordsContextProvider } from "@/context/ShowPointerCoords";
-import provider from "../../auth/provider";
 
 const FloodMonitoringStations = lazy(() => import("./FloodMonitoringStations"));
 const PointAssets = lazy(() => import("./PointAssets"));
@@ -163,21 +163,20 @@ function BuiltinSources() {
   return <>{sources.map(generateSources)}</>;
 }
 
-function TransformUrl(url : string) {
+function TransformUrl(url: string) {
   let transformedUrl = url;
   let headers = {};
 
   if (transformedUrl.includes("api.os.uk")) {
-    let urlParts = transformedUrl.split("api.os.uk");
-    let routeParams = urlParts[urlParts.length - 1];
+    const urlParts = transformedUrl.split("api.os.uk");
+    const routeParams = urlParts[urlParts.length - 1];
     let requestedFont = "";
     let encodedRequestedFont = "";
 
     // transform the from the os maps api to the transparent proxy.
     if (routeParams.startsWith("/")) {
       transformedUrl = `${window.location.origin}/transparent-proxy/os/${routeParams.substring(1)}`;
-    }
-    else {
+    } else {
       transformedUrl = `${window.location.origin}/transparent-proxy/os/${routeParams}`;
     }
 
@@ -188,8 +187,7 @@ function TransformUrl(url : string) {
 
       if (routeParams.includes("?")) {
         transformedUrl += `&fonts=${encodedRequestedFont}`;
-      }
-      else {
+      } else {
         transformedUrl += `&fonts=${encodedRequestedFont}`;
       }
 
@@ -276,7 +274,9 @@ export default function ParalogMap() {
             onMouseMove={handleOnMouseMove}
             boxZoom={false}
             styleDiffing
-            transformRequest={function(url, _resourceType) { return TransformUrl(url) }}
+            transformRequest={function (url, _resourceType) {
+              return TransformUrl(url);
+            }}
           >
             <DrawingModeContextProvider>
               <ControlsOverlay />

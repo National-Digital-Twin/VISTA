@@ -1,4 +1,4 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { fetchAllFloodAreas } from "@/api/combined";
 
 const useFloodWatchAreas = () => {
@@ -38,7 +38,7 @@ const useFloodWatchAreas = () => {
     return nodes;
   };
 
-  const { isError, error, data } = useSuspenseQuery({
+  const { isError, error, data } = useQuery({
     queryKey: ["flood-watch-areas"],
     queryFn: fetchAllFloodAreas,
     select: generateFloodAreaNodes,
