@@ -5,6 +5,10 @@ on:
     branches:
       - "release-*"
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   versioning:
     name: Extract Version
