@@ -4,16 +4,16 @@ import useFindIcon from "@/hooks/useFindIcon";
 
 export interface TypeIconProps {
   /** Icon size */
-  size?: "sm" | "md" | "lg" | "base";
+  readonly size?: "sm" | "md" | "lg" | "base";
   /** Ontology type (class) URI or short URI */
-  type: string;
+  readonly type: string;
   /** Disabled - if true, icon is rendered in a disabled state */
-  disabled?: boolean;
+  readonly disabled?: boolean;
 }
 
 function NewTypeIcon({ size = "base", type, disabled = false }: TypeIconProps) {
   const iconProps = useFindIcon(type);
-  // TODO: Most of these icons are missing in fontawesome
+  // Most of these icons are missing in fontawesome
   //const hasIcon = Boolean(iconProps?.faIcon);
   const hasIcon = false;
 

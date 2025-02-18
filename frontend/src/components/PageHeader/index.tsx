@@ -1,5 +1,8 @@
 import { AppBar, Toolbar, Grid2 } from "@mui/material";
 
+/** Overall header of the application */
+export default function PageHeader({ appName, className }: PageHeaderProps) {
+
 const PageHeader = ({ appName }) => {
   return (
     <AppBar position="static" sx={{ backgroundColor: "#002244" }}>

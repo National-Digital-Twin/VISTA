@@ -71,12 +71,13 @@ export default function VulnerablePeopleControls() {
 
   return (
     <>
-      {features.length ? (
+      {features.length > 0 && (
         <button className="menu-item" role="menuitem" onClick={toggle}>
           {enabled ? "Hide" : "Show"} Vulnerable People
         </button>
-      ) : null}
-      {drawnFeature ? (
+      )}
+
+      {drawnFeature && (
         <button
           className="menu-item text-red-500"
           role="menuitem"
@@ -84,7 +85,9 @@ export default function VulnerablePeopleControls() {
         >
           <FontAwesomeIcon icon={faTrashAlt} className="mr-2" /> Delete Area
         </button>
-      ) : !features.length ? (
+      )}
+
+      {!drawnFeature && features.length === 0 && (
         <button
           className="menu-item"
           role="menuitem"
@@ -92,7 +95,7 @@ export default function VulnerablePeopleControls() {
         >
           <FontAwesomeIcon icon={faDrawPolygon} className="mr-2" /> Draw Area
         </button>
-      ) : null}
+      )}
     </>
   );
 }

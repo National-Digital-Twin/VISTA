@@ -5,11 +5,11 @@ import styles from "./style.module.css";
 
 export interface AuthPromptProps {
   /** Additional classes to add to the top-level element */
-  className?: string;
+  readonly className?: string;
   /** Error from the last login, if any */
-  error?: string;
+  readonly error?: string;
   /** How to perform a login. If missing, this is disabled */
-  onLogIn?: (key: string) => void;
+  readonly onLogIn?: (key: string) => void;
 }
 
 /** Top-level authentication prompt */

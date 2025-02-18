@@ -7,9 +7,6 @@ assets within regions in the UK. It allows analysts to better understand the
 impact of high value assets which in turn allows them to make better decisions
 quickly.
 
-Paralog was originally developed by [Telicent][telicent], now being developed by
-[Coefficient][coefficient].
-
 ## Components
 
 Paralog comprises four main components:
@@ -35,12 +32,6 @@ For detailed setup instructions, please refer to the [SETUP.md](SETUP.md) file. 
 
 For more detailed information on each component, please refer to their respective README files in their directories.
 
-# Telicent Integration Architecture
-
-Telicent provides an implementation of the IA, called [Telicent Core][telicent-core],
-although for now there is a thin wrapper which we used for limited purposes from
-the frontend. [telicent-core]: https://telicent.io/the-core-platform/
-
 ## Additional Notes
 
 - For updating Python requirements, refer to `docs/updating_requirements.md`.
@@ -50,5 +41,6 @@ the frontend. [telicent-core]: https://telicent.io/the-core-platform/
 
 See [RUNNING_CODE_DEV_TOOLS.md](./developer_docs/RUNNING_CODE_DEV_TOOLS.md) for more information.
 
-[telicent]: https://telicent.io/
-[coefficient]: https://coefficient.ai
+## Contributors
+
+The development of these works has been made possible with thanks to our [contributors](https://github.com/National-Digital-Twin/Paralog/graphs/contributors).

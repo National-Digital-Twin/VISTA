@@ -4,7 +4,7 @@ import useHydroTidesWeatherStore from "@/components/DetailsPanel/useHydroTidesWe
 import Chart from "@/components/DetailsPanel/Chart";
 
 export interface TidesChartProps {
-  className?: string;
+  readonly className?: string;
 }
 
 export default function TidesChart({ className }: TidesChartProps) {

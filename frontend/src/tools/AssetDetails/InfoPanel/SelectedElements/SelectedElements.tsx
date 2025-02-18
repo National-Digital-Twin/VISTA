@@ -6,7 +6,7 @@ import type { Element } from "@/models";
 
 export interface SelectedElementsProps {
   /** Elements which are selected */
-  selectedElements: Element[];
+  readonly selectedElements: Element[];
 }
 
 export default function SelectedElements({
@@ -38,8 +38,8 @@ export default function SelectedElements({
 }
 
 interface ElementsListProps {
-  selectedElements: Element[];
-  totalSelected: number;
+  readonly selectedElements: Element[];
+  readonly totalSelected: number;
 }
 
 function ElementsList({ selectedElements, totalSelected }: ElementsListProps) {

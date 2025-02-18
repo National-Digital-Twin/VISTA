@@ -1,5 +1,5 @@
 import { isCircle, getCircleCenter } from "mapbox-gl-draw-geodesic";
-import type { MapboxGeoJSONFeature } from "react-map-gl";
+import type { Feature, Geometry, GeoJsonProperties } from "geojson";
 import {
   circle as turfCircle,
   booleanPointInPolygon,
@@ -15,7 +15,7 @@ export default function useElementsInPolygons() {
     assets,
     dependencies,
   }) => {
-    const pointAssets: MapboxGeoJSONFeature[] =
+    const pointAssets: Feature<Geometry, GeoJsonProperties>[] =
       target.getSource("point-assets")._data.features;
     const points = pointAssets.filter(
       (feature) => feature.geometry.type === "Point",
@@ -41,20 +41,14 @@ export default function useElementsInPolygons() {
           pointFeature.properties.uri === feature.properties.dependent,
       );
       if (isDependent) {
-        const providerAsset = points.find(
+        return points.find(
           (point) => point.properties.uri === feature.properties.provider,
         );
-        return providerAsset;
       }
-      const dependentAsset = points.find(
+      return points.find(
         (point) => point.properties.uri === feature.properties.dependent,
       );
-      return dependentAsset;
     });
-
-    // Alecs - Leaving this in for now until Tom gives the go ahead to remove this feature
-    // const pointAssetDependecies = target.getSource("point-asset-dependecies")._data.features;
-    // const PADIntersectingPolygon = findLinesIntersectingPolygon(polygons, pointAssetDependecies);
 
     const linearAssets = target.getSource("linear-assets")._data.features;
     const LAIntersectingPolygon = findLinesIntersectingPolygon(
@@ -71,23 +65,18 @@ export default function useElementsInPolygons() {
       return findElement([...assets, ...dependencies], element.properties.uri);
     });
 
-    const uniqueElements = getUniqueElements(elements);
-    return uniqueElements;
+    return getUniqueElements(elements);
   };
+
   return { findElementsInPolygons };
 }
 
-function getPolygon(feature: MapboxGeoJSONFeature) {
+function getPolygon(feature: Feature<Geometry, GeoJsonProperties>) {
   if (isCircle(feature)) {
     const center = getCircleCenter(feature);
     const radius = parseFloat(
       Math.fround(feature.properties.circleRadius).toFixed(3),
     );
-    feature.properties = {
-      ...feature.properties,
-      center,
-      radius,
-    };
 
     const circle = turfCircle(center, radius, {
       steps: 50,
@@ -99,40 +88,28 @@ function getPolygon(feature: MapboxGeoJSONFeature) {
   return feature;
 }
 
-function findPointsInPolygon(polygonFeatures, points) {
-  const pointsInPolygon = [];
+function findPointsInPolygon(
+  polygonFeatures: Feature<Geometry, GeoJsonProperties>[],
+  points: Feature<Geometry, GeoJsonProperties>[],
+) {
+  if (isEmpty(polygonFeatures)) return [];
 
-  if (isEmpty(polygonFeatures)) {
-    return pointsInPolygon;
-  }
-
-  for (let polygon of polygonFeatures) {
-    polygon = getPolygon(polygon);
-    for (const point of points) {
-      const isPointInPolygon = booleanPointInPolygon(point, polygon);
-      if (isPointInPolygon) {
-        pointsInPolygon.push(point);
-      }
-    }
-  }
-  return pointsInPolygon;
+  return points.filter((point) =>
+    polygonFeatures.some((polygon) =>
+      booleanPointInPolygon(point, getPolygon(polygon)),
+    ),
+  );
 }
 
-function findLinesIntersectingPolygon(polygonFeatures, lineStringFeatures) {
-  const intersectingLineStrings = [];
+function findLinesIntersectingPolygon(
+  polygonFeatures: Feature<Geometry, GeoJsonProperties>[],
+  lineStringFeatures: Feature<Geometry, GeoJsonProperties>[],
+) {
+  if (isEmpty(polygonFeatures)) return [];
 
-  if (isEmpty(polygonFeatures)) {
-    return intersectingLineStrings;
-  }
-
-  for (let polygon of polygonFeatures) {
-    polygon = getPolygon(polygon);
-    for (const lineString of lineStringFeatures) {
-      const lineIntersectsPolygon = booleanIntersects(polygon, lineString);
-      if (lineIntersectsPolygon) {
-        intersectingLineStrings.push(lineString);
-      }
-    }
-  }
-  return intersectingLineStrings;
+  return lineStringFeatures.filter((lineString) =>
+    polygonFeatures.some((polygon) =>
+      booleanIntersects(getPolygon(polygon), lineString),
+    ),
+  );
 }

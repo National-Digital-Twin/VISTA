@@ -9,7 +9,7 @@ export function useTideData(selectedStationId: string | null) {
 
   const tideDataQuery = useQuery({
     queryKey: ["get-tide-data", selectedStationId],
-    queryFn: () => fetchTideData(selectedStationId!),
+    queryFn: () => fetchTideData(selectedStationId),
     enabled: !!selectedStationId,
   });
 

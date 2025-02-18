@@ -34,7 +34,7 @@ jobs:
           cache: yarn
           cache-dependency-path: frontend/yarn.lock
 
-      - name: Configure the Coefficient registry
+      - name: Configure the registry
         run: |
           npm config set "@coefficientsystems:registry" "https://npm.pkg.github.com/"
           npm config set "//npm.pkg.github.com/:_authToken" $GITHUB_TOKEN

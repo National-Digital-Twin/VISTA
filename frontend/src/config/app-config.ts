@@ -4,7 +4,7 @@ import featureFlags from "./feature-flags";
 
 const config = {
   map: {
-    maptilerToken: import.meta.env.VITE_MAP_TILER_TOKEN
+    maptilerToken: import.meta.env.VITE_MAP_TILER_TOKEN,
   },
   api: {
     url: import.meta.env.VITE_PARALOG_API_URL,
@@ -14,7 +14,7 @@ const config = {
   },
   services: {
     ontology: import.meta.env.VITE_ONTOLOGY_SERVICE_URL,
-    coefficientPython: "/coefficient-python/api/graphql/",
+    ndtpPython: "/ndtp-python/api/graphql/",
   },
   canny: {
     appId: import.meta.env.VITE_CANNY_APP_ID,
@@ -66,7 +66,7 @@ if (!import.meta.env.VITE_CANNY_BOARD_TOKEN) {
 }
 
 if (!import.meta.env.VITE_MET_OFFICE_GLOBAL_SPOT_API_KEY) {
-  if (import.meta.env.VITE_GLOBAL_SPOT_MET_OFFICE_API_KEY) {
+  if (import.meta.env.VITE_MET_OFFICE_GLOBAL_SPOT_API_KEY) {
     config.configErrors.push(
       "No VITE_MET_OFFICE_GLOBAL_SPOT_API_KEY but VITE_GLOBAL_SPOT_MET_OFFICE_API_KEY is defined. " +
         "Update the name in your .env - note the order of 'global spot' and 'met office'.",

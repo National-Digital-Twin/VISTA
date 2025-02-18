@@ -1,15 +1,15 @@
 import { ReactNode, Suspense, lazy, useMemo } from "react";
 
 export interface ChartProps<T> {
-  name: string;
-  rawData: T[] | undefined;
-  isLoading: boolean;
-  isError: boolean;
-  parameter: string;
-  getUnit: (param: string) => string;
-  dataTransform: (item: T) => { time: string; value: number };
-  className?: string;
-  additionalChartElements?: ReactNode;
+  readonly name: string;
+  readonly rawData: T[] | undefined;
+  readonly isLoading: boolean;
+  readonly isError: boolean;
+  readonly parameter: string;
+  readonly getUnit: (param: string) => string;
+  readonly dataTransform: (item: T) => { time: string; value: number };
+  readonly className?: string;
+  readonly additionalChartElements?: ReactNode;
 }
 
 const ChartBody = lazy(() => import("./ChartBody"));

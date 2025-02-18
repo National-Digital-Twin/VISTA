@@ -27,9 +27,6 @@ const WEATHER_STATIONS = {
   },
 };
 
-// const LOCATION = "Newport (Isle of Wight)";
-// const BASE_URL = `https://data.hub.api.metoffice.gov.uk/sitespecific/v0/point/hourly?latitude=${WEATHER_STATIONS[LOCATION].latitude}&longitude=${WEATHER_STATIONS[LOCATION].longitude}&includeLocationName=true`;
-
 const options = {
   method: "GET",
   headers: {

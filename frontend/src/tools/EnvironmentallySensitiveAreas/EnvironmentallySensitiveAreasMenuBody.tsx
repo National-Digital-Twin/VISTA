@@ -8,12 +8,12 @@ import useLayer from "@/hooks/useLayer";
 import { MenuButton } from "@/components/MenuButton";
 
 export interface EnvironmentallySensitiveAreasMenuBodyProps {
-  searchQuery?: string;
+  readonly searchQuery?: string;
 }
 
 export function EnvironmentallySensitiveAreasMenuBody({
   searchQuery = "",
-}: EnvironmentallySensitiveAreasMenuBodyProps) {
+}: Readonly<EnvironmentallySensitiveAreasMenuBodyProps>) {
   const { enabled, toggle } = useLayer("environmentally-sensitive-areas");
 
   const enabledLayers = useEnvironmentallySensitiveAreasSharedStore(

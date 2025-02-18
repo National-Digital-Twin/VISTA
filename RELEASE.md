@@ -94,4 +94,4 @@ For a minor release (fixing regressions, last minute changes for demos, security
 
 No demo video or separate evidential record are needed for these minor releases.
 
-[github-releases]: https://github.com/CoefficientSystems/c477-paralog/releases
+[github-releases]: https://github.com/National-Digital-Twin/Paralog/releases

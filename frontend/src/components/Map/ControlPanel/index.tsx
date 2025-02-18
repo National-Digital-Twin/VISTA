@@ -11,9 +11,9 @@ import { useTools } from "@/tools/useTools";
 
 export interface ControlPanelProps {
   /** Additional class name to attach to the top-level element */
-  className?: string;
+  readonly className?: string;
   /** Action to close the control panel */
-  onClose?: () => void;
+  readonly onClose?: () => void;
 }
 
 /** Main control panel, for controlling layers and simulation */
@@ -25,16 +25,16 @@ export default function ControlPanel({
 
   const entries = tools("control-panel-order")
     .map((tool) => {
-      if (!tool.controlPanelTab) {
+      if (!tool.controlPanelTab || !tool.ControlPanelContent) {
         return null;
       }
       return {
         name: tool.controlPanelTab.title,
         icon: tool.controlPanelTab.icon,
-        Content: tool.ControlPanelContent!,
+        Content: tool.ControlPanelContent,
       };
     })
-    .filter((item) => item !== null);
+    .filter(Boolean); // Removes null values safely
 
   return (
     <Tabs
@@ -71,7 +71,7 @@ export default function ControlPanel({
 }
 
 interface ControlPanelCloseButtonProps {
-  onClose: () => void;
+  readonly onClose: () => void;
 }
 
 function ControlPanelCloseButton({ onClose }: ControlPanelCloseButtonProps) {

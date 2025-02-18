@@ -1,30 +1,30 @@
 import { useState } from "react";
 import { Marker, Popup, Source } from "react-map-gl";
-import type { MapboxGeoJSONFeature } from "react-map-gl";
+import type { Feature } from "geojson"; // ✅ Use standard GeoJSON Feature
 
 import { FEATURE_COLLECTION, GEOJSON } from "./ParalogMap";
 
 export interface FloodMonitoringStationsProps {
   /** Query result to show */
-  query: { data: any }; // TODO: Precise type
+  readonly query: { data: any };
   /** Whether to show any stations */
-  showStations?: boolean;
+  readonly showStations?: boolean;
 }
 
 export default function FloodMonitoringStations({
   query,
   showStations = false,
 }: FloodMonitoringStationsProps) {
-  const [selectedStation, setSelectedStation] = useState<
-    MapboxGeoJSONFeature | undefined
-  >(undefined);
+  const [selectedStation, setSelectedStation] = useState<Feature | undefined>(
+    undefined,
+  );
   const { data: features } = query;
 
   if (!features || !showStations) {
     return null;
   }
 
-  const handleOnStationClick = (feature: MapboxGeoJSONFeature) =>
+  const handleOnStationClick = (feature: Feature) =>
     setSelectedStation(feature);
   const handleOnClosePopup = () => setSelectedStation(undefined);
 
@@ -32,7 +32,7 @@ export default function FloodMonitoringStations({
     <Source
       id="flood-monitoring-stations"
       type={GEOJSON}
-      data={{ type: FEATURE_COLLECTION, features: features }}
+      data={{ type: FEATURE_COLLECTION, features }}
     >
       <StationIcons features={features} onStationClick={handleOnStationClick} />
       <StationPopup
@@ -44,18 +44,18 @@ export default function FloodMonitoringStations({
 }
 
 interface StationIconsProps {
-  features: MapboxGeoJSONFeature[];
-  onStationClick: (station: MapboxGeoJSONFeature) => void;
+  readonly features: Feature[]; // ✅ Updated type
+  readonly onStationClick: (station: Feature) => void;
 }
 
 function StationIcons({ features, onStationClick }: StationIconsProps) {
   return (
     <>
-      {features.map((feature: MapboxGeoJSONFeature) => {
+      {features.map((feature) => {
         const [longitude, latitude] = (feature.geometry as any).coordinates;
         return (
           <Marker
-            key={feature.properties.id}
+            key={feature.properties?.id} // ✅ Added optional chaining to prevent crashes
             longitude={longitude}
             latitude={latitude}
             onClick={() => onStationClick(feature)}
@@ -70,8 +70,8 @@ function StationIcons({ features, onStationClick }: StationIconsProps) {
 }
 
 interface StationPopupProps {
-  selectedStation?: MapboxGeoJSONFeature;
-  onClose: () => void;
+  readonly selectedStation?: Feature; // ✅ Updated type
+  readonly onClose: () => void;
 }
 
 function StationPopup({ selectedStation, onClose }: StationPopupProps) {
@@ -98,10 +98,10 @@ function StationPopup({ selectedStation, onClose }: StationPopupProps) {
       offset={offset}
     >
       <h4 className="mr-6 font-medium">Monitoring Station</h4>
-      <p>{selectedStation.properties.label}</p>
+      <p>{selectedStation.properties?.label}</p>
       <a
         href={`https://environment.data.gov.uk/flood-monitoring/id/stations/${getId(
-          selectedStation.properties.id,
+          selectedStation.properties?.id ?? "",
         )}.html`}
         target="_blank"
         rel="noreferrer"
