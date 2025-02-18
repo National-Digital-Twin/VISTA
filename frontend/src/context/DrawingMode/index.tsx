@@ -12,7 +12,7 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import { useControl, useMap } from "react-map-gl";
+import { useControl, useMap } from "react-map-gl/maplibre";
 import type { Feature } from "geojson";
 import { useShallow } from "zustand/react/shallow";
 import RectangleMode from "mapbox-gl-draw-rectangle-mode";
@@ -25,6 +25,7 @@ import {
 import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
 import "./maplibre-gl-draw.css";
 import useSharedStore, { State } from "@/hooks/useSharedStore";
+import { drawStyles } from "./theme";
 
 /** Context for Drawing Mode */
 interface DrawingModeContextValue {
@@ -52,12 +53,17 @@ export function DrawingModeContextProvider({
   const { paralogMap: map } = useMap();
   const [isMapLoaded, setIsMapLoaded] = useState(map.loaded());
 
+  const blue = "#3bb2d0";
+  const orange = "#fbb03b";
+  const white = "#fff";
+
   const draw = useControl(
     () =>
-      new MapboxDraw({
+      new (MapboxDraw as any)({
         userProperties: true,
         displayControlsDefault: false,
         modes,
+        styles: drawStyles,
       }),
   );
 

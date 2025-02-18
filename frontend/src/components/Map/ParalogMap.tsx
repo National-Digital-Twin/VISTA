@@ -19,6 +19,7 @@ import Map, {
 } from "react-map-gl/maplibre";
 import { ErrorBoundary } from "react-error-boundary";
 
+import provider from "../../auth/provider";
 import { FLOOD_AREA_LAYERS, LINEAR_ASSET_LAYER } from "./layers";
 import { generateLinearAssetFeatures } from "./map-utils";
 import { useMapStyles } from "./mapStyles";
@@ -40,7 +41,6 @@ import { ElementsContext } from "@/context/ElementContext";
 import { DrawingModeContextProvider } from "@/context/DrawingMode";
 import { MapStyleContextProvider } from "@/context/MapStyle";
 import { ShowPointerCoordsContextProvider } from "@/context/ShowPointerCoords";
-import provider from "../../auth/provider";
 
 const FloodMonitoringStations = lazy(() => import("./FloodMonitoringStations"));
 const PointAssets = lazy(() => import("./PointAssets"));
@@ -168,8 +168,8 @@ function TransformUrl(url: string) {
   let headers = {};
 
   if (transformedUrl.includes("api.os.uk")) {
-    let urlParts = transformedUrl.split("api.os.uk");
-    let routeParams = urlParts[urlParts.length - 1];
+    const urlParts = transformedUrl.split("api.os.uk");
+    const routeParams = urlParts[urlParts.length - 1];
     let requestedFont = "";
     let encodedRequestedFont = "";
 
@@ -187,6 +187,7 @@ function TransformUrl(url: string) {
       encodedRequestedFont = encodeURIComponent(requestedFont);
 
       transformedUrl += `&fonts=${encodedRequestedFont}`;
+
       transformedUrl = transformedUrl.replace(`/${requestedFont}/`, "/");
     }
 

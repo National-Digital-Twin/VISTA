@@ -1,9 +1,9 @@
-import { Marker } from "react-map-gl";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import useHydrologyStore from "./useStore";
 import useHydroTidesWeatherStore from "@/components/DetailsPanel/useHydroTidesWeatherStore";
 import { fetchStations, HydrologyStation } from "@/api/hydrology";
+import { Marker } from "react-map-gl/maplibre";
 
 export default function HydrologyStations() {
   const { selectStation, selectedStation } = useHydroTidesWeatherStore();
@@ -35,17 +35,20 @@ export default function HydrologyStations() {
           key={item.id}
           longitude={item.longitude}
           latitude={item.latitude}
-          onClick={() => handleStationClick(item)}
-          style={{
-            cursor: "pointer",
-            border:
-              selectedStation?.type === "hydrology" &&
-              selectedStation.data.id === item.id
-                ? "1px solid yellow"
-                : "",
-            borderRadius: "10px",
-          }}
-        />
+        >
+          <div
+            onClick={() => handleStationClick(item)}
+            style={{
+              cursor: "pointer",
+              border:
+                selectedStation?.type === "hydrology" &&
+                selectedStation.data.id === item.id
+                  ? "1px solid yellow"
+                  : "",
+              borderRadius: "10px",
+            }}
+          />
+        </Marker>
       ))}
     </>
   );

@@ -21,6 +21,7 @@ export default function VulnerablePeopleControls() {
   const features = useSharedStore(
     useShallow((state) => state.vulnerablePeopleFeatures),
   );
+
   const setSelected = useStore(
     (state) => state.setSelectedVulnerablePeopleItem,
   );
