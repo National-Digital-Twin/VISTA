@@ -1,4 +1,4 @@
-name: Backend CI push to ECR
+name: Backend CD push to ECR
 
 on:
   workflow_call:
@@ -11,6 +11,10 @@ on:
         type: string
         required: true
         description: "Name of the repository in ECR"
+      version:
+        type: string
+        required: false
+        description: "Optional version number to skip version generation steps"
   workflow_dispatch:
     inputs:
       aws_account_number:
@@ -21,6 +25,10 @@ on:
         type: string
         required: true
         description: "Name of the repository in ECR"
+      version:
+        type: string
+        required: false
+        description: "Optional version number to skip version generation steps"
 
 permissions:
   id-token: write
@@ -31,27 +39,40 @@ jobs:
     name: Semantic Versioning
     runs-on: ubuntu-latest
     outputs:
-      version: ${{ steps.generate-version.outputs.version }}
+      version: ${{ steps.set-version.outputs.version }}
     steps:
       - name: Generate Patch Version (Timestamp)
         id: generate-patch
+        if: ${{ !inputs.version }} # Skip this step if version is provided
         run: |
           PATCH=$(date -u +"%Y%m%d%H%M%S")
           echo "patch_version=${PATCH}" >> $GITHUB_ENV
 
       - name: Generate Full Semantic Version
         id: generate-version
+        if: ${{ !inputs.version }} # Skip this step if version is provided
         run: |
           MAJOR="${{ github.event.inputs.major || '1' }}"
           MINOR="${{ github.event.inputs.minor || '0' }}"
           PATCH="${{ env.patch_version }}"
           VERSION="${MAJOR}.${MINOR}.${PATCH}"
           echo "VERSION=${VERSION}" >> $GITHUB_ENV
-          echo "version=${VERSION}" >> $GITHUB_OUTPUT  # Ensure output is set correctly
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
 
-      - name: Print Generated Version
+      - name: Set Version from Input or Generated Version
+        id: set-version
         run: |
-          echo "Generated Version: ${{ env.VERSION }}"
+          if [ -n "${{ inputs.version }}" ]; then
+            echo "Using provided version: ${{ inputs.version }}"
+            echo "version=${{ inputs.version }}" >> $GITHUB_OUTPUT
+          else
+            echo "Using generated version: ${{ env.VERSION }}"
+            echo "version=${{ env.VERSION }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Print Version
+        run: |
+          echo "Version: ${{ steps.set-version.outputs.version }}"
 
   docker-build-push:
     name: Docker Build & Push
@@ -99,4 +120,4 @@ jobs:
       - name: Verify Docker Image
         run: |
           docker images
-          aws ecr describe-images --repository-name ${{ inputs.repo_name }} --query 'sort_by(imageDetails, &imagePushedAt)[-1]' --output table >> $GITHUB_STEP_SUMMARY
+          aws ecr describe-images --repository-name ${{ inputs.repo_name }} --query 'sort_by(imageDetails, &imagePushedAt)[-1]' --output table  >> $GITHUB_STEP_SUMMARY
