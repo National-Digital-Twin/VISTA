@@ -8,7 +8,9 @@ import apolloClient from "./api/apollo-client";
 import App from "@/App";
 import DevTools from "@/components/DevTools";
 import "./index.css";
-import featureFlags, { updateFeatureFlagsFromURL } from "@/config/feature-flags";
+import featureFlags, {
+  updateFeatureFlagsFromURL,
+} from "@/config/feature-flags";
 
 // ✅ Update feature flags from URL on app initialization
 updateFeatureFlagsFromURL();
@@ -45,5 +47,5 @@ root.render(
         </DevTools>
       </QueryClientProvider>
     </ApolloProvider>
-  </StrictMode>
+  </StrictMode>,
 );
