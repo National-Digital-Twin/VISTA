@@ -1,8 +1,8 @@
 - op: replace
   path: /spec/hosts/0
-  value: paralog.demo.ndtp.co.uk
+  value: paralog-pro.demo.ndtp.co.uk
 
 
 - op: replace
   path: /spec/gateways/0
-  value: paralog-pro/paralog-frontend-ingress-gateway
+  value: paralog-pro/paralog-pro-frontend-ingress-gateway

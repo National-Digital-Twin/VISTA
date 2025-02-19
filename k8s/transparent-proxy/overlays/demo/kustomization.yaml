@@ -9,10 +9,6 @@ patches:
   - path: patches/allow-ingress.yaml
     target:
       kind: AuthorizationPolicy
-  - path: patches/requestAuthentication.yaml
-    target:
-      kind: RequestAuthentication
-      name: cognito-authentication-request
   - path: patches/virtualService.yaml
     target:
       kind: VirtualService
@@ -35,3 +31,7 @@ images:
     newTag: 'latest'
 
 
+secretGenerator:
+  - name: paralog-transparent-proxy-static-secret
+    envs:
+      - secrets.env

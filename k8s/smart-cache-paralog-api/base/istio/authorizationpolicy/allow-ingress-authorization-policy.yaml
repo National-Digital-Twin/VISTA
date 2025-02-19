@@ -2,16 +2,16 @@
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:
-  name: allow-ingress-to-frontend
+  name: allow-ingress-to-smart-cache-paralog-pro-api
 spec:
   selector:
     matchLabels:
-      io.kompose.service: paralog-pro-frontend
+      io.kompose.service: smart-cache-paralog-pro-api
   action: ALLOW
   rules:
     - from:
         - source:
-            principals: ["PLACE_HOLDER"]
+            principals : ["PLACE_HOLDER"]
       to:
         - operation:
             methods: ["GET","POST"]

@@ -1,16 +1,13 @@
 resources:
-  - ../base/istio/authorizationpolicy/deny-by-default.yaml
   - ../base/istio/authorizationpolicy/allow-ingress-authorization-policy.yaml
   - ../base/istio/gateway.yaml
   - ../base/istio/virtualService.yaml
-  - ../base/istio/peereauthentication.yaml
-  - ../base/istio/requestAuthentication.yaml
-  - namespace.yaml
   - service-account.yaml
   - deployment.yaml
   - service.yaml
-  - VaultAuth.yaml
-  - VaultStaticSecret.yaml
+  - vault/vaultAuth.yaml
+  - vault/vaultStaticSecret.yaml
+  - vault/vaultAuthSecret.yaml
 
 labels:
   - pairs:

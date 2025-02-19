@@ -1,0 +1,12 @@
+apiVersion: secrets.hashicorp.com/v1beta1
+kind: VaultAuth
+metadata:
+  name: paralog-pro-python-api-static-auth
+spec:
+  method: kubernetes
+  mount: kubernetes
+  kubernetes:
+    role: paralog-pro-python-api-role
+    serviceAccount: paralog-pro-python-api-sa
+    audiences:
+      - vault

@@ -1,7 +1,7 @@
 apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
 metadata:
-  name: paralog-pro-frontend-ingress-gateway
+  name: paralog-pro-python-api-ingress-gateway
 spec:
   selector:
     app: istio-ingress

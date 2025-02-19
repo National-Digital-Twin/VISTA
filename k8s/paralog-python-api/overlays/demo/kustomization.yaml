@@ -2,8 +2,6 @@ resources:
   - ../../base
 
 namespace: paralog-pro
-
-
 patches:
   - path: patches/gateway.yaml
     target:
@@ -14,22 +12,23 @@ patches:
   - path: patches/virtualService.yaml
     target:
       kind: VirtualService
-      name: paralog-pro-frontend
+      name: paralog-pro-python-api
   - path: patches/service-account.yaml
     target:
       kind: ServiceAccount
-      name: paralog-frontend-sa
-
-
+      name: paralog-pro-python-api-sa
 
 labels:
   - pairs:
       env: demo
 
-
 images:
-  - name: paralog-frontend-image
-    newName: 503561419905.dkr.ecr.eu-west-2.amazonaws.com/paralog/demo-frontend
-    newTag: 'remove-auth-2'
+  - name: paralog-pro-python-api-image
+    newName: 503561419905.dkr.ecr.eu-west-2.amazonaws.com/paralog/demo-paralog-python-api
+    newTag: '1739979400'
 
 
+configMapGenerator:
+  - name: paralog-pro-python-api-configs
+    envs:
+      - params.env

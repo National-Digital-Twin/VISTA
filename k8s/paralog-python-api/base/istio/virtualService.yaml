@@ -3,7 +3,7 @@ apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 
 metadata:
-  name: paralog-transparent-proxy
+  name: paralog-pro-python-api
 spec:
   hosts:
     - placeholder
@@ -12,11 +12,11 @@ spec:
   http:
     - match:
         - uri:
-            prefix: /transparent-proxy/
+            prefix: /ndtp-python/
       rewrite:
-             uri : "/"
+          uri: "/"
       route:
         - destination:
-            host: paralog-transparent-proxy
+            host: paralog-pro-python-api
             port:
               number: 80

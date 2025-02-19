@@ -3,7 +3,7 @@ apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 
 metadata:
-  name: paralog-transparent-proxy
+  name: smart-cache-paralog-pro-api
 spec:
   hosts:
     - placeholder
@@ -12,11 +12,11 @@ spec:
   http:
     - match:
         - uri:
-            prefix: /transparent-proxy/
+            prefix: /paralog/
       rewrite:
-             uri : "/"
+        uri : "/"
       route:
         - destination:
-            host: paralog-transparent-proxy
+            host: smart-cache-paralog-pro-api
             port:
               number: 80

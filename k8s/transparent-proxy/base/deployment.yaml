@@ -16,18 +16,6 @@ spec:
     metadata:
       annotations:
         traffic.sidecar.istio.io/excludeOutboundPorts: "8200"
-        vault.hashicorp.com/agent-init-first: "true"
-        vault.hashicorp.com/agent-inject: "true"
-        vault.hashicorp.com/agent-cache-enable: "false"
-        vault.hashicorp.com/role: "paralog-transparent-proxy-role"
-#        vault.hashicorp.com/agent-inject-secret-proxy.json: "k8-cluster/data/applications/paralog/transparent-proxy"
-#        vault.hashicorp.com/agent-inject-template-proxy.json: |
-#          {{ with secret "k8-cluster/data/applications/paralog/transparent-proxy" -}}
-#            export ADMIRALTY_API_KEY="{{ .Data.data.ADMIRALTY_API_KEY }}"
-#            export REALTIME_TRAINS_API_KEY="{{ .Data.data.REALTIME_TRAINS_API_KEY }}"
-#            export OS_API_KEY="{{ .Data.data.OS_API_KEY }}"
-#
-#          {{- end }}
       labels:
         io.kompose.service: paralog-transparent-proxy
     spec:
@@ -35,7 +23,6 @@ spec:
       containers:
         - name: paralog-transparent-proxy-image
           image: paralog-transparent-proxy-image
-
           imagePullPolicy: Always
           envFrom:
            - secretRef:
