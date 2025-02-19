@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useCallback } from "react";
-import { Layer, Marker, Source, useMap } from "react-map-gl";
+import { Layer, Marker, Source, useMap } from "react-map-gl/maplibre";
 import type { Feature } from "geojson";
 import classNames from "classnames";
 

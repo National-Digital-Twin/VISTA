@@ -1,5 +1,5 @@
 import { capitalCase } from "change-case";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import ontologyService from "@/ontology-service";
 
 export interface FoundIcon {
@@ -53,8 +53,8 @@ function getTypeInitials(type: string) {
   return type ?? "";
 }
 
-function useStyles(): Record<string, FoundIcon> {
-  const { data } = useSuspenseQuery({
+function useStyles(): Record<string, FoundIcon> | undefined {
+  const { data, error, isLoading } = useSuspenseQuery({
     queryKey: ["ontology-styles"],
     queryFn: async () => {
       const iconEntries: Record<
@@ -101,6 +101,16 @@ function useStyles(): Record<string, FoundIcon> {
       );
     },
   });
+
+  if (isLoading) {
+    return undefined; // or return a loading state if needed
+  }
+
+  if (error) {
+    console.error("Error fetching ontology styles:", error);
+    return undefined; // or handle the error state if needed
+  }
+
   return data;
 }
 

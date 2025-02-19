@@ -3,7 +3,7 @@ import { faBell } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import classNames from "classnames";
 import { useBoolean, useOnClickOutside } from "usehooks-ts";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import styles from "./style.module.css";
 import FloodRiskAreas from "./FloodRiskAreas";
 import { fetchAllLiveStations } from "@/api/hydrology";
@@ -16,7 +16,7 @@ export default function FloodNotifDropdown() {
   } = useBoolean(false);
   const widgetRef = useRef<HTMLDivElement>(null);
 
-  const { data: floodWarnings } = useSuspenseQuery({
+  const { data: floodWarnings } = useQuery({
     queryKey: ["floodWarnings"],
     queryFn: async () => {
       const geoJsonData = await fetchAllLiveStations();
@@ -28,7 +28,6 @@ export default function FloodNotifDropdown() {
     if (!floodWarnings || floodWarnings.length === 0) {
       return [];
     }
-
     return floodWarnings.filter(
       (station) => station.properties.atrisk === true,
     );
