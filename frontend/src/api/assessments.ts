@@ -48,20 +48,24 @@ export const fetchAssessmentDependencies = async (
   assessment: string,
   types: string[],
 ) => {
-  const typeParams = types.map((type) => ["types", type]);
-  const queryParams = new URLSearchParams([
-    ["assessment", assessment],
-    ...typeParams,
-  ]).toString();
+  const body = JSON.stringify({ assessment, types });
 
   const response = await fetchWithAuth(
-    createParalogEndpoint(`assessments/dependencies?${queryParams}`),
-    fetchOptions,
+    createParalogEndpoint(`assessments/dependencies`),
+    {
+      ...fetchOptions,
+      method: "POST",
+      headers: {
+        ...fetchOptions.headers,
+        "Content-Type": "application/json",
+      },
+      body,
+    },
   );
 
   if (!response.ok) {
     throw new Error(
-      `An error occured while retrieving dependencies for assessment ${assessment} and types ${typeParams.toString()}`,
+      `An error occurred while retrieving dependencies for assessment ${assessment} and types ${types.toString()}`,
     );
   }
 
