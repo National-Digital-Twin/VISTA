@@ -10,9 +10,9 @@ resources:
 
 labels:
   - pairs:
-      app: paralog-pro-python-api
+      app: paralog-python-api
       env: ENV_PLACEHOLDER
-      app.kubernetes.io/name: paralog-pro-python-api
+      app.kubernetes.io/name: paralog-python-api
 
 
 

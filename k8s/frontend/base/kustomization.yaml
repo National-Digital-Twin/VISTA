@@ -9,9 +9,9 @@ resources:
 
 labels:
   - pairs:
-      app: paralog-pro-frontend
+      app: paralog-frontend
       env: ENV_PLACEHOLDER
-      app.kubernetes.io/name: paralog-pro-frontend
+      app.kubernetes.io/name: paralog-frontend
 
 
 

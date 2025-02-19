@@ -1,7 +1,7 @@
 resources:
   - ../../base
 
-namespace: paralog-pro
+namespace: paralog
 patches:
   - path: patches/gateway.yaml
     target:
@@ -12,23 +12,23 @@ patches:
   - path: patches/virtualService.yaml
     target:
       kind: VirtualService
-      name: paralog-pro-python-api
+      name: paralog-python-api
   - path: patches/service-account.yaml
     target:
       kind: ServiceAccount
-      name: paralog-pro-python-api-sa
+      name: paralog-python-api-sa
 
 labels:
   - pairs:
       env: demo
 
 images:
-  - name: paralog-pro-python-api-image
+  - name: paralog-python-api-image
     newName: 503561419905.dkr.ecr.eu-west-2.amazonaws.com/paralog/demo-paralog-python-api
     newTag: '1739979400'
 
 
 configMapGenerator:
-  - name: paralog-pro-python-api-configs
+  - name: paralog-python-api-configs
     envs:
       - params.env

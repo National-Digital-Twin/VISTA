@@ -1,7 +1,7 @@
 resources:
   - ../../base
 
-namespace: paralog-pro
+namespace: paralog
 
 
 patches:
@@ -14,7 +14,7 @@ patches:
   - path: patches/virtualService.yaml
     target:
       kind: VirtualService
-      name: paralog-pro-frontend
+      name: paralog-frontend
   - path: patches/service-account.yaml
     target:
       kind: ServiceAccount

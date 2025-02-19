@@ -1,7 +1,7 @@
 resources:
   - ../../base
 
-namespace: paralog-pro
+namespace: paralog
 patches:
   - path: patches/gateway.yaml
     target:

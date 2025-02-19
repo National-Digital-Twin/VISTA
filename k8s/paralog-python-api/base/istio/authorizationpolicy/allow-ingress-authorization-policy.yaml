@@ -2,11 +2,11 @@
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:
-  name: allow-ingress-to-paralog-pro-python-api
+  name: allow-ingress-to-paralog-python-api
 spec:
   selector:
     matchLabels:
-      io.kompose.service: paralog-pro-python-api
+      io.kompose.service: paralog-python-api
   action: ALLOW
   rules:
     - from:

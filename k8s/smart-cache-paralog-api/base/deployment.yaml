@@ -3,13 +3,13 @@ kind: Deployment
 metadata:
   annotations: {}
   labels:
-    io.kompose.service: smart-cache-paralog-pro-api
-  name: smart-cache-paralog-pro-api
+    io.kompose.service: smart-cache-paralog-api
+  name: smart-cache-paralog-api
 spec:
   replicas: 1
   selector:
     matchLabels:
-      io.kompose.service: smart-cache-paralog-pro-api
+      io.kompose.service: smart-cache-paralog-api
   template:
     metadata:
       annotations:
@@ -17,21 +17,21 @@ spec:
         vault.hashicorp.com/agent-init-first: "true"
         vault.hashicorp.com/agent-inject: "true"
         vault.hashicorp.com/agent-cache-enable: "false"
-        vault.hashicorp.com/role: "smart-cache-paralog-pro-api-role"
+        vault.hashicorp.com/role: "smart-cache-paralog-api-role"
       labels:
-        io.kompose.service: smart-cache-paralog-pro-api
+        io.kompose.service: smart-cache-paralog-api
     spec:
-      serviceAccountName: smart-cache-paralog-pro-api-sa
+      serviceAccountName: smart-cache-paralog-api-sa
       containers:
-        - name: smart-cache-paralog-pro-api-image
-          image: smart-cache-paralog-pro-api-image
+        - name: smart-cache-paralog-api-image
+          image: smart-cache-paralog-api-image
           imagePullPolicy: Always
           envFrom:
             - configMapRef:
-                name: smart-cache-paralog-pro-api-configs
+                name: smart-cache-paralog-api-configs
 #          envFrom:
 #           - secretRef:
-#              name: smart-cache-paralog-pro-api-static-secret
+#              name: smart-cache-paralog-api-static-secret
           ports:
             - containerPort: 4001
               protocol: TCP

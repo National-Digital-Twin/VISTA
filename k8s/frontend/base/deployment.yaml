@@ -3,18 +3,18 @@ kind: Deployment
 metadata:
   annotations: {}
   labels:
-    io.kompose.service: paralog-pro-frontend
-  name: paralog-pro-frontend
+    io.kompose.service: paralog-frontend
+  name: paralog-frontend
 spec:
   replicas: 1
   selector:
     matchLabels:
-      io.kompose.service: paralog-pro-frontend
+      io.kompose.service: paralog-frontend
   template:
     metadata:
       annotations: {}
       labels:
-        io.kompose.service: paralog-pro-frontend
+        io.kompose.service: paralog-frontend
     spec:
       serviceAccountName: paralog-frontend-sa
       containers:

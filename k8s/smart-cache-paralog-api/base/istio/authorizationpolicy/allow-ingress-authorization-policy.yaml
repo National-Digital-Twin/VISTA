@@ -2,11 +2,11 @@
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:
-  name: allow-ingress-to-smart-cache-paralog-pro-api
+  name: allow-ingress-to-smart-cache-paralog-api
 spec:
   selector:
     matchLabels:
-      io.kompose.service: smart-cache-paralog-pro-api
+      io.kompose.service: smart-cache-paralog-api
   action: ALLOW
   rules:
     - from:

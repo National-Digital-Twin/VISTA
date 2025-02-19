@@ -10,9 +10,9 @@ resources:
 
 labels:
   - pairs:
-      app: smart-cache-paralog-pro-api
+      app: smart-cache-paralog-api
       env: ENV_PLACEHOLDER
-      app.kubernetes.io/name: smart-cache-paralog-pro-api
+      app.kubernetes.io/name: smart-cache-paralog-api
 
 
 

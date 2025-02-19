@@ -1,7 +1,7 @@
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:
-  name: allow-ingress-to-smart-cache-paralog-pro-api
+  name: allow-ingress-to-smart-cache-paralog-api
 spec:
   rules:
     - from:

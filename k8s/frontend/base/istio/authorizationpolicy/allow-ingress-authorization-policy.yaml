@@ -6,7 +6,7 @@ metadata:
 spec:
   selector:
     matchLabels:
-      io.kompose.service: paralog-pro-frontend
+      io.kompose.service: paralog-frontend
   action: ALLOW
   rules:
     - from:

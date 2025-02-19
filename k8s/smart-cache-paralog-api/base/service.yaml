@@ -3,8 +3,8 @@ kind: Service
 metadata:
   annotations: {}
   labels:
-    io.kompose.service: smart-cache-paralog-pro-api
-  name: smart-cache-paralog-pro-api
+    io.kompose.service: smart-cache-paralog-api
+  name: smart-cache-paralog-api
 spec:
   ports:
     - name: "80"
@@ -12,4 +12,4 @@ spec:
       targetPort: 4001
   type: NodePort
   selector:
-    io.kompose.service: smart-cache-paralog-pro-api
+    io.kompose.service: smart-cache-paralog-api

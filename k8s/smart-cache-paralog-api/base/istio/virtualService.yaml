@@ -3,7 +3,7 @@ apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 
 metadata:
-  name: smart-cache-paralog-pro-api
+  name: smart-cache-paralog-api
 spec:
   hosts:
     - placeholder
@@ -17,6 +17,6 @@ spec:
         uri : "/"
       route:
         - destination:
-            host: smart-cache-paralog-pro-api
+            host: smart-cache-paralog-api
             port:
               number: 80
