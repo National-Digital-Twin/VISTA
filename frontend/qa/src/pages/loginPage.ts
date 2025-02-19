@@ -32,17 +32,12 @@ export default class LoginPage {
     }
 
     async clickLoginButton() {
-        //await this.base.waitAndClick(this.Elements.loginBtn);
         await this.page.getByRole('button', { name: 'Continue' }).click();
-
     }
-
 
     async loginUser(user: string, password: string) {
         await this.enterUserName(user);
         await this.enterPassword(password);
         await this.clickLoginButton();
     }
-
-
 }

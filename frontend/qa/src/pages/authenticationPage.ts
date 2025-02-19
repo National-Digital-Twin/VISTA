@@ -10,16 +10,17 @@ export default class AuthenticationPage {
     }
 
     private Elements = {
-        menuLisa: "L!SA",
-        menuIris: "",
-        menuParalog: "Paralog",
+        authField: "XXXX-XXXX-XXXX-XXXX",
     }
 
-
-    async EnterAndClickAuthKey() {
+    async EnterKeyAndClickLoginBtn() {
       const key = process.env.AUTH_KEY;
-      await this.page.getByPlaceholder('XXXX-XXXX-XXXX-XXXX').click();
-      await this.page.getByPlaceholder('XXXX-XXXX-XXXX-XXXX').fill(key);
+      await this.page.getByPlaceholder(this.Elements.authField).click();
+      await this.page.getByPlaceholder(this.Elements.authField).fill(key);
       await this.page.getByRole('button', { name: 'Log In' }).click();
     }
+
+    async verifyAssetDetailTabIsDisplayed() {
+      await expect(this.page.getByRole('tab', { name: 'Asset details' })).toBeVisible();
+  }
   }

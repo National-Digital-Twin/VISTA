@@ -18,16 +18,9 @@ Given('I login to the ndtp app with the user credentials', async function () {
     await loginPage.navigateToLoginPage(process.env.BASEURL);
     basePage.logger.info("Navigated to the application");
     await loginPage.loginUser(process.env.USERNAME, process.env.PASSWORD);
-
 });
-
 
 When('I click the Paralog menu', async function () {
     landingPage = new LandingPage(basePage.page);
     await landingPage.clickMenuByName();
-})
-
-When('I enter the auth key and click login button', async function () {
-    authPage = new AuthenticationPage(basePage.page);
-    await authPage.EnterAndClickAuthKey();
 })

@@ -64,7 +64,6 @@ After(async function ({ pickle, result }) {
             videoPath = await basePage.page.video().path();
         }
         await context.tracing.stop({ path: path });
-        // await basePage.page.waitForTimeout(9000);
         await basePage.page.close();
         await context.close();
 
