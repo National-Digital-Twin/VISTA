@@ -3,7 +3,6 @@ import { StrictMode } from "react";
 import { MapProvider } from "react-map-gl/maplibre";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ApolloProvider } from "@apollo/client";
-
 import apolloClient from "./api/apollo-client";
 import App from "@/App";
 import DevTools from "@/components/DevTools";
