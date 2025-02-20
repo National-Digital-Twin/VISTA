@@ -74,8 +74,6 @@ resource "aws_apigatewayv2_route" "paralog_transparent_proxy_admiralty_tidal" {
   api_id             = aws_apigatewayv2_api.main.id
   route_key          = "ANY /transparent-proxy/admiralty-tidal-discovery/{proxy+}"
   target             = "integrations/${aws_apigatewayv2_integration.paralog_transparent_proxy_admiralty_tidal_integration.id}"
-  authorization_type = "CUSTOM"
-  authorizer_id      = aws_apigatewayv2_authorizer.request_authorizer.id
 }
 
 resource "aws_apigatewayv2_integration" "paralog_transparent_proxy_realtime_trains_integration" {
@@ -96,8 +94,6 @@ resource "aws_apigatewayv2_route" "paralog_transparent_proxy_realtime_trains" {
   api_id             = aws_apigatewayv2_api.main.id
   route_key          = "ANY /transparent-proxy/realtime-trains/{proxy+}"
   target             = "integrations/${aws_apigatewayv2_integration.paralog_transparent_proxy_realtime_trains_integration.id}"
-  authorization_type = "CUSTOM"
-  authorizer_id      = aws_apigatewayv2_authorizer.request_authorizer.id
 }
 
 resource "aws_apigatewayv2_integration" "paralog_transparent_proxy_ordinance_survey_integration" {
@@ -117,6 +113,4 @@ resource "aws_apigatewayv2_route" "paralog_transparent_proxy_ordinance_survey" {
   api_id             = aws_apigatewayv2_api.main.id
   route_key          = "ANY /transparent-proxy/os/{proxy+}"
   target             = "integrations/${aws_apigatewayv2_integration.paralog_transparent_proxy_ordinance_survey_integration.id}"
-  authorization_type = "CUSTOM"
-  authorizer_id      = aws_apigatewayv2_authorizer.request_authorizer.id
 }

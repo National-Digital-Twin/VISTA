@@ -19,7 +19,6 @@ import Map, {
 } from "react-map-gl/maplibre";
 import { ErrorBoundary } from "react-error-boundary";
 
-import provider from "../../auth/provider";
 import { FLOOD_AREA_LAYERS, LINEAR_ASSET_LAYER } from "./layers";
 import { generateLinearAssetFeatures } from "./map-utils";
 import { useMapStyles } from "./mapStyles";
@@ -193,8 +192,6 @@ function TransformUrl(url: string) {
 
     // remove the api key query string parameter from the transformed url.
     transformedUrl = transformedUrl.replace(/\?key=[^&]+&/, "?");
-
-    headers = { Authorization: `Bearer ${provider.bearerToken()}` };
   }
 
   return { url: transformedUrl, headers: headers };

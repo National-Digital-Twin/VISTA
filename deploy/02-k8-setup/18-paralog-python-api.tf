@@ -313,6 +313,4 @@ resource "aws_apigatewayv2_route" "paralog_python_api" {
   api_id             = aws_apigatewayv2_api.main.id
   route_key          = "ANY /coefficient-python/{proxy+}"
   target             = "integrations/${aws_apigatewayv2_integration.paralog_python_api.id}"
-  authorization_type = "CUSTOM"
-  authorizer_id      = aws_apigatewayv2_authorizer.request_authorizer.id
 }

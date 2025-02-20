@@ -69,10 +69,6 @@ locals {
 #   description = "aws_apigatewayv2_api.main.id from previous stage output."
 # }
 
-# variable "aws_apigatewayv2_authorizer_request_authorizer_id" {
-#   description = "aws_apigatewayv2_authorizer.request_authorizer.id from previous stage output."
-# }
-
 variable "s3_state_bucket" {
   description = "State file name for the env."
 }

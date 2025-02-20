@@ -58,6 +58,4 @@ resource "aws_apigatewayv2_route" "ontology_api" {
   api_id             = aws_apigatewayv2_api.main.id
   route_key          = "ANY /ontology-service/{proxy+}"
   target             = "integrations/${aws_apigatewayv2_integration.ontology_api.id}"
-  authorization_type = "CUSTOM"
-  authorizer_id      = aws_apigatewayv2_authorizer.request_authorizer.id
 }
