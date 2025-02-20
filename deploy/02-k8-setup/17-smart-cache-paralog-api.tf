@@ -51,4 +51,6 @@ resource "aws_apigatewayv2_route" "smart_cache_paralog_api" {
   api_id             = aws_apigatewayv2_api.main.id
   route_key          = "ANY /paralog/{proxy+}"
   target             = "integrations/${aws_apigatewayv2_integration.smart_cache_paralog_api.id}"
+  authorization_type = "CUSTOM"
+  authorizer_id      = aws_apigatewayv2_authorizer.request_authorizer.id
 }
