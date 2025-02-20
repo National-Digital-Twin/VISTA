@@ -1,0 +1,18 @@
+resources:
+  - ../base/istio/authorizationpolicy/allow-ingress-authorization-policy.yaml
+  - ../base/istio/gateway.yaml
+  - ../base/istio/virtualService.yaml
+  - service-account.yaml
+  - deployment.yaml
+  - service.yaml
+  - vault/vaultAuth.yaml
+  - vault/vaultStaticSecret.yaml
+
+labels:
+  - pairs:
+      app: paralog-python-api
+      env: ENV_PLACEHOLDER
+      app.kubernetes.io/name: paralog-python-api
+
+
+

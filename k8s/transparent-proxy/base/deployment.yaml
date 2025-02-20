@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    reloader.stakater.com/auto: "true"
+
+  labels:
+    io.kompose.service: paralog-transparent-proxy
+  name: paralog-transparent-proxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: paralog-transparent-proxy
+  template:
+    metadata:
+      annotations:
+        traffic.sidecar.istio.io/excludeOutboundPorts: "8200"
+      labels:
+        io.kompose.service: paralog-transparent-proxy
+    spec:
+      serviceAccountName: paralog-transparent-proxy-sa
+      containers:
+        - name: paralog-transparent-proxy-image
+          image: paralog-transparent-proxy-image
+          imagePullPolicy: Always
+          envFrom:
+           - secretRef:
+              name: paralog-transparent-proxy-static-secret
+          ports:
+            - containerPort: 80
+              protocol: TCP
+      restartPolicy: Always
