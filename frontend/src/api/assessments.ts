@@ -1,5 +1,4 @@
 import { createParalogEndpoint, fetchOptions } from "./utils";
-import fetchWithAuth from "@/auth/fetchAuth";
 
 interface Assessment {
   /** Assessment human-readable name */
@@ -11,7 +10,7 @@ interface Assessment {
 }
 
 export const fetchAssessments = async () => {
-  const response = await fetchWithAuth(
+  const response = await fetch(
     createParalogEndpoint("assessments"),
     fetchOptions,
   );
@@ -50,7 +49,7 @@ export const fetchAssessmentDependencies = async (
 ) => {
   const body = JSON.stringify({ assessment, types });
 
-  const response = await fetchWithAuth(
+  const response = await fetch(
     createParalogEndpoint(`assessments/dependencies`),
     {
       ...fetchOptions,
