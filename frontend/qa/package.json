@@ -1,7 +1,7 @@
 {
-  "name": "ndtp-qa-boilerplate",
+  "name": "ndtp-qa-test-automation",
   "version": "1.0.0",
-  "description": "BoilerPlate for the National Digital Twin Project",
+  "description": "test automation for the National Digital Twin Project",
   "main": "index.js",
   "scripts": {
     "debug": "cross-env ENV=prod PWDEBUG=1 DEBUG=pw:api cucumber-js --config=config/cucumber.js",

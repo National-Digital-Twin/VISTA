@@ -55,26 +55,52 @@ Before({ tags: "@auth" }, async function ({ pickle }) {
   basePage.logger = createLogger(options(scenarioName));
 });
 
-After(async function ({ pickle, result }) {
-  let videoPath: string;
-  let img: Buffer;
+After(async function TestCaseHook({ pickle, result }) {
+  let videoPath: string | undefined;
+  let img: Buffer | undefined;
   const path = `./test-results/trace/${pickle.id}.zip`;
-  if (result?.status == Status.PASSED) {
-    img = await basePage.page.screenshot({
-      path: `./test-results/screenshots/${pickle.name}.png`,
-      type: "png",
-    });
-    videoPath = await basePage.page.video().path();
+
+  if (result?.status === Status.PASSED) {
+    try {
+      img = await basePage.page.screenshot({
+        path: `./test-results/screenshots/${pickle.name}.png`,
+        type: "png",
+      });
+
+      const video = basePage.page.video();
+      if (video) {
+        videoPath = await video.path();
+      } else {
+        console.warn("No video recorded for this test.");
+      }
+    } catch (error) {
+      console.error("Error capturing screenshot or video:", error);
+    }
   }
-  await context.tracing.stop({ path: path });
-  await basePage.page.close();
+
+  await context.tracing.stop({ path });
+  await basePage.page?.close();
   await context.close();
 
-  if (result?.status == Status.PASSED) {
-    await this.attach(img, "image/png");
-    await this.attach(fs.readFileSync(videoPath), "video/webm");
+  console.log("FS Module:", fs); // Debugging line
+
+  if (result?.status === Status.PASSED) {
+    if (img) {
+      this.attach(img, "image/png");
+    }
+
+    if (videoPath && fs && fs.existsSync(videoPath)) {
+      try {
+        this.attach(fs.readFileSync(videoPath), "video/webm");
+      } catch (error) {
+        console.error(`Error attaching video: ${videoPath}`, error);
+      }
+    } else {
+      console.warn(`Video file not found at path: ${videoPath}`);
+    }
+
     const traceFileLink = `<a href="https://trace.playwright.dev/">Open ${path}</a>`;
-    await this.attach(`Trace file: ${traceFileLink}`, "text/html");
+    this.attach(`Trace file: ${traceFileLink}`, "text/html");
   }
 });
 

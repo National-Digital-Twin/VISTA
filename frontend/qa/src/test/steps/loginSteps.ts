@@ -20,7 +20,8 @@ When("I click the Paralog menu", async function () {
   await landingPage.clickMenuByName();
 });
 
-Then("I should see the asset details tab", async function () {
+Then("I should see the asset details and layers tab", async function () {
   loginPage = new LoginPage(basePage.page);
   await loginPage.verifyAssetDetailsTabIsDisplayed();
+  await loginPage.verifyLayersTabIsDisplayed();
 });
