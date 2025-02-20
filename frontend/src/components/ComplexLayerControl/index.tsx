@@ -10,13 +10,13 @@ import styles from "./style.module.css";
 
 export interface ComplexLayerControlProps {
   /** Icon for the layer */
-  icon: IconProp;
+  readonly icon: IconProp;
   /** Title of the layer */
-  title: string;
+  readonly title: string;
   /** Children */
-  children: ReactNode;
+  readonly children: ReactNode;
   /** Automatic show and hide for search */
-  autoShowHide?: boolean;
+  readonly autoShowHide?: boolean;
 }
 
 export default function ComplexLayerControl({
@@ -33,7 +33,15 @@ export default function ComplexLayerControl({
       data-expanded={expanded}
       data-auto-show-hide={autoShowHide}
     >
-      <div onClick={toggle} className={styles.complexLayer}>
+      <div
+        onClick={toggle}
+        className={styles.complexLayer}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            toggle();
+          }
+        }}
+      >
         <FontAwesomeIcon icon={icon} className={styles.icon} />
         <FontAwesomeIcon
           icon={expanded ? faChevronDown : faChevronRight}

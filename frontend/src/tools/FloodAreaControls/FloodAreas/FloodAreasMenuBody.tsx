@@ -34,7 +34,7 @@ const useFloodAreaSharedStore = () =>
 
 export interface FloodAreasMenuBodyProps {
   /** Search query */
-  searchQuery?: string;
+  readonly searchQuery?: string;
 }
 
 export default function FloodAreasMenuBody({
@@ -55,7 +55,9 @@ export default function FloodAreasMenuBody({
     ...drawingModeCallbacks
   } = useFloodAreaSharedStore();
 
-  const floodPolygonUris = floodAreaNodes.map((node) => node.value);
+  const floodPolygonUris = floodAreaNodes
+    ? floodAreaNodes.map((node) => node.value)
+    : [];
   const { polygonFeatures, isLoading } = useFloodAreaPolygons(floodPolygonUris);
 
   const { startDrawing } = useDrawingMode(

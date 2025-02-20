@@ -5,10 +5,10 @@ import { isEmpty } from "@/utils/isEmpty";
 import { useLocalStorage, useProviders } from "@/hooks";
 
 export interface ProvidersProps {
-  isAsset: boolean;
-  isDependency: boolean;
-  assetUri: string;
-  provider: any;
+  readonly isAsset: boolean;
+  readonly isDependency: boolean;
+  readonly assetUri: string;
+  readonly provider: any;
 }
 
 export default function Providers({

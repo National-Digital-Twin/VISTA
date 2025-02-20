@@ -15,15 +15,13 @@
   color: rgba(255, 255, 255, 0.5);
   width: 30px;
   height: 30px;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .maplibre-gl-draw_ctrl-draw-btn.active,
 .maplibre-gl-draw_ctrl-draw-btn.active:hover {
   background-color: rgb(0 0 0/5%);
-}
-.maplibre-gl-draw_ctrl-draw-btn {
-  background-repeat: no-repeat;
-  background-position: center;
 }
 
 .maplibre-gl-draw_point {

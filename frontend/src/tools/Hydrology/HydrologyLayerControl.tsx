@@ -34,7 +34,7 @@ const STATION_MENU_ITEMS = [
 
 export default function HydrologyLayerControl({
   searchQuery,
-}: LayerControlProps) {
+}: Readonly<LayerControlProps>) {
   return (
     <ComplexLayerControl
       icon={faWater}
@@ -47,7 +47,7 @@ export default function HydrologyLayerControl({
 }
 
 interface MonitoringStationControlPanelBodyProps {
-  searchQuery: string;
+  readonly searchQuery: string;
 }
 
 function MonitoringStationControlPanelBody({
@@ -69,10 +69,10 @@ function MonitoringStationControlPanelBody({
 }
 
 interface MonitoringStationTypeButtonProps {
-  type: StationType;
-  icon: IconDefinition;
-  label: string;
-  searchQuery: string;
+  readonly type: StationType;
+  readonly icon: IconDefinition;
+  readonly label: string;
+  readonly searchQuery: string;
 }
 
 function MonitoringStationTypeButton({

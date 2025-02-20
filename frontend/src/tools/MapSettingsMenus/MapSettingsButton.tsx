@@ -12,14 +12,12 @@ import { resetHashStorage } from "@/hooks/createStore";
 interface ToggleSwitchControlMenuItem {
   name: string;
   selected: boolean;
-  type: "toggleSwitch";
   onItemClick: () => void;
 }
 
 interface ButtonControlMenuItem {
-  name: string;
-  type: "button";
-  onItemClick: () => void;
+  readonly name: string;
+  readonly onItemClick: () => void;
 }
 
 type ControlMenuItem = ToggleSwitchControlMenuItem | ButtonControlMenuItem;
@@ -126,7 +124,7 @@ function ToggleSwitchControl({
   name,
   onItemClick,
   selected,
-}: ToggleSwitchControlProps) {
+}: Readonly<ToggleSwitchControlProps>) {
   return (
     <button
       className="menu-item"

@@ -34,10 +34,8 @@ DEBUG = env("DEBUG", default=not IS_PROD)
 
 ALLOWED_HOSTS = (
     [
-        "paralog.demo.ndtp.co.uk",
+        env("ALLOWED_HOSTS", default="*"),
     ]
-    if IS_PROD
-    else ["*"]
 )
 
 # Application definition

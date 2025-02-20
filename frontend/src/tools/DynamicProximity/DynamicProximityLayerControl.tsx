@@ -9,7 +9,7 @@ import type { LayerControlProps } from "@/tools/Tool";
 
 export default function DynamicProximityLayerControl({
   searchQuery,
-}: LayerControlProps) {
+}: Readonly<LayerControlProps>) {
   return (
     <SearchConditional
       searchQuery={searchQuery}
@@ -33,8 +33,8 @@ function DynamicProximityControlPanelBody() {
 }
 
 interface DynamicProximityMenuItemProps {
-  radiusKm: number;
-  onClick?: () => void;
+  readonly radiusKm: number;
+  readonly onClick?: () => void;
 }
 
 function DynamicProximityMenuItem({

@@ -1,50 +1,73 @@
-import { Layer } from "react-map-gl";
+import { useEffect, useRef, useState } from "react";
+import { Layer } from "react-map-gl/maplibre";
 import { point } from "@turf/turf";
-
 import useDynamicProximity from "./useDynamicProximity";
 
 export default function DynamicProximityMapElements() {
   const { features } = useDynamicProximity();
+  const mapRef = useRef(null);
+  const [isMapLoaded, setIsMapLoaded] = useState(false);
 
-  if (features.length === 0) {
-    return null;
-  }
+  useEffect(() => {
+    const handleLoadChange = () => {
+      const mapInstance = mapRef.current.getMap();
+      if (mapInstance.isStyleLoaded()) {
+        setIsMapLoaded(true);
+      }
+    };
+
+    if (mapRef.current) {
+      const mapInstance = mapRef.current.getMap();
+      mapInstance.on("styledata", handleLoadChange);
+
+      return () => {
+        mapInstance.off("styledata", handleLoadChange);
+      };
+    }
+  }, []);
+
+  if (!features.length) return null;
+
+  const buildingLayerId = "OS/TopographicArea_2/Building/1_4D";
+  const pointLayerId = "OS/TopographicPoint/Structure_distinct_name";
+
+  const buildingLayerPaint = {
+    "fill-extrusion-color": [
+      "case",
+      [
+        "any",
+        ...features.map(({ properties }) => [
+          "<=",
+          ["distance", point(properties.center)],
+          properties.radiusInKm * 1000,
+        ]),
+      ],
+      "blue",
+      "green",
+    ],
+    "fill-extrusion-height": ["get", "RelHMax"],
+    "fill-extrusion-opacity": 0.6,
+  };
+
+  const pointLayerPaint = {
+    "icon-color": "black",
+  };
 
   return (
     <>
       <Layer
+        id={buildingLayerId}
+        source="esri"
         source-layer="TopographicArea_2"
-        id="OS/TopographicArea_2/Building/1_4D"
         type="fill-extrusion"
-        source="esri"
-        paint={{
-          "fill-extrusion-color": [
-            "case",
-            [
-              "any",
-              ...features.map((feature) => [
-                "<=",
-                ["distance", point(feature.properties.center)],
-                feature.properties.radiusInKm * 1000,
-              ]),
-            ],
-            "blue",
-            "green",
-          ],
-          "fill-extrusion-height": ["get", "RelHMax"],
-          "fill-extrusion-opacity": 0.6,
-        }}
+        paint={buildingLayerPaint}
       />
-
       <Layer
-        id="OS/TopographicPoint/Structure_distinct_name"
+        id={pointLayerId}
         source="esri"
-        type="symbol"
         source-layer="TopographicPoint"
-        filter={["==", "_symbol", 12]}
-        paint={{
-          "icon-color": "black",
-        }}
+        type="symbol"
+        paint={pointLayerPaint}
       />
     </>
   );

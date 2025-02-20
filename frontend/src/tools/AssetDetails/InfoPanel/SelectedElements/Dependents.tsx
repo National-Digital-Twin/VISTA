@@ -9,13 +9,13 @@ import { useDependents, useLocalStorage } from "@/hooks";
 
 export interface DependentsProps {
   /** Asset URI */
-  assetUri: string;
+  readonly assetUri: string;
   /** Dependent asset */
-  dependent: any;
+  readonly dependent: any;
   /** Is it an asset? */
-  isAsset: boolean;
+  readonly isAsset: boolean;
   /** Is it a dependency? */
-  isDependency: boolean;
+  readonly isDependency: boolean;
 }
 
 export default function Dependents({

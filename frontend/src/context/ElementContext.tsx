@@ -5,7 +5,6 @@ import React, {
   useState,
   useMemo,
 } from "react";
-// import { assetAreaMap } from "../components/Sidebar/Layers/Assets/assetAreaMap"
 import type ColorScale from "color-scales";
 import type { Feature, Polygon } from "geojson";
 
@@ -30,7 +29,6 @@ import { getUniqueElements } from "@/utils";
 import type { Asset, Dependency, Element } from "@/models";
 
 export interface ElementsContextItems {
-  // TODO: Discover the precise type of all of these
   /** All assets */
   assets: Asset[];
   /** Asset criticalities */
@@ -87,7 +85,7 @@ export const ElementsContext = React.createContext<ElementsContextItems | null>(
 
 export interface ElementsProviderProps {
   /** Children */
-  children?: React.ReactNode;
+  readonly children?: React.ReactNode;
 }
 
 /** Provide the "Elements" context */
@@ -128,7 +126,6 @@ export function ElementsProvider({ children }: ElementsProviderProps) {
     if (selected !== selectedTimeline) {
       setSelectedTimeline(selected);
     }
-    return;
   };
 
   const closeTimelinePanel = () => {
@@ -389,34 +386,61 @@ export function ElementsProvider({ children }: ElementsProviderProps) {
     dispatch({ type: CLEAR_SELECTED });
   }, []);
 
+  const contextValue = useMemo(
+    () => ({
+      assets,
+      assetCriticalities,
+      dependencies,
+      errors,
+      selectedElements,
+      maxAssetTotalCxns,
+      clickedFloodAreas,
+      setClickedFloodAreas,
+      assetCriticalityColorScale,
+      cxnCriticalityColorScale,
+      totalCxnsColorScale,
+      addElements,
+      clearSelectedElements,
+      dismissErrorNotification,
+      onAreaSelect,
+      onElementClick,
+      reset,
+      removeElementsByType,
+      updateErrorNotifications,
+      selectedTimeline,
+      closeTimelinePanel,
+      onFloodTimelineSelect,
+      liveFloodAreas,
+    }),
+    [
+      assets,
+      assetCriticalities,
+      dependencies,
+      errors,
+      selectedElements,
+      maxAssetTotalCxns,
+      clickedFloodAreas,
+      setClickedFloodAreas,
+      assetCriticalityColorScale,
+      cxnCriticalityColorScale,
+      totalCxnsColorScale,
+      addElements,
+      clearSelectedElements,
+      dismissErrorNotification,
+      onAreaSelect,
+      onElementClick,
+      reset,
+      removeElementsByType,
+      updateErrorNotifications,
+      selectedTimeline,
+      closeTimelinePanel,
+      onFloodTimelineSelect,
+      liveFloodAreas,
+    ],
+  );
+
   return (
-    <ElementsContext.Provider
-      value={{
-        assets,
-        assetCriticalities,
-        dependencies,
-        errors,
-        selectedElements,
-        maxAssetTotalCxns,
-        clickedFloodAreas,
-        setClickedFloodAreas,
-        assetCriticalityColorScale,
-        cxnCriticalityColorScale,
-        totalCxnsColorScale,
-        addElements,
-        clearSelectedElements,
-        dismissErrorNotification,
-        onAreaSelect,
-        onElementClick,
-        reset,
-        removeElementsByType,
-        updateErrorNotifications,
-        selectedTimeline,
-        closeTimelinePanel,
-        onFloodTimelineSelect,
-        liveFloodAreas,
-      }}
-    >
+    <ElementsContext.Provider value={contextValue}>
       {children}
     </ElementsContext.Provider>
   );

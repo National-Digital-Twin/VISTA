@@ -106,7 +106,7 @@ def _load_graphql_geojson(data):
 
 
 def _load_resource_geojson(filename):
-    return converter.loads((importlib.resources.files() / filename).read_bytes(), Model)
+    return converter.loads((importlib.resources.files(__package__) / filename).read_bytes(), Model)
 
 
 def test_road_route_query(client):

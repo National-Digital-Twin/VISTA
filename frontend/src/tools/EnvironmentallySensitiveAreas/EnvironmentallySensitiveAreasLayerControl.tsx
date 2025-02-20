@@ -6,7 +6,7 @@ import ComplexLayerControl from "@/components/ComplexLayerControl";
 
 export default function EnvironmentallySensitiveAreasLayerControl({
   searchQuery,
-}: LayerControlProps) {
+}: Readonly<LayerControlProps>) {
   return (
     <ComplexLayerControl
       icon={faMarker}

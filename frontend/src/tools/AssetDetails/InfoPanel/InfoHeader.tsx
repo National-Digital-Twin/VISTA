@@ -6,9 +6,9 @@ import GOOGLE_MAP_ICON from "./assets/google-map-icon.svg";
 
 export interface InfoHeaderProps {
   /** Additional classes to add to the top-level element */
-  className?: string;
+  readonly className?: string;
   /** Children */
-  children?: React.ReactNode;
+  readonly children?: React.ReactNode;
 }
 
 export default function InfoHeader({ className, children }: InfoHeaderProps) {
@@ -19,9 +19,9 @@ export default function InfoHeader({ className, children }: InfoHeaderProps) {
 
 export interface InfoTitleProps {
   /** Additional classes to add to the top-level element */
-  className?: string;
+  readonly className?: string;
   /** Children */
-  children: React.ReactNode;
+  readonly children: React.ReactNode;
 }
 
 export function InfoTitle({ children, className }: InfoHeaderProps) {
@@ -32,11 +32,11 @@ export function InfoTitle({ children, className }: InfoHeaderProps) {
 
 export interface StreetViewProps {
   /** Additional classes to add to the top-level element */
-  className?: string;
+  readonly className?: string;
   /** Latitude, in decimal degrees */
-  latitude: number;
+  readonly latitude: number;
   /** Longitude, in decimal degrees */
-  longitude: number;
+  readonly longitude: number;
 }
 
 export function StreetView({

@@ -3,7 +3,7 @@ import NDTPLogo from "./assets/ndtp-dark-cropped.png";
 
 export interface SponsorLogosProps {
   /** Additional classes to add to the top-level element */
-  className?: string;
+  readonly className?: string;
 }
 
 /** Logos of the Paralog sponsors, for the bottom-left of the screen */

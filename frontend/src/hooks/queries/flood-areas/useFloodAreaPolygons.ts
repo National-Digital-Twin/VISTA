@@ -30,7 +30,7 @@ export default function useFloodAreaPolygons(selectedFloodAreas: string[]) {
 
   useEffect(() => {
     if (query.isError) {
-      query.errors.map((error) => updateErrorNotifications(error.message));
+      query.errors.forEach((error) => updateErrorNotifications(error.message));
     }
   }, [query.isError, query.errors, updateErrorNotifications]);
 

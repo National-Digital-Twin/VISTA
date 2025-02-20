@@ -22,11 +22,11 @@ export function useSetMapStyleKey(): (mapStyleKey: string) => void {
 
 export interface MapStyleContextProviderProps {
   /** Currently selected map style */
-  mapStyleKey: string;
+  readonly mapStyleKey: string;
   /** Set a new map style */
-  setMapStyleKey: (mapStyleKey: string) => void;
+  readonly setMapStyleKey: (mapStyleKey: string) => void;
   /** Children */
-  children: React.ReactNode;
+  readonly children: React.ReactNode;
 }
 
 export function MapStyleContextProvider({

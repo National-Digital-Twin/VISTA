@@ -12,7 +12,7 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import { useControl, useMap } from "react-map-gl";
+import { useControl, useMap } from "react-map-gl/maplibre";
 import type { Feature } from "geojson";
 import { useShallow } from "zustand/react/shallow";
 import RectangleMode from "mapbox-gl-draw-rectangle-mode";
@@ -25,73 +25,60 @@ import {
 import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
 import "./maplibre-gl-draw.css";
 import useSharedStore, { State } from "@/hooks/useSharedStore";
+import { drawStyles } from "./theme";
 
-export interface DrawingModeContextProviderProps {
-  /** Children */
-  children: React.ReactNode;
-}
-
+/** Context for Drawing Mode */
 interface DrawingModeContextValue {
-  /** The draw instance */
-  draw: MapboxDraw;
-  isMapLoaded: boolean;
+  readonly draw: MapboxDraw;
+  readonly isMapLoaded: boolean;
 }
-
 const DrawingModeContext = createContext<DrawingModeContextValue | null>(null);
 
+/** Mapbox Draw Modes */
 const modes = {
   ...MapboxDraw.modes,
   draw_rectangle: RectangleMode,
-  /**
-   * Passing draw_circle mode to enable appears to break initial radius
-   */
   draw_circle: CircleMode,
   drag_circle: DragCircleMode,
   direct_select: DirectMode,
   simple_select: SimpleSelectMode,
-} as {
-  [key in keyof typeof MapboxDraw.modes]: DrawCustomMode;
-} & {
-  draw_circle: DrawCustomMode;
-  drag_circle: DrawCustomMode;
-};
+} as Record<string, DrawCustomMode>;
 
+/** Drawing Mode Context Provider */
 export function DrawingModeContextProvider({
   children,
-}: DrawingModeContextProviderProps) {
+}: {
+  readonly children: React.ReactNode;
+}) {
   const { paralogMap: map } = useMap();
-
   const [isMapLoaded, setIsMapLoaded] = useState(map.loaded());
+
+  const blue = "#3bb2d0";
+  const orange = "#fbb03b";
+  const white = "#fff";
 
   const draw = useControl(
     () =>
-      new MapboxDraw({
+      new (MapboxDraw as any)({
         userProperties: true,
         displayControlsDefault: false,
         modes,
+        styles: drawStyles,
       }),
   );
 
   useEffect(() => {
-    const handleLoadChange = () => {
-      setIsMapLoaded(true);
-    };
-
+    const handleLoadChange = () => setIsMapLoaded(true);
     map.on("load", handleLoadChange);
-
     return () => {
       map.off("load", handleLoadChange);
       setIsMapLoaded(false);
     };
   }, [map]);
 
-  const contextValue: DrawingModeContextValue = useMemo(
-    () => ({
-      draw,
-      map,
-      isMapLoaded,
-    }),
-    [draw, map, isMapLoaded],
+  const contextValue = useMemo(
+    () => ({ draw, isMapLoaded }),
+    [draw, isMapLoaded],
   );
 
   return (
@@ -101,6 +88,7 @@ export function DrawingModeContextProvider({
   );
 }
 
+/** Callback Types */
 interface DrawShapeCallbacks {
   onAddFeatures: (features: Feature[]) => void;
   onUpdateFeatures: (features: Feature[]) => void;
@@ -108,20 +96,10 @@ interface DrawShapeCallbacks {
 }
 
 type UseDrawShapeOptions =
-  | {
-      drawingMode: "draw_polygon" | "draw_rectangle";
-      options?: never;
-    }
-  | {
-      drawingMode: "draw_circle";
-      options?: {
-        /**
-         * @default 2
-         */
-        initialRadiusInKm?: number;
-      };
-    };
+  | { drawingMode: "draw_polygon" | "draw_rectangle"; options?: never }
+  | { drawingMode: "draw_circle"; options?: { initialRadiusInKm?: number } };
 
+/** Hook for Drawing Mode */
 export const useDrawingMode = <T extends Feature>(
   selector: (
     state: Omit<
@@ -132,90 +110,78 @@ export const useDrawingMode = <T extends Feature>(
   { onAddFeatures, onUpdateFeatures, onDeleteFeatures }: DrawShapeCallbacks,
 ) => {
   const context = useContext(DrawingModeContext);
-  if (!context) {
+  if (!context)
     throw new Error(
-      "useDrawingMode must be used within a DrawingModeContextProvider",
+      "useDrawingMode must be used within DrawingModeContextProvider",
     );
-  }
 
   const { draw, isMapLoaded } = context;
-
   const { paralogMap: map } = useMap();
-
   const features = useSharedStore(useShallow(selector));
 
+  /** Start Drawing */
   const startDrawing = useCallback(
     ({ drawingMode, options }: UseDrawShapeOptions) => {
-      const handleDrawCreateEvent = (event: DrawCreateEvent) => {
+      const handleDrawCreate = (event: DrawCreateEvent) => {
         onAddFeatures(event.features);
-        map.off("draw.create", handleDrawCreateEvent);
+        map.off("draw.create", handleDrawCreate);
       };
 
       const handleModeChange = () => {
-        map.off("draw.create", handleDrawCreateEvent);
+        map.off("draw.create", handleDrawCreate);
         map.off("draw.modechange", handleModeChange);
       };
 
-      switch (drawingMode) {
-        case "draw_circle":
-          draw.changeMode(drawingMode, options);
-          break;
-        default:
-          draw.changeMode(drawingMode as "draw_polygon");
-          break;
-      }
-
-      map.on("draw.create", handleDrawCreateEvent);
+      draw.changeMode(
+        drawingMode,
+        drawingMode === "draw_circle" ? options : undefined,
+      );
+      map.on("draw.create", handleDrawCreate);
       map.on("draw.modechange", handleModeChange);
     },
     [draw, map, onAddFeatures],
   );
 
-  useEffect(
-    function registerUpdateAndDeleteEventHandlers() {
-      const handleDrawEvent = (event: DrawUpdateEvent | DrawDeleteEvent) => {
-        const relevantFeatures = event.features.filter((eventFeature) =>
-          features.find((feature) => eventFeature.id === feature.id),
-        );
-        if (relevantFeatures.length > 0) {
-          switch (event.type) {
-            case "draw.update":
-              onUpdateFeatures(relevantFeatures);
-              break;
-            case "draw.delete":
-              onDeleteFeatures(relevantFeatures.map(({ id }) => id));
-              break;
-            default:
-              console.warn("Unhandled event:", event);
-          }
-        }
-      };
-
-      map.on("draw.update", handleDrawEvent);
-      map.on("draw.delete", handleDrawEvent);
-
-      return () => {
-        map.off("draw.update", handleDrawEvent);
-        map.off("draw.delete", handleDrawEvent);
-      };
-    },
-    [features, map, onDeleteFeatures, onUpdateFeatures],
-  );
-
-  useEffect(
-    function redraw() {
-      if (!isMapLoaded) {
-        return;
+  /** Process Draw Events */
+  const processDrawEvent = useCallback(
+    (event: DrawUpdateEvent | DrawDeleteEvent, relevantFeatures: Feature[]) => {
+      if (event.type === "draw.update") {
+        onUpdateFeatures(relevantFeatures);
+      } else if (event.type === "draw.delete") {
+        onDeleteFeatures(relevantFeatures.map(({ id }) => id as string));
       }
-
-      features.forEach(draw.add);
-
-      return () => {
-        draw.delete(features.map(({ id }) => id as string));
-      };
     },
-    [draw, features, isMapLoaded],
+    [onUpdateFeatures, onDeleteFeatures],
   );
+
+  /** Handle Draw Event */
+  const handleDrawEvent = useCallback(
+    (event: DrawUpdateEvent | DrawDeleteEvent) => {
+      const relevantFeatures = event.features.filter((feature) =>
+        features.some((existing) => existing.id === feature.id),
+      );
+      if (relevantFeatures.length) processDrawEvent(event, relevantFeatures);
+    },
+    [features, processDrawEvent],
+  );
+
+  /** Attach Event Listeners */
+  useEffect(() => {
+    if (!map) return;
+    map.on("draw.update", handleDrawEvent);
+    map.on("draw.delete", handleDrawEvent);
+    return () => {
+      map.off("draw.update", handleDrawEvent);
+      map.off("draw.delete", handleDrawEvent);
+    };
+  }, [map, handleDrawEvent]);
+
+  /** Redraw Features */
+  useEffect(() => {
+    if (!isMapLoaded) return;
+    features.forEach(draw.add);
+    return () => draw.delete(features.map(({ id }) => id as string));
+  }, [draw, features, isMapLoaded]);
 
   return { startDrawing, features };
 };

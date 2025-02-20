@@ -4,7 +4,7 @@ import SimpleLayerControl from "@/components/SimpleLayerControl";
 
 export default function WeatherLayerControl({
   searchQuery,
-}: LayerControlProps) {
+}: Readonly<LayerControlProps>) {
   return (
     <SimpleLayerControl
       layerName="weather"

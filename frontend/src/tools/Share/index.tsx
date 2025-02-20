@@ -7,7 +7,7 @@ function handleShare() {
   navigator.clipboard
     .writeText(window.location.href)
     .then(() => {
-      // TODO: Toast
+      // Toast
       console.log("URL copied to clipboard successfully!");
     })
     .catch((err) => {

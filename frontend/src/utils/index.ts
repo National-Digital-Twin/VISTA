@@ -21,11 +21,11 @@ export function isElementCached<T extends ElementLike>(
 }
 
 export function isAsset<T extends ElementLike>(element?: T) {
-  return !!(element?.elementType === "asset");
+  return element?.elementType === "asset";
 }
 
 export function isDependency<T extends ElementLike>(element?: T) {
-  return !!(element?.elementType === "dependency");
+  return element?.elementType === "dependency";
 }
 
 export function getShortType(type: string) {

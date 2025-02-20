@@ -40,7 +40,6 @@ import { ElementsContext } from "@/context/ElementContext";
 import { DrawingModeContextProvider } from "@/context/DrawingMode";
 import { MapStyleContextProvider } from "@/context/MapStyle";
 import { ShowPointerCoordsContextProvider } from "@/context/ShowPointerCoords";
-import provider from "../../auth/provider";
 
 const FloodMonitoringStations = lazy(() => import("./FloodMonitoringStations"));
 const PointAssets = lazy(() => import("./PointAssets"));
@@ -55,7 +54,7 @@ const VIEWSTATE = {
 };
 
 interface CustomMapElementsProps {
-  tool: Tool;
+  readonly tool: Tool;
 }
 
 function CustomMapElements({ tool }: CustomMapElementsProps) {
@@ -163,43 +162,36 @@ function BuiltinSources() {
   return <>{sources.map(generateSources)}</>;
 }
 
-function TransformUrl(url : string) {
+function TransformUrl(url: string) {
   let transformedUrl = url;
   let headers = {};
 
   if (transformedUrl.includes("api.os.uk")) {
-    let urlParts = transformedUrl.split("api.os.uk");
-    let routeParams = urlParts[urlParts.length - 1];
+    const urlParts = transformedUrl.split("api.os.uk");
+    const routeParams = urlParts[urlParts.length - 1];
     let requestedFont = "";
     let encodedRequestedFont = "";
 
     // transform the from the os maps api to the transparent proxy.
     if (routeParams.startsWith("/")) {
       transformedUrl = `${window.location.origin}/transparent-proxy/os/${routeParams.substring(1)}`;
-    }
-    else {
+    } else {
       transformedUrl = `${window.location.origin}/transparent-proxy/os/${routeParams}`;
     }
 
     // pick out the request font from the path parameters, encode it and include it in the query string parameters.
-    if (routeParams.includes("fonts")) {
-      requestedFont = routeParams.match(/fonts\/(.*)\//)[1];
+    const fontMatch = /fonts\/(.*?)\//.exec(routeParams); // ✅ Use RegExp.exec()
+    if (fontMatch) {
+      requestedFont = fontMatch[1];
       encodedRequestedFont = encodeURIComponent(requestedFont);
 
-      if (routeParams.includes("?")) {
-        transformedUrl += `&fonts=${encodedRequestedFont}`;
-      }
-      else {
-        transformedUrl += `&fonts=${encodedRequestedFont}`;
-      }
+      transformedUrl += `&fonts=${encodedRequestedFont}`;
 
       transformedUrl = transformedUrl.replace(`/${requestedFont}/`, "/");
     }
 
     // remove the api key query string parameter from the transformed url.
     transformedUrl = transformedUrl.replace(/\?key=[^&]+&/, "?");
-
-    headers = { Authorization: `Bearer ${provider.bearerToken()}` };
   }
 
   return { url: transformedUrl, headers: headers };
@@ -276,7 +268,9 @@ export default function ParalogMap() {
             onMouseMove={handleOnMouseMove}
             boxZoom={false}
             styleDiffing
-            transformRequest={function(url, _resourceType) { return TransformUrl(url) }}
+            transformRequest={function (url, _resourceType) {
+              return TransformUrl(url);
+            }}
           >
             <DrawingModeContextProvider>
               <ControlsOverlay />

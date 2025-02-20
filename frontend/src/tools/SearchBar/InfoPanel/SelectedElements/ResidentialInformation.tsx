@@ -9,13 +9,13 @@ const LIMIT = 3;
 
 export interface ResidentialInformationProps {
   /** Is this/there an asset? */
-  isAsset: boolean;
+  readonly isAsset: boolean;
   /** URI of the asset */
-  uri?: string;
+  readonly uri?: string;
   /** Primary asset type */
-  primaryType?: string;
+  readonly primaryType?: string;
   /** Additional classes to add to the top-level element */
-  className?: string;
+  readonly className?: string;
 }
 
 export default function ResidentialInformation({
@@ -63,10 +63,10 @@ export default function ResidentialInformation({
 }
 
 interface AddressesProps {
-  residences: any[];
-  isLoading: boolean;
-  isError: boolean;
-  error?: Error;
+  readonly residences: any[];
+  readonly isLoading: boolean;
+  readonly isError: boolean;
+  readonly error?: Error;
 }
 
 function Addresses({
