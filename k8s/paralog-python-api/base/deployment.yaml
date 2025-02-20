@@ -29,9 +29,8 @@ spec:
           envFrom:
             - configMapRef:
                 name: paralog-python-api-configs
-#          envFrom:
-#           - secretRef:
-#              name: paralog-python-api-static-secret
+            - secretRef:
+               name: paralog-python-api-static-secret
 
           ports:
             - containerPort: 8000
