@@ -31,7 +31,3 @@ images:
     newTag: 'latest'
 
 
-secretGenerator:
-  - name: paralog-transparent-proxy-static-secret
-    envs:
-      - secrets.env
