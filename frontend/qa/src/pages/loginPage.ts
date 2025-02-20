@@ -38,4 +38,10 @@ export default class LoginPage {
     await this.enterPassword(password);
     await this.clickLoginButton();
   }
+  async verifyAssetDetailsTabIsDisplayed() {
+    await expect(
+      this.page.getByRole("tab", { name: "Asset details" }),
+    ).toBeVisible();
+    await this.page.waitForTimeout(3000);
+  }
 }

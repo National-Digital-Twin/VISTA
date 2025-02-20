@@ -19,3 +19,8 @@ When("I click the Paralog menu", async function () {
   landingPage = new LandingPage(basePage.page);
   await landingPage.clickMenuByName();
 });
+
+Then("I should see the asset details tab", async function () {
+  loginPage = new LoginPage(basePage.page);
+  await loginPage.verifyAssetDetailsTabIsDisplayed();
+});

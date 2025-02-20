@@ -11,8 +11,8 @@ let browser: Browser;
 let context: BrowserContext;
 
 BeforeAll(async function () {
-    getEnv();
-    browser = await invokeBrowser();
+  getEnv();
+  browser = await invokeBrowser();
 });
 // It will trigger for not auth scenarios
 Before({ tags: "not @auth" }, async function ({ pickle }) {
@@ -82,9 +82,7 @@ AfterAll(async function () {
   await browser.close();
 });
 
-function getStorageState(
-  user: string,
-):
+function getStorageState(user: string):
   | string
   | {
       cookies: {
