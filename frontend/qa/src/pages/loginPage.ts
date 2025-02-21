@@ -10,7 +10,6 @@ export default class LoginPage {
   //Object Locators
   private Elements = {
     userInput: "username",
-    nextBtn: "",
     passwordInput: "Password",
     loginBtn: "button[color='primary']",
     errorMessage: "alert",
@@ -42,6 +41,9 @@ export default class LoginPage {
     await expect(
       this.page.getByRole("tab", { name: "Asset details" }),
     ).toBeVisible();
-    await this.page.waitForTimeout(3000);
+  }
+
+  async verifyLayersTabIsDisplayed() {
+    await expect(this.page.getByRole("tab", { name: "Layers" })).toBeVisible();
   }
 }
