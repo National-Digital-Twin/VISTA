@@ -10,7 +10,6 @@ export default class LoginPage {
   //Object Locators
   private Elements = {
     userInput: "username",
-    nextBtn: "",
     passwordInput: "Password",
     loginBtn: "button[color='primary']",
     errorMessage: "alert",
