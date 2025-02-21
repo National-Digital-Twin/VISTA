@@ -5,3 +5,4 @@ Feature: Paralog login functionality
     When  I click the Paralog menu
     Then  I should see the asset details tab
 
+
