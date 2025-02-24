@@ -1,19 +1,21 @@
+
+
+.assetTableContainer td {
+  line-height: 0;
+}
 .assetTableHeader {
-  display: block flex;
+  display: flex;
   align-items: center;
-
-  /* Even in fallback-mode, we want a minimum size here */
-  min-inline-size: 40ch;
-
-  /* Add space before the table */
-  margin-block-end: 1rem;
+  justify-content: space-between;
+  padding: 12px;
+  background-color: #f8f9fa;
+  border-radius: 10px 10px 0 0;
+  border-bottom: 1px solid #dee2e6;
 }
 
-.assetTableHeader button {
-  margin-inline-start: 0.5rem;
-}
 
-.assetTableHeader button:first-of-type {
-  /* Push the buttons to the end */
-  margin-inline-start: auto;
-}
+
+
+
+
+
