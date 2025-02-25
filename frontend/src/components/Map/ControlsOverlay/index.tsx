@@ -1,12 +1,11 @@
 import { memo } from "react";
+import { Grid2 } from "@mui/material";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { useBoolean } from "usehooks-ts";
 import styles from "./style.module.css";
 import { useTools } from "@/tools/useTools";
 import ToolbarButton from "@/components/ToolbarButton";
-
 import featureFlags from "@/config/feature-flags";
-
 import ControlPanel from "@/components/Map/ControlPanel";
 import MapToolbar from "@/components/Map/SideButtons/MapToolbar";
 
@@ -50,19 +49,34 @@ export default function ControlsOverlay() {
   const shouldShowControlPanel = featureFlags.uiNext && controlPanelOpen;
 
   return (
-    <div className={styles.controlsOverlay}>
-      {shouldShowControlPanel && (
-        <ControlPanel
-          className={styles.controlPanel}
-          onClose={hideControlPanel}
+    <Grid2 container className={styles.controlsOverlay}>
+      <Grid2 size={4} sx={{ padding: "10px" }}>
+        {shouldShowControlPanel && (
+          <ControlPanel
+            className={styles.controlPanel}
+            onClose={hideControlPanel}
+          />
+        )}
+      </Grid2>
+      <Grid2
+        size={8}
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "flex-start",
+          alignItems: "flex-end",
+          padding: "10px",
+        }}
+      >
+        <MToolbar
+          onOpenControlPanel={
+            featureFlags.uiNext && !controlPanelOpen && showControlPanel
+          }
         />
-      )}
-      <MapToolbar className={styles.buttons} />
-      <MToolbar
-        onOpenControlPanel={
-          featureFlags.uiNext && !controlPanelOpen && showControlPanel
-        }
-      />
-    </div>
+        <div style={{ marginTop: "10px" }}>
+          <MapToolbar className={styles.buttons} />
+        </div>
+      </Grid2>
+    </Grid2>
   );
 }

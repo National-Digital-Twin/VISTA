@@ -1,4 +1,4 @@
-import { ApolloClient, InMemoryCache, HttpLink, concat } from "@apollo/client";
+import { ApolloClient, InMemoryCache, HttpLink } from "@apollo/client";
 import roadRoute from "./graphql-queries/roadRoute.graphql";
 import SandbagPlacement from "./graphql-queries/sandbagPlacement.graphql";
 import SandbagPlacements from "./graphql-queries/sandbagPlacements.graphql";

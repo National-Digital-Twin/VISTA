@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
+import { Marker } from "react-map-gl/maplibre";
 import useHydrologyStore from "./useStore";
 import useHydroTidesWeatherStore from "@/components/DetailsPanel/useHydroTidesWeatherStore";
 import { fetchStations, HydrologyStation } from "@/api/hydrology";
-import { Marker } from "react-map-gl/maplibre";
 
 export default function HydrologyStations() {
   const { selectStation, selectedStation } = useHydroTidesWeatherStore();

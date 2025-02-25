@@ -378,15 +378,6 @@ input[type="range"].criticality-slider::-ms-thumb {
   }
 }
 
-button.maplibregl-ctrl-compass {
-  width: 40px;
-  height: 40px;
-}
-
-button.maplibregl-ctrl-compass .mapboxgl-ctrl-icon {
-  background-size: 40px;
-}
-
 body,
 html {
   min-block-size: 100svh;
