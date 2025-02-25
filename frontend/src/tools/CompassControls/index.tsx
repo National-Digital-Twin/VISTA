@@ -16,13 +16,11 @@ export function SideButtons() {
   }, [map]);
 
   return (
-    <>
-      <ToolbarButton
-        title="Compass"
-        onClick={handleCompassClick}
-        svgSrc="/icons/Compass.svg"
-      />
-    </>
+    <ToolbarButton
+      title="Compass"
+      onClick={handleCompassClick}
+      svgSrc="/icons/Compass.svg"
+    />
   );
 }
 

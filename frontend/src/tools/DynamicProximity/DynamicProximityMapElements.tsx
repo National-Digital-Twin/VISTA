@@ -5,26 +5,6 @@ import useDynamicProximity from "./useDynamicProximity";
 
 export default function DynamicProximityMapElements() {
   const { features } = useDynamicProximity();
-  // const mapRef = useRef(null);
-  // const [isMapLoaded, setIsMapLoaded] = useState(false);
-
-  // useEffect(() => {
-  //   const handleLoadChange = () => {
-  // const mapInstance = mapRef.current.getMap();
-  // if (mapInstance.isStyleLoaded()) {
-  //   setIsMapLoaded(true);
-  //     }
-  //   };
-
-  //   if (mapRef.current) {
-  //     const mapInstance = mapRef.current.getMap();
-  //     mapInstance.on("styledata", handleLoadChange);
-
-  //     return () => {
-  //       mapInstance.off("styledata", handleLoadChange);
-  //     };
-  //   }
-  // }, []);
 
   if (!features.length) {
     return null;

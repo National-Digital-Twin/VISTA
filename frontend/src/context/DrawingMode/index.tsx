@@ -112,7 +112,7 @@ export const useDrawingMode = <T extends Feature>(
     );
   }
 
-  const { draw } = context;
+  const { draw, isMapLoaded } = context;
   const { paralogMap: map } = useMap();
   const features = useSharedStore(useShallow(selector));
 
@@ -178,13 +178,13 @@ export const useDrawingMode = <T extends Feature>(
   }, [map, handleDrawEvent]);
 
   /** Redraw Features */
-  // useEffect(() => {
-  //   if (!isMapLoaded) {
-  //     return;
-  //   }
-  //   features.forEach(draw.add);
-  //   return () => draw.delete(features.map(({ id }) => id as string));
-  // }, [draw, features, isMapLoaded]);
+  useEffect(() => {
+    if (!isMapLoaded) {
+      return;
+    }
+    features.forEach(draw.add);
+    return () => draw.delete(features.map(({ id }) => id as string));
+  }, [draw, features, isMapLoaded]);
 
   return { startDrawing, features };
 };
