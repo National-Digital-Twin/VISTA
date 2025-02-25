@@ -1,5 +1,3 @@
-
-
 .assetTableContainer td {
   line-height: 0;
 }
@@ -8,7 +6,6 @@
   align-items: center;
   justify-content: space-between;
   padding: 12px;
-
 }
 
 .exportButtons {

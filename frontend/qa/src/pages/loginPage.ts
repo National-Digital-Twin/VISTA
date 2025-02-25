@@ -10,7 +10,7 @@ export default class LoginPage {
   //Object Locators
   private Elements = {
     userInput: "username",
-    passwordInput: "Password",
+    passwordInput: "Password", // pragma: allowlist secret
     loginBtn: "button[color='primary']",
     errorMessage: "alert",
   };
@@ -20,12 +20,13 @@ export default class LoginPage {
     await expect(this.page).toHaveTitle("Sign-in");
   }
   async enterUserName(user: string) {
-    await this.page.locator('[name="username"]').fill(user);
+    await this.page.locator('[name="username"]').fill(user); // pragma: allowlist secret
     await this.page.getByRole("button", { name: "Next" }).click();
   }
+
   async enterPassword(password: string) {
     await expect(this.page).toHaveTitle("Enter your password");
-    await this.page.locator('[name="password"]').fill(password);
+    await this.page.locator('[name="password"]').fill(password); // pragma: allowlist secret
   }
 
   async clickLoginButton() {
