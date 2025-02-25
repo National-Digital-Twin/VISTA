@@ -213,6 +213,7 @@ input[type="range"].criticality-slider::-ms-thumb {
     border-radius: 0.25rem;
     padding: 1rem;
     box-shadow: var(--card-shadow);
+    position: fixed;
   }
 
   .menu {
@@ -376,15 +377,6 @@ input[type="range"].criticality-slider::-ms-thumb {
     outline: 1px solid var(--col-neutral-input-outline);
     border-width: 0;
   }
-}
-
-button.maplibregl-ctrl-compass {
-  width: 40px;
-  height: 40px;
-}
-
-button.maplibregl-ctrl-compass .mapboxgl-ctrl-icon {
-  background-size: 40px;
 }
 
 body,

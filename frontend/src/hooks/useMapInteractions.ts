@@ -73,7 +73,9 @@ export default function useMapInteractions({
     clickedFeature?: Feature;
     isMultiSelect: boolean;
   }) => {
-    if (!clickedFeature) return;
+    if (!clickedFeature) {
+      return;
+    }
 
     const { properties } = clickedFeature;
     const element = findElement([...assets, ...dependencies], properties?.uri);

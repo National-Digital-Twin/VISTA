@@ -3,12 +3,13 @@ import { StrictMode } from "react";
 import { MapProvider } from "react-map-gl/maplibre";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ApolloProvider } from "@apollo/client";
-
 import apolloClient from "./api/apollo-client";
 import App from "@/App";
 import DevTools from "@/components/DevTools";
 import "./index.css";
-import featureFlags, { updateFeatureFlagsFromURL } from "@/config/feature-flags";
+import featureFlags, {
+  updateFeatureFlagsFromURL,
+} from "@/config/feature-flags";
 
 // ✅ Update feature flags from URL on app initialization
 updateFeatureFlagsFromURL();
@@ -45,5 +46,5 @@ root.render(
         </DevTools>
       </QueryClientProvider>
     </ApolloProvider>
-  </StrictMode>
+  </StrictMode>,
 );

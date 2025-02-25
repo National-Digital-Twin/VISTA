@@ -71,7 +71,7 @@ export function RoadRouteMenuBody({ searchQuery }: RoadRouteMenuBodyProps) {
       abortAddStartMarker();
       abortAddEndMarker();
     }
-  }, [enabled, featureFlags.routing, abortAddStartMarker, abortAddEndMarker]);
+  }, [enabled, abortAddStartMarker, abortAddEndMarker]);
 
   const kindDropdownID = useId();
 

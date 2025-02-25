@@ -1,12 +1,9 @@
 import { useMemo, useRef } from "react";
-import { faBell } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import classNames from "classnames";
 import { useBoolean, useOnClickOutside } from "usehooks-ts";
 import { useQuery } from "@tanstack/react-query";
-import styles from "./style.module.css";
 import FloodRiskAreas from "./FloodRiskAreas";
 import { fetchAllLiveStations } from "@/api/hydrology";
+import ToolbarButton from "@/components/Map/SideButtons/ToolbarButton";
 
 export default function FloodNotifDropdown() {
   const {
@@ -37,20 +34,14 @@ export default function FloodNotifDropdown() {
 
   return (
     <div className="pointer-events-auto relative" ref={widgetRef}>
-      <button
-        className={classNames(
-          "bg-button hover:bg-button p-2 rounded cursor-pointer flex items-center justify-center w-9 h-9 border-none transition-colors duration-300",
-          { "bg-button-hover": isOpen },
-        )}
+      <ToolbarButton
+        title="Flood Notifications"
         onClick={toggleWidget}
-      >
-        <FontAwesomeIcon icon={faBell} className="text-whiteSmoke" />
-        {atRiskAreas.length > 0 && (
-          <span className={styles.warningCount}>{atRiskAreas.length}</span>
-        )}
-      </button>
+        svgSrc="/icons/Warning.svg"
+        badgeContent={atRiskAreas.length}
+      />
       {isOpen && (
-        <div className="absolute top-full left-0 mt-2 bg-card border border-neutral-outline rounded p-4 shadow-lg w-[350px] max-h-[40vh] overflow-y-auto">
+        <div className="absolute top-0 right-0 pr-10 mt-2 mr-20 bg-card border border-neutral-outline rounded p-4 shadow-lg w-[350px] max-h-[40vh] overflow-y-auto">
           <FloodRiskAreas atRiskAreas={atRiskAreas} />
         </div>
       )}

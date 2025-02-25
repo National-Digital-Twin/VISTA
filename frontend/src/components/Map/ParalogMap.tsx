@@ -164,7 +164,7 @@ function BuiltinSources() {
 
 function TransformUrl(url: string) {
   let transformedUrl = url;
-  let headers = {};
+  const headers = {};
 
   if (transformedUrl.includes("api.os.uk")) {
     const urlParts = transformedUrl.split("api.os.uk");
@@ -322,7 +322,7 @@ export default function ParalogMap() {
                   borderColor: "#949494",
                 }}
               />
-              <NavigationControl showZoom={false} showCompass={true} />
+              <NavigationControl showZoom={false} showCompass={false} />
             </DrawingModeContextProvider>
           </Map>
 
