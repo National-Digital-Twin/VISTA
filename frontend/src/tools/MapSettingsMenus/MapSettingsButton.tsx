@@ -1,4 +1,3 @@
-import { faGear } from "@fortawesome/free-solid-svg-icons";
 import { useRef } from "react";
 import { useBoolean, useDarkMode, useOnClickOutside } from "usehooks-ts";
 import ToolbarButton from "@/components/Map/SideButtons/ToolbarButton";
@@ -7,7 +6,6 @@ import {
   useTogglePointerCoords,
 } from "@/context/ShowPointerCoords";
 import useSharedStore from "@/hooks/useSharedStore";
-import { resetHashStorage } from "@/hooks/createStore";
 
 interface ToggleSwitchControlMenuItem {
   name: string;
@@ -58,15 +56,6 @@ export default function MapSettingsButton() {
       type: "toggleSwitch",
       onItemClick: toggleShowCpsIconsForAssetTypes,
     },
-    {
-      name: "Reset all layers",
-      type: "button",
-      onItemClick: () => {
-        if (window.confirm("Are you sure you want to reset all layers?")) {
-          resetHashStorage();
-        }
-      },
-    },
   ];
 
   return (
@@ -74,7 +63,7 @@ export default function MapSettingsButton() {
       <ToolbarButton
         title="Settings menu"
         onClick={toggleSettingsMenu}
-        icon={faGear}
+        svgSrc="icons/Settings.svg"
       />
       {showSettingsMenu && (
         <div className="absolute right-12 bottom-0 menu">

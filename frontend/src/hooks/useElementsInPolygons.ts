@@ -92,7 +92,9 @@ function findPointsInPolygon(
   polygonFeatures: Feature<Geometry, GeoJsonProperties>[],
   points: Feature<Geometry, GeoJsonProperties>[],
 ) {
-  if (isEmpty(polygonFeatures)) return [];
+  if (isEmpty(polygonFeatures)) {
+    return [];
+  }
 
   return points.filter((point) =>
     polygonFeatures.some((polygon) =>
@@ -105,7 +107,7 @@ function findLinesIntersectingPolygon(
   polygonFeatures: Feature<Geometry, GeoJsonProperties>[],
   lineStringFeatures: Feature<Geometry, GeoJsonProperties>[],
 ) {
-  if (isEmpty(polygonFeatures)) return [];
+  if (isEmpty(polygonFeatures)) {return [];}
 
   return lineStringFeatures.filter((lineString) =>
     polygonFeatures.some((polygon) =>

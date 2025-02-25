@@ -1,25 +1,4 @@
-.controlsOverlay {
-  display: grid;
-  inline-size: 100%;
-  block-size: 100%;
-  max-block-size: calc(100lvb - 50px);
 
-  padding: 0.5rem;
-
-  grid:
-    "toolbar toolbar" 1fr
-    ". buttons" auto
-    ". ." 2rem /
-    1fr auto;
-
-  column-gap: 0.5rem;
-
-  pointer-events: none;
-
-  isolation: isolate;
-  position: absolute;
-  z-index: 20;
-}
 
 .controlsOverlay:has(.controlPanel) {
   grid:

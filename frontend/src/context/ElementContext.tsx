@@ -122,15 +122,18 @@ export function ElementsProvider({ children }: ElementsProviderProps) {
     [liveFloodAreasRaw, showLiveFloods],
   );
 
-  const onFloodTimelineSelect = (selected) => {
-    if (selected !== selectedTimeline) {
-      setSelectedTimeline(selected);
-    }
-  };
+  const onFloodTimelineSelect = useCallback(
+    (selected) => {
+      if (selected !== selectedTimeline) {
+        setSelectedTimeline(selected);
+      }
+    },
+    [selectedTimeline],
+  );
 
-  const closeTimelinePanel = () => {
+  const closeTimelinePanel = useCallback(() => {
     setSelectedTimeline(null);
-  };
+  }, []);
 
   const {
     assets,
@@ -378,9 +381,9 @@ export function ElementsProvider({ children }: ElementsProviderProps) {
     dispatch({ type: UPDATE_ERRORS, error: msg });
   }, []);
 
-  const dismissErrorNotification = (error) => {
+  const dismissErrorNotification = useCallback((error) => {
     dispatch({ type: DISMISS_ERROR, error });
-  };
+  }, []);
 
   const clearSelectedElements = useCallback(() => {
     dispatch({ type: CLEAR_SELECTED });

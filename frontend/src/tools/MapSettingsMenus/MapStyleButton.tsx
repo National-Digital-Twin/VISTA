@@ -1,7 +1,5 @@
 import { useRef, useMemo } from "react";
 import { useBoolean, useOnClickOutside } from "usehooks-ts";
-import { faMap } from "@fortawesome/free-solid-svg-icons";
-
 import ToolbarButton from "@/components/Map/SideButtons/ToolbarButton";
 import { useMapStyles } from "@/components/Map/mapStyles";
 import { useMapStyleKey, useSetMapStyleKey } from "@/context/MapStyle";
@@ -38,7 +36,7 @@ export default function MapStyleButton() {
       <ToolbarButton
         title="Map style menu"
         onClick={toggleMapStyleMenu}
-        icon={faMap}
+        svgSrc="/icons/Stacks.svg"
       />
       {showMapStyles && (
         <div className="absolute right-12 bottom-0 menu">
