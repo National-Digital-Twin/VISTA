@@ -1,4 +1,3 @@
-// import { useEffect, useRef, useState } from "react";
 import { Layer } from "react-map-gl/maplibre";
 import { point } from "@turf/turf";
 import useDynamicProximity from "./useDynamicProximity";
