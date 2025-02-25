@@ -38,8 +38,7 @@ node js needs to be latest or minimum version 22
 2. Extract and open in the VS-Code
 3. `npm i` to install the dependencies
 4. `npx playwright install` to install the browsers
-5. `USERNAME="ndtp.user" PASSWORD="ndtp.pass" npm run test` to execute the tests
-
+5. `USERNAME="ndtp.user" PASSWORD="ndtp.pass" npm run test` to execute the tests  // pragma: allowlist secret
 ### Folder structure
 
 0. `src\pages` -> All the page (UI screen)
