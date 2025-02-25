@@ -8,14 +8,12 @@
   align-items: center;
   justify-content: space-between;
   padding: 12px;
-  background-color: #f8f9fa;
-  border-radius: 10px 10px 0 0;
-  border-bottom: 1px solid #dee2e6;
+
 }
 
-
-
-
-
-
-
+.exportButtons {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 7px;
+}
