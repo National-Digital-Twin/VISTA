@@ -213,6 +213,7 @@ input[type="range"].criticality-slider::-ms-thumb {
     border-radius: 0.25rem;
     padding: 1rem;
     box-shadow: var(--card-shadow);
+    position: fixed;
   }
 
   .menu {

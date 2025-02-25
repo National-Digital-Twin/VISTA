@@ -1,19 +1,16 @@
+.assetTableContainer td {
+  line-height: 0;
+}
 .assetTableHeader {
-  display: block flex;
+  display: flex;
   align-items: center;
-
-  /* Even in fallback-mode, we want a minimum size here */
-  min-inline-size: 40ch;
-
-  /* Add space before the table */
-  margin-block-end: 1rem;
+  justify-content: space-between;
+  padding: 12px;
 }
 
-.assetTableHeader button {
-  margin-inline-start: 0.5rem;
-}
-
-.assetTableHeader button:first-of-type {
-  /* Push the buttons to the end */
-  margin-inline-start: auto;
+.exportButtons {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 7px;
 }
