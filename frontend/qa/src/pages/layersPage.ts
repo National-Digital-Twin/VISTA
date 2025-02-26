@@ -102,7 +102,6 @@ export default class LayersPage {
     const detailsElements = await this.page
       .locator("div._idCardItem_1nzqt_20")
       .allTextContents();
-    console.log("Extracted Details:", detailsElements);
     expect(detailsElements).toEqual([
       "Name: Philip Romeo",
       "Year of Birth: 1954",
