@@ -1,5 +1,4 @@
 import { useQuery } from "@tanstack/react-query";
-import { useCallback } from "react";
 import type Tool from "./Tool";
 
 import TOOLS from "./tools";

@@ -18,7 +18,6 @@ const TOOLS: (false | (() => Promise<Tool>))[] = [
   () => import("./MapSettingsMenus"),
   () => import("./ZoomControls"),
   () => import("./LayersControlPanel"),
-  () => import("./Sponsors"),
   featureFlags.feedbackWidget && (() => import("./FeedbackWidget")),
   () => import("./DynamicProximity"),
   () => import("./FloodAreaControls"),
