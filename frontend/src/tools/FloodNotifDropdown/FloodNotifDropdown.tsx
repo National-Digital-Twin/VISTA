@@ -1,7 +1,9 @@
 import { useMemo, useRef } from "react";
 import { useBoolean, useOnClickOutside } from "usehooks-ts";
 import { useQuery } from "@tanstack/react-query";
+import Link from "@mui/material/Link";
 import FloodRiskAreas from "./FloodRiskAreas";
+import styles from "./style.module.css";
 import { fetchAllLiveStations } from "@/api/hydrology";
 import ToolbarButton from "@/components/Map/SideButtons/ToolbarButton";
 
@@ -41,8 +43,16 @@ export default function FloodNotifDropdown() {
         badgeContent={atRiskAreas.length}
       />
       {isOpen && (
-        <div className="absolute top-0 right-0 pr-10 mt-2 mr-20 bg-card border border-neutral-outline rounded p-4 shadow-lg w-[350px] max-h-[40vh] overflow-y-auto">
+        <div className={styles.floodPanel}>
           <FloodRiskAreas atRiskAreas={atRiskAreas} />
+          <Link
+            component="button"
+            variant="body2"
+            onClick={closeWidget}
+            className={styles.closeButton}
+          >
+            Close
+          </Link>
         </div>
       )}
     </div>
