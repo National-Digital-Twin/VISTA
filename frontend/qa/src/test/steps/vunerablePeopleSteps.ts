@@ -7,14 +7,14 @@ let layersPage: LayersPage;
 setDefaultTimeout(60 * 1000 * 2);
 
 When(
-  "I draw a vunerable people area and click a vunerable person",
+  "I draw a vulnerable people area and click a vulnerable person",
   async function () {
     layersPage = new LayersPage(basePage.page);
-    await layersPage.drawAndClickVunerableArea();
+    await layersPage.drawAndClickVulnerableArea();
   },
 );
 
-Then("I can see the details of the vunerable person displayed", async function () {
+Then("I can see the details of the vulnerable person displayed", async function () {
   layersPage = new LayersPage(basePage.page);
   await layersPage.verifyVulnerabilityDetailIsDisplayed();
 });

@@ -83,7 +83,7 @@ export default class LayersPage {
   async zoomOutTheMap() {
     await this.page.mouse.wheel(0, 500);
   }
-  async drawAndClickVunerableArea() {
+  async drawAndClickVulnerableArea() {
     await this.page.waitForTimeout(3000);
     await this.page.getByRole("heading", { name: "Vulnerable People" }).click();
     const drawPolygonButton = this.page.locator('button:has-text("Draw Area")');
