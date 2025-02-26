@@ -9,10 +9,15 @@ export default class LayersPage {
 
   private Elements = {
     menuParalog: "Paralog",
-    polygon:"svg path, .polygon-layer, canvas"
+    polygon: "svg path, .polygon-layer, canvas",
   };
 
   async verifyPolygonIsDrawn() {
+    const polygonAdded = await this.page.locator(this.Elements.polygon).count();
+    expect(polygonAdded).toEqual(44);
+  }
+
+  async drawAPolygon(){
     await this.page.waitForTimeout(3000);
     await this.page.getByRole("heading", { name: "Flood Polygons" }).click();
     const polygonExists = await this.page
@@ -35,34 +40,91 @@ export default class LayersPage {
     await this.page.mouse.click(500, 300);
     await this.page.mouse.up();
     await this.page.waitForTimeout(3000);
-    const polygonAdded = await this.page
-      .locator(this.Elements.polygon)
-      .count();
-    expect(polygonAdded).toEqual(44);
   }
 
   async zoomWithButtonWithScreenshotComparison() {
-    const zoomInButton = this.page.locator('button[title="Zoom in"]');
-    const zoomOutButton = this.page.locator('button[title="Zoom out"]');
     const beforeZoom = await this.page.screenshot();
-    await zoomInButton.click();
+    this.zoomInWithButton();
     const afterZoomIn = await this.page.screenshot();
     expect(afterZoomIn).not.toEqual(beforeZoom);
-    await zoomOutButton.click();
+    this.zoomOutWithButton();
     const afterZoomOut = await this.page.screenshot();
     expect(afterZoomOut).not.toEqual(afterZoomIn);
   }
 
+  async zoomInWithButton() {
+    const zoomInButton = this.page.locator('button[title="Zoom in"]');
+    await zoomInButton.click();
+  }
+
+  async zoomOutWithButton() {
+    const zoomOutButton = this.page.locator('button[title="Zoom out"]');
+    await zoomOutButton.click();
+  }
+
   async zoomOnTheMapWithScreenshotComparison() {
-    await this.page.waitForTimeout(2000);
-    await this.page.mouse.move(600, 400);
     const beforeZoom = await this.page.screenshot();
-    await this.page.mouse.wheel(0, -500);
+    await this.page.waitForTimeout(2000);
+    this.zoomOnTheMap();
     await this.page.waitForTimeout(2000);
     const afterZoom = await this.page.screenshot();
-    await this.page.mouse.wheel(0, 500);
+    expect(afterZoom).not.toEqual(beforeZoom);
+    this.zoomOutTheMap()
     await this.page.waitForTimeout(2000);
     const afterZoomOut = await this.page.screenshot();
     expect(afterZoomOut).not.toEqual(afterZoom);
+  }
+
+  async zoomOnTheMap() {
+    await this.page.mouse.move(600, 400);
+    await this.page.mouse.wheel(0, -500);
+  }
+
+  async zoomOutTheMap() {
+    await this.page.mouse.wheel(0, 500);
+  }
+  async drawAndClickVunerableArea() {
+    await this.page.waitForTimeout(3000);
+    await this.page.getByRole("heading", { name: "Vulnerable People" }).click();
+    const drawPolygonButton = this.page.locator('button:has-text("Draw Area")');
+    await drawPolygonButton.click();
+    await this.page.waitForTimeout(2000);
+    await this.page.mouse.click(850, 300);
+    await this.page.mouse.click(900, 250);
+    await this.page.mouse.click(950, 200);
+    await this.page.mouse.click(850, 300);
+    await this.page.keyboard.press("Enter");
+    await this.page.waitForTimeout(5000);
+    await this.page.mouse.click(900, 245);
+    await this.page.waitForSelector("div._idCardItem_1nzqt_20");
+  }
+  async verifyVulnerabilityDetailIsDisplayed() {
+    const detailsElements = await this.page
+      .locator("div._idCardItem_1nzqt_20")
+      .allTextContents();
+    console.log("Extracted Details:", detailsElements);
+    expect(detailsElements).toEqual([
+      "Name: Philip Romeo",
+      "Year of Birth: 1954",
+      "UPRN: 10090466223.0",
+      "Primary Support Reason: nan",
+      "Disability: No conditions",
+      "Coordinates: 50.71163324269709, -1.251859667094288",
+      "Alert Category: nan",
+      "Alert Detail: nan",
+    ]);
+  }
+
+  async panWithScreenshotComparison() {
+    const beforePan = await this.page.screenshot();
+    await this.panAroundTheMap();
+    const afterPan = await this.page.screenshot();
+    expect(beforePan).not.toEqual(afterPan);
+  }
+  async panAroundTheMap() {
+    await this.page.mouse.move(800, 400);
+    await this.page.mouse.down();
+    await this.page.mouse.move(1000, 400, { steps: 20 });
+    await this.page.mouse.up();
   }
 }
