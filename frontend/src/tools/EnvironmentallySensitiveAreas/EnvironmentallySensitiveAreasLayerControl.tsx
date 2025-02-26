@@ -1,4 +1,3 @@
-import { faMarker } from "@fortawesome/free-solid-svg-icons";
 import { EnvironmentallySensitiveAreasMenuBody } from "./EnvironmentallySensitiveAreasMenuBody";
 import type { LayerControlProps } from "@/tools/Tool";
 
@@ -8,10 +7,7 @@ export default function EnvironmentallySensitiveAreasLayerControl({
   searchQuery,
 }: Readonly<LayerControlProps>) {
   return (
-    <ComplexLayerControl
-      icon={faMarker}
-      title="Environmentally Sensitive Areas"
-    >
+    <ComplexLayerControl title="Environmentally Sensitive Areas">
       <div className="menu menu-lg">
         <EnvironmentallySensitiveAreasMenuBody searchQuery={searchQuery} />
       </div>
