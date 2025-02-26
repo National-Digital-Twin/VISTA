@@ -4,4 +4,4 @@ Feature: Draw a vunerable people area functionality
     Given I login to the ndtp app with the user credentials
     When  I click the Paralog menu
     And   I draw a vunerable people area and click a vunerable person
-    Then  The details of the vunerable person is displayed
+    Then  I can see the details of the vunerable person displayed
