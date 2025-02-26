@@ -10,7 +10,7 @@ export interface SimpleLayerControlProps {
   /** Layer being controlled */
   readonly layerName: string;
   /** Icon for the layer */
-  readonly icon: IconProp;
+  readonly icon?: IconProp;
   /** Title of the layer */
   readonly title: string;
   /** Current search query */
@@ -47,7 +47,7 @@ export default function SimpleLayerControl({
           }
         }}
       >
-        <FontAwesomeIcon icon={icon} className={styles.icon} />
+        {icon && <FontAwesomeIcon icon={icon} className={styles.icon} />}
         <FontAwesomeIcon
           icon={enabled ? faEye : faEyeSlash}
           className={styles.toggle}

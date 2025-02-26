@@ -36,11 +36,7 @@ export default function HydrologyLayerControl({
   searchQuery,
 }: Readonly<LayerControlProps>) {
   return (
-    <ComplexLayerControl
-      icon={faWater}
-      title="Hydrology monitoring"
-      autoShowHide
-    >
+    <ComplexLayerControl title="Hydrology monitoring" autoShowHide>
       <MonitoringStationControlPanelBody searchQuery={searchQuery} />
     </ComplexLayerControl>
   );

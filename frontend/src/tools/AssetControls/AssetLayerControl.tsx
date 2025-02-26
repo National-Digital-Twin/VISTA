@@ -213,7 +213,7 @@ function AssessmentCategoryLayerControls({
   return (
     <ComplexLayerControl
       icon={
-        hasAvailableFontAwesomeIcon ? ["fas", fontAwesomeIconName] : faMapMarker
+        hasAvailableFontAwesomeIcon ? ["fas", fontAwesomeIconName] : undefined
       }
       title={category}
     >
