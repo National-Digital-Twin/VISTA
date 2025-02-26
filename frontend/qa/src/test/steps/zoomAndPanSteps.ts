@@ -26,10 +26,13 @@ When("I zoom in and out on the map", async function () {
   await layersPage.zoomOutTheMap();
 });
 
-Then("I should be able to see the zoom difference in the screenshots", async function () {
-  layersPage = new LayersPage(basePage.page);
-  await layersPage.zoomOnTheMapWithScreenshotComparison();
-});
+Then(
+  "I should be able to see the zoom difference in the screenshots",
+  async function () {
+    layersPage = new LayersPage(basePage.page);
+    await layersPage.zoomOnTheMapWithScreenshotComparison();
+  },
+);
 
 When("I pan around the map", async function () {
   layersPage = new LayersPage(basePage.page);

@@ -14,7 +14,10 @@ When(
   },
 );
 
-Then("I can see the details of the vulnerable person displayed", async function () {
-  layersPage = new LayersPage(basePage.page);
-  await layersPage.verifyVulnerabilityDetailIsDisplayed();
-});
+Then(
+  "I can see the details of the vulnerable person displayed",
+  async function () {
+    layersPage = new LayersPage(basePage.page);
+    await layersPage.verifyVulnerabilityDetailIsDisplayed();
+  },
+);

@@ -17,7 +17,7 @@ export default class LayersPage {
     expect(polygonAdded).toEqual(44);
   }
 
-  async drawAPolygon(){
+  async drawAPolygon() {
     await this.page.waitForTimeout(3000);
     await this.page.getByRole("heading", { name: "Flood Polygons" }).click();
     const polygonExists = await this.page
@@ -69,7 +69,7 @@ export default class LayersPage {
     await this.page.waitForTimeout(2000);
     const afterZoom = await this.page.screenshot();
     expect(afterZoom).not.toEqual(beforeZoom);
-    this.zoomOutTheMap()
+    this.zoomOutTheMap();
     await this.page.waitForTimeout(2000);
     const afterZoomOut = await this.page.screenshot();
     expect(afterZoomOut).not.toEqual(afterZoom);

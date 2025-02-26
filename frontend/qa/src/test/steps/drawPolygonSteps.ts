@@ -11,7 +11,10 @@ When("I draw a polygon", async function () {
   await layersPage.drawAPolygon();
 });
 
-Then("I should be able to verify a polygon is drawn successfully", async function () {
-  layersPage = new LayersPage(basePage.page);
-  await layersPage.verifyPolygonIsDrawn();
-});
+Then(
+  "I should be able to verify a polygon is drawn successfully",
+  async function () {
+    layersPage = new LayersPage(basePage.page);
+    await layersPage.verifyPolygonIsDrawn();
+  },
+);
