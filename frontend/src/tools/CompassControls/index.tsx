@@ -24,4 +24,4 @@ export function SideButtons() {
   );
 }
 
-export const SIDE_BUTTON_ORDER = -1;
+export const SIDE_BUTTON_ORDER = 1;

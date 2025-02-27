@@ -7,7 +7,7 @@ import styles from "./style.module.css";
 import { fetchAllLiveStations } from "@/api/hydrology";
 import ToolbarButton from "@/components/Map/SideButtons/ToolbarButton";
 
-export default function FloodNotifDropdown() {
+export default function SideButtons() {
   const {
     value: isOpen,
     setFalse: closeWidget,
@@ -58,3 +58,4 @@ export default function FloodNotifDropdown() {
     </div>
   );
 }
+export const SIDE_BUTTON_ORDER = 0;

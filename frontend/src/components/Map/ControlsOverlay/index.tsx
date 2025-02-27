@@ -25,6 +25,7 @@ function Toolbar({ onOpenControlPanel }: ToolbarProps) {
           hideTitle
         />
       )}
+
       {tools("toolbar-order").map((tool) => {
         if (!tool.ToolbarTools) {
           return null;
@@ -50,7 +51,7 @@ export default function ControlsOverlay() {
 
   return (
     <Grid2 container className={styles.controlsOverlay}>
-      <Grid2 size={4} sx={{ padding: "10px" }}>
+      <Grid2 size={4} sx={{ padding: "10px" }} className={styles.controlPanel}>
         {shouldShowControlPanel && (
           <ControlPanel
             className={styles.controlPanel}
@@ -58,8 +59,15 @@ export default function ControlsOverlay() {
           />
         )}
       </Grid2>
+      <Grid2 size={7} sx={{}}>
+        <MToolbar
+          onOpenControlPanel={
+            featureFlags.uiNext && !controlPanelOpen && showControlPanel
+          }
+        />
+      </Grid2>
       <Grid2
-        size={8}
+        size={1}
         sx={{
           display: "flex",
           flexDirection: "column",
@@ -68,12 +76,7 @@ export default function ControlsOverlay() {
           padding: "10px",
         }}
       >
-        <MToolbar
-          onOpenControlPanel={
-            featureFlags.uiNext && !controlPanelOpen && showControlPanel
-          }
-        />
-        <div style={{ marginTop: "10px" }}>
+        <div style={{ marginTop: "10px" }} className="pointer-events-auto">
           <MapToolbar className={styles.buttons} />
         </div>
       </Grid2>
