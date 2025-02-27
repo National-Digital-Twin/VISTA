@@ -10,7 +10,7 @@ import styles from "./style.module.css";
 
 export interface ComplexLayerControlProps {
   /** Icon for the layer */
-  readonly icon: IconProp;
+  readonly icon?: IconProp;
   /** Title of the layer */
   readonly title: string;
   /** Children */
@@ -42,7 +42,7 @@ export default function ComplexLayerControl({
           }
         }}
       >
-        <FontAwesomeIcon icon={icon} className={styles.icon} />
+        {icon && <FontAwesomeIcon icon={icon} className={styles.icon} />}
         <FontAwesomeIcon
           icon={expanded ? faChevronDown : faChevronRight}
           className={styles.toggle}

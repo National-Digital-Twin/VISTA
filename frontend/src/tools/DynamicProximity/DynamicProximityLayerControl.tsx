@@ -1,7 +1,4 @@
-import { faMapMarkerAlt } from "@fortawesome/free-solid-svg-icons";
-
 import { useCallback } from "react";
-
 import useDynamicProximity from "./useDynamicProximity";
 import ComplexLayerControl from "@/components/ComplexLayerControl";
 import SearchConditional from "@/components/SearchConditional";
@@ -15,7 +12,7 @@ export default function DynamicProximityLayerControl({
       searchQuery={searchQuery}
       terms={["dynamic proximity", "radius", "circle", "km"]}
     >
-      <ComplexLayerControl icon={faMapMarkerAlt} title="Dynamic proximity">
+      <ComplexLayerControl title="Dynamic proximity">
         <DynamicProximityControlPanelBody />
       </ComplexLayerControl>
     </SearchConditional>

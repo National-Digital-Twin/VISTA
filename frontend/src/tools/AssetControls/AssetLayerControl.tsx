@@ -1,6 +1,6 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useMemo, useCallback } from "react";
-import { faEye, faMapMarker } from "@fortawesome/free-solid-svg-icons";
+import { faEye } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { icon, IconName } from "@fortawesome/fontawesome-svg-core";
 import { capitalize } from "@/utils/capitalize";
@@ -213,7 +213,7 @@ function AssessmentCategoryLayerControls({
   return (
     <ComplexLayerControl
       icon={
-        hasAvailableFontAwesomeIcon ? ["fas", fontAwesomeIconName] : faMapMarker
+        hasAvailableFontAwesomeIcon ? ["fas", fontAwesomeIconName] : undefined
       }
       title={category}
     >
