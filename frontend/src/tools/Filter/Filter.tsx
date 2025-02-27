@@ -209,16 +209,5 @@ function CriticalitySlider() {
         aria-labelledby="criticality-slider"
       />
     </>
-    // <div className="btn" title="Filter out less critical assets">
-    //   <span className="text-white pr-2">Criticality</span>
-    //   <input
-    //     type="range"
-    //     value={currentValue}
-    //     onChange={handleChange}
-    //     min={0}
-    //     max={maxValue}
-    //     className="criticality-slider"
-    //   />
-    // </div>
   );
 }
