@@ -70,13 +70,21 @@ export default function Filter() {
             </Card>
           </Grid2>
           <Grid2 size={6}>
-            <Card sx={{ boxShadow: 3, marginRight: 2, height: "100%" }}>
+            <Card
+              sx={{
+                boxShadow: 3,
+                marginRight: 2,
+                height: "100%",
+                overflow: "visible",
+              }}
+            >
               <CardContent
                 sx={{
                   display: "flex",
                   flexDirection: "row",
                   alignItems: "center",
                   justifyContent: "center",
+                  overflow: "visible",
                 }}
               >
                 {(showPrimary || showSecondary) && <CriticalitySlider />}
@@ -126,6 +134,8 @@ function CriticalitySlider() {
         sx={{
           marginRight: 2,
           marginTop: 0.5,
+          overflow: "visible",
+          position: "relative",
           "& .MuiSlider-rail": {
             backgroundColor: "#F2F0EF",
             height: 20,
@@ -162,6 +172,31 @@ function CriticalitySlider() {
             },
             "&.Mui-active": {
               backgroundColor: "blue",
+            },
+            "&::after": {
+              content: `"${sliderValue}"`,
+              position: "absolute",
+              top: 40,
+              left: "50%",
+              transform: "translateX(-50%)",
+              color: "black",
+              fontSize: 12,
+              backgroundColor: "white",
+              fontWeight: "bold",
+              padding: "5px 8px",
+              borderRadius: "50%",
+              width: "60px",
+              height: "60px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              zIndex: 10,
+              boxShadow: "0 0 5px 0 rgba(0, 0, 0, 0.3)",
+              visibility: "hidden",
+            },
+
+            "&.Mui-active::after": {
+              visibility: "visible",
             },
           },
         }}
