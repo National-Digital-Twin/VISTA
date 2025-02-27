@@ -1,3 +1,4 @@
+import { Typography, Box } from "@mui/material";
 import styles from "./style.module.css";
 
 interface FloodRiskAreasProps {
@@ -6,12 +7,17 @@ interface FloodRiskAreasProps {
 
 export default function FloodRiskAreas({ atRiskAreas }: FloodRiskAreasProps) {
   if (!atRiskAreas.length) {
-    return <p>No current flood warnings</p>;
+    return <Typography>No current flood warnings</Typography>;
   }
 
   return (
-    <div>
-      <h1 className="mt-0 text-base mb-2 text-fg">Flood Risk Areas</h1>
+    <Box>
+      <Typography
+        variant="h5"
+        sx={{ marginTop: 0, marginBottom: 2, fontWeight: "400" }}
+      >
+        Active flood warnings
+      </Typography>
       {atRiskAreas.map((area) => {
         const {
           name,
@@ -26,32 +32,36 @@ export default function FloodRiskAreas({ atRiskAreas }: FloodRiskAreasProps) {
         } = area.properties;
 
         return (
-          <div key={area.id} className={styles.warningAlert}>
-            <h2 className="text-fg mt-0 mb-2">{name || "Unnamed Area"}</h2>
-            <p className="text-fg-secondary my-1">
+          <div key={name} className={styles.floodRiskArea}>
+            <Typography
+              variant="body2"
+              sx={{ marginTop: 0, marginBottom: 2, fontWeight: "bold" }}
+            >
+              {name || "Unnamed Area"}
+            </Typography>
+            <Typography variant="body2" color="textSecondary" sx={{ my: 1 }}>
               River: {river || river_name || "Unknown"}
-            </p>
-            <p className="text-fg-secondary my-1">
+            </Typography>
+            <Typography variant="body2" color="textSecondary" sx={{ my: 1 }}>
               Current Level:{" "}
               {currentLevel !== null ? currentLevel.toFixed(2) : "Unknown"}
-            </p>
-            <p className="text-fg-secondary my-1">
+            </Typography>
+            <Typography variant="body2" color="textSecondary" sx={{ my: 1 }}>
               Trend: {trend || "Unknown"} (
               {direction === "u" ? "Upstream" : "Downstream"})
-            </p>
-            <p className="text-fg-secondary my-1">
-              Last Updated:{" "}
+            </Typography>
+            <Typography variant="body2" color="textSecondary" sx={{ my: 1 }}>
+              Last updated:{" "}
               {value_date ? new Date(value_date).toLocaleString() : "Unknown"}
-            </p>
-            {percentile_5 !== null && percentile_95 !== null && (
-              <p className="text-fg-secondary my-1">
-                Normal Range: {percentile_95.toFixed(2)} -{" "}
-                {percentile_5.toFixed(2)} m
-              </p>
-            )}
+            </Typography>
+            <Typography variant="body2" color="textSecondary" sx={{ my: 1 }}>
+              Normal range:{" "}
+              {percentile_5 !== null ? percentile_5.toFixed(2) : "Unknown"} -{" "}
+              {percentile_95 !== null ? percentile_95.toFixed(2) : "Unknown"}
+            </Typography>
           </div>
         );
       })}
-    </div>
+    </Box>
   );
 }
