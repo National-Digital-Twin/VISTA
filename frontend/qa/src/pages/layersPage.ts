@@ -1,5 +1,6 @@
 import { expect, Page } from "@playwright/test";
 import PlaywrightWrapper from "../helper/wrapper/PlaywrightWrappers";
+import { Console } from "winston/lib/winston/transports";
 
 export default class LayersPage {
   private base: PlaywrightWrapper;
@@ -125,5 +126,48 @@ export default class LayersPage {
     await this.page.mouse.down();
     await this.page.mouse.move(1000, 400, { steps: 20 });
     await this.page.mouse.up();
+  }
+  async clickTransportInfrastructure() {
+    const transportInfra = this.page.getByRole("heading", {
+      name: "Transport Infrastructure",
+    });
+    await transportInfra.waitFor({ state: "visible" });
+    await transportInfra.click();
+    await this.page.waitForTimeout(3000);
+    const road = this.page.getByText("Road (16)");
+    await road.waitFor({ state: "visible" });
+    await road.click();
+    await this.page.waitForTimeout(1000);
+    const bridge = this.page.getByText("Bridge (37)");
+    await bridge.waitFor({ state: "visible" });
+    await bridge.click();
+    await this.page.waitForTimeout(1000);
+    const bridgeItem = this.page.getByText(
+      "A3055 Lake Hill - Sandown to Lake Rail BridgebridgeTS025B",
+    );
+    await bridgeItem.waitFor({ state: "visible" });
+    await bridgeItem.click();
+    await this.page.waitForTimeout(5000);
+    const assetDetailsTab = this.page.getByRole("tab", {
+      name: "Asset details",
+    });
+    await assetDetailsTab.waitFor({ state: "visible" });
+    await assetDetailsTab.click();
+    const assetHeading = this.page.getByRole("heading", {
+      name: "A3055 Lake Hill - Sandown to Lake Rail Bridge",
+    });
+    await assetHeading.waitFor({ state: "visible" });
+    await assetHeading.click();
+    const dependentAssets = this.page.getByRole("heading", {
+      name: "2 dependent assets",
+    });
+    await dependentAssets.waitFor({ state: "visible" });
+    await dependentAssets.click();
+  }
+  async assetsWithinAccordionIsVisible() {
+    const dependentAssetAccordion = this.page.getByText(
+      "Dependent assets: Assets that rely on/ consume services from this asset.",
+    );
+    expect(dependentAssetAccordion).toBeVisible();
   }
 }
