@@ -1,32 +1,58 @@
-import React from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faRoad } from "@fortawesome/free-solid-svg-icons";
+import React, { useState } from "react";
+import { Card, CardContent, Typography, List, ListItem, Divider, Button } from "@mui/material";
 
 const LegendContent: React.FC = () => {
+  const [isOpen, setIsOpen] = useState(true);
+
+  if (!isOpen) {
+    return null;
+  }
+
   return (
-    <>
-      <h3 className="menu-title">Legend</h3>
-      <div className="menu-item">
-        <div className="flex items-center">
-          <FontAwesomeIcon icon={faRoad} className="mr-2" />
-          <span className="font-semibold">Road Criticality</span>
+    <Card sx={{ minWidth: 250, boxShadow: 3, borderRadius: 2, position: "absolute", top: 20, right: 20 }}>
+      <CardContent>
+        {/* Title */}
+        <Typography variant="h6" fontWeight="bold">
+          Legend
+        </Typography>
+
+        {/* Subtitle */}
+        <Typography variant="subtitle1" fontWeight="bold">
+          Road Criticality
+        </Typography>
+
+        <Divider sx={{ my: 1 }} />
+
+        {/* Legend Items */}
+        <List dense>
+          <ListItem>
+            <div style={{ width: 16, height: 4, backgroundColor: "#35C035", marginRight: 8 }} />
+            <Typography variant="body2">Low</Typography>
+          </ListItem>
+
+          <ListItem>
+            <div style={{ width: 16, height: 4, backgroundColor: "#FFB60A", marginRight: 8 }} />
+            <Typography variant="body2">Medium</Typography>
+          </ListItem>
+
+          <ListItem>
+            <div style={{ width: 16, height: 4, backgroundColor: "#FB3737", marginRight: 8 }} />
+            <Typography variant="body2">High</Typography>
+          </ListItem>
+        </List>
+
+        <div style={{ display: "flex", justifyContent: "flex-end" }}>
+          <Button
+            variant="text"
+            color="primary"
+            sx={{ textTransform: "none" }} 
+            onClick={() => setIsOpen(false)}
+          >
+            Close
+          </Button>
         </div>
-        <div className="mt-2 flex items-center space-x-4">
-          <div className="flex items-center">
-            <div className="w-4 h-1 bg-[#35C035] mr-1" />
-            <span className="text-sm">Low</span>
-          </div>
-          <div className="flex items-center">
-            <div className="w-4 h-1 bg-[#FFB60A] mr-1" />
-            <span className="text-sm">Medium</span>
-          </div>
-          <div className="flex items-center">
-            <div className="w-4 h-1 bg-[#FB3737] mr-1" />
-            <span className="text-sm">High</span>
-          </div>
-        </div>
-      </div>
-    </>
+      </CardContent>
+    </Card>
   );
 };
 
