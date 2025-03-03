@@ -1,0 +1,220 @@
+name: Frontend CI on PR
+
+on:
+  workflow_call:
+  pull_request:
+    paths:
+      - "frontend/**"
+      - ".github/workflows/frontend-ci-pr.yml"
+      - ".github/workflows/frontend-ci-pr-merge.yml"
+  workflow_dispatch:
+
+jobs:
+  dependencies:
+    name: Dependency Checks
+    runs-on: ubuntu-latest
+    # timeout-minutes: 10
+    permissions:
+      contents: read
+      packages: write
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # ensures all files are checked out
+
+    - name: Setup Node.js for yarn
+      uses: actions/setup-node@v4
+      with:
+        node-version: "20.x"
+
+    - name: Setup yarn
+      run: npm install -g yarn
+
+    # - name: Setup .yarnrc
+      # uses: actions/setup-node@v4
+      # with:
+      #   node-version: '14.x'
+      # run: |
+      #   yarn config set npmScopes.my-org.npmRegistryServer "https://npm.pkg.github.com"
+      #   yarn config set npmScopes.my-org.npmAlwaysAuth true
+      #   yarn config set npmScopes.my-org.npmAuthToken $GITHUB_TOKEN
+
+
+    - name: Setup Node.js for dependencies
+      uses: actions/setup-node@v4
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        node-version: "20.x"
+        cache: "yarn"
+        cache-dependency-path: "frontend/yarn.lock"
+        registry-url: https://registry.yarnpkg.com
+        run: |
+          yarn config set npmScopes.national-digital-twin.npmRegistryServer "https://npm.pkg.github.com"
+          yarn config set npmScopes.national-digital-twin.npmAlwaysAuth true
+          yarn config set npmScopes.national-digital-twin.npmAuthToken $GITHUB_TOKEN
+
+
+    # - name: Configure the registry
+    #   run: |
+    #       npm config set "@national-digital-twin:registry" "https://npm.pkg.github.com/"
+    #       npm config set "//npm.pkg.github.com/:_authToken" $GITHUB_TOKEN
+    #       npm whoami --registry=https://npm.pkg.github.com
+    #   working-directory: frontend
+    #   env:
+    #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Install Dependencies (with Peer Dependency Resolution)
+      run: |
+        cd frontend
+        if [ -f yarn.lock ]; then
+          echo "✅ yarn.lock found. Running yarn install with frozen lockfile..."
+          yarn install --frozen-lockfile
+        else
+          echo "⚠️ yarn.lock missing. Running yarn install with legacy peer deps..."
+          yarn install --legacy-peer-deps
+        fi
+
+
+
+
+
+  linting:
+    name: Code Linting
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: dependencies
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+          cache: "npm"
+          # cache-dependency-path: "**/package-lock.json"
+
+      # - name: Install Dependencies
+      #   # run: npm ci
+
+      - name: Install Dependencies (Ensure package-lock.json exists)
+        run: |
+            if [ ! -f package-lock.json ]; then
+                echo "⚠️ package-lock.json missing, generating one..."
+                npm install --package-lock-only
+                echo "✅ package-lock.json generated successfully."
+            fi
+            npm ci
+
+      - name: Run ESLint
+        run: |
+          echo "Running ESLint..." >> $GITHUB_STEP_SUMMARY
+          npx eslint frontend/ --ext .js,.jsx,.ts,.tsx
+
+      - name: Run Stylelint
+        run: |
+          echo "Running Stylelint..." >> $GITHUB_STEP_SUMMARY
+          npx stylelint "frontend/**/*.{css,scss}"
+
+  testing:
+    name: Unit Testing
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: linting
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+          cache: "npm"
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run Unit Tests (Jest)
+        run: |
+          echo "Running unit tests..." >> $GITHUB_STEP_SUMMARY
+          npx jest --coverage --ci --reporters=default --reporters=jest-junit
+        env:
+          CI: true
+
+  security-scanning:
+    name: Security Scanning
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: testing
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Trivy
+        run: |
+          wget -q https://github.com/aquasecurity/trivy/releases/download/v0.18.3/trivy_0.18.3_Linux-64bit.deb
+          sudo dpkg -i trivy_0.18.3_Linux-64bit.deb
+
+      - name: Run Trivy Scan on Codebase
+        run: trivy fs --severity HIGH,CRITICAL frontend >> $GITHUB_STEP_SUMMARY
+
+  docker-build-test-scan:
+    name: Docker Build, Test & Scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: security-scanning
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v6
+        with:
+          file: "frontend/Dockerfile"
+          context: "./frontend"
+          load: true
+          tags: "paralog/demo-paralog-frontend:latest"
+
+      - name: Run Docker image
+        run: |
+          docker images
+          docker run --rm -d -p 3000:3000 --name frontend paralog/demo-paralog-frontend:latest
+          docker ps
+          sleep 10
+          docker logs frontend
+
+      - name: Ping Frontend App
+        run: |
+          #!/bin/bash
+          status_code=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:3000/)
+          if [[ "$status_code" == "200" ]]; then
+            echo "Ping successful (200 OK)" >> $GITHUB_STEP_SUMMARY
+          elif
+            echo "Ping failed with status code: $status_code" >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
+
+      - name: Run Trivy vulnerability scanner on Docker Image
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: "paralog/demo-paralog-frontend:latest"
+          format: "table"
+          exit-code: "1"
+          ignore-unfixed: true
+          vuln-type: "os,library"
+          severity: "CRITICAL,HIGH"
+
+      - name: Cleanup
+        if: always()
+        run: docker stop frontend
