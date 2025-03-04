@@ -1,0 +1,5 @@
+# FROM nginx as runner
+FROM nginx
+
+# Copy the built files from the builder stage to the runner stage
+COPY dist /usr/share/nginx/html
