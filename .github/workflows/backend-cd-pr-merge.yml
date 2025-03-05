@@ -54,10 +54,11 @@ jobs:
 
   push-to-ECR:
     needs: [backend-ci]
-    uses: ./.github/workflows/backend-ci-push-to-ECR.yml
+    uses: ./.github/workflows/backend-cd-push-to-ECR.yml
     with:
-      aws_account_number: "503561419905"
-      repo_name: "paralog/demo-paralog-python-api"
+      aws_account_number: "537124944113"
+      repo_name: "paralog/python-api"
+      app_name: "backend"
 
   tag-repository:
     name: Tag Repository

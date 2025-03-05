@@ -1,4 +1,4 @@
-name: Backend CD push to ECR
+name: Backend CD - push to ECR
 
 on:
   workflow_call:
@@ -11,6 +11,10 @@ on:
         type: string
         required: true
         description: "Name of the repository in ECR"
+      app_name:
+        type: string
+        required: true
+        description: "Name of app - frontend, backend or transparent-proxy"
       version:
         type: string
         required: false
@@ -25,6 +29,10 @@ on:
         type: string
         required: true
         description: "Name of the repository in ECR"
+      app_name:
+        type: string
+        required: true
+        description: "Name of app - frontend, backend or transparent-proxy"
       version:
         type: string
         required: false
@@ -99,13 +107,12 @@ jobs:
           docker build --load \
                         -t ${{ inputs.aws_account_number }}.dkr.ecr.eu-west-2.amazonaws.com/${{ inputs.repo_name }}:${{ github.sha }} \
                         -t ${{ inputs.aws_account_number }}.dkr.ecr.eu-west-2.amazonaws.com/${{ inputs.repo_name }}:${{ env.VERSION }} \
-                        -t ${{ inputs.aws_account_number }}.dkr.ecr.eu-west-2.amazonaws.com/${{ inputs.repo_name }}:latest \
-                        -f backend/Dockerfile ./backend
+                        -f ${{ inputs.app_name }}/Dockerfile ./${{ inputs.app_name }}
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::${{ inputs.aws_account_number }}:role/ecs-access-for-github
+          role-to-assume: arn:aws:iam::${{ inputs.aws_account_number }}:role/ecr-access-for-github
           aws-region: eu-west-2
           role-session-name: githubsession
 
