@@ -40,6 +40,12 @@ server {
         return 403;
     }
 
+    location  /health {
+            access_log off;
+            add_header 'Content-Type' 'application/json';
+            return 200 '{"status":"UP"}';
+    }
+
     ## BEGIN UPSTREAM DEFINITIONS
 
     # Ordinance Survey
