@@ -44,7 +44,6 @@ jobs:
         working-directory: frontend
         run: |
           yarn install --frozen-lockfile
-          # ls -la node_modules || echo "node_modules directory missing!"
 
       - name: Run Dependency Checks
         working-directory: frontend
