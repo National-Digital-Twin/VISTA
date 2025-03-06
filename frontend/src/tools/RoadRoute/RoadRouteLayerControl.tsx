@@ -13,9 +13,7 @@ export default function RoadRouteLayerControl({
 
   return (
     <ComplexLayerControl title="Road Route">
-      <div className="menu menu-lg">
-        <RoadRouteMenuBody searchQuery={searchQuery} />
-      </div>
+      <RoadRouteMenuBody searchQuery={searchQuery} />
     </ComplexLayerControl>
   );
 }
