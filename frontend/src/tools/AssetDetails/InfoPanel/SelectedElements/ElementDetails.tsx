@@ -1,8 +1,10 @@
 import type { CSSProperties } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
 import { noCase } from "change-case";
 import { useQuery } from "@tanstack/react-query";
-import { StreetView } from "../InfoHeader";
+import { Box, Card, CardContent, Typography, Button } from "@mui/material";
+import { faStreetView, faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import TypeIcon from "./TypeIcon";
 import Dependents from "./Dependents";
 import Providers from "./Providers";
@@ -14,16 +16,11 @@ import { fetchAssetInfo } from "@/api/combined";
 import { isEmpty } from "@/utils/isEmpty";
 
 export interface ElementDefaultsProps {
-  /** Element for which we're showing details */
   readonly element: any;
-  /** Whether the details should be fully expanded */
   readonly expand?: boolean;
 }
 
-export default function ElementDetails({
-  element,
-  expand,
-}: Readonly<ElementDefaultsProps>) {
+export default function ElementDetails({ element, expand }: Readonly<ElementDefaultsProps>) {
   const elemIsAsset = isAsset(element);
   const elemIsDependency = isDependency(element);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -50,19 +47,17 @@ export default function ElementDetails({
     enabled: elemIsDependency,
   });
 
-  const isLoading =
-    assetInfo.isLoading || dependentInfo.isLoading || providerInfo.isLoading;
-  const isError =
-    assetInfo.isError || dependentInfo.isError || providerInfo.isError;
+  const isLoading = assetInfo.isLoading || dependentInfo.isLoading || providerInfo.isLoading;
+  const isError = assetInfo.isError || dependentInfo.isError || providerInfo.isError;
 
   if (isLoading) {
-    return <p className={styles.loadingMessage}>Fetching element details</p>;
+    return <Typography className={styles.loadingMessage}>Fetching element details...</Typography>;
   }
   if (isError) {
     return (
-      <p className={styles.errorMessage}>
-        An error has occured while fetching information for {element.uri}
-      </p>
+      <Typography className={styles.errorMessage}>
+        An error occurred while fetching information for {element.uri}
+      </Typography>
     );
   }
 
@@ -71,92 +66,69 @@ export default function ElementDetails({
     details = element.getDetails(assetInfo.data);
   }
   if (elemIsDependency) {
-    details = element.getDetails(
-      dependentInfo.data.name,
-      providerInfo.data.name,
-    );
+    details = element.getDetails(dependentInfo.data.name, providerInfo.data.name);
   }
 
   if (isEmpty(element) || !details) {
     return (
-      <p className={styles.errorMessage}>
-        Unable to retrieve details for unknown element or details not found
-      </p>
-    );
-  }
-
-  if (!expand) {
-    return (
-      <li className={styles.elementDetails}>
-        <button
-          aria-label={details.title}
-          onClick={toggleDropdown}
-          className={styles.elementDetailsButton}
-        >
-          <Details expand={false} details={details} />
-        </button>
-        {showDropdown && (
-          <div className={styles.elementDetailsDropdown}>
-            <div className={styles.streetViewContainer}>
-              <span className={styles.streetViewLabel}>
-                Visit Asset in Street View:
-              </span>
-              <StreetView latitude={element?.lat} longitude={element?.lng} />
-            </div>
-            <ResidentialInformation
-              isAsset={elemIsAsset}
-              primaryType={element.primaryType}
-              uri={element.uri}
-            />
-            <Residents
-              isAsset={elemIsAsset}
-              assetUri={element.uri}
-              primaryType={element.primaryType}
-            />
-            <Dependents
-              isAsset={elemIsAsset}
-              isDependency={elemIsDependency}
-              assetUri={element.uri}
-              dependent={element?.dependent}
-            />
-            <Providers
-              isAsset={elemIsAsset}
-              isDependency={elemIsDependency}
-              assetUri={element.uri}
-              provider={element?.provider}
-            />
-          </div>
-        )}
-      </li>
+      <Typography className={styles.errorMessage}>
+        Unable to retrieve details for unknown element or details not found.
+      </Typography>
     );
   }
 
   return (
-    <div className={styles.elementDetailsContent}>
-      <Details expand details={details} />
-      <ResidentialInformation
-        isAsset={elemIsAsset}
-        primaryType={element.primaryType}
-        uri={element.uri}
-      />
-      <Residents
-        isAsset={elemIsAsset}
-        assetUri={element.uri}
-        primaryType={element.primaryType}
-      />
-      <Dependents
-        isAsset={elemIsAsset}
-        isDependency={elemIsDependency}
-        assetUri={element.uri}
-        dependent={element?.dependent}
-      />
-      <Providers
-        isAsset={elemIsAsset}
-        isDependency={elemIsDependency}
-        assetUri={element.uri}
-        provider={element?.provider}
-      />
-    </div>
+    <Box sx={{ display: "flex", flexDirection: "column", gap: 2, padding: 2 }}>
+      {/* Asset Details */}
+      <Card sx={{ boxShadow: 3, borderRadius: 2 }}>
+        <CardContent>
+          <Details expand details={details} />
+        </CardContent>
+      </Card>
+
+      {/* Street View Integration */}
+      <Card sx={{ boxShadow: 3, borderRadius: 2 }}>
+        <CardContent sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <FontAwesomeIcon icon={faStreetView} style={{ color: "#1976d2" }} />
+            <Typography variant="body2">Google Street View</Typography>
+          </Box>
+          <Box sx={{ display: "flex", gap: 1 }}>
+            <Button
+              variant="outlined"
+              size="small"
+              sx={{ textTransform: "none" }}
+              onClick={() => toggleDropdown()}
+            >
+              View
+            </Button>
+            <Button
+              component="a"
+              href={`https://www.google.com/maps?q=${element?.lat},${element?.lng}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              variant="contained"
+              color="primary"
+              size="small"
+              sx={{ textTransform: "none" }}
+              endIcon={<FontAwesomeIcon icon={faArrowRight} />}
+            >
+              Open
+            </Button>
+          </Box>
+        </CardContent>
+      </Card>
+
+      {/* Expandable Section */}
+      {expand ? (
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+          <ResidentialInformation isAsset={elemIsAsset} primaryType={element.primaryType} uri={element.uri} />
+          <Residents isAsset={elemIsAsset} assetUri={element.uri} primaryType={element.primaryType} />
+          <Dependents isAsset={elemIsAsset} isDependency={elemIsDependency} assetUri={element.uri} dependent={element?.dependent} />
+          <Providers isAsset={elemIsAsset} isDependency={elemIsDependency} assetUri={element.uri} provider={element?.provider} />
+        </Box>
+      ) : null}
+    </Box>
   );
 }
 
@@ -180,38 +152,28 @@ function Details({ expand, details }: Readonly<DetailsProps>) {
   const { id, title, criticality, type, desc, icon, elementType } = details;
 
   return (
-    <div className={styles.assetDetails}>
-      <div className={styles.assetDetailsHeader}>
-        {elementType === "asset" ? (
-          <TypeIcon size="sm" type={type} />
-        ) : (
-          <span className={styles.assetIcon} style={{ ...icon.style }} />
-        )}
-        <div>
-          <h2 className={styles.assetDetailsTitle}>{title}</h2>
-          {type && (
-            <p className={styles.assetDetailsType}>
-              {noCase(getURIFragment(type))}
-            </p>
-          )}
-          <p>{id}</p>
-        </div>
-      </div>
+    <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+      <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+        {elementType === "asset" ? <TypeIcon size="sm" type={type} /> : <span className={styles.assetIcon} style={{ ...icon.style }} />}
+        <Box>
+          <Typography variant="h6">{title}</Typography>
+          {type && <Typography variant="body2">{noCase(getURIFragment(type))}</Typography>}
+          <Typography variant="body2">{id}</Typography>
+        </Box>
+      </Box>
+
       {expand && (
         <>
           {icon?.icon && (
-            <p className={styles.assetDetailsCriticality}>
-              <i className="fa-solid fa-triangle-exclamation" />
-              Icon styles not found
-            </p>
+            <Typography variant="body2">
+              <i className="fa-solid fa-triangle-exclamation" /> Icon styles not found
+            </Typography>
           )}
-          <p className={styles.assetDetailsCriticality}>
-            Criticality: {criticality}
-          </p>
+          <Typography variant="body2">Criticality: {criticality}</Typography>
           <Description description={desc} />
         </>
       )}
-    </div>
+    </Box>
   );
 }
 
@@ -225,8 +187,8 @@ function Description({ description }: DescriptionProps) {
   }
 
   return (
-    <div>
-      <p>{description}</p>
-    </div>
+    <Box>
+      <Typography variant="body2">{description}</Typography>
+    </Box>
   );
 }
