@@ -1,4 +1,4 @@
-#Frontend CD on PR merge
+#Frontend CD on PR merge workflow
 name: Frontend CD on PR merge
 
 on:
