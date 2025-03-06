@@ -8,9 +8,7 @@ export default function FloodAreaLayerControl({
 }: Readonly<LayerControlProps>) {
   return (
     <ComplexLayerControl title="Flood Polygons" autoShowHide>
-      <div className="menu menu-lg">
-        <FloodAreasMenuBody searchQuery={searchQuery} />
-      </div>
+      <FloodAreasMenuBody searchQuery={searchQuery} />
     </ComplexLayerControl>
   );
 }

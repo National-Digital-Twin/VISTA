@@ -8,9 +8,7 @@ export default function EnvironmentallySensitiveAreasLayerControl({
 }: Readonly<LayerControlProps>) {
   return (
     <ComplexLayerControl title="Environmentally Sensitive Areas">
-      <div className="menu menu-lg">
-        <EnvironmentallySensitiveAreasMenuBody searchQuery={searchQuery} />
-      </div>
+      <EnvironmentallySensitiveAreasMenuBody searchQuery={searchQuery} />
     </ComplexLayerControl>
   );
 }
