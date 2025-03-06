@@ -1,6 +1,13 @@
 name: Frontend CD push to ECR
 
 on:
+  push:
+    branches:
+      - main
+      - develop
+    paths:
+      - "frontend/**"
+      - ".github/workflows/frontend-ci-push-to-ecr.yml"
   workflow_call:
     inputs:
       aws_account_number:
@@ -33,51 +40,46 @@ on:
 permissions:
   id-token: write
   contents: read
+
 jobs:
-  versioning:
-    name: Semantic Versioning
+  build:
+    name: Build Frontend
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.set-version.outputs.version }}
     steps:
-      - name: Generate Patch Version (Timestamp)
-        id: generate-patch
-        if: ${{ !inputs.version }} # Skip this step if version is provided
-        run: |
-          PATCH=$(date -u +"%Y%m%d%H%M%S")
-          echo "patch_version=${PATCH}" >> $GITHUB_ENV
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Generate Full Semantic Version
-        id: generate-version
-        if: ${{ !inputs.version }} # Skip this step if version is provided
-        run: |
-          MAJOR="${{ github.event.inputs.major || '1' }}"
-          MINOR="${{ github.event.inputs.minor || '0' }}"
-          PATCH="${{ env.patch_version }}"
-          VERSION="${MAJOR}.${MINOR}.${PATCH}"
-          echo "VERSION=${VERSION}" >> $GITHUB_ENV
-          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+          cache: yarn
+          cache-dependency-path: frontend/yarn.lock
 
-      - name: Set Version from Input or Generated Version
-        id: set-version
-        run: |
-          if [ -n "${{ inputs.version }}" ]; then
-            echo "Using provided version: ${{ inputs.version }}"
-            echo "version=${{ inputs.version }}" >> $GITHUB_OUTPUT
-          else
-            echo "Using generated version: ${{ env.VERSION }}"
-            echo "version=${{ env.VERSION }}" >> $GITHUB_OUTPUT
-          fi
+      - name: Install Dependencies
+        working-directory: frontend
+        run: yarn install --frozen-lockfile
 
-      - name: Print Version
-        run: |
-          echo "Version: ${{ steps.set-version.outputs.version }}"
+      - name: Build Frontend
+        working-directory: frontend
+        run: yarn run build
+        env:
+          VITE_ONTOLOGY_SERVICE_URL: "/ontology"
+          VITE_PARALOG_API_URL: "/paralog"
+          VITE_MAP_TILER_TOKEN: "ABC123"
+          VITE_MET_OFFICE_GLOBAL_SPOT_API_KEY: "XYZ123"
+
+      - name: List Build Output
+        working-directory: frontend
+        run: ls -l dist/
 
   docker-build-push:
     name: Docker Build & Push
-    needs: [versioning]
+    needs: build
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -85,21 +87,15 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Set VERSION from versioning job
-        run: |
-          echo "VERSION=${{ needs.versioning.outputs.version }}" >> $GITHUB_ENV
-
-      - name: Debug Version Output
-        run: |
-          echo "Version used for tagging: $VERSION"
-
       - name: Build Docker Image
         run: |
           docker build --load \
                         -t ${{ inputs.aws_account_number }}.dkr.ecr.eu-west-2.amazonaws.com/${{ inputs.repo_name }}:${{ github.sha }} \
-                        -t ${{ inputs.aws_account_number }}.dkr.ecr.eu-west-2.amazonaws.com/${{ inputs.repo_name }}:${{ env.VERSION }} \
                         -t ${{ inputs.aws_account_number }}.dkr.ecr.eu-west-2.amazonaws.com/${{ inputs.repo_name }}:latest \
                         -f frontend/Dockerfile ./frontend
+
+      - name: List Built Docker Images
+        run: docker images
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -116,7 +112,10 @@ jobs:
         run: |
           docker image push --all-tags ${{ inputs.aws_account_number }}.dkr.ecr.eu-west-2.amazonaws.com/${{ inputs.repo_name }}
 
-      - name: Verify Docker Image
+      - name: Verify Docker Image in ECR
         run: |
-          docker images
-          aws ecr describe-images --repository-name ${{ inputs.repo_name }} --query 'sort_by(imageDetails, &imagePushedAt)[-1]' --output table  >> $GITHUB_STEP_SUMMARY
+          aws ecr describe-images --repository-name ${{ inputs.repo_name }} --query 'sort_by(imageDetails, &imagePushedAt)[-1]' --output table >> $GITHUB_STEP_SUMMARY
+
+      - name: Cleanup Docker Images
+        if: always()
+        run: docker rmi -f $(docker images -q ${{ inputs.aws_account_number }}.dkr.ecr.eu-west-2.amazonaws.com/${{ inputs.repo_name }})
