@@ -49,7 +49,6 @@ export default function ComplexLayerControl({
           cursor: "pointer",
         }}
         tabIndex={0}
-        role="button"
       >
         {icon && <FontAwesomeIcon icon={icon} style={{ marginRight: 8 }} />}
         <Typography variant="body1" sx={{ flexGrow: 1 }}>
