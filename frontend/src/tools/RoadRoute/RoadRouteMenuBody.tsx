@@ -7,6 +7,7 @@ import useLayer from "@/hooks/useLayer";
 import { MenuButton } from "@/components/MenuButton";
 import featureFlags from "@/config/feature-flags";
 import SearchConditional from "@/components/SearchConditional";
+import MenuItemRow from "@/components/MenuItemRow";
 
 export interface RoadRouteMenuBodyProps {
   readonly searchQuery?: string;
@@ -80,10 +81,12 @@ export function RoadRouteMenuBody({ searchQuery }: RoadRouteMenuBodyProps) {
       searchQuery={searchQuery}
       terms={["road", "route", "vehicle"]}
     >
-      <MenuButton
-        onClick={toggle}
-        selected={false}
-        label={enabled ? "Hide Road Route" : "Show Road Route"}
+      <MenuItemRow
+        searchQuery={searchQuery}
+        terms={["road", "route", "vehicle"]}
+        primaryText="Route"
+        checked={enabled}
+        onChange={toggle}
       />
       {enabled && (
         <>

@@ -29,7 +29,7 @@ export function ControlPanelContent() {
   });
 
   return (
-    <div className={styles.layerPanel}>
+    <div>
       <SearchControl searchQuery={searchQuery} onSearch={setSearchQuery} />
       {layerControls.map(([toolName, Control]) => (
         <Control key={toolName} searchQuery={searchQuery} />
