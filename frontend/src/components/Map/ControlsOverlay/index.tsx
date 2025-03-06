@@ -1,14 +1,16 @@
 import { memo } from "react";
 import { Grid2 } from "@mui/material";
-import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
+import {
+  faChevronRight,
+  faChevronLeft,
+} from "@fortawesome/free-solid-svg-icons";
 import { useBoolean } from "usehooks-ts";
 import styles from "./style.module.css";
 import { useTools } from "@/tools/useTools";
-import ToolbarButton from "@/components/ToolbarButton";
+import ToolbarButton from "@/components/Map/SideButtons/ToolbarButton";
 import featureFlags from "@/config/feature-flags";
 import ControlPanel from "@/components/Map/ControlPanel";
 import MapToolbar from "@/components/Map/SideButtons/MapToolbar";
-
 interface ToolbarProps {
   readonly onOpenControlPanel?: () => void;
 }
@@ -19,13 +21,11 @@ function Toolbar({ onOpenControlPanel }: ToolbarProps) {
     <div className={styles.controlsContainer}>
       {onOpenControlPanel && (
         <ToolbarButton
-          icon={faChevronRight}
+          icon={faChevronLeft}
           onClick={onOpenControlPanel}
           title="Open control panel"
-          hideTitle
         />
       )}
-
       {tools("toolbar-order").map((tool) => {
         if (!tool.ToolbarTools) {
           return null;
@@ -53,11 +53,18 @@ export default function ControlsOverlay() {
     <Grid2 container className={styles.controlsOverlay}>
       <Grid2 size={4} sx={{ padding: "10px" }} className={styles.controlPanel}>
         {shouldShowControlPanel && <ControlPanel onClose={hideControlPanel} />}
+        {!shouldShowControlPanel && (
+          <ToolbarButton
+            icon={faChevronRight}
+            onClick={showControlPanel}
+            title="Open control panel"
+          />
+        )}
       </Grid2>
-      <Grid2 size={7} sx={{}}>
+      <Grid2 size={7} sx={{ paddingTop: "10px" }}>
         <MToolbar
           onOpenControlPanel={
-            featureFlags.uiNext && !controlPanelOpen && showControlPanel
+            featureFlags.uiNext && controlPanelOpen && hideControlPanel
           }
         />
       </Grid2>

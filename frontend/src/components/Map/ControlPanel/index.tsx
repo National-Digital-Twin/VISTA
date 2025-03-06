@@ -120,15 +120,21 @@ export default function ControlPanel({ onClose }: ControlPanelProps) {
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
+                    paddingTop: 2,
                   }}
                 >
                   {entry.icon && (
                     <FontAwesomeIcon
                       className="inline mb-1"
                       icon={entry.icon}
+                      size="2x"
                     />
                   )}
-                  <Typography variant="body2">{entry.name}</Typography>
+                  <Typography
+                    sx={{ textTransform: "none", fontWeight: "bold" }}
+                  >
+                    {entry.name}
+                  </Typography>
                 </Box>
               }
               {...a11yProps(index)}
