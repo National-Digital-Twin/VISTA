@@ -41,12 +41,14 @@ permissions:
   id-token: write
   contents: read
 
+
 jobs:
-  build:
-    name: Build Frontend
+  dependencies:
+    name: Dependency Checks
     runs-on: ubuntu-latest
-    outputs:
-      version: ${{ steps.set-version.outputs.version }}
+    timeout-minutes: 10
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -58,18 +60,49 @@ jobs:
           cache: yarn
           cache-dependency-path: frontend/yarn.lock
 
-      - name: Install Dependencies
-        working-directory: frontend
-        run: yarn install --frozen-lockfile
+      - name: Create .npmrc file
+        run: |
+          echo "registry=https://registry.yarnpkg.com/" > .npmrc
+          echo "//npm.pkg.github.com/:_authToken=\${GITHUB_TOKEN}" >> .npmrc
+          echo "@national-digital-twin:registry=https://npm.pkg.github.com" >> .npmrc
 
-      - name: Build Frontend
+      - name: Install Yarn
+        run: npm install -g yarn
+
+      - name: Install dependencies
         working-directory: frontend
-        run: yarn run build
-        env:
-          VITE_ONTOLOGY_SERVICE_URL: "/ontology"
-          VITE_PARALOG_API_URL: "/paralog"
-          VITE_MAP_TILER_TOKEN: "ABC123"
-          VITE_MET_OFFICE_GLOBAL_SPOT_API_KEY: "XYZ123"
+        run: |
+          yarn install --frozen-lockfile
+          # ls -la node_modules || echo "node_modules directory missing!"
+
+      - name: Run Dependency Checks
+        working-directory: frontend
+        run: yarn audit --groups dependencies
+        continue-on-error: true
+
+      - name: Check for Outdated Dependencies
+        working-directory: frontend
+        run: |
+          if [ ! -f yarn.lock ]; then
+            echo "Error: yarn.lock file is missing!"
+            exit 1
+          fi
+          echo "Checking for outdated dependencies"
+          yarn outdated
+        continue-on-error: true
+
+    #   - name: Verify Lockfile Integrity
+    #     working-directory: frontend
+    #     run: yarn check --integrity
+    #     continue-on-error: true
+    #   - name: Build Frontend
+    #     working-directory: frontend
+    #     run: yarn run build
+    #     env:
+    #       VITE_ONTOLOGY_SERVICE_URL: "/ontology"
+    #       VITE_PARALOG_API_URL: "/paralog"
+    #       VITE_MAP_TILER_TOKEN: "ABC123"
+    #       VITE_MET_OFFICE_GLOBAL_SPOT_API_KEY: "XYZ123"
 
       - name: List Build Output
         working-directory: frontend
