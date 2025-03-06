@@ -3,7 +3,6 @@ import { IconDefinition } from "@fortawesome/fontawesome-common-types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import { Button, Box, Menu } from "@mui/material";
-import classNames from "classnames";
 import styles from "./style.module.css";
 
 export interface ToolbarDropdownProps {
@@ -15,15 +14,12 @@ export interface ToolbarDropdownProps {
   readonly children:
     | React.ReactNode
     | ((props: { toggle: () => void }) => React.ReactNode);
-  /** Is this a large menu? */
-  readonly large?: boolean;
 }
 
 export default function ToolbarDropdown({
   icon,
   title,
   children,
-  large = false,
 }: ToolbarDropdownProps) {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(false);
@@ -78,9 +74,6 @@ export default function ToolbarDropdown({
         MenuListProps={{
           "aria-labelledby": menuId,
         }}
-        PaperProps={{
-          className: classNames(styles.dropdown, large && "menu-lg"),
-        }}
       >
         {typeof children === "function"
           ? children({ toggle: toggleDropdown })
@@ -109,7 +102,7 @@ function ToolbarDropdownButton({
       onClick={onClick}
       startIcon={icon && <FontAwesomeIcon icon={icon} />}
       endIcon={<FontAwesomeIcon icon={faChevronDown} />}
-      className={styles.toolbarDropdownButton}
+      sx={{ backgroundColor: "#f0f0f0" }}
     >
       {title}
     </Button>

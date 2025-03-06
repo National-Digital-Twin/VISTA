@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { Grid2 } from "@mui/material";
+import { Box, Grid2 } from "@mui/material";
 import {
   faChevronRight,
   faChevronLeft,
@@ -18,12 +18,20 @@ interface ToolbarProps {
 function Toolbar({ onOpenControlPanel }: ToolbarProps) {
   const tools = useTools();
   return (
-    <div className={styles.controlsContainer}>
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        width: "100%",
+        marginTop: 1,
+      }}
+    >
       {onOpenControlPanel && (
         <ToolbarButton
           icon={faChevronLeft}
           onClick={onOpenControlPanel}
-          title="Open control panel"
+          title="Close control panel"
+          width={75}
         />
       )}
       {tools("toolbar-order").map((tool) => {
@@ -33,7 +41,7 @@ function Toolbar({ onOpenControlPanel }: ToolbarProps) {
         const ToolbarTools = tool.ToolbarTools;
         return <ToolbarTools key={tool.TOOL_NAME} />;
       })}
-    </div>
+    </Box>
   );
 }
 
@@ -51,17 +59,18 @@ export default function ControlsOverlay() {
 
   return (
     <Grid2 container className={styles.controlsOverlay}>
-      <Grid2 size={4} sx={{ padding: "10px" }} className={styles.controlPanel}>
+      <Grid2 size={4} sx={{ padding: 1 }} className={styles.controlPanel}>
         {shouldShowControlPanel && <ControlPanel onClose={hideControlPanel} />}
         {!shouldShowControlPanel && (
           <ToolbarButton
             icon={faChevronRight}
             onClick={showControlPanel}
             title="Open control panel"
+            width={75}
           />
         )}
       </Grid2>
-      <Grid2 size={7} sx={{ paddingTop: "10px" }}>
+      <Grid2 size={7} className={styles.controlPanel}>
         <MToolbar
           onOpenControlPanel={
             featureFlags.uiNext && controlPanelOpen && hideControlPanel

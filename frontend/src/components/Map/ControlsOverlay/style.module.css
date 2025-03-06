@@ -21,7 +21,6 @@
 }
 
 .controlPanel {
-  grid-area: control-panel;
   pointer-events: auto;
 
   :where(&) > * {
