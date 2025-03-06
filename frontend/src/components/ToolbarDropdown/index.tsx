@@ -2,7 +2,7 @@ import React, { useRef, useId, useState, useEffect, useCallback } from "react";
 import { IconDefinition } from "@fortawesome/fontawesome-common-types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
-import { Button, Box, Menu, MenuItem } from "@mui/material";
+import { Button, Box, Menu } from "@mui/material";
 import classNames from "classnames";
 import styles from "./style.module.css";
 
