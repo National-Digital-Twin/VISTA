@@ -98,19 +98,17 @@ function AssessmentAssetLayerControls({
   }
 
   return (
-    <>
-      <Grid2 size={12} container>
-        {sortedCategories.map((category) => (
-          <Grid2 size={12} key={category.category}>
-            <AssessmentCategoryLayerControls
-              key={category.category}
-              category={category.category}
-              assets={category.assets}
-            />
-          </Grid2>
-        ))}
-      </Grid2>
-    </>
+    <Grid2 size={12} container>
+      {sortedCategories.map((category) => (
+        <Grid2 size={12} key={category.category}>
+          <AssessmentCategoryLayerControls
+            key={category.category}
+            category={category.category}
+            assets={category.assets}
+          />
+        </Grid2>
+      ))}
+    </Grid2>
   );
 }
 
@@ -289,8 +287,6 @@ function AssetTypeControls({
   return (
     <ListItem
       key={asset.type}
-      // className="menu-item"
-      // data-selected={isSelected}
       onClick={onClick}
       sx={{
         display: "flex",

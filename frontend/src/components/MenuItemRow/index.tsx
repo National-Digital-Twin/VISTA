@@ -44,9 +44,7 @@ const MenuItemRow = ({
         }}
       >
         <Box sx={{ display: "flex", alignItems: "left", flexGrow: 1 }}>
-          {children ? (
-            children
-          ) : (
+          {children || (
             <>
               <Box
                 onClick={
@@ -60,9 +58,9 @@ const MenuItemRow = ({
               >
                 <ListItemText primary={primaryText} />
               </Box>
-              {buttons?.map((button, index) => (
+              {buttons?.map((button) => (
                 <IconButton
-                  key={index}
+                  key={button.name}
                   size="small"
                   onClick={(event) => {
                     event.stopPropagation();
