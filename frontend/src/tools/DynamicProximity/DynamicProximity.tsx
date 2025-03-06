@@ -11,6 +11,7 @@ export interface DynamicProximityProps {
   map: MapRef;
 }
 
+/* This is not used in the app currently */
 export default function DynamicProximity() {
   if (featureFlags.uiNext) {
     return null;

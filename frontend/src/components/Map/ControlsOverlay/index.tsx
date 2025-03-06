@@ -52,12 +52,7 @@ export default function ControlsOverlay() {
   return (
     <Grid2 container className={styles.controlsOverlay}>
       <Grid2 size={4} sx={{ padding: "10px" }} className={styles.controlPanel}>
-        {shouldShowControlPanel && (
-          <ControlPanel
-            className={styles.controlPanel}
-            onClose={hideControlPanel}
-          />
-        )}
+        {shouldShowControlPanel && <ControlPanel onClose={hideControlPanel} />}
       </Grid2>
       <Grid2 size={7} sx={{}}>
         <MToolbar
