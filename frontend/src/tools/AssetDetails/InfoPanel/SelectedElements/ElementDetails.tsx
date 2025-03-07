@@ -1,18 +1,23 @@
-import type { CSSProperties } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
-import { noCase } from "change-case";
 import { useQuery } from "@tanstack/react-query";
-import { Box, Card, CardContent, Typography, Button } from "@mui/material";
-import { faStreetView, faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import {
+  Card,
+  CardContent,
+  Typography,
+  Collapse,
+  CircularProgress,
+  Alert,
+  Box,
+  IconButton,
+  Tooltip,
+} from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import RoomIcon from "@mui/icons-material/Room"; // Google Maps Pin Icon
 import TypeIcon from "./TypeIcon";
 import Dependents from "./Dependents";
-import Providers from "./Providers";
-import ResidentialInformation from "./ResidentialInformation";
-import Residents from "./Residents";
-import styles from "./elements.module.css";
-import { getURIFragment, isAsset, isDependency } from "@/utils";
 import { fetchAssetInfo } from "@/api/combined";
+import { isAsset, isDependency } from "@/utils";
 import { isEmpty } from "@/utils/isEmpty";
 
 export interface ElementDefaultsProps {
@@ -20,175 +25,132 @@ export interface ElementDefaultsProps {
   readonly expand?: boolean;
 }
 
-export default function ElementDetails({ element, expand }: Readonly<ElementDefaultsProps>) {
+export default function ElementDetails({
+  element,
+  expand = false,
+}: Readonly<ElementDefaultsProps>) {
   const elemIsAsset = isAsset(element);
   const elemIsDependency = isDependency(element);
-  const [showDropdown, setShowDropdown] = useState(false);
 
-  const toggleDropdown = () => {
-    setShowDropdown(!showDropdown);
-  };
+  const [showDropdown, setShowDropdown] = useState<boolean>(expand);
+
+  const toggleDropdown = () => setShowDropdown((prev) => !prev);
 
   const assetInfo = useQuery({
     enabled: elemIsAsset,
-    queryKey: ["asset-info", element?.uri],
-    queryFn: () => fetchAssetInfo(element?.uri),
+    queryKey: ["asset-info", element?.uri || ""],
+    queryFn: () => fetchAssetInfo(element?.uri || ""),
   });
 
-  const dependentInfo = useQuery({
-    queryKey: ["asset-info", element?.dependent?.uri],
-    queryFn: () => fetchAssetInfo(element?.dependent?.uri),
-    enabled: elemIsDependency,
-  });
-
-  const providerInfo = useQuery({
-    queryKey: ["asset-info", element?.provider?.uri],
-    queryFn: () => fetchAssetInfo(element?.provider?.uri),
-    enabled: elemIsDependency,
-  });
-
-  const isLoading = assetInfo.isLoading || dependentInfo.isLoading || providerInfo.isLoading;
-  const isError = assetInfo.isError || dependentInfo.isError || providerInfo.isError;
+  const isLoading = assetInfo.isLoading;
+  const isError = assetInfo.isError;
 
   if (isLoading) {
-    return <Typography className={styles.loadingMessage}>Fetching element details...</Typography>;
+    return (
+      <Box display="flex" justifyContent="center" mt={2}>
+        <CircularProgress />
+      </Box>
+    );
   }
+
   if (isError) {
     return (
-      <Typography className={styles.errorMessage}>
-        An error occurred while fetching information for {element.uri}
-      </Typography>
+      <Alert severity="error" sx={{ mt: 2 }}>
+        Error fetching details for {element?.uri || "this asset"}
+      </Alert>
     );
   }
 
   let details = undefined;
   if (elemIsAsset) {
-    details = element.getDetails(assetInfo.data);
-  }
-  if (elemIsDependency) {
-    details = element.getDetails(dependentInfo.data.name, providerInfo.data.name);
+    details = element?.getDetails?.(assetInfo.data) || {};
   }
 
   if (isEmpty(element) || !details) {
     return (
-      <Typography className={styles.errorMessage}>
-        Unable to retrieve details for unknown element or details not found.
-      </Typography>
+      <Alert severity="warning" sx={{ mt: 2 }}>
+        Unable to retrieve details for this element.
+      </Alert>
     );
   }
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", gap: 2, padding: 2 }}>
-      {/* Asset Details */}
-      <Card sx={{ boxShadow: 3, borderRadius: 2 }}>
-        <CardContent>
-          <Details expand details={details} />
-        </CardContent>
-      </Card>
-
-      {/* Street View Integration */}
-      <Card sx={{ boxShadow: 3, borderRadius: 2 }}>
-        <CardContent sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-            <FontAwesomeIcon icon={faStreetView} style={{ color: "#1976d2" }} />
-            <Typography variant="body2">Google Street View</Typography>
+    <Card sx={{ borderRadius: 2, boxShadow: 3, mb: 2, p: 1 }}>
+      <CardContent>
+        <Box display="flex" alignItems="center" justifyContent="space-between">
+          {/* Asset Title */}
+          <Box>
+            <Typography variant="h6">
+              {details.title || "Asset Details"}
+            </Typography>
+            <Typography variant="caption" color="textSecondary">
+              {element?.uri || "N/A"}
+            </Typography>
           </Box>
-          <Box sx={{ display: "flex", gap: 1 }}>
-            <Button
-              variant="outlined"
-              size="small"
-              sx={{ textTransform: "none" }}
-              onClick={() => toggleDropdown()}
-            >
-              View
-            </Button>
-            <Button
+
+          {/* Asset Type */}
+          {details?.type && (
+            <Box display="flex" alignItems="center" ml={1}>
+              <TypeIcon size="sm" type={details.type} />
+            </Box>
+          )}
+        </Box>
+
+        {/* View Connected Assets - Expands Panel */}
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="space-between"
+          mt={1}
+          onClick={toggleDropdown}
+          sx={{ cursor: "pointer" }}
+        >
+          <Typography variant="body2" sx={{ fontWeight: 500 }}>
+            View connected assets
+          </Typography>
+          <IconButton size="small">
+            {showDropdown ? (
+              <ExpandLessIcon fontSize="small" />
+            ) : (
+              <ExpandMoreIcon fontSize="small" />
+            )}
+          </IconButton>
+        </Box>
+
+        {/* Google Street View Section */}
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="space-between"
+          mt={1}
+        >
+          <Typography variant="body2" sx={{ fontWeight: 500 }}>
+            Google Street View
+          </Typography>
+          <Tooltip title="Open Google Street View">
+            <IconButton
               component="a"
-              href={`https://www.google.com/maps?q=${element?.lat},${element?.lng}`}
+              href={`https://www.google.com/maps?q=${element?.uri}`}
               target="_blank"
               rel="noopener noreferrer"
-              variant="contained"
-              color="primary"
-              size="small"
-              sx={{ textTransform: "none" }}
-              endIcon={<FontAwesomeIcon icon={faArrowRight} />}
             >
-              Open
-            </Button>
+              <RoomIcon sx={{ color: "#4285F4" }} />
+            </IconButton>
+          </Tooltip>
+        </Box>
+
+        {/* Dependent Assets Section (Expanded View) */}
+        <Collapse in={showDropdown}>
+          <Box mt={2}>
+            <Dependents
+              isAsset={elemIsAsset}
+              isDependency={elemIsDependency}
+              assetUri={element?.uri || ""}
+              dependent={element?.dependent || {}}
+            />
           </Box>
-        </CardContent>
-      </Card>
-
-      {/* Expandable Section */}
-      {expand ? (
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-          <ResidentialInformation isAsset={elemIsAsset} primaryType={element.primaryType} uri={element.uri} />
-          <Residents isAsset={elemIsAsset} assetUri={element.uri} primaryType={element.primaryType} />
-          <Dependents isAsset={elemIsAsset} isDependency={elemIsDependency} assetUri={element.uri} dependent={element?.dependent} />
-          <Providers isAsset={elemIsAsset} isDependency={elemIsDependency} assetUri={element.uri} provider={element?.provider} />
-        </Box>
-      ) : null}
-    </Box>
-  );
-}
-
-interface DetailsProps {
-  readonly expand: boolean;
-  readonly details: {
-    id: string;
-    title: string;
-    criticality: number;
-    type: string;
-    desc: string;
-    icon: {
-      icon: string;
-      style: CSSProperties;
-    };
-    elementType: string;
-  };
-}
-
-function Details({ expand, details }: Readonly<DetailsProps>) {
-  const { id, title, criticality, type, desc, icon, elementType } = details;
-
-  return (
-    <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-      <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-        {elementType === "asset" ? <TypeIcon size="sm" type={type} /> : <span className={styles.assetIcon} style={{ ...icon.style }} />}
-        <Box>
-          <Typography variant="h6">{title}</Typography>
-          {type && <Typography variant="body2">{noCase(getURIFragment(type))}</Typography>}
-          <Typography variant="body2">{id}</Typography>
-        </Box>
-      </Box>
-
-      {expand && (
-        <>
-          {icon?.icon && (
-            <Typography variant="body2">
-              <i className="fa-solid fa-triangle-exclamation" /> Icon styles not found
-            </Typography>
-          )}
-          <Typography variant="body2">Criticality: {criticality}</Typography>
-          <Description description={desc} />
-        </>
-      )}
-    </Box>
-  );
-}
-
-interface DescriptionProps {
-  readonly description: string;
-}
-
-function Description({ description }: DescriptionProps) {
-  if (!description) {
-    return null;
-  }
-
-  return (
-    <Box>
-      <Typography variant="body2">{description}</Typography>
-    </Box>
+        </Collapse>
+      </CardContent>
+    </Card>
   );
 }
