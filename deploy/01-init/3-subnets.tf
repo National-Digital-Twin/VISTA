@@ -8,6 +8,7 @@ resource "aws_subnet" "private-eu-west-2a" {
     "Name"                                        = "${var.environment}-private-eu-west-2a"
     "kubernetes.io/role/internal-elb"             = "1"
     "kubernetes.io/cluster/${local.cluster_name}" = "owned"
+    "karpenter.sh/discovery" = local.cluster_name
   }
 }
 
@@ -20,6 +21,7 @@ resource "aws_subnet" "private-eu-west-2b" {
     "Name"                                        = "${var.environment}-private-eu-west-2b"
     "kubernetes.io/role/internal-elb"             = "1"
     "kubernetes.io/cluster/${local.cluster_name}" = "owned"
+    "karpenter.sh/discovery" = local.cluster_name
   }
 }
 
