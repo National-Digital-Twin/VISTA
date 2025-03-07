@@ -1,4 +1,4 @@
-import { faMapPin } from "@fortawesome/free-solid-svg-icons";
+import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
 import { lazy } from "react";
 
 const InfoPanel = lazy(() => import("./InfoPanel/InfoPanel"));
@@ -10,6 +10,6 @@ export function ControlPanelContent() {
 }
 
 export const controlPanelTab = {
-  title: "Asset details",
-  icon: faMapPin,
+  title: "Asset Details",
+  icon: faCircleInfo,
 };

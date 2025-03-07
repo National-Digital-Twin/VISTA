@@ -1,3 +1,7 @@
+.noSelect {
+  user-select: none;
+}
+
 .detailsPanel {
   background-color: var(--col-bg-card);
   box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
@@ -33,11 +37,11 @@
 .toggleButton {
   position: absolute;
   right: 10px;
-  top: 10px;
+  top: 5px;
   background: none;
   border: none;
   cursor: pointer;
-  padding: 8px;
+  padding: 5px;
   color: var(--col-fg-secondary);
 }
 

@@ -1,7 +1,9 @@
-import { faLayerGroup } from "@fortawesome/free-solid-svg-icons";
+import { faLayerGroup, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { useState, startTransition, useCallback } from "react";
 import type React from "react";
 import classNames from "classnames";
+import { Box, TextField } from "@mui/material";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from "./style.module.css";
 import { useTools } from "@/tools/useTools";
 import type { LayerControlProps } from "@/tools/Tool";
@@ -54,14 +56,32 @@ function SearchControl({ searchQuery, onSearch }: SearchControlProps) {
   );
 
   return (
-    <form className={styles.searchForm}>
-      <input
+    <Box
+      component="form"
+      sx={{
+        mb: 2,
+        display: "flex",
+        alignItems: "center",
+        backgroundColor: "#e0e0e0",
+      }}
+    >
+      <FontAwesomeIcon
+        icon={faSearch}
+        size="2x"
+        style={{ color: "#1976d2", padding: 20 }}
+      />
+      <TextField
         type="search"
-        className={classNames("form-control", styles.searchInput)}
-        placeholder="Search for layers..."
+        fullWidth
+        label="Search for layers..."
         value={searchQuery}
         onChange={handleSearchChange}
+        className={classNames(styles.searchInput)}
+        variant="standard"
+        sx={{
+          paddingBottom: 2,
+        }}
       />
-    </form>
+    </Box>
   );
 }
