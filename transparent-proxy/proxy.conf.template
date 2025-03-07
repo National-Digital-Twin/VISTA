@@ -19,7 +19,7 @@ server {
 
     server_name localhost *.ndtp.co.uk;
 
-    resolver 8.8.8.8 valid=30s;
+    resolver kube-dns.kube-system.svc.cluster.local valid=30s;
 
     # Proxy config
     proxy_cache_valid any 1d;
