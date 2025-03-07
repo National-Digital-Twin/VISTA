@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import { Suspense, lazy } from "react";
-import styles from "./style.module.css";
+// import styles from "./style.module.css";
 
 const AppBodyLoadedContents = lazy(() => import("./AppBodyLoadedContents"));
 
@@ -12,7 +12,7 @@ export interface AppBodyProps {
 /** Body of the Paralog app, everything below the header */
 export default function AppBody({ className }: AppBodyProps) {
   return (
-    <main className={classNames(styles.appBody, className)}>
+    <main className={classNames(className)}>
       <Suspense fallback={<p>Loading...</p>}>
         <AppBodyLoadedContents />
       </Suspense>
