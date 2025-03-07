@@ -1,6 +1,5 @@
 import classNames from "classnames";
 import { Suspense, lazy } from "react";
-// import styles from "./style.module.css";
 
 const AppBodyLoadedContents = lazy(() => import("./AppBodyLoadedContents"));
 
