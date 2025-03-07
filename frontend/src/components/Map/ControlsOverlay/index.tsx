@@ -58,24 +58,30 @@ export default function ControlsOverlay() {
   const shouldShowControlPanel = featureFlags.uiNext && controlPanelOpen;
 
   return (
-    <Grid2 container className={styles.controlsOverlay}>
+    <Grid2 container>
       <Grid2 size={4} sx={{ padding: 1 }} className={styles.controlPanel}>
-        {shouldShowControlPanel && <ControlPanel onClose={hideControlPanel} />}
-        {!shouldShowControlPanel && (
-          <ToolbarButton
-            icon={faChevronRight}
-            onClick={showControlPanel}
-            title="Open control panel"
-            width={75}
-          />
-        )}
+        <div className="pointer-events-auto">
+          {shouldShowControlPanel && (
+            <ControlPanel onClose={hideControlPanel} />
+          )}
+          {!shouldShowControlPanel && (
+            <ToolbarButton
+              icon={faChevronRight}
+              onClick={showControlPanel}
+              title="Open control panel"
+              width={75}
+            />
+          )}
+        </div>
       </Grid2>
-      <Grid2 size={7} className={styles.controlPanel}>
-        <MToolbar
-          onOpenControlPanel={
-            featureFlags.uiNext && controlPanelOpen && hideControlPanel
-          }
-        />
+      <Grid2 size={7}>
+        <div style={{ marginTop: "10px" }} className="pointer-events-auto">
+          <MToolbar
+            onOpenControlPanel={
+              featureFlags.uiNext && controlPanelOpen && hideControlPanel
+            }
+          />
+        </div>
       </Grid2>
       <Grid2
         size={1}
