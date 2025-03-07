@@ -18,7 +18,7 @@ export default function DynamicProximity() {
   }
 
   return (
-    <ToolbarDropdown icon={faPlus} title="Add Dynamic Proximity" large>
+    <ToolbarDropdown icon={faPlus} title="Add Dynamic Proximity">
       {({ toggle }) =>
         [1, 2, 3].map((radiusKm) => (
           <DynamicProximityMenuItem

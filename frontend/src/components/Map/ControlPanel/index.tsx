@@ -6,9 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "react-tabs/style/react-tabs.css";
 
 import React, { Suspense } from "react";
-import { faClose } from "@fortawesome/free-solid-svg-icons";
 import Typography from "@mui/material/Typography";
-import styles from "./style.module.css";
 import { useTools } from "@/tools/useTools";
 
 // move this to the child tab panels
@@ -47,13 +45,6 @@ function TabPanel(props: Readonly<TabPanelProps>) {
   );
 }
 
-export interface ControlPanelProps {
-  /** Additional class name to attach to the top-level element */
-  readonly className?: string;
-  /** Action to close the control panel */
-  readonly onClose?: () => void;
-}
-
 function a11yProps(index: number) {
   return {
     id: `simple-tab-${index}`,
@@ -62,7 +53,7 @@ function a11yProps(index: number) {
 }
 
 /** Main control panel, for controlling layers and simulation */
-export default function ControlPanel({ onClose }: ControlPanelProps) {
+export default function ControlPanel() {
   const tools = useTools();
   const [value, setValue] = React.useState(0);
 
@@ -87,7 +78,7 @@ export default function ControlPanel({ onClose }: ControlPanelProps) {
     <Box
       sx={{
         width: "100%",
-        height: "90vh",
+        height: "70vh",
         position: "relative",
         backgroundColor: "background.paper",
         display: "flex",
@@ -120,15 +111,21 @@ export default function ControlPanel({ onClose }: ControlPanelProps) {
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
+                    paddingTop: 2,
                   }}
                 >
                   {entry.icon && (
                     <FontAwesomeIcon
                       className="inline mb-1"
                       icon={entry.icon}
+                      size="2x"
                     />
                   )}
-                  <Typography variant="body2">{entry.name}</Typography>
+                  <Typography
+                    sx={{ textTransform: "none", fontWeight: "bold" }}
+                  >
+                    {entry.name}
+                  </Typography>
                 </Box>
               }
               {...a11yProps(index)}
@@ -146,23 +143,6 @@ export default function ControlPanel({ onClose }: ControlPanelProps) {
           </TabPanel>
         ))}
       </Box>
-      {onClose && <ControlPanelCloseButton onClose={onClose} />}
     </Box>
-  );
-}
-
-interface ControlPanelCloseButtonProps {
-  readonly onClose: () => void;
-}
-
-function ControlPanelCloseButton({ onClose }: ControlPanelCloseButtonProps) {
-  return (
-    <button
-      onClick={onClose}
-      title="Close control panel"
-      className={styles.controlPanelCloseButton}
-    >
-      <FontAwesomeIcon icon={faClose} />
-    </button>
   );
 }
