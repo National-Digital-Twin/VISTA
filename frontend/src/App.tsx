@@ -49,10 +49,9 @@ export default function App() {
   }
 
   return (
-    <>
+    <div style={{ overflow: "hidden" }}>
       <PageHeader appName="Paralog" />
-
       <AppBody />
-    </>
+    </div>
   );
 }

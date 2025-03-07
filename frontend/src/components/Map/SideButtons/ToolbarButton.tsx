@@ -35,7 +35,7 @@ export default function ToolbarButton({
   iconSize,
 }: ToolbarButtonProps) {
   return (
-    <Tooltip title={title}>
+    <Tooltip title={title} enterDelay={500}>
       <IconButton
         aria-label={title}
         onClick={onClick}

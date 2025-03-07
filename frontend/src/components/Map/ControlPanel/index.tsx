@@ -78,7 +78,7 @@ export default function ControlPanel() {
     <Box
       sx={{
         width: "100%",
-        height: "90vh",
+        height: "70vh",
         position: "relative",
         backgroundColor: "background.paper",
         display: "flex",
