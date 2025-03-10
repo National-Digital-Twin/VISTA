@@ -44,7 +44,7 @@ export default function Filter() {
           size={12}
         >
           <Grid2 size={5}>
-            <Card sx={{ boxShadow: 3, marginLeft: 2 }}>
+            <Card sx={{ boxShadow: 3, marginLeft: 2, position: "relative" }}>
               <CardContent
                 sx={{
                   display: "flex",
@@ -82,6 +82,7 @@ export default function Filter() {
                 marginRight: 2,
                 height: "100%",
                 overflow: "visible",
+                position: "relative",
               }}
             >
               <CardContent
