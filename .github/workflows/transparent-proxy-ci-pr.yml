@@ -65,9 +65,9 @@ jobs:
           docker build -t paralog/transparent-proxy:latest .
 
       - name: Run Docker Image
-        run: | #pragma: allowlist secret
+        run: |
           docker images
-          docker run --rm -d -p 80:80 -e OS_API_KEY=DUMMY -e ADMIRALTY_API_KEY=DUMMY -e REALTIME_TRAINS_API_KEY=DUMMY --name transparent-proxy paralog/transparent-proxy:latest
+          docker run --rm -d -p 80:80 --name transparent-proxy paralog/transparent-proxy:latest
           docker ps
           sleep 10
           docker logs transparent-proxy
