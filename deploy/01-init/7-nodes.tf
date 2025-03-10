@@ -51,9 +51,7 @@ resource "aws_eks_node_group" "private-nodes" {
     aws_subnet.private-eu-west-2b.id
   ]
 
-  tags = {
-    "karpenter.sh/discovery"=aws_eks_cluster.cluster.name
-  }
+
   capacity_type  = "SPOT"
   instance_types = ["t3.xlarge"]
 
