@@ -30,14 +30,10 @@ export default class LayersPage {
     await drawPolygonButton.click();
     await this.page.mouse.move(500, 300);
     await this.page.mouse.down();
-    await this.page.mouse.move(600, 300);
-    await this.page.mouse.click(600, 300);
-    await this.page.mouse.move(600, 400);
-    await this.page.mouse.click(600, 400);
-    await this.page.mouse.move(500, 400);
-    await this.page.mouse.click(500, 400);
-    await this.page.mouse.move(500, 300);
-    await this.page.mouse.click(500, 300);
+    await this.base.moveAndClick(600, 300);
+    await this.base.moveAndClick(600, 400);
+    await this.base.moveAndClick(500, 400);
+    await this.base.moveAndClick(500, 300);
     await this.page.mouse.up();
     await this.page.waitForTimeout(3000);
   }
