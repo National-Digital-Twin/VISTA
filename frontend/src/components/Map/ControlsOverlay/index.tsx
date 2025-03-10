@@ -54,6 +54,12 @@ export default function ControlsOverlay() {
     setFalse: hideControlPanel,
   } = useBoolean(true);
 
+  const {
+    value: dependantPanelOpen,
+    setTrue: showDependantPanel,
+    setFalse: hideDependantPanel,
+  } = useBoolean(false);
+
   const shouldShowControlPanel = featureFlags.uiNext && controlPanelOpen;
 
   return (
@@ -62,10 +68,14 @@ export default function ControlsOverlay() {
       sx={{ height: "95vh", display: "flex", flexDirection: "column" }}
     >
       <Grid2 container size={12} sx={{ flexGrow: 1 }}>
-        <Grid2 size={4} sx={{ padding: 1 }}>
+        <Grid2 size={dependantPanelOpen ? 6 : 3} sx={{ padding: 1 }}>
           <div className="pointer-events-auto">
             {shouldShowControlPanel && (
-              <ControlPanel onClose={hideControlPanel} />
+              <ControlPanel
+                dependantPanelOpen={dependantPanelOpen}
+                hideDependantPanel={hideDependantPanel}
+                showDependantPanel={showDependantPanel}
+              />
             )}
             {!shouldShowControlPanel && (
               <ToolbarButton
@@ -77,7 +87,7 @@ export default function ControlsOverlay() {
             )}
           </div>
         </Grid2>
-        <Grid2 size={7}>
+        <Grid2 size={dependantPanelOpen ? 5 : 8}>
           <div style={{ marginTop: "10px" }} className="pointer-events-auto">
             <MToolbar
               onOpenControlPanel={

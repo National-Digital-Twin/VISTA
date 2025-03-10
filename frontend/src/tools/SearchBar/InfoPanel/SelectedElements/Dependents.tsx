@@ -1,7 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 
-import Popover from "@mui/material/Popover";
 import Button from "@mui/material/Button";
 import ConnectedAssets from "./ConnectedAssets";
 import DetailsSection from "./DetailsSection";
