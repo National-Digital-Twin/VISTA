@@ -4,3 +4,4 @@ metadata:
   name: TBC
   labels:
     istio-injection: enabled
+
