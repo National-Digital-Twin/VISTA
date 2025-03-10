@@ -191,6 +191,7 @@ jobs:
     timeout-minutes: 20
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    environment: development
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -221,8 +222,7 @@ jobs:
         env:
           VITE_ONTOLOGY_SERVICE_URL: "/ontology"
           VITE_PARALOG_API_URL: "/paralog"
-          VITE_MAP_TILER_TOKEN: "ABC123"
-          VITE_MET_OFFICE_GLOBAL_SPOT_API_KEY: "XYZ123" # pragma: allowlist secret
+          VITE_MAP_TILER_TOKEN: ${{ secrets.VITE_MAP_TILER_TOKEN }}
 
       - name: list files in dist dir
         working-directory: frontend
