@@ -17,8 +17,8 @@ on:
         description: "Name of app - frontend, backend or transparent-proxy"
       version:
         type: string
-        required: false
-        description: "Optional version number to skip version generation steps"
+        required: true
+        description: "Version number passed from main workflow"
   workflow_dispatch:
     inputs:
       aws_account_number:
@@ -35,56 +35,16 @@ on:
         description: "Name of app - frontend, backend or transparent-proxy"
       version:
         type: string
-        required: false
-        description: "Optional version number to skip version generation steps"
+        required: true
+        description: "Version number passed from main workflow"
 
 permissions:
   id-token: write
   contents: read
 
 jobs:
-  versioning:
-    name: Semantic Versioning
-    runs-on: ubuntu-latest
-    outputs:
-      version: ${{ steps.set-version.outputs.version }}
-    steps:
-      - name: Generate Patch Version (Timestamp)
-        id: generate-patch
-        if: ${{ !inputs.version }} # Skip this step if version is provided
-        run: |
-          PATCH=$(date -u +"%Y%m%d%H%M%S")
-          echo "patch_version=${PATCH}" >> $GITHUB_ENV
-
-      - name: Generate Full Semantic Version
-        id: generate-version
-        if: ${{ !inputs.version }} # Skip this step if version is provided
-        run: |
-          MAJOR="${{ github.event.inputs.major || '1' }}"
-          MINOR="${{ github.event.inputs.minor || '0' }}"
-          PATCH="${{ env.patch_version }}"
-          VERSION="${MAJOR}.${MINOR}.${PATCH}"
-          echo "VERSION=${VERSION}" >> $GITHUB_ENV
-          echo "version=${VERSION}" >> $GITHUB_OUTPUT
-
-      - name: Set Version from Input or Generated Version
-        id: set-version
-        run: |
-          if [ -n "${{ inputs.version }}" ]; then
-            echo "Using provided version: ${{ inputs.version }}"
-            echo "version=${{ inputs.version }}" >> $GITHUB_OUTPUT
-          else
-            echo "Using generated version: ${{ env.VERSION }}"
-            echo "version=${{ env.VERSION }}" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Print Version
-        run: |
-          echo "Version: ${{ steps.set-version.outputs.version }}"
-
   docker-build-push:
     name: Docker Build & Push
-    needs: [versioning]
     runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
@@ -97,13 +57,13 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Set VERSION from versioning job
+      - name: Use Provided Version
         run: |
-          echo "VERSION=${{ needs.versioning.outputs.version }}" >> $GITHUB_ENV
+          echo "VERSION=${{ inputs.version }}" >> $GITHUB_ENV
 
       - name: Debug Version Output
         run: |
-          echo "Version used for tagging: $VERSION"
+          echo "Using provided version: $VERSION"
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -138,7 +98,7 @@ jobs:
         run: |
           docker build --load \
                         -t ${{ inputs.aws_account_number }}.dkr.ecr.eu-west-2.amazonaws.com/${{ inputs.repo_name }}:${{ github.sha }} \
-                        -t ${{ inputs.aws_account_number }}.dkr.ecr.eu-west-2.amazonaws.com/${{ inputs.repo_name }}:${{ env.VERSION }} \
+                        -t ${{ inputs.aws_account_number }}.dkr.ecr.eu-west-2.amazonaws.com/${{ inputs.repo_name }}:${{ inputs.version }} \
                         -f ${{ inputs.app_name }}/CI_Dockerfile ./${{ inputs.app_name }}
 
       - name: Configure AWS credentials

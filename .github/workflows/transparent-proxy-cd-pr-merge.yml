@@ -37,28 +37,29 @@ jobs:
       - name: Generate Full Semantic Version
         id: generate-version
         run: |
-          MAJOR="${{ github.event.inputs.major || '1' }}"
-          MINOR="${{ github.event.inputs.minor || '0' }}"
+          MAJOR="${{ github.event.inputs.major }}" && MAJOR=${MAJOR:-1}
+          MINOR="${{ github.event.inputs.minor }}" && MINOR=${MINOR:-0}
           PATCH="${{ env.patch_version }}"
           VERSION="${MAJOR}.${MINOR}.${PATCH}"
           echo "VERSION=${VERSION}" >> $GITHUB_ENV
-          echo "version=${VERSION}" >> $GITHUB_OUTPUT  # Ensure output is set correctly
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
 
       - name: Print Generated Version
         run: |
-          echo "Generated Version: ${{ env.VERSION }}"
+          echo "Generated Version: ${{ steps.generate-version.outputs.version }}"
 
   transparent-proxy-ci:
     needs: [versioning]
     uses: ./.github/workflows/transparent-proxy-ci-pr.yml
 
   push-to-ECR:
-    needs: [transparent-proxy-ci]
+    needs: [transparent-proxy-ci, versioning]
     uses: ./.github/workflows/transparent-proxy-cd-push-to-ECR.yml
     with:
       aws_account_number: "537124944113"
       repo_name: "paralog/transparent-proxy"
       app_name: "transparent-proxy"
+      version: ${{ needs.versioning.outputs.version }}
 
   tag-repository:
     name: Tag Repository
@@ -81,16 +82,3 @@ jobs:
       - name: Debug Version Output
         run: |
           echo "Final Version: $VERSION"
-
-      # - name: Create Git Tag
-      #   run: |
-      #     git config --global user.name "GitHub Actions"
-      #     git config --global user.email "actions@github.com"
-
-      #     echo "✅ Tagging commit with version: ${VERSION}"
-      #     git tag -f ${VERSION}
-      #     git push -f origin ${VERSION}
-
-      #     echo "✅ Tagging commit with SHA: ${{ github.sha }}"
-      #     git tag -f ${{ github.sha }}
-      #     git push -f origin ${{ github.sha }}

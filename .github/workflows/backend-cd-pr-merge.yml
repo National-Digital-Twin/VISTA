@@ -37,28 +37,29 @@ jobs:
       - name: Generate Full Semantic Version
         id: generate-version
         run: |
-          MAJOR="${{ github.event.inputs.major || '1' }}"
-          MINOR="${{ github.event.inputs.minor || '0' }}"
+          MAJOR="${{ github.event.inputs.major }}" && MAJOR=${MAJOR:-1}
+          MINOR="${{ github.event.inputs.minor }}" && MINOR=${MINOR:-0}
           PATCH="${{ env.patch_version }}"
           VERSION="${MAJOR}.${MINOR}.${PATCH}"
           echo "VERSION=${VERSION}" >> $GITHUB_ENV
-          echo "version=${VERSION}" >> $GITHUB_OUTPUT  # Ensure output is set correctly
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
 
       - name: Print Generated Version
         run: |
-          echo "Generated Version: ${{ env.VERSION }}"
+          echo "Generated Version: ${{ steps.generate-version.outputs.version }}"
 
   backend-ci:
     needs: [versioning]
     uses: ./.github/workflows/backend-ci-pr.yml
 
   push-to-ECR:
-    needs: [backend-ci]
+    needs: [backend-ci, versioning]
     uses: ./.github/workflows/backend-cd-push-to-ECR.yml
     with:
       aws_account_number: "537124944113"
       repo_name: "paralog/python-api"
       app_name: "backend"
+      version: ${{ needs.versioning.outputs.version }}
 
   tag-repository:
     name: Tag Repository
