@@ -19,3 +19,4 @@ spec:
        - key: request.auth.claims[groups]
          values:
              - paralog_access
+
