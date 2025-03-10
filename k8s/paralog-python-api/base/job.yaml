@@ -15,9 +15,9 @@ spec:
           envFrom:
 
           - configMapRef:
-                        - name: paralog-python-api-configs
-#          - secretRef:
-#             - name: paralog-python-api-static-secret
+            - name: paralog-python-api-configs
+          - secretRef:
+             - name: paralog-python-api-static-secret
       restartPolicy: Never
   ttlSecondsAfterFinished: 10
   backoffLimit: 4
