@@ -1,0 +1,38 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: ${NAME}
+  namespace: paralog
+spec:
+  template:
+    spec:
+      containers:
+        - name: paralog-python-api-image
+          image: paralog-python-api-image
+          imagePullPolicy: Always
+          command: [ "./entrypoint.sh" ]
+          envFrom:
+          - configMapRef:
+              - name: paralog-python-api-configs
+          - secretRef:
+             - name: paralog-python-api-static-secret
+          env:
+            - name: IMAGE_DIGEST
+              value: ${IMAGE_DIGEST}
+            - name: DJANGO_SECRET_KEY
+              value: ${DJANGO_SECRET_KEY}
+            - name: DB_HOSTNAME
+              value: ${DB_HOSTNAME}
+            - name: POSTGRES_PASSWORD
+              value: ${POSTGRES_PASSWORD}
+            - name: ENVIRONMENT
+              value: ${ENVIRONMENT}
+            - name: AWS_DEFAULT_REGION
+              value: "eu-west-2"
+            - name: AWS_ACCESS_KEY_ID
+              value: ${AWS_ACCESS_KEY_ID}
+            - name: AWS_SECRET_ACCESS_KEY
+              value: ${AWS_SECRET_ACCESS_KEY}
+      restartPolicy: Never
+  ttlSecondsAfterFinished: 10
+  backoffLimit: 4
