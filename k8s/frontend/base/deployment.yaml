@@ -21,7 +21,7 @@ spec:
         - image: paralog-frontend-image
           env:
             - name: IMAGE_DIGEST
-              value: 'none'
+              value: "none"
           name: frontend
           imagePullPolicy: Always
           ports:

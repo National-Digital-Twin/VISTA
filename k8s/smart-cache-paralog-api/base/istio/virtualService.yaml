@@ -14,7 +14,7 @@ spec:
         - uri:
             prefix: /paralog/
       rewrite:
-        uri : "/"
+        uri: "/"
       route:
         - destination:
             host: smart-cache-paralog-api

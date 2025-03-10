@@ -16,6 +16,7 @@ spec:
         - operation:
             methods: ["GET","POST"]
       when:
-        - key: request.auth.claims[groups]
-          values:
-            - tc_adminxxxx
+       - key: request.auth.claims[groups]
+         values:
+             - paralog_access
+
