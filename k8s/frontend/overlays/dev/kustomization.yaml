@@ -19,14 +19,9 @@ patches:
     target:
       kind: ServiceAccount
       name: paralog-frontend-sa
-
-
-
 labels:
   - pairs:
       env: dev
-
-
 images:
   - name: paralog-frontend-image
     newName: 537124944113.dkr.ecr.eu-west-2.amazonaws.com/paralog/demo-frontend

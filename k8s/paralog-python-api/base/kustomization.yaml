@@ -6,8 +6,6 @@ resources:
   - deployment.yaml
   - service.yaml
   - job.yaml
-#  - vault/vaultAuth.yaml
-#  - vault/vaultStaticSecret.yaml
 
 labels:
   - pairs:
