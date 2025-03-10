@@ -8,9 +8,6 @@ patches:
   - path: patches/gateway.yaml
     target:
       kind: Gateway
-  - path: patches/allow-ingress.yaml
-    target:
-      kind: AuthorizationPolicy
   - path: patches/virtualService.yaml
     target:
       kind: VirtualService
