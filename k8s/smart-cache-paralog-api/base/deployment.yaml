@@ -38,7 +38,7 @@ spec:
               path: /
             timeoutSeconds: 3
             initialDelaySeconds: 10
-            periodSeconds: 2
+            periodSeconds: 10
           readinessProbe:
             httpGet:
               port: 4001
