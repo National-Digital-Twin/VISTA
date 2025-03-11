@@ -19,6 +19,7 @@ import Dependents from "./Dependents";
 import { fetchAssetInfo } from "@/api/combined";
 import { isAsset, isDependency } from "@/utils";
 import { isEmpty } from "@/utils/isEmpty";
+import Providers from "./Providers";
 
 export interface ElementDefaultsProps {
   readonly element: any;
@@ -147,6 +148,12 @@ export default function ElementDetails({
               isDependency={elemIsDependency}
               assetUri={element?.uri || ""}
               dependent={element?.dependent || {}}
+            />
+            <Providers
+              isAsset={elemIsAsset}
+              isDependency={elemIsDependency}
+              assetUri={element.uri}
+              provider={element?.provider}
             />
           </Box>
         </Collapse>
