@@ -6,15 +6,23 @@ import SelectedElements from "./SelectedElements/SelectedElements";
 import { ElementsContext } from "@/context/ElementContext";
 
 interface InfoPanelProps {
-  showDependantPanel?: () => void;
+  showConnectedAssets: () => void;
+  setConnectedAssetData: (data: any) => void;
 }
-export default function InfoPanel({ showDependantPanel }: InfoPanelProps) {
+export default function InfoPanel({
+  showConnectedAssets,
+  setConnectedAssetData,
+}: InfoPanelProps) {
   const { selectedElements } = useContext(ElementsContext);
 
   return (
     <div className={`${styles.infoPanelContainer} overflow-y-auto`}>
-      <Button onClick={showDependantPanel}>Show connected assets</Button>
-      <SelectedElements selectedElements={selectedElements} />
+      <Button onClick={showConnectedAssets}>Show connected assets</Button>
+      <SelectedElements
+        selectedElements={selectedElements}
+        showConnectedAssets={showConnectedAssets}
+        setConnectedAssetData={setConnectedAssetData}
+      />
     </div>
   );
 }

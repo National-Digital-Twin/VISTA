@@ -8,66 +8,26 @@ import { faLayerGroup, faCircleInfo } from "@fortawesome/free-solid-svg-icons";
 
 import React, { Suspense } from "react";
 import Typography from "@mui/material/Typography";
-import { Button } from "@mui/material";
+import ConnectedAssetsPanel from "../ConnectedAssetsPanel";
 import { AssetDetailControlPanel } from "@/tools/AssetDetails";
 import { LayersControlPanel } from "@/tools/LayersControlPanel";
-
-// move this to the child tab panels
-interface TabPanelProps {
-  children?: React.ReactNode;
-  index: number;
-  value: number;
-}
-
-function TabPanel(props: Readonly<TabPanelProps>) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      style={{
-        maxHeight: "100%",
-        overflow: "auto",
-      }}
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box
-          sx={{
-            p: 3,
-            maxHeight: "100%",
-          }}
-        >
-          {children}
-        </Box>
-      )}
-    </div>
-  );
-}
-
-function a11yProps(index: number) {
-  return {
-    id: `simple-tab-${index}`,
-    "aria-controls": `simple-tabpanel-${index}`,
-  };
-}
+import { a11yProps, TabPanel } from "@/utils/tabHelpers";
 
 interface ControlPanelProps {
-  dependantPanelOpen: boolean;
-  hideDependantPanel: () => void;
-  showDependantPanel: () => void;
+  connectedAssetsPanelOpen: boolean;
+  hideConnectedAssets: () => void;
+  showConnectedAssets: () => void;
 }
 
 /** Main control panel, for controlling layers and simulation */
 export default function ControlPanel({
-  dependantPanelOpen,
-  hideDependantPanel,
-  showDependantPanel,
+  connectedAssetsPanelOpen,
+  hideConnectedAssets,
+  showConnectedAssets,
 }: ControlPanelProps) {
   const [value, setValue] = React.useState(0);
+
+  const [connectedAssetData, setConnectedAssetData] = React.useState<any>(null);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
@@ -79,7 +39,10 @@ export default function ControlPanel({
       name: "Asset Details",
       icon: faCircleInfo,
       Content: (
-        <AssetDetailControlPanel showDependantPanel={showDependantPanel} />
+        <AssetDetailControlPanel
+          showConnectedAssets={showConnectedAssets}
+          setConnectedAssetData={setConnectedAssetData}
+        />
       ),
     },
   ];
@@ -161,26 +124,11 @@ export default function ControlPanel({
           ))}
         </Box>
       </Box>
-      {dependantPanelOpen && (
-        <Box
-          sx={{
-            width: "100%",
-            height: "70vh",
-            position: "relative",
-            backgroundColor: "background.paper",
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
-          <Typography variant="h6">Control Panel</Typography>
-          <Button
-            onClick={() => {
-              hideDependantPanel();
-            }}
-          >
-            Close
-          </Button>
-        </Box>
+      {connectedAssetsPanelOpen && (
+        <ConnectedAssetsPanel
+          connectedAssetData={connectedAssetData}
+          hideConnectedAssets={hideConnectedAssets}
+        />
       )}
     </Box>
   );

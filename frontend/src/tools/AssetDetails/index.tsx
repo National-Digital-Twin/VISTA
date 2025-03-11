@@ -5,14 +5,21 @@ const InfoPanel = lazy(() => import("./InfoPanel/InfoPanel"));
 
 export const TOOL_NAME = "Asset details panel";
 
-interface ControlPanelContentProps {
-  showDependantPanel?: () => void;
+interface AssetDetailControlPanelContentProps {
+  showConnectedAssets: () => void;
+  setConnectedAssetData: (data: any) => void;
 }
 
 export function AssetDetailControlPanel({
-  showDependantPanel,
-}: ControlPanelContentProps) {
-  return <InfoPanel showDependantPanel={showDependantPanel} />;
+  showConnectedAssets,
+  setConnectedAssetData,
+}: AssetDetailControlPanelContentProps) {
+  return (
+    <InfoPanel
+      showConnectedAssets={showConnectedAssets}
+      setConnectedAssetData={setConnectedAssetData}
+    />
+  );
 }
 
 export const controlPanelTab = {

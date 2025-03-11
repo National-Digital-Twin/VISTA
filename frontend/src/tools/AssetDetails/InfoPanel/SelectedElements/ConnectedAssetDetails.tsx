@@ -1,5 +1,5 @@
 import { noCase } from "change-case";
-import TypeIcon from "./TypeIcon";
+import { Box, Grid2, Typography } from "@mui/material";
 import styles from "./elements.module.css";
 import { getURIFragment } from "@/utils";
 
@@ -27,7 +27,6 @@ export default function ConnectedAssetDetails({
   type,
   criticality,
   connectionStrength,
-  isAdded,
 }: ConnectedAssetDetailsProps) {
   if (error) {
     return <li className={styles.errorMessage}>{error.message}</li>;
@@ -35,22 +34,45 @@ export default function ConnectedAssetDetails({
 
   return (
     <li className={styles.connectedAssetDetails}>
-      <div className={styles.connectedAssetHeader}>
-        <TypeIcon size="sm" type={type} disabled={!isAdded} />
-        <div>
-          <h4>{name || uri}</h4>
-          <p className={styles.connectedAssetType}>
+      <Box className={styles.connectedAssetHeader}>
+        <Box>
+          <Typography variant="h6" fontWeight={800}>
+            {name || uri}
+          </Typography>
+          <Typography className={styles.connectedAssetUri} fontWeight={600}>
+            {uri.split("#")[1]}
+          </Typography>
+        </Box>
+      </Box>
+
+      <Grid2 container spacing={2}>
+        <Grid2 size={4}>
+          <Typography variant="body1" fontWeight={600}>
+            Type:
+          </Typography>
+        </Grid2>
+        <Grid2 size={8}>
+          <Typography variant="body1">
             {noCase(getURIFragment(type))}
-          </p>
-          <p className={styles.connectedAssetUri}>{uri.split("#")[1]}</p>
-        </div>
-      </div>
-      <p className={styles.connectedAssetInfo}>
-        Criticality: {criticality || "N/D"}
-      </p>
-      <p className={styles.connectedAssetInfo}>
-        Connection Strength: {connectionStrength || "N/D"}
-      </p>
+          </Typography>
+        </Grid2>
+        <Grid2 size={4}>
+          <Typography variant="body1" fontWeight={600}>
+            Criticality:
+          </Typography>
+        </Grid2>
+        <Grid2 size={8}>
+          <Typography variant="body1">{criticality || "N/D"}</Typography>
+        </Grid2>
+        <Grid2 size={4}>
+          <Typography variant="body1" fontWeight={600}>
+            Connection Strength:
+          </Typography>
+        </Grid2>
+        <Grid2 size={8}>
+          <Typography variant="body1">{connectionStrength || "N/D"}</Typography>
+        </Grid2>
+      </Grid2>
     </li>
   );
 }

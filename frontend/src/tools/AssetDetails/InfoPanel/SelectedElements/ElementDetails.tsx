@@ -1,10 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   Card,
   CardContent,
   Typography,
-  Collapse,
   CircularProgress,
   Alert,
   Box,
@@ -14,23 +13,26 @@ import {
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import RoomIcon from "@mui/icons-material/Room"; // Google Maps Pin Icon
+import ArrowRightIcon from "@mui/icons-material/ArrowRight"; // Import ArrowRightIcon
 import TypeIcon from "./TypeIcon";
-import Dependents from "./Dependents";
 import { fetchAssetInfo } from "@/api/combined";
-import { isAsset, isDependency } from "@/utils";
+import { getURIFragment, isAsset, isDependency } from "@/utils";
 import { isEmpty } from "@/utils/isEmpty";
 
 export interface ElementDefaultsProps {
   readonly element: any;
   readonly expand?: boolean;
+  showConnectedAssets: () => void;
+  setConnectedAssetData: (data: any) => void;
 }
 
 export default function ElementDetails({
   element,
   expand = false,
+  showConnectedAssets,
+  setConnectedAssetData,
 }: Readonly<ElementDefaultsProps>) {
   const elemIsAsset = isAsset(element);
-  const elemIsDependency = isDependency(element);
 
   const [showDropdown, setShowDropdown] = useState<boolean>(expand);
 
@@ -44,6 +46,13 @@ export default function ElementDetails({
 
   const isLoading = assetInfo.isLoading;
   const isError = assetInfo.isError;
+
+  useEffect(() => {
+    if (elemIsAsset && assetInfo.data) {
+      const details = element?.getDetails?.(assetInfo.data) || {};
+      setConnectedAssetData(constructElementDetailsObject(element, details));
+    }
+  }, [elemIsAsset, assetInfo.data, element, setConnectedAssetData]);
 
   if (isLoading) {
     return (
@@ -102,6 +111,21 @@ export default function ElementDetails({
           alignItems="center"
           justifyContent="space-between"
           mt={1}
+          onClick={() => {
+            showConnectedAssets();
+          }}
+          sx={{ cursor: "pointer" }}
+        >
+          <Typography variant="body2" sx={{ fontWeight: 500 }}>
+            View connected assets
+          </Typography>
+          <ArrowRightIcon fontSize="small" sx={{ ml: 1 }} />
+        </Box>
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="space-between"
+          mt={1}
           onClick={toggleDropdown}
           sx={{ cursor: "pointer" }}
         >
@@ -116,7 +140,6 @@ export default function ElementDetails({
             )}
           </IconButton>
         </Box>
-
         {/* Google Street View Section */}
         <Box
           display="flex"
@@ -138,19 +161,21 @@ export default function ElementDetails({
             </IconButton>
           </Tooltip>
         </Box>
-
-        {/* Dependent Assets Section (Expanded View) */}
-        <Collapse in={showDropdown}>
-          <Box mt={2}>
-            <Dependents
-              isAsset={elemIsAsset}
-              isDependency={elemIsDependency}
-              assetUri={element?.uri || ""}
-              dependent={element?.dependent || {}}
-            />
-          </Box>
-        </Collapse>
       </CardContent>
     </Card>
   );
+}
+
+function constructElementDetailsObject(element: any, details: any) {
+  console.log("constructElementDetailsObject", element);
+  return {
+    dependent: element?.dependent || {},
+    assetUri: element?.uri || "",
+    isAsset: isAsset(element),
+    isDependency: isDependency(element),
+    provider: element?.provider || {},
+    title: details.title,
+    id: details.id,
+    type: getURIFragment(details.type || "#Unknown"),
+  };
 }

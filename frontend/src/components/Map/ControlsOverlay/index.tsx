@@ -56,8 +56,8 @@ export default function ControlsOverlay() {
 
   const {
     value: dependantPanelOpen,
-    setTrue: showDependantPanel,
-    setFalse: hideDependantPanel,
+    setTrue: showConnectedAssetsPanel,
+    setFalse: hideConnectedAssetsPanel,
   } = useBoolean(false);
 
   const shouldShowControlPanel = featureFlags.uiNext && controlPanelOpen;
@@ -72,9 +72,9 @@ export default function ControlsOverlay() {
           <div className="pointer-events-auto">
             {shouldShowControlPanel && (
               <ControlPanel
-                dependantPanelOpen={dependantPanelOpen}
-                hideDependantPanel={hideDependantPanel}
-                showDependantPanel={showDependantPanel}
+                connectedAssetsPanelOpen={dependantPanelOpen}
+                hideConnectedAssets={hideConnectedAssetsPanel}
+                showConnectedAssets={showConnectedAssetsPanel}
               />
             )}
             {!shouldShowControlPanel && (
