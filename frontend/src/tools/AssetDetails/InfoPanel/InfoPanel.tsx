@@ -1,6 +1,5 @@
 import { useContext } from "react";
 
-import Button from "@mui/material/Button";
 import styles from "./infopanel.module.css";
 import SelectedElements from "./SelectedElements/SelectedElements";
 import { ElementsContext } from "@/context/ElementContext";
