@@ -121,25 +121,7 @@ export default function ElementDetails({
           </Typography>
           <ArrowRightIcon fontSize="small" sx={{ ml: 1 }} />
         </Box>
-        <Box
-          display="flex"
-          alignItems="center"
-          justifyContent="space-between"
-          mt={1}
-          onClick={toggleDropdown}
-          sx={{ cursor: "pointer" }}
-        >
-          <Typography variant="body2" sx={{ fontWeight: 500 }}>
-            View connected assets
-          </Typography>
-          <IconButton size="small">
-            {showDropdown ? (
-              <ExpandLessIcon fontSize="small" />
-            ) : (
-              <ExpandMoreIcon fontSize="small" />
-            )}
-          </IconButton>
-        </Box>
+
         {/* Google Street View Section */}
         <Box
           display="flex"
