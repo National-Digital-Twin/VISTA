@@ -7,7 +7,6 @@ resource "aws_subnet" "private-eu-west-2a" {
   tags = {
     "Name"                                        = "${var.environment}-private-eu-west-2a"
     "kubernetes.io/role/internal-elb"             = "1"
-    "kubernetes.io/cluster/${local.cluster_name}" = "owned"
   }
 }
 
@@ -18,8 +17,6 @@ resource "aws_subnet" "private-eu-west-2b" {
 
   tags = {
     "Name"                                        = "${var.environment}-private-eu-west-2b"
-    "kubernetes.io/role/internal-elb"             = "1"
-    "kubernetes.io/cluster/${local.cluster_name}" = "owned"
   }
 }
 

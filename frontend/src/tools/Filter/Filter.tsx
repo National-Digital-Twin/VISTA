@@ -36,7 +36,13 @@ export default function Filter() {
   return (
     <>
       {showFloodAreaControls && (
-        <Grid2 direction={"row"} container gap={4} sx={{ marginTop: 2 }}>
+        <Grid2
+          direction={"row"}
+          container
+          gap={4}
+          sx={{ paddingTop: 0 }}
+          size={12}
+        >
           <Grid2 size={5}>
             <Card sx={{ boxShadow: 3, marginLeft: 2 }}>
               <CardContent

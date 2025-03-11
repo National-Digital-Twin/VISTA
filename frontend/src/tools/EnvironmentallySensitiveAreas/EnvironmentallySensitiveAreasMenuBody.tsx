@@ -5,7 +5,7 @@ import {
 } from "./environmentally-sensitive-areas-layers";
 import { useEnvironmentallySensitiveAreasSharedStore } from "./useStore";
 import useLayer from "@/hooks/useLayer";
-import { MenuButton } from "@/components/MenuButton";
+import MenuItemRow from "@/components/MenuItemRow";
 
 export interface EnvironmentallySensitiveAreasMenuBodyProps {
   readonly searchQuery?: string;
@@ -37,12 +37,13 @@ export function EnvironmentallySensitiveAreasMenuBody({
     <>
       {(Object.keys(layers) as EnvironmentallySensitiveAreasLayerId[]).map(
         (layerId) => (
-          <MenuButton
+          <MenuItemRow
             key={layerId}
-            onClick={() => handleClick(layerId)}
-            selected={!!enabledLayers[layerId]}
-            label={layers[layerId].name}
+            primaryText={layers[layerId].name}
+            checked={!!enabledLayers[layerId]}
+            onChange={() => handleClick(layerId)}
             searchQuery={searchQuery}
+            terms={[layers[layerId].name]}
           />
         ),
       )}

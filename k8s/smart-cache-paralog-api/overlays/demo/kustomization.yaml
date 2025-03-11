@@ -32,3 +32,4 @@ configMapGenerator:
   - name: smart-cache-paralog-api-configs
     envs:
       - params.env
+

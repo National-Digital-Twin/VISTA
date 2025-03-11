@@ -56,19 +56,6 @@ input[type="range"].criticality-slider::-ms-thumb {
   border-radius: 50%;
 }
 
-[role="tooltip"],
-.hideTooltip + [role="tooltip"] {
-  @apply absolute -top-9 whitespace-nowrap px-2 py-1 bg-black-50 rounded-md invisible z-10 text-sm;
-}
-[aria-labelledby]:hover + [role="tooltip"],
-[aria-labelledby]:focus + [role="tooltip"] {
-  @apply visible;
-}
-[aria-labelledby]:hover + .hideTooltip[role="tooltip"],
-[aria-labelledby]:focus + .hideTooltip[role="tooltip"] {
-  @apply invisible;
-}
-
 #theme-provider > div {
   height: 100%;
 }
