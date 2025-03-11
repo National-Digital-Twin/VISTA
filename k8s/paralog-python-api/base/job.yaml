@@ -1,0 +1,24 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: paralog-python-api-job
+spec:
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+    spec:
+      serviceAccountName: paralog-python-api-sa
+      containers:
+        - name: paralog-python-api-image
+          image: paralog-python-api-image
+          imagePullPolicy: Always
+          command: ["./entrypoint.sh"]
+          envFrom:
+            - configMapRef:
+                name: paralog-python-api-configs
+            - secretRef:
+                name: paralog-python-api-static-secret
+      restartPolicy: Never
+  ttlSecondsAfterFinished: 10
+  backoffLimit: 4

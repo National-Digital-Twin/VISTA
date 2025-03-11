@@ -23,6 +23,7 @@ function Toolbar({ onOpenControlPanel }: ToolbarProps) {
         alignItems: "center",
         width: "100%",
         marginTop: 1,
+        position: "relative",
       }}
     >
       {onOpenControlPanel && (

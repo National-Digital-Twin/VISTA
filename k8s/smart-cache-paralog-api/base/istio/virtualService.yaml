@@ -1,4 +1,3 @@
-
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 
@@ -14,7 +13,7 @@ spec:
         - uri:
             prefix: /paralog/
       rewrite:
-        uri : "/"
+        uri: "/"
       route:
         - destination:
             host: smart-cache-paralog-api
