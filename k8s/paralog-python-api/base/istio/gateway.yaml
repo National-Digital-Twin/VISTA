@@ -20,4 +20,3 @@ spec:
         name: https
         number: 443
         protocol: HTTP
-

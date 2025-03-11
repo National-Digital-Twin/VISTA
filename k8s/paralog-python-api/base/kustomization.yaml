@@ -12,6 +12,3 @@ labels:
       app: paralog-python-api
       env: ENV_PLACEHOLDER
       app.kubernetes.io/name: paralog-python-api
-
-
-

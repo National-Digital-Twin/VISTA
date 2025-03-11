@@ -18,15 +18,11 @@ patches:
       kind: ServiceAccount
       name: paralog-transparent-proxy-sa
 
-
-
 labels:
   - pairs:
       env: demo
 
-
 images:
   - name: paralog-transparent-proxy-image
     newName: 503561419905.dkr.ecr.eu-west-2.amazonaws.com/paralog/demo-transparent-proxy
-    newTag: 'latest'
-
+    newTag: "latest"

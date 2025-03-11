@@ -3,7 +3,6 @@ resources:
 
 namespace: paralog
 
-
 patches:
   - path: patches/request-authentication.yaml
     target:

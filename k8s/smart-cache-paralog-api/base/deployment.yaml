@@ -29,9 +29,9 @@ spec:
           envFrom:
             - configMapRef:
                 name: smart-cache-paralog-api-configs
-#          envFrom:
-#           - secretRef:
-#              name: smart-cache-paralog-api-static-secret
+          #          envFrom:
+          #           - secretRef:
+          #              name: smart-cache-paralog-api-static-secret
           livenessProbe:
             httpGet:
               port: 4001
@@ -52,9 +52,9 @@ spec:
 
           resources:
             requests:
-              cpu: "1"      # Minimum CPU your container is guaranteed.
-              memory: "2Gi"  # Minimum Memory your container is guaranteed.
+              cpu: "1" # Minimum CPU your container is guaranteed.
+              memory: "2Gi" # Minimum Memory your container is guaranteed.
             limits:
-              cpu: "1"     # Maximum CPU your container can use.
+              cpu: "1" # Maximum CPU your container can use.
               memory: "2Gi" # Maximum Memory your container can use.
       restartPolicy: Always

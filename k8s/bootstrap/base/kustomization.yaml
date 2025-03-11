@@ -3,5 +3,3 @@ resources:
   - istio/peer-authentication.yaml
   - istio/request-authentication.yaml
   - namespace.yaml
-
-
