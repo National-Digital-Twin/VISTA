@@ -25,8 +25,8 @@ spec:
           image: paralog-transparent-proxy-image
           imagePullPolicy: Always
           envFrom:
-           - secretRef:
-              name: paralog-transparent-proxy-static-secret
+            - secretRef:
+                name: paralog-transparent-proxy-static-secret
           ports:
             - containerPort: 80
               protocol: TCP

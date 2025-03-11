@@ -25,8 +25,7 @@ labels:
 images:
   - name: paralog-python-api-image
     newName: 537124944113.dkr.ecr.eu-west-2.amazonaws.com/paralog/python-api
-    newTag: 'to.be.replaced'
-
+    newTag: "to.be.replaced"
 
 configMapGenerator:
   - name: paralog-python-api-configs

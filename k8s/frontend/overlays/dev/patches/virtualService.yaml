@@ -2,7 +2,6 @@
   path: /spec/hosts/0
   value: paralog.dev.ndtp.co.uk
 
-
 - op: replace
   path: /spec/gateways/0
   value: paralog/paralog-frontend-ingress-gateway

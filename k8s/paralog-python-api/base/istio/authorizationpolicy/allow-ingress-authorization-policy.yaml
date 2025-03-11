@@ -1,4 +1,3 @@
-
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:
@@ -14,4 +13,4 @@ spec:
             principals: ["PLACE_HOLDER"]
       to:
         - operation:
-            methods: ["GET","POST"]
+            methods: ["GET", "POST"]

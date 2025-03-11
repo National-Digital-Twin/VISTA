@@ -13,12 +13,12 @@ spec:
         - name: paralog-python-api-image
           image: paralog-python-api-image
           imagePullPolicy: Always
-          command: [ "./entrypoint.sh" ]
+          command: ["./entrypoint.sh"]
           envFrom:
-          - configMapRef:
-             name: paralog-python-api-configs
-          - secretRef:
-              name: paralog-python-api-static-secret
+            - configMapRef:
+                name: paralog-python-api-configs
+            - secretRef:
+                name: paralog-python-api-static-secret
       restartPolicy: Never
   ttlSecondsAfterFinished: 10
   backoffLimit: 4

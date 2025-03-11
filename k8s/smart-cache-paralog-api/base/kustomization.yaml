@@ -13,6 +13,3 @@ labels:
       app: smart-cache-paralog-api
       env: ENV_PLACEHOLDER
       app.kubernetes.io/name: smart-cache-paralog-api
-
-
-

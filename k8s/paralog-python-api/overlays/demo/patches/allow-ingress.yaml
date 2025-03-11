@@ -7,4 +7,3 @@ spec:
     - from:
         - source:
             principals: ["cluster.local/ns/istio-ingress/sa/istio-ingress"]
-

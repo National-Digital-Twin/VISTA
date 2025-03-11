@@ -12,7 +12,3 @@ labels:
       app: paralog-frontend
       env: ENV_PLACEHOLDER
       app.kubernetes.io/name: paralog-frontend
-
-
-
-

@@ -25,11 +25,9 @@ labels:
 images:
   - name: smart-cache-paralog-api-image
     newName: 503561419905.dkr.ecr.eu-west-2.amazonaws.com/paralog/smart-cache-paralog-api
-    newTag: '1739898581'
-
+    newTag: "1739898581"
 
 configMapGenerator:
   - name: smart-cache-paralog-api-configs
     envs:
       - params.env
-
