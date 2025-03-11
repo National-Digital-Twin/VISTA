@@ -113,11 +113,6 @@ const ConnectedAssetsPanel = ({
           </Grid2>
         </Grid2>
       </Grid2>
-      {/* {connectedAssetData && (
-        <Typography component="pre">
-          {JSON.stringify(connectedAssetData, null, 2)}
-        </Typography>
-      )} */}
     </Box>
   );
 };

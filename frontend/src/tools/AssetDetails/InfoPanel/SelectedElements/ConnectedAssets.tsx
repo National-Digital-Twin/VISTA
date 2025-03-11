@@ -36,7 +36,6 @@ export default function ConnectedAssets({
           type={asset?.assetType}
           criticality={asset?.dependentCriticalitySum}
           connectionStrength={asset?.connectionStrength}
-          isAdded={isElementCached(assets, asset.uri)}
         />
       ))}
     </ul>

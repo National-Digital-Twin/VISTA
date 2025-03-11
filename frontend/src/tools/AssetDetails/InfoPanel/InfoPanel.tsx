@@ -5,8 +5,8 @@ import SelectedElements from "./SelectedElements/SelectedElements";
 import { ElementsContext } from "@/context/ElementContext";
 
 interface InfoPanelProps {
-  showConnectedAssets: () => void;
-  setConnectedAssetData: (data: any) => void;
+  readonly showConnectedAssets: () => void;
+  readonly setConnectedAssetData: (data: any) => void;
 }
 export default function InfoPanel({
   showConnectedAssets,

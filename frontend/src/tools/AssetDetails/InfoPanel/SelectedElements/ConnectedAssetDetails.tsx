@@ -16,8 +16,6 @@ export interface ConnectedAssetDetailsProps {
   readonly criticality?: number;
   /** Connection strength, which is apparently different from criticality */
   readonly connectionStrength?: number;
-  /** Whether the connection is added(?) */
-  readonly isAdded: boolean;
 }
 
 export default function ConnectedAssetDetails({

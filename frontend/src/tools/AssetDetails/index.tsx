@@ -6,8 +6,8 @@ const InfoPanel = lazy(() => import("./InfoPanel/InfoPanel"));
 export const TOOL_NAME = "Asset details panel";
 
 interface AssetDetailControlPanelContentProps {
-  showConnectedAssets: () => void;
-  setConnectedAssetData: (data: any) => void;
+  readonly showConnectedAssets: () => void;
+  readonly setConnectedAssetData: (data: any) => void;
 }
 
 export function AssetDetailControlPanel({

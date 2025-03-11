@@ -16,8 +16,6 @@ export interface ConnectedAssetDetailsProps {
   readonly criticality?: number;
   /** Connection strength, which is apparently different from criticality */
   readonly connectionStrength?: number;
-  /** Whether the connection is added(?) */
-  readonly isAdded: boolean;
 }
 
 export default function ConnectedAssetDetails({
@@ -27,7 +25,6 @@ export default function ConnectedAssetDetails({
   type,
   criticality,
   connectionStrength,
-  isAdded,
 }: ConnectedAssetDetailsProps) {
   if (error) {
     return <li className={styles.errorMessage}>{error.message}</li>;
@@ -36,7 +33,7 @@ export default function ConnectedAssetDetails({
   return (
     <li className={styles.connectedAssetDetails}>
       <div className={styles.connectedAssetHeader}>
-        <TypeIcon size="sm" type={type} disabled={!isAdded} />
+        <TypeIcon size="sm" type={type} />
         <div>
           <h4>{name || uri}</h4>
           <p className={styles.connectedAssetType}>

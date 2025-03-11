@@ -4,10 +4,10 @@ import styles from "./elements.module.css";
 import { isEmpty } from "@/utils/isEmpty";
 
 export interface ProvidersProps {
-  isLoading: boolean;
-  isError: boolean;
-  error: any;
-  providers: any;
+  readonly isLoading: boolean;
+  readonly isError: boolean;
+  readonly error: any;
+  readonly providers: any;
 }
 
 export default function Providers({

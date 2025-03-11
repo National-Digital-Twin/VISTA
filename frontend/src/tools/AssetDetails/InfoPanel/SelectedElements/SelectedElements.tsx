@@ -7,8 +7,8 @@ import type { Element } from "@/models";
 export interface SelectedElementsProps {
   /** Elements which are selected */
   readonly selectedElements: Element[];
-  showConnectedAssets: () => void;
-  setConnectedAssetData: (data: any) => void;
+  readonly showConnectedAssets: () => void;
+  readonly setConnectedAssetData: (data: any) => void;
 }
 
 export default function SelectedElements({
@@ -46,8 +46,8 @@ export default function SelectedElements({
 interface ElementsListProps {
   readonly selectedElements: Element[];
   readonly totalSelected: number;
-  showConnectedAssets: () => void;
-  setConnectedAssetData: (data: any) => void;
+  readonly showConnectedAssets: () => void;
+  readonly setConnectedAssetData: (data: any) => void;
 }
 
 function ElementsList({

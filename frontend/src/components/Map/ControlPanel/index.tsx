@@ -14,9 +14,9 @@ import { LayersControlPanel } from "@/tools/LayersControlPanel";
 import { a11yProps, TabPanel } from "@/utils/tabHelpers";
 
 interface ControlPanelProps {
-  connectedAssetsPanelOpen: boolean;
-  hideConnectedAssets: () => void;
-  showConnectedAssets: () => void;
+  readonly connectedAssetsPanelOpen: boolean;
+  readonly hideConnectedAssets: () => void;
+  readonly showConnectedAssets: () => void;
 }
 
 /** Main control panel, for controlling layers and simulation */
