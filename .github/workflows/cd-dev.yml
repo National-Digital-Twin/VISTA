@@ -16,7 +16,7 @@ jobs:
     with:
       environment: "dev"
     secrets:
-      MAP_TILER_TOKEN: ${{ secrets.MAP_TILER_TOKEN }}
+      MAP_TILER_TOKEN: ${{ secrets.VITE_MAP_TILER_TOKEN }}
       ORDNANCE_SURVEY_API_KEY: ${{ secrets.ORDNANCE_SURVEY_API_KEY }}
       ADMIRALTY_API_KEY: ${{ secrets.ADMIRALTY_API_KEY }}
       DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
