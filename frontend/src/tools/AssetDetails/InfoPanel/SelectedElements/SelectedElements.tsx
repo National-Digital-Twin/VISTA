@@ -66,7 +66,6 @@ function ElementsList({
           <ElementDetails
             key={selectedElement.id}
             element={selectedElement}
-            expand={false}
             showConnectedAssets={showConnectedAssets}
             setConnectedAssetData={setConnectedAssetData}
           />

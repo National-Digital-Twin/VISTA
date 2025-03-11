@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   Card,
@@ -10,8 +10,6 @@ import {
   IconButton,
   Tooltip,
 } from "@mui/material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import RoomIcon from "@mui/icons-material/Room"; // Google Maps Pin Icon
 import ArrowRightIcon from "@mui/icons-material/ArrowRight"; // Import ArrowRightIcon
 import TypeIcon from "./TypeIcon";
@@ -21,22 +19,16 @@ import { isEmpty } from "@/utils/isEmpty";
 
 export interface ElementDefaultsProps {
   readonly element: any;
-  readonly expand?: boolean;
   showConnectedAssets: () => void;
   setConnectedAssetData: (data: any) => void;
 }
 
 export default function ElementDetails({
   element,
-  expand = false,
   showConnectedAssets,
   setConnectedAssetData,
 }: Readonly<ElementDefaultsProps>) {
   const elemIsAsset = isAsset(element);
-
-  const [showDropdown, setShowDropdown] = useState<boolean>(expand);
-
-  const toggleDropdown = () => setShowDropdown((prev) => !prev);
 
   const assetInfo = useQuery({
     enabled: elemIsAsset,
