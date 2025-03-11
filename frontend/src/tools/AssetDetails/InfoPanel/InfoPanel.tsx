@@ -17,7 +17,6 @@ export default function InfoPanel({
 
   return (
     <div className={`${styles.infoPanelContainer} overflow-y-auto`}>
-      <Button onClick={showConnectedAssets}>Show connected assets</Button>
       <SelectedElements
         selectedElements={selectedElements}
         showConnectedAssets={showConnectedAssets}
