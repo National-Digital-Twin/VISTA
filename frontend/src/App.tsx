@@ -29,6 +29,24 @@ export default function App() {
     html.setAttribute("data-color-scheme", isDarkMode ? "dark" : "light");
   }, [isDarkMode]);
 
+  if (config.configErrors.length > 0) {
+    // This doesn't violate the rules of React vis a vis the hooks below because
+    // this value is a constant.
+    console.log(config.configErrors);
+    return (
+      <p className="mx-5 my-2">
+        Paralog encountered errors on boot:
+        <ul>
+          {config.configErrors.map((error) => (
+            <li className="ml-2" key={error}>
+              — {error}
+            </li>
+          ))}
+        </ul>
+      </p>
+    );
+  }
+
   return (
     <div style={{ overflow: "hidden" }}>
       <PageHeader appName="Paralog" />
