@@ -4,6 +4,7 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import PageHeader from "@/components/PageHeader";
 import AppBody from "@/components/AppBody";
+import config from "@/config/app-config";
 
 library.add(fas);
 
