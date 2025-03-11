@@ -48,7 +48,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     environment: development
     steps:
       - name: Checkout repository
@@ -68,19 +68,12 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20.x"
+          node-version: "23.x"
           cache: yarn
           cache-dependency-path: frontend/yarn.lock
 
       - name: Install Yarn
         run: npm install -g yarn
-
-      - name: Create .npmrc file
-        working-directory: frontend
-        run: |
-          echo "registry=https://registry.yarnpkg.com/" > .npmrc
-          echo "//npm.pkg.github.com/:_authToken=\${GITHUB_TOKEN}" >> .npmrc
-          echo "@national-digital-twin:registry=https://npm.pkg.github.com" >> .npmrc
 
       - name: Install dependencies
         working-directory: frontend

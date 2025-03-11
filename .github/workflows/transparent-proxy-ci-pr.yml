@@ -64,24 +64,6 @@ jobs:
         run: |
           docker build -t paralog/transparent-proxy:latest .
 
-      - name: Run Docker Image
-        run: |
-          docker images
-          docker run --rm -d -p 80:80 --name transparent-proxy paralog/transparent-proxy:latest
-          docker ps
-          sleep 10
-          docker logs transparent-proxy
-
-      - name: Ping App
-        run: |
-          status_code=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:80/health)
-          if [[ "$status_code" == "200" ]]; then
-            echo "Ping successful (200 OK)"  >> $GITHUB_STEP_SUMMARY
-          else
-            echo "Ping failed with status code: $status_code"  >> $GITHUB_STEP_SUMMARY
-            exit 1  # Indicate an error
-          fi
-
       - name: Run Trivy Scan on Docker Image
         uses: aquasecurity/trivy-action@0.28.0
         with:

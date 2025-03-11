@@ -1,5 +1,5 @@
 # FROM nginx as runner
-FROM nginx
+FROM nginx:1.27-alpine
 
 # Copy the built files from the builder stage to the runner stage
 COPY dist /usr/share/nginx/html
