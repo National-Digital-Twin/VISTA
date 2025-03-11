@@ -179,14 +179,14 @@ jobs:
       - name: Populate environment variables.
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          MAP_TILER_TOKEN: ${{ secrets.MAP_TILER_TOKEN }}
+          MAP_TILER_TOKEN: ${{ secrets.VITE_MAP_TILER_TOKEN }}
           ORDNANCE_SURVEY_API_KEY: ${{ secrets.ORDNANCE_SURVEY_API_KEY }}
           VITE_ADMIRALTY_TIDES_API_KEY: ${{ secrets.ADMIRALTY_API_KEY }}
           MET_OFFICE_GLOBAL_SPOT_API_KEY: ${{ secrets.MET_OFFICE_GLOBAL_SPOT_API_KEY }}
           CANNY_APP_ID: ${{ secrets.CANNY_APP_ID }}
           CANNY_BOARD_TOKEN: ${{ secrets.CANNY_BOARD_TOKEN }}
         run: |
-          echo 'MAP_TILER_TOKEN=${{ env.MAP_TILER_TOKEN }}' >> $GITHUB_ENV
+          echo 'MAP_TILER_TOKEN=${{ env.VITE_MAP_TILER_TOKEN }}' >> $GITHUB_ENV
           echo 'ORDNANCE_SURVEY_API_KEY=${{ env.ORDNANCE_SURVEY_API_KEY }}' >> $GITHUB_ENV
           echo 'MET_OFFICE_GLOBAL_SPOT_API_KEY=${{ env.MET_OFFICE_GLOBAL_SPOT_API_KEY }}' >> $GITHUB_ENV
           echo 'CANNY_APP_ID=${{ env.CANNY_APP_ID }}' >> $GITHUB_ENV

@@ -84,10 +84,6 @@ jobs:
       - name: Build Frontend
         working-directory: frontend
         run: yarn run build
-        env:
-          VITE_ONTOLOGY_SERVICE_URL: "/ontology"
-          VITE_PARALOG_API_URL: "/paralog"
-          VITE_MAP_TILER_TOKEN: ${{ secrets.VITE_MAP_TILER_TOKEN }}
 
       - name: Build Docker Image
         run: |
