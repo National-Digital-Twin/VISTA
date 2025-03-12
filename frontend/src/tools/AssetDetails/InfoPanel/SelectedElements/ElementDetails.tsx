@@ -76,64 +76,58 @@ export default function ElementDetails({
   }
 
   return (
-    <Card sx={{ borderRadius: 2, boxShadow: 3, mb: 2, p: 1 }}>
+    <Card sx={{ mb: 1, p: 0.5 }}>
       <CardContent>
-        <Box display="flex" alignItems="center" justifyContent="space-between">
-          {/* Asset Title */}
-          <Box>
+        <Box
+          display="flex"
+          justifyContent="space-between"
+          alignItems="start"
+          gap={2}
+        >
+          {/* Left Column - Asset Title & Type (Left Aligned) */}
+          <Box sx={{ flex: 1 }}>
             <Typography variant="h6">
               {details.title || "Asset Details"}
             </Typography>
-            <Typography variant="caption" color="textSecondary">
-              {element?.uri || "N/A"}
-            </Typography>
           </Box>
 
-          {/* Asset Type */}
-          {details?.type && (
-            <Box display="flex" alignItems="center" ml={1}>
-              <TypeIcon size="sm" type={details.type} />
-            </Box>
-          )}
-        </Box>
-
-        {/* View Connected Assets - Expands Panel */}
-        <Box
-          display="flex"
-          alignItems="center"
-          justifyContent="space-between"
-          mt={1}
-          onClick={() => {
-            showConnectedAssets();
-          }}
-          sx={{ cursor: "pointer" }}
-        >
-          <Typography variant="body2" sx={{ fontWeight: 500 }}>
-            View connected assets
-          </Typography>
-          <ArrowRightIcon fontSize="small" sx={{ ml: 1 }} />
-        </Box>
-
-        {/* Google Street View Section */}
-        <Box
-          display="flex"
-          alignItems="center"
-          justifyContent="space-between"
-          mt={1}
-        >
-          <Typography variant="body2" sx={{ fontWeight: 500 }}>
-            Google Street View
-          </Typography>
-          <Tooltip title="Open Google Street View">
-            <IconButton
-              component="a"
-              href={`https://www.google.com/maps?q=${element?.uri}`}
-              target="_blank"
-              rel="noopener noreferrer"
+          {/* Right Column - View Connected Assets & Google Street View */}
+          <Box
+            display="flex"
+            flexDirection="column"
+            alignItems="flex-end"
+            sx={{ minWidth: 200 }}
+          >
+            {/* View Connected Assets */}
+            <Box
+              display="flex"
+              alignItems="center"
+              sx={{ cursor: "pointer", mb: 1, whiteSpace: "nowrap" }}
+              onClick={() => showConnectedAssets()}
             >
-              <RoomIcon sx={{ color: "#4285F4" }} />
-            </IconButton>
-          </Tooltip>
+              <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                View connected assets
+              </Typography>
+              <ArrowRightIcon fontSize="small" sx={{ ml: 1 }} />
+            </Box>
+
+            {/* Google Street View */}
+            <Box display="flex" alignItems="center">
+              <Typography variant="body2" sx={{ fontWeight: 500, mr: 1 }}>
+                Google Street View
+              </Typography>
+              <Tooltip title="Open Google Street View">
+                <IconButton
+                  component="a"
+                  href={`https://www.google.com/maps?q=${element?.uri}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <RoomIcon sx={{ color: "#4285F4" }} />
+                </IconButton>
+              </Tooltip>
+            </Box>
+          </Box>
         </Box>
       </CardContent>
     </Card>
