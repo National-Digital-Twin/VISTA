@@ -31,7 +31,6 @@ function Toolbar({ onOpenControlPanel }: ToolbarProps) {
           icon={faChevronLeft}
           onClick={onOpenControlPanel}
           title="Close control panel"
-          width={75}
         />
       )}
       {tools("toolbar-order").map((tool) => {
@@ -107,7 +106,10 @@ export default function ControlsOverlay() {
             padding: "10px",
           }}
         >
-          <div style={{ marginTop: "10px" }} className="pointer-events-auto">
+          <div
+            style={{ marginTop: "10px", maxHeight: "65vh", overflow: "scroll" }}
+            className="pointer-events-auto"
+          >
             <MapToolbar />
           </div>
         </Grid2>
