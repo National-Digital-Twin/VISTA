@@ -82,12 +82,6 @@ jobs:
       - name: Install Yarn
         run: npm install -g yarn
 
-      - name: Create .npmrc file
-        run: |
-          echo "registry=https://registry.yarnpkg.com/" > .npmrc
-          echo "//npm.pkg.github.com/:_authToken=\${GITHUB_TOKEN}" >> .npmrc
-          echo "@national-digital-twin:registry=https://npm.pkg.github.com" >> .npmrc
-
       - name: Install dependencies
         working-directory: frontend
         run: yarn install --frozen-lockfile
