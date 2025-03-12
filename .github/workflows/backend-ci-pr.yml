@@ -228,12 +228,12 @@ jobs:
           file: "backend/Dockerfile"
           context: "./backend"
           load: true
-          tags: "paralog/demo-paralog-python-api:latest"
+          tags: "paralog/python-api:latest"
 
       - name: Run Docker image
         run: |
           docker images
-          docker run --rm -d -p 8000:8000 --name backend paralog/demo-paralog-python-api:latest
+          docker run --rm -d -p 8000:8000 --name backend paralog/python-api:latest
           docker ps
           sleep 10
           docker logs backend
@@ -252,7 +252,7 @@ jobs:
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@0.28.0
         with:
-          image-ref: "paralog/demo-paralog-python-api:latest"
+          image-ref: "paralog/python-api:latest"
           format: "table"
           exit-code: "1"
           ignore-unfixed: true

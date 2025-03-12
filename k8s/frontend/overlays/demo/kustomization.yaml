@@ -3,14 +3,10 @@ resources:
 
 namespace: paralog
 
-
 patches:
   - path: patches/gateway.yaml
     target:
       kind: Gateway
-  - path: patches/allow-ingress.yaml
-    target:
-      kind: AuthorizationPolicy
   - path: patches/virtualService.yaml
     target:
       kind: VirtualService
@@ -20,15 +16,11 @@ patches:
       kind: ServiceAccount
       name: paralog-frontend-sa
 
-
-
 labels:
   - pairs:
       env: demo
 
-
 images:
   - name: paralog-frontend-image
     newName: 503561419905.dkr.ecr.eu-west-2.amazonaws.com/paralog/demo-frontend
-    newTag: 'remove-auth-2'
-
+    newTag: "remove-auth-2"

@@ -5,14 +5,10 @@ resources:
   - service-account.yaml
   - deployment.yaml
   - service.yaml
-  - vault/vaultAuth.yaml
-  - vault/vaultStaticSecret.yaml
+  - job.yaml
 
 labels:
   - pairs:
       app: paralog-python-api
       env: ENV_PLACEHOLDER
       app.kubernetes.io/name: paralog-python-api
-
-
-

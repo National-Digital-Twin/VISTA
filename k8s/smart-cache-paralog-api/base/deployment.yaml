@@ -29,16 +29,16 @@ spec:
           envFrom:
             - configMapRef:
                 name: smart-cache-paralog-api-configs
-#          envFrom:
-#           - secretRef:
-#              name: smart-cache-paralog-api-static-secret
+          #          envFrom:
+          #           - secretRef:
+          #              name: smart-cache-paralog-api-static-secret
           livenessProbe:
             httpGet:
               port: 4001
               path: /
             timeoutSeconds: 3
             initialDelaySeconds: 10
-            periodSeconds: 20
+            periodSeconds: 2
           readinessProbe:
             httpGet:
               port: 4001

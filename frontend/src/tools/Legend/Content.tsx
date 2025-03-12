@@ -45,7 +45,7 @@ const LegendContent: React.FC = () => {
           <Button
             variant="text"
             color="primary"
-            sx={{ textTransform: "none" }} 
+            sx={{ textTransform: "none" }}
             onClick={() => setIsOpen(false)}
           >
             Close
