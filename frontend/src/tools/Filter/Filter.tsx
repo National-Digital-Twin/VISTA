@@ -95,6 +95,9 @@ export default function Filter() {
                 marginRight: 2,
                 overflow: "visible",
                 position: "relative",
+                maxHeight: 75,
+                height: "6vh",
+                marginBottom: 1,
               }}
             >
               <CardContent
