@@ -3,7 +3,6 @@ import {
   Box,
   Card,
   CardContent,
-  FormControlLabel,
   Grid2,
   Slider,
   Switch,
