@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -67,7 +67,7 @@ jobs:
     timeout-minutes: 10
     needs: dependencies
     env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -81,12 +81,6 @@ jobs:
 
       - name: Install Yarn
         run: npm install -g yarn
-
-      - name: Create .npmrc file
-        run: |
-          echo "registry=https://registry.yarnpkg.com/" > .npmrc
-          echo "//npm.pkg.github.com/:_authToken=\${GITHUB_TOKEN}" >> .npmrc
-          echo "@national-digital-twin:registry=https://npm.pkg.github.com" >> .npmrc
 
       - name: Install dependencies
         working-directory: frontend
