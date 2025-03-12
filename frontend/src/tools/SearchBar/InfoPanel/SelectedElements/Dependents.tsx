@@ -1,6 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 
+import Button from "@mui/material/Button";
 import ConnectedAssets from "./ConnectedAssets";
 import DetailsSection from "./DetailsSection";
 import styles from "./elements.module.css";
@@ -48,6 +49,8 @@ export default function Dependents({
     return null;
   }
 
+  const handleClick = () => {};
+
   return (
     <DetailsSection
       expand={expand}
@@ -60,6 +63,9 @@ export default function Dependents({
           Dependent assets: Assets that rely on/ consume services from this
           asset.
         </span>
+        <Button variant="contained" onClick={handleClick}>
+          Open Popover
+        </Button>
       </div>
       <ConnectedAssets connectedAssets={dependents} />
     </DetailsSection>
