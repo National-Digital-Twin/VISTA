@@ -2,7 +2,6 @@ resources:
   - ../base/istio/authorizationpolicy/allow-ingress-authorization-policy.yaml
   - ../base/istio/gateway.yaml
   - ../base/istio/virtualService.yaml
-  - ../base/istio/peereauthentication.yaml
   - service-account.yaml
   - deployment.yaml
   - service.yaml
