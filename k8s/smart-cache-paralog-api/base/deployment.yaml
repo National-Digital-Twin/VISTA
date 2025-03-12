@@ -18,6 +18,7 @@ spec:
         vault.hashicorp.com/agent-inject: "true"
         vault.hashicorp.com/agent-cache-enable: "false"
         vault.hashicorp.com/role: "smart-cache-paralog-api-role"
+        sidecar.istio.io/inject: "false"
       labels:
         io.kompose.service: smart-cache-paralog-api
     spec:
