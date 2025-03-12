@@ -12,13 +12,12 @@ spec:
       io.kompose.service: smart-cache-paralog-api
   template:
     metadata:
-      annotations:
-        traffic.sidecar.istio.io/excludeOutboundPorts: "8200"
-        vault.hashicorp.com/agent-init-first: "true"
-        vault.hashicorp.com/agent-inject: "true"
-        vault.hashicorp.com/agent-cache-enable: "false"
-        vault.hashicorp.com/role: "smart-cache-paralog-api-role"
-        sidecar.istio.io/inject: "false"
+      annotations: {}
+#        traffic.sidecar.istio.io/excludeOutboundPorts: "8200"
+#        vault.hashicorp.com/agent-init-first: "true"
+#        vault.hashicorp.com/agent-inject: "true"
+#        vault.hashicorp.com/agent-cache-enable: "false"
+#        vault.hashicorp.com/role: "smart-cache-paralog-api-role"
       labels:
         io.kompose.service: smart-cache-paralog-api
     spec:
