@@ -14,7 +14,7 @@ export const controlPanelTab = {
   icon: faLayerGroup,
 };
 
-export function ControlPanelContent() {
+export function LayersControlPanel() {
   const tools = useTools();
 
   const [searchQuery, setSearchQuery] = useState("");

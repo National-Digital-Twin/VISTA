@@ -108,10 +108,10 @@
 .connectedAssetDetails {
   display: flex;
   flex-direction: column;
-  padding: 0.5rem;
-  border-radius: 0.375rem;
+  padding-bottom:10px;
   gap: 0.5rem;
   background-color: var(--col-bg-card);
+  border-bottom: 1px solid var(--col-neutral-outline);
 }
 
 .connectedAssetHeader {

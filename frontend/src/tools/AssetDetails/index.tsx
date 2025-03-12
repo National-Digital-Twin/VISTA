@@ -5,11 +5,25 @@ const InfoPanel = lazy(() => import("./InfoPanel/InfoPanel"));
 
 export const TOOL_NAME = "Asset details panel";
 
-export function ControlPanelContent() {
-  return <InfoPanel />;
+interface AssetDetailControlPanelContentProps {
+  readonly showConnectedAssets: () => void;
+  readonly setConnectedAssetData: (data: any) => void;
+}
+
+export function AssetDetailControlPanel({
+  showConnectedAssets,
+  setConnectedAssetData,
+}: AssetDetailControlPanelContentProps) {
+  return (
+    <InfoPanel
+      showConnectedAssets={showConnectedAssets}
+      setConnectedAssetData={setConnectedAssetData}
+    />
+  );
 }
 
 export const controlPanelTab = {
   title: "Asset Details",
   icon: faCircleInfo,
+  hasFunction: true,
 };
