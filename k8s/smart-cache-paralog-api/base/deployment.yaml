@@ -38,14 +38,14 @@ spec:
               path: /
             timeoutSeconds: 3
             initialDelaySeconds: 10
-            periodSeconds: 2
+            periodSeconds: 20
           readinessProbe:
             httpGet:
               port: 4001
               path: /
             timeoutSeconds: 10
             initialDelaySeconds: 10
-            periodSeconds: 2
+            periodSeconds: 5
           ports:
             - containerPort: 4001
               protocol: TCP
