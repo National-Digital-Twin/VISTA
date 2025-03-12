@@ -1,8 +1,8 @@
 import { useContext, useCallback, useState, useEffect } from "react";
 import {
+  Box,
   Card,
   CardContent,
-  Divider,
   FormControlLabel,
   Grid2,
   Slider,
@@ -44,34 +44,47 @@ export default function Filter() {
           size={12}
         >
           <Grid2 size={5}>
-            <Card sx={{ boxShadow: 3, marginLeft: 2, position: "relative" }}>
+            <Card
+              sx={{
+                boxShadow: 3,
+                marginLeft: 2,
+                height: "6vh",
+                maxHeight: 75,
+                marginBottom: 1,
+              }}
+            >
               <CardContent
                 sx={{
                   display: "flex",
                   flexDirection: "row",
                   alignItems: "center",
                   justifyContent: "space-between",
+                  height: "100%",
                 }}
               >
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={showPrimary}
-                      onChange={toggleShowPrimary}
-                    />
-                  }
-                  label="Primary Assets"
-                />
-                <Divider orientation="vertical" flexItem sx={{ marginX: 2 }} />
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={showSecondary}
-                      onChange={toggleShowSecondary}
-                    />
-                  }
-                  label="Dependent Assets"
-                />
+                <Grid2 container size={12}>
+                  <Grid2
+                    size={6}
+                    sx={{ borderRight: 1, borderColor: "divider" }}
+                  >
+                    <Box display="flex" alignItems="center">
+                      <Switch
+                        checked={showPrimary}
+                        onChange={toggleShowPrimary}
+                      />
+                      <Typography>Primary Assets</Typography>
+                    </Box>
+                  </Grid2>
+                  <Grid2 size={6}>
+                    <Box display="flex" alignItems="center">
+                      <Switch
+                        checked={showSecondary}
+                        onChange={toggleShowSecondary}
+                      />
+                      <Typography>Dependent Assets</Typography>
+                    </Box>
+                  </Grid2>
+                </Grid2>
               </CardContent>
             </Card>
           </Grid2>
@@ -80,7 +93,6 @@ export default function Filter() {
               sx={{
                 boxShadow: 3,
                 marginRight: 2,
-                height: "100%",
                 overflow: "visible",
                 position: "relative",
               }}
@@ -92,6 +104,7 @@ export default function Filter() {
                   alignItems: "center",
                   justifyContent: "center",
                   overflow: "visible",
+                  height: "100%",
                 }}
               >
                 {(showPrimary || showSecondary) && <CriticalitySlider />}

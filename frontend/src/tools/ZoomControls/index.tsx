@@ -28,6 +28,7 @@ export function SideButtons() {
         title="Zoom in"
         onClick={handleZoomIn}
         svgSrc="icons/Zoom in.svg"
+        hasNoMarginBottom
       />
       <div style={{ marginTop: "0.1rem" }}>
         <ToolbarButton
