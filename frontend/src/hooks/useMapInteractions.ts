@@ -1,4 +1,4 @@
-import type { MapboxGeoJSONFeature } from "react-map-gl";
+import type { Feature } from "geojson"; // Use Feature from geojson instead of MapboxGeoJSONFeature
 import { useEffect, useState } from "react";
 
 import { findElement } from "@/utils";
@@ -22,7 +22,7 @@ export default function useMapInteractions({
   dependencies: Dependency[];
   onElementClick: (isMultiSelect: boolean, selectedElements: Element[]) => void;
 }) {
-  const [selectedFloodZones, setSelectedFloodZones] = useState([]);
+  const [selectedFloodZones, setSelectedFloodZones] = useState<Feature[]>([]);
 
   const interactiveLayers = [
     pointAssetCxnLayer.id,
@@ -31,15 +31,13 @@ export default function useMapInteractions({
   ];
 
   useEffect(() => {
-    const polygonOutlineLayer =
-      map?.style && map.getLayer(FLOOD_AREA_POLYGON_OUTLINE_ID);
-    if (!polygonOutlineLayer) {
+    if (!map?.style || !map.getLayer(FLOOD_AREA_POLYGON_OUTLINE_ID)) {
       return;
     }
 
     const floodZoneFeatures = map.getMap().queryRenderedFeatures({
       layers: [FLOOD_AREA_POLYGON_OUTLINE_ID],
-    });
+    }) as Feature[];
 
     updateSelectedFeatureState({
       map: map.getMap(),
@@ -48,40 +46,51 @@ export default function useMapInteractions({
     });
   }, [map, selectedFloodZones]);
 
-  const onFloodZoneClick = ({ clickedFloodZones, isMultiSelect }) => {
-    if (!isEmpty(clickedFloodZones)) {
-      if (clickedFloodZones.length > 1) {
-        console.warn(
-          "An unexpected case of >1 clicked zone; performance won't be optimal if many are clicked",
-        );
-      }
+  const onFloodZoneClick = ({
+    clickedFloodZones,
+    isMultiSelect,
+  }: {
+    clickedFloodZones: Feature[];
+    isMultiSelect: boolean;
+  }) => {
+    if (!isEmpty(clickedFloodZones) && clickedFloodZones.length > 1) {
+      console.warn(
+        "An unexpected case of >1 clicked zone; performance won't be optimal if many are clicked",
+      );
     }
 
-    if (isMultiSelect) {
-      setSelectedFloodZones((prevSelection) =>
-        getAllSelectedPolygons([...prevSelection, ...clickedFloodZones]),
-      );
-      return;
-    }
-    setSelectedFloodZones(clickedFloodZones);
+    setSelectedFloodZones((prevSelection) =>
+      isMultiSelect
+        ? getAllSelectedPolygons([...prevSelection, ...clickedFloodZones])
+        : clickedFloodZones,
+    );
   };
 
-  const onOtherElementClick = ({ clickedFeature, isMultiSelect }) => {
+  const onOtherElementClick = ({
+    clickedFeature,
+    isMultiSelect,
+  }: {
+    clickedFeature?: Feature;
+    isMultiSelect: boolean;
+  }) => {
     if (!clickedFeature) {
       return;
     }
-    const { properties } = clickedFeature;
-    const element = findElement([...assets, ...dependencies], properties.uri);
 
-    onElementClick(isMultiSelect, [element]);
+    const { properties } = clickedFeature;
+    const element = findElement([...assets, ...dependencies], properties?.uri);
+
+    if (element) {
+      onElementClick(isMultiSelect, [element]);
+    }
   };
 
-  const handleOnClick = (event) => {
-    const { originalEvent } = event;
+  const handleOnClick = (event: any) => {
+    const { originalEvent, features = [] } = event;
     originalEvent.stopPropagation();
 
     const isMultiSelect = originalEvent.shiftKey;
-    const clickedFeatures: MapboxGeoJSONFeature[] = event?.features || [];
+    const clickedFeatures: Feature[] = features;
 
     const clickedFloodZones = clickedFeatures.filter((feature) =>
       isClickedLayer(feature, FLOOD_AREA_POLYGON_ID),
@@ -95,6 +104,7 @@ export default function useMapInteractions({
     if (isEmpty(clickedFeatures)) {
       onElementClick(false, []);
     }
+
     onFloodZoneClick({ clickedFloodZones, isMultiSelect });
     onOtherElementClick({
       clickedFeature: otherClickedElements[0],
@@ -105,8 +115,8 @@ export default function useMapInteractions({
   return { interactiveLayers, selectedFloodZones, handleOnClick };
 }
 
-function isClickedLayer(feature: MapboxGeoJSONFeature, layerId: string) {
-  return feature.layer.id === layerId;
+function isClickedLayer(feature: Feature, layerId: string) {
+  return feature?.properties?.layer?.id === layerId;
 }
 
 function updateSelectedFeatureState({
@@ -115,12 +125,12 @@ function updateSelectedFeatureState({
   clickedFeatures,
 }: {
   map: any;
-  renderedFeatures: MapboxGeoJSONFeature[];
-  clickedFeatures: MapboxGeoJSONFeature[];
+  renderedFeatures: Feature[];
+  clickedFeatures: Feature[];
 }) {
   renderedFeatures.forEach((renderedFeature) => {
     const isSelected = clickedFeatures.some(
-      (clickedFeature) => clickedFeature.id === renderedFeature.id,
+      (clickedFeature) => clickedFeature?.id === renderedFeature?.id,
     );
     map.setFeatureState(
       {
@@ -134,16 +144,13 @@ function updateSelectedFeatureState({
   });
 }
 
-const getAllSelectedPolygons = (selected) => {
-  const uniquePolygons = selected.reduce((acc, current) => {
-    const isAdded = acc.find(
-      (feature) => feature.properties.id === current.properties.id,
-    );
-    if (isAdded) {
-      return acc;
-    } else {
-      return acc.concat([current]);
+const getAllSelectedPolygons = (selected: Feature[]) => {
+  return selected.reduce<Feature[]>((acc, current) => {
+    if (
+      !acc.some((feature) => feature.properties?.id === current.properties?.id)
+    ) {
+      acc.push(current);
     }
+    return acc;
   }, []);
-  return uniquePolygons;
 };

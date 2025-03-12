@@ -1,87 +1,135 @@
-import classNames from "classnames";
-import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
+import Box from "@mui/material/Box";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import "react-tabs/style/react-tabs.css";
+import { faLayerGroup, faCircleInfo } from "@fortawesome/free-solid-svg-icons";
 
-import { Suspense } from "react";
-import { faClose } from "@fortawesome/free-solid-svg-icons";
-import styles from "./style.module.css";
-import { useTools } from "@/tools/useTools";
+import React, { Suspense } from "react";
+import Typography from "@mui/material/Typography";
+import ConnectedAssetsPanel from "../ConnectedAssetsPanel";
+import { AssetDetailControlPanel } from "@/tools/AssetDetails";
+import { LayersControlPanel } from "@/tools/LayersControlPanel";
+import { a11yProps, TabPanel } from "@/utils/tabHelpers";
 
-export interface ControlPanelProps {
-  /** Additional class name to attach to the top-level element */
-  className?: string;
-  /** Action to close the control panel */
-  onClose?: () => void;
+interface ControlPanelProps {
+  readonly connectedAssetsPanelOpen: boolean;
+  readonly hideConnectedAssets: () => void;
+  readonly showConnectedAssets: () => void;
 }
 
 /** Main control panel, for controlling layers and simulation */
 export default function ControlPanel({
-  className,
-  onClose,
+  connectedAssetsPanelOpen,
+  hideConnectedAssets,
+  showConnectedAssets,
 }: ControlPanelProps) {
-  const tools = useTools();
+  const [value, setValue] = React.useState(0);
 
-  const entries = tools("control-panel-order")
-    .map((tool) => {
-      if (!tool.controlPanelTab) {
-        return null;
-      }
-      return {
-        name: tool.controlPanelTab.title,
-        icon: tool.controlPanelTab.icon,
-        Content: tool.ControlPanelContent!,
-      };
-    })
-    .filter((item) => item !== null);
+  const [connectedAssetData, setConnectedAssetData] = React.useState<any>(null);
+
+  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+    setValue(newValue);
+  };
+
+  const tabs = [
+    { name: "Layers", icon: faLayerGroup, Content: <LayersControlPanel /> },
+    {
+      name: "Asset Details",
+      icon: faCircleInfo,
+      Content: (
+        <AssetDetailControlPanel
+          showConnectedAssets={showConnectedAssets}
+          setConnectedAssetData={setConnectedAssetData}
+        />
+      ),
+    },
+  ];
 
   return (
-    <Tabs
-      className={classNames(
-        styles.controlPanel,
-        "relative",
-        "menu",
-        "menu-lg",
-        className,
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "row",
+        height: "100%",
+
+        gap: 2,
+      }}
+    >
+      <Box
+        sx={{
+          width: "100%",
+          height: "70vh",
+          position: "relative",
+          backgroundColor: "background.paper",
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
+        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+          <Tabs
+            value={value}
+            onChange={handleChange}
+            aria-label="basic tabs example"
+            variant="scrollable"
+            scrollButtons="auto"
+            TabIndicatorProps={{
+              sx: {
+                display: "flex",
+                justifyContent: "center",
+                "& .MuiTabs-indicator": {
+                  width: "fit-content",
+                },
+              },
+            }}
+          >
+            {tabs.map((entry, index) => (
+              <Tab
+                key={entry.name}
+                label={
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      paddingTop: 2,
+                    }}
+                  >
+                    {entry.icon && (
+                      <FontAwesomeIcon
+                        className="inline mb-1"
+                        icon={entry.icon}
+                        size="2x"
+                      />
+                    )}
+                    <Typography
+                      sx={{ textTransform: "none", fontWeight: "bold" }}
+                    >
+                      {entry.name}
+                    </Typography>
+                  </Box>
+                }
+                {...a11yProps(index)}
+                sx={{ flexBasis: "50%" }}
+              ></Tab>
+            ))}
+          </Tabs>
+        </Box>
+        <Box sx={{ flexGrow: 1, overflow: "hidden" }}>
+          {tabs.map((entry, i) => (
+            <TabPanel key={entry.name} index={i} value={value}>
+              <Suspense fallback="Loading...">{entry.Content}</Suspense>
+            </TabPanel>
+          ))}
+        </Box>
+      </Box>
+      {connectedAssetsPanelOpen && (
+        <ConnectedAssetsPanel
+          connectedAssetData={connectedAssetData}
+          hideConnectedAssets={hideConnectedAssets}
+        />
       )}
-    >
-      <TabList>
-        {entries.map((entry) => (
-          <Tab key={entry.name}>
-            {entry.icon && (
-              <FontAwesomeIcon className="inline mr-2" icon={entry.icon} />
-            )}
-            {entry.name}
-          </Tab>
-        ))}
-      </TabList>
-
-      {entries.map((entry) => (
-        <TabPanel key={entry.name}>
-          <Suspense fallback="Loading...">
-            <entry.Content />
-          </Suspense>
-        </TabPanel>
-      ))}
-
-      {onClose && <ControlPanelCloseButton onClose={onClose} />}
-    </Tabs>
-  );
-}
-
-interface ControlPanelCloseButtonProps {
-  onClose: () => void;
-}
-
-function ControlPanelCloseButton({ onClose }: ControlPanelCloseButtonProps) {
-  return (
-    <button
-      onClick={onClose}
-      title="Close control panel"
-      className={styles.controlPanelCloseButton}
-    >
-      <FontAwesomeIcon icon={faClose} />
-    </button>
+    </Box>
   );
 }

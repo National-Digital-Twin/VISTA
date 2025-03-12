@@ -1,9 +1,7 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import classNames from "classnames";
-
 import { forwardRef } from "react";
 import AssetTypes from "./Assets/AssetTypes";
-
 import styles from "./style.module.css";
 import { fetchAssessments } from "@/api/assessments";
 
@@ -16,14 +14,21 @@ export interface SideDropdownProps {
 
 export default forwardRef<HTMLDivElement, SideDropdownProps>(
   function SideDropdown({ searchQuery, className }: SideDropdownProps, ref) {
-    const { isError: isErrorAssessments, data: assessmentsData } =
-      useSuspenseQuery({
-        queryKey: ["assessments"],
-        queryFn: fetchAssessments,
-      });
+    const {
+      isError: isErrorAssessments,
+      data: assessmentsData,
+      isLoading,
+    } = useQuery({
+      queryKey: ["assessments"],
+      queryFn: fetchAssessments,
+    });
+
+    if (isLoading) {
+      return <div>Loading...</div>;
+    }
 
     if (isErrorAssessments) {
-      return null;
+      return <div>Error loading assessments</div>;
     }
 
     return (

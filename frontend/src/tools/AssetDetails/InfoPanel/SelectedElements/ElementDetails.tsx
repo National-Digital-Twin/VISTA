@@ -1,230 +1,155 @@
-import type { CSSProperties } from "react";
-import { useState } from "react";
-import { noCase } from "change-case";
+import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { StreetView } from "../InfoHeader";
+import {
+  Card,
+  CardContent,
+  Typography,
+  CircularProgress,
+  Alert,
+  Box,
+  IconButton,
+  Tooltip,
+} from "@mui/material";
+import RoomIcon from "@mui/icons-material/Room"; // Google Maps Pin Icon
+import ArrowRightIcon from "@mui/icons-material/ArrowRight"; // Import ArrowRightIcon
 import TypeIcon from "./TypeIcon";
-import Dependents from "./Dependents";
-import Providers from "./Providers";
-import ResidentialInformation from "./ResidentialInformation";
-import Residents from "./Residents";
-import styles from "./elements.module.css";
-import { getURIFragment, isAsset, isDependency } from "@/utils";
 import { fetchAssetInfo } from "@/api/combined";
+import { getURIFragment, isAsset, isDependency } from "@/utils";
 import { isEmpty } from "@/utils/isEmpty";
 
 export interface ElementDefaultsProps {
-  /** Element for which we're showing details */
-  element: any;
-  /** Whether the details should be fully expanded */
-  expand?: boolean;
+  readonly element: any;
+  showConnectedAssets: () => void;
+  setConnectedAssetData: (data: any) => void;
 }
 
 export default function ElementDetails({
   element,
-  expand,
-}: ElementDefaultsProps) {
+  showConnectedAssets,
+  setConnectedAssetData,
+}: Readonly<ElementDefaultsProps>) {
   const elemIsAsset = isAsset(element);
-  const elemIsDependency = isDependency(element);
-  const [showDropdown, setShowDropdown] = useState(false);
-
-  const toggleDropdown = () => {
-    setShowDropdown(!showDropdown);
-  };
 
   const assetInfo = useQuery({
     enabled: elemIsAsset,
-    queryKey: ["asset-info", element?.uri],
-    queryFn: () => fetchAssetInfo(element?.uri),
+    queryKey: ["asset-info", element?.uri || ""],
+    queryFn: () => fetchAssetInfo(element?.uri || ""),
   });
 
-  const dependentInfo = useQuery({
-    queryKey: ["asset-info", element?.dependent?.uri],
-    queryFn: () => fetchAssetInfo(element?.dependent?.uri),
-    enabled: elemIsDependency,
-  });
+  const isLoading = assetInfo.isLoading;
+  const isError = assetInfo.isError;
 
-  const providerInfo = useQuery({
-    queryKey: ["asset-info", element?.provider?.uri],
-    queryFn: () => fetchAssetInfo(element?.provider?.uri),
-    enabled: elemIsDependency,
-  });
-
-  const isLoading =
-    assetInfo.isLoading || dependentInfo.isLoading || providerInfo.isLoading;
-  const isError =
-    assetInfo.isError || dependentInfo.isError || providerInfo.isError;
+  useEffect(() => {
+    if (elemIsAsset && assetInfo.data) {
+      const details = element?.getDetails?.(assetInfo.data) || {};
+      setConnectedAssetData(constructElementDetailsObject(element, details));
+    }
+  }, [elemIsAsset, assetInfo.data, element, setConnectedAssetData]);
 
   if (isLoading) {
-    return <p className={styles.loadingMessage}>Fetching element details</p>;
+    return (
+      <Box display="flex" justifyContent="center" mt={2}>
+        <CircularProgress />
+      </Box>
+    );
   }
+
   if (isError) {
     return (
-      <p className={styles.errorMessage}>
-        An error has occured while fetching information for {element.uri}
-      </p>
+      <Alert severity="error" sx={{ mt: 2 }}>
+        Error fetching details for {element?.uri || "this asset"}
+      </Alert>
     );
   }
 
   let details = undefined;
   if (elemIsAsset) {
-    details = element.getDetails(assetInfo.data);
-  }
-  if (elemIsDependency) {
-    details = element.getDetails(
-      dependentInfo.data.name,
-      providerInfo.data.name,
-    );
+    details = element?.getDetails?.(assetInfo.data) || {};
   }
 
   if (isEmpty(element) || !details) {
     return (
-      <p className={styles.errorMessage}>
-        Unable to retrieve details for unknown element or details not found
-      </p>
+      <Alert severity="warning" sx={{ mt: 2 }}>
+        Unable to retrieve details for this element.
+      </Alert>
     );
   }
 
-  if (!expand) {
-    return (
-      <li className={styles.elementDetails}>
-        <button
-          aria-label={details.title}
-          onClick={toggleDropdown}
-          className={styles.elementDetailsButton}
+  return (
+    <Card sx={{ borderRadius: 2, boxShadow: 3, mb: 2, p: 1 }}>
+      <CardContent>
+        <Box display="flex" alignItems="center" justifyContent="space-between">
+          {/* Asset Title */}
+          <Box>
+            <Typography variant="h6">
+              {details.title || "Asset Details"}
+            </Typography>
+            <Typography variant="caption" color="textSecondary">
+              {element?.uri || "N/A"}
+            </Typography>
+          </Box>
+
+          {/* Asset Type */}
+          {details?.type && (
+            <Box display="flex" alignItems="center" ml={1}>
+              <TypeIcon size="sm" type={details.type} />
+            </Box>
+          )}
+        </Box>
+
+        {/* View Connected Assets - Expands Panel */}
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="space-between"
+          mt={1}
+          onClick={() => {
+            showConnectedAssets();
+          }}
+          sx={{ cursor: "pointer" }}
         >
-          <Details expand={false} details={details} />
-        </button>
-        {showDropdown && (
-          <div className={styles.elementDetailsDropdown}>
-            <div className={styles.streetViewContainer}>
-              <span className={styles.streetViewLabel}>
-                Visit Asset in Street View:
-              </span>
-              <StreetView latitude={element?.lat} longitude={element?.lng} />
-            </div>
-            <ResidentialInformation
-              isAsset={elemIsAsset}
-              primaryType={element.primaryType}
-              uri={element.uri}
-            />
-            <Residents
-              isAsset={elemIsAsset}
-              assetUri={element.uri}
-              primaryType={element.primaryType}
-            />
-            <Dependents
-              isAsset={elemIsAsset}
-              isDependency={elemIsDependency}
-              assetUri={element.uri}
-              dependent={element?.dependent}
-            />
-            <Providers
-              isAsset={elemIsAsset}
-              isDependency={elemIsDependency}
-              assetUri={element.uri}
-              provider={element?.provider}
-            />
-          </div>
-        )}
-      </li>
-    );
-  }
+          <Typography variant="body2" sx={{ fontWeight: 500 }}>
+            View connected assets
+          </Typography>
+          <ArrowRightIcon fontSize="small" sx={{ ml: 1 }} />
+        </Box>
 
-  return (
-    <div className={styles.elementDetailsContent}>
-      <Details expand details={details} />
-      <ResidentialInformation
-        isAsset={elemIsAsset}
-        primaryType={element.primaryType}
-        uri={element.uri}
-      />
-      <Residents
-        isAsset={elemIsAsset}
-        assetUri={element.uri}
-        primaryType={element.primaryType}
-      />
-      <Dependents
-        isAsset={elemIsAsset}
-        isDependency={elemIsDependency}
-        assetUri={element.uri}
-        dependent={element?.dependent}
-      />
-      <Providers
-        isAsset={elemIsAsset}
-        isDependency={elemIsDependency}
-        assetUri={element.uri}
-        provider={element?.provider}
-      />
-    </div>
+        {/* Google Street View Section */}
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="space-between"
+          mt={1}
+        >
+          <Typography variant="body2" sx={{ fontWeight: 500 }}>
+            Google Street View
+          </Typography>
+          <Tooltip title="Open Google Street View">
+            <IconButton
+              component="a"
+              href={`https://www.google.com/maps?q=${element?.uri}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <RoomIcon sx={{ color: "#4285F4" }} />
+            </IconButton>
+          </Tooltip>
+        </Box>
+      </CardContent>
+    </Card>
   );
 }
 
-interface DetailsProps {
-  expand: boolean;
-  details: {
-    id: string;
-    title: string;
-    criticality: number;
-    type: string;
-    desc: string;
-    icon: {
-      icon: string;
-      style: CSSProperties;
-    };
-    elementType: string;
+function constructElementDetailsObject(element: any, details: any) {
+  console.log("constructElementDetailsObject", element);
+  return {
+    dependent: element?.dependent || {},
+    assetUri: element?.uri || "",
+    isAsset: isAsset(element),
+    isDependency: isDependency(element),
+    provider: element?.provider || {},
+    title: details.title,
+    id: details.id,
+    type: getURIFragment(details.type || "#Unknown"),
   };
-}
-
-function Details({ expand, details }: DetailsProps) {
-  const { id, title, criticality, type, desc, icon, elementType } = details;
-
-  return (
-    <div className={styles.assetDetails}>
-      <div className={styles.assetDetailsHeader}>
-        {elementType === "asset" ? (
-          <TypeIcon size="sm" type={type} />
-        ) : (
-          <span className={styles.assetIcon} style={{ ...icon.style }} />
-        )}
-        <div>
-          <h2 className={styles.assetDetailsTitle}>{title}</h2>
-          {type && (
-            <p className={styles.assetDetailsType}>
-              {noCase(getURIFragment(type))}
-            </p>
-          )}
-          <p>{id}</p>
-        </div>
-      </div>
-      {expand && (
-        <>
-          {icon?.icon && (
-            <p className={styles.assetDetailsCriticality}>
-              <i className="fa-solid fa-triangle-exclamation" />
-              Icon styles not found
-            </p>
-          )}
-          <p>Criticality: {criticality}</p>
-          <Description description={desc} />
-        </>
-      )}
-    </div>
-  );
-}
-
-interface DescriptionProps {
-  description: string;
-}
-
-function Description({ description }: DescriptionProps) {
-  if (!description) {
-    return null;
-  }
-
-  return (
-    <div>
-      <p>{description}</p>
-    </div>
-  );
 }

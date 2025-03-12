@@ -1,7 +1,9 @@
-import { faLayerGroup } from "@fortawesome/free-solid-svg-icons";
+import { faLayerGroup, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { useState, startTransition, useCallback } from "react";
 import type React from "react";
 import classNames from "classnames";
+import { Box, TextField } from "@mui/material";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from "./style.module.css";
 import { useTools } from "@/tools/useTools";
 import type { LayerControlProps } from "@/tools/Tool";
@@ -12,7 +14,7 @@ export const controlPanelTab = {
   icon: faLayerGroup,
 };
 
-export function ControlPanelContent() {
+export function LayersControlPanel() {
   const tools = useTools();
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -29,20 +31,18 @@ export function ControlPanelContent() {
   });
 
   return (
-    <>
-      <div className={styles.layerPanel}>
-        <SearchControl searchQuery={searchQuery} onSearch={setSearchQuery} />
-        {layerControls.map(([toolName, Control]) => (
-          <Control key={toolName} searchQuery={searchQuery} />
-        ))}
-      </div>
-    </>
+    <div>
+      <SearchControl searchQuery={searchQuery} onSearch={setSearchQuery} />
+      {layerControls.map(([toolName, Control]) => (
+        <Control key={toolName} searchQuery={searchQuery} />
+      ))}
+    </div>
   );
 }
 
 interface SearchControlProps {
-  searchQuery: string;
-  onSearch: (query: string) => void;
+  readonly searchQuery: string;
+  readonly onSearch: (query: string) => void;
 }
 
 function SearchControl({ searchQuery, onSearch }: SearchControlProps) {
@@ -56,14 +56,32 @@ function SearchControl({ searchQuery, onSearch }: SearchControlProps) {
   );
 
   return (
-    <form className={styles.searchForm}>
-      <input
+    <Box
+      component="form"
+      sx={{
+        mb: 2,
+        display: "flex",
+        alignItems: "center",
+        backgroundColor: "#e0e0e0",
+      }}
+    >
+      <FontAwesomeIcon
+        icon={faSearch}
+        size="2x"
+        style={{ color: "#1976d2", padding: 20 }}
+      />
+      <TextField
         type="search"
-        className={classNames("form-control", styles.searchInput)}
-        placeholder="Search for layers..."
+        fullWidth
+        label="Search for layers..."
         value={searchQuery}
         onChange={handleSearchChange}
+        className={classNames(styles.searchInput)}
+        variant="standard"
+        sx={{
+          paddingBottom: 2,
+        }}
       />
-    </form>
+    </Box>
   );
 }

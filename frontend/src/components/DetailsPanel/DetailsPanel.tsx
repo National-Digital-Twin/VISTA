@@ -5,9 +5,9 @@ import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import styles from "./style.module.css";
 
 interface DetailsPanelProps {
-  children: React.ReactNode;
-  onClose?: () => void;
-  isOpen: boolean;
+  readonly children: React.ReactNode;
+  readonly onClose?: () => void;
+  readonly isOpen: boolean;
 }
 
 export default function DetailsPanel({
@@ -38,11 +38,13 @@ export default function DetailsPanel({
     };
 
     const onMouseUp = () => {
+      document.body.classList.remove(styles.noSelect);
       document.removeEventListener("mousemove", onMouseMove);
       document.removeEventListener("mouseup", onMouseUp);
     };
 
     const onMouseDown = (e: MouseEvent) => {
+      document.body.classList.add(styles.noSelect);
       startY = e.clientY;
       startHeight = height;
       document.addEventListener("mousemove", onMouseMove);
@@ -61,12 +63,12 @@ export default function DetailsPanel({
       ref={panelRef}
       className={classNames(styles.detailsPanel)}
       data-expanded={isOpen}
-      style={{ height: `${height}px` }}
+      style={{ height: `${height}px`, maxHeight: "22vh" }}
     >
       <div ref={resizeRef} className={styles.resizeHandle} />
       {onClose && (
         <button onClick={onClose} className={styles.toggleButton}>
-          <FontAwesomeIcon icon={faChevronDown} />
+          <FontAwesomeIcon icon={faChevronDown} size="2x" />
         </button>
       )}
       <div className={styles.content}>{children}</div>

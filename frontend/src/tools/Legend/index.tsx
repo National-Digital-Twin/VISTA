@@ -1,4 +1,3 @@
-import { faList } from "@fortawesome/free-solid-svg-icons";
 import { useBoolean, useOnClickOutside } from "usehooks-ts";
 import { useRef } from "react";
 import LegendContent from "./Content";
@@ -21,7 +20,7 @@ export function SideButtons() {
       <ToolbarButton
         title="Toggle Legend"
         onClick={toggleLegend}
-        icon={faList}
+        svgSrc="icons/Legend.svg"
       />
       {showLegend && (
         <div className="absolute right-12 bottom-0 menu">
@@ -32,4 +31,4 @@ export function SideButtons() {
   );
 }
 
-export const SIDE_BUTTON_ORDER = 1; // Adjust this value as needed
+export const SIDE_BUTTON_ORDER = 3;

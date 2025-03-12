@@ -1,6 +1,5 @@
 import { useCallback } from "react";
-import { faPlus, faMinus } from "@fortawesome/free-solid-svg-icons";
-import { useMap } from "react-map-gl";
+import { useMap } from "react-map-gl/maplibre";
 
 import ToolbarButton from "@/components/Map/SideButtons/ToolbarButton";
 
@@ -25,10 +24,21 @@ export function SideButtons() {
 
   return (
     <>
-      <ToolbarButton title="Zoom in" onClick={handleZoomIn} icon={faPlus} />
-      <ToolbarButton title="Zoom out" onClick={handleZoomOut} icon={faMinus} />
+      <ToolbarButton
+        title="Zoom in"
+        onClick={handleZoomIn}
+        svgSrc="icons/Zoom in.svg"
+        hasNoMarginBottom
+      />
+      <div style={{ marginTop: "0.1rem" }}>
+        <ToolbarButton
+          title="Zoom out"
+          onClick={handleZoomOut}
+          svgSrc="icons/Zoom out.svg"
+        />
+      </div>
     </>
   );
 }
 
-export const SIDE_BUTTON_ORDER = -1;
+export const SIDE_BUTTON_ORDER = 1;

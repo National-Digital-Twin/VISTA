@@ -1,8 +1,10 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useMemo, useCallback } from "react";
-import { faEye, faMapMarker } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { icon, IconName } from "@fortawesome/fontawesome-svg-core";
+import ListItem from "@mui/material/ListItem";
+import Box from "@mui/material/Box";
+import ListItemText from "@mui/material/ListItemText";
+import { Grid2 } from "@mui/material";
 import { capitalize } from "@/utils/capitalize";
 
 import type { Asset } from "@/models";
@@ -15,12 +17,15 @@ import useSharedStore from "@/hooks/useSharedStore";
 import ComplexLayerControl from "@/components/ComplexLayerControl";
 import useFindIcon from "@/hooks/useFindIcon";
 import type { LayerControlProps } from "@/tools/Tool";
+import MaterialUISwitch from "@/components/Switch";
 
 function formatAltText(altText: string) {
   return altText.replace(/([A-Z])/g, " $1").trim();
 }
 
-export default function AssetLayerControl({ searchQuery }: LayerControlProps) {
+export default function AssetLayerControl({
+  searchQuery,
+}: Readonly<LayerControlProps>) {
   const { isError: isErrorAssessments, data: assessmentsData } =
     useSuspenseQuery({
       queryKey: ["assessments"],
@@ -45,8 +50,8 @@ export default function AssetLayerControl({ searchQuery }: LayerControlProps) {
 }
 
 interface AssessmentAssetLayerControlsProps {
-  assessment: string;
-  searchQuery: string;
+  readonly assessment: string;
+  readonly searchQuery: string;
 }
 
 function AssessmentAssetLayerControls({
@@ -93,27 +98,29 @@ function AssessmentAssetLayerControls({
   }
 
   return (
-    <>
+    <Grid2 size={12} container>
       {sortedCategories.map((category) => (
-        <AssessmentCategoryLayerControls
-          key={category.category}
-          category={category.category}
-          assets={category.assets}
-        />
+        <Grid2 size={12} key={category.category}>
+          <AssessmentCategoryLayerControls
+            key={category.category}
+            category={category.category}
+            assets={category.assets}
+          />
+        </Grid2>
       ))}
-    </>
+    </Grid2>
   );
 }
 
 interface AssessmentCategoryLayerControlsProps {
-  category: string;
-  assets: Asset[];
+  readonly category: string;
+  readonly assets: Asset[];
 }
 
 function AssessmentCategoryLayerControls({
   category,
   assets,
-}: AssessmentCategoryLayerControlsProps) {
+}: Readonly<AssessmentCategoryLayerControlsProps>) {
   const selectedAssetTypes = useSharedStore(
     (state) => state.selectedAssetTypes,
   );
@@ -157,23 +164,6 @@ function AssessmentCategoryLayerControls({
     return categoryMap;
   }, [assets]);
 
-  const handleSelectAll = useCallback(
-    (typeURIs: string[]) => {
-      if (typeURIs.some((typeURI) => !selectedAssetTypes[typeURI])) {
-        for (const typeURI of typeURIs) {
-          if (!selectedAssetTypes[typeURI]) {
-            selectAssetType(typeURI);
-          }
-        }
-      } else {
-        for (const typeURI of typeURIs) {
-          deselectAssetType(typeURI);
-        }
-      }
-    },
-    [selectedAssetTypes, deselectAssetType, selectAssetType],
-  );
-
   const handleTypeClick = useCallback(
     (typeURI: string) => {
       if (selectedAssetTypes[typeURI]) {
@@ -211,26 +201,23 @@ function AssessmentCategoryLayerControls({
   return (
     <ComplexLayerControl
       icon={
-        hasAvailableFontAwesomeIcon ? ["fas", fontAwesomeIconName] : faMapMarker
+        hasAvailableFontAwesomeIcon ? ["fas", fontAwesomeIconName] : undefined
       }
       title={category}
     >
-      <div className="menu">
-        {Object.entries(assetsBySecondaryCategory).map(([category, types]) => (
-          <SecondaryCategoryControls
-            key={category}
-            types={types}
-            onClickType={handleTypeClick}
-            onClickAll={handleSelectAll}
-          />
-        ))}
-      </div>
+      {Object.entries(assetsBySecondaryCategory).map(([category, types]) => (
+        <SecondaryCategoryControls
+          key={category}
+          types={types}
+          onClickType={handleTypeClick}
+        />
+      ))}
     </ComplexLayerControl>
   );
 }
 
 interface SecondaryCategoryControlsProps {
-  types: {
+  readonly types: {
     [category: string]: {
       count: number;
       maxCriticality: number;
@@ -239,37 +226,19 @@ interface SecondaryCategoryControlsProps {
     };
   };
 
-  onClickType: (typeURI: string) => void;
-  onClickAll: (typeURIs: string[]) => void;
+  readonly onClickType: (typeURI: string) => void;
 }
 
 function SecondaryCategoryControls({
   types,
   onClickType,
-  onClickAll,
 }: SecondaryCategoryControlsProps) {
   const selectedAssetTypes = useSharedStore(
     (state) => state.selectedAssetTypes,
   );
 
-  const allSelected = Object.keys(types).every(
-    (type) => selectedAssetTypes[type],
-  );
-
-  const selectAll = useCallback(() => {
-    onClickAll(Object.keys(types));
-  }, [onClickAll, types]);
-
   return (
     <div>
-      <div
-        className="menu-item flex items-center"
-        data-selected={allSelected}
-        onClick={selectAll}
-      >
-        <span className="text-lg font-bold">Select All</span>
-        {allSelected && <FontAwesomeIcon icon={faEye} className="ml-auto" />}
-      </div>
       <ul className="flex flex-col">
         {Object.values(types)
           .sort((a, b) => {
@@ -295,15 +264,15 @@ function SecondaryCategoryControls({
 }
 
 interface AssetTypeControlsProps {
-  asset: {
+  readonly asset: {
     count: number;
     maxCriticality: number;
     type: string;
     styles: FoundIcon;
   };
 
-  isSelected: boolean;
-  onClickType: (assetType: string) => void;
+  readonly isSelected: boolean;
+  readonly onClickType: (assetType: string) => void;
 }
 
 function AssetTypeControls({
@@ -316,18 +285,28 @@ function AssetTypeControls({
   }, [onClickType, asset]);
 
   return (
-    <li
+    <ListItem
       key={asset.type}
-      className="menu-item"
-      data-selected={isSelected}
       onClick={onClick}
+      sx={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        borderBottom: "1px solid #e0e0e0",
+        padding: 0,
+      }}
     >
-      <div className="flex items-center justify-between">
-        <span>
-          {capitalize(formatAltText(asset.styles.alt))} ({asset.count})
-        </span>
-        <span className="text-sm">Criticality: {asset.maxCriticality}</span>
-      </div>
-    </li>
+      <Box>
+        <ListItemText
+          primary={capitalize(formatAltText(asset.styles.alt))}
+          secondary={`(${asset.count})`}
+        />
+      </Box>
+      <MaterialUISwitch
+        checked={isSelected}
+        onChange={onClick}
+        inputProps={{ "aria-label": "controlled" }}
+      />
+    </ListItem>
   );
 }

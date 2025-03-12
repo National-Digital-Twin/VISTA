@@ -1,16 +1,17 @@
-import { faCloudSun } from "@fortawesome/free-solid-svg-icons";
 import type { LayerControlProps } from "../Tool";
 import SimpleLayerControl from "@/components/SimpleLayerControl";
+import ComplexLayerControl from "@/components/ComplexLayerControl";
 
 export default function WeatherLayerControl({
   searchQuery,
-}: LayerControlProps) {
+}: Readonly<LayerControlProps>) {
   return (
-    <SimpleLayerControl
-      layerName="weather"
-      icon={faCloudSun}
-      title="Live weather"
-      searchQuery={searchQuery}
-    />
+    <ComplexLayerControl title="Weather">
+      <SimpleLayerControl
+        layerName="weather"
+        title="Live weather"
+        searchQuery={searchQuery}
+      />
+    </ComplexLayerControl>
   );
 }

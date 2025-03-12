@@ -1,59 +1,42 @@
 services:
-  graph-smart-cache:
+  fuseki-server:
+    container_name: paralog-fuseki-server
     environment:
-      JAVA_OPTIONS: "-XX:MaxRAMPercentage=70.0"
+      JAVA_OPTIONS: "-XX:MaxRAMPercentage=40.0"
     command:
       - --ping
       - --config
-      - /fuseki/config/config.ttl
-    image: 098669589541.dkr.ecr.eu-west-2.amazonaws.com/smart-cache-graph:0.60.1
+      - /fuseki/config.ttl
+    image: atomgraph/fuseki:latest
     volumes:
-      - ./config:/fuseki/config:ro
-      - ./data:/fuseki/data:ro
-
-    ports:
-      - 3030:3030
-
-  ontology-api:
-    image: 098669589541.dkr.ecr.eu-west-2.amazonaws.com/telicent-smart-cache-ontology:0.0.5-rc1
-
-    ports:
-      - 5007:5007
-    environment:
-      JENA_URL: graph-smart-cache
-      JENA_PORT: 3030
-      ONTO_PORT: 5007
-      ONTOLOGY_SERVER_MODE: file
-    restart: unless-stopped
-    healthcheck:
-      test: curl -X GET "http://localhost:5007/" || exit 1
-      interval: 30s
-      timeout: 10s
-      retries: 5
-    user: root
+      - ${PWD}/config/config.ttl:/fuseki/config.ttl:ro
+      - ${PWD}/data:/fuseki/databases:ro
+    network_mode: host
 
   api:
-    image: 098669589541.dkr.ecr.eu-west-2.amazonaws.com/telicent-smart-cache-paralog-api:1.1.7
-
+    container_name: smart-cache-paralog-api
+    image: smart-cache-paralog-api
     ports:
       - 4001:4001
     environment:
-      JENA_URL: graph-smart-cache
+      JENA_URL: localhost
       JENA_PORT: 3030
       PORT: 4001
       JENA_DATASET: knowledge
-    restart: unless-stopped
-    healthcheck:
-      test: curl -X GET "http://localhost:4001/" || exit 1
-      interval: 30s
-      timeout: 10s
-      retries: 5
-    user: root
+    network_mode: host
 
   transparent-proxy:
-    image: paralog-transparent-proxy:latest
+    container_name: paralog-transparent-proxy
+    image: paralog-transparent-proxy
     ports:
       - 5013:80
-    restart: unless-stopped
+    env_file:
+      - "../.env"
+
+  paralog-python-api:
+    container_name: paralog-python-api
+    image: paralog-python-api
+    ports:
+      - 8000:8000
     env_file:
       - "../.env"

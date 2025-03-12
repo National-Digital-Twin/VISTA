@@ -11,11 +11,8 @@ function escapeCSVCell(value: string) {
 }
 
 function formatCSVCell(value: string) {
-  if (value.match(/[",\\]/)) {
-    return escapeCSVCell(value);
-  } else {
-    return value;
-  }
+  const regex = /[",\\]/;
+  return regex.exec(value) ? escapeCSVCell(value) : value;
 }
 
 function formatCSVRow(row: string[]) {

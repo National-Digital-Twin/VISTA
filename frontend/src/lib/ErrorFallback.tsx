@@ -1,6 +1,6 @@
 export interface ErrorFallbackProps {
   /** Error object */
-  error: Error;
+  readonly error: Error;
 }
 
 export default function ErrorFallback({ error }: ErrorFallbackProps) {

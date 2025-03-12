@@ -2,15 +2,15 @@ import styles from "./chart.module.css";
 
 export interface SummaryInfoProps {
   /** Name we are summarising */
-  name: string;
+  readonly name: string;
   /** Parameter which is being plotted */
-  parameter: string;
+  readonly parameter: string;
   /** Internal name of the parameter */
-  param: string;
+  readonly param: string;
   /** Latest measured value */
-  latestValue: number;
+  readonly latestValue: number;
   /** RLOI ID */
-  RLOIid: number;
+  readonly RLOIid: number;
 }
 
 export default function SummaryInfo({
@@ -32,7 +32,7 @@ export default function SummaryInfo({
         Latest {param}: <strong>{latestValue}m</strong>
       </div>
       <div className={styles.summaryInfoItem}>
-        {/* TODO: Actually fetch RLOI ID */}
+        {/* Actually fetch RLOI ID */}
         RLOI ID: <strong>{RLOIid}</strong>
       </div>
     </div>

@@ -2,13 +2,13 @@ import ChartBody from "@/components/DetailsPanel/ChartBody";
 
 export interface WeatherChartBodyProps {
   /** Data being rendered */
-  data: Array<{ time: string; screenTemperature: number }>;
+  readonly data: Array<{ time: string; screenTemperature: number }>;
   /** Item which is being plotted */
-  param: string;
+  readonly param: string;
   /** Unit of the parameter being plotted */
-  unit: string;
+  readonly unit: string;
   /** Additional classes to add to the top-level element */
-  className?: string;
+  readonly className?: string;
 }
 
 export default function WeatherChartBody({

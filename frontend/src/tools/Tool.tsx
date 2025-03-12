@@ -2,7 +2,7 @@ import { IconProp } from "@fortawesome/fontawesome-svg-core";
 
 export interface LayerControlProps {
   /** Current search query */
-  searchQuery: string;
+  readonly searchQuery: string;
 }
 
 /** Independent component of the Paralog map */

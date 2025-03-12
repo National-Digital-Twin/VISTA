@@ -48,9 +48,9 @@ const subtractDays = (date, numberOfDays) => {
 };
 
 interface HydrologyStationMeasureDataProps {
-  name: string;
-  measure: HydrologyMeasure;
-  RLOIid: number;
+  readonly name: string;
+  readonly measure: HydrologyMeasure;
+  readonly RLOIid: number;
 }
 
 function HydrologyStationMeasureData({

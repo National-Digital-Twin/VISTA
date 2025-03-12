@@ -39,10 +39,10 @@ export default defineConfig({
         secure: false,
       },
       // Coefficent python
-      "/coefficient-python": {
+      "/ndtp-python": {
         target: "http://localhost:8000",
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/coefficient-python/, ""),
+        rewrite: (path) => path.replace(/^\/ndtp-python/, ""),
         secure: false,
       },
     },

@@ -1,9 +1,8 @@
 import { createParalogEndpoint, fetchOptions } from "./utils";
-import fetchWithAuth from "@/auth/fetchAuth";
 
 export const fetchTypeSuperclass = async (typeUri: string) => {
   const queryParams = new URLSearchParams({ classUri: typeUri }).toString();
-  const response = await fetchWithAuth(
+  const response = await fetch(
     createParalogEndpoint(`ontology/class?${queryParams}`),
     fetchOptions,
   );
@@ -15,7 +14,7 @@ export const fetchTypeSuperclass = async (typeUri: string) => {
 
 export const fetchResidentialInformation = async (personUri: string) => {
   const queryParams = new URLSearchParams({ personUri }).toString();
-  const response = await fetchWithAuth(
+  const response = await fetch(
     createParalogEndpoint(`person/residences?${queryParams}`),
     fetchOptions,
   );
@@ -31,7 +30,7 @@ export const fetchFloodTimeline = async (floodArea: string) => {
   const queryParam = new URLSearchParams({
     parent_uri: `http://environment.data.gov.uk/flood-monitoring/id/floodAreas/${floodArea}`,
   }).toString();
-  const response = await fetchWithAuth(
+  const response = await fetch(
     createParalogEndpoint(`states?${queryParam}`),
     fetchOptions,
   );

@@ -1,7 +1,5 @@
 # paralog-python-api
 
-[![CI](https://github.com/coefficientsystems/telicent-paralog/actions/workflows/main.yaml/badge.svg)](https://github.com/coefficientsystems/telicent-paralog/actions/workflows/main.yaml)
-
 Provides Data to the paralog app.
 
 ## Project cheatsheet
@@ -31,3 +29,12 @@ Or [docs/quickstart.md](docs/quickstart.md) for a quickstart guide if you've don
 ## Release Process
 
 See [docs/release_process.md](docs/release_process.md) for the release process.
+
+## Environment Variable
+
+The following are a list of envrironment variables required by the API
+
+- ENVIRONMENT
+- DEBUG
+- DJANGO_SECRET_KEY
+- ALLOWED_HOSTS

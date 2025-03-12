@@ -1,6 +1,6 @@
 export interface ErrorHandlerProps {
   /** Message to be displayed */
-  message: string;
+  readonly message: string;
 }
 
 export default function ErrorHandler({ message }: ErrorHandlerProps) {

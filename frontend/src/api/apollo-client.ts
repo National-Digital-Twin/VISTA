@@ -1,4 +1,4 @@
-import { ApolloClient, InMemoryCache, HttpLink, concat } from "@apollo/client";
+import { ApolloClient, InMemoryCache, HttpLink } from "@apollo/client";
 import roadRoute from "./graphql-queries/roadRoute.graphql";
 import SandbagPlacement from "./graphql-queries/sandbagPlacement.graphql";
 import SandbagPlacements from "./graphql-queries/sandbagPlacements.graphql";
@@ -9,15 +9,13 @@ import getLowBridges from "./graphql-queries/lowBridges.graphql";
 import getVulnerablePeople from "./graphql-queries/vulnerablePeople.graphql";
 
 import config from "@/config/app-config";
-import apolloMiddleware from "@/auth/apolloMiddleware";
 
-const PARALOG_PYTHON_BASE_URL = config.services.coefficientPython;
+const PARALOG_PYTHON_BASE_URL = config.services.ndtpPython;
 
 const httpLink = new HttpLink({ uri: PARALOG_PYTHON_BASE_URL });
-const authedLink = concat(apolloMiddleware, httpLink);
 
 const client = new ApolloClient({
-  link: authedLink,
+  link: httpLink,
   cache: new InMemoryCache(),
 });
 

@@ -1,0 +1,5 @@
+resources:
+  - istio/deny-by-default.yaml
+  - istio/peer-authentication.yaml
+  - istio/request-authentication.yaml
+  - namespace.yaml

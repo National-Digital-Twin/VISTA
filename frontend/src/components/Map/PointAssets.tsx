@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useCallback } from "react";
-import { Layer, Marker, Source, useMap } from "react-map-gl";
-import type { MapboxGeoJSONFeature } from "react-map-gl";
+import { Layer, Marker, Source, useMap } from "react-map-gl/maplibre";
 import type { Feature } from "geojson";
 import classNames from "classnames";
 
@@ -23,13 +22,16 @@ import TRAIN_STATIONS from "@/data/train-stations.json";
 
 export interface PointAssetsProps {
   /** List of all point assets */
-  assets?: Asset[];
+  readonly assets?: Asset[];
   /** List of dependencies between any point assets */
-  dependencies?: Dependency[];
+  readonly dependencies?: Dependency[];
   /** Those elements currently selected */
-  selectedElements?: Element[];
+  readonly selectedElements?: Element[];
   /** Callback when an element is clicked */
-  onElementClick?: (isMultiSelect: boolean, elements: Element[]) => void;
+  readonly onElementClick?: (
+    isMultiSelect: boolean,
+    elements: Element[],
+  ) => void;
 }
 
 export default function PointAssets({
@@ -107,7 +109,7 @@ export default function PointAssets({
     onElementClick(isMultiSelect, elements);
   };
 
-  const isSelected = (feature: MapboxGeoJSONFeature) => {
+  const isSelected = (feature: Feature) => {
     const isSelected = selectedElements.some(
       (selectedElement) => selectedElement.uri === feature.properties.uri,
     );
@@ -136,14 +138,13 @@ export default function PointAssets({
 
 // The "asset click" marker event is a type with parameters spanning a few libraries;
 // it would be good to make it precise but for now we're going with an imprecise type.
-type AssetClickEvent = any;
 
 interface MarkerWithTooltipProps {
-  feature: Feature;
-  isSelected: boolean;
-  onAssetClick: (event: AssetClickEvent, clickedFeature: Feature) => void;
-  assets: Asset[];
-  dependencies: Dependency[];
+  readonly feature: Feature;
+  readonly isSelected: boolean;
+  readonly onAssetClick: (event: Event, clickedFeature: Feature) => void;
+  readonly assets: Asset[];
+  readonly dependencies: Dependency[];
 }
 
 function MarkerWithTooltip({
@@ -168,7 +169,7 @@ function MarkerWithTooltip({
   const [longitude, latitude] = (feature.geometry as any).coordinates;
 
   const onClick = useCallback(
-    (event: AssetClickEvent) => {
+    (event: Event) => {
       onAssetClick(event, feature);
 
       // Check if the clicked asset is a train station
@@ -248,11 +249,11 @@ function MarkerWithTooltip({
 }
 
 interface AssetIconsProps {
-  features: Feature[];
-  isSelected: (feature: Feature) => boolean;
-  onAssetClick: (event: AssetClickEvent, clickedFeature: Feature) => void;
-  assets: Asset[];
-  dependencies: Dependency[];
+  readonly features: Feature[];
+  readonly isSelected: (feature: Feature) => boolean;
+  readonly onAssetClick: (event: Event, clickedFeature: Feature) => void;
+  readonly assets: Asset[];
+  readonly dependencies: Dependency[];
 }
 
 function AssetIcons({

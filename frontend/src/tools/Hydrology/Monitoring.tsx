@@ -38,7 +38,7 @@ export default function Monitoring() {
   }
 
   return (
-    <ToolbarDropdown icon={faSignal} title="Monitoring" large>
+    <ToolbarDropdown icon={faSignal} title="Monitoring">
       {STATION_MENU_ITEMS.map((stationType) => (
         <MonitoringStationTypeButton
           key={stationType.type}
@@ -52,9 +52,9 @@ export default function Monitoring() {
 }
 
 interface MonitoringStationTypeButtonProps {
-  type: StationType;
-  icon: IconDefinition;
-  label: string;
+  readonly type: StationType;
+  readonly icon: IconDefinition;
+  readonly label: string;
 }
 
 function MonitoringStationTypeButton({

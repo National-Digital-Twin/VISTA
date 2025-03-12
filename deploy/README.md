@@ -81,7 +81,7 @@ connectivity, and all the services needed for Paralog to run. Namely:
 |---|-------------------------|------------------|----------------------|--------|----------------------------------------------------------------------------------------|
 | 1 | frontend                | 80:80            | /                    |  No    | Primary React application with the Paralog frontend                                    |
 | 2 | smart-cache-paralog-api | 4001:4001        | /paralog/            |  Yes   | Paralog API to Telicent Core knowledge graph                                           |
-| 3 | graph-smart-cache       | 3030:3030        | /ontology/ontology   |  No    | Telicent Core linked data core service                                                 | 
+| 3 | graph-smart-cache       | 3030:3030        | /ontology/ontology   |  No    | Telicent Core linked data core service                                                 |
 | 4 | ontology-api            | 5007:80          | /ontology-service/   |  Yes   | Paralog API to Telicent Core ontology graph                                            |
 | 5 | paralog-python-api      | 8000:8000        | /coefficient-python/ |  Yes   | Coefficient backend services outwith the security perimeter                            |
 | 6 | transparent-proxy       | 5013:80          | /transparent-proxy/  |  Yes   | Coefficient proxy service for third party integrations avoiding cross-origin requests  |
