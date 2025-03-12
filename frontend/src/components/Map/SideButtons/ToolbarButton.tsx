@@ -10,7 +10,7 @@ export interface ToolbarButtonProps {
   readonly title: string;
   readonly width?: number;
   readonly height?: number;
-
+  readonly hasNoMarginBottom?: boolean;
   /** The FontAwesome icon to be shown (preferred) */
   readonly icon?: IconProp;
   /** The FontAwesome icon size to be shown (preferred) */
@@ -26,8 +26,9 @@ export interface ToolbarButtonProps {
 
 export default function ToolbarButton({
   title,
-  width = 60,
-  height = width,
+  width,
+  height,
+  hasNoMarginBottom,
   icon,
   svgSrc,
   onClick,
@@ -46,8 +47,11 @@ export default function ToolbarButton({
           boxShadow: "0px 4px 8px 0px rgba(0,0,0,0.2)",
           fontSize: "2.0rem",
           padding: 1,
-          width: width,
-          height: height,
+          marginBottom: hasNoMarginBottom ? 0 : 1,
+          width: width ?? "6vh",
+          height: height ?? "6vh",
+          maxHeight: 75,
+          maxWidth: 75,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
