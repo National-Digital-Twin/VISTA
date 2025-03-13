@@ -3,16 +3,9 @@ resources:
 
 namespace: paralog
 patches:
-  - path: patches/gateway.yaml
-    target:
-      kind: Gateway
   - path: patches/allow-ingress.yaml
     target:
       kind: AuthorizationPolicy
-  - path: patches/virtualService.yaml
-    target:
-      kind: VirtualService
-      name: paralog-transparent-proxy
   - path: patches/service-account.yaml
     target:
       kind: ServiceAccount

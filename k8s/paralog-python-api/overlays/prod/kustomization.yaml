@@ -3,6 +3,7 @@ resources:
 
 namespace: paralog
 patches:
+
   - path: patches/allow-ingress.yaml
     target:
       kind: AuthorizationPolicy
@@ -13,12 +14,12 @@ patches:
 
 labels:
   - pairs:
-      env: demo
+      env: prod
 
 images:
   - name: paralog-python-api-image
-    newName: 503561419905.dkr.ecr.eu-west-2.amazonaws.com/paralog/demo-paralog-python-api
-    newTag: "1739979400"
+    newName: 537124944113.dkr.ecr.eu-west-2.amazonaws.com/paralog/python-api
+    newTag: "to.be.replaced"
 
 configMapGenerator:
   - name: paralog-python-api-configs

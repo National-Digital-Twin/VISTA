@@ -4,6 +4,12 @@ resources:
 namespace: paralog
 
 patches:
+  - path: patches/virtualService.yaml
+    target:
+      kind: VirtualService
+  - path: patches/gateway.yaml
+    target:
+     kind: Gateway
   - path: patches/request-authentication.yaml
     target:
       kind: RequestAuthentication

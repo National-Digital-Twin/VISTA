@@ -5,3 +5,7 @@
 - op: replace
   path: /spec/servers/1/hosts/0
   value: paralog.demo.ndtp.co.uk
+
+- op: replace
+  path: /spec/http/0/match/0/uri/prefix
+  value: /coefficient-python/

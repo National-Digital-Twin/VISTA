@@ -9,18 +9,18 @@ patches:
   - path: patches/service-account.yaml
     target:
       kind: ServiceAccount
-      name: paralog-python-api-sa
+      name: smart-cache-paralog-api-sa
 
 labels:
   - pairs:
-      env: demo
+      env: prod
 
 images:
-  - name: paralog-python-api-image
-    newName: 503561419905.dkr.ecr.eu-west-2.amazonaws.com/paralog/demo-paralog-python-api
-    newTag: "1739979400"
+  - name: smart-cache-paralog-api-image
+    newName: 537124944113.dkr.ecr.eu-west-2.amazonaws.com/paralog/smart-cache-paralog-api
+    newTag: "to.be.replaced"
 
 configMapGenerator:
-  - name: paralog-python-api-configs
+  - name: smart-cache-paralog-api-configs
     envs:
       - params.env

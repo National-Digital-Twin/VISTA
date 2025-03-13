@@ -8,12 +8,10 @@ patches:
     target:
       kind: ServiceAccount
       name: paralog-frontend-sa
-
 labels:
   - pairs:
-      env: demo
-
+      env: prod
 images:
   - name: paralog-frontend-image
-    newName: 503561419905.dkr.ecr.eu-west-2.amazonaws.com/paralog/demo-frontend
+    newName: 537124944113.dkr.ecr.eu-west-2.amazonaws.com/paralog/demo-frontend
     newTag: "remove-auth-2"
