@@ -109,6 +109,10 @@ server {
 
     # Met office weather API
     location /weather/ {
+        proxy_buffer_size 128k;
+        proxy_buffers 4 256k;
+        proxy_busy_buffers_size 256k;
+
         proxy_pass https://data.hub.api.metoffice.gov.uk/;
 
         proxy_set_header apiKey "Basic $MET_OFFICE_GLOBAL_SPOT_API_KEY"; # pragma: allowlist-secret
