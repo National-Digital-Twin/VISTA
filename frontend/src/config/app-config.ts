@@ -5,7 +5,7 @@ const config = {
     url: import.meta.env.VITE_PARALOG_API_URL || "/paralog",
   },
   services: {
-    ontology: import.meta.env.VITE_ONTOLOGY_SERVICE_URL || "/ontology",
+    ontology: import.meta.env.VITE_ONTOLOGY_SERVICE_URL || "/transparent-proxy",
     ndtpPython: "/ndtp-python/api/graphql/",
   },
   configErrors: [] as string[],
