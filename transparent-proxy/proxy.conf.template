@@ -107,6 +107,13 @@ server {
         proxy_set_header Authorization "Basic $REALTIME_TRAINS_API_KEY";
     }
 
+    # Met office weather API
+    location /weather/ {
+        proxy_pass https://data.hub.api.metoffice.gov.uk/;
+
+        proxy_set_header apiKey "Basic $MET_OFFICE_GLOBAL_SPOT_API_KEY"; # pragma: allowlist-secret
+    }
+
     ## END UPSTREAM DEFINITIONS
 
     if ($upstream_http_content_type ~* "(text/html|application/xhtml+xml|text/javascript|application/javascript)") {

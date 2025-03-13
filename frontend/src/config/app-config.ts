@@ -8,6 +8,9 @@ const config = {
     ontology: import.meta.env.VITE_ONTOLOGY_SERVICE_URL || "/transparent-proxy",
     ndtpPython: "/ndtp-python/api/graphql/",
   },
+  weather: {
+    url: import.meta.env.VITE_MET_OFFICE_GLOBAL_SPOT_API_KEY || "/transparent-proxy/weather"
+  },
   configErrors: [] as string[],
 };
 
