@@ -10,7 +10,7 @@ import {
   IconButton,
   Tooltip,
 } from "@mui/material";
-import RoomIcon from "@mui/icons-material/Room"; 
+import RoomIcon from "@mui/icons-material/Room";
 import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import { fetchAssetInfo } from "@/api/combined";
 import { getURIFragment, isAsset, isDependency } from "@/utils";
