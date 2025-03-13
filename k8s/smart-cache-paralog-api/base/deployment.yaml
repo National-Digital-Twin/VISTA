@@ -13,11 +13,6 @@ spec:
   template:
     metadata:
       annotations: {}
-#        traffic.sidecar.istio.io/excludeOutboundPorts: "8200"
-#        vault.hashicorp.com/agent-init-first: "true"
-#        vault.hashicorp.com/agent-inject: "true"
-#        vault.hashicorp.com/agent-cache-enable: "false"
-#        vault.hashicorp.com/role: "smart-cache-paralog-api-role"
       labels:
         io.kompose.service: smart-cache-paralog-api
     spec:
@@ -29,9 +24,6 @@ spec:
           envFrom:
             - configMapRef:
                 name: smart-cache-paralog-api-configs
-          #          envFrom:
-          #           - secretRef:
-          #              name: smart-cache-paralog-api-static-secret
           livenessProbe:
             httpGet:
               port: 4001
@@ -52,9 +44,9 @@ spec:
 
           resources:
             requests:
-              cpu: "1"      # Minimum CPU your container is guaranteed.
-              memory: "2Gi"  # Minimum Memory your container is guaranteed.
+              cpu: "1" # Minimum CPU your container is guaranteed.
+              memory: "2Gi" # Minimum Memory your container is guaranteed.
             limits:
-              cpu: "1"     # Maximum CPU your container can use.
+              cpu: "1" # Maximum CPU your container can use.
               memory: "2Gi" # Maximum Memory your container can use.
       restartPolicy: Always
