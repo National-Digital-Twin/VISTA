@@ -115,7 +115,7 @@ server {
 
         proxy_pass https://data.hub.api.metoffice.gov.uk/;
 
-        proxy_set_header apiKey "Basic $MET_OFFICE_GLOBAL_SPOT_API_KEY"; # pragma: allowlist-secret
+        proxy_set_header apiKey $MET_OFFICE_GLOBAL_SPOT_API_KEY; # pragma: allowlist-secret
     }
 
     ## END UPSTREAM DEFINITIONS
