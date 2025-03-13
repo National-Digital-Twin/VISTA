@@ -9,7 +9,7 @@ const config = {
     ndtpPython: "/ndtp-python/api/graphql/",
   },
   weather: {
-    url: import.meta.env.VITE_MET_OFFICE_GLOBAL_SPOT_API_KEY || "/transparent-proxy/weather"
+    url: import.meta.env.WEATHER_API_URL || "/transparent-proxy/weather"
   },
   configErrors: [] as string[],
 };
