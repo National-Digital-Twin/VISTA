@@ -10,9 +10,8 @@ import {
   IconButton,
   Tooltip,
 } from "@mui/material";
-import RoomIcon from "@mui/icons-material/Room"; // Google Maps Pin Icon
-import ArrowRightIcon from "@mui/icons-material/ArrowRight"; // Import ArrowRightIcon
-import TypeIcon from "./TypeIcon";
+import RoomIcon from "@mui/icons-material/Room"; 
+import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import { fetchAssetInfo } from "@/api/combined";
 import { getURIFragment, isAsset, isDependency } from "@/utils";
 import { isEmpty } from "@/utils/isEmpty";
@@ -75,65 +74,75 @@ export default function ElementDetails({
     );
   }
 
+  // Extract type string after #
+  const extractedType = details.type?.split("#").pop() || "Unknown";
+
   return (
-    <Card sx={{ borderRadius: 2, boxShadow: 3, mb: 2, p: 1 }}>
+    <Card sx={{ mb: 1, p: 0.5 }} elevation={0}>
       <CardContent>
-        <Box display="flex" alignItems="center" justifyContent="space-between">
-          {/* Asset Title */}
-          <Box>
-            <Typography variant="h6">
+        <Box
+          display="flex"
+          justifyContent="space-between"
+          alignItems="start"
+          gap={2}
+        >
+          {/* Left Column - Asset Title & Type (Left Aligned) */}
+          <Box sx={{ maxWidth: 150 }}>
+            <Typography variant="subtitle1" sx={{ fontWeight: 500 }}>
               {details.title || "Asset Details"}
             </Typography>
-            <Typography variant="caption" color="textSecondary">
-              {element?.uri || "N/A"}
+            <Typography variant="subtitle2">
+              {details.id || "Asset Details"}
             </Typography>
+
+            {/* Grey Box for Type */}
+            <Box
+              sx={{
+                backgroundColor: "#f0f0f0",
+                padding: "4px 8px",
+                borderRadius: "4px",
+                display: "inline-block",
+                fontWeight: 500,
+                fontSize: "0.875rem",
+                marginTop: "4px",
+              }}
+            >
+              {extractedType}
+            </Box>
           </Box>
 
-          {/* Asset Type */}
-          {details?.type && (
-            <Box display="flex" alignItems="center" ml={1}>
-              <TypeIcon size="sm" type={details.type} />
-            </Box>
-          )}
-        </Box>
-
-        {/* View Connected Assets - Expands Panel */}
-        <Box
-          display="flex"
-          alignItems="center"
-          justifyContent="space-between"
-          mt={1}
-          onClick={() => {
-            showConnectedAssets();
-          }}
-          sx={{ cursor: "pointer" }}
-        >
-          <Typography variant="body2" sx={{ fontWeight: 500 }}>
-            View connected assets
-          </Typography>
-          <ArrowRightIcon fontSize="small" sx={{ ml: 1 }} />
-        </Box>
-
-        {/* Google Street View Section */}
-        <Box
-          display="flex"
-          alignItems="center"
-          justifyContent="space-between"
-          mt={1}
-        >
-          <Typography variant="body2" sx={{ fontWeight: 500 }}>
-            Google Street View
-          </Typography>
-          <Tooltip title="Open Google Street View">
-            <IconButton
-              component="a"
-              href={`https://www.google.com/maps?q=${element?.uri}`}
-              target="_blank"
-              rel="noopener noreferrer"
+          {/* Right Column - View Connected Assets & Google Street View */}
+          <Box display="flex" flexDirection="column" alignItems="flex-end">
+            {/* View Connected Assets */}
+            <Box
+              display="flex"
+              alignItems="center"
+              sx={{ cursor: "pointer", mb: 1, whiteSpace: "nowrap" }}
+              onClick={() => showConnectedAssets()}
             >
-              <RoomIcon sx={{ color: "#4285F4" }} />
-            </IconButton>
-          </Tooltip>
+              <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                View connected assets
+              </Typography>
+              <ArrowRightIcon fontSize="small" sx={{ ml: 1 }} />
+            </Box>
+
+            {/* Google Street View */}
+            <Box display="flex" alignItems="center">
+              <Typography variant="body2" sx={{ fontWeight: 500, mr: 1 }}>
+                Google Street View
+              </Typography>
+              <Tooltip title="Open Google Street View">
+                <IconButton
+                  component="a"
+                  href={`https://www.google.com/maps?q=${element?.uri}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <RoomIcon />
+                </IconButton>
+              </Tooltip>
+            </Box>
+          </Box>
         </Box>
       </CardContent>
     </Card>
