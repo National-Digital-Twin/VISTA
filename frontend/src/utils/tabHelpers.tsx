@@ -20,6 +20,7 @@ export function TabPanel(props: Readonly<TabPanelProps>) {
     <div
       style={{
         maxHeight: "100%",
+        height: "100%",
         overflow: "auto",
       }}
       role="tabpanel"

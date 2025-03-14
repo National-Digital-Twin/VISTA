@@ -1,5 +1,7 @@
 import { useRef } from "react";
 import { useBoolean, useDarkMode, useOnClickOutside } from "usehooks-ts";
+import { Box, Switch, Typography } from "@mui/material";
+import styles from "./style.module.css";
 import ToolbarButton from "@/components/Map/SideButtons/ToolbarButton";
 import {
   useShowPointerCoords,
@@ -21,7 +23,7 @@ interface ButtonControlMenuItem {
 type ControlMenuItem = ToggleSwitchControlMenuItem | ButtonControlMenuItem;
 
 export default function MapSettingsButton() {
-  const ref = useRef<HTMLDivElement>();
+  const ref = useRef<HTMLDivElement>(null);
 
   const {
     value: showSettingsMenu,
@@ -51,7 +53,7 @@ export default function MapSettingsButton() {
       onItemClick: togglePointerCoords,
     },
     {
-      name: showCpsIconsForAssetTypes ? "Hide CPS icons" : "Show CPS icons",
+      name: "Show CPS icons",
       selected: showCpsIconsForAssetTypes,
       type: "toggleSwitch",
       onItemClick: toggleShowCpsIconsForAssetTypes,
@@ -59,69 +61,48 @@ export default function MapSettingsButton() {
   ];
 
   return (
-    <div ref={ref} className="relative">
+    <div ref={ref} className="pointer-events-auto">
+      {showSettingsMenu && (
+        <Box
+          className={styles.menu}
+          sx={{
+            p: 2,
+            bgcolor: "background.paper",
+            borderRadius: 1,
+            boxShadow: 3,
+          }}
+        >
+          <Box display="flex" alignItems="center" mb={1}>
+            <Switch
+              onChange={(event) => {
+                if (event.target.checked) {
+                  enableDarkMode();
+                } else {
+                  disableDarkMode();
+                }
+              }}
+            />
+            <Typography sx={{ ml: 1 }}>Dark Mode</Typography>
+          </Box>
+          {mapTools.map((tool) => {
+            return (
+              <ButtonControl
+                key={tool.name}
+                {...tool}
+                onItemClick={() => {
+                  tool.onItemClick();
+                }}
+              />
+            );
+          })}
+        </Box>
+      )}
       <ToolbarButton
         title="Settings menu"
         onClick={toggleSettingsMenu}
         svgSrc="icons/Settings.svg"
       />
-      {showSettingsMenu && (
-        <div className="absolute right-12 bottom-0 menu">
-          <button
-            className="menu-item"
-            data-selected={isDarkMode}
-            onClick={enableDarkMode}
-          >
-            Dark Mode
-          </button>
-          <button
-            className="menu-item"
-            data-selected={!isDarkMode}
-            onClick={disableDarkMode}
-          >
-            Light Mode
-          </button>
-          {mapTools.map((tool) => {
-            switch (tool.type) {
-              case "toggleSwitch":
-                return <ToggleSwitchControl key={tool.name} {...tool} />;
-              case "button":
-                return (
-                  <ButtonControl
-                    key={tool.name}
-                    {...tool}
-                    onItemClick={() => {
-                      tool.onItemClick();
-                      hideSettingsMenu();
-                    }}
-                  />
-                );
-              default:
-                console.error(`Unhandled mapTool type:`, tool);
-                return null;
-            }
-          })}
-        </div>
-      )}
     </div>
-  );
-}
-
-type ToggleSwitchControlProps = ToggleSwitchControlMenuItem;
-
-function ToggleSwitchControl({
-  name,
-  onItemClick,
-  selected,
-}: Readonly<ToggleSwitchControlProps>) {
-  return (
-    <button
-      className="menu-item"
-      data-selected={selected}
-      onClick={onItemClick}
-    >
-      {name}
-    </button>
   );
 }
 
@@ -129,8 +110,9 @@ type ButtonControlProps = ButtonControlMenuItem;
 
 function ButtonControl({ name, onItemClick }: ButtonControlProps) {
   return (
-    <button className="menu-item" onClick={onItemClick}>
-      {name}
-    </button>
+    <Box display="flex" alignItems="center" mb={1}>
+      <Switch onChange={onItemClick} />
+      <Typography sx={{ ml: 1 }}>{name}</Typography>
+    </Box>
   );
 }

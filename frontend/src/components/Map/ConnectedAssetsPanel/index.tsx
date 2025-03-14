@@ -38,14 +38,20 @@ const ConnectedAssetsPanel = ({
       sx={{
         width: "100%",
         height: "70vh",
+        maxHeight: "70vh",
         position: "relative",
         backgroundColor: "background.paper",
         display: "flex",
         flexDirection: "column",
       }}
     >
-      <Grid2 container direction="row" size={12} sx={{ p: 2 }}>
-        <Grid2 size={12} container>
+      <Box
+        sx={{
+          p: 2,
+          flexShrink: 0,
+        }}
+      >
+        <Grid2 container>
           <Grid2 size={11}>
             <Typography variant="h5" fontWeight={800}>
               {connectedAssetData.title}
@@ -61,58 +67,71 @@ const ConnectedAssetsPanel = ({
             </Button>
           </Grid2>
         </Grid2>
-        <Grid2 size={12} container>
-          <Grid2 size={12}>
-            <Typography variant="body1">{connectedAssetData.id}</Typography>
-            <Typography variant="body1" sx={{ backgroundColor: "#f0f0f0" }}>
-              {connectedAssetData.type}
-            </Typography>
-            <Tabs
-              value={value}
-              onChange={handleChange}
-              aria-label="basic tabs example"
-              variant="scrollable"
-              scrollButtons="auto"
-              TabIndicatorProps={{
-                sx: {
-                  display: "flex",
-                  justifyContent: "center",
-                  "& .MuiTabs-indicator": {
-                    width: "fit-content",
-                  },
+      </Box>
+      <Box
+        sx={{
+          p: 2,
+        }}
+      >
+        <Typography variant="body1">{connectedAssetData.id}</Typography>
+        <Typography variant="body1" sx={{ backgroundColor: "#f0f0f0" }}>
+          {connectedAssetData.type}
+        </Typography>
+      </Box>
+      <Box
+        sx={{
+          flexGrow: 0,
+          overflowY: "scroll",
+          p: 2,
+        }}
+      >
+        <Box sx={{}}>
+          <Tabs
+            sx={{}}
+            value={value}
+            onChange={handleChange}
+            aria-label="basic tabs example"
+            variant="scrollable"
+            scrollButtons={true}
+            TabIndicatorProps={{
+              sx: {
+                display: "flex",
+                justifyContent: "center",
+                "& .MuiTabs-indicator": {
+                  width: "fit-content",
                 },
-              }}
-            >
-              <Tab
-                label={`Dependant Assets (${connectedAssetData?.dependent?.count}) `}
-                {...a11yProps(0)}
-                sx={{ flexBasis: "50%" }}
-              />
-              <Tab
-                label={`Provider Assets (${totalProviders}) `}
-                {...a11yProps(1)}
-                sx={{ flexBasis: "50%" }}
-              />
-            </Tabs>
-            <TabPanel value={value} index={0}>
-              <Dependents
-                assetUri={connectedAssetData.assetUri}
-                dependent={connectedAssetData.dependant}
-                isAsset={connectedAssetData.isAsset}
-                isDependency={connectedAssetData.isDependency}
-              />
-            </TabPanel>
-            <TabPanel value={value} index={1}>
-              <Providers
-                isLoading={isProvidersLoading}
-                isError={isProvidersFetchError}
-                error={providersFetchError}
-                providers={providers}
-              />
-            </TabPanel>
-          </Grid2>
-        </Grid2>
-      </Grid2>
+              },
+            }}
+          >
+            <Tab
+              label={`Dependant Assets (${connectedAssetData?.dependent?.count}) `}
+              {...a11yProps(0)}
+              sx={{ flexBasis: "50%" }}
+            />
+            <Tab
+              label={`Provider Assets (${totalProviders}) `}
+              {...a11yProps(1)}
+              sx={{ flexBasis: "50%" }}
+            />
+          </Tabs>
+          <TabPanel value={value} index={0}>
+            <Dependents
+              assetUri={connectedAssetData.assetUri}
+              dependent={connectedAssetData.dependant}
+              isAsset={connectedAssetData.isAsset}
+              isDependency={connectedAssetData.isDependency}
+            />
+          </TabPanel>
+          <TabPanel value={value} index={1}>
+            <Providers
+              isLoading={isProvidersLoading}
+              isError={isProvidersFetchError}
+              error={providersFetchError}
+              providers={providers}
+            />
+          </TabPanel>
+        </Box>
+      </Box>
     </Box>
   );
 };
