@@ -10,12 +10,13 @@ interface ConnectAssetPanelProps {
   hideConnectedAssets: () => void;
 }
 
-const ConnectedAssetsPanel = ({
+const ConnectedAssetsPanel: React.FC<ConnectAssetPanelProps> = ({
   connectedAssetData,
   hideConnectedAssets,
-}: ConnectAssetPanelProps) => {
+}) => {
   const [value, setValue] = React.useState(0);
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+
+  const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
 
@@ -25,13 +26,14 @@ const ConnectedAssetsPanel = ({
     error: providersFetchError,
     data: providers,
   } = useProviders(
-    connectedAssetData.isAsset,
-    connectedAssetData.isDependency,
-    connectedAssetData.assetUri,
-    connectedAssetData.provider,
+    connectedAssetData?.isAsset ?? false,
+    connectedAssetData?.isDependency ?? false,
+    connectedAssetData?.assetUri ?? "",
+    connectedAssetData?.provider ?? ""
   );
 
   const totalProviders = providers?.length || 0;
+  const totalDependents = connectedAssetData?.dependent?.count || 0;
 
   return (
     <Box
@@ -44,73 +46,73 @@ const ConnectedAssetsPanel = ({
         flexDirection: "column",
       }}
     >
-      <Grid2 container direction="row" size={12} sx={{ p: 2 }}>
-        <Grid2 size={12} container>
-          <Grid2 size={11}>
-            <Typography variant="h5" fontWeight={800}>
-              {connectedAssetData.title}
-            </Typography>
-          </Grid2>
-          <Grid2 size={1} sx={{ textAlign: "right" }}>
-            <Button
-              onClick={() => {
-                hideConnectedAssets();
-              }}
-            >
-              X
-            </Button>
-          </Grid2>
+      <Grid2 container spacing={2} sx={{ p: 2 }}>
+        {/* Header Section */}
+        <Grid2 size={11}>
+          <Typography variant="h5" fontWeight={800}>
+            {connectedAssetData?.title || "Unknown Asset"}
+          </Typography>
         </Grid2>
-        <Grid2 size={12} container>
-          <Grid2 size={12}>
-            <Typography variant="body1">{connectedAssetData.id}</Typography>
-            <Typography variant="body1" sx={{ backgroundColor: "#f0f0f0" }}>
-              {connectedAssetData.type}
-            </Typography>
-            <Tabs
-              value={value}
-              onChange={handleChange}
-              aria-label="basic tabs example"
-              variant="scrollable"
-              scrollButtons="auto"
-              TabIndicatorProps={{
-                sx: {
-                  display: "flex",
-                  justifyContent: "center",
-                  "& .MuiTabs-indicator": {
-                    width: "fit-content",
-                  },
+        <Grid2 size={1} sx={{ textAlign: "right" }}>
+          <Button onClick={hideConnectedAssets}>X</Button>
+        </Grid2>
+
+        {/* Asset Info */}
+        <Grid2 size={12}>
+          <Typography variant="body1">{connectedAssetData?.id || "N/A"}</Typography>
+          <Typography variant="body1" sx={{ backgroundColor: "#f0f0f0" }}>
+            {connectedAssetData?.type || "Unknown Type"}
+          </Typography>
+        </Grid2>
+
+        {/* Tabs Section */}
+        <Grid2 size={12}>
+          <Tabs
+            value={value}
+            onChange={handleChange}
+            aria-label="connected assets tabs"
+            variant="scrollable"
+            scrollButtons="auto"
+            TabIndicatorProps={{
+              sx: {
+                display: "flex",
+                justifyContent: "center",
+                "& .MuiTabs-indicator": {
+                  width: "fit-content",
                 },
-              }}
-            >
-              <Tab
-                label={`Dependant Assets (${connectedAssetData?.dependent?.count}) `}
-                {...a11yProps(0)}
-                sx={{ flexBasis: "50%" }}
-              />
-              <Tab
-                label={`Provider Assets (${totalProviders}) `}
-                {...a11yProps(1)}
-                sx={{ flexBasis: "50%" }}
-              />
-            </Tabs>
-            <TabPanel value={value} index={0}>
-              <Dependents
-                assetUri={connectedAssetData.assetUri}
-                dependent={connectedAssetData.dependant}
-                isAsset={connectedAssetData.isAsset}
-                isDependency={connectedAssetData.isDependency}
-              />
-            </TabPanel>
-            <TabPanel value={value} index={1}>
-              <Providers
-                isLoading={isProvidersLoading}
-                isError={isProvidersFetchError}
-                error={providersFetchError}
-                providers={providers}
-              />
-            </TabPanel>
-          </Grid2>
+              },
+            }}
+          >
+            <Tab
+              label={`Dependent Assets (${totalDependents})`}
+              {...a11yProps(0)}
+              sx={{ flexBasis: "50%" }}
+            />
+            <Tab
+              label={`Provider Assets (${totalProviders})`}
+              {...a11yProps(1)}
+              sx={{ flexBasis: "50%" }}
+            />
+          </Tabs>
+
+          {/* Tab Panels */}
+          <TabPanel value={value} index={0}>
+            <Dependents
+              assetUri={connectedAssetData?.assetUri}
+              dependent={connectedAssetData?.dependent}
+              isAsset={connectedAssetData?.isAsset}
+              isDependency={connectedAssetData?.isDependency}
+            />
+          </TabPanel>
+
+          <TabPanel value={value} index={1}>
+            <Providers
+              isLoading={isProvidersLoading}
+              isError={isProvidersFetchError}
+              error={providersFetchError}
+              providers={providers}
+            />
+          </TabPanel>
         </Grid2>
       </Grid2>
     </Box>
