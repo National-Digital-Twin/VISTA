@@ -5,4 +5,3 @@
 - op: replace
   path: /spec/servers/1/hosts/0
   value: paralog.demo.ndtp.co.uk
-

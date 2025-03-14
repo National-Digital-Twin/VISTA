@@ -9,7 +9,7 @@ patches:
       kind: VirtualService
   - path: patches/gateway.yaml
     target:
-     kind: Gateway
+      kind: Gateway
   - path: patches/request-authentication.yaml
     target:
       kind: RequestAuthentication
