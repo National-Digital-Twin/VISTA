@@ -19,22 +19,22 @@ function getMapTilerStyles(darkMode: boolean): MapStyle[] {
       key: "os",
     },
     {
-      id: `https://api.maptiler.com/maps/streets-v2${darkLight}/style.json`,
+      id: `/transparent-proxy/maptiler/maps/streets-v2${darkLight}/style.json`,
       name: "Streets",
       key: "streets",
     },
     {
-      id: "https://api.maptiler.com/maps/hybrid/style.json",
+      id: "/transparent-proxy/maptiler/maps/hybrid/style.json",
       name: "Satellite",
       key: "satellite",
     },
     {
-      id: `https://api.maptiler.com/maps/basic-v2${darkLight}/style.json`,
+      id: `/transparent-proxy/maptiler/maps/basic-v2${darkLight}/style.json`,
       name: "Basic",
       key: "basic",
     },
     {
-      id: `https://api.maptiler.com/maps/bright-v2${darkLight}/style.json`,
+      id: `/transparent-proxy/maptiler/maps/bright-v2${darkLight}/style.json`,
       name: "Bright",
       key: "bright",
     },
