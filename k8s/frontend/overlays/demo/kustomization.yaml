@@ -1,0 +1,19 @@
+resources:
+  - ../../base
+
+namespace: paralog
+
+patches:
+  - path: patches/service-account.yaml
+    target:
+      kind: ServiceAccount
+      name: paralog-frontend-sa
+
+labels:
+  - pairs:
+      env: demo
+
+images:
+  - name: paralog-frontend-image
+    newName: 503561419905.dkr.ecr.eu-west-2.amazonaws.com/paralog/demo-frontend
+    newTag: "remove-auth-2"

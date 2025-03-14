@@ -32,13 +32,9 @@ SECRET_KEY = env("DJANGO_SECRET_KEY", default=env.NOTSET if IS_PROD else get_sec
 
 DEBUG = env("DEBUG", default=not IS_PROD)
 
-ALLOWED_HOSTS = (
-    [
-        "paralog.demo.ndtp.co.uk",
-    ]
-    if IS_PROD
-    else ["*"]
-)
+ALLOWED_HOSTS = [
+    env("ALLOWED_HOSTS", default="*"),
+]
 
 # Application definition
 

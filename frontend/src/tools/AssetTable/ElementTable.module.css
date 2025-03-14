@@ -1,8 +1,0 @@
-.paginationControls {
-  /* Add gap above before the table */
-  margin-block-start: 1rem;
-
-  display: block flex;
-  align-items: center;
-  justify-content: space-between;
-}

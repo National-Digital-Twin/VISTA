@@ -1,4 +1,4 @@
-## Telicent Paralog
+## Paralog
 
 **Paralog is a free, open source web application used to evaluate high value
 assets**
@@ -32,11 +32,11 @@ Run `yarn build` to build the application.
 yarn install
 # 2. Start the application
 yarn start
-
-# Terminal 2 (Paralog Server):
-cd dev
-docker-compose up
 ```
+
+## Setup services required by paralog
+
+See [RUN_SERVICES.md](./dev/RUN_SERVICES.md) for instructions.
 
 ## Features
 
@@ -58,10 +58,9 @@ docker-compose up
 ## Related repositories
 
 - [Smart Cache Paralog (SCP)
-  API](https://github.com/Telicent-io/smart-cache-paralog-api) is a REST API
-  used by Telicent Paralog to get data from the IES Triplestore.
-- [RDF Libraries](https://github.com/Telicent-io/rdf-libraries), specifically
-  the Ontology Service is used to provide the ontology iconography to Telicent
-  Paralog.
-- [Smart Cache Graph (SCG) API](https://github.com/Telicent-io/smart-cache-graph-api)
+  API](https://github.com/National-Digital-Twin/smart-cache-paralog-api) is a REST API
+  used by Paralog to get data from the IES Triplestore.
+- [RDF Libraries](https://github.com/National-Digital-Twin/rdf-libraries), specifically
+  the Ontology Service is used to provide the ontology iconography to Paralog.
+- [Secure Agent Graph (SAG) API](https://github.com/National-Digital-Twin/secure-agent-graph)
   is used as a datastore for SCP and RDF Libraries.

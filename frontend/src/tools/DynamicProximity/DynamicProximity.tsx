@@ -11,31 +11,30 @@ export interface DynamicProximityProps {
   map: MapRef;
 }
 
+/* This is not used in the app currently */
 export default function DynamicProximity() {
   if (featureFlags.uiNext) {
     return null;
   }
 
   return (
-    <>
-      <ToolbarDropdown icon={faPlus} title="Add Dynamic Proximity" large>
-        {({ toggle }) =>
-          [1, 2, 3].map((radiusKm) => (
-            <DynamicProximityMenuItem
-              key={radiusKm}
-              radiusKm={radiusKm}
-              onClick={toggle}
-            />
-          ))
-        }
-      </ToolbarDropdown>
-    </>
+    <ToolbarDropdown icon={faPlus} title="Add Dynamic Proximity">
+      {({ toggle }) =>
+        [1, 2, 3].map((radiusKm) => (
+          <DynamicProximityMenuItem
+            key={radiusKm}
+            radiusKm={radiusKm}
+            onClick={toggle}
+          />
+        ))
+      }
+    </ToolbarDropdown>
   );
 }
 
 interface DynamicProximityMenuItemProps {
-  radiusKm: number;
-  onClick: () => void;
+  readonly radiusKm: number;
+  readonly onClick: () => void;
 }
 
 function DynamicProximityMenuItem({

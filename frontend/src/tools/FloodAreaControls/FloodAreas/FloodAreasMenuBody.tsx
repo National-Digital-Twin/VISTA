@@ -1,19 +1,19 @@
 import { useContext, useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faPlus,
   faTrash,
   faPencilAlt,
+  faDrawPolygon,
 } from "@fortawesome/free-solid-svg-icons";
 import { useShallow } from "zustand/react/shallow";
 import type { Feature } from "geojson";
+import { Box, IconButton, ListItemText, TextField } from "@mui/material";
 import useSharedStore from "@/hooks/useSharedStore";
 import { ElementsContext } from "@/context/ElementContext";
 import { useFloodAreaPolygons } from "@/hooks";
 import { useDrawingMode } from "@/context/DrawingMode";
 import useFloodWatchAreas from "@/hooks/queries/flood-areas/useFloodWatchAreas";
-import SearchConditional from "@/components/SearchConditional";
-import { MenuButton } from "@/components/MenuButton";
+import MenuItemRow from "@/components/MenuItemRow";
 
 const useFloodAreaSharedStore = () =>
   useSharedStore(
@@ -34,7 +34,7 @@ const useFloodAreaSharedStore = () =>
 
 export interface FloodAreasMenuBodyProps {
   /** Search query */
-  searchQuery?: string;
+  readonly searchQuery?: string;
 }
 
 export default function FloodAreasMenuBody({
@@ -55,7 +55,9 @@ export default function FloodAreasMenuBody({
     ...drawingModeCallbacks
   } = useFloodAreaSharedStore();
 
-  const floodPolygonUris = floodAreaNodes.map((node) => node.value);
+  const floodPolygonUris = floodAreaNodes
+    ? floodAreaNodes.map((node) => node.value)
+    : [];
   const { polygonFeatures, isLoading } = useFloodAreaPolygons(floodPolygonUris);
 
   const { startDrawing } = useDrawingMode(
@@ -132,33 +134,41 @@ export default function FloodAreasMenuBody({
 
   return (
     <>
-      <MenuButton
-        onClick={handleDrawPolygon}
-        selected={false}
-        label="Draw Polygon"
-        icon={faPlus}
+      <MenuItemRow
+        primaryText="Draw Polygon"
+        checked={false}
         searchQuery={searchQuery}
+        terms={["Draw Polygon"]}
+        buttons={[
+          {
+            icon: faDrawPolygon,
+            name: "Draw Polygon",
+            onClick: handleDrawPolygon,
+          },
+        ]}
       />
-      <MenuButton
-        onClick={toggleShowLiveFloods}
-        selected={showLiveFloods}
-        label="Live Floods"
+      <MenuItemRow
+        primaryText="Live Floods"
+        checked={showLiveFloods}
+        onChange={toggleShowLiveFloods}
         searchQuery={searchQuery}
+        terms={["Live Floods"]}
       />
-
       {features.map((feature, index) => (
-        <SearchConditional
+        <MenuItemRow
           key={feature.id}
+          primaryText=""
           searchQuery={searchQuery}
           terms={[editedPolygonName, feature.properties.name, "flood"]}
+          checked={selectedFeatureIds[feature.id]}
+          onChange={(event) => {
+            event.stopPropagation();
+            toggleFeature(feature.id);
+          }}
         >
-          <div
-            className="menu-item"
-            data-selected={selectedFeatureIds[feature.id]}
-            onClick={() => toggleFeature(feature.id)}
-          >
+          <Box sx={{ display: "flex", alignItems: "left", flexGrow: 1 }}>
             {editingPolygonId === feature.id ? (
-              <input
+              <TextField
                 type="text"
                 value={editedPolygonName}
                 onChange={(e) => setEditedPolygonName(e.target.value)}
@@ -168,43 +178,45 @@ export default function FloodAreasMenuBody({
                     handleSavePolygonName(feature.id);
                   }
                 }}
-                className="flex-grow bg-black-200 text-white focus:outline-none"
               />
             ) : (
               <>
-                <span className="flex-grow">
-                  {feature.properties.name || ` area ${index + 1}`}
-                </span>
-                <button
-                  className="ml-2 focus:outline-none hover:text-black-900"
+                <Box>
+                  <ListItemText
+                    primary={feature.properties.name || ` area ${index + 1}`}
+                  />
+                </Box>
+                <IconButton
+                  size="small"
                   onClick={(event) => {
                     event.stopPropagation();
                     handleEditPolygonName(feature.id);
                   }}
                 >
                   <FontAwesomeIcon icon={faPencilAlt} />
-                </button>
+                </IconButton>
+                <IconButton
+                  size="small"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    handleDeleteFeature(feature.id);
+                  }}
+                >
+                  <FontAwesomeIcon icon={faTrash} />
+                </IconButton>
               </>
             )}
-            <button
-              className="ml-2 focus:outline-none hover:text-black-900"
-              onClick={(event) => {
-                event.stopPropagation();
-                handleDeleteFeature(feature.id);
-              }}
-            >
-              <FontAwesomeIcon icon={faTrash} />
-            </button>
-          </div>
-        </SearchConditional>
+          </Box>
+        </MenuItemRow>
       ))}
       {floodAreaNodes.map((node) => (
-        <MenuButton
-          key={node.value}
-          onClick={() => onCheck(node.value)}
-          selected={selected.includes(node.value)}
-          label={node.label}
+        <MenuItemRow
+          primaryText={node.label}
           searchQuery={searchQuery}
+          terms={[node.label]}
+          key={node.value}
+          checked={selected.includes(node.value)}
+          onChange={() => onCheck(node.value)}
         />
       ))}
     </>

@@ -4,10 +4,8 @@ PREFIX fuseki:  <http://jena.apache.org/fuseki#>
 PREFIX rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX rdfs:    <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX ja:      <http://jena.hpl.hp.com/2005/11/Assembler#>
-PREFIX authz:   <http://telicent.io/security#>
+PREFIX authz:   <http://ndtp.co.uk/security#>
 PREFIX tdb2:    <http://jena.apache.org/2016/tdb#>
-PREFIX authz:   <http://telicent.io/security#>
-PREFIX graphql: <https://telicent.io/fuseki/modules/graphql#>
 [] rdf:type fuseki:Server ;
     fuseki:services (
     :knowledgeService
@@ -32,16 +30,24 @@ PREFIX graphql: <https://telicent.io/fuseki/modules/graphql#>
         fuseki:operation fuseki:gsp-r ;
         fuseki:name "get"
     ] ;
+
+    # Disable when deploying to the smart cache graph for Paralog
     fuseki:endpoint [
-        fuseki:operation authz:upload ;
+        fuseki:operation fuseki:upload ;
         fuseki:name "upload"
     ] ;
+
+    # Enable only when deploying as AuthZ is a module of the smart cache graph
+    #fuseki:endpoint [
+    #    fuseki:operation authz:upload ;
+    #    fuseki:name "upload"
+    #] ;
 
     fuseki:dataset :dataset ;
     .
 
 :dataset rdf:type ja:MemoryDataset ;
-    ja:data <file:/fuseki/data/iow.ttl> ;
+    ja:data <file:/fuseki/databases/iow.ttl> ;
     .
 
 ####
@@ -80,5 +86,5 @@ PREFIX graphql: <https://telicent.io/fuseki/modules/graphql#>
 
 
 :ontologyDataset rdf:type ja:MemoryDataset ;
-    ja:data <file:/fuseki/data/ontology.ttl> ;
+    ja:data <file:/fuseki/databases/ontology.ttl> ;
     .

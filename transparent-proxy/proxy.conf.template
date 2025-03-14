@@ -19,7 +19,7 @@ server {
 
     server_name localhost *.ndtp.co.uk;
 
-    resolver 8.8.8.8 valid=30s;
+    resolver kube-dns.kube-system.svc.cluster.local valid=30s;
 
     # Proxy config
     proxy_cache_valid any 1d;
@@ -38,6 +38,28 @@ server {
 
     if ($host_allowed = 0) {
         return 403;
+    }
+
+    # Ontology dataset
+    location /ontology/ {
+        if ($request_method = 'OPTIONS') {
+            add_header 'Access-Control-Max-Age' 1728000;
+            add_header 'Access-Control-Allow-Origin' '*';
+            add_header 'Access-Control-Allow-Headers' 'Authorization,Accept,Origin,DNT,X-CustomHeader,Keep-Alive,User-Agent,
+                X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Content-Range,Range,Expects';
+            add_header 'Access-Control-Allow-Methods' 'GET,POST,OPTIONS';
+            add_header 'Content-Type' 'application/json';
+            add_header 'Content-Length' 0;
+            return 204;
+        }
+
+        proxy_pass $IA_URL;
+    }
+
+    location  /health {
+            access_log off;
+            add_header 'Content-Type' 'application/json';
+            return 200 '{"status":"UP"}';
     }
 
     ## BEGIN UPSTREAM DEFINITIONS
@@ -83,6 +105,17 @@ server {
         proxy_pass https://api.rtt.io/api/v1/;
 
         proxy_set_header Authorization "Basic $REALTIME_TRAINS_API_KEY";
+    }
+
+    # Met office weather API
+    location /weather/ {
+        proxy_buffer_size 128k;
+        proxy_buffers 4 256k;
+        proxy_busy_buffers_size 256k;
+
+        proxy_pass https://data.hub.api.metoffice.gov.uk/;
+
+        proxy_set_header apiKey $MET_OFFICE_GLOBAL_SPOT_API_KEY; # pragma: allowlist-secret
     }
 
     ## END UPSTREAM DEFINITIONS

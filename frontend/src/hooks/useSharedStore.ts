@@ -84,14 +84,18 @@ function updateFeatures<
   },
 >(key: Key, set: SetFunction) {
   return (features: T[]) =>
-    set((state) => ({
-      [key]: state[key].map((f) => ({
-        ...f,
-        ...features.find((feature) => feature.id === f.id),
-      })),
-    }));
-}
+    set((state) => {
+      const featureMap = new Map(
+        features.map((feature) => [feature.id, feature]),
+      );
 
+      return {
+        [key]: state[key].map((f) =>
+          featureMap.has(f.id) ? { ...f, ...featureMap.get(f.id) } : f,
+        ),
+      };
+    });
+}
 function deleteFeatures<
   T extends Feature,
   Key extends keyof {

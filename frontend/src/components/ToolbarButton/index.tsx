@@ -4,11 +4,11 @@ import classNames from "classnames";
 import styles from "./style.module.css";
 
 interface ToolbarButtonProps {
-  icon: IconProp;
-  title: string;
-  onClick: () => void;
-  active?: boolean;
-  hideTitle?: boolean;
+  readonly icon: IconProp;
+  readonly title: string;
+  readonly onClick: () => void;
+  readonly active?: boolean;
+  readonly hideTitle?: boolean;
 }
 
 export default function ToolbarButton({

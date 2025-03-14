@@ -1,15 +1,15 @@
 import { useContext, useCallback } from "react";
 import classNames from "classnames";
 
-import type { MapboxGeoJSONFeature } from "react-map-gl";
+import type { Feature } from "geojson"; // ✅ Use standard GeoJSON Feature
 
 import { ElementsContext } from "@/context/ElementContext";
 
 export interface FloodZonesProps {
   /** Selected zones */
-  selectedFloodZones?: MapboxGeoJSONFeature[];
+  readonly selectedFloodZones?: Feature[];
   /** Additional classes to add to the top-level element */
-  className?: string;
+  readonly className?: string;
 }
 
 export default function FloodZones({
@@ -21,14 +21,6 @@ export default function FloodZones({
 
   const noZones = selectedFloodZones.length === 0;
 
-  // This causes a render loop
-  // TODO: Find a better way of closing the timeline panel when there are no zones
-  // useEffect(() => {
-  //   if (noZones) {
-  //     closeTimelinePanel();
-  //   }
-  // }, [closeTimelinePanel, noZones]);
-
   if (noZones) {
     return null;
   }
@@ -39,7 +31,7 @@ export default function FloodZones({
       <ul className="list-disc list-inside text-sm">
         {selectedFloodZones.map((selectedFloodZone) => (
           <FloodAreaListItem
-            key={selectedFloodZone.properties.TA_NAME}
+            key={selectedFloodZone.properties?.TA_NAME} // ✅ Added optional chaining
             selectedFloodZone={selectedFloodZone}
             selectedTimeline={selectedTimeline}
             onTimelineClick={onFloodTimelineSelect}
@@ -51,9 +43,9 @@ export default function FloodZones({
 }
 
 interface FloodAreaListItemProps {
-  selectedFloodZone: MapboxGeoJSONFeature;
-  selectedTimeline: MapboxGeoJSONFeature;
-  onTimelineClick: (zone: MapboxGeoJSONFeature) => void;
+  readonly selectedFloodZone: Feature;
+  readonly selectedTimeline: Feature;
+  readonly onTimelineClick: (zone: Feature) => void;
 }
 
 function FloodAreaListItem({
@@ -68,7 +60,7 @@ function FloodAreaListItem({
 
   return (
     <li className="flex items-center justify-between pt-1">
-      <p>{selectedFloodZone.properties.TA_NAME}</p>
+      <p>{selectedFloodZone.properties?.TA_NAME}</p>{" "}
       <button
         className={classNames(
           "border border-black-400 rounded-lg ml-2 px-1 text-sm hover:bg-black-400",

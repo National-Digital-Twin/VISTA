@@ -56,19 +56,6 @@ input[type="range"].criticality-slider::-ms-thumb {
   border-radius: 50%;
 }
 
-[role="tooltip"],
-.hideTooltip + [role="tooltip"] {
-  @apply absolute -top-9 whitespace-nowrap px-2 py-1 bg-black-50 rounded-md invisible z-10 text-sm;
-}
-[aria-labelledby]:hover + [role="tooltip"],
-[aria-labelledby]:focus + [role="tooltip"] {
-  @apply visible;
-}
-[aria-labelledby]:hover + .hideTooltip[role="tooltip"],
-[aria-labelledby]:focus + .hideTooltip[role="tooltip"] {
-  @apply invisible;
-}
-
 #theme-provider > div {
   height: 100%;
 }
@@ -111,24 +98,15 @@ input[type="range"].criticality-slider::-ms-thumb {
   background-color: #fff;
   padding: 1rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  @apply bg-gray-600 text-whiteSmoke text-sm py-2 rounded-lg shadow-lg absolute w-full z-10 hidden top-full;
 }
 
 .dropdown-button {
   @apply flex items-center justify-center bg-gray-700 text-whiteSmoke text-sm px-4 py-2 rounded-lg hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 shadow-md w-full;
 }
 
-.h-screen-dropdown {
-  height: calc(100vh - 3rem);
-  overflow-y: auto;
-  margin-bottom: 0.5rem;
-}
-
 .dropdown-icon {
   @apply w-5 h-5;
-}
-
-.dropdown-content {
-  @apply bg-gray-600 text-whiteSmoke text-sm py-2 rounded-lg shadow-lg absolute w-full z-10 hidden top-full;
 }
 
 .dropdown-content-item {
@@ -222,6 +200,7 @@ input[type="range"].criticality-slider::-ms-thumb {
     border-radius: 0.25rem;
     padding: 1rem;
     box-shadow: var(--card-shadow);
+    position: fixed;
   }
 
   .menu {
@@ -385,15 +364,6 @@ input[type="range"].criticality-slider::-ms-thumb {
     outline: 1px solid var(--col-neutral-input-outline);
     border-width: 0;
   }
-}
-
-button.maplibregl-ctrl-compass {
-  width: 40px;
-  height: 40px;
-}
-
-button.maplibregl-ctrl-compass .mapboxgl-ctrl-icon {
-  background-size: 40px;
 }
 
 body,

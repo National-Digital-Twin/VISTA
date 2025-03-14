@@ -41,7 +41,7 @@ np.random.default_rng(0)
 PLACE = "Isle of Wight, England"
 
 
-def flood_graph(G: MultiDiGraph, flood_extent: GeoJSON, points: Sequence[Center] = ()):
+def flood_graph(graph: MultiDiGraph, flood_extent: GeoJSON, points: Sequence[Center] = ()):
     """
     Flood the roads on the Isle of Wight.
 
@@ -49,9 +49,9 @@ def flood_graph(G: MultiDiGraph, flood_extent: GeoJSON, points: Sequence[Center]
     this returns a MultiDiGraph without the flooded nodes and edges.
     """
     if not (flood_extent or points):
-        return G
+        return graph
     # Returns node and edge geodataframes.
-    road_nodes, road_edges = ox.graph_to_gdfs(G)
+    road_nodes, road_edges = ox.graph_to_gdfs(graph)
 
     if flood_extent:
         # This isn't ideal, but we'll round-trip through encoded JSON to appease this version of
@@ -91,21 +91,21 @@ def flood_graph(G: MultiDiGraph, flood_extent: GeoJSON, points: Sequence[Center]
         road_nodes = road_nodes.loc[~road_nodes.index.isin(restricted_road_nodes.index)]
         road_edges = road_edges.loc[~road_edges.index.isin(restricted_road_edges.index)]
 
-    G: MultiDiGraph = ox.graph_from_gdfs(gdf_nodes=road_nodes, gdf_edges=road_edges)
-    return G
+    graph: MultiDiGraph = ox.graph_from_gdfs(gdf_nodes=road_nodes, gdf_edges=road_edges)
+    return graph
 
 
 def setup_graph(flood_extent: GeoJSON, points: list[Center]):
     """Instantiate Isle of Wight Graph."""
-    G: MultiDiGraph = ox.graph_from_place(PLACE, network_type="drive")
+    graph: MultiDiGraph = ox.graph_from_place(PLACE, network_type="drive")
 
-    G = flood_graph(G, flood_extent, points)
+    graph = flood_graph(graph, flood_extent, points)
 
-    G = ox.routing.add_edge_speeds(G)  # for shortest path by travel time.
-    G = ox.routing.add_edge_travel_times(G)
-    G = ox.bearing.add_edge_bearings(G)  # for text directions.
+    graph = ox.routing.add_edge_speeds(graph)  # for shortest path by travel time.
+    graph = ox.routing.add_edge_travel_times(graph)
+    graph = ox.bearing.add_edge_bearings(graph)  # for text directions.
 
-    return G  # noqa: RET504
+    return graph  # noqa: RET504
 
 
 @dataclass(frozen=True)
@@ -117,7 +117,7 @@ class Point:
 
 
 def generate_route(
-    G: MultiDiGraph, origin: Point | None, destination: Point | None
+    graph: MultiDiGraph, origin: Point | None, destination: Point | None
 ) -> gpd.GeoDataFrame:
     """
     Plot route between two Points on our osmnx Graph.
@@ -126,14 +126,14 @@ def generate_route(
     osmid, lanes, ref, name, highway, maxspeed, oneway, reversed, length, geometry,
     speed_kph, travel_time, bearing, bridge, junction, prev_bearing, text_guidance.
     """
-    origin = ox.distance.nearest_nodes(G, X=origin.X, Y=origin.Y)
-    destination = ox.distance.nearest_nodes(G, X=destination.X, Y=destination.Y)
+    origin = ox.distance.nearest_nodes(graph, X=origin.X, Y=origin.Y)
+    destination = ox.distance.nearest_nodes(graph, X=destination.X, Y=destination.Y)
 
     if origin == destination:
         return gpd.GeoDataFrame(geometry=[])
 
     # Find the shortest path between nodes, minimizing travel time, then plot it
-    route = ox.shortest_path(G, origin, destination, weight="travel_time")
+    route = ox.shortest_path(graph, origin, destination, weight="travel_time")
     if route is None:
         return gpd.GeoDataFrame(geometry=[])
-    return ox.routing.route_to_gdf(G, route)
+    return ox.routing.route_to_gdf(graph, route)

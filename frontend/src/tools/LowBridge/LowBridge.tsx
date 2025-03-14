@@ -1,4 +1,4 @@
-import { Marker } from "react-map-gl";
+import { Marker } from "react-map-gl/maplibre";
 import { useQuery } from "@tanstack/react-query";
 import { fetchLowBridges } from "@/api/paralog-python";
 import useLayer from "@/hooks/useLayer";

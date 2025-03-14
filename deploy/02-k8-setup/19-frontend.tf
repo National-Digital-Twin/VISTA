@@ -5,7 +5,7 @@ data "aws_ecr_image" "frontend_image" {
 
 resource "kubernetes_manifest" "frontend_deployment" {
   manifest = yamldecode(templatefile(
-    "./19-frontend-deployment.yaml", {
+    "deployment.yaml", {
       ENVIRONMENT     = var.environment,
       IMAGE_DIGEST    = data.aws_ecr_image.frontend_image.image_digest
       repository_name = data.aws_ecr_image.frontend_image.repository_name
@@ -15,7 +15,7 @@ resource "kubernetes_manifest" "frontend_deployment" {
 }
 
 resource "kubernetes_manifest" "frontend_service" {
-  manifest = yamldecode(templatefile("./19-frontend-service.yaml", {
+  manifest = yamldecode(templatefile("service.yaml", {
     ENVIRONMENT = var.environment,
   }))
   depends_on = [kubernetes_namespace.paralog]

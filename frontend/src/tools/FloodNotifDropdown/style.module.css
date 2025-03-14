@@ -1,28 +1,25 @@
-.warningCount {
-  position: absolute;
-  inset-block-start: -0.5rem;
-  inset-inline-end: -0.5rem;
-  background-color: var(--col-danger);
-  color: var(--col-fg-button);
-  border-radius: 50%;
-  padding-block: 0.25rem;
-  padding-inline: 0.5rem;
-  font-size: 0.75rem;
-  min-inline-size: 1.5rem;
-  block-size: 1.5rem;
-  display: block flex;
-  align-items: center;
-  justify-content: center;
+.floodRiskArea {
+  margin-top: 1.0em;
 }
 
-.warningAlert {
-  background-color: color-mix(
-    in oklab,
-    var(--col-warning) 15%,
-    var(--col-bg-card)
-  );
-  border: 1px solid var(--col-warning);
-  border-radius: 0.25rem;
-  padding: 0.5rem;
-  margin-block-start: 0.5rem;
+.closeButton {
+  padding:2.0em;
+  padding-bottom: 0.5em;
+  margin-left: auto;
+  display: block;
+}
+
+.floodPanel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin-top: 0.5em;
+  margin-right: 5em;
+  background-color: white;
+  border-radius: 0.375em;
+  padding: 2em;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 350px;
+  max-height: 40vh;
+  overflow-y: auto;
 }

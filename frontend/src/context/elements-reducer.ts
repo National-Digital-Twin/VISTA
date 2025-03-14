@@ -86,11 +86,11 @@ export const INITIAL_STATE: State = {
   dependencies: [],
   errors: [],
   selectedElements: [],
-  iconStyles: {}, // TODO: Unused?
-  maxAssetTotalCxns: 0, // TODO: This seems immutable?
-  assetCriticalityColorScale: {}, // TODO: Unused?
-  cxnCriticalityColorScale: getColorScale(1, 3), // TODO: Unused?
-  totalCxnsColorScale: {}, // TODO: Unused?
+  iconStyles: {},
+  maxAssetTotalCxns: 0,
+  assetCriticalityColorScale: {},
+  cxnCriticalityColorScale: getColorScale(1, 3),
+  totalCxnsColorScale: {},
 };
 
 const getAllCounts = (assets: Asset[]) =>

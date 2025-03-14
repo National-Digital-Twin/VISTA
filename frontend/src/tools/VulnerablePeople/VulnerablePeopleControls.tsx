@@ -1,12 +1,12 @@
 import { useShallow } from "zustand/react/shallow";
 import { faTrashAlt, faDrawPolygon } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useCallback, useEffect } from "react";
 import useStore from "./useStore";
 import featureFlags from "@/config/feature-flags";
 import useLayer from "@/hooks/useLayer";
 import { useDrawingMode } from "@/context/DrawingMode";
 import useSharedStore from "@/hooks/useSharedStore";
+import MenuItemRow from "@/components/MenuItemRow";
 
 export default function VulnerablePeopleControls() {
   const { enabled, toggle } = useLayer("vulnerable-people");
@@ -21,6 +21,7 @@ export default function VulnerablePeopleControls() {
   const features = useSharedStore(
     useShallow((state) => state.vulnerablePeopleFeatures),
   );
+
   const setSelected = useStore(
     (state) => state.setSelectedVulnerablePeopleItem,
   );
@@ -69,30 +70,32 @@ export default function VulnerablePeopleControls() {
     return null;
   }
 
+  const buttons = [];
+
+  if (drawnFeature) {
+    buttons.push({
+      icon: faTrashAlt,
+      name: "Delete Area",
+      onClick: handleDeleteArea,
+    });
+  }
+
+  if (!drawnFeature && features.length === 0) {
+    buttons.push({
+      icon: faDrawPolygon,
+      name: "Draw Area",
+      onClick: handleDrawRectangle,
+    });
+  }
+
   return (
-    <>
-      {features.length ? (
-        <button className="menu-item" role="menuitem" onClick={toggle}>
-          {enabled ? "Hide" : "Show"} Vulnerable People
-        </button>
-      ) : null}
-      {drawnFeature ? (
-        <button
-          className="menu-item text-red-500"
-          role="menuitem"
-          onClick={handleDeleteArea}
-        >
-          <FontAwesomeIcon icon={faTrashAlt} className="mr-2" /> Delete Area
-        </button>
-      ) : !features.length ? (
-        <button
-          className="menu-item"
-          role="menuitem"
-          onClick={handleDrawRectangle}
-        >
-          <FontAwesomeIcon icon={faDrawPolygon} className="mr-2" /> Draw Area
-        </button>
-      ) : null}
-    </>
+    <MenuItemRow
+      primaryText="Vulnerable People Polygon"
+      checked={enabled}
+      onChange={toggle}
+      searchQuery=""
+      terms={["Vulnerable People"]}
+      buttons={buttons}
+    />
   );
 }

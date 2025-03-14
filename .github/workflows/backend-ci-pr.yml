@@ -1,0 +1,265 @@
+name: Backend CI on PR
+
+on:
+  workflow_call:
+  pull_request:
+    paths:
+      - "backend/**"
+      - ".github/workflows/backend-ci-pr.yml"
+      - ".github/workflows/backend-ci-pr-merge.yml"
+      - ".github/workflows/constraints.txt"
+  workflow_dispatch:
+
+jobs:
+  dependencies:
+    name: Dependency Checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      matrix:
+        python-version: ["3.12.5"]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Set up Virtual Environment
+        id: venv-cache
+        uses: actions/cache@v4
+        with:
+          path: venv
+          key: venv-${{ matrix.python-version }}-${{ hashFiles('backend/poetry.lock', '.github/workflows/constraints.txt') }}
+          restore-keys: |
+            venv-${{ matrix.python-version }}-
+
+      - name: Create virtualenv
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+          python -m pip install --constraint=.github/workflows/constraints.txt --upgrade pip
+
+      - name: Install Poetry
+        if: steps.venv-cache.outcome!= 'restored'
+        run: |
+          source venv/bin/activate
+          pip install poetry --constraint=.github/workflows/constraints.txt
+
+      - name: Configure Poetry
+        run: |
+          source venv/bin/activate
+          poetry config virtualenvs.in-project true
+          poetry config virtualenvs.create false
+          poetry config virtualenvs.path venv
+
+      - name: Install Python Dependencies
+        run: |
+          source venv/bin/activate
+          cd backend
+          poetry install --no-root
+
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+
+      - name: PIP AUDIT
+        run: |
+          source venv/bin/activate
+          pip-audit
+          pip-audit --format json | jq '.vulnerabilities' >> $GITHUB_STEP_SUMMARY
+
+      - name: POETRY LOCK CHECK
+        run: |
+          source venv/bin/activate
+          cd backend
+          poetry check --lock
+          poetry lock --no-update
+
+      - name: Check for Outdated Dependencies
+        run: |
+          source venv/bin/activate
+          cd backend
+          poetry show --outdated
+
+  linting:
+    name: Code Linting
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: dependencies
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Restore virtualenv from cache
+        id: restore-venv
+        uses: actions/cache@v4
+        with:
+          path: venv
+          key: venv-${{ matrix.python-version }}-${{ hashFiles('backend/poetry.lock', '.github/workflows/constraints.txt') }} #Consistent key
+          restore-keys: |
+            venv-${{ matrix.python-version }}-
+
+      - name: Create virtualenv if missing
+        if: steps.restore-venv.outcome!= 'restored'
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+          python -m pip install --constraint=.github/workflows/constraints.txt --upgrade pip
+
+      - name: Install linting tools
+        run: |
+          source venv/bin/activate
+          pip install -q ruff isort bandit
+
+      - name: Run RUFF
+        run: |
+          source venv/bin/activate
+          echo "running ruff"  >> $GITHUB_STEP_SUMMARY
+          ruff format backend  >> $GITHUB_STEP_SUMMARY
+
+      - name: Run ISORT (import sorting)
+        run: |
+          source venv/bin/activate
+          echo "running isort"  >> $GITHUB_STEP_SUMMARY
+          isort --check-only backend  >> $GITHUB_STEP_SUMMARY
+        continue-on-error: true
+
+      - name: Run BANDIT (security linter)
+        run: |
+          source venv/bin/activate
+          echo "running bandit"  >> $GITHUB_STEP_SUMMARY
+          bandit -r -q backend -lll  >> $GITHUB_STEP_SUMMARY
+
+  testing:
+    name: Unit Testing
+    runs-on: ubuntu-latest
+    needs: linting
+    timeout-minutes: 10
+    strategy:
+      matrix:
+        python-version: ["3.12.5"]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Set up Virtual Environment
+        id: venv-cache
+        uses: actions/cache@v4
+        with:
+          path: venv
+          key: venv-${{ matrix.python-version }}-${{ hashFiles('backend/poetry.lock', '.github/workflows/constraints.txt') }}
+          restore-keys: |
+            venv-${{ matrix.python-version }}-
+
+      - name: Create virtualenv
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+          python -m pip install --constraint=.github/workflows/constraints.txt --upgrade pip
+
+      - name: Install Poetry
+        if: steps.venv-cache.outcome!= 'restored'
+        run: |
+          source venv/bin/activate
+          pip install poetry --constraint=.github/workflows/constraints.txt
+
+      - name: Configure Poetry
+        run: |
+          source venv/bin/activate
+          poetry config virtualenvs.in-project true
+          poetry config virtualenvs.create false
+          poetry config virtualenvs.path venv
+
+      - name: Install Python Dependencies
+        run: |
+          source venv/bin/activate
+          cd backend
+          poetry install --no-root
+
+      - name: PYTEST
+        env:
+          DJANGO_SECRET_KEY: fake-secret-key #pragma: allowlist secret
+        run: |
+          source venv/bin/activate
+          cd backend
+          pytest --cov-fail-under=80.0  >> $GITHUB_STEP_SUMMARY
+        continue-on-error: true
+
+  security-scanning:
+    name: Security Scanning
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: testing
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Trivy
+        run: |
+          wget -q https://github.com/aquasecurity/trivy/releases/download/v0.18.3/trivy_0.18.3_Linux-64bit.deb # Update Trivy Version if needed
+          sudo dpkg -i trivy_0.18.3_Linux-64bit.deb
+
+      - name: Run Trivy Scan
+        run: |
+          trivy fs --severity HIGH,CRITICAL backend  >> $GITHUB_STEP_SUMMARY
+
+  docker-build-test-scan:
+    name: Docker Build, Test & Scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: security-scanning
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v6
+        with:
+          file: "backend/Dockerfile"
+          context: "./backend"
+          load: true
+          tags: "paralog/python-api:latest"
+
+      - name: Run Docker image
+        run: |
+          docker images
+          docker run --rm -d -p 8000:8000 --name backend paralog/python-api:latest
+          docker ps
+          sleep 10
+          docker logs backend
+
+      - name: Ping App
+        run: |
+          #!/bin/bash
+          status_code=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8000/ping/)
+          if [[ "$status_code" == "200" ]]; then
+            echo "Ping successful (200 OK)"  >> $GITHUB_STEP_SUMMARY
+          else
+            echo "Ping failed with status code: $status_code"  >> $GITHUB_STEP_SUMMARY
+            exit 1  # Indicate an error
+          fi
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: "paralog/python-api:latest"
+          format: "table"
+          exit-code: "1"
+          ignore-unfixed: true
+          vuln-type: "os,library"
+          severity: "CRITICAL,HIGH"
+
+      - name: Cleanup
+        if: always()
+        run: |
+          docker stop backend

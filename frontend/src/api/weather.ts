@@ -1,4 +1,5 @@
 // see https://www.metoffice.gov.uk/research/climate/maps-and-data/uk-synoptic-and-climate-stations
+import config from "@/config/app-config";
 
 const WEATHER_STATIONS = {
   Cowes: {
@@ -27,14 +28,10 @@ const WEATHER_STATIONS = {
   },
 };
 
-// const LOCATION = "Newport (Isle of Wight)";
-// const BASE_URL = `https://data.hub.api.metoffice.gov.uk/sitespecific/v0/point/hourly?latitude=${WEATHER_STATIONS[LOCATION].latitude}&longitude=${WEATHER_STATIONS[LOCATION].longitude}&includeLocationName=true`;
-
 const options = {
   method: "GET",
   headers: {
-    accept: "application/json",
-    apikey: import.meta.env.VITE_MET_OFFICE_GLOBAL_SPOT_API_KEY,
+    accept: "application/json"
   },
 };
 
@@ -59,7 +56,7 @@ export const fetchWeatherStation = async (
   latitude: string,
   longitude: string,
 ): Promise<WeatherStation> => {
-  const query_url = `https://data.hub.api.metoffice.gov.uk/sitespecific/v0/point/hourly?latitude=${latitude}&longitude=${longitude}&includeLocationName=true`;
+  const query_url = `${config.weather.url}/sitespecific/v0/point/hourly?latitude=${latitude}&longitude=${longitude}&includeLocationName=true`;
 
   const response = await fetch(query_url, options);
 

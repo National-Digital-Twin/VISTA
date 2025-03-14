@@ -1,27 +1,20 @@
-import { IconProp } from "@fortawesome/fontawesome-svg-core";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { useMemo } from "react";
-import styles from "./style.module.css";
-import SearchConditional from "@/components/SearchConditional";
+import MenuItemRow from "../MenuItemRow";
 import useLayer from "@/hooks/useLayer";
 
 export interface SimpleLayerControlProps {
   /** Layer being controlled */
-  layerName: string;
-  /** Icon for the layer */
-  icon: IconProp;
+  readonly layerName: string;
   /** Title of the layer */
-  title: string;
+  readonly title: string;
   /** Current search query */
-  searchQuery: string;
+  readonly searchQuery: string;
   /** Additional terms to match in search, if any */
-  terms?: string[];
+  readonly terms?: string[];
 }
 
 export default function SimpleLayerControl({
   layerName,
-  icon,
   title,
   searchQuery,
   terms,
@@ -37,15 +30,12 @@ export default function SimpleLayerControl({
   }, [title, layerName, terms]);
 
   return (
-    <SearchConditional searchQuery={searchQuery} terms={fullTerms}>
-      <div onClick={toggle} className={styles.simpleLayer}>
-        <FontAwesomeIcon icon={icon} className={styles.icon} />
-        <FontAwesomeIcon
-          icon={enabled ? faEye : faEyeSlash}
-          className={styles.toggle}
-        />
-        <h3 className={styles.body}>{title}</h3>
-      </div>
-    </SearchConditional>
+    <MenuItemRow
+      checked={enabled}
+      onChange={toggle}
+      primaryText={title}
+      terms={fullTerms}
+      searchQuery={searchQuery}
+    />
   );
 }

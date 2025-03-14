@@ -29,7 +29,7 @@ const CustomTooltip = ({
   param,
   unit,
 }: CustomTooltipProps) => {
-  if (active && payload && payload.length) {
+  if (active && payload?.length) {
     return (
       <div className={styles.tooltip}>
         <p className={styles.tooltipLabel}>{labelFormatter(label)}</p>
@@ -43,11 +43,11 @@ const CustomTooltip = ({
 };
 
 export interface ChartBodyProps<T> {
-  data: T[];
-  param: string;
-  unit: string;
-  className?: string;
-  additionalChartElements?: ReactNode;
+  readonly data: T[];
+  readonly param: string;
+  readonly unit: string;
+  readonly className?: string;
+  readonly additionalChartElements?: ReactNode;
 }
 
 export default function ChartBody<T extends { time: string; value: number }>({

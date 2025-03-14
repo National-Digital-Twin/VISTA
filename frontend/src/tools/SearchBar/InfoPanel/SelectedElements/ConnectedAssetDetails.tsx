@@ -5,19 +5,17 @@ import { getURIFragment } from "@/utils";
 
 export interface ConnectedAssetDetailsProps {
   /** Connected asset error, if any */
-  error?: Error;
+  readonly error?: Error;
   /** Asset URI */
-  uri: string;
+  readonly uri: string;
   /** Canonical asset name */
-  name: string;
+  readonly name: string;
   /** Asset type */
-  type: string;
+  readonly type: string;
   /** Asset criticality */
-  criticality?: number;
+  readonly criticality?: number;
   /** Connection strength, which is apparently different from criticality */
-  connectionStrength?: number;
-  /** Whether the connection is added(?) */
-  isAdded: boolean;
+  readonly connectionStrength?: number;
 }
 
 export default function ConnectedAssetDetails({
@@ -27,7 +25,6 @@ export default function ConnectedAssetDetails({
   type,
   criticality,
   connectionStrength,
-  isAdded,
 }: ConnectedAssetDetailsProps) {
   if (error) {
     return <li className={styles.errorMessage}>{error.message}</li>;
@@ -36,7 +33,7 @@ export default function ConnectedAssetDetails({
   return (
     <li className={styles.connectedAssetDetails}>
       <div className={styles.connectedAssetHeader}>
-        <TypeIcon size="sm" type={type} disabled={!isAdded} />
+        <TypeIcon size="sm" type={type} />
         <div>
           <h4>{name || uri}</h4>
           <p className={styles.connectedAssetType}>

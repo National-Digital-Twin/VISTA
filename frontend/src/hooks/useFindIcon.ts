@@ -17,7 +17,7 @@ export interface FoundIcon {
   faIcon?: string;
 }
 
-// These utilities are taken from the Telicent design system
+// These utilities are taken from the ontology service
 function hasFragment(uri: string) {
   return uri && uri.startsWith("http") && uri.includes("#");
 }
@@ -53,8 +53,8 @@ function getTypeInitials(type: string) {
   return type ?? "";
 }
 
-function useStyles(): Record<string, FoundIcon> {
-  const { data } = useSuspenseQuery({
+function useStyles(): Record<string, FoundIcon> | undefined {
+  const { data, error, isLoading } = useSuspenseQuery({
     queryKey: ["ontology-styles"],
     queryFn: async () => {
       const iconEntries: Record<
@@ -101,6 +101,16 @@ function useStyles(): Record<string, FoundIcon> {
       );
     },
   });
+
+  if (isLoading) {
+    return undefined; // or return a loading state if needed
+  }
+
+  if (error) {
+    console.error("Error fetching ontology styles:", error);
+    return undefined; // or handle the error state if needed
+  }
+
   return data;
 }
 

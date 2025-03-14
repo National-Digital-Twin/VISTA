@@ -1,17 +1,3 @@
-.layerPanel {
-  display: block grid;
-
-  grid-template-columns: [layer-start toggle-start] 2rem [toggle-end] 1rem [panel-start icon-start] 1.5rem [icon-end] 0.5rem [body-start] 1fr [body-end layer-end panel-end];
-
-  row-gap: 0.5rem;
-}
-
-.searchForm {
-  display: block flow;
-
-  grid-column: layer;
-}
-
 .searchInput {
   display: block flow;
 

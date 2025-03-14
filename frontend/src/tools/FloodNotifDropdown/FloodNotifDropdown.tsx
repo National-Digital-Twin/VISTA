@@ -1,14 +1,13 @@
 import { useMemo, useRef } from "react";
-import { faBell } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import classNames from "classnames";
 import { useBoolean, useOnClickOutside } from "usehooks-ts";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import styles from "./style.module.css";
+import { useQuery } from "@tanstack/react-query";
+import Link from "@mui/material/Link";
 import FloodRiskAreas from "./FloodRiskAreas";
+import styles from "./style.module.css";
 import { fetchAllLiveStations } from "@/api/hydrology";
+import ToolbarButton from "@/components/Map/SideButtons/ToolbarButton";
 
-export default function FloodNotifDropdown() {
+export default function SideButtons() {
   const {
     value: isOpen,
     setFalse: closeWidget,
@@ -16,7 +15,7 @@ export default function FloodNotifDropdown() {
   } = useBoolean(false);
   const widgetRef = useRef<HTMLDivElement>(null);
 
-  const { data: floodWarnings } = useSuspenseQuery({
+  const { data: floodWarnings } = useQuery({
     queryKey: ["floodWarnings"],
     queryFn: async () => {
       const geoJsonData = await fetchAllLiveStations();
@@ -28,7 +27,6 @@ export default function FloodNotifDropdown() {
     if (!floodWarnings || floodWarnings.length === 0) {
       return [];
     }
-
     return floodWarnings.filter(
       (station) => station.properties.atrisk === true,
     );
@@ -38,23 +36,26 @@ export default function FloodNotifDropdown() {
 
   return (
     <div className="pointer-events-auto relative" ref={widgetRef}>
-      <button
-        className={classNames(
-          "bg-button hover:bg-button p-2 rounded cursor-pointer flex items-center justify-center w-9 h-9 border-none transition-colors duration-300",
-          { "bg-button-hover": isOpen },
-        )}
+      <ToolbarButton
+        title="Flood Notifications"
         onClick={toggleWidget}
-      >
-        <FontAwesomeIcon icon={faBell} className="text-whiteSmoke" />
-        {atRiskAreas.length > 0 && (
-          <span className={styles.warningCount}>{atRiskAreas.length}</span>
-        )}
-      </button>
+        svgSrc="/icons/Warning.svg"
+        badgeContent={atRiskAreas.length}
+      />
       {isOpen && (
-        <div className="absolute top-full left-0 mt-2 bg-card border border-neutral-outline rounded p-4 shadow-lg w-[350px] max-h-[40vh] overflow-y-auto">
+        <div className={styles.floodPanel}>
           <FloodRiskAreas atRiskAreas={atRiskAreas} />
+          <Link
+            component="button"
+            variant="body2"
+            onClick={closeWidget}
+            className={styles.closeButton}
+          >
+            Close
+          </Link>
         </div>
       )}
     </div>
   );
 }
+export const SIDE_BUTTON_ORDER = 0;

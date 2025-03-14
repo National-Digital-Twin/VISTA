@@ -1,0 +1,12 @@
+resources:
+  - ../base/istio/authorizationpolicy/allow-ingress-authorization-policy.yaml
+  - service-account.yaml
+  - deployment.yaml
+  - service.yaml
+  - job.yaml
+
+labels:
+  - pairs:
+      app: paralog-python-api
+      env: ENV_PLACEHOLDER
+      app.kubernetes.io/name: paralog-python-api

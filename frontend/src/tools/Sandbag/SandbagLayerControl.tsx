@@ -1,16 +1,17 @@
-import { faMound } from "@fortawesome/free-solid-svg-icons";
+import ComplexLayerControl from "@/components/ComplexLayerControl";
 import SimpleLayerControl from "@/components/SimpleLayerControl";
 import type { LayerControlProps } from "@/tools/Tool";
 
 export default function SandbagLayerControl({
   searchQuery,
-}: LayerControlProps) {
+}: Readonly<LayerControlProps>) {
   return (
-    <SimpleLayerControl
-      layerName="sandbag"
-      icon={faMound}
-      title="Sandbags"
-      searchQuery={searchQuery}
-    />
+    <ComplexLayerControl title="Sandbags">
+      <SimpleLayerControl
+        layerName="sandbag"
+        title="Sandbags"
+        searchQuery={searchQuery}
+      />
+    </ComplexLayerControl>
   );
 }

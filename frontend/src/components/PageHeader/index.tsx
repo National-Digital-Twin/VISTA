@@ -1,26 +1,24 @@
-import classNames from "classnames";
-
-import styles from "./style.module.css";
-import featureFlags from "@/config/feature-flags";
-
-export interface PageHeaderProps {
-  /** Primary name of the application, as it appears in the header */
-  appName: string;
-  /** Additional classes to add to the top-level element */
-  className?: string;
-}
+import { AppBar, Toolbar, Grid2 } from "@mui/material";
 
 /** Overall header of the application */
-export default function PageHeader({ appName, className }: PageHeaderProps) {
-  const srOnly = featureFlags.pageHeader ? null : "sr-only";
 
+const PageHeader = ({ appName }) => {
   return (
-    <header className={classNames(styles.pageHeader, className, srOnly)}>
-      <h1 className={styles.title}>
-        <a href="/" className={styles.noLinkStyle}>
-          {appName}
-        </a>
-      </h1>
-    </header>
+    <AppBar position="static" sx={{ backgroundColor: "#002244" }}>
+      <Toolbar>
+        <Grid2 container alignItems="center">
+          {/* Logo on the far left */}
+          <Grid2>
+            <img
+              src="/logo.svg"
+              alt={`${appName} Logo`}
+              style={{ width: 200, height: 75 }}
+            />
+          </Grid2>
+        </Grid2>
+      </Toolbar>
+    </AppBar>
   );
-}
+};
+
+export default PageHeader;

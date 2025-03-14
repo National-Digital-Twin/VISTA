@@ -1,0 +1,20 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-ingress-to-frontend
+spec:
+  selector:
+    matchLabels:
+      io.kompose.service: paralog-frontend
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals: ["cluster.local/ns/istio-ingress/sa/istio-ingress"]
+      to:
+        - operation:
+            methods: ["GET", "POST"]
+      when:
+        - key: request.auth.claims[groups]
+          values:
+            - paralog_access

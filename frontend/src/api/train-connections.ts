@@ -1,12 +1,11 @@
 // Train Arrivals and Departures.
-import fetchWithAuth from "@/auth/fetchAuth";
 
 export const fetchTrainDepartures = async (station: string) => {
   // station uses either CRS or TIPLOC codes.
   // See http://www.railwaycodes.org.uk/
 
   const queryUrl = `/transparent-proxy/realtime-trains/json/search/${station}`;
-  const response = await fetchWithAuth(queryUrl);
+  const response = await fetch(queryUrl);
 
   if (!response.ok) {
     throw new Error(
@@ -19,7 +18,7 @@ export const fetchTrainDepartures = async (station: string) => {
 
 export const fetchTrainArrivals = async (station: string) => {
   const queryUrl = `/transparent-proxy/realtime-trains/json/search/${station}/arrivals`;
-  const response = await fetchWithAuth(queryUrl);
+  const response = await fetch(queryUrl);
 
   if (!response.ok) {
     throw new Error(

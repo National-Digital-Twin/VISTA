@@ -6,11 +6,15 @@ import type { Element } from "@/models";
 
 export interface SelectedElementsProps {
   /** Elements which are selected */
-  selectedElements: Element[];
+  readonly selectedElements: Element[];
+  readonly showConnectedAssets: () => void;
+  readonly setConnectedAssetData: (data: any) => void;
 }
 
 export default function SelectedElements({
   selectedElements,
+  showConnectedAssets,
+  setConnectedAssetData,
 }: SelectedElementsProps) {
   const totalSelected = useMemo(
     () => selectedElements?.length || 0,
@@ -26,6 +30,8 @@ export default function SelectedElements({
       <ElementsList
         selectedElements={selectedElements}
         totalSelected={totalSelected}
+        showConnectedAssets={showConnectedAssets}
+        setConnectedAssetData={setConnectedAssetData}
       />
     );
   }
@@ -38,11 +44,18 @@ export default function SelectedElements({
 }
 
 interface ElementsListProps {
-  selectedElements: Element[];
-  totalSelected: number;
+  readonly selectedElements: Element[];
+  readonly totalSelected: number;
+  readonly showConnectedAssets: () => void;
+  readonly setConnectedAssetData: (data: any) => void;
 }
 
-function ElementsList({ selectedElements, totalSelected }: ElementsListProps) {
+function ElementsList({
+  selectedElements,
+  totalSelected,
+  showConnectedAssets,
+  setConnectedAssetData,
+}: ElementsListProps) {
   return (
     <>
       <InfoHeader className="justify-between">
@@ -53,7 +66,8 @@ function ElementsList({ selectedElements, totalSelected }: ElementsListProps) {
           <ElementDetails
             key={selectedElement.id}
             element={selectedElement}
-            expand={false}
+            showConnectedAssets={showConnectedAssets}
+            setConnectedAssetData={setConnectedAssetData}
           />
         ))}
       </ul>

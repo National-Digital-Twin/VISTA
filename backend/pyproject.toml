@@ -5,7 +5,7 @@
 name = "paralog_python_api"
 version = "2.0.1"
 description = "Provides Data to the paralog app."
-authors = ["Jamie Coombes <jamie@coefficient.ai>"]
+authors = ["NDTP <digitaltwins@dft.gov.uk>"]
 license = "UNLICENSED"
 classifiers = ["Private :: Do Not Upload"]
 packages = [
@@ -20,7 +20,7 @@ python = ">=3.12.5,<3.13"
 # Everything below here is alphabetically sorted
 ariadne = "^0.23.0"
 ariadne-django = "^0.3.0"
-django = "^5.1"
+django = "5.1.7"
 osmnx = "^1.9.4"
 uvicorn = "^0.30.3"
 matplotlib = "^3.9.2"
@@ -34,9 +34,13 @@ geopy = "^2.4.1"
 gunicorn = "^23.0.0"
 fiona = ">=1.10.0rc1"
 django-environ = "^0.11.2"
-cryptography = "43.0.1"
+cryptography = "44.0.1"
 boto3 = "^1.35.12"
 psycopg2-binary = "^2.9.9"
+jinja2 = "3.1.6"
+starlette = "0.40.0"
+tornado = "6.4.2"
+virtualenv = "20.26.6"
 
 [tool.poetry.dev-dependencies]
 # Everything below here is alphabetically sorted
@@ -145,7 +149,7 @@ filename = "CHANGELOG.md"
 directory = ".changelog/"
 template = ".changelog/template.md"
 title_format = "## [{version}] - {project_date}"
-issue_format = "[#{issue}](https://github.com/coefficientsystems/telicent-paralog{issue})"
+issue_format = "[#{issue}](https://github.com/national-digital-twin/Paralog/issues/{issue})"
 start_string = "<!-- TOWNCRIER -->\n"
 underlines = ["", ""]
 

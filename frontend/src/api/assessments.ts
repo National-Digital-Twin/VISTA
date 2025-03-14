@@ -1,5 +1,4 @@
 import { createParalogEndpoint, fetchOptions } from "./utils";
-import fetchWithAuth from "@/auth/fetchAuth";
 
 interface Assessment {
   /** Assessment human-readable name */
@@ -10,17 +9,22 @@ interface Assessment {
   uri: string;
 }
 
-export const fetchAssessments = async () => {
-  const response = await fetchWithAuth(
-    createParalogEndpoint("assessments"),
-    fetchOptions,
-  );
+export const fetchAssessments = async (): Promise<Assessment[]> => {
+  try {
+    const response = await fetch(
+      createParalogEndpoint("assessments"),
+      fetchOptions,
+    );
 
-  if (!response.ok) {
-    throw new Error(`Failed to retrieve assessments`);
+    if (!response.ok) {
+      throw new Error(`Failed to retrieve assessments: ${response.statusText}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching assessments:", error);
+    throw error;
   }
-
-  return (await response.json()) as Assessment[];
 };
 
 interface AssessmentDependency {
@@ -45,25 +49,37 @@ interface AssessmentDependency {
 }
 
 export const fetchAssessmentDependencies = async (
-  assessment: string,
+  assessment: string = "DEFAULT_ASSESSMENT",
   types: string[],
-) => {
-  const typeParams = types.map((type) => ["types", type]);
-  const queryParams = new URLSearchParams([
-    ["assessment", assessment],
-    ...typeParams,
-  ]).toString();
+): Promise<AssessmentDependency[]> => {
+  try {
+    const body = JSON.stringify({ assessment, types });
 
-  const response = await fetchWithAuth(
-    createParalogEndpoint(`assessments/dependencies?${queryParams}`),
-    fetchOptions,
-  );
-
-  if (!response.ok) {
-    throw new Error(
-      `An error occured while retrieving dependencies for assessment ${assessment} and types ${typeParams.toString()}`,
+    const response = await fetch(
+      createParalogEndpoint("assessments/dependencies"),
+      {
+        ...fetchOptions,
+        method: "POST",
+        headers: {
+          ...fetchOptions.headers,
+          "Content-Type": "application/json",
+        },
+        body,
+      },
     );
-  }
 
-  return (await response.json()) as AssessmentDependency[];
+    if (!response.ok) {
+      throw new Error(
+        `Failed to retrieve dependencies for assessment "${assessment}" with types: ${types.join(", ")}`,
+      );
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error(
+      `Error fetching dependencies for assessment "${assessment}":`,
+      error,
+    );
+    throw error;
+  }
 };
