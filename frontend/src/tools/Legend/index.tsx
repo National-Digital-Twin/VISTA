@@ -1,6 +1,8 @@
 import { useBoolean, useOnClickOutside } from "usehooks-ts";
 import { useRef } from "react";
+import { Box } from "@mui/material";
 import LegendContent from "./Content";
+import styles from "./style.module.css";
 import ToolbarButton from "@/components/Map/SideButtons/ToolbarButton";
 
 export const TOOL_NAME = "Legend";
@@ -16,17 +18,17 @@ export function SideButtons() {
   useOnClickOutside(ref, hideLegend);
 
   return (
-    <div ref={ref} className="relative">
+    <div ref={ref} className="pointer-events-auto">
+      {showLegend && (
+        <Box className={styles.menu}>
+          <LegendContent />
+        </Box>
+      )}
       <ToolbarButton
         title="Toggle Legend"
         onClick={toggleLegend}
         svgSrc="icons/Legend.svg"
       />
-      {showLegend && (
-        <div className="absolute right-12 bottom-0 menu">
-          <LegendContent />
-        </div>
-      )}
     </div>
   );
 }

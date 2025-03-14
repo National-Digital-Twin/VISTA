@@ -35,7 +35,7 @@ export default function SideButtons() {
   useOnClickOutside(widgetRef, closeWidget);
 
   return (
-    <div className="pointer-events-auto relative" ref={widgetRef}>
+    <div className="pointer-events-auto" ref={widgetRef}>
       <ToolbarButton
         title="Flood Notifications"
         onClick={toggleWidget}
@@ -47,7 +47,7 @@ export default function SideButtons() {
           <FloodRiskAreas atRiskAreas={atRiskAreas} />
           <Link
             component="button"
-            variant="body2"
+            variant="body1"
             onClick={closeWidget}
             className={styles.closeButton}
           >

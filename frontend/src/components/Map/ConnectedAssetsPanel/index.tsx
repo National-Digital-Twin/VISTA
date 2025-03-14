@@ -29,7 +29,7 @@ const ConnectedAssetsPanel: React.FC<ConnectAssetPanelProps> = ({
     connectedAssetData?.isAsset ?? false,
     connectedAssetData?.isDependency ?? false,
     connectedAssetData?.assetUri ?? "",
-    connectedAssetData?.provider ?? ""
+    connectedAssetData?.provider ?? "",
   );
 
   const totalProviders = providers?.length || 0;
@@ -40,39 +40,63 @@ const ConnectedAssetsPanel: React.FC<ConnectAssetPanelProps> = ({
       sx={{
         width: "100%",
         height: "70vh",
+        maxHeight: "70vh",
         position: "relative",
         backgroundColor: "background.paper",
         display: "flex",
         flexDirection: "column",
       }}
     >
-      <Grid2 container spacing={2} sx={{ p: 2 }}>
-        {/* Header Section */}
-        <Grid2 size={11}>
-          <Typography variant="h5" fontWeight={800}>
-            {connectedAssetData?.title || "Unknown Asset"}
-          </Typography>
+      <Box
+        sx={{
+          p: 2,
+          flexShrink: 0,
+        }}
+      >
+        <Grid2 container>
+          <Grid2 size={11}>
+            <Typography variant="h5" fontWeight={800}>
+              {connectedAssetData?.title || "Unknown Asset"}
+            </Typography>
+          </Grid2>
+          <Grid2 size={1} sx={{ textAlign: "right" }}>
+            <Button
+              onClick={() => {
+                hideConnectedAssets();
+              }}
+            >
+              X
+            </Button>
+          </Grid2>
         </Grid2>
-        <Grid2 size={1} sx={{ textAlign: "right" }}>
-          <Button onClick={hideConnectedAssets}>X</Button>
-        </Grid2>
-
-        {/* Asset Info */}
-        <Grid2 size={12}>
-          <Typography variant="body1">{connectedAssetData?.id || "N/A"}</Typography>
-          <Typography variant="body1" sx={{ backgroundColor: "#f0f0f0" }}>
-            {connectedAssetData?.type || "Unknown Type"}
-          </Typography>
-        </Grid2>
-
-        {/* Tabs Section */}
-        <Grid2 size={12}>
+      </Box>
+      <Box
+        sx={{
+          p: 2,
+        }}
+      >
+        <Typography variant="body1">
+          {connectedAssetData?.id || "N/A"}
+        </Typography>
+        <Typography variant="body1" sx={{ backgroundColor: "#f0f0f0" }}>
+          {connectedAssetData?.type || "Unknown Type"}
+        </Typography>
+      </Box>
+      <Box
+        sx={{
+          flexGrow: 0,
+          overflowY: "auto",
+          p: 2,
+        }}
+      >
+        <Box sx={{}}>
           <Tabs
+            sx={{}}
             value={value}
             onChange={handleChange}
-            aria-label="connected assets tabs"
+            aria-label="connected asset tabs"
             variant="scrollable"
-            scrollButtons="auto"
+            scrollButtons={true}
             TabIndicatorProps={{
               sx: {
                 display: "flex",
@@ -84,27 +108,24 @@ const ConnectedAssetsPanel: React.FC<ConnectAssetPanelProps> = ({
             }}
           >
             <Tab
-              label={`Dependent Assets (${totalDependents})`}
+              label={`Dependant Assets (${totalDependents}) `}
               {...a11yProps(0)}
               sx={{ flexBasis: "50%" }}
             />
             <Tab
-              label={`Provider Assets (${totalProviders})`}
+              label={`Provider Assets (${totalProviders}) `}
               {...a11yProps(1)}
               sx={{ flexBasis: "50%" }}
             />
           </Tabs>
-
-          {/* Tab Panels */}
           <TabPanel value={value} index={0}>
             <Dependents
               assetUri={connectedAssetData?.assetUri}
-              dependent={connectedAssetData?.dependent}
+              dependent={connectedAssetData?.dependant}
               isAsset={connectedAssetData?.isAsset}
               isDependency={connectedAssetData?.isDependency}
             />
           </TabPanel>
-
           <TabPanel value={value} index={1}>
             <Providers
               isLoading={isProvidersLoading}
@@ -113,8 +134,8 @@ const ConnectedAssetsPanel: React.FC<ConnectAssetPanelProps> = ({
               providers={providers}
             />
           </TabPanel>
-        </Grid2>
-      </Grid2>
+        </Box>
+      </Box>
     </Box>
   );
 };
