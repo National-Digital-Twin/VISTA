@@ -1,7 +1,8 @@
 - op: replace
   path: /spec/servers/0/hosts/0
-  value: paralog.dev.ndtp.co.uk
+  value: paralog.demo.ndtp.co.uk
 
 - op: replace
   path: /spec/servers/1/hosts/0
-  value: paralog.dev.ndtp.co.uk
+  value: paralog.demo.ndtp.co.uk
+
