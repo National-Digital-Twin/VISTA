@@ -43,7 +43,7 @@ export default function AssetTable() {
   return (
     <>
       <div className={styles.assetTableHeader}>
-      
+
         <Typography variant="h6">
              Asset Table
             </Typography>
