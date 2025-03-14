@@ -122,12 +122,9 @@ server {
 
   # Met Office weather API
   location /maptiler/ {
-    proxy_buffer_size 128k;
-    proxy_buffers 4 256k;
-    proxy_busy_buffers_size 256k;
-
-    proxy_pass https://api.maptiler.com/;
-    proxy_set_header apiKey $MAPTILER_API_KEY; # pragma: allowlist-secret
+    set $delimeter "?";
+    set $api_key_qs ${delimeter}key=$MAPTILER_API_KEY;
+    proxy_pass https://api.maptiler.com/$uri$api_key_qs;
   }
 
   ## END UPSTREAM DEFINITIONS
