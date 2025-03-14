@@ -33,11 +33,7 @@ export default function MapSettingsButton() {
 
   useOnClickOutside(ref, hideSettingsMenu);
 
-  const {
-    isDarkMode,
-    enable: enableDarkMode,
-    disable: disableDarkMode,
-  } = useDarkMode();
+  const { enable: enableDarkMode, disable: disableDarkMode } = useDarkMode();
 
   const showPointerCoords = useShowPointerCoords();
   const togglePointerCoords = useTogglePointerCoords();
