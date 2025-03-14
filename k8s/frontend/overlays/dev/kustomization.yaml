@@ -4,13 +4,6 @@ resources:
 namespace: paralog
 
 patches:
-  - path: patches/gateway.yaml
-    target:
-      kind: Gateway
-  - path: patches/virtualService.yaml
-    target:
-      kind: VirtualService
-      name: paralog-frontend
   - path: patches/service-account.yaml
     target:
       kind: ServiceAccount

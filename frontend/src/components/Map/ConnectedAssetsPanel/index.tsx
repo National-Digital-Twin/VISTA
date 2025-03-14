@@ -10,12 +10,13 @@ interface ConnectAssetPanelProps {
   hideConnectedAssets: () => void;
 }
 
-const ConnectedAssetsPanel = ({
+const ConnectedAssetsPanel: React.FC<ConnectAssetPanelProps> = ({
   connectedAssetData,
   hideConnectedAssets,
-}: ConnectAssetPanelProps) => {
+}) => {
   const [value, setValue] = React.useState(0);
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+
+  const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
 
@@ -25,13 +26,14 @@ const ConnectedAssetsPanel = ({
     error: providersFetchError,
     data: providers,
   } = useProviders(
-    connectedAssetData.isAsset,
-    connectedAssetData.isDependency,
-    connectedAssetData.assetUri,
-    connectedAssetData.provider,
+    connectedAssetData?.isAsset ?? false,
+    connectedAssetData?.isDependency ?? false,
+    connectedAssetData?.assetUri ?? "",
+    connectedAssetData?.provider ?? "",
   );
 
   const totalProviders = providers?.length || 0;
+  const totalDependents = connectedAssetData?.dependent?.count || 0;
 
   return (
     <Box
@@ -54,7 +56,7 @@ const ConnectedAssetsPanel = ({
         <Grid2 container>
           <Grid2 size={11}>
             <Typography variant="h5" fontWeight={800}>
-              {connectedAssetData.title}
+              {connectedAssetData?.title || "Unknown Asset"}
             </Typography>
           </Grid2>
           <Grid2 size={1} sx={{ textAlign: "right" }}>
@@ -73,9 +75,11 @@ const ConnectedAssetsPanel = ({
           p: 2,
         }}
       >
-        <Typography variant="body1">{connectedAssetData.id}</Typography>
+        <Typography variant="body1">
+          {connectedAssetData?.id || "N/A"}
+        </Typography>
         <Typography variant="body1" sx={{ backgroundColor: "#f0f0f0" }}>
-          {connectedAssetData.type}
+          {connectedAssetData?.type || "Unknown Type"}
         </Typography>
       </Box>
       <Box
@@ -90,7 +94,7 @@ const ConnectedAssetsPanel = ({
             sx={{}}
             value={value}
             onChange={handleChange}
-            aria-label="basic tabs example"
+            aria-label="connected asset tabs"
             variant="scrollable"
             scrollButtons={true}
             TabIndicatorProps={{
@@ -104,7 +108,7 @@ const ConnectedAssetsPanel = ({
             }}
           >
             <Tab
-              label={`Dependant Assets (${connectedAssetData?.dependent?.count}) `}
+              label={`Dependant Assets (${totalDependents}) `}
               {...a11yProps(0)}
               sx={{ flexBasis: "50%" }}
             />
@@ -116,10 +120,10 @@ const ConnectedAssetsPanel = ({
           </Tabs>
           <TabPanel value={value} index={0}>
             <Dependents
-              assetUri={connectedAssetData.assetUri}
-              dependent={connectedAssetData.dependant}
-              isAsset={connectedAssetData.isAsset}
-              isDependency={connectedAssetData.isDependency}
+              assetUri={connectedAssetData?.assetUri}
+              dependent={connectedAssetData?.dependant}
+              isAsset={connectedAssetData?.isAsset}
+              isDependency={connectedAssetData?.isDependency}
             />
           </TabPanel>
           <TabPanel value={value} index={1}>

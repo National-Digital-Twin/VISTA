@@ -8,6 +8,7 @@ import {
   TableContainer,
   Paper,
   TablePagination,
+  Typography,
 } from "@mui/material";
 import { faFileExcel, faFileCsv } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -42,7 +43,10 @@ export default function AssetTable() {
   return (
     <>
       <div className={styles.assetTableHeader}>
-        <h3 className="text-lg font-semibold">Asset Table</h3>
+
+        <Typography variant="h6">
+             Asset Table
+            </Typography>
         {assets.length > 0 && (
           <div className={styles.exportButtons}>
             <button className="btn btn-primary" onClick={downloadCSV}>
