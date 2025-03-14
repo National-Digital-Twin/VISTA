@@ -1,11 +1,23 @@
-- op: replace
-  path: /spec/servers/0/hosts/0
-  value: paralog.demo.ndtp.co.uk
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
 
-- op: replace
-  path: /spec/servers/1/hosts/0
-  value: paralog.demo.ndtp.co.uk
+metadata:
+  name: paralog-virtual-service
+spec:
+  hosts:
+    - paralog.demo.ndtp.co.uk
+  gateways:
+    - paralog/paralog-ingress-gateway
+  http:
+    - match:
+        - uri:
+            prefix: /coefficient-python/
+      rewrite:
+        uri: "/"
+      route:
+        - destination:
+            host: paralog-python-api
+            port:
+              number: 80
 
-- op: replace
-  path: /spec/http/0/match/0/uri/prefix
-  value: /coefficient-python/
+
