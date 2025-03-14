@@ -85,7 +85,7 @@ const ConnectedAssetsPanel: React.FC<ConnectAssetPanelProps> = ({
       <Box
         sx={{
           flexGrow: 0,
-          overflowY: "scroll",
+          overflowY: "auto",
           p: 2,
         }}
       >
