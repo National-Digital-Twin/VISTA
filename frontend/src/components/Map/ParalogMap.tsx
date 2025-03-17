@@ -61,7 +61,6 @@ function CustomMapElements({ tool }: CustomMapElementsProps) {
   if (!tool.MapElements) {
     return null;
   }
-
   const MapElements = tool.MapElements;
   return <MapElements />;
 }
@@ -91,7 +90,6 @@ const MAllOverlays = memo(AllOverlays);
 
 function AllCustomMapElements() {
   const tools = useTools();
-
   return (
     <>
       {tools("map-element-order").map((tool) => (
