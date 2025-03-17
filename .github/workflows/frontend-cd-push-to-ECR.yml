@@ -49,9 +49,9 @@ jobs:
     name: Docker Build & Push
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    environment: development
     env:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    environment: development
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -81,11 +81,14 @@ jobs:
         working-directory: frontend
         run: yarn install --frozen-lockfile
 
+      - name: Build .env file
+        working-directory: frontend
+        run: |
+          echo VITE_MAP_TILER_TOKEN=${{ secrets.VITE_MAP_TILER_TOKEN }} > .env
+
       - name: Build Frontend
         working-directory: frontend
         run: yarn run build
-        env:
-          VITE_MAP_TILER_TOKEN: ${{ secrets.VITE_MAP_TILER_TOKEN }}
 
       - name: Build Docker Image
         run: |
