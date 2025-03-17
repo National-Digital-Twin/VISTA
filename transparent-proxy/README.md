@@ -24,3 +24,5 @@ It can be run for example as:
 ```bash
 docker run -ti -p 5013:80 --env ADMIRALTY_API_KEY=... --env REALTIME_TRAINS_API_KEY=... paralog-transparent-proxy:latest
 ```
+
+Note that for this application specifically, [maptiler](https://api.maptiler.com/) cannot be passed via the transparent proxy, as the host header must match api.maptiler.com else a 403 error will be returned by CloudFlare. To secure API keys used by maptiler, you must follow the guidance available at [maptiler](https://docs.maptiler.com/cloud/api/authentication-key/) to scope its use to specific domains.
