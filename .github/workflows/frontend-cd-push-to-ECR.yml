@@ -2,6 +2,9 @@ name: Frontend CD - push to ECR
 
 on:
   workflow_call:
+    secrets:
+      VITE_MAP_TILER_TOKEN:
+        required: true
     inputs:
       aws_account_number:
         type: string
