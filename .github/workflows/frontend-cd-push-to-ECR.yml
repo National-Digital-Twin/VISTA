@@ -81,14 +81,9 @@ jobs:
         working-directory: frontend
         run: yarn install --frozen-lockfile
 
-      - name: Build .env file
-        working-directory: frontend
-        run: |
-          echo VITE_MAP_TILER_TOKEN=${{ secrets.VITE_MAP_TILER_TOKEN }} > .env
-
       - name: Build Frontend
         working-directory: frontend
-        run: yarn run build
+        run: VITE_MAP_TILER_TOKEN=${{ secrets.VITE_MAP_TILER_TOKEN }} && npm run build
 
       - name: Build Docker Image
         run: |
