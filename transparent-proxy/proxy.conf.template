@@ -130,4 +130,11 @@ server {
     set $api_key_qs ${delimeter}key=$MAPTILER_API_KEY;
     proxy_pass https://api.maptiler.com/$uri$api_key_qs;
   }
+
+  ## END UPSTREAM DEFINITIONS
+
+  if ($upstream_http_content_type ~* "(text/html|application/xhtml+xml|text/javascript|application/javascript)") {
+    # Block upstreams ever serving us "dangerous" content
+    return 502;
+  }
 }
