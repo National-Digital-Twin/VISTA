@@ -55,6 +55,7 @@ jobs:
     environment: development
     env:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      VITE_MAP_TILER_TOKEN: ${{ secrets.VITE_MAP_TILER_TOKEN }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -87,7 +88,8 @@ jobs:
       - name: Build Frontend
         working-directory: frontend
         run: |
-          VITE_MAP_TILER_TOKEN=${{ secrets.VITE_MAP_TILER_TOKEN }} npm run build
+          echo "${#VITE_MAP_TILER_TOKEN}"
+          npm run build
 
       - name: Build Docker Image
         run: |
