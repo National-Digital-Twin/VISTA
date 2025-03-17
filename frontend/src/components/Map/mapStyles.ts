@@ -1,5 +1,10 @@
 import { useMemo } from "react";
 import { useDarkMode } from "usehooks-ts";
+import config from "@/config/app-config";
+
+function createMapTilerStyle(styleId: string) {
+  return `${styleId}?key=${config.map.maptilerToken}`;
+}
 
 export interface MapStyle {
   /** Map style ID by its URI (varies between light/dark) */
@@ -19,22 +24,30 @@ function getMapTilerStyles(darkMode: boolean): MapStyle[] {
       key: "os",
     },
     {
-      id: `/transparent-proxy/maptiler/maps/streets-v2${darkLight}/style.json`,
+      id: createMapTilerStyle(
+        `https://api.maptiler.com/maps/streets-v2${darkLight}/style.json`,
+      ),
       name: "Streets",
       key: "streets",
     },
     {
-      id: "/transparent-proxy/maptiler/maps/hybrid/style.json",
+      id: createMapTilerStyle(
+        "https://api.maptiler.com/maps/hybrid/style.json",
+      ),
       name: "Satellite",
       key: "satellite",
     },
     {
-      id: `/transparent-proxy/maptiler/maps/basic-v2${darkLight}/style.json`,
+      id: createMapTilerStyle(
+        `https://api.maptiler.com/maps/basic-v2${darkLight}/style.json`,
+      ),
       name: "Basic",
       key: "basic",
     },
     {
-      id: `/transparent-proxy/maptiler/maps/bright-v2${darkLight}/style.json`,
+      id: createMapTilerStyle(
+        `https://api.maptiler.com/maps/bright-v2${darkLight}/style.json`,
+      ),
       name: "Bright",
       key: "bright",
     },
