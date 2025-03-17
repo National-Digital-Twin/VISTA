@@ -87,9 +87,7 @@ jobs:
 
       - name: Build Frontend
         working-directory: frontend
-        run: |
-          echo "${#VITE_MAP_TILER_TOKEN}"
-          npm run build
+        run: npm run build
 
       - name: Build Docker Image
         run: |

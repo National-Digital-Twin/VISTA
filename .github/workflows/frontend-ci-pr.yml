@@ -2,6 +2,9 @@ name: Frontend CI on PR
 
 on:
   workflow_call:
+    secrets:
+      VITE_MAP_TILER_TOKEN:
+        required: true
   pull_request:
     paths:
       - "frontend/**"
@@ -145,6 +148,7 @@ jobs:
     timeout-minutes: 20
     env:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      VITE_MAP_TILER_TOKEN: ${{ secrets.VITE_MAP_TILER_TOKEN }}
     environment: development
     steps:
       - name: Checkout repository
@@ -166,7 +170,7 @@ jobs:
 
       - name: Build Frontend
         working-directory: frontend
-        run: VITE_MAP_TILER_TOKEN=${{ secrets.VITE_MAP_TILER_TOKEN }} && npm run build
+        run: npm run build
 
       - name: list files in dist dir
         working-directory: frontend
