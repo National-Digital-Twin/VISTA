@@ -167,6 +167,8 @@ jobs:
       - name: Build Frontend
         working-directory: frontend
         run: yarn run build
+        env:
+          VITE_MAP_TILER_TOKEN: ${{ secrets.VITE_MAP_TILER_TOKEN }}
 
       - name: list files in dist dir
         working-directory: frontend
