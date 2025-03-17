@@ -62,6 +62,8 @@ jobs:
       repo_name: "paralog/frontend"
       app_name: "frontend"
       version: ${{ needs.versioning.outputs.version }}
+    secrets:
+      VITE_MAP_TILER_TOKEN: ${{ secrets.VITE_MAP_TILER_TOKEN }}
 
   tag-repository:
     name: Tag Repository
