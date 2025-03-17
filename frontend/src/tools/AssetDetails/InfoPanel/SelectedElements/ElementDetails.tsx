@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   Card,
@@ -25,6 +24,7 @@ export interface ElementDefaultsProps {
 export default function ElementDetails({
   element,
   setConnectedAssetData,
+  showConnectedAssets,
 }: Readonly<ElementDefaultsProps>) {
   const elemIsAsset = isAsset(element);
 
@@ -37,17 +37,18 @@ export default function ElementDetails({
   const isLoading = assetInfo.isLoading;
   const isError = assetInfo.isError;
 
-  useEffect(() => {
-    if (elemIsAsset && assetInfo.data) {
-      const details = element?.getDetails?.(assetInfo.data) || {};
-      setConnectedAssetData(constructElementDetailsObject(element, details));
-    }
-  }, [elemIsAsset, assetInfo.data, element, setConnectedAssetData]);
+  // useEffect(() => {
+  //   if (elemIsAsset && assetInfo.data) {
+  //     const details = element?.getDetails?.(assetInfo.data) || {};
+  //     setConnectedAssetData(constructElementDetailsObject(element, details));
+  //   }
+  // }, [elemIsAsset, assetInfo.data, element, setConnectedAssetData]);
 
   const onClick = () => {
     if (elemIsAsset && assetInfo.data) {
       const details = element?.getDetails?.(assetInfo.data) || {};
       setConnectedAssetData(constructElementDetailsObject(element, details));
+      showConnectedAssets();
     }
   };
   if (isLoading) {
