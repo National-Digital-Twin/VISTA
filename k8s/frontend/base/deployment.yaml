@@ -24,9 +24,6 @@ spec:
               value: "none"
           name: frontend
           imagePullPolicy: Always
-          envFrom:
-            - secretRef:
-                name: paralog-frontend-secret
           ports:
             - containerPort: 80
               protocol: TCP
