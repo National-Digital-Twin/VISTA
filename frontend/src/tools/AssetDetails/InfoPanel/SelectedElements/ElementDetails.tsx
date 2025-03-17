@@ -125,29 +125,29 @@ export default function ElementDetails({
               </Typography>
               <ArrowRightIcon fontSize="small" sx={{ ml: 1 }} />
             </Box>
-          </Box>
 
-          {/* Google Street View */}
-          <Box display="flex" alignItems="center">
-            <Typography variant="body2" sx={{ fontWeight: 500, mr: 1 }}>
-              Google Street View
-            </Typography>
-            {element?.lat && element?.lng ? (
-              <Tooltip title="Open Google Street View">
-                <IconButton
-                  component="a"
-                  href={`https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${element?.lat},${element?.lng}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <RoomIcon />
-                </IconButton>
-              </Tooltip>
-            ) : (
-              <Typography variant="body2" color="textSecondary">
-                Coordinates not available
+            {/* Google Street View */}
+            <Box display="flex" alignItems="center">
+              <Typography variant="body2" sx={{ fontWeight: 500, mr: 1 }}>
+                Google Street View
               </Typography>
-            )}
+              {element?.lat && element?.lng ? (
+                <Tooltip title="Open Google Street View">
+                  <IconButton
+                    component="a"
+                    href={`https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${element?.lat},${element?.lng}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <RoomIcon />
+                  </IconButton>
+                </Tooltip>
+              ) : (
+                <Typography variant="body2" color="textSecondary">
+                  Coordinates not available
+                </Typography>
+              )}
+            </Box>
           </Box>
         </Box>
       </CardContent>
