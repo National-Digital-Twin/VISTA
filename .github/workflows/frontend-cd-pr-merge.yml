@@ -57,6 +57,7 @@ jobs:
   push-to-ECR:
     needs: [frontend-ci, versioning]
     uses: ./.github/workflows/frontend-cd-push-to-ECR.yml
+    environment: development
     with:
       aws_account_number: "537124944113"
       repo_name: "paralog/frontend"
