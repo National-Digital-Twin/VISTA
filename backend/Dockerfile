@@ -9,7 +9,10 @@ WORKDIR /paralog-python-api/core
 
 # upgrade pip to the latest version
 RUN apt-get update && apt-get upgrade -y \
-    && apt-get install -y build-essential libstdc++6 libgdal-dev gdal-bin \
+    && apt-get install -y build-essential \
+    libgdal-dev \
+    libstdc++6 \
+    gdal-bin \
     && rm -rf /var/lib/apt/lists/*
 
 # Set environment variables for GDAL
@@ -32,7 +35,10 @@ WORKDIR /paralog-python-api/core
 COPY --from=builder /venv /venv
 
 # bash is installed for more convenient debugging.
-RUN apt-get update && apt-get upgrade -y && apt-get -y install bash linux-libc-dev=6.1.128-1 && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get upgrade -y \
+    && apt-get -y install bash \
+    linux-libc-dev=6.1.128-1 \
+    && rm -rf /var/lib/apt/lists/*
 
 # copy payload code only
 COPY /paralog-python-api/core .
