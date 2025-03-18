@@ -35,7 +35,7 @@ WORKDIR /paralog-python-api/core
 COPY --from=builder /venv /venv
 
 # bash is installed for more convenient debugging.
-RUN apt-get update && apt-get upgrade -y \
+RUN apt-get update && apt-get upgrade -y --allow-downgrades \
     && apt-get -y install bash \
     linux-libc-dev=6.1.128-1 \
     && rm -rf /var/lib/apt/lists/*
