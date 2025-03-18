@@ -37,13 +37,6 @@ export default function ElementDetails({
   const isLoading = assetInfo.isLoading;
   const isError = assetInfo.isError;
 
-  // useEffect(() => {
-  //   if (elemIsAsset && assetInfo.data) {
-  //     const details = element?.getDetails?.(assetInfo.data) || {};
-  //     setConnectedAssetData(constructElementDetailsObject(element, details));
-  //   }
-  // }, [elemIsAsset, assetInfo.data, element, setConnectedAssetData]);
-
   const onClick = () => {
     if (elemIsAsset && assetInfo.data) {
       const details = element?.getDetails?.(assetInfo.data) || {};
