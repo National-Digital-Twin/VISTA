@@ -51,7 +51,7 @@ function getMapTilerStyles(darkMode: boolean): MapStyle[] {
       name: "Bright",
       key: "bright",
     },
-  ];
+  ].filter((x) => x);
 }
 
 export function useMapStyles() {
