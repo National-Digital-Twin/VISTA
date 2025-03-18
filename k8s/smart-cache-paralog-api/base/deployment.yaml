@@ -41,7 +41,6 @@ spec:
           ports:
             - containerPort: 4001
               protocol: TCP
-
           resources:
             requests:
               cpu: "1" # Minimum CPU your container is guaranteed.

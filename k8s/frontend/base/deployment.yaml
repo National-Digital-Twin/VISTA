@@ -23,6 +23,13 @@ spec:
             - name: IMAGE_DIGEST
               value: "none"
           name: frontend
+          resources:
+            limits:
+              memory: "2Gi"
+            requests:
+              cpu: 1
+              memory: "2Gi"
+              ephemeral-storage: "2Gi"
           imagePullPolicy: Always
           ports:
             - containerPort: 80
