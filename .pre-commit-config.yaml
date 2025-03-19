@@ -49,7 +49,7 @@ repos:
           # https://regex101.com/
           "--exclude-files 'backend/poetry\\.lock'", "--exclude-files '\\.secrets\\.baseline'", "--exclude-files '.*\\.ipynb$'",
           # "--exclude-files '.*build/'",
-          "--exclude-files 'dev/kafka/consumer\\.properties'", "--exclude-files 'dev/kafka/server\\.properties'", "--exclude-secrets 'password|ENTER_PASSWORD_HERE|INSERT_API_KEY_HERE'", "--exclude-lines 'integrity=*sha'"]
+          "--exclude-files 'frontend/dev/kafka/consumer\\.properties'", "--exclude-files 'frontend/dev/kafka/server\\.properties'", "--exclude-secrets 'password|ENTER_PASSWORD_HERE|INSERT_API_KEY_HERE'", "--exclude-lines 'integrity=*sha'"]
         # https://pre-commit.com/#regular-expressions
         exclude: |
           (?x)^(
