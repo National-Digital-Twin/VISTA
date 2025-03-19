@@ -29,7 +29,6 @@ export default function SelectedElements({
     return (
       <ElementsList
         selectedElements={selectedElements}
-        totalSelected={totalSelected}
         showConnectedAssets={showConnectedAssets}
         setConnectedAssetData={setConnectedAssetData}
       />
@@ -45,7 +44,6 @@ export default function SelectedElements({
 
 interface ElementsListProps {
   readonly selectedElements: Element[];
-  readonly totalSelected: number;
   readonly showConnectedAssets: () => void;
   readonly setConnectedAssetData: (data: any) => void;
 }
