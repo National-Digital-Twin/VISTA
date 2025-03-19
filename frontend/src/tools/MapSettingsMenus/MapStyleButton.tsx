@@ -31,6 +31,7 @@ export default function MapStyleButton() {
     () =>
       mapStyles.map(({ name, key }) => ({
         name: name,
+        key: key,
         selected: key === mapStyleKey,
         type: "radio",
         onItemClick: () => {
@@ -63,7 +64,7 @@ export default function MapStyleButton() {
               {mapMenuItems.map((item) => (
                 <FormControlLabel
                   key={item.name}
-                  value={item.name}
+                  value={item.key}
                   control={<Radio />}
                   label={item.name}
                   onClick={item.onItemClick}

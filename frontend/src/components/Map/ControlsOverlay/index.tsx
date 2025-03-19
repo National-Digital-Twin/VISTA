@@ -89,11 +89,14 @@ export default function ControlsOverlay() {
         </Grid2>
         <Grid2 size={dependantPanelOpen ? 5 : 8}>
           <div style={{ marginTop: "10px" }} className="pointer-events-auto">
-            <MToolbar
-              onOpenControlPanel={
-                featureFlags.uiNext && controlPanelOpen && hideControlPanel
-              }
-            />
+            {controlPanelOpen && ( // Only show close button when the panel is open
+              <MToolbar
+                onOpenControlPanel={() => {
+                  hideControlPanel(); // Hide Control Panel
+                  hideConnectedAssetsPanel(); // Also hide Connected Assets Panel
+                }}
+              />
+            )}
           </div>
         </Grid2>
         <Grid2
@@ -120,6 +123,7 @@ export default function ControlsOverlay() {
     </Grid2>
   );
 }
+
 
 function DetailPanels() {
   const tools = useTools();
