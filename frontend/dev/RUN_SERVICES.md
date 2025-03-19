@@ -11,7 +11,7 @@ The following services are required by Paralog to run:
 
 You will need to build images for the services listed above locally with specific tags to be able to run them using the docker compose.
 
-The Secure agent graph is a docker image that needs to be built with the tag `paralog/secure-agent-graph`. The docker file to build the image can be found in this directory. Before building the image you will need to generate a personal access token (classic) on GitHub and run the following command to login to the GitHub container registry `echo <my-pat-token> | docker login ghcr.io -u <my-username> --password-stdin
+The Secure agent graph is a docker image that needs to be built with the tag `paralog/secure-agent-graph`. The docker file to build the image can be found in this directory. Before building the image you will need to generate a personal access token (classic) on GitHub and run the following command to login to the GitHub container registry `echo <my-pat-token> | docker login ghcr.io -u <my-username> --password-stdin`
 
 The Smart cache paralog API can be found [here](https://github.com/National-Digital-Twin/smart-cache-paralog-api) and needs to be built with the tag `smart-cache-paralog-api`.
 

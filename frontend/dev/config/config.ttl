@@ -202,4 +202,5 @@ PREFIX tdb2:    <http://jena.apache.org/2016/tdb#>
     # Empty default (the :} at the end) means if this variable is not set then no extra
     # properties are loaded
     fk:configFile       "/fuseki/kafka/consumer.properties"
+    .
 
