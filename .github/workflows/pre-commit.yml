@@ -13,4 +13,4 @@ jobs:
           python-version: 3.12.5
       - uses: pre-commit/action@v3.0.1
         with:
-          extra_args: --hook-stage=manual --all-files --exclude-files '*./consumer\.properties$'
+          extra_args: --hook-stage=manual --all-files
