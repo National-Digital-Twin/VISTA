@@ -4,16 +4,16 @@ services:
     container_name: paralog-zookeeper
     image: bitnami/zookeeper:latest
     ports:
-      - '2181:2181'
+      - "2181:2181"
     environment:
       - ALLOW_ANONYMOUS_LOGIN=yes
   kafka:
     container_name: paralog-kafka
-    image: 'bitnami/kafka:latest'
+    image: "bitnami/kafka:latest"
     depends_on:
       - zookeeper
     ports:
-      - '9092:9092'
+      - "9092:9092"
     volumes:
       - ./kafka/server.properties:/bitnami/kafka/config/server.properties
     environment:
@@ -38,7 +38,17 @@ services:
       - 3030:3030
   curl-knowledge:
     image: curlimages/curl
-    command: ["curl", "-X", "POST", "-H", "Content-Type: text/turtle", "--data-binary", "@/work/iow.ttl", "http://secure-agent-graph:3030/knowledge/upload"]
+    command:
+      [
+        "curl",
+        "-X",
+        "POST",
+        "-H",
+        "Content-Type: text/turtle",
+        "--data-binary",
+        "@/work/iow.ttl",
+        "http://secure-agent-graph:3030/knowledge/upload",
+      ]
     depends_on:
       secure-agent-graph:
         condition: service_healthy
@@ -46,7 +56,17 @@ services:
       - ./data/iow.ttl:/work/iow.ttl
   curl-ontology:
     image: curlimages/curl
-    command: ["curl", "-X", "POST", "-H", "Content-Type: text/turtle", "--data-binary", "@/work/ontology.ttl", "http://secure-agent-graph:3030/ontology/upload"]
+    command:
+      [
+        "curl",
+        "-X",
+        "POST",
+        "-H",
+        "Content-Type: text/turtle",
+        "--data-binary",
+        "@/work/ontology.ttl",
+        "http://secure-agent-graph:3030/ontology/upload",
+      ]
     depends_on:
       secure-agent-graph:
         condition: service_healthy
