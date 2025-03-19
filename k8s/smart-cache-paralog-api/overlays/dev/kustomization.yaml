@@ -16,7 +16,7 @@ labels:
       env: demo
 
 images:
-  - name: smart-cache-paralog-api-image
+  - name: smart-cache-paralog-api-image:template
     newName: 537124944113.dkr.ecr.eu-west-2.amazonaws.com/paralog/smart-cache-paralog-api
     newTag: "to.be.replaced"
 

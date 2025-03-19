@@ -15,7 +15,7 @@ services:
 
   api:
     container_name: smart-cache-paralog-api
-    image: smart-cache-paralog-api
+    image: smart-cache-paralog-api:template
     ports:
       - 4001:4001
     environment:
@@ -27,7 +27,7 @@ services:
 
   transparent-proxy:
     container_name: paralog-transparent-proxy
-    image: paralog-transparent-proxy
+    image: paralog-transparent-proxy:template
     ports:
       - 5013:80
     env_file:
@@ -35,7 +35,7 @@ services:
 
   paralog-python-api:
     container_name: paralog-python-api
-    image: paralog-python-api
+    image: paralog-python-api:template
     ports:
       - 8000:8000
     env_file:

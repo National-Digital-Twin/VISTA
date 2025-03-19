@@ -16,7 +16,7 @@ labels:
       env: dev
 
 images:
-  - name: paralog-python-api-image
+  - name: paralog-python-api-image:template
     newName: 537124944113.dkr.ecr.eu-west-2.amazonaws.com/paralog/python-api
     newTag: "to.be.replaced"
 

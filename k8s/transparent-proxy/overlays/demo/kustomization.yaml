@@ -17,6 +17,6 @@ labels:
       env: demo
 
 images:
-  - name: paralog-transparent-proxy-image
+  - name: paralog-transparent-proxy-image:template
     newName: 503561419905.dkr.ecr.eu-west-2.amazonaws.com/paralog/demo-transparent-proxy
     newTag: "latest"

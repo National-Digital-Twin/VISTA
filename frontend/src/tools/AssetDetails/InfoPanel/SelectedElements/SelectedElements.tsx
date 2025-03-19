@@ -29,7 +29,6 @@ export default function SelectedElements({
     return (
       <ElementsList
         selectedElements={selectedElements}
-        totalSelected={totalSelected}
         showConnectedAssets={showConnectedAssets}
         setConnectedAssetData={setConnectedAssetData}
       />
@@ -45,22 +44,17 @@ export default function SelectedElements({
 
 interface ElementsListProps {
   readonly selectedElements: Element[];
-  readonly totalSelected: number;
   readonly showConnectedAssets: () => void;
   readonly setConnectedAssetData: (data: any) => void;
 }
 
 function ElementsList({
   selectedElements,
-  totalSelected,
   showConnectedAssets,
   setConnectedAssetData,
 }: ElementsListProps) {
   return (
     <>
-      <InfoHeader className="justify-between">
-        {totalSelected} selected
-      </InfoHeader>
       <ul className="flex flex-col gap-y-3 grow min-h-0 overflow-y-auto">
         {selectedElements.map((selectedElement) => (
           <ElementDetails

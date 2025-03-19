@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   Card,
@@ -24,8 +23,8 @@ export interface ElementDefaultsProps {
 
 export default function ElementDetails({
   element,
-  showConnectedAssets,
   setConnectedAssetData,
+  showConnectedAssets,
 }: Readonly<ElementDefaultsProps>) {
   const elemIsAsset = isAsset(element);
 
@@ -38,13 +37,13 @@ export default function ElementDetails({
   const isLoading = assetInfo.isLoading;
   const isError = assetInfo.isError;
 
-  useEffect(() => {
+  const onClick = () => {
     if (elemIsAsset && assetInfo.data) {
       const details = element?.getDetails?.(assetInfo.data) || {};
       setConnectedAssetData(constructElementDetailsObject(element, details));
+      showConnectedAssets();
     }
-  }, [elemIsAsset, assetInfo.data, element, setConnectedAssetData]);
-
+  };
   if (isLoading) {
     return (
       <Box display="flex" justifyContent="center" mt={2}>
@@ -67,11 +66,7 @@ export default function ElementDetails({
   }
 
   if (isEmpty(element) || !details) {
-    return (
-      <Alert severity="warning" sx={{ mt: 2 }}>
-        Unable to retrieve details for this element.
-      </Alert>
-    );
+    return null;
   }
 
   // Extract type string after #
@@ -118,7 +113,9 @@ export default function ElementDetails({
               display="flex"
               alignItems="center"
               sx={{ cursor: "pointer", mb: 1, whiteSpace: "nowrap" }}
-              onClick={() => showConnectedAssets()}
+              onClick={() => {
+                onClick();
+              }}
             >
               <Typography variant="body2" sx={{ fontWeight: 500 }}>
                 View connected assets
@@ -156,7 +153,6 @@ export default function ElementDetails({
 }
 
 function constructElementDetailsObject(element: any, details: any) {
-  console.log("constructElementDetailsObject", element);
   return {
     dependent: element?.dependent || {},
     assetUri: element?.uri || "",

@@ -18,11 +18,18 @@ spec:
     spec:
       serviceAccountName: paralog-frontend-sa
       containers:
-        - image: paralog-frontend-image
+        - image: paralog-frontend-image:template
           env:
             - name: IMAGE_DIGEST
               value: "none"
           name: frontend
+          resources:
+            limits:
+              memory: "1Gi"
+            requests:
+              cpu: "0.25"
+              memory: "256Mi"
+              ephemeral-storage: "2Gi"
           imagePullPolicy: Always
           ports:
             - containerPort: 80
