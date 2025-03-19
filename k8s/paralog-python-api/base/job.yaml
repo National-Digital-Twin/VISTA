@@ -21,10 +21,10 @@ spec:
                 name: paralog-python-api-static-secret
           resources:
             requests:
-              cpu: "0.5" # Minimum CPU your container is guaranteed.
+              cpu: "250m" # Minimum CPU your container is guaranteed.
               memory: "2Gi" # Minimum Memory your container is guaranteed.
             limits:
-              cpu: "3" # Maximum CPU your container can use.
+              cpu: "500m" # Maximum CPU your container can use.
               memory: "2Gi" # Maximum Memory your container can use.
       restartPolicy: Never
   ttlSecondsAfterFinished: 10
