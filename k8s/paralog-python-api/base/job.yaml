@@ -23,6 +23,7 @@ spec:
             requests:
               cpu: "0.5" # Minimum CPU your container is guaranteed.
               memory: "2Gi" # Minimum Memory your container is guaranteed.
+              ephemeral-storage: "2Gi"
             limits:
               cpu: "3" # Maximum CPU your container can use.
               memory: "2Gi" # Maximum Memory your container can use.
