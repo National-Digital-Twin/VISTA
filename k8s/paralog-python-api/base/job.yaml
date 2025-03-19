@@ -11,7 +11,7 @@ spec:
       serviceAccountName: paralog-python-api-sa
       containers:
         - name: paralog-python-api-image
-          image: paralog-python-api-image
+          image: paralog-python-api-image:template
           imagePullPolicy: Always
           command: ["./entrypoint.sh"]
           envFrom:

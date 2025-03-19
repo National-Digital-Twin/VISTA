@@ -24,7 +24,7 @@ spec:
       serviceAccountName: paralog-python-api-sa
       containers:
         - name: paralog-python-api-image
-          image: paralog-python-api-image
+          image: paralog-python-api-image:template
           imagePullPolicy: Always
           envFrom:
             - configMapRef:
@@ -36,9 +36,9 @@ spec:
               protocol: TCP
           resources:
             requests:
-              cpu: 0.5 # Minimum CPU your container is guaranteed.
+              cpu: "0.5" # Minimum CPU your container is guaranteed.
               memory: "2Gi" # Minimum Memory your container is guaranteed.
             limits:
-              cpu: 3 # Maximum CPU your container can use.
+              cpu: "3" # Maximum CPU your container can use.
               memory: "3Gi" # Maximum Memory your container can use.
       restartPolicy: Always
