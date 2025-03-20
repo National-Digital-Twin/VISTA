@@ -29,7 +29,6 @@ repos:
       - id: check-added-large-files
         name: Check for files larger than 5 MB
         args: ["--maxkb=5120"]
-
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.6.4
     hooks:
@@ -37,25 +36,24 @@ repos:
       - id: ruff-format
         args: [backend]
         types_or: [python, pyi, jupyter]
-
       # Run the linter.
       - id: ruff
         types_or: [python, pyi, jupyter]
         args: [--fix, backend]
-
   - repo: https://github.com/Yelp/detect-secrets
     rev: v1.4.0
     hooks:
       - id: detect-secrets
         name: detect-secrets - Detect secrets in staged code
-        args: [
+        args:
+          [
             "--baseline",
             ".secrets.baseline",
-            # https://regex101.com/
             "--exclude-files 'backend/poetry\\.lock'",
             "--exclude-files '\\.secrets\\.baseline'",
             "--exclude-files '.*\\.ipynb$'",
-            # "--exclude-files '.*build/'",
+            "--exclude-files 'frontend/dev/kafka/consumer\\.properties'",
+            "--exclude-files 'frontend/dev/kafka/server\\.properties'",
             "--exclude-secrets 'password|ENTER_PASSWORD_HERE|INSERT_API_KEY_HERE'",
             "--exclude-lines 'integrity=*sha'",
           ]
@@ -65,58 +63,14 @@ repos:
               poetry\.lock|
               \.secrets\.baseline|
               \.env\.template|
-              .*\.ipynb
+              .*\.ipynb |
+              frontend/dev/kafka/consumer\.properties |
+              frontend/dev/kafka/server\.properties
           )$
-  # - repo: https://github.com/python-poetry/poetry
-  #   rev: 1.4.0
-  #   hooks:
-  #     - id: poetry-check
-  #     - id: poetry-lock
-  #       args: ["--no-update"]
-  #     - id: poetry-export
-  #       args:
-  #         [
-  #           "-f",
-  #           "requirements.txt",
-  #           "-o",
-  #           "requirements.txt",
-  #           "--without-hashes",
-  #         ]
   - repo: https://github.com/pre-commit/mirrors-prettier
     rev: v4.0.0-alpha.8
     hooks:
       - id: prettier
         types_or: [yaml]
         additional_dependencies:
-          - "prettier@2.8.4"
-  # - repo: https://github.com/pre-commit/mirrors-eslint
-  #   rev: "v8.56.0"
-  #   hooks:
-  #     - id: eslint
-  #       additional_dependencies:
-  #         - eslint@8.56.0
-  #         - "@typescript-eslint/eslint-plugin@7.18.0"
-  #         - "@typescript-eslint/parser@7.18.0"
-  #         - eslint-plugin-import@2.29.1
-  #         - eslint-plugin-jsx-a11y@6.9.0
-  #         - eslint-plugin-react@7.35.0
-  #         - eslint-plugin-react-hooks@5.1.0-rc-fb9a90fa48-20240614
-  #         - eslint-plugin-sonarjs@1.0.4
-  #         - "@babel/core@7.25.2"
-  #         - "@babel/eslint-parser@7.25.1"
-  #         - "@babel/preset-react@7.23.3"
-  #       files: \.tsx?$ # *.ts and *.tsx only.
-  #       types: [file]
-  #       stages: [manual]
-  # - repo: https://github.com/thibaudcolas/pre-commit-stylelint
-  #   rev: v14.4.0
-  #   hooks:
-  #     - id: stylelint
-  #       additional_dependencies:
-  #         # stylelint itself needs to be here when using additional_dependencies.
-  #         - stylelint@^16.7.0
-  #         - stylelint-config-standard@^35.0.0
-  #         - stylelint-order@^6.0.3
-  #       files: \.module\.css
-  #       args: [--fix, --config, stylelint.config.js]
-  #       stages: [manual]
+          - "prettier@3.5.3"
