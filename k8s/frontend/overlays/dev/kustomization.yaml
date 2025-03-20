@@ -12,6 +12,6 @@ labels:
   - pairs:
       env: dev
 images:
-  - name: paralog-frontend-image
+  - name: paralog-frontend-image:template
     newName: 537124944113.dkr.ecr.eu-west-2.amazonaws.com/paralog/demo-frontend
     newTag: "remove-auth-2"

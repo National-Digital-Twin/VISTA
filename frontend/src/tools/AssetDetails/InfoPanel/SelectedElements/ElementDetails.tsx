@@ -66,11 +66,7 @@ export default function ElementDetails({
   }
 
   if (isEmpty(element) || !details) {
-    return (
-      <Alert severity="warning" sx={{ mt: 2 }}>
-        Unable to retrieve details for this element.
-      </Alert>
-    );
+    return null;
   }
 
   // Extract type string after #

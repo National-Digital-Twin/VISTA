@@ -16,7 +16,7 @@ labels:
       env: demo
 
 images:
-  - name: paralog-python-api-image
+  - name: paralog-python-api-image:template
     newName: 503561419905.dkr.ecr.eu-west-2.amazonaws.com/paralog/demo-paralog-python-api
     newTag: "1739979400"
 
