@@ -77,10 +77,10 @@ function SearchControl({ searchQuery, onSearch }: SearchControlProps) {
       <SearchIcon
         sx={{
           color: "#3670B3",
-          paddingLeft: 1,
-          paddingRight: 1,
+          marginLeft: 2,
+          marginRight: 2,
           paddingBottom: 1,
-          fontSize: "48px",
+          fontSize: "40px",
         }}
       />
       <TextField
