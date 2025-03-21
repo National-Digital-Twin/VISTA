@@ -1,9 +1,12 @@
-import { faLayerGroup, faSearch } from "@fortawesome/free-solid-svg-icons";
+import { faLayerGroup } from "@fortawesome/free-solid-svg-icons";
+
+import SearchIcon from "@mui/icons-material/Search";
+import HighlightOffIcon from "@mui/icons-material/HighlightOff";
+
 import { useState, startTransition, useCallback } from "react";
 import type React from "react";
 import classNames from "classnames";
 import { Box, TextField } from "@mui/material";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from "./style.module.css";
 import { useTools } from "@/tools/useTools";
 import type { LayerControlProps } from "@/tools/Tool";
@@ -55,6 +58,10 @@ function SearchControl({ searchQuery, onSearch }: SearchControlProps) {
     [onSearch],
   );
 
+  const handleClearSearch = () => {
+    onSearch(""); // Clear the search query
+  };
+
   return (
     <Box
       component="form"
@@ -62,16 +69,22 @@ function SearchControl({ searchQuery, onSearch }: SearchControlProps) {
         mb: 2,
         display: "flex",
         alignItems: "center",
-        backgroundColor: "#e0e0e0",
+        backgroundColor: "#F0F2F2",
+        borderBottom: "2px solid #49454F  ",
+        paddingTop: 2,
       }}
     >
-      <FontAwesomeIcon
-        icon={faSearch}
-        size="2x"
-        style={{ color: "#1976d2", padding: 20 }}
+      <SearchIcon
+        sx={{
+          color: "#3670B3",
+          marginLeft: 2,
+          marginRight: 2,
+          paddingBottom: 1,
+          fontSize: "40px",
+        }}
       />
       <TextField
-        type="search"
+        type="text"
         fullWidth
         label="Search for layers..."
         value={searchQuery}
@@ -80,8 +93,27 @@ function SearchControl({ searchQuery, onSearch }: SearchControlProps) {
         variant="standard"
         sx={{
           paddingBottom: 2,
+          marginRight: 2,
+          "& .MuiInputLabel-root.Mui-focused": {
+            color: "#3670B3", // Label color when focused
+          },
+        }}
+        InputProps={{
+          disableUnderline: true, // Disable the underline
         }}
       />
+      {searchQuery && (
+        <HighlightOffIcon
+          sx={{
+            color: "#3670B3",
+            paddingLeft: 1,
+            paddingRight: 1,
+            paddingBottom: 1,
+            fontSize: "48px",
+          }}
+          onClick={handleClearSearch}
+        />
+      )}
     </Box>
   );
 }
