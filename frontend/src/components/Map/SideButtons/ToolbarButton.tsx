@@ -1,5 +1,4 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
 import type { IconProp, SizeProp } from "@fortawesome/fontawesome-svg-core";
 import Tooltip from "@mui/material/Tooltip";
 import { IconButton } from "@mui/material";
@@ -15,13 +14,14 @@ export interface ToolbarButtonProps {
   readonly icon?: IconProp;
   /** The FontAwesome icon size to be shown (preferred) */
   readonly iconSize?: SizeProp;
-
   /** The SVG source to be shown */
   readonly svgSrc?: string;
   /** Action on click */
   readonly onClick: () => void;
   /** Number to be shown as a badge (optional) */
   readonly badgeContent?: number;
+  /** Rotation angle for compass (optional) */
+  readonly compassRotation?: number;
 }
 
 export default function ToolbarButton({
@@ -34,6 +34,7 @@ export default function ToolbarButton({
   onClick,
   badgeContent,
   iconSize,
+  compassRotation,
 }: ToolbarButtonProps) {
   return (
     <Tooltip title={title} enterDelay={500}>
@@ -65,7 +66,11 @@ export default function ToolbarButton({
             <img
               src={svgSrc}
               alt={title}
-              style={{ width: "100%", height: "100%" }}
+              style={{
+                width: "100%",
+                height: "100%",
+                transform: compassRotation !== undefined ? `rotate(${compassRotation}deg)` : undefined
+              }}
             />
           ) : (
             icon && <FontAwesomeIcon icon={icon} size={iconSize || "1x"} />
