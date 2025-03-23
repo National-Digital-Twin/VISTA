@@ -4,7 +4,7 @@ import type { Feature } from "geojson";
 import classNames from "classnames";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { icon, IconName } from "@fortawesome/fontawesome-svg-core";
+import { icon } from "@fortawesome/fontawesome-svg-core";
 import { FEATURE_COLLECTION, GEOJSON } from "./ParalogMap";
 import { generatePointAssetFeatures } from "./map-utils";
 import { FLOOD_AREA_LAYERS, heatmap, pointAssetCxnLayer } from "./layers";
