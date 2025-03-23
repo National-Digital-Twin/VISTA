@@ -49,8 +49,8 @@ interface AssessmentDependency {
 }
 
 export const fetchAssessmentDependencies = async (
-  assessment: string = "DEFAULT_ASSESSMENT",
   types: string[],
+  assessment: string = "DEFAULT_ASSESSMENT",
 ): Promise<AssessmentDependency[]> => {
   try {
     const body = JSON.stringify({ assessment, types });

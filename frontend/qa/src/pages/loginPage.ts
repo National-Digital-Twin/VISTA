@@ -2,13 +2,13 @@ import { expect, Page } from "@playwright/test";
 import PlaywrightWrapper from "../helper/wrapper/PlaywrightWrappers";
 
 export default class LoginPage {
-  private base: PlaywrightWrapper;
-  constructor(private page: Page) {
+  private readonly base: PlaywrightWrapper;
+  constructor(private readonly page: Page) {
     this.base = new PlaywrightWrapper(page);
   }
 
   //Object Locators
-  private Elements = {
+  private readonly Elements = {
     userInput: "username",
     passwordInput: "Password", // pragma: allowlist secret
     loginBtn: "button[color='primary']",

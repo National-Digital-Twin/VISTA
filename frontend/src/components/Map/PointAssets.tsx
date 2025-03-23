@@ -203,7 +203,7 @@ function MarkerWithTooltip({
   const fontAwesomeIconName = iconStyles.faIcon
     ?.split(" ")
     .pop()
-    ?.replace("fa-", "") as IconName | undefined;
+    ?.replace("fa-", "");
 
   const hasAvailableFontAwesomeIcon = !!icon({
     prefix: "fas",

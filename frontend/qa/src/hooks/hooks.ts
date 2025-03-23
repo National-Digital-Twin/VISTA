@@ -89,7 +89,7 @@ After(async function TestCaseHook({ pickle, result }) {
       this.attach(img, "image/png");
     }
 
-    if (videoPath && fs && fs.existsSync(videoPath)) {
+    if (videoPath && fs?.existsSync(videoPath)) {
       try {
         this.attach(fs.readFileSync(videoPath), "video/webm");
       } catch (error) {

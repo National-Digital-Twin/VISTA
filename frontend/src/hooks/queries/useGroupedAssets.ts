@@ -15,7 +15,7 @@ const useGroupedAssets = ({
   assessment,
   searchFilter,
 }: UseGroupedAssetsOptions) => {
-  const searchFilterWithoutWhitespace = (searchFilter || "")
+  const searchFilterWithoutWhitespace = (searchFilter ?? "")
     .toLowerCase()
     .replace(/\s/g, "");
 
@@ -24,7 +24,7 @@ const useGroupedAssets = ({
     isLoading: dependenciesLoading,
     error: dependenciesError,
   } = useQuery({
-    queryKey: ["assets-with-dependencies", assessment || ""],
+    queryKey: ["assets-with-dependencies", assessment ?? ""],
     queryFn: async () => {
       const rawAssets = (await import("@/data/coeff-assets-with-geometry.json"))
         .default as any[];

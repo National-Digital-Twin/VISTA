@@ -2,7 +2,7 @@
 
 const config = {
   map: {
-    maptilerToken: import.meta.env.VITE_MAP_TILER_TOKEN
+    maptilerToken: import.meta.env.VITE_MAP_TILER_TOKEN,
   },
   api: {
     url: import.meta.env.VITE_PARALOG_API_URL || "/paralog",
@@ -12,7 +12,7 @@ const config = {
     ndtpPython: "/ndtp-python/api/graphql/",
   },
   weather: {
-    url: import.meta.env.WEATHER_API_URL || "/transparent-proxy/weather"
+    url: import.meta.env.WEATHER_API_URL || "/transparent-proxy/weather",
   },
   configErrors: [] as string[],
 };

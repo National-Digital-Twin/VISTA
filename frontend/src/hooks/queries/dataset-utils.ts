@@ -22,7 +22,7 @@ export function createDependencies(dependencies: DependencyData[]) {
     (dependency) =>
       new Dependency({
         uri: dependency.dependencyUri,
-        criticality: dependency?.criticalityRating || 0,
+        criticality: dependency?.criticalityRating ?? 0,
         dependent: {
           uri: dependency.dependentNode,
           name: dependency.dependentName,
