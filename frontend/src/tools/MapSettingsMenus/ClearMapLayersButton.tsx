@@ -1,4 +1,5 @@
 import { useCallback } from "react";
+import Box from "@mui/material/Box";
 import { resetHashStorage } from "@/hooks/createStore";
 
 import ToolbarButton from "@/components/Map/SideButtons/ToolbarButton";
@@ -13,12 +14,12 @@ export default function ClearMapLayersButton() {
   }, []);
 
   return (
-    <div className="relative">
+    <Box sx={{ display: "flex", justifyContent: "end" }}>
       <ToolbarButton
         title="Clear Map Layers"
         onClick={handleClear}
         svgSrc="icons/Clear layers.svg"
       />
-    </div>
+    </Box>
   );
 }

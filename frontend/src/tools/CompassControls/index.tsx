@@ -1,3 +1,4 @@
+import Box from "@mui/material/Box";
 import { useCallback, useEffect, useState } from "react";
 import { useMap } from "react-map-gl/maplibre";
 import ToolbarButton from "@/components/Map/SideButtons/ToolbarButton";
@@ -28,20 +29,22 @@ export function SideButtons() {
       setBearing(map.getBearing());
     };
 
-    map.on('rotate', onRotate);
+    map.on("rotate", onRotate);
 
     return () => {
-      map.off('rotate', onRotate);
+      map.off("rotate", onRotate);
     };
   }, [map]);
 
   return (
-    <ToolbarButton
-      title="Compass"
-      onClick={handleCompassClick}
-      svgSrc="/icons/Compass.svg"
-      compassRotation={-bearing}
-    />
+    <Box sx={{ display: "flex", justifyContent: "end" }}>
+      <ToolbarButton
+        title="Compass"
+        onClick={handleCompassClick}
+        svgSrc="/icons/Compass.svg"
+        compassRotation={-bearing}
+      />
+    </Box>
   );
 }
 

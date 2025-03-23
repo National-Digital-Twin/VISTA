@@ -57,7 +57,10 @@ export default function MapSettingsButton() {
   ];
 
   return (
-    <div ref={ref} className="pointer-events-auto">
+    <Box
+      ref={ref}
+      sx={{ display: "flex", justifyContent: "end", pointerEvents: "auto" }}
+    >
       {showSettingsMenu && (
         <Box
           className={styles.menu}
@@ -98,7 +101,7 @@ export default function MapSettingsButton() {
         onClick={toggleSettingsMenu}
         svgSrc="icons/Settings.svg"
       />
-    </div>
+    </Box>
   );
 }
 
