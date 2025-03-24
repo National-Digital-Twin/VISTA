@@ -3,23 +3,24 @@
 }
 
 .closeButton {
-  padding:2.0em;
+  align-self: self-end;
+  padding: 2.0em;
   padding-bottom: 0.5em;
-  margin-left: auto;
-  display: block;
+  padding-right: 0;
+  text-decoration-style: -moz-none;
 }
 
 .floodPanel {
+  display: flex;
+  flex-direction: column;
   position: absolute;
-  top: 0;
-  right:0;
-  margin-top: 1.6em;
-  margin-right: 9em;
+  right: 0;
+  margin-right: 8vh;
   background-color: white;
   border-radius: 0.375em;
   padding: 2em;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  width: 350px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.04);
+  width: 24em;
   max-height: 40vh;
   overflow-y: auto;
   z-index: 1000;

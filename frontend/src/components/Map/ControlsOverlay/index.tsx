@@ -97,8 +97,8 @@ export default function ControlsOverlay() {
             )}
           </div>
         </Grid2>
-        <Grid2 size={dependantPanelOpen ? 5 : 8}>
-          <div style={{ marginTop: "10px" }} className="pointer-events-auto">
+        <Grid2 size={dependantPanelOpen ? 4 : 0}>
+          <Box sx={{ marginTop: "10px", pointerEvents: "auto" }}>
             {controlPanelOpen && ( // Only show close button when the panel is open
               <MToolbar
                 onOpenControlPanel={() => {
@@ -107,10 +107,10 @@ export default function ControlsOverlay() {
                 }}
               />
             )}
-          </div>
+          </Box>
         </Grid2>
         <Grid2
-          size={1}
+          size={dependantPanelOpen ? 2 : 9}
           sx={{
             display: "flex",
             flexDirection: "column",
@@ -119,12 +119,15 @@ export default function ControlsOverlay() {
             padding: "10px",
           }}
         >
-          <div
-            style={{ marginTop: "10px", maxHeight: "65vh", overflow: "scroll" }}
-            className="pointer-events-auto"
+          <Box
+            sx={{
+              marginTop: "10px",
+              maxHeight: "65vh",
+              pointerEvents: "auto",
+            }}
           >
             <MapToolbar />
-          </div>
+          </Box>
         </Grid2>
       </Grid2>
       <Grid2 size={12} sx={{ marginTop: "auto" }}>

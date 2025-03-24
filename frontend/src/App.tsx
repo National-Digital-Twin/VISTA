@@ -1,5 +1,3 @@
-import { useLayoutEffect } from "react";
-import { useDarkMode } from "usehooks-ts";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { Grid2 } from "@mui/material";
@@ -16,21 +14,6 @@ export default function App() {
 
   // We're using useLayoutEffect here rather than useEffect because we want to
   // be quite sure this happens _before_ the browser has the chance to repaint.
-  const { isDarkMode } = useDarkMode();
-
-  useLayoutEffect(() => {
-    const html = document.documentElement;
-
-    if (isDarkMode) {
-      html.classList.add("dark");
-      html.classList.remove("light");
-    } else {
-      html.classList.add("light");
-      html.classList.remove("dark");
-    }
-    html.setAttribute("data-color-scheme", isDarkMode ? "dark" : "light");
-  }, [isDarkMode]);
-
   if (config.configErrors.length > 0) {
     // This doesn't violate the rules of React vis a vis the hooks below because
     // this value is a constant.

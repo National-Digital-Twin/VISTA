@@ -1,4 +1,5 @@
-import { AppBar, Toolbar, Grid2 } from "@mui/material";
+import { AppBar, Toolbar } from "@mui/material";
+import { Box } from "@mui/system";
 
 /** Overall header of the application */
 
@@ -6,16 +7,16 @@ const PageHeader = ({ appName }) => {
   return (
     <AppBar position="static" sx={{ backgroundColor: "#002244" }}>
       <Toolbar>
-        <Grid2 container alignItems="center">
+        <Box alignItems="center">
           {/* Logo on the far left */}
-          <Grid2>
+          <Box>
             <img
               src="/logo.svg"
               alt={`${appName} Logo`}
               style={{ width: 200, height: 75 }}
             />
-          </Grid2>
-        </Grid2>
+          </Box>
+        </Box>
       </Toolbar>
     </AppBar>
   );
