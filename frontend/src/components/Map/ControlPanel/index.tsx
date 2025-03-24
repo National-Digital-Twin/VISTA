@@ -53,14 +53,13 @@ export default function ControlPanel({
         display: "flex",
         flexDirection: "row",
         height: "100%",
-
         gap: 2,
       }}
     >
       <Box
         sx={{
           width: "100%",
-          height: "70vh",
+          height: "100%",
           position: "relative",
           backgroundColor: "background.paper",
           display: "flex",
@@ -116,7 +115,7 @@ export default function ControlPanel({
             ))}
           </Tabs>
         </Box>
-        <Box sx={{ flexGrow: 1, overflow: "hidden" }}>
+        <Box sx={{ flexGrow: 1, maxHeight: "100%", overflowY: "auto" }}>
           {tabs.map((entry, i) => (
             <TabPanel key={entry.name} index={i} value={value}>
               <Suspense fallback="Loading...">{entry.Content}</Suspense>

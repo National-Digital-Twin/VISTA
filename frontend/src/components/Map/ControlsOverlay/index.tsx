@@ -65,11 +65,21 @@ export default function ControlsOverlay() {
   return (
     <Grid2
       container
-      sx={{ height: "95vh", display: "flex", flexDirection: "column" }}
+      sx={{
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+      }}
     >
-      <Grid2 container size={12} sx={{ flexGrow: 1 }}>
-        <Grid2 size={dependantPanelOpen ? 6 : 3} sx={{ padding: 1 }}>
-          <div className="pointer-events-auto">
+      <Grid2 container size={12} sx={{ flexGrow: 1, height: "100%" }}>
+        <Grid2
+          size={dependantPanelOpen ? 6 : 3}
+          sx={{ padding: 1, height: "100%" }}
+        >
+          <div
+            className="pointer-events-auto"
+            style={{ height: "100%", padding: "10px" }}
+          >
             {shouldShowControlPanel && (
               <ControlPanel
                 connectedAssetsPanelOpen={dependantPanelOpen}
@@ -123,7 +133,6 @@ export default function ControlsOverlay() {
     </Grid2>
   );
 }
-
 
 function DetailPanels() {
   const tools = useTools();
