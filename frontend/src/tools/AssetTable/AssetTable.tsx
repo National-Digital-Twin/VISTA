@@ -17,6 +17,7 @@ import { download } from "./utils";
 import { ASSET_TABLE } from "./format-assets";
 import styles from "./AssetTable.module.css";
 import { ElementsContext } from "@/context/ElementContext";
+import { useMediaQuery } from "usehooks-ts";
 
 export default function AssetTable() {
   const { assets, dependencies } = useContext(ElementsContext);
@@ -41,6 +42,8 @@ export default function AssetTable() {
     page * rowsPerPage + rowsPerPage,
   );
 
+  const smallScreen = useMediaQuery("(max-height: 767px)");
+
   return (
     <Box
       display="flex"
@@ -52,11 +55,11 @@ export default function AssetTable() {
         maxWidth: "61vw",
         position: "absolute",
         right: "0",
-        marginRight: "8vh",
       }}
       width={assets.length > 0 ? "initial" : "21em"}
       top={assets.length > 0 ? "0" : "initial"}
       marginTop={assets.length > 0 ? "2vh" : "initial"}
+      marginRight={smallScreen ? "9vh" : "8vh"}
       component={Paper}
     >
       <Box
