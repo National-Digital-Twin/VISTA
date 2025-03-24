@@ -1,6 +1,6 @@
 import { useRef } from "react";
-import { useBoolean, useDarkMode, useOnClickOutside } from "usehooks-ts";
-import { Box, Switch, Typography } from "@mui/material";
+import { useBoolean, useOnClickOutside } from "usehooks-ts";
+import { Box, Typography } from "@mui/material";
 import styles from "./style.module.css";
 import ToolbarButton from "@/components/Map/SideButtons/ToolbarButton";
 import {
@@ -8,19 +8,13 @@ import {
   useTogglePointerCoords,
 } from "@/context/ShowPointerCoords";
 import useSharedStore from "@/hooks/useSharedStore";
+import MaterialUISwitch from "@/components/Switch";
 
 interface ToggleSwitchControlMenuItem {
   name: string;
-  selected: boolean;
+  checked: boolean;
   onItemClick: () => void;
 }
-
-interface ButtonControlMenuItem {
-  readonly name: string;
-  readonly onItemClick: () => void;
-}
-
-type ControlMenuItem = ToggleSwitchControlMenuItem | ButtonControlMenuItem;
 
 export default function MapSettingsButton() {
   const ref = useRef<HTMLDivElement>(null);
@@ -33,31 +27,30 @@ export default function MapSettingsButton() {
 
   useOnClickOutside(ref, hideSettingsMenu);
 
-  const { enable: enableDarkMode, disable: disableDarkMode } = useDarkMode();
-
   const showPointerCoords = useShowPointerCoords();
   const togglePointerCoords = useTogglePointerCoords();
 
   const { showCpsIconsForAssetTypes, toggleShowCpsIconsForAssetTypes } =
     useSharedStore();
 
-  const mapTools: ControlMenuItem[] = [
+  const mapTools: ToggleSwitchControlMenuItem[] = [
     {
       name: "Coordinates",
-      selected: showPointerCoords,
-      type: "toggleSwitch",
+      checked: showPointerCoords,
       onItemClick: togglePointerCoords,
     },
     {
       name: "Show CPS icons",
-      selected: showCpsIconsForAssetTypes,
-      type: "toggleSwitch",
+      checked: showCpsIconsForAssetTypes,
       onItemClick: toggleShowCpsIconsForAssetTypes,
     },
   ];
 
   return (
-    <div ref={ref} className="pointer-events-auto">
+    <Box
+      ref={ref}
+      sx={{ display: "flex", justifyContent: "end", pointerEvents: "auto" }}
+    >
       {showSettingsMenu && (
         <Box
           className={styles.menu}
@@ -68,21 +61,9 @@ export default function MapSettingsButton() {
             boxShadow: 3,
           }}
         >
-          <Box display="flex" alignItems="center" mb={1}>
-            <Switch
-              onChange={(event) => {
-                if (event.target.checked) {
-                  enableDarkMode();
-                } else {
-                  disableDarkMode();
-                }
-              }}
-            />
-            <Typography sx={{ ml: 1 }}>Dark Mode</Typography>
-          </Box>
           {mapTools.map((tool) => {
             return (
-              <ButtonControl
+              <ToggleSwitchControl
                 key={tool.name}
                 {...tool}
                 onItemClick={() => {
@@ -98,16 +79,18 @@ export default function MapSettingsButton() {
         onClick={toggleSettingsMenu}
         svgSrc="icons/Settings.svg"
       />
-    </div>
+    </Box>
   );
 }
 
-type ButtonControlProps = ButtonControlMenuItem;
-
-function ButtonControl({ name, onItemClick }: ButtonControlProps) {
+function ToggleSwitchControl({
+  name,
+  onItemClick,
+  checked,
+}: Readonly<ToggleSwitchControlMenuItem>) {
   return (
     <Box display="flex" alignItems="center" mb={1}>
-      <Switch onChange={onItemClick} />
+      <MaterialUISwitch onChange={onItemClick} checked={checked} />
       <Typography sx={{ ml: 1 }}>{name}</Typography>
     </Box>
   );

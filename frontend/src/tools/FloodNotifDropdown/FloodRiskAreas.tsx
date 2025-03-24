@@ -16,9 +16,9 @@ export default function FloodRiskAreas({ atRiskAreas }: FloodRiskAreasProps) {
         variant="h5"
         sx={{ marginTop: 0, marginBottom: 2, fontWeight: "400" }}
       >
-        Active flood warnings
+        Flood risk areas
       </Typography>
-      {atRiskAreas.map((area) => {
+      {atRiskAreas.map((area, index) => {
         const {
           name,
           value: currentLevel,
@@ -32,34 +32,53 @@ export default function FloodRiskAreas({ atRiskAreas }: FloodRiskAreasProps) {
         } = area.properties;
 
         return (
-          <div key={name} className={styles.floodRiskArea}>
-            <Typography
-              variant="body2"
-              sx={{ marginTop: 0, marginBottom: 2, fontWeight: "bold" }}
-            >
+          <Box key={`${name}-${index}`} className={styles.floodRiskArea}>
+            <Typography variant="body2" sx={{ margin: 0, fontWeight: "bold" }}>
               {name || "Unnamed Area"}
             </Typography>
-            <Typography variant="body2" color="textSecondary" sx={{ my: 1 }}>
+            <Typography
+              variant="body2"
+              color="textSecondary"
+              sx={{ margin: 0 }}
+            >
               River: {river || river_name || "Unknown"}
             </Typography>
-            <Typography variant="body2" color="textSecondary" sx={{ my: 1 }}>
+            <Typography
+              variant="body2"
+              color="textSecondary"
+              sx={{ margin: 0 }}
+            >
               Current Level:{" "}
               {currentLevel !== null ? currentLevel.toFixed(2) : "Unknown"}
             </Typography>
-            <Typography variant="body2" color="textSecondary" sx={{ my: 1 }}>
+            <Typography
+              variant="body2"
+              color="textSecondary"
+              sx={{ margin: 0 }}
+            >
               Trend: {trend || "Unknown"} (
               {direction === "u" ? "Upstream" : "Downstream"})
             </Typography>
-            <Typography variant="body2" color="textSecondary" sx={{ my: 1 }}>
+            <Typography
+              variant="body2"
+              color="textSecondary"
+              sx={{ margin: 0 }}
+            >
               Last updated:{" "}
-              {value_date ? new Date(value_date).toLocaleString() : "Unknown"}
+              {value_date
+                ? new Date(value_date).toLocaleString("en-GB", { hour12: true })
+                : "Unknown"}
             </Typography>
-            <Typography variant="body2" color="textSecondary" sx={{ my: 1 }}>
+            <Typography
+              variant="body2"
+              color="textSecondary"
+              sx={{ margin: 0 }}
+            >
               Normal range:{" "}
-              {percentile_5 !== null ? percentile_5.toFixed(2) : "Unknown"} -{" "}
-              {percentile_95 !== null ? percentile_95.toFixed(2) : "Unknown"}
+              {percentile_95 !== null ? percentile_95.toFixed(2) : "Unknown"} -{" "}
+              {percentile_5 !== null ? percentile_5.toFixed(2) : "Unknown"}m
             </Typography>
-          </div>
+          </Box>
         );
       })}
     </Box>

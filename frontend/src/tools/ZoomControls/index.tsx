@@ -1,3 +1,4 @@
+import Box from "@mui/material/Box";
 import { useCallback } from "react";
 import { useMap } from "react-map-gl/maplibre";
 
@@ -23,21 +24,23 @@ export function SideButtons() {
   }, [map]);
 
   return (
-    <>
-      <ToolbarButton
-        title="Zoom in"
-        onClick={handleZoomIn}
-        svgSrc="icons/Zoom in.svg"
-        hasNoMarginBottom
-      />
-      <div style={{ marginTop: "0.1rem" }}>
+    <Box sx={{ display: "flex", justifyContent: "end" }}>
+      <Box sx={{ display: "flex", flexDirection: "column" }}>
         <ToolbarButton
-          title="Zoom out"
-          onClick={handleZoomOut}
-          svgSrc="icons/Zoom out.svg"
+          title="Zoom in"
+          onClick={handleZoomIn}
+          svgSrc="icons/Zoom in.svg"
+          hasNoMarginBottom
         />
-      </div>
-    </>
+        <Box sx={{ marginTop: "0.1rem" }}>
+          <ToolbarButton
+            title="Zoom out"
+            onClick={handleZoomOut}
+            svgSrc="icons/Zoom out.svg"
+          />
+        </Box>
+      </Box>
+    </Box>
   );
 }
 

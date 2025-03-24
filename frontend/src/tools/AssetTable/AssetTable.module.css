@@ -1,6 +1,3 @@
-.assetTableContainer td {
-  line-height: 0;
-}
 .assetTableHeader {
   display: flex;
   align-items: center;
