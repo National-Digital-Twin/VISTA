@@ -10,9 +10,9 @@ import MenuItemRow from "@/components/MenuItemRow";
 
 export default function VulnerablePeopleControls({
   searchQuery = ""
-}: {
+}: Readonly<{
   searchQuery?: string
-}) {
+}>) {
   const { enabled, toggle } = useLayer("vulnerable-people");
 
   const drawingModeCallbacks = useSharedStore(
