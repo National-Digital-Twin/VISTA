@@ -42,7 +42,10 @@ export default function MapStyleButton() {
   );
 
   return (
-    <div className="pointer-events-auto" ref={ref}>
+    <Box
+      sx={{ display: "flex", justifyContent: "end", pointerEvents: "auto" }}
+      ref={ref}
+    >
       {showMapStyles && (
         <Box
           className={styles.menu}
@@ -79,6 +82,6 @@ export default function MapStyleButton() {
         onClick={toggleMapStyleMenu}
         svgSrc="/icons/Stacks.svg"
       />
-    </div>
+    </Box>
   );
 }
