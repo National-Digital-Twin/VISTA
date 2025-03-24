@@ -6,7 +6,7 @@
   "homepage": "paralog",
   "license": "Apache-2.0",
   "dependencies": {
-    "@apollo/client": "^3.11.5",
+    "@apollo/client": "^3.13.5",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@fortawesome/fontawesome-common-types": "^6.6.0",
