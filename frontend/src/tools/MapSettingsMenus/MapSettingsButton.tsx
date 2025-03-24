@@ -87,7 +87,7 @@ function ToggleSwitchControl({
   name,
   onItemClick,
   checked,
-}: ToggleSwitchControlMenuItem) {
+}: Readonly<ToggleSwitchControlMenuItem>) {
   return (
     <Box display="flex" alignItems="center" mb={1}>
       <MaterialUISwitch onChange={onItemClick} checked={checked} />
