@@ -211,6 +211,7 @@ jobs:
           ignore-unfixed: true
           vuln-type: "os,library"
           severity: "CRITICAL,HIGH"
+          trivyignores: "frontend/.trivyignore"
 
       - name: Cleanup
         if: always()

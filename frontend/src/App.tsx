@@ -1,6 +1,8 @@
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { fas } from "@fortawesome/free-solid-svg-icons";
-import { Box, Grid2 } from "@mui/material";
+
+import { Box } from "@mui/material";
+
 import PageHeader from "@/components/PageHeader";
 import AppBody from "@/components/AppBody";
 import config from "@/config/app-config";
