@@ -86,7 +86,7 @@
         <boolProp name="AuthManager.clearEachIteration">true</boolProp>
       </AuthManager>
       <hashTree/>
-      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Thread Group">
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Thread Group" enabled="true">
         <intProp name="ThreadGroup.num_threads">5</intProp>
         <intProp name="ThreadGroup.ramp_time">1</intProp>
         <longProp name="ThreadGroup.duration">0</longProp>
@@ -99,11 +99,11 @@
         </elementProp>
       </ThreadGroup>
       <hashTree>
-        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Test">
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Test" enabled="true">
           <boolProp name="TransactionController.includeTimers">false</boolProp>
         </TransactionController>
         <hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="landing" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="landing">
             <stringProp name="HTTPSampler.domain">landing.dev.ndtp.co.uk</stringProp>
             <stringProp name="HTTPSampler.port">0</stringProp>
             <stringProp name="HTTPSampler.protocol">https</stringProp>
@@ -155,6 +155,16 @@
               <stringProp name="HtmlExtractor.extractor_impl"></stringProp>
             </HtmlExtractor>
             <hashTree/>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion">
+              <collectionProp name="Asserion.test_strings">
+                <stringProp name="49586">200</stringProp>
+              </collectionProp>
+              <stringProp name="Assertion.custom_message"></stringProp>
+              <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">2</intProp>
+            </ResponseAssertion>
+            <hashTree/>
           </hashTree>
           <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://landing.dev.ndtp.co.uk/api/v1/links/applications" enabled="true">
             <stringProp name="HTTPSampler.domain">${BASE_URL_1}</stringProp>
@@ -192,7 +202,7 @@
             </HeaderManager>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://paralog.dev.ndtp.co.uk/" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Paralog-page">
             <stringProp name="HTTPSampler.domain">${BASE_URL_3}</stringProp>
             <stringProp name="HTTPSampler.port">0</stringProp>
             <stringProp name="HTTPSampler.protocol">https</stringProp>
@@ -240,8 +250,18 @@
               <stringProp name="TestPlan.comments">Recorded time was 3931 milliseconds</stringProp>
             </UniformRandomTimer>
             <hashTree/>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion">
+              <collectionProp name="Asserion.test_strings">
+                <stringProp name="49586">200</stringProp>
+              </collectionProp>
+              <stringProp name="Assertion.custom_message"></stringProp>
+              <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">2</intProp>
+            </ResponseAssertion>
+            <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://landing.dev.ndtp.co.uk/api/v1/user-details" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://landing.dev.ndtp.co.uk/api/v1/user-details">
             <stringProp name="HTTPSampler.domain">${BASE_URL_1}</stringProp>
             <stringProp name="HTTPSampler.port">0</stringProp>
             <stringProp name="HTTPSampler.protocol">https</stringProp>
@@ -324,7 +344,7 @@
             </HeaderManager>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://paralog.dev.ndtp.co.uk/paralog/assessments" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://paralog.dev.ndtp.co.uk/paralog/assessments">
             <stringProp name="HTTPSampler.domain">${BASE_URL_3}</stringProp>
             <stringProp name="HTTPSampler.port">0</stringProp>
             <stringProp name="HTTPSampler.protocol">https</stringProp>
@@ -364,7 +384,7 @@
             </HeaderManager>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://paralog.dev.ndtp.co.uk/paralog/flood-watch-areas" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://paralog.dev.ndtp.co.uk/paralog/flood-watch-areas">
             <stringProp name="HTTPSampler.domain">${BASE_URL_3}</stringProp>
             <stringProp name="HTTPSampler.port">0</stringProp>
             <stringProp name="HTTPSampler.protocol">https</stringProp>
@@ -400,7 +420,7 @@
             </HeaderManager>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://paralog.dev.ndtp.co.uk/transparent-proxy/admiralty-tidal-discovery/V1/Stations" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://paralog.dev.ndtp.co.uk/transparent-proxy/admiralty-tidal-discovery/V1/Stations">
             <stringProp name="HTTPSampler.domain">${BASE_URL_3}</stringProp>
             <stringProp name="HTTPSampler.port">0</stringProp>
             <stringProp name="HTTPSampler.protocol">https</stringProp>
@@ -436,7 +456,7 @@
             </HeaderManager>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://paralog.dev.ndtp.co.uk/paralog/assessments/dependencies" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://paralog.dev.ndtp.co.uk/paralog/assessments/dependencies">
             <stringProp name="HTTPSampler.domain">${BASE_URL_3}</stringProp>
             <stringProp name="HTTPSampler.port">0</stringProp>
             <stringProp name="HTTPSampler.protocol">https</stringProp>
@@ -481,8 +501,18 @@
               </collectionProp>
             </HeaderManager>
             <hashTree/>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion">
+              <collectionProp name="Asserion.test_strings">
+                <stringProp name="49586">200</stringProp>
+              </collectionProp>
+              <stringProp name="Assertion.custom_message"></stringProp>
+              <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">16</intProp>
+            </ResponseAssertion>
+            <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://paralog.dev.ndtp.co.uk/paralog/flood-watch-areas/polygon?polygon_uri=http%3A%2F%2Fenvironment.data.gov.uk%2Fflood-monitoring%2Fid%2FfloodAreas%2F065WAF217%2Fpolygon" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://paralog.dev.ndtp.co.uk/paralog/flood-watch-areas/polygon?polygon_uri=http%3A%2F%2Fenvironment.data.gov.uk%2Fflood-monitoring%2Fid%2FfloodAreas%2F065WAF217%2Fpolygon">
             <stringProp name="HTTPSampler.domain">${BASE_URL_3}</stringProp>
             <stringProp name="HTTPSampler.port">0</stringProp>
             <stringProp name="HTTPSampler.protocol">https</stringProp>
@@ -498,6 +528,7 @@
                   <stringProp name="Argument.name">polygon_uri</stringProp>
                   <stringProp name="Argument.value">http://environment.data.gov.uk/flood-monitoring/id/floodAreas/065WAF217/polygon</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
+                  <boolProp name="HTTPArgument.use_equals">true</boolProp>
                 </elementProp>
               </collectionProp>
             </elementProp>
@@ -523,6 +554,16 @@
                 </elementProp>
               </collectionProp>
             </HeaderManager>
+            <hashTree/>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion">
+              <collectionProp name="Asserion.test_strings">
+                <stringProp name="49586">200</stringProp>
+              </collectionProp>
+              <stringProp name="Assertion.custom_message"></stringProp>
+              <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">16</intProp>
+            </ResponseAssertion>
             <hashTree/>
           </hashTree>
           <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://paralog.dev.ndtp.co.uk/paralog/flood-watch-areas/polygon?polygon_uri=http%3A%2F%2Fenvironment.data.gov.uk%2Fflood-monitoring%2Fid%2FfloodAreas%2F065WAF212%2Fpolygon" enabled="true">
@@ -654,7 +695,7 @@
             </HeaderManager>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://paralog.dev.ndtp.co.uk/paralog/flood-watch-areas/polygon?polygon_uri=http%3A%2F%2Fenvironment.data.gov.uk%2Fflood-monitoring%2Fid%2FfloodAreas%2F065WAC220%2Fpolygon" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://paralog.dev.ndtp.co.uk/paralog/flood-watch-areas/polygon?polygon_uri=http%3A%2F%2Fenvironment.data.gov.uk%2Fflood-monitoring%2Fid%2FfloodAreas%2F065WAC220%2Fpolygon">
             <stringProp name="HTTPSampler.domain">${BASE_URL_3}</stringProp>
             <stringProp name="HTTPSampler.port">0</stringProp>
             <stringProp name="HTTPSampler.protocol">https</stringProp>
@@ -670,6 +711,7 @@
                   <stringProp name="Argument.name">polygon_uri</stringProp>
                   <stringProp name="Argument.value">http://environment.data.gov.uk/flood-monitoring/id/floodAreas/065WAC220/polygon</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
+                  <boolProp name="HTTPArgument.use_equals">true</boolProp>
                 </elementProp>
               </collectionProp>
             </elementProp>
@@ -869,7 +911,7 @@
             </HeaderManager>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://paralog.dev.ndtp.co.uk/paralog/assessments/dependencies" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://paralog.dev.ndtp.co.uk/paralog/assessments/dependencies">
             <stringProp name="HTTPSampler.domain">${BASE_URL_3}</stringProp>
             <stringProp name="HTTPSampler.port">0</stringProp>
             <stringProp name="HTTPSampler.protocol">https</stringProp>
@@ -1369,7 +1411,7 @@
             </HeaderManager>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://paralog.dev.ndtp.co.uk/ndtp-python/api/graphql/" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://paralog.dev.ndtp.co.uk/ndtp-python/api/graphql/">
             <stringProp name="HTTPSampler.domain">${BASE_URL_3}</stringProp>
             <stringProp name="HTTPSampler.port">0</stringProp>
             <stringProp name="HTTPSampler.protocol">https</stringProp>
@@ -1650,7 +1692,7 @@
             </HeaderManager>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://paralog.dev.ndtp.co.uk/paralog/asset?assetUri=https%3A%2F%2Fwww.iow.gov.uk%2FDigitalTwin%23PYL195" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://paralog.dev.ndtp.co.uk/paralog/asset?assetUri=https%3A%2F%2Fwww.iow.gov.uk%2FDigitalTwin%23PYL195">
             <stringProp name="HTTPSampler.domain">${BASE_URL_3}</stringProp>
             <stringProp name="HTTPSampler.port">0</stringProp>
             <stringProp name="HTTPSampler.protocol">https</stringProp>
@@ -1666,6 +1708,7 @@
                   <stringProp name="Argument.name">assetUri</stringProp>
                   <stringProp name="Argument.value">https://www.iow.gov.uk/DigitalTwin#PYL195</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
+                  <boolProp name="HTTPArgument.use_equals">true</boolProp>
                 </elementProp>
               </collectionProp>
             </elementProp>
@@ -4094,7 +4137,7 @@
             </HeaderManager>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://paralog.dev.ndtp.co.uk/paralog/asset?assetUri=https%3A%2F%2Fwww.iow.gov.uk%2FDigitalTwin%23PYL269" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://paralog.dev.ndtp.co.uk/paralog/asset?assetUri=https%3A%2F%2Fwww.iow.gov.uk%2FDigitalTwin%23PYL269">
             <stringProp name="HTTPSampler.domain">${BASE_URL_3}</stringProp>
             <stringProp name="HTTPSampler.port">0</stringProp>
             <stringProp name="HTTPSampler.protocol">https</stringProp>
@@ -4110,6 +4153,7 @@
                   <stringProp name="Argument.name">assetUri</stringProp>
                   <stringProp name="Argument.value">https://www.iow.gov.uk/DigitalTwin#PYL269</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
+                  <boolProp name="HTTPArgument.use_equals">true</boolProp>
                 </elementProp>
               </collectionProp>
             </elementProp>
@@ -12979,7 +13023,7 @@
             </HeaderManager>
             <hashTree/>
           </hashTree>
-          <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree">
+          <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
             <boolProp name="ResultCollector.error_logging">false</boolProp>
             <objProp>
               <name>saveConfig</name>
@@ -13121,7 +13165,7 @@
           <boolProp name="CookieManager.controlledByThreadGroup">true</boolProp>
         </CookieManager>
         <hashTree/>
-        <ResultCollector guiclass="SummaryReport" testclass="ResultCollector" testname="Summary Report">
+        <ResultCollector guiclass="SummaryReport" testclass="ResultCollector" testname="Summary Report" enabled="true">
           <boolProp name="ResultCollector.error_logging">false</boolProp>
           <objProp>
             <name>saveConfig</name>
@@ -13158,7 +13202,7 @@
           <stringProp name="filename"></stringProp>
         </ResultCollector>
         <hashTree/>
-        <ResultCollector guiclass="StatVisualizer" testclass="ResultCollector" testname="Aggregate Report">
+        <ResultCollector guiclass="StatVisualizer" testclass="ResultCollector" testname="Aggregate Report" enabled="true">
           <boolProp name="ResultCollector.error_logging">false</boolProp>
           <objProp>
             <name>saveConfig</name>
@@ -13195,7 +13239,7 @@
           <stringProp name="filename"></stringProp>
         </ResultCollector>
         <hashTree/>
-        <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion">
+        <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion" enabled="true">
           <collectionProp name="Asserion.test_strings">
             <stringProp name="49586">200</stringProp>
           </collectionProp>
