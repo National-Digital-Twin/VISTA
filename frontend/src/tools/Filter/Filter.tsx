@@ -38,11 +38,11 @@ export default function Filter() {
         <Grid2
           direction={"row"}
           container
-          gap={4}
+          gap={1}
           sx={{ paddingTop: 0 }}
           size={12}
         >
-          <Grid2 size={5}>
+          <Grid2 size={7}>
             <Card
               sx={{
                 boxShadow: 3,
@@ -64,7 +64,11 @@ export default function Filter() {
                 <Grid2 container size={12}>
                   <Grid2
                     size={6}
-                    sx={{ borderRight: 1, borderColor: "divider" }}
+                    sx={{
+                      display: "flex",
+                      borderRight: 1,
+                      borderColor: "divider",
+                    }}
                   >
                     <Box display="flex" alignItems="center">
                       <Switch
@@ -74,7 +78,7 @@ export default function Filter() {
                       <Typography>Primary Assets</Typography>
                     </Box>
                   </Grid2>
-                  <Grid2 size={6}>
+                  <Grid2 size={6} sx={{ display: "flex" }}>
                     <Box display="flex" alignItems="center">
                       <Switch
                         checked={showSecondary}
@@ -87,31 +91,33 @@ export default function Filter() {
               </CardContent>
             </Card>
           </Grid2>
-          <Grid2 size={6}>
-            <Card
-              sx={{
-                boxShadow: 3,
-                marginRight: 2,
-                overflow: "visible",
-                position: "relative",
-                maxHeight: 75,
-                height: "6vh",
-                marginBottom: 1,
-              }}
-            >
-              <CardContent
+          <Grid2 size={4}>
+            {(showPrimary || showSecondary) && (
+              <Card
                 sx={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "center",
+                  boxShadow: 3,
+                  marginRight: 2,
                   overflow: "visible",
-                  height: "100%",
+                  position: "relative",
+                  maxHeight: 75,
+                  height: "6vh",
+                  marginBottom: 1,
                 }}
               >
-                {(showPrimary || showSecondary) && <CriticalitySlider />}
-              </CardContent>
-            </Card>
+                <CardContent
+                  sx={{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    overflow: "visible",
+                    height: "100%",
+                  }}
+                >
+                  <CriticalitySlider />
+                </CardContent>
+              </Card>
+            )}
           </Grid2>
         </Grid2>
       )}

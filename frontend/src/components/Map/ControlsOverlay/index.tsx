@@ -16,32 +16,30 @@ function Toolbar({ onOpenControlPanel }: ToolbarProps) {
     <Box
       sx={{
         display: "flex",
-        alignItems: "center",
         width: "100%",
         marginTop: 1,
         position: "relative",
       }}
     >
       {onOpenControlPanel && (
-        <Box sx={{ position: "absolute", top: "0" }}>
-          <Tooltip title="Close layer panel">
-            <Button
-              onClick={onOpenControlPanel}
-              aria-label="close layer panel"
-              sx={{
-                width: "6vh",
-                height: "6vh",
-                minWidth: "initial",
-                maxWidth: "48px",
-                maxHeight: "48px",
-                backgroundColor: "#ffffff",
-                color: "initial",
-              }}
-            >
-              <ChevronLeft />
-            </Button>
-          </Tooltip>
-        </Box>
+        <Tooltip title="Close layer panel">
+          <Button
+            onClick={onOpenControlPanel}
+            aria-label="close layer panel"
+            sx={{
+              width: "6vh",
+              height: "6vh",
+              minWidth: "initial",
+              maxWidth: "48px",
+              maxHeight: "48px",
+              backgroundColor: "#ffffff",
+              color: "initial",
+              margin: "0",
+            }}
+          >
+            <ChevronLeft />
+          </Button>
+        </Tooltip>
       )}
       {tools("toolbar-order").map((tool) => {
         if (!tool.ToolbarTools) {
@@ -133,8 +131,8 @@ export default function ControlsOverlay() {
             )}
           </Box>
         </Grid2>
-        <Grid2 size={dependantPanelOpen ? 4 : 0}>
-          <Box sx={{ marginTop: "10px", pointerEvents: "auto" }}>
+        <Grid2 size={dependantPanelOpen ? 5 : 8}>
+          <Box sx={{ pointerEvents: "auto" }}>
             {controlPanelOpen && ( // Only show close button when the panel is open
               <MToolbar
                 onOpenControlPanel={() => {
@@ -146,7 +144,7 @@ export default function ControlsOverlay() {
           </Box>
         </Grid2>
         <Grid2
-          size={dependantPanelOpen ? 2 : 9}
+          size={1}
           sx={{
             display: "flex",
             flexDirection: "column",

@@ -60,7 +60,7 @@ export default function ConnectedAssetDetails({
           </Typography>
         </Grid2>
         <Grid2 size={8}>
-          <Typography variant="body1">{criticality || "N/D"}</Typography>
+          <Typography variant="body1">{criticality ?? "N/D"}</Typography>
         </Grid2>
         <Grid2 size={4}>
           <Typography variant="body1" fontWeight={600}>
@@ -68,7 +68,7 @@ export default function ConnectedAssetDetails({
           </Typography>
         </Grid2>
         <Grid2 size={8}>
-          <Typography variant="body1">{connectionStrength || "N/D"}</Typography>
+          <Typography variant="body1">{connectionStrength ?? "N/D"}</Typography>
         </Grid2>
       </Grid2>
     </li>

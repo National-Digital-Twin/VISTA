@@ -4,7 +4,7 @@ import type { Feature } from "geojson";
 import classNames from "classnames";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { icon, IconName } from "@fortawesome/fontawesome-svg-core";
+import { icon } from "@fortawesome/fontawesome-svg-core";
 import { FEATURE_COLLECTION, GEOJSON } from "./ParalogMap";
 import { generatePointAssetFeatures } from "./map-utils";
 import { FLOOD_AREA_LAYERS, heatmap, pointAssetCxnLayer } from "./layers";
@@ -203,7 +203,7 @@ function MarkerWithTooltip({
   const fontAwesomeIconName = iconStyles.faIcon
     ?.split(" ")
     .pop()
-    ?.replace("fa-", "") as IconName | undefined;
+    ?.replace("fa-", "");
 
   const hasAvailableFontAwesomeIcon = !!icon({
     prefix: "fas",

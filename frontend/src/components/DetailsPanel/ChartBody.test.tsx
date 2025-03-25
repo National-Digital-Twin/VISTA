@@ -27,9 +27,9 @@ jest.mock("./useZoomChart", () => ({
 describe("ChartBody", () => {
   beforeAll(() => {
     global.ResizeObserver = class {
-      observe() {}
-      unobserve() {}
-      disconnect() {}
+      observe() { console.log('observe called') }
+      unobserve() { console.log('unobserve called') }
+      disconnect() { console.log('disconnect called') }
     };
   });
   const baseProps = {

@@ -43,10 +43,10 @@ export default function ConnectedAssetDetails({
         </div>
       </div>
       <p className={styles.connectedAssetInfo}>
-        Criticality: {criticality || "N/D"}
+        Criticality: {criticality ?? "N/D"}
       </p>
       <p className={styles.connectedAssetInfo}>
-        Connection Strength: {connectionStrength || "N/D"}
+        Connection Strength: {connectionStrength ?? "N/D"}
       </p>
     </li>
   );
