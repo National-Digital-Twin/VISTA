@@ -1,6 +1,6 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useMemo, useCallback } from "react";
-import { icon, IconName } from "@fortawesome/fontawesome-svg-core";
+import { icon } from "@fortawesome/fontawesome-svg-core";
 import ListItem from "@mui/material/ListItem";
 import Box from "@mui/material/Box";
 import ListItemText from "@mui/material/ListItemText";
@@ -191,7 +191,7 @@ function AssessmentCategoryLayerControls({
   const fontAwesomeIconName = iconStyles.faIcon
     ?.split(" ")
     .pop()
-    ?.replace("fa-", "") as IconName | undefined;
+    ?.replace("fa-", "");
 
   const hasAvailableFontAwesomeIcon = !!icon({
     prefix: "fas",

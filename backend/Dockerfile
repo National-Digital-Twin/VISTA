@@ -10,9 +10,9 @@ WORKDIR /paralog-python-api/core
 # upgrade pip to the latest version
 RUN apt-get update && apt-get upgrade -y \
     && apt-get install -y build-essential \
+    gdal-bin \
     libgdal-dev \
     libstdc++6 \
-    gdal-bin \
     && rm -rf /var/lib/apt/lists/*
 
 # Set environment variables for GDAL
