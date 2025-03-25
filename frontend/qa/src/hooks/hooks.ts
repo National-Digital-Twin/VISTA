@@ -85,28 +85,32 @@ After(async function TestCaseHook({ pickle, result }) {
   console.log("FS Module:", fs); // Debugging line
 
   if (result?.status === Status.PASSED) {
-    if (img) {
-      this.attach(img, "image/png");
-    }
-
-    if (videoPath && fs?.existsSync(videoPath)) {
-      try {
-        this.attach(fs.readFileSync(videoPath), "video/webm");
-      } catch (error) {
-        console.error(`Error attaching video: ${videoPath}`, error);
-      }
-    } else {
-      console.warn(`Video file not found at path: ${videoPath}`);
-    }
-
-    const traceFileLink = `<a href="https://trace.playwright.dev/">Open ${path}</a>`;
-    this.attach(`Trace file: ${traceFileLink}`, "text/html");
+    attachFiles(img, videoPath, path);
   }
 });
 
 AfterAll(async function () {
   await browser.close();
 });
+
+function attachFiles(img : any, videoPath : string, path : string) {
+  if (img) {
+    this.attach(img, "image/png");
+  }
+
+  if (videoPath && fs?.existsSync(videoPath)) {
+    try {
+      this.attach(fs.readFileSync(videoPath), "video/webm");
+    } catch (error) {
+      console.error(`Error attaching video: ${videoPath}`, error);
+    }
+  } else {
+    console.warn(`Video file not found at path: ${videoPath}`);
+  }
+
+  const traceFileLink = `<a href="https://trace.playwright.dev/">Open ${path}</a>`;
+  this.attach(`Trace file: ${traceFileLink}`, "text/html");
+}
 
 function getStorageState(user: string):
   | string

@@ -38,7 +38,9 @@ spec:
             requests:
               cpu: "0.5" # Minimum CPU your container is guaranteed.
               memory: "2Gi" # Minimum Memory your container is guaranteed.
+              ephemeral-storage: "1Gi" # Minimum Storage your container is guaranteed
             limits:
               cpu: "3" # Maximum CPU your container can use.
               memory: "3Gi" # Maximum Memory your container can use.
+              ephemeral-storage: "5Gi" # Maximum Storage your container is guaranteed
       restartPolicy: Always

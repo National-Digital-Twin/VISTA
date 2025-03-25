@@ -48,7 +48,7 @@ describe("DetailsPanel", () => {
     const mouseMove = new MouseEvent("mousemove", { bubbles: true, clientY: 200 });
     const mouseUp = new MouseEvent("mouseup", { bubbles: true });
 
-    fireEvent(handle!, mouseDown);
+    fireEvent(handle, mouseDown);
     expect(document.body.classList.contains("noSelect")).toBe(true);
 
     fireEvent(document, mouseMove);

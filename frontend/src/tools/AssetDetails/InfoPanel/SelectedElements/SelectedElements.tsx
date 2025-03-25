@@ -54,7 +54,6 @@ function ElementsList({
   setConnectedAssetData,
 }: ElementsListProps) {
   return (
-    <>
       <ul className="flex flex-col gap-y-3 grow min-h-0 overflow-y-auto">
         {selectedElements.map((selectedElement) => (
           <ElementDetails
@@ -65,6 +64,5 @@ function ElementsList({
           />
         ))}
       </ul>
-    </>
   );
 }
