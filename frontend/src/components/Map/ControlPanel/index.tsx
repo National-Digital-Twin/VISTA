@@ -64,9 +64,11 @@ export default function ControlPanel({
           backgroundColor: "background.paper",
           display: "flex",
           flexDirection: "column",
+          borderRadius: 2,
+          boxShadow: 4,
         }}
       >
-        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+        <Box sx={{ borderBottom: 1, borderColor: "divider", borderRadius: 2 }}>
           <Tabs
             value={value}
             onChange={handleChange}

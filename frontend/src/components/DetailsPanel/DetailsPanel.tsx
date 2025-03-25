@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useRef } from "react";
-import classNames from "classnames";
+import React from "react";
+import { Card, CardContent, IconButton } from "@mui/material";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
-import styles from "./style.module.css";
 
 interface DetailsPanelProps {
   readonly children: React.ReactNode;
@@ -16,17 +15,39 @@ export default function DetailsPanel({
   isOpen,
 }: DetailsPanelProps) {
   return (
-    <div
-      className={classNames(styles.detailsPanel)}
+    <Card
+      sx={{
+        height: "25vh",
+        maxHeight: "22vh",
+        overflow: "hidden",
+        position: "relative",
+        transition: "height 0.3s ease",
+        borderRadius: 2,
+        boxShadow: 3,
+      }}
       data-expanded={isOpen}
-      style={{ height: `350px`, maxHeight: "22vh" }}
     >
       {onClose && (
-        <button onClick={onClose} className={styles.toggleButton}>
-          <FontAwesomeIcon icon={faChevronDown} size="2x" />
-        </button>
+        <IconButton
+          onClick={onClose}
+          sx={{
+            position: "absolute",
+            top: 8,
+            right: 8,
+            zIndex: 1,
+          }}
+        >
+          <FontAwesomeIcon icon={faChevronDown} size="lg" />
+        </IconButton>
       )}
-      <div className={styles.content}>{children}</div>
-    </div>
+      <CardContent
+        sx={{
+          height: "100%",
+          overflowY: "auto",
+        }}
+      >
+        {children}
+      </CardContent>
+    </Card>
   );
 }

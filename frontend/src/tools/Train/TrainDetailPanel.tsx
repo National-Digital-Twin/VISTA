@@ -29,6 +29,10 @@ export default function TrainDetailPanel() {
 
   const isLoading = isDeparturesLoading || isArrivalsLoading;
 
+  if (!selectedStation || stationObj === null) {
+    return null;
+  }
+
   const content = (
     <div className={styles.trainsContent}>
       <h2 className="text-xl font-bold">{selectedStation}</h2>

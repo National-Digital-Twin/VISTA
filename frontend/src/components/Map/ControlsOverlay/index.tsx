@@ -63,23 +63,37 @@ export default function ControlsOverlay() {
   const shouldShowControlPanel = featureFlags.uiNext && controlPanelOpen;
 
   return (
-    <Grid2
-      container
+    <Box
       sx={{
-        height: "100%",
         display: "flex",
         flexDirection: "column",
-        margin: 0,
+        height: "100%",
+        margin: 1,
       }}
     >
-      <Grid2 container size={12} sx={{ flexGrow: 1, height: "100%" }}>
+      <Grid2
+        container
+        size={12}
+        sx={{
+          flexGrow: 1,
+          minHeight: 0,
+          overflow: "hidden",
+        }}
+      >
         <Grid2
           size={dependantPanelOpen ? 6 : 3}
-          sx={{ padding: 1, height: "100%" }}
+          sx={{
+            padding: 1,
+            height: "100%",
+            minHeight: 0,
+            overflow: "hidden",
+            display: "flex",
+            flexDirection: "column",
+          }}
         >
           <div
             className="pointer-events-auto"
-            style={{ height: "100%", padding: "5px" }}
+            style={{ height: "100%", padding: "5px", maxHeight: "100%" }}
           >
             {shouldShowControlPanel && (
               <ControlPanel
@@ -131,10 +145,21 @@ export default function ControlsOverlay() {
           </Box>
         </Grid2>
       </Grid2>
-      <Grid2 size={12} sx={{ marginTop: "auto" }}>
-        <DetailPanels />
+      <Grid2
+        container
+        size={12}
+        sx={{
+          transition: "flex-grow 0.3s ease",
+          padding: 1,
+        }}
+      >
+        <Grid2 size={12}>
+          <Box sx={{ zIndex: 10000, backgroundColor: "pink" }}>
+            <DetailPanels />
+          </Box>
+        </Grid2>
       </Grid2>
-    </Grid2>
+    </Box>
   );
 }
 
