@@ -53,27 +53,26 @@ export default function ControlPanel({
         display: "flex",
         flexDirection: "row",
         height: "100%",
-
-        gap: 2,
+        gap: 0,
       }}
     >
       <Box
         sx={{
           width: "100%",
-          height: "70vh",
+          height: "100%",
           position: "relative",
           backgroundColor: "background.paper",
           display: "flex",
           flexDirection: "column",
+          borderRadius: 2,
+          boxShadow: 4,
         }}
       >
-        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+        <Box sx={{ borderBottom: 1, borderColor: "divider", borderRadius: 2 }}>
           <Tabs
             value={value}
             onChange={handleChange}
-            aria-label="basic tabs example"
-            variant="scrollable"
-            scrollButtons="auto"
+            aria-label="layers and asset details"
             TabIndicatorProps={{
               sx: {
                 display: "flex",
@@ -116,7 +115,7 @@ export default function ControlPanel({
             ))}
           </Tabs>
         </Box>
-        <Box sx={{ flexGrow: 1, overflow: "hidden" }}>
+        <Box sx={{ flexGrow: 1, maxHeight: "100%", overflowY: "auto" }}>
           {tabs.map((entry, i) => (
             <TabPanel key={entry.name} index={i} value={value}>
               <Suspense fallback="Loading...">{entry.Content}</Suspense>

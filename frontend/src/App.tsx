@@ -1,6 +1,8 @@
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { fas } from "@fortawesome/free-solid-svg-icons";
-import Box from "@mui/material/Box";
+
+import { Box } from "@mui/material";
+
 import PageHeader from "@/components/PageHeader";
 import AppBody from "@/components/AppBody";
 import config from "@/config/app-config";
@@ -33,9 +35,20 @@ export default function App() {
   }
 
   return (
-    <Box sx={{ overflow: "hidden" }}>
-      <PageHeader appName="Paralog" />
-      <AppBody />
+    <Box
+      sx={{
+        height: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        overflow: "hidden",
+      }}
+    >
+      <Box sx={{ flexShrink: 0 }}>
+        <PageHeader appName="Paralog" />
+      </Box>
+      <Box sx={{ flexGrow: 1, overflow: "hidden" }}>
+        <AppBody />
+      </Box>
     </Box>
   );
 }

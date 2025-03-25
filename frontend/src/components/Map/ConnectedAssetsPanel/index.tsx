@@ -95,8 +95,6 @@ const ConnectedAssetsPanel: React.FC<ConnectAssetPanelProps> = ({
             value={value}
             onChange={handleChange}
             aria-label="connected asset tabs"
-            variant="scrollable"
-            scrollButtons={true}
             TabIndicatorProps={{
               sx: {
                 display: "flex",

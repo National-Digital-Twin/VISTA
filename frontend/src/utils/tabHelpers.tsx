@@ -21,7 +21,6 @@ export function TabPanel(props: Readonly<TabPanelProps>) {
       style={{
         maxHeight: "100%",
         height: "100%",
-        overflow: "auto",
       }}
       role="tabpanel"
       hidden={value !== index}
@@ -34,6 +33,7 @@ export function TabPanel(props: Readonly<TabPanelProps>) {
           sx={{
             p: 3,
             maxHeight: "100%",
+            overflowY: "auto",
           }}
         >
           {children}
