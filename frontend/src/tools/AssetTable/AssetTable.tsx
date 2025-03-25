@@ -13,11 +13,11 @@ import {
   Button,
   SvgIcon,
 } from "@mui/material";
+import { useMediaQuery } from "usehooks-ts";
 import { download } from "./utils";
 import { ASSET_TABLE } from "./format-assets";
 import styles from "./AssetTable.module.css";
 import { ElementsContext } from "@/context/ElementContext";
-import { useMediaQuery } from "usehooks-ts";
 
 export default function AssetTable() {
   const { assets, dependencies } = useContext(ElementsContext);
