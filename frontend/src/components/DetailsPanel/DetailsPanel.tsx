@@ -1,7 +1,6 @@
 import React from "react";
 import { Card, CardContent, IconButton } from "@mui/material";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 interface DetailsPanelProps {
   readonly children: React.ReactNode;
@@ -37,7 +36,7 @@ export default function DetailsPanel({
             zIndex: 1,
           }}
         >
-          <FontAwesomeIcon icon={faChevronDown} size="lg" />
+          <ExpandMoreIcon sx={{ fontSize: "3rem" }} />
         </IconButton>
       )}
       <CardContent

@@ -101,7 +101,7 @@ export default function ControlsOverlay() {
             flexDirection: "column",
           }}
         >
-          <div
+          <Box
             className="pointer-events-auto"
             style={{ height: "100%", padding: "5px", maxHeight: "100%" }}
           >

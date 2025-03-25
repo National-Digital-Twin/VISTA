@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { Box } from "@mui/material";
 import styles from "./style.module.css";
 
 import useStore from "./useStore";
@@ -34,13 +35,13 @@ export default function TrainDetailPanel() {
   }
 
   const content = (
-    <div className={styles.trainsContent}>
+    <Box className={styles.trainsContent}>
       <h2 className="text-xl font-bold">{selectedStation}</h2>
       {isLoading ? (
         <p>Loading train data...</p>
       ) : (
-        <div className={styles.trainDataContainer}>
-          <div className={styles.trainDataColumn}>
+        <Box className={styles.trainDataContainer}>
+          <Box className={styles.trainDataColumn}>
             <h3 className="text-lg font-semibold mb-2">Departures</h3>
             <table className={styles.trainTable}>
               <thead>
@@ -62,9 +63,9 @@ export default function TrainDetailPanel() {
                 ))}
               </tbody>
             </table>
-          </div>
+          </Box>
 
-          <div className={styles.trainDataColumn}>
+          <Box className={styles.trainDataColumn}>
             <h3 className="text-lg font-semibold mb-2">Arrivals</h3>
             <table className={styles.trainTable}>
               <thead>
@@ -86,10 +87,10 @@ export default function TrainDetailPanel() {
                 ))}
               </tbody>
             </table>
-          </div>
-        </div>
+          </Box>
+        </Box>
       )}
-    </div>
+    </Box>
   );
 
   return (

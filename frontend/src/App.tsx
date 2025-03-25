@@ -49,9 +49,6 @@ export default function App() {
       <Box sx={{ flexGrow: 1, overflow: "hidden" }}>
         <AppBody />
       </Box>
-      {/* <Box sx={{ flexShrink: 0 }}>
-        <p>DETAULS sda d sd sad sad sada sd asd as ds</p>
-      </Box> */}
     </Box>
   );
 }

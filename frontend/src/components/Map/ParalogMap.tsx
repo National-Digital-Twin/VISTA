@@ -19,6 +19,7 @@ import Map, {
 } from "react-map-gl/maplibre";
 import { ErrorBoundary } from "react-error-boundary";
 
+import { Box } from "@mui/material";
 import { FLOOD_AREA_LAYERS, LINEAR_ASSET_LAYER } from "./layers";
 import { generateLinearAssetFeatures } from "./map-utils";
 import { useMapStyles } from "./mapStyles";
@@ -247,7 +248,7 @@ export default function ParalogMap() {
   };
 
   return (
-    <div
+    <Box
       style={{
         // maxHeight: "100%",
         height: "100%",
@@ -343,6 +344,6 @@ export default function ParalogMap() {
           </ErrorBoundary>
         </ShowPointerCoordsContextProvider>
       </MapStyleContextProvider>
-    </div>
+    </Box>
   );
 }
