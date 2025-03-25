@@ -5,6 +5,14 @@ import type { LayerControlProps } from "@/tools/Tool";
 export default function LowBridgeLayerControl({
   searchQuery,
 }: Readonly<LayerControlProps>) {
+  if (searchQuery &&
+    !("Bridges".toLowerCase().includes(searchQuery.toLowerCase()) ||
+      "Low bridges".toLowerCase().includes(searchQuery.toLowerCase()) ||
+      "bridge".toLowerCase().includes(searchQuery.toLowerCase()) ||
+      "low".toLowerCase().includes(searchQuery.toLowerCase()))) {
+  return null;
+  }
+
   return (
     <ComplexLayerControl title="Bridges">
       <SimpleLayerControl
