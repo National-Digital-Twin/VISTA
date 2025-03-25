@@ -23,9 +23,9 @@
   width: 0;
 }
 
-@supports (scrollbar-color: #6a6a6a #14141460) {
+@-moz-document url-prefix() {
   * {
-    scrollbar-width: auto;
+    scrollbar-width: thin;
     scrollbar-color: #6a6a6a #14141460;
   }
 }
