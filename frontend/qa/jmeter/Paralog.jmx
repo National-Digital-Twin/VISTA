@@ -27,8 +27,8 @@
             <stringProp name="Argument.value">paralog.dev.ndtp.co.uk</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
-          <elementProp name="OIDC_TOKEN_VALUE" elementType="Argument">
-            <stringProp name="Argument.name">OIDC_TOKEN_VALUE</stringProp>
+          <elementProp name="OIDC_COOKIE_VALUE" elementType="Argument">
+            <stringProp name="Argument.name">OIDC_COOKIE_VALUE</stringProp>
             <stringProp name="Argument.value">PLACEHOLDER</stringProp>
             <stringProp name="Argument.desc">Cookie value to allow for authentication. This can be acquired by logging in to the service and copying the issued cookie content to this variable.</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
@@ -78,8 +78,8 @@
       </AuthManager>
       <hashTree/>
       <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Thread Group" enabled="true">
-        <stringProp name="ThreadGroup.num_threads">1</stringProp>
-        <stringProp name="ThreadGroup.ramp_time">1</stringProp>
+        <stringProp name="ThreadGroup.num_threads">10</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">10</stringProp>
         <stringProp name="ThreadGroup.duration">0</stringProp>
         <stringProp name="ThreadGroup.delay">0</stringProp>
         <boolProp name="ThreadGroup.same_user_on_next_iteration">false</boolProp>
@@ -91,6 +91,22 @@
         <boolProp name="ThreadGroup.scheduler">false</boolProp>
       </ThreadGroup>
       <hashTree>
+        <CookieManager guiclass="CookiePanel" testclass="CookieManager" testname="HTTP Cookie Manager" enabled="true">
+          <collectionProp name="CookieManager.cookies">
+            <elementProp name="oidc-cookie" elementType="Cookie" testname="oidc-cookie">
+              <stringProp name="Cookie.value">${OIDC_COOKIE_VALUE}</stringProp>
+              <stringProp name="Cookie.domain">${OIDC_COOKIE_DOMAIN}</stringProp>
+              <stringProp name="Cookie.path">/</stringProp>
+              <boolProp name="Cookie.secure">true</boolProp>
+              <longProp name="Cookie.expires">0</longProp>
+              <boolProp name="Cookie.path_specified">true</boolProp>
+              <boolProp name="Cookie.domain_specified">true</boolProp>
+            </elementProp>
+          </collectionProp>
+          <boolProp name="CookieManager.clearEachIteration">false</boolProp>
+          <boolProp name="CookieManager.controlledByThreadGroup">true</boolProp>
+        </CookieManager>
+        <hashTree/>
         <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Steps" enabled="true">
           <boolProp name="TransactionController.includeTimers">false</boolProp>
           <boolProp name="TransactionController.parent">false</boolProp>
@@ -369,6 +385,7 @@
                   <stringProp name="Argument.name">assetUri</stringProp>
                   <stringProp name="Argument.value">https://www.iow.gov.uk/DigitalTwin#PYL133</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
+                  <boolProp name="HTTPArgument.use_equals">true</boolProp>
                 </elementProp>
               </collectionProp>
             </elementProp>
@@ -1306,6 +1323,7 @@
                   <stringProp name="Argument.name">assetUri</stringProp>
                   <stringProp name="Argument.value">https://www.iow.gov.uk/DigitalTwin#W089</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
+                  <boolProp name="HTTPArgument.use_equals">true</boolProp>
                 </elementProp>
               </collectionProp>
             </elementProp>
@@ -2450,6 +2468,7 @@
                   <stringProp name="Argument.name">assetUri</stringProp>
                   <stringProp name="Argument.value">https://www.iow.gov.uk/DigitalTwin#TS065</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
+                  <boolProp name="HTTPArgument.use_equals">true</boolProp>
                 </elementProp>
               </collectionProp>
             </elementProp>
@@ -2502,6 +2521,7 @@
                   <stringProp name="Argument.name">assetUri</stringProp>
                   <stringProp name="Argument.value">https://www.iow.gov.uk/DigitalTwin#PYL194</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
+                  <boolProp name="HTTPArgument.use_equals">true</boolProp>
                 </elementProp>
               </collectionProp>
             </elementProp>
@@ -2963,22 +2983,6 @@
             <hashTree/>
           </hashTree>
         </hashTree>
-        <CookieManager guiclass="CookiePanel" testclass="CookieManager" testname="HTTP Cookie Manager" enabled="true">
-          <collectionProp name="CookieManager.cookies">
-            <elementProp name="oidc-cookie" elementType="Cookie" testname="oidc-cookie">
-              <stringProp name="Cookie.value">${OIDC_COOKIE_VALUE}</stringProp>
-              <stringProp name="Cookie.domain">${OIDC_COOKIE_DOMAIN}</stringProp>
-              <stringProp name="Cookie.path">/</stringProp>
-              <boolProp name="Cookie.secure">true</boolProp>
-              <longProp name="Cookie.expires">0</longProp>
-              <boolProp name="Cookie.path_specified">true</boolProp>
-              <boolProp name="Cookie.domain_specified">true</boolProp>
-            </elementProp>
-          </collectionProp>
-          <boolProp name="CookieManager.clearEachIteration">true</boolProp>
-          <boolProp name="CookieManager.controlledByThreadGroup">true</boolProp>
-        </CookieManager>
-        <hashTree/>
         <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion" enabled="true">
           <collectionProp name="Asserion.test_strings">
             <stringProp name="49586">200</stringProp>
