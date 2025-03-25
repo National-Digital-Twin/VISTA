@@ -53,7 +53,7 @@ export default function ControlPanel({
         display: "flex",
         flexDirection: "row",
         height: "100%",
-        gap: 2,
+        gap: 0,
       }}
     >
       <Box
@@ -70,9 +70,7 @@ export default function ControlPanel({
           <Tabs
             value={value}
             onChange={handleChange}
-            aria-label="basic tabs example"
-            variant="scrollable"
-            scrollButtons="auto"
+            aria-label="layers and asset details"
             TabIndicatorProps={{
               sx: {
                 display: "flex",

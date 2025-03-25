@@ -69,6 +69,7 @@ export default function ControlsOverlay() {
         height: "100%",
         display: "flex",
         flexDirection: "column",
+        margin: 0,
       }}
     >
       <Grid2 container size={12} sx={{ flexGrow: 1, height: "100%" }}>
@@ -78,7 +79,7 @@ export default function ControlsOverlay() {
         >
           <div
             className="pointer-events-auto"
-            style={{ height: "100%", padding: "10px" }}
+            style={{ height: "100%", padding: "5px" }}
           >
             {shouldShowControlPanel && (
               <ControlPanel
@@ -159,7 +160,7 @@ function DetailPanels() {
   }, [tools]);
 
   return (
-    <Box sx={{ height: "100%", backgroundColor: "pink" }}>
+    <Box sx={{ height: "100%" }}>
       {detailPanels.map((detailPanel) => {
         const Component = detailPanel.component;
         return <Component key={detailPanel.key} />;

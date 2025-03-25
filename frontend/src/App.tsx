@@ -1,6 +1,6 @@
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { fas } from "@fortawesome/free-solid-svg-icons";
-import { Grid2 } from "@mui/material";
+import { Box, Grid2 } from "@mui/material";
 import PageHeader from "@/components/PageHeader";
 import AppBody from "@/components/AppBody";
 import config from "@/config/app-config";
@@ -33,21 +33,20 @@ export default function App() {
   }
 
   return (
-    <Grid2
-      container
-      direction="row"
-      size={12}
-      sx={{ height: "100vh", backgroundColor: "pink", overflow: "hidden" }}
+    <Box
+      sx={{
+        height: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        overflow: "hidden",
+      }}
     >
-      {/* Fixed height for the header */}
-      <Grid2 size={12} sx={{ flexShrink: 0, backgroundColor: "blue" }}>
+      <Box sx={{ flexShrink: 0 }}>
         <PageHeader appName="Paralog" />
-      </Grid2>
-
-      {/* Remaining space for the body */}
-      <Grid2 size={12} sx={{ flexGrow: 1, overflow: "auto", height: "100%" }}>
+      </Box>
+      <Box sx={{ flexGrow: 1, overflow: "hidden" }}>
         <AppBody />
-      </Grid2>
-    </Grid2>
+      </Box>
+    </Box>
   );
 }
