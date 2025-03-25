@@ -48,7 +48,7 @@ export default function SandbagToggle() {
   }
 
   return (
-    <ToolbarDropdown title="Sandbags">
+    <ToolbarDropdown title="Sandbags" applyOverrideForSandbag={true}>
       {!featureFlags.uiNext && (
         <Button onClick={toggle}>{enabled ? "Hide" : "Show"} Sandbags</Button>
       )}
