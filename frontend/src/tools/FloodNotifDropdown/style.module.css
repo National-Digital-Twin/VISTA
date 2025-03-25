@@ -15,17 +15,17 @@
   flex-direction: column;
   position: absolute;
   right: 0;
-  margin-right: 8vh;
+  margin-right: 9vh;
   background-color: white;
   border-radius: 0.375em;
   padding: 2em;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.04);
-  width: 24em;
+  width: 25em;
   max-height: 40vh;
   overflow-y: auto;
   z-index: 1000;
 
   @media screen and (max-height: 767px) {
-    margin-right: 9vh;
+    margin-right: 10vh;
   }
 }

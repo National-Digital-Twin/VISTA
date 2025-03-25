@@ -1,10 +1,10 @@
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import LayersOutlinedIcon from "@mui/icons-material/LayersOutlined";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 
 import "react-tabs/style/react-tabs.css";
-import { faLayerGroup, faCircleInfo } from "@fortawesome/free-solid-svg-icons";
 
 import React, { Suspense } from "react";
 import Typography from "@mui/material/Typography";
@@ -34,11 +34,15 @@ export default function ControlPanel({
   };
 
   const tabs = [
-    { name: "Layers", icon: faLayerGroup, Content: <LayersControlPanel /> },
+    {
+      name: "Layers",
+      icon: <LayersOutlinedIcon />,
+      content: <LayersControlPanel />,
+    },
     {
       name: "Asset Details",
-      icon: faCircleInfo,
-      Content: (
+      icon: <InfoOutlinedIcon />,
+      content: (
         <AssetDetailControlPanel
           showConnectedAssets={showConnectedAssets}
           setConnectedAssetData={setConnectedAssetData}
@@ -68,18 +72,34 @@ export default function ControlPanel({
           boxShadow: 4,
         }}
       >
-        <Box sx={{ borderBottom: 1, borderColor: "divider", borderRadius: 2 }}>
+        <Box
+          sx={{
+            borderBottom: 1,
+            borderColor: "divider",
+            backgroundColor: "#f0f2f2",
+            borderRadius: 2,
+          }}
+        >
           <Tabs
             value={value}
             onChange={handleChange}
-            aria-label="layers and asset details"
-            TabIndicatorProps={{
-              sx: {
-                display: "flex",
-                justifyContent: "center",
-                "& .MuiTabs-indicator": {
-                  width: "fit-content",
-                },
+            aria-label="basic tabs example"
+            variant="scrollable"
+            scrollButtons="auto"
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+
+              "& .Mui-selected": {
+                color: "#3670b3",
+              },
+
+              "& .MuiTabs-indicator": {
+                width: "50px !important",
+                borderRadius: "5px 5px 0 0",
+                marginLeft: "90px",
+                height: "3px",
+                backgroundColor: "#3670b3",
               },
             }}
           >
@@ -92,16 +112,9 @@ export default function ControlPanel({
                       display: "flex",
                       flexDirection: "column",
                       alignItems: "center",
-                      paddingTop: 2,
+                      paddingTop: 0,
                     }}
                   >
-                    {entry.icon && (
-                      <FontAwesomeIcon
-                        className="inline mb-1"
-                        icon={entry.icon}
-                        size="2x"
-                      />
-                    )}
                     <Typography
                       sx={{ textTransform: "none", fontWeight: "bold" }}
                     >
@@ -111,6 +124,7 @@ export default function ControlPanel({
                 }
                 {...a11yProps(index)}
                 sx={{ flexBasis: "50%" }}
+                icon={entry.icon}
               ></Tab>
             ))}
           </Tabs>
@@ -118,7 +132,7 @@ export default function ControlPanel({
         <Box sx={{ flexGrow: 1, maxHeight: "100%", overflowY: "auto" }}>
           {tabs.map((entry, i) => (
             <TabPanel key={entry.name} index={i} value={value}>
-              <Suspense fallback="Loading...">{entry.Content}</Suspense>
+              <Suspense fallback="Loading...">{entry.content}</Suspense>
             </TabPanel>
           ))}
         </Box>

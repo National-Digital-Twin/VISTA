@@ -59,7 +59,7 @@ export default function AssetTable() {
       width={assets.length > 0 ? "initial" : "21em"}
       top={assets.length > 0 ? "0" : "initial"}
       marginTop={assets.length > 0 ? "2vh" : "initial"}
-      marginRight={smallScreen ? "9vh" : "8vh"}
+      marginRight={smallScreen ? "10vh" : "9vh"}
       component={Paper}
     >
       <Box

@@ -16,7 +16,7 @@ export default function FloodRiskAreas({ atRiskAreas }: FloodRiskAreasProps) {
         variant="h5"
         sx={{ marginTop: 0, marginBottom: 2, fontWeight: "400" }}
       >
-        Flood risk areas
+        Active flood warnings
       </Typography>
       {atRiskAreas.map((area, index) => {
         const {

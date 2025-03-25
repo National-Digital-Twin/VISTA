@@ -35,8 +35,8 @@ const useGroupedAssets = ({
       let dependencies: Dependency[];
       if (assetTypes.length > 0) {
         const dependencyData = await fetchAssessmentDependencies(
-          assessment,
           assetTypes,
+          assessment,
         );
         dependencies = createDependencies(dependencyData);
       } else {
