@@ -1,12 +1,8 @@
 import { memo, useMemo } from "react";
-import { Box, Grid2 } from "@mui/material";
-import {
-  faChevronRight,
-  faChevronLeft,
-} from "@fortawesome/free-solid-svg-icons";
+import { Box, Grid2, Button, Tooltip } from "@mui/material";
+import { ChevronLeft, ChevronRight } from "@mui/icons-material";
 import { useBoolean } from "usehooks-ts";
 import { useTools } from "@/tools/useTools";
-import ToolbarButton from "@/components/Map/SideButtons/ToolbarButton";
 import featureFlags from "@/config/feature-flags";
 import ControlPanel from "@/components/Map/ControlPanel";
 import MapToolbar from "@/components/Map/SideButtons/MapToolbar";
@@ -27,11 +23,25 @@ function Toolbar({ onOpenControlPanel }: ToolbarProps) {
       }}
     >
       {onOpenControlPanel && (
-        <ToolbarButton
-          icon={faChevronLeft}
-          onClick={onOpenControlPanel}
-          title="Close control panel"
-        />
+        <Box sx={{ position: "absolute", top: "0" }}>
+          <Tooltip title="Close layer panel">
+            <Button
+              onClick={onOpenControlPanel}
+              aria-label="close layer panel"
+              sx={{
+                width: "6vh",
+                height: "6vh",
+                minWidth: "initial",
+                maxWidth: "48px",
+                maxHeight: "48px",
+                backgroundColor: "#ffffff",
+                color: "initial",
+              }}
+            >
+              <ChevronLeft />
+            </Button>
+          </Tooltip>
+        </Box>
       )}
       {tools("toolbar-order").map((tool) => {
         if (!tool.ToolbarTools) {
@@ -69,7 +79,7 @@ export default function ControlsOverlay() {
     >
       <Grid2 container size={12} sx={{ flexGrow: 1 }}>
         <Grid2 size={dependantPanelOpen ? 6 : 3} sx={{ padding: 1 }}>
-          <div className="pointer-events-auto">
+          <Box sx={{ pointerEvents: "auto" }}>
             {shouldShowControlPanel && (
               <ControlPanel
                 connectedAssetsPanelOpen={dependantPanelOpen}
@@ -78,14 +88,25 @@ export default function ControlsOverlay() {
               />
             )}
             {!shouldShowControlPanel && (
-              <ToolbarButton
-                icon={faChevronRight}
-                onClick={showControlPanel}
-                title="Open control panel"
-                width={75}
-              />
+              <Tooltip title="Open layer panel">
+                <Button
+                  onClick={showControlPanel}
+                  aria-label="open layer panel"
+                  sx={{
+                    width: "6vh",
+                    height: "6vh",
+                    minWidth: "initial",
+                    maxWidth: "48px",
+                    maxHeight: "48px",
+                    backgroundColor: "#ffffff",
+                    color: "initial",
+                  }}
+                >
+                  <ChevronRight />
+                </Button>
+              </Tooltip>
             )}
-          </div>
+          </Box>
         </Grid2>
         <Grid2 size={dependantPanelOpen ? 4 : 0}>
           <Box sx={{ marginTop: "10px", pointerEvents: "auto" }}>
