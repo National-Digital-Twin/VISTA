@@ -25,8 +25,7 @@ COPY . .
 RUN yarn build
 
 # Start a new stage from scratch
-FROM nginx:1.27 AS runner
-USER nginx
+FROM nginx:1.27.4 AS runner
 
 # Copy the built files from the builder stage to the runner stage
 COPY --from=builder /app/dist /usr/share/nginx/html

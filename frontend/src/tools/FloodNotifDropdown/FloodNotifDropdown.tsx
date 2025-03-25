@@ -1,4 +1,5 @@
 import { useMemo, useRef } from "react";
+import Box from "@mui/material/Box";
 import { useBoolean, useOnClickOutside } from "usehooks-ts";
 import { useQuery } from "@tanstack/react-query";
 import Link from "@mui/material/Link";
@@ -35,15 +36,12 @@ export default function SideButtons() {
   useOnClickOutside(widgetRef, closeWidget);
 
   return (
-    <div className="pointer-events-auto" ref={widgetRef}>
-      <ToolbarButton
-        title="Flood Notifications"
-        onClick={toggleWidget}
-        svgSrc="/icons/Warning.svg"
-        badgeContent={atRiskAreas.length}
-      />
+    <Box
+      sx={{ display: "flex", justifyContent: "end", pointerEvents: "auto" }}
+      ref={widgetRef}
+    >
       {isOpen && (
-        <div className={styles.floodPanel}>
+        <Box className={styles.floodPanel}>
           <FloodRiskAreas atRiskAreas={atRiskAreas} />
           <Link
             component="button"
@@ -53,9 +51,15 @@ export default function SideButtons() {
           >
             Close
           </Link>
-        </div>
+        </Box>
       )}
-    </div>
+      <ToolbarButton
+        title="Flood Notifications"
+        onClick={toggleWidget}
+        svgSrc="/icons/Warning.svg"
+        badgeContent={atRiskAreas.length}
+      />
+    </Box>
   );
 }
 export const SIDE_BUTTON_ORDER = 0;

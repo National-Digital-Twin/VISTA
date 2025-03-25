@@ -1,15 +1,17 @@
-
 .menu {
   position: absolute;
-  top: -1;
-  right:0;
-  margin-right: 9em;
+  right: 0;
+  margin-right: 8vh;
   background-color: white;
   border-radius: 0.375em;
   padding: 2em;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  width: 350px;
+  width: 20em;
   max-height: 40vh;
   overflow-y: auto;
   z-index: 1000;
+
+  @media screen and (max-height: 767px) {
+    margin-right: 9vh;
+  }
 }
