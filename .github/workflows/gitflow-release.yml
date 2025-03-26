@@ -93,7 +93,6 @@ jobs:
       repo_name: "paralog/transparent-proxy"
       app_name: "transparent-proxy"
       version: ${{ needs.versioning.outputs.version }}
-      environment: demo
 
   tagging:
     name: Create Git Tag
