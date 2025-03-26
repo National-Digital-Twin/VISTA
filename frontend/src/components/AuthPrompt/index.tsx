@@ -24,7 +24,9 @@ export default function AuthPrompt({
     (event: SyntheticEvent<HTMLFormElement>) => {
       event.preventDefault();
       if (onLogIn) {
-        onLogIn(event.currentTarget.elements["key"].value);
+        const form = event.currentTarget;
+        const keyInput = form.elements.namedItem("key") as HTMLInputElement;
+        onLogIn(keyInput.value);
       }
     },
     [onLogIn],
