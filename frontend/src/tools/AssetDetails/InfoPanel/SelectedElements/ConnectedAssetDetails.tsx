@@ -1,4 +1,4 @@
-import { noCase } from "change-case";
+import { capitalCase } from "change-case";
 import { Box, Grid2, Typography } from "@mui/material";
 import styles from "./elements.module.css";
 import { getURIFragment } from "@/utils";
@@ -34,10 +34,10 @@ export default function ConnectedAssetDetails({
     <li className={styles.connectedAssetDetails}>
       <Box className={styles.connectedAssetHeader}>
         <Box>
-          <Typography variant="h6" fontWeight={800}>
+          <Typography variant="body1" fontWeight={900}>
             {name || uri}
           </Typography>
-          <Typography className={styles.connectedAssetUri} fontWeight={600}>
+          <Typography variant="body1" fontWeight={500}>
             {uri.split("#")[1]}
           </Typography>
         </Box>
@@ -45,27 +45,21 @@ export default function ConnectedAssetDetails({
 
       <Grid2 container spacing={2}>
         <Grid2 size={4}>
-          <Typography variant="body1" fontWeight={600}>
-            Type:
-          </Typography>
+          <Typography variant="body1">Type:</Typography>
         </Grid2>
         <Grid2 size={8}>
           <Typography variant="body1">
-            {noCase(getURIFragment(type))}
+            {capitalCase(getURIFragment(type))}
           </Typography>
         </Grid2>
         <Grid2 size={4}>
-          <Typography variant="body1" fontWeight={600}>
-            Criticality:
-          </Typography>
+          <Typography variant="body1">Criticality:</Typography>
         </Grid2>
         <Grid2 size={8}>
           <Typography variant="body1">{criticality ?? "N/D"}</Typography>
         </Grid2>
         <Grid2 size={4}>
-          <Typography variant="body1" fontWeight={600}>
-            Connection Strength:
-          </Typography>
+          <Typography variant="body1">Connection Strength:</Typography>
         </Grid2>
         <Grid2 size={8}>
           <Typography variant="body1">{connectionStrength ?? "N/D"}</Typography>
