@@ -53,7 +53,7 @@ export default function MapStyleButton() {
             p: 2,
             bgcolor: "background.paper",
             borderRadius: 1,
-            boxShadow: 3,
+            boxShadow: 4,
           }}
         >
           <FormControl component="fieldset">

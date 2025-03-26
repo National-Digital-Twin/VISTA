@@ -22,7 +22,7 @@ export default function DetailsPanel({
         position: "relative",
         transition: "height 0.3s ease",
         borderRadius: 2,
-        boxShadow: 3,
+        boxShadow: 4,
       }}
       data-expanded={isOpen}
     >

@@ -1,4 +1,5 @@
-import { Box, Button, Grid2, Tab, Tabs, Typography } from "@mui/material";
+import { Box, IconButton, Grid2, Tab, Tabs, Typography } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 import React from "react";
 import { capitalCase } from "change-case";
 import Dependents from "@/tools/AssetDetails/InfoPanel/SelectedElements/Dependents";
@@ -49,6 +50,7 @@ const ConnectedAssetsPanel: React.FC<ConnectAssetPanelProps> = ({
         borderRadius: 2,
         boxShadow: 4,
         marginLeft: 2,
+        opacity: "0.95",
       }}
     >
       <Box
@@ -67,13 +69,13 @@ const ConnectedAssetsPanel: React.FC<ConnectAssetPanelProps> = ({
             </Typography>
           </Grid2>
           <Grid2 size={1} sx={{ textAlign: "right" }}>
-            <Button
+            <IconButton
               onClick={() => {
                 hideConnectedAssets();
               }}
             >
-              X
-            </Button>
+              <CloseIcon />
+            </IconButton>
           </Grid2>
         </Grid2>
       </Box>
@@ -97,9 +99,8 @@ const ConnectedAssetsPanel: React.FC<ConnectAssetPanelProps> = ({
           p: 2,
         }}
       >
-        <Box sx={{}}>
+        <Box>
           <Tabs
-            sx={{}}
             value={value}
             onChange={handleChange}
             aria-label="connected asset tabs"
@@ -116,15 +117,15 @@ const ConnectedAssetsPanel: React.FC<ConnectAssetPanelProps> = ({
             <Tab
               label={`Dependant Assets (${totalDependents}) `}
               {...a11yProps(0)}
-              sx={{ flexBasis: "50%" }}
+              sx={{ flexBasis: "53%" }}
             />
             <Tab
               label={`Provider Assets (${totalProviders}) `}
               {...a11yProps(1)}
-              sx={{ flexBasis: "50%" }}
+              sx={{ flexBasis: "47%" }}
             />
           </Tabs>
-          <TabPanel value={value} index={0}>
+          <TabPanel value={value} index={0} containerPadding={0}>
             <Dependents
               assetUri={connectedAssetData?.assetUri}
               dependent={connectedAssetData?.dependant}
@@ -132,7 +133,7 @@ const ConnectedAssetsPanel: React.FC<ConnectAssetPanelProps> = ({
               isDependency={connectedAssetData?.isDependency}
             />
           </TabPanel>
-          <TabPanel value={value} index={1}>
+          <TabPanel value={value} index={1} containerPadding={0}>
             <Providers
               isLoading={isProvidersLoading}
               isError={isProvidersFetchError}

@@ -1,12 +1,16 @@
 import React from "react";
-import { ListItem, ListItemText, Box, IconButton } from "@mui/material";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { IconProp } from "@fortawesome/fontawesome-svg-core";
+import {
+  ListItem,
+  ListItemText,
+  Box,
+  IconButton,
+  SvgIcon,
+} from "@mui/material";
 import MaterialUISwitch from "../Switch";
 import SearchConditional from "../SearchConditional";
 
 interface ButtonConfig {
-  icon: IconProp;
+  iconSvg: React.ReactNode;
   name: string;
   onClick: (
     event: React.MouseEvent<HTMLButtonElement | HTMLDivElement>,
@@ -68,7 +72,7 @@ const MenuItemRow = ({
                   }}
                   aria-label={button.name}
                 >
-                  <FontAwesomeIcon icon={button.icon} />
+                  <SvgIcon>{button.iconSvg}</SvgIcon>
                 </IconButton>
               ))}
             </>
