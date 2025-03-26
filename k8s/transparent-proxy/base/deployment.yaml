@@ -3,7 +3,6 @@ kind: Deployment
 metadata:
   annotations:
     reloader.stakater.com/auto: "true"
-
   labels:
     io.kompose.service: paralog-transparent-proxy
   name: paralog-transparent-proxy
