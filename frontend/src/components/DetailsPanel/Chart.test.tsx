@@ -1,8 +1,6 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import Chart from "./Chart";
 
-
-
 type SampleData = { timestamp: string; reading: number };
 
 describe("Chart component", () => {
@@ -34,12 +32,16 @@ describe("Chart component", () => {
 
   it("shows loading message when isLoading is true", () => {
     render(<Chart {...baseProps} rawData={[]} isLoading isError={false} />);
-    expect(screen.getByText(`Loading ${parameter} data for ${name}`)).toBeInTheDocument();
+    expect(
+      screen.getByText(`Loading ${parameter} data for ${name}`),
+    ).toBeInTheDocument();
   });
 
   it("shows error message when isError is true", () => {
     render(<Chart {...baseProps} rawData={[]} isLoading={false} isError />);
-    expect(screen.getByText(`Error loading ${parameter} data for ${name}`)).toBeInTheDocument();
+    expect(
+      screen.getByText(`Error loading ${parameter} data for ${name}`),
+    ).toBeInTheDocument();
   });
 
   it("renders ChartBody with transformed data and unit", async () => {
@@ -49,7 +51,7 @@ describe("Chart component", () => {
         rawData={sampleData}
         isLoading={false}
         isError={false}
-      />
+      />,
     );
 
     await waitFor(() => {

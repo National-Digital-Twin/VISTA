@@ -12,22 +12,26 @@ export default function EnvironmentallySensitiveAreasLayerControl({
     "Environmentally",
     "Sensitive",
     "Areas",
-    "Environmental"
+    "Environmental",
   ];
 
-  const matchesParentCategory = !searchQuery ||
-    parentCategoryTerms.some(term =>
-      term.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      searchQuery.toLowerCase().includes(term.toLowerCase())
+  const matchesParentCategory =
+    !searchQuery ||
+    parentCategoryTerms.some(
+      (term) =>
+        term.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        searchQuery.toLowerCase().includes(term.toLowerCase()),
     );
 
-  const layerNames = Object.values(layers).map(layer => layer.name);
+  const layerNames = Object.values(layers).map((layer) => layer.name);
   const allSearchTerms = [...parentCategoryTerms, ...layerNames];
 
-  const matchesAnyTerm = !searchQuery ||
-    allSearchTerms.some(term =>
-      term.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      searchQuery.toLowerCase().includes(term.toLowerCase())
+  const matchesAnyTerm =
+    !searchQuery ||
+    allSearchTerms.some(
+      (term) =>
+        term.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        searchQuery.toLowerCase().includes(term.toLowerCase()),
     );
 
   if (!matchesAnyTerm) {

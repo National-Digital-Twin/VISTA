@@ -11,10 +11,14 @@ export default function RoadRouteLayerControl({
     return null;
   }
 
-  if (searchQuery &&
-    !("Road Route".toLowerCase().includes(searchQuery.toLowerCase()) ||
+  if (
+    searchQuery &&
+    !(
+      "Road Route".toLowerCase().includes(searchQuery.toLowerCase()) ||
       "road".toLowerCase().includes(searchQuery.toLowerCase()) ||
-      "route".toLowerCase().includes(searchQuery.toLowerCase()))) {
+      "route".toLowerCase().includes(searchQuery.toLowerCase())
+    )
+  ) {
     return null;
   }
 
