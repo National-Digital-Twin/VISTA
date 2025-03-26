@@ -14,6 +14,7 @@ repos:
               repository-configuration/.*|
               deploy/.*|
               \.github/.*|
+              \frontend/public/.*|
           )$
       - id: trailing-whitespace
         exclude: ^public/
