@@ -10,7 +10,8 @@ import {
   Tooltip,
 } from "@mui/material";
 import RoomIcon from "@mui/icons-material/Room";
-import ArrowRightIcon from "@mui/icons-material/ArrowRight";
+import { capitalCase } from "change-case";
+import ArrowRightAltIcon from "@mui/icons-material/ArrowRightAlt";
 import { fetchAssetInfo } from "@/api/combined";
 import { getURIFragment, isAsset, isDependency } from "@/utils";
 import { isEmpty } from "@/utils/isEmpty";
@@ -73,17 +74,12 @@ export default function ElementDetails({
   const extractedType = details.type?.split("#").pop() || "Unknown";
 
   return (
-    <Card sx={{ mb: 1, p: 0.5 }} elevation={0}>
-      <CardContent>
-        <Box
-          display="flex"
-          justifyContent="space-between"
-          alignItems="start"
-          gap={2}
-        >
+    <Card sx={{ padding: 0, margin: 0 }} elevation={0}>
+      <CardContent sx={{ padding: 1, margin: 0 }}>
+        <Box display="flex" justifyContent="space-between" alignItems="start">
           {/* Left Column - Asset Title & Type (Left Aligned) */}
-          <Box sx={{ maxWidth: 150 }}>
-            <Typography variant="subtitle1" sx={{ fontWeight: 500 }}>
+          <Box sx={{ maxWidth: 250 }}>
+            <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
               {details.title || "Asset Details"}
             </Typography>
             <Typography variant="subtitle2">
@@ -94,15 +90,13 @@ export default function ElementDetails({
             <Box
               sx={{
                 backgroundColor: "#f0f0f0",
-                padding: "4px 8px",
                 borderRadius: "4px",
                 display: "inline-block",
                 fontWeight: 500,
-                fontSize: "0.875rem",
                 marginTop: "4px",
               }}
             >
-              {extractedType}
+              {capitalCase(extractedType)}
             </Box>
           </Box>
 
@@ -120,7 +114,7 @@ export default function ElementDetails({
               <Typography variant="body2" sx={{ fontWeight: 500 }}>
                 View connected assets
               </Typography>
-              <ArrowRightIcon fontSize="small" sx={{ ml: 1 }} />
+              <ArrowRightAltIcon fontSize="small" sx={{ ml: 1 }} />
             </Box>
 
             {/* Google Street View */}
