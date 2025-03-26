@@ -33,7 +33,7 @@ spec:
           imagePullPolicy: Always
           envFrom:
             - secretRef:
-                name: paralog-transparent-proxy-static-secret
+                name: paralog-transparent-proxy-secrets
           ports:
             - containerPort: 80
               protocol: TCP
