@@ -9,9 +9,9 @@ import useSharedStore from "@/hooks/useSharedStore";
 import MenuItemRow from "@/components/MenuItemRow";
 
 export default function VulnerablePeopleControls({
-  searchQuery = ""
+  searchQuery = "",
 }: Readonly<{
-  searchQuery?: string
+  searchQuery?: string;
 }>) {
   const { enabled, toggle } = useLayer("vulnerable-people");
 

@@ -24,13 +24,18 @@ const STATION_MENU_ITEMS = [
 export default function HydrologyLayerControl({
   searchQuery,
 }: Readonly<LayerControlProps>) {
-  const complexLayerMatches = !searchQuery ||
-  "Hydrology monitoring".toLowerCase().includes(searchQuery.toLowerCase()) ||
-  ["hydrology", "monitoring", "water"].some(term =>
-    term.toLowerCase().includes(searchQuery.toLowerCase()));
+  const complexLayerMatches =
+    !searchQuery ||
+    "Hydrology monitoring".toLowerCase().includes(searchQuery.toLowerCase()) ||
+    ["hydrology", "monitoring", "water"].some((term) =>
+      term.toLowerCase().includes(searchQuery.toLowerCase()),
+    );
 
-  const anyStationMatches = !searchQuery || STATION_MENU_ITEMS.some(item =>
-    item.label.toLowerCase().includes(searchQuery.toLowerCase()));
+  const anyStationMatches =
+    !searchQuery ||
+    STATION_MENU_ITEMS.some((item) =>
+      item.label.toLowerCase().includes(searchQuery.toLowerCase()),
+    );
 
   if (!complexLayerMatches && !anyStationMatches) {
     return null;

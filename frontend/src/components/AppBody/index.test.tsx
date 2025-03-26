@@ -2,7 +2,9 @@ import { render, screen, waitFor } from "@testing-library/react";
 import AppBody from ".";
 
 // Mock the lazy-loaded component
-jest.mock("./AppBodyLoadedContents", () => () => <div data-testid="loaded-contents">Loaded Contents</div>);
+jest.mock("./AppBodyLoadedContents", () => () => (
+  <div data-testid="loaded-contents">Loaded Contents</div>
+));
 
 describe("AppBody", () => {
   it("renders with custom className", () => {

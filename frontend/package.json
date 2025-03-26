@@ -2,9 +2,39 @@
   "name": "paralog",
   "version": "2.0.1",
   "private": true,
-  "type": "module",
   "homepage": "paralog",
   "license": "Apache-2.0",
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "format": "prettier --write .",
+    "format-changed": "prettier --write --cache .",
+    "lint": "eslint .",
+    "lint-ci": "yarn run lint && prettier --check . && tsc --noEmit",
+    "start": "vite --port 3001",
+    "test": "jest --watch"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all",
+      "not safari < 10",
+      "not chrome < 51",
+      "not android < 5",
+      "not ie < 12"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "prettier": {
+    "semi": true,
+    "tabWidth": 2,
+    "trailingComma": "all"
+  },
   "dependencies": {
     "@apollo/client": "^3.13.5",
     "@emotion/react": "^11.14.0",
@@ -44,36 +74,6 @@
     "vite-plugin-svgr": "^4.3.0",
     "xlsx-republish": "0.20.3",
     "zustand": "^4.5.6"
-  },
-  "scripts": {
-    "start": "vite --port 3001",
-    "build": "vite build",
-    "lint": "eslint .",
-    "format": "prettier --write .",
-    "format-changed": "prettier --write --cache .",
-    "lint-ci": "yarn run lint && prettier --check . && tsc --noEmit",
-    "test": "jest --watch"
-  },
-  "prettier": {
-    "trailingComma": "all",
-    "tabWidth": 2,
-    "semi": true
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all",
-      "not safari < 10",
-      "not chrome < 51",
-      "not android < 5",
-      "not ie < 12"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
   },
   "devDependencies": {
     "@babel/core": "7.26.10",

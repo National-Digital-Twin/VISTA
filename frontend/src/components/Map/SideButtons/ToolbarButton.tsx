@@ -69,7 +69,10 @@ export default function ToolbarButton({
               style={{
                 width: "100%",
                 height: "100%",
-                transform: compassRotation !== undefined ? `rotate(${compassRotation}deg)` : undefined
+                transform:
+                  compassRotation !== undefined
+                    ? `rotate(${compassRotation}deg)`
+                    : undefined,
               }}
             />
           ) : (

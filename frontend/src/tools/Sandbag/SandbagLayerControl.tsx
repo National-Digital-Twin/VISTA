@@ -5,10 +5,14 @@ import type { LayerControlProps } from "@/tools/Tool";
 export default function SandbagLayerControl({
   searchQuery,
 }: Readonly<LayerControlProps>) {
-  if (searchQuery &&
-    !("Sandbags".toLowerCase().includes(searchQuery.toLowerCase()) ||
-      "sandbag".toLowerCase().includes(searchQuery.toLowerCase()))) {
-  return null;
+  if (
+    searchQuery &&
+    !(
+      "Sandbags".toLowerCase().includes(searchQuery.toLowerCase()) ||
+      "sandbag".toLowerCase().includes(searchQuery.toLowerCase())
+    )
+  ) {
+    return null;
   }
 
   return (

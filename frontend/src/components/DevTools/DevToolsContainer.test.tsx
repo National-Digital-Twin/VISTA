@@ -11,7 +11,7 @@ describe("DevToolsContainer", () => {
     render(
       <DevToolsContainer>
         <div data-testid="child">Hello Child</div>
-      </DevToolsContainer>
+      </DevToolsContainer>,
     );
 
     // Check if children are rendered
