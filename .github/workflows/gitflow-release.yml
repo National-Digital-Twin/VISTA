@@ -74,6 +74,8 @@ jobs:
   frontend-push-to-ECR:
     needs: [frontend-ci, versioning]
     uses: ./.github/workflows/frontend-cd-push-to-ECR.yml
+    secrets:
+      VITE_MAP_TILER_TOKEN: ${{ secrets.VITE_MAP_TILER_TOKEN }}
     with:
       aws_account_number: "${{ vars.DEMO_AWS_ACCOUNT_ID }}"
       repo_name: "paralog/frontend"
