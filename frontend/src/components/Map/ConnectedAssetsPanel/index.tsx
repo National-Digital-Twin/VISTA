@@ -1,6 +1,5 @@
 import { Box, Button, Grid2, Tab, Tabs, Typography } from "@mui/material";
 import React from "react";
-import VerticalAlignTopIcon from "@mui/icons-material/VerticalAlignTop";
 import { capitalCase } from "change-case";
 import Dependents from "@/tools/AssetDetails/InfoPanel/SelectedElements/Dependents";
 import Providers from "@/tools/AssetDetails/InfoPanel/SelectedElements/Providers";
@@ -73,12 +72,7 @@ const ConnectedAssetsPanel: React.FC<ConnectAssetPanelProps> = ({
                 hideConnectedAssets();
               }}
             >
-              <VerticalAlignTopIcon
-                sx={{
-                  transform: "rotate(-90deg)", // Rotate the icon 180 degrees
-                  color: "black",
-                }}
-              />
+              X
             </Button>
           </Grid2>
         </Grid2>
