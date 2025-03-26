@@ -72,7 +72,6 @@ jobs:
       version: ${{ needs.versioning.outputs.version }}
 
   frontend-push-to-ECR:
-    environment: demo
     needs: [frontend-ci, versioning]
     uses: ./.github/workflows/frontend-cd-push-to-ECR.yml
     secrets:
@@ -82,6 +81,7 @@ jobs:
       repo_name: "paralog/frontend"
       app_name: "frontend"
       version: ${{ needs.versioning.outputs.version }}
+      environment: demo
 
   proxy-push-to-ECR:
     needs: [proxy-ci, versioning]
@@ -91,6 +91,7 @@ jobs:
       repo_name: "paralog/transparent-proxy"
       app_name: "transparent-proxy"
       version: ${{ needs.versioning.outputs.version }}
+      environment: demo
 
   tagging:
     name: Create Git Tag
