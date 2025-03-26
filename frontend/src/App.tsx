@@ -44,7 +44,7 @@ export default function App() {
       }}
     >
       <Box sx={{ flexShrink: 0 }}>
-        <PageHeader appName="Paralog" />
+        <PageHeader appName="Vista" />
       </Box>
       <Box sx={{ flexGrow: 1, overflow: "hidden" }}>
         <AppBody />
