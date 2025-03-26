@@ -29,7 +29,7 @@ export default function ControlPanel({
 
   const [connectedAssetData, setConnectedAssetData] = React.useState<any>(null);
 
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
 

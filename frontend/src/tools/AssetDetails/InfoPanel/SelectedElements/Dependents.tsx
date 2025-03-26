@@ -31,7 +31,7 @@ export default function Dependents({
     return <p className={styles.loadingMessage}>Loading dependent assets</p>;
   }
   if (isError) {
-    return <p className={styles.errorMessage}>{error.message}</p>;
+    return <p className={styles.errorMessage}>{error?.message}</p>;
   }
   if (isEmpty(dependents)) {
     return null;
