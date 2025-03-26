@@ -30,7 +30,7 @@ spec:
             - configMapRef:
                 name: paralog-python-api-configs
             - secretRef:
-                name: paralog-python-api-static-secret
+                name: paralog-python-api-secret
           ports:
             - containerPort: 8000
               protocol: TCP
