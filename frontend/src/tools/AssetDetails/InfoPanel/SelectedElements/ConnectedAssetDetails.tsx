@@ -1,4 +1,4 @@
-import { capitalCase, noCase } from "change-case";
+import { capitalCase } from "change-case";
 import { Box, Grid2, Typography } from "@mui/material";
 import styles from "./elements.module.css";
 import { getURIFragment } from "@/utils";

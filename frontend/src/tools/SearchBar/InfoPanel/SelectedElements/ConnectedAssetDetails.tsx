@@ -1,4 +1,4 @@
-import { capitalCase, noCase } from "change-case";
+import { capitalCase } from "change-case";
 import TypeIcon from "./TypeIcon";
 import styles from "./elements.module.css";
 import { getURIFragment } from "@/utils";
