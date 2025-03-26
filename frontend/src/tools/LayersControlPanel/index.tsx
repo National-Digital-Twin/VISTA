@@ -10,7 +10,6 @@ import { Box, TextField } from "@mui/material";
 import styles from "./style.module.css";
 import { useTools } from "@/tools/useTools";
 import type { LayerControlProps } from "@/tools/Tool";
-import { useMediaQuery } from "usehooks-ts";
 
 export const TOOL_NAME = "Layers control panel";
 export const controlPanelTab = {

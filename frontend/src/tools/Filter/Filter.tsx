@@ -1,12 +1,5 @@
 import { useContext, useCallback, useState, useEffect } from "react";
-import {
-  Box,
-  Card,
-  CardContent,
-  Grid2,
-  Slider,
-  Typography,
-} from "@mui/material";
+import { Box, Card, CardContent, Slider, Typography } from "@mui/material";
 import MaterialUISwitch from "../../components/Switch";
 import useSharedStore from "@/hooks/useSharedStore";
 import useFloodWatchAreas from "@/hooks/queries/flood-areas/useFloodWatchAreas";
