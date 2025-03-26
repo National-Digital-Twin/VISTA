@@ -6,6 +6,8 @@ on:
       VITE_MAP_TILER_TOKEN:
         required: true
   pull_request:
+    branches-ignore:
+      - "main"
     paths:
       - "frontend/**"
       - ".github/workflows/frontend-ci-pr.yml"
@@ -46,7 +48,6 @@ jobs:
       - name: Run Dependency Checks
         working-directory: frontend
         run: yarn audit --groups dependencies
-        continue-on-error: true
 
       - name: Check for Outdated Dependencies
         working-directory: frontend
@@ -56,13 +57,12 @@ jobs:
             exit 1
           fi
           echo "Checking for outdated dependencies"
-          yarn outdated
-        continue-on-error: true
+          npm install -g npm-check-updates
+          ncu --target minor
 
       - name: Verify Lockfile Integrity
         working-directory: frontend
         run: yarn check --integrity
-        continue-on-error: true
 
   linting:
     name: Code Linting
@@ -92,29 +92,24 @@ jobs:
       - name: Run ESLint CI
         working-directory: frontend
         run: yarn run lint-ci
-        continue-on-error: true
 
       - name: Run Linting
         working-directory: frontend
         run: yarn lint
-        continue-on-error: true
 
       - name: Run Prettier
         working-directory: frontend
         run: yarn prettier --check "src/**/*.{js,ts,tsx}"
-        continue-on-error: true
 
       - name: TypeScript Check
         working-directory: frontend
         run: yarn tsc --noEmit
-        continue-on-error: true
 
       - name: Run Sort-Package-Json (Import Sorting)
         working-directory: frontend
         run: |
           echo "Running sort-package-json"
           npx sort-package-json --check
-        continue-on-error: true
 
       - name: Run Audit-CI (Security Check)
         working-directory: frontend
