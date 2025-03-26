@@ -23,7 +23,7 @@ export function SideButtons() {
       sx={{ display: "flex", justifyContent: "end", pointerEvents: "auto" }}
     >
       {showLegend && (
-        <Box className={styles.menu}>
+        <Box boxShadow={4} className={styles.menu}>
           <LegendContent />
           <Box sx={{ display: "flex", justifyContent: "end" }}>
             <Link
