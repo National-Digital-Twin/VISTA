@@ -57,6 +57,8 @@ jobs:
   frontend-ci:
     needs: [versioning]
     uses: ./.github/workflows/frontend-ci-pr.yml
+    secrets:
+      VITE_MAP_TILER_TOKEN: ${{ secrets.VITE_MAP_TILER_TOKEN }}
 
   proxy-ci:
     needs: [versioning]
