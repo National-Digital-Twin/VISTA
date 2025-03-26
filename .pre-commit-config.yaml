@@ -16,6 +16,7 @@ repos:
               \.github/.*|
           )$
       - id: trailing-whitespace
+        exclude: ^public/
       - id: fix-byte-order-marker
       - id: check-case-conflict
       - id: check-merge-conflict
