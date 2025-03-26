@@ -72,6 +72,7 @@ jobs:
       version: ${{ needs.versioning.outputs.version }}
 
   frontend-push-to-ECR:
+    environment: demo
     needs: [frontend-ci, versioning]
     uses: ./.github/workflows/frontend-cd-push-to-ECR.yml
     secrets:
