@@ -13,7 +13,7 @@ export default function DynamicProximityLayerControl({
       searchQuery={searchQuery}
       terms={["dynamic proximity", "radius", "circle", "km"]}
     >
-      <ComplexLayerControl title="Dynamic proximity">
+      <ComplexLayerControl title="Dynamic proximity" hideCount={true}>
         <DynamicProximityControlPanelBody />
       </ComplexLayerControl>
     </SearchConditional>

@@ -17,11 +17,14 @@ export default function SandbagLayerControl({
 
   return (
     <ComplexLayerControl title="Sandbags">
-      <SimpleLayerControl
-        layerName="sandbag"
-        title="Sandbags"
-        searchQuery={searchQuery}
-      />
+      {(updateSelectedCount) => (
+        <SimpleLayerControl
+          layerName="sandbag"
+          title="Sandbags"
+          searchQuery={searchQuery}
+          updateSelectedCount={updateSelectedCount}
+        />
+      )}
     </ComplexLayerControl>
   );
 }

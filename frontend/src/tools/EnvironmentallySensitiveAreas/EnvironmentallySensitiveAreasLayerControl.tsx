@@ -40,9 +40,12 @@ export default function EnvironmentallySensitiveAreasLayerControl({
 
   return (
     <ComplexLayerControl title="Environmentally Sensitive Areas">
-      <EnvironmentallySensitiveAreasMenuBody
-        searchQuery={matchesParentCategory ? "" : searchQuery}
-      />
+      {(updateSelectedCount) => (
+        <EnvironmentallySensitiveAreasMenuBody
+          searchQuery={matchesParentCategory ? "" : searchQuery}
+          updateSelectedCount={updateSelectedCount}
+        />
+      )}
     </ComplexLayerControl>
   );
 }

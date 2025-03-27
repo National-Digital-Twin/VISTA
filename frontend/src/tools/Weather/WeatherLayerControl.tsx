@@ -18,11 +18,14 @@ export default function WeatherLayerControl({
 
   return (
     <ComplexLayerControl title="Weather">
-      <SimpleLayerControl
-        layerName="weather"
-        title="Live weather"
-        searchQuery={searchQuery}
-      />
+      {(updateSelectedCount) => (
+        <SimpleLayerControl
+          layerName="weather"
+          title="Live weather"
+          searchQuery={searchQuery}
+          updateSelectedCount={updateSelectedCount}
+        />
+      )}
     </ComplexLayerControl>
   );
 }

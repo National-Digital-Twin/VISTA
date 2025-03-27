@@ -1,6 +1,8 @@
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import { useShallow } from "zustand/react/shallow";
-import { useCallback, useEffect } from "react";
+
+import { useCallback, useEffect, useRef } from "react";
+
 import useStore from "./useStore";
 import featureFlags from "@/config/feature-flags";
 import useLayer from "@/hooks/useLayer";
@@ -10,8 +12,10 @@ import MenuItemRow from "@/components/MenuItemRow";
 
 export default function VulnerablePeopleControls({
   searchQuery = "",
+  updateSelectedCount,
 }: Readonly<{
   searchQuery?: string;
+  updateSelectedCount?: (isSelected: boolean) => void;
 }>) {
   const { enabled, toggle } = useLayer("vulnerable-people");
 
@@ -60,20 +64,28 @@ export default function VulnerablePeopleControls({
     drawingModeCallbacks.onDeleteFeatures([drawnFeature.id]);
   }, [drawnFeature, enabled, toggle, setSelected, drawingModeCallbacks]);
 
-  useEffect(
-    function turnOnLayerWhenUserDrawsArea() {
-      if (!drawnFeature) {
-        return;
-      }
-      if (enabled) {
-        return;
-      }
+  // Track whether the component has mounted to prevent double increment
+  const hasMounted = useRef(false);
 
-      toggle();
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- only trigger when user adds or changes area
-    [drawnFeature],
-  );
+  // Notify parent about the initial state when the component mounts
+  useEffect(() => {
+    if (updateSelectedCount && !hasMounted.current) {
+      updateSelectedCount(enabled); // Notify parent about the initial state
+      hasMounted.current = true; // Mark as mounted
+    }
+  }, [enabled, updateSelectedCount]);
+
+  // Automatically enable the layer when a feature is drawn
+  useEffect(() => {
+    if (!drawnFeature) {
+      return;
+    }
+    if (enabled) {
+      return;
+    }
+
+    toggle();
+  }, [drawnFeature, enabled, toggle]);
 
   if (!featureFlags.vulnerablePeople) {
     return null;
@@ -115,11 +127,18 @@ export default function VulnerablePeopleControls({
     });
   }
 
+  const handleToggle = () => {
+    toggle(); // Toggle the layer state
+    if (updateSelectedCount) {
+      updateSelectedCount(!enabled); // Notify parent about the new state
+    }
+  };
+
   return (
     <MenuItemRow
       primaryText="Vulnerable People Polygon"
       checked={enabled}
-      onChange={toggle}
+      onChange={handleToggle}
       searchQuery={searchQuery}
       terms={["Vulnerable People", "polygon", "vulnerable"]}
       buttons={buttons}
