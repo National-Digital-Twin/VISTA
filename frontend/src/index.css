@@ -23,9 +23,9 @@
   width: 0;
 }
 
-@supports (scrollbar-color: #6a6a6a #14141460) {
+@-moz-document url-prefix() {
   * {
-    scrollbar-width: auto;
+    scrollbar-width: thin;
     scrollbar-color: #6a6a6a #14141460;
   }
 }
@@ -56,20 +56,7 @@ input[type="range"].criticality-slider::-ms-thumb {
   border-radius: 50%;
 }
 
-[role="tooltip"],
-.hideTooltip + [role="tooltip"] {
-  @apply absolute -top-9 whitespace-nowrap px-2 py-1 bg-black-50 rounded-md invisible z-10 text-sm;
-}
-[aria-labelledby]:hover + [role="tooltip"],
-[aria-labelledby]:focus + [role="tooltip"] {
-  @apply visible;
-}
-[aria-labelledby]:hover + .hideTooltip[role="tooltip"],
-[aria-labelledby]:focus + .hideTooltip[role="tooltip"] {
-  @apply invisible;
-}
-
-#theme-provider > div {
+#theme-provider>div {
   height: 100%;
 }
 
@@ -130,6 +117,7 @@ input[type="range"].criticality-slider::-ms-thumb {
   .hide-scrollbar::-webkit-scrollbar {
     display: none;
   }
+
   @supports (scrollbar-width: none) {
     .hide-scrollbar {
       scrollbar-width: none;
@@ -158,10 +146,8 @@ input[type="range"].criticality-slider::-ms-thumb {
     cursor: pointer;
 
     &:hover {
-      background: var(
-        --btn-bg-hover,
-        oklab(from var(--btn-bg) calc(l - 0.15) a b)
-      );
+      background: var(--btn-bg-hover,
+          oklab(from var(--btn-bg) calc(l - 0.15) a b));
     }
 
     &:focus {
@@ -171,10 +157,8 @@ input[type="range"].criticality-slider::-ms-thumb {
     }
 
     &:disabled {
-      background: var(
-        --btn-bg-disabled,
-        color-mix(in oklab, var(--btn-bg) 50%, var(--col-bg))
-      );
+      background: var(--btn-bg-disabled,
+          color-mix(in oklab, var(--btn-bg) 50%, var(--col-bg)));
       cursor: not-allowed;
     }
   }
@@ -213,16 +197,15 @@ input[type="range"].criticality-slider::-ms-thumb {
     border-radius: 0.25rem;
     padding: 1rem;
     box-shadow: var(--card-shadow);
+    position: fixed;
   }
 
   .menu {
     --menu-bg: var(--col-bg-card);
     --menu-bg-hover: color-mix(in oklab, var(--menu-bg) 90%, currentColor 10%);
-    --menu-bg-selected: color-mix(
-      in oklab,
-      var(--menu-bg) 80%,
-      currentColor 20%
-    );
+    --menu-bg-selected: color-mix(in oklab,
+        var(--menu-bg) 80%,
+        currentColor 20%);
 
     --menu-padding-block: 0.5rem;
     --menu-padding-inline: 1rem;
@@ -332,7 +315,7 @@ input[type="range"].criticality-slider::-ms-thumb {
   .w-sidebar {
     inline-size: calc(25% + 2rem);
 
-    @media (width >= 1024px) {
+    @media (width >=1024px) {
       inline-size: calc(40% + 2rem);
     }
   }
@@ -345,7 +328,8 @@ input[type="range"].criticality-slider::-ms-thumb {
     transition-property: width, opacity;
     transition-timing-function: cubic-bezier(0.39, 0.58, 0.57, 1);
   }
-  .link:hover + .linkBorder {
+
+  .link:hover+.linkBorder {
     @apply opacity-100 w-full;
   }
 
@@ -378,15 +362,6 @@ input[type="range"].criticality-slider::-ms-thumb {
   }
 }
 
-button.maplibregl-ctrl-compass {
-  width: 40px;
-  height: 40px;
-}
-
-button.maplibregl-ctrl-compass .mapboxgl-ctrl-icon {
-  background-size: 40px;
-}
-
 body,
 html {
   min-block-size: 100svh;
@@ -401,9 +376,7 @@ body {
   display: block grid;
 
   grid:
-    "header" auto
-    "body" 1fr
-    / 1fr;
+    "header" auto "body" 1fr / 1fr;
 
   /* Typographic tweak for design */
   letter-spacing: 0.05em;

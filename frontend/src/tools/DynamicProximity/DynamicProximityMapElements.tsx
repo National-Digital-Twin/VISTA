@@ -1,32 +1,13 @@
-import { useEffect, useRef, useState } from "react";
 import { Layer } from "react-map-gl/maplibre";
 import { point } from "@turf/turf";
 import useDynamicProximity from "./useDynamicProximity";
 
 export default function DynamicProximityMapElements() {
   const { features } = useDynamicProximity();
-  const mapRef = useRef(null);
-  const [isMapLoaded, setIsMapLoaded] = useState(false);
 
-  useEffect(() => {
-    const handleLoadChange = () => {
-      const mapInstance = mapRef.current.getMap();
-      if (mapInstance.isStyleLoaded()) {
-        setIsMapLoaded(true);
-      }
-    };
-
-    if (mapRef.current) {
-      const mapInstance = mapRef.current.getMap();
-      mapInstance.on("styledata", handleLoadChange);
-
-      return () => {
-        mapInstance.off("styledata", handleLoadChange);
-      };
-    }
-  }, []);
-
-  if (!features.length) return null;
+  if (!features.length) {
+    return null;
+  }
 
   const buildingLayerId = "OS/TopographicArea_2/Building/1_4D";
   const pointLayerId = "OS/TopographicPoint/Structure_distinct_name";

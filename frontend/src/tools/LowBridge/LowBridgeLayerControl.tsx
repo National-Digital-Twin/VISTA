@@ -1,16 +1,25 @@
-import { faBridge } from "@fortawesome/free-solid-svg-icons";
+import ComplexLayerControl from "@/components/ComplexLayerControl";
 import SimpleLayerControl from "@/components/SimpleLayerControl";
 import type { LayerControlProps } from "@/tools/Tool";
 
 export default function LowBridgeLayerControl({
   searchQuery,
 }: Readonly<LayerControlProps>) {
+  if (searchQuery &&
+    !("Bridges".toLowerCase().includes(searchQuery.toLowerCase()) ||
+      "Low bridges".toLowerCase().includes(searchQuery.toLowerCase()) ||
+      "bridge".toLowerCase().includes(searchQuery.toLowerCase()) ||
+      "low".toLowerCase().includes(searchQuery.toLowerCase()))) {
+  return null;
+  }
+
   return (
-    <SimpleLayerControl
-      layerName="low-bridges"
-      icon={faBridge}
-      title="Low bridges"
-      searchQuery={searchQuery}
-    />
+    <ComplexLayerControl title="Bridges">
+      <SimpleLayerControl
+        layerName="low-bridges"
+        title="Low bridges"
+        searchQuery={searchQuery}
+      />
+    </ComplexLayerControl>
   );
 }

@@ -1,3 +1,4 @@
+import Button from "@mui/material/Button";
 import { useState, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -34,7 +35,7 @@ export default function SideBar() {
       )}
       data-paralog-sidebar={sidebarIsVisible}
     >
-      <button
+      <Button
         className={styles.sidebarToggleButton}
         onClick={toggleSidebar}
         aria-label={sidebarIsVisible ? "Close sidebar" : "Open sidebar"}
@@ -45,7 +46,7 @@ export default function SideBar() {
           className="h-6 w-6"
           aria-hidden="true"
         />
-      </button>
+      </Button>
 
       {sidebarIsVisible && (
         <>

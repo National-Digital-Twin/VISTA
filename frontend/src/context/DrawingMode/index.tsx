@@ -16,6 +16,7 @@ import { useControl, useMap } from "react-map-gl/maplibre";
 import type { Feature } from "geojson";
 import { useShallow } from "zustand/react/shallow";
 import RectangleMode from "mapbox-gl-draw-rectangle-mode";
+import { drawStyles } from "./theme";
 import {
   CircleMode,
   DirectMode,
@@ -25,7 +26,6 @@ import {
 import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
 import "./maplibre-gl-draw.css";
 import useSharedStore, { State } from "@/hooks/useSharedStore";
-import { drawStyles } from "./theme";
 
 /** Context for Drawing Mode */
 interface DrawingModeContextValue {
@@ -52,10 +52,6 @@ export function DrawingModeContextProvider({
 }) {
   const { paralogMap: map } = useMap();
   const [isMapLoaded, setIsMapLoaded] = useState(map.loaded());
-
-  const blue = "#3bb2d0";
-  const orange = "#fbb03b";
-  const white = "#fff";
 
   const draw = useControl(
     () =>
@@ -110,10 +106,11 @@ export const useDrawingMode = <T extends Feature>(
   { onAddFeatures, onUpdateFeatures, onDeleteFeatures }: DrawShapeCallbacks,
 ) => {
   const context = useContext(DrawingModeContext);
-  if (!context)
+  if (!context) {
     throw new Error(
       "useDrawingMode must be used within DrawingModeContextProvider",
     );
+  }
 
   const { draw, isMapLoaded } = context;
   const { paralogMap: map } = useMap();
@@ -160,14 +157,18 @@ export const useDrawingMode = <T extends Feature>(
       const relevantFeatures = event.features.filter((feature) =>
         features.some((existing) => existing.id === feature.id),
       );
-      if (relevantFeatures.length) processDrawEvent(event, relevantFeatures);
+      if (relevantFeatures.length) {
+        processDrawEvent(event, relevantFeatures);
+      }
     },
     [features, processDrawEvent],
   );
 
   /** Attach Event Listeners */
   useEffect(() => {
-    if (!map) return;
+    if (!map) {
+      return;
+    }
     map.on("draw.update", handleDrawEvent);
     map.on("draw.delete", handleDrawEvent);
     return () => {
@@ -178,7 +179,9 @@ export const useDrawingMode = <T extends Feature>(
 
   /** Redraw Features */
   useEffect(() => {
-    if (!isMapLoaded) return;
+    if (!isMapLoaded) {
+      return;
+    }
     features.forEach(draw.add);
     return () => draw.delete(features.map(({ id }) => id as string));
   }, [draw, features, isMapLoaded]);

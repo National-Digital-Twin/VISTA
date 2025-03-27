@@ -37,7 +37,7 @@ export default function AuthPrompt({
       <div className={styles.authPrompt}>
         <h2 className={styles.title}>Enter authentication key</h2>
         <form className={styles.authForm} onSubmit={onSubmit}>
-          <p className={styles.error}>{error || " "}</p>
+          <p className={styles.error}>{error ?? " "}</p>
           <label className="sr-only" htmlFor={keyId}>
             Authentication Key
           </label>

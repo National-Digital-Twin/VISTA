@@ -26,7 +26,7 @@ export default function ConnectedAssets({
   );
 
   return (
-    <ul className="grid gap-y-3">
+    <ul>
       {sortedAssets.map((asset) => (
         <ConnectedAssetDetails
           key={asset?.uri || asset.error.message}
@@ -36,7 +36,6 @@ export default function ConnectedAssets({
           type={asset?.assetType}
           criticality={asset?.dependentCriticalitySum}
           connectionStrength={asset?.connectionStrength}
-          isAdded={isElementCached(assets, asset.uri)}
         />
       ))}
     </ul>

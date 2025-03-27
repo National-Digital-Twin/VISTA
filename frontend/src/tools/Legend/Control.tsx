@@ -1,4 +1,5 @@
 import { useRef } from "react";
+import Box from "@mui/material/Box";
 import { faList } from "@fortawesome/free-solid-svg-icons";
 import { useBoolean, useOnClickOutside } from "usehooks-ts";
 import LegendContent from "./Content";
@@ -15,9 +16,9 @@ export default function LegendControl() {
   useOnClickOutside(ref, close);
 
   return (
-    <div ref={ref} className="relative">
+    <Box ref={ref} sx={{ display: "flex", justifyContent: "end" }}>
       <ToolbarButton title="Toggle Legend" onClick={toggleOpen} icon={faList} />
       {isOpen && <LegendContent />}
-    </div>
+    </Box>
   );
 }

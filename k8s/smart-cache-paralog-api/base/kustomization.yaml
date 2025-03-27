@@ -1,18 +1,13 @@
 resources:
   - ../base/istio/authorizationpolicy/allow-ingress-authorization-policy.yaml
-  - ../base/istio/gateway.yaml
-  - ../base/istio/virtualService.yaml
   - service-account.yaml
   - deployment.yaml
   - service.yaml
-  - vault/vaultAuth.yaml
-  - vault/vaultStaticSecret.yaml
+#  - vault/vaultAuth.yaml
+#  - vault/vaultStaticSecret.yaml
 
 labels:
   - pairs:
       app: smart-cache-paralog-api
       env: ENV_PLACEHOLDER
       app.kubernetes.io/name: smart-cache-paralog-api
-
-
-

@@ -1,8 +1,6 @@
-import React, { useState, useEffect, useRef } from "react";
-import classNames from "classnames";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
-import styles from "./style.module.css";
+import React from "react";
+import { Card, CardContent, IconButton } from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 interface DetailsPanelProps {
   readonly children: React.ReactNode;
@@ -15,61 +13,40 @@ export default function DetailsPanel({
   onClose,
   isOpen,
 }: DetailsPanelProps) {
-  const [height, setHeight] = useState(300);
-  const panelRef = useRef<HTMLDivElement>(null);
-  const resizeRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const resizeHandle = resizeRef.current;
-    if (!resizeHandle) {
-      return;
-    }
-
-    let startY: number;
-    let startHeight: number;
-
-    const onMouseMove = (e: MouseEvent) => {
-      const deltaY = startY - e.clientY;
-      const newHeight = Math.max(
-        100,
-        Math.min(startHeight + deltaY, window.innerHeight - 100),
-      );
-      setHeight(newHeight);
-    };
-
-    const onMouseUp = () => {
-      document.removeEventListener("mousemove", onMouseMove);
-      document.removeEventListener("mouseup", onMouseUp);
-    };
-
-    const onMouseDown = (e: MouseEvent) => {
-      startY = e.clientY;
-      startHeight = height;
-      document.addEventListener("mousemove", onMouseMove);
-      document.addEventListener("mouseup", onMouseUp);
-    };
-
-    resizeHandle.addEventListener("mousedown", onMouseDown);
-
-    return () => {
-      resizeHandle.removeEventListener("mousedown", onMouseDown);
-    };
-  }, [height]);
-
   return (
-    <div
-      ref={panelRef}
-      className={classNames(styles.detailsPanel)}
+    <Card
+      sx={{
+        height: "25vh",
+        maxHeight: "22vh",
+        overflow: "hidden",
+        position: "relative",
+        transition: "height 0.3s ease",
+        borderRadius: 2,
+        boxShadow: 3,
+      }}
       data-expanded={isOpen}
-      style={{ height: `${height}px` }}
     >
-      <div ref={resizeRef} className={styles.resizeHandle} />
       {onClose && (
-        <button onClick={onClose} className={styles.toggleButton}>
-          <FontAwesomeIcon icon={faChevronDown} />
-        </button>
+        <IconButton
+          onClick={onClose}
+          sx={{
+            position: "absolute",
+            top: 8,
+            right: 8,
+            zIndex: 1,
+          }}
+        >
+          <ExpandMoreIcon sx={{ fontSize: "3rem" }} />
+        </IconButton>
       )}
-      <div className={styles.content}>{children}</div>
-    </div>
+      <CardContent
+        sx={{
+          height: "100%",
+          overflowY: "auto",
+        }}
+      >
+        {children}
+      </CardContent>
+    </Card>
   );
 }

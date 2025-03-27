@@ -1,11 +1,10 @@
-import { faMapMarkerAlt } from "@fortawesome/free-solid-svg-icons";
-
 import { useCallback } from "react";
-
+import { faDrawPolygon } from "@fortawesome/free-solid-svg-icons";
 import useDynamicProximity from "./useDynamicProximity";
 import ComplexLayerControl from "@/components/ComplexLayerControl";
 import SearchConditional from "@/components/SearchConditional";
 import type { LayerControlProps } from "@/tools/Tool";
+import MenuItemRow from "@/components/MenuItemRow";
 
 export default function DynamicProximityLayerControl({
   searchQuery,
@@ -15,7 +14,7 @@ export default function DynamicProximityLayerControl({
       searchQuery={searchQuery}
       terms={["dynamic proximity", "radius", "circle", "km"]}
     >
-      <ComplexLayerControl icon={faMapMarkerAlt} title="Dynamic proximity">
+      <ComplexLayerControl title="Dynamic proximity">
         <DynamicProximityControlPanelBody />
       </ComplexLayerControl>
     </SearchConditional>
@@ -24,7 +23,7 @@ export default function DynamicProximityLayerControl({
 
 function DynamicProximityControlPanelBody() {
   return (
-    <div className="menu menu-lg">
+    <div>
       {[1, 2, 3].map((radiusKm) => (
         <DynamicProximityMenuItem key={radiusKm} radiusKm={radiusKm} />
       ))}
@@ -49,8 +48,18 @@ function DynamicProximityMenuItem({
   }, [radiusKm, onClick, startDrawingWithRange]);
 
   return (
-    <button className="menu-item" role="menuitem" onClick={clicked}>
-      {radiusKm}km radius
-    </button>
+    <MenuItemRow
+      primaryText={`${radiusKm}km radius`}
+      checked={false}
+      searchQuery=""
+      terms={[`${radiusKm}km radius`]}
+      buttons={[
+        {
+          icon: faDrawPolygon,
+          name: `${radiusKm}km radius`,
+          onClick: clicked,
+        },
+      ]}
+    />
   );
 }

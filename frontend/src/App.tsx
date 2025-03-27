@@ -1,7 +1,8 @@
-import { useLayoutEffect } from "react";
-import { useDarkMode } from "usehooks-ts";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { fas } from "@fortawesome/free-solid-svg-icons";
+
+import { Box } from "@mui/material";
+
 import PageHeader from "@/components/PageHeader";
 import AppBody from "@/components/AppBody";
 import config from "@/config/app-config";
@@ -15,21 +16,6 @@ export default function App() {
 
   // We're using useLayoutEffect here rather than useEffect because we want to
   // be quite sure this happens _before_ the browser has the chance to repaint.
-  const { isDarkMode } = useDarkMode();
-
-  useLayoutEffect(() => {
-    const html = document.documentElement;
-
-    if (isDarkMode) {
-      html.classList.add("dark");
-      html.classList.remove("light");
-    } else {
-      html.classList.add("light");
-      html.classList.remove("dark");
-    }
-    html.setAttribute("data-color-scheme", isDarkMode ? "dark" : "light");
-  }, [isDarkMode]);
-
   if (config.configErrors.length > 0) {
     // This doesn't violate the rules of React vis a vis the hooks below because
     // this value is a constant.
@@ -49,10 +35,20 @@ export default function App() {
   }
 
   return (
-    <>
-      <PageHeader appName="Paralog" />
-
-      <AppBody />
-    </>
+    <Box
+      sx={{
+        height: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        overflow: "hidden",
+      }}
+    >
+      <Box sx={{ flexShrink: 0 }}>
+        <PageHeader appName="Vista" />
+      </Box>
+      <Box sx={{ flexGrow: 1, overflow: "hidden" }}>
+        <AppBody />
+      </Box>
+    </Box>
   );
 }

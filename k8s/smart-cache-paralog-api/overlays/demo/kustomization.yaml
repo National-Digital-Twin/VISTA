@@ -3,16 +3,9 @@ resources:
 
 namespace: paralog
 patches:
-  - path: patches/gateway.yaml
-    target:
-      kind: Gateway
   - path: patches/allow-ingress.yaml
     target:
       kind: AuthorizationPolicy
-  - path: patches/virtualService.yaml
-    target:
-      kind: VirtualService
-      name: smart-cache-paralog-api
   - path: patches/service-account.yaml
     target:
       kind: ServiceAccount
@@ -23,10 +16,9 @@ labels:
       env: demo
 
 images:
-  - name: smart-cache-paralog-api-image
+  - name: smart-cache-paralog-api-image:template
     newName: 503561419905.dkr.ecr.eu-west-2.amazonaws.com/paralog/smart-cache-paralog-api
-    newTag: '1739898581'
-
+    newTag: "1739898581"
 
 configMapGenerator:
   - name: smart-cache-paralog-api-configs

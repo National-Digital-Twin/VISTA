@@ -1,4 +1,5 @@
 import { useCallback } from "react";
+import { Button } from "@mui/material";
 import { useAddMarker } from "../NewMarker/useAddMarker";
 import useStore from "./useStore";
 import featureFlags from "@/config/feature-flags";
@@ -47,16 +48,12 @@ export default function SandbagToggle() {
   }
 
   return (
-    <ToolbarDropdown title="Sandbags" large>
+    <ToolbarDropdown title="Sandbags" applyOverrideForSandbag={true}>
       {!featureFlags.uiNext && (
-        <button className="menu-item" role="menuitem" onClick={toggle}>
-          {enabled ? "Hide" : "Show"} Sandbags
-        </button>
+        <Button onClick={toggle}>{enabled ? "Hide" : "Show"} Sandbags</Button>
       )}
       {enabled && !mousePosition ? (
-        <button className="menu-item" role="menuitem" onClick={startAddMarker}>
-          Add new sandbag
-        </button>
+        <Button onClick={startAddMarker}>Add new sandbag</Button>
       ) : null}
     </ToolbarDropdown>
   );

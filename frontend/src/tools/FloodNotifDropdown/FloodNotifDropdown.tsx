@@ -1,14 +1,14 @@
 import { useMemo, useRef } from "react";
-import { faBell } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import classNames from "classnames";
+import Box from "@mui/material/Box";
 import { useBoolean, useOnClickOutside } from "usehooks-ts";
 import { useQuery } from "@tanstack/react-query";
-import styles from "./style.module.css";
+import Link from "@mui/material/Link";
 import FloodRiskAreas from "./FloodRiskAreas";
+import styles from "./style.module.css";
 import { fetchAllLiveStations } from "@/api/hydrology";
+import ToolbarButton from "@/components/Map/SideButtons/ToolbarButton";
 
-export default function FloodNotifDropdown() {
+export default function SideButtons() {
   const {
     value: isOpen,
     setFalse: closeWidget,
@@ -36,24 +36,30 @@ export default function FloodNotifDropdown() {
   useOnClickOutside(widgetRef, closeWidget);
 
   return (
-    <div className="pointer-events-auto relative" ref={widgetRef}>
-      <button
-        className={classNames(
-          "bg-button hover:bg-button p-2 rounded cursor-pointer flex items-center justify-center w-9 h-9 border-none transition-colors duration-300",
-          { "bg-button-hover": isOpen },
-        )}
-        onClick={toggleWidget}
-      >
-        <FontAwesomeIcon icon={faBell} className="text-whiteSmoke" />
-        {atRiskAreas.length > 0 && (
-          <span className={styles.warningCount}>{atRiskAreas.length}</span>
-        )}
-      </button>
+    <Box
+      sx={{ display: "flex", justifyContent: "end", pointerEvents: "auto" }}
+      ref={widgetRef}
+    >
       {isOpen && (
-        <div className="absolute top-full left-0 mt-2 bg-card border border-neutral-outline rounded p-4 shadow-lg w-[350px] max-h-[40vh] overflow-y-auto">
+        <Box className={styles.floodPanel}>
           <FloodRiskAreas atRiskAreas={atRiskAreas} />
-        </div>
+          <Link
+            component="button"
+            variant="body1"
+            onClick={closeWidget}
+            className={styles.closeButton}
+          >
+            Close
+          </Link>
+        </Box>
       )}
-    </div>
+      <ToolbarButton
+        title="Flood Notifications"
+        onClick={toggleWidget}
+        svgSrc="/icons/Warning.svg"
+        badgeContent={atRiskAreas.length}
+      />
+    </Box>
   );
 }
+export const SIDE_BUTTON_ORDER = 0;

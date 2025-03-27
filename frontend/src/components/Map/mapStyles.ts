@@ -1,5 +1,4 @@
 import { useMemo } from "react";
-
 import { useDarkMode } from "usehooks-ts";
 import config from "@/config/app-config";
 
@@ -57,6 +56,5 @@ function getMapTilerStyles(darkMode: boolean): MapStyle[] {
 
 export function useMapStyles() {
   const { isDarkMode } = useDarkMode();
-
   return useMemo(() => getMapTilerStyles(isDarkMode), [isDarkMode]);
 }

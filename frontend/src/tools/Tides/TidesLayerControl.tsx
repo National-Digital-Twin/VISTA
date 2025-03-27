@@ -1,16 +1,24 @@
-import { faWaveSquare } from "@fortawesome/free-solid-svg-icons";
+import ComplexLayerControl from "@/components/ComplexLayerControl";
 import SimpleLayerControl from "@/components/SimpleLayerControl";
 import type { LayerControlProps } from "@/tools/Tool";
 
 export default function TidesLayerControl({
   searchQuery,
 }: Readonly<LayerControlProps>) {
+  if (searchQuery &&
+    !("Tides".toLowerCase().includes(searchQuery.toLowerCase()) ||
+      "Tidal".toLowerCase().includes(searchQuery.toLowerCase()) ||
+      "monitoring".toLowerCase().includes(searchQuery.toLowerCase()))) {
+  return null;
+  }
+
   return (
-    <SimpleLayerControl
-      layerName="tides"
-      icon={faWaveSquare}
-      title="Tidal monitoring"
-      searchQuery={searchQuery}
-    />
+    <ComplexLayerControl title="Tides">
+      <SimpleLayerControl
+        layerName="tides"
+        title="Tidal monitoring"
+        searchQuery={searchQuery}
+      />
+    </ComplexLayerControl>
   );
 }

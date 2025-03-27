@@ -1,0 +1,218 @@
+name: Frontend CI on PR
+
+on:
+  workflow_call:
+    secrets:
+      VITE_MAP_TILER_TOKEN:
+        required: true
+  pull_request:
+    paths:
+      - "frontend/**"
+      - ".github/workflows/frontend-ci-pr.yml"
+      - ".github/workflows/frontend-ci-pr-merge.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: read
+  statuses: write # To report GitHub Actions status checks
+
+jobs:
+  dependencies:
+    name: Dependency Checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "23.x"
+          cache: yarn
+          cache-dependency-path: frontend/yarn.lock
+
+      - name: Install Yarn
+        run: npm install -g yarn
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: |
+          yarn install --frozen-lockfile
+
+      - name: Run Dependency Checks
+        working-directory: frontend
+        run: yarn audit --groups dependencies
+        continue-on-error: true
+
+      - name: Check for Outdated Dependencies
+        working-directory: frontend
+        run: |
+          if [ ! -f yarn.lock ]; then
+            echo "Error: yarn.lock file is missing!"
+            exit 1
+          fi
+          echo "Checking for outdated dependencies"
+          yarn outdated
+        continue-on-error: true
+
+      - name: Verify Lockfile Integrity
+        working-directory: frontend
+        run: yarn check --integrity
+        continue-on-error: true
+
+  linting:
+    name: Code Linting
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: dependencies
+    env:
+      GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "23.x"
+          cache: yarn
+          cache-dependency-path: frontend/yarn.lock
+
+      - name: Install Yarn
+        run: npm install -g yarn
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: yarn install --frozen-lockfile
+
+      - name: Run ESLint CI
+        working-directory: frontend
+        run: yarn run lint-ci
+        continue-on-error: true
+
+      - name: Run Linting
+        working-directory: frontend
+        run: yarn lint
+        continue-on-error: true
+
+      - name: Run Prettier
+        working-directory: frontend
+        run: yarn prettier --check "src/**/*.{js,ts,tsx}"
+        continue-on-error: true
+
+      - name: TypeScript Check
+        working-directory: frontend
+        run: yarn tsc --noEmit
+        continue-on-error: true
+
+      - name: Run Sort-Package-Json (Import Sorting)
+        working-directory: frontend
+        run: |
+          echo "Running sort-package-json"
+          npx sort-package-json --check
+        continue-on-error: true
+
+      - name: Run Audit-CI (Security Check)
+        working-directory: frontend
+        run: |
+          echo "Running audit-ci"
+          npx audit-ci --high
+
+  security-scanning:
+    name: Security Scanning
+    runs-on: ubuntu-latest
+    needs: linting
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          scan-type: "fs"
+          scan-ref: frontend
+          format: "table"
+          exit-code: "1"
+          ignore-unfixed: true
+          severity: "CRITICAL,HIGH"
+
+  docker-build-test-scan:
+    name: Yarn Build, Docker Build, Test & Scan
+    runs-on: ubuntu-latest
+    needs: security-scanning
+    timeout-minutes: 20
+    env:
+      GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      VITE_MAP_TILER_TOKEN: ${{ secrets.VITE_MAP_TILER_TOKEN }}
+    environment: development
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "23.x"
+          cache: yarn
+          cache-dependency-path: frontend/yarn.lock
+
+      - name: Install Yarn
+        run: npm install -g yarn
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: yarn install --frozen-lockfile
+
+      - name: Build Frontend
+        working-directory: frontend
+        run: npm run build
+
+      - name: list files in dist dir
+        working-directory: frontend
+        if: success()
+        run: |
+          ls -l dist/
+
+      - name: Build Docker Image
+        working-directory: frontend
+        run: |
+          docker build -t paralog/frontend:latest -f CI_Dockerfile .
+
+      - name: Run Docker Image
+        run: |
+          docker images
+          docker run --rm -d -p 80:80 --name frontend paralog/frontend:latest
+          docker ps
+          sleep 10
+          docker logs frontend
+          docker exec frontend ls -l /usr/share/nginx/html
+
+      - name: Ping App
+        run: |
+          status_code=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:80/)
+          if [[ "$status_code" == "200" ]]; then
+            echo "Ping successful (200 OK)"  >> $GITHUB_STEP_SUMMARY
+          else
+            echo "Ping failed with status code: $status_code"  >> $GITHUB_STEP_SUMMARY
+            exit 1  # Indicate an error
+          fi
+
+      - name: Run Trivy Scan on Docker Image
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: "paralog/frontend:latest"
+          format: "table"
+          exit-code: "1"
+          ignore-unfixed: true
+          vuln-type: "os,library"
+          severity: "CRITICAL,HIGH"
+          trivyignores: "frontend/.trivyignore"
+
+      - name: Cleanup
+        if: always()
+        run: docker stop frontend

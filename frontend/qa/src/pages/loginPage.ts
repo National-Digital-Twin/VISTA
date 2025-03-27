@@ -2,15 +2,15 @@ import { expect, Page } from "@playwright/test";
 import PlaywrightWrapper from "../helper/wrapper/PlaywrightWrappers";
 
 export default class LoginPage {
-  private base: PlaywrightWrapper;
-  constructor(private page: Page) {
+  private readonly base: PlaywrightWrapper;
+  constructor(private readonly page: Page) {
     this.base = new PlaywrightWrapper(page);
   }
 
   //Object Locators
-  private Elements = {
+  private readonly Elements = {
     userInput: "username",
-    passwordInput: "Password",
+    passwordInput: "Password", // pragma: allowlist secret
     loginBtn: "button[color='primary']",
     errorMessage: "alert",
   };
@@ -23,6 +23,7 @@ export default class LoginPage {
     await expect(this.page.locator('[name="username"]')).toBeVisible();
     await this.page.locator('[name="username"]').fill(user);
   }
+
   async enterPassword(password: string) {
     await expect(this.page.locator('[name="password"]')).toBeVisible();
     await this.page.locator('[name="password"]').fill(password);

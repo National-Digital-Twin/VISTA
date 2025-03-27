@@ -1,19 +1,27 @@
-import { faTable } from "@fortawesome/free-solid-svg-icons";
-import { useBoolean } from "usehooks-ts";
+import { useRef } from "react";
+import { useBoolean, useOnClickOutside } from "usehooks-ts";
+import Box from "@mui/material/Box";
 import AssetTable from "./AssetTable";
 import ToolbarButton from "@/components/Map/SideButtons/ToolbarButton";
 
 export default function AssetTableSideButton() {
-  const { value: showTable, toggle: toggleTable } = useBoolean(false);
+  const {
+    value: showTable,
+    setFalse: closeTable,
+    toggle: toggleTable,
+  } = useBoolean(false);
+  const widgetRef = useRef<HTMLDivElement>(null);
+
+  useOnClickOutside(widgetRef, closeTable);
 
   return (
-    <div className="relative">
-      <ToolbarButton title="Asset Table" onClick={toggleTable} icon={faTable} />
-      {showTable && (
-        <div className="absolute right-12 bottom-0 card max-w-[80vw] max-h-[80vh]">
-          <AssetTable />
-        </div>
-      )}
-    </div>
+    <Box ref={widgetRef} sx={{ display: "flex", justifyContent: "end" }}>
+      {showTable && <AssetTable />}
+      <ToolbarButton
+        title="Asset Table"
+        onClick={toggleTable}
+        svgSrc="icons/Asset table.svg"
+      />
+    </Box>
   );
 }

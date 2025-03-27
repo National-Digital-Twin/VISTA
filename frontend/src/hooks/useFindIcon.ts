@@ -1,5 +1,5 @@
 import { capitalCase } from "change-case";
-import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import ontologyService from "@/ontology-service";
 
 export interface FoundIcon {
