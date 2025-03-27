@@ -30,7 +30,7 @@ export default function ConnectedAssets({
     <ul>
       {sortedAssets.map((asset) => (
         <ConnectedAssetDetails
-          key={asset?.uri || asset?.error?.message || 'unknown'}
+          key={asset?.uri || asset?.error?.message || "unknown"}
           error={asset?.error}
           uri={asset?.uri}
           name={asset?.name}

@@ -92,17 +92,14 @@ jobs:
       - name: Run ESLint CI
         working-directory: frontend
         run: yarn run lint-ci
-        continue-on-error: true
 
       - name: Run Linting
         working-directory: frontend
         run: yarn lint
-        continue-on-error: true
 
       - name: Run Prettier
         working-directory: frontend
         run: yarn prettier --check "src/**/*.{js,ts,tsx}"
-        continue-on-error: true
 
       - name: TypeScript Check
         working-directory: frontend
