@@ -53,12 +53,12 @@ export default class LayersPage {
   }
 
   async zoomInWithButton() {
-    const zoomInButton = this.page.getByRole('button', { name: 'Zoom in' });
+    const zoomInButton = this.page.getByRole("button", { name: "Zoom in" });
     await zoomInButton.click();
   }
 
   async zoomOutWithButton() {
-    const zoomOutButton = this.page.getByRole('button', { name: 'Zoom out' });
+    const zoomOutButton = this.page.getByRole("button", { name: "Zoom out" });
     await zoomOutButton.click();
   }
 
