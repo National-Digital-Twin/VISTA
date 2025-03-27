@@ -18,7 +18,7 @@ spec:
             - configMapRef:
                 name: paralog-python-api-configs
             - secretRef:
-                name: paralog-python-api-static-secret
+                name: paralog-python-api-secret
           resources:
             requests:
               cpu: "0.5" # Minimum CPU your container is guaranteed.
