@@ -108,10 +108,16 @@
 .connectedAssetDetails {
   display: flex;
   flex-direction: column;
-  padding-bottom:10px;
+  padding-bottom: 20px;
+  margin-bottom: 20px;
   gap: 0.5rem;
   background-color: var(--col-bg-card);
   border-bottom: 1px solid var(--col-neutral-outline);
+  margin-top: 10px;
+}
+
+.connectedAssetDetails:first-child() {
+  margin-top: 0;
 }
 
 .connectedAssetHeader {

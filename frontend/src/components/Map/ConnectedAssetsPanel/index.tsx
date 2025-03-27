@@ -1,5 +1,7 @@
-import { Box, Button, Grid2, Tab, Tabs, Typography } from "@mui/material";
+import { Box, IconButton, Grid2, Tab, Tabs, Typography } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 import React from "react";
+import { capitalCase } from "change-case";
 import Dependents from "@/tools/AssetDetails/InfoPanel/SelectedElements/Dependents";
 import Providers from "@/tools/AssetDetails/InfoPanel/SelectedElements/Providers";
 import { a11yProps, TabPanel } from "@/utils/tabHelpers";
@@ -45,12 +47,19 @@ const ConnectedAssetsPanel: React.FC<ConnectAssetPanelProps> = ({
         backgroundColor: "background.paper",
         display: "flex",
         flexDirection: "column",
+        borderRadius: 2,
+        boxShadow: 4,
+        marginLeft: 2,
+        opacity: "0.95",
       }}
     >
       <Box
         sx={{
-          p: 2,
+          paddingTop: 2,
+          paddingX: 2,
+          paddingBottom: 0,
           flexShrink: 0,
+          marginBottom: 0,
         }}
       >
         <Grid2 container>
@@ -60,26 +69,27 @@ const ConnectedAssetsPanel: React.FC<ConnectAssetPanelProps> = ({
             </Typography>
           </Grid2>
           <Grid2 size={1} sx={{ textAlign: "right" }}>
-            <Button
+            <IconButton
               onClick={() => {
                 hideConnectedAssets();
               }}
             >
-              X
-            </Button>
+              <CloseIcon />
+            </IconButton>
           </Grid2>
         </Grid2>
       </Box>
       <Box
         sx={{
-          p: 2,
+          paddingX: 2,
+          paddingBottom: 0,
         }}
       >
         <Typography variant="body1">
           {connectedAssetData?.id || "N/A"}
         </Typography>
         <Typography variant="body1" sx={{ backgroundColor: "#f0f0f0" }}>
-          {connectedAssetData?.type || "Unknown Type"}
+          {capitalCase(connectedAssetData?.type) || "Unknown Type"}
         </Typography>
       </Box>
       <Box
@@ -89,9 +99,8 @@ const ConnectedAssetsPanel: React.FC<ConnectAssetPanelProps> = ({
           p: 2,
         }}
       >
-        <Box sx={{}}>
+        <Box>
           <Tabs
-            sx={{}}
             value={value}
             onChange={handleChange}
             aria-label="connected asset tabs"
@@ -108,15 +117,15 @@ const ConnectedAssetsPanel: React.FC<ConnectAssetPanelProps> = ({
             <Tab
               label={`Dependant Assets (${totalDependents}) `}
               {...a11yProps(0)}
-              sx={{ flexBasis: "50%" }}
+              sx={{ flexBasis: "53%" }}
             />
             <Tab
               label={`Provider Assets (${totalProviders}) `}
               {...a11yProps(1)}
-              sx={{ flexBasis: "50%" }}
+              sx={{ flexBasis: "47%" }}
             />
           </Tabs>
-          <TabPanel value={value} index={0}>
+          <TabPanel value={value} index={0} containerPadding={0}>
             <Dependents
               assetUri={connectedAssetData?.assetUri}
               dependent={connectedAssetData?.dependant}
@@ -124,7 +133,7 @@ const ConnectedAssetsPanel: React.FC<ConnectAssetPanelProps> = ({
               isDependency={connectedAssetData?.isDependency}
             />
           </TabPanel>
-          <TabPanel value={value} index={1}>
+          <TabPanel value={value} index={1} containerPadding={0}>
             <Providers
               isLoading={isProvidersLoading}
               isError={isProvidersFetchError}

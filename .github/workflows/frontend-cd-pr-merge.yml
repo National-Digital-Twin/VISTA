@@ -64,5 +64,6 @@ jobs:
       repo_name: "paralog/frontend"
       app_name: "frontend"
       version: ${{ needs.versioning.outputs.version }}
+      environment: development
     secrets:
       VITE_MAP_TILER_TOKEN: ${{ secrets.VITE_MAP_TILER_TOKEN }}

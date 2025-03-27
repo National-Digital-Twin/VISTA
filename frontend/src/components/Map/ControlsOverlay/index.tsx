@@ -97,6 +97,7 @@ export default function ControlsOverlay() {
             overflow: "hidden",
             display: "flex",
             flexDirection: "column",
+            paddingTop: 0,
           }}
         >
           <Box
@@ -151,11 +152,11 @@ export default function ControlsOverlay() {
             justifyContent: "flex-start",
             alignItems: "flex-end",
             padding: "10px",
+            paddingTop: "6px",
           }}
         >
           <Box
             sx={{
-              marginTop: "10px",
               maxHeight: "65vh",
               pointerEvents: "auto",
             }}

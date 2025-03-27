@@ -1,17 +1,19 @@
-import { useCallback } from "react";
-import { Button } from "@mui/material";
+import { MouseEvent, useCallback, useState } from "react";
+import { Box, Button, Menu, MenuItem, Paper, Typography } from "@mui/material";
+import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
 import { useAddMarker } from "../NewMarker/useAddMarker";
 import useStore from "./useStore";
 import featureFlags from "@/config/feature-flags";
 import useLayer from "@/hooks/useLayer";
-import ToolbarDropdown from "@/components/ToolbarDropdown";
 import {
   useCreateSandbagPlacement,
   useGetSandbagPlacements,
 } from "@/api/paralog-python";
 
 export default function SandbagToggle() {
-  const { enabled, toggle } = useLayer("sandbag");
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const { enabled } = useLayer("sandbag");
 
   const mousePosition = useStore((state) => state.mousePosition);
 
@@ -19,10 +21,19 @@ export default function SandbagToggle() {
 
   const [createSandbag] = useCreateSandbagPlacement();
 
+  const openMenu = (event: MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const closeMenu = () => {
+    setAnchorEl(null);
+  };
+
   const { startAddMarker } = useAddMarker({
     onSelectMarkerPosition: useCallback(
       async ({ lat: latitude, lng: longitude }) => {
-        while (true) {
+        // This is similar to while(true) but has been replaced by this due to eslint flagging it as an issue
+        for (;;) {
           const name = prompt("Enter the name for the new sandbag placement:");
           if (!name) {
             return;
@@ -43,18 +54,49 @@ export default function SandbagToggle() {
     ),
   });
 
+  const handleClick = () => {
+    closeMenu();
+    startAddMarker();
+  };
+
   if (featureFlags.uiNext && !enabled) {
     return null;
   }
 
   return (
-    <ToolbarDropdown title="Sandbags" applyOverrideForSandbag={true}>
-      {!featureFlags.uiNext && (
-        <Button onClick={toggle}>{enabled ? "Hide" : "Show"} Sandbags</Button>
-      )}
-      {enabled && !mousePosition ? (
-        <Button onClick={startAddMarker}>Add new sandbag</Button>
-      ) : null}
-    </ToolbarDropdown>
+    <Box
+      component={Paper}
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        marginLeft: "10px",
+      }}
+    >
+      <Button
+        aria-controls={open ? "basic-menu" : undefined}
+        aria-haspopup="true"
+        aria-expanded={open ? "true" : undefined}
+        onClick={openMenu}
+        endIcon={<ExpandMoreOutlinedIcon />}
+        sx={{ textTransform: "none", color: "black" }}
+      >
+        <Typography variant="body1">Sandbags</Typography>
+      </Button>
+      <Menu
+        anchorEl={anchorEl}
+        open={open && enabled && !mousePosition}
+        onClose={closeMenu}
+        sx={{
+          "& .MuiPaper-root": {
+            marginTop: "15px",
+          },
+        }}
+      >
+        <MenuItem onClick={handleClick}>
+          <Typography variant="body1">Add new sandbag</Typography>
+        </MenuItem>
+      </Menu>
+    </Box>
   );
 }

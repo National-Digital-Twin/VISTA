@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useId } from "react";
+import { useCallback, useEffect, useId, useRef } from "react";
 import type { ChangeEvent } from "react";
 import { LngLat } from "maplibre-gl";
 import { useAddMarker } from "../NewMarker/useAddMarker";
@@ -11,9 +11,13 @@ import MenuItemRow from "@/components/MenuItemRow";
 
 export interface RoadRouteMenuBodyProps {
   readonly searchQuery?: string;
+  readonly updateSelectedCount?: (isSelected: boolean) => void;
 }
 
-export function RoadRouteMenuBody({ searchQuery }: RoadRouteMenuBodyProps) {
+export function RoadRouteMenuBody({
+  searchQuery,
+  updateSelectedCount,
+}: RoadRouteMenuBodyProps) {
   const { enabled, toggle } = useLayer("road-route");
 
   const {
@@ -28,7 +32,7 @@ export function RoadRouteMenuBody({ searchQuery }: RoadRouteMenuBodyProps) {
   const handleSelectPosition = useCallback(
     (position: LngLat | null, setPosition: (pos: LngLat | null) => void) => {
       if (!enabled) {
-        toggle(); // ⚠️ Make sure `toggle` doesn’t cause unnecessary updates
+        toggle();
       }
       setPosition(position);
     },
@@ -67,6 +71,17 @@ export function RoadRouteMenuBody({ searchQuery }: RoadRouteMenuBodyProps) {
     ),
   });
 
+  // Track whether the component has mounted to prevent double increment
+  const hasMounted = useRef(false);
+
+  // Notify parent about the initial state when the component mounts
+  useEffect(() => {
+    if (updateSelectedCount && !hasMounted.current) {
+      updateSelectedCount(enabled); // Notify parent about the initial state
+      hasMounted.current = true; // Mark as mounted
+    }
+  }, [enabled, updateSelectedCount]);
+
   useEffect(() => {
     if (featureFlags.routing && !enabled) {
       abortAddStartMarker();
@@ -86,7 +101,12 @@ export function RoadRouteMenuBody({ searchQuery }: RoadRouteMenuBodyProps) {
         terms={["road", "route", "vehicle"]}
         primaryText="Route"
         checked={enabled}
-        onChange={toggle}
+        onChange={() => {
+          toggle();
+          if (updateSelectedCount) {
+            updateSelectedCount(!enabled); // Notify parent about the new state
+          }
+        }}
       />
       {enabled && (
         <>

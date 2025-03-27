@@ -72,6 +72,8 @@ function SearchControl({ searchQuery, onSearch }: SearchControlProps) {
         backgroundColor: "#F0F2F2",
         borderBottom: "2px solid #49454F  ",
         paddingTop: 2,
+        height: "10vh",
+        maxHeight: "55px",
       }}
     >
       <SearchIcon

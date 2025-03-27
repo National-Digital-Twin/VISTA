@@ -57,6 +57,8 @@ jobs:
   frontend-ci:
     needs: [versioning]
     uses: ./.github/workflows/frontend-ci-pr.yml
+    secrets:
+      VITE_MAP_TILER_TOKEN: ${{ secrets.VITE_MAP_TILER_TOKEN }}
 
   proxy-ci:
     needs: [versioning]
@@ -74,17 +76,20 @@ jobs:
   frontend-push-to-ECR:
     needs: [frontend-ci, versioning]
     uses: ./.github/workflows/frontend-cd-push-to-ECR.yml
+    secrets:
+      VITE_MAP_TILER_TOKEN: ${{ secrets.VITE_MAP_TILER_TOKEN }}
     with:
       aws_account_number: "${{ vars.DEMO_AWS_ACCOUNT_ID }}"
       repo_name: "paralog/frontend"
       app_name: "frontend"
       version: ${{ needs.versioning.outputs.version }}
+      environment: demo
 
   proxy-push-to-ECR:
     needs: [proxy-ci, versioning]
     uses: ./.github/workflows/transparent-proxy-cd-push-to-ECR.yml
     with:
-      aws_account_number: "${{ vars.DEV_AWS_ACCOUNT_ID }}"
+      aws_account_number: "${{ vars.DEMO_AWS_ACCOUNT_ID }}"
       repo_name: "paralog/transparent-proxy"
       app_name: "transparent-proxy"
       version: ${{ needs.versioning.outputs.version }}

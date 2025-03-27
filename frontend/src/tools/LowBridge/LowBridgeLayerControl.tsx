@@ -5,21 +5,28 @@ import type { LayerControlProps } from "@/tools/Tool";
 export default function LowBridgeLayerControl({
   searchQuery,
 }: Readonly<LayerControlProps>) {
-  if (searchQuery &&
-    !("Bridges".toLowerCase().includes(searchQuery.toLowerCase()) ||
+  if (
+    searchQuery &&
+    !(
+      "Bridges".toLowerCase().includes(searchQuery.toLowerCase()) ||
       "Low bridges".toLowerCase().includes(searchQuery.toLowerCase()) ||
       "bridge".toLowerCase().includes(searchQuery.toLowerCase()) ||
-      "low".toLowerCase().includes(searchQuery.toLowerCase()))) {
-  return null;
+      "low".toLowerCase().includes(searchQuery.toLowerCase())
+    )
+  ) {
+    return null;
   }
 
   return (
     <ComplexLayerControl title="Bridges">
-      <SimpleLayerControl
-        layerName="low-bridges"
-        title="Low bridges"
-        searchQuery={searchQuery}
-      />
+      {(updateSelectedCount) => (
+        <SimpleLayerControl
+          layerName="low-bridges"
+          title="Low bridges"
+          searchQuery={searchQuery}
+          updateSelectedCount={updateSelectedCount}
+        />
+      )}
     </ComplexLayerControl>
   );
 }

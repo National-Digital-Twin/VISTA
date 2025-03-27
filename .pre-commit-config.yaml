@@ -14,8 +14,11 @@ repos:
               repository-configuration/.*|
               deploy/.*|
               \.github/.*|
+              frontend/public/.*| # Exclude public folder
+              ^public/.*| # Exclude public folder
           )$
       - id: trailing-whitespace
+        exclude: ^public/
       - id: fix-byte-order-marker
       - id: check-case-conflict
       - id: check-merge-conflict

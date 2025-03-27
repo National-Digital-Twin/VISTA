@@ -48,6 +48,7 @@ export default function AssetTable() {
     <Box
       display="flex"
       flexDirection="column"
+      boxShadow={4}
       sx={{
         padding: "1em",
         zIndex: "1000",
@@ -75,6 +76,7 @@ export default function AssetTable() {
             <Button
               variant="contained"
               color="primary"
+              disableElevation
               sx={{ paddingLeft: "2.5em", paddingRight: "2.5em" }}
               onClick={downloadCSV}
             >
@@ -98,6 +100,7 @@ export default function AssetTable() {
               variant="contained"
               color="success"
               onClick={downloadXLSX}
+              disableElevation
               sx={{ paddingLeft: "2.5em", paddingRight: "2.5em" }}
             >
               <SvgIcon>

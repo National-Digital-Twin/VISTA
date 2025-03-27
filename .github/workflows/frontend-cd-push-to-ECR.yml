@@ -22,6 +22,10 @@ on:
         type: string
         required: true
         description: "Version number passed from main workflow"
+      environment:
+        type: string
+        required: true
+        description: "Deployment environment (e.g. development, production)"
   workflow_dispatch:
     inputs:
       aws_account_number:
@@ -40,6 +44,10 @@ on:
         type: string
         required: true
         description: "Version number passed from main workflow"
+      environment:
+        type: string
+        required: true
+        description: "Deployment environment (e.g. development, production)"
 
 permissions:
   id-token: write
@@ -52,7 +60,7 @@ jobs:
     name: Docker Build & Push
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    environment: development
+    environment: ${{ inputs.environment }}
     env:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       VITE_MAP_TILER_TOKEN: ${{ secrets.VITE_MAP_TILER_TOKEN }}

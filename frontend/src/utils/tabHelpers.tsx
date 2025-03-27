@@ -11,14 +11,15 @@ export interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
   value: number;
+  containerPadding?: number;
 }
 
 export function TabPanel(props: Readonly<TabPanelProps>) {
-  const { children, value, index, ...other } = props;
+  const { children, value, index, containerPadding, ...other } = props;
 
   return (
-    <div
-      style={{
+    <Box
+      sx={{
         maxHeight: "100%",
         height: "100%",
       }}
@@ -31,14 +32,14 @@ export function TabPanel(props: Readonly<TabPanelProps>) {
       {value === index && (
         <Box
           sx={{
-            p: 3,
             maxHeight: "100%",
             overflowY: "auto",
           }}
+          padding={containerPadding ?? 3}
         >
           {children}
         </Box>
       )}
-    </div>
+    </Box>
   );
 }

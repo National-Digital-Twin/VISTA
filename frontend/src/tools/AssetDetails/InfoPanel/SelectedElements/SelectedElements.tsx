@@ -54,15 +54,15 @@ function ElementsList({
   setConnectedAssetData,
 }: ElementsListProps) {
   return (
-      <ul className="flex flex-col gap-y-3 grow min-h-0 overflow-y-auto">
-        {selectedElements.map((selectedElement) => (
-          <ElementDetails
-            key={selectedElement.id}
-            element={selectedElement}
-            showConnectedAssets={showConnectedAssets}
-            setConnectedAssetData={setConnectedAssetData}
-          />
-        ))}
-      </ul>
+    <ul className="flex flex-col gap-y-3 grow min-h-0 overflow-y-auto">
+      {selectedElements.map((selectedElement) => (
+        <ElementDetails
+          key={selectedElement.id}
+          element={selectedElement}
+          showConnectedAssets={showConnectedAssets}
+          setConnectedAssetData={setConnectedAssetData}
+        />
+      ))}
+    </ul>
   );
 }

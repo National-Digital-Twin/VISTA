@@ -8,6 +8,7 @@ export default {
   moduleNameMapper: {
     "^common/(.*)$": "<rootDir>/../common/$1",
     "^(.*).svg\\?react$": "$1.svg",
+    "^@/(.*)$": "<rootDir>/src/$1",
   },
   setupFilesAfterEnv: ["<rootDir>/src/setupTests.ts"],
 };

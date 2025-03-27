@@ -11,13 +11,15 @@ export default function FloodAreaLayerControl({
     "Flood",
     "Floods",
     "Flooding",
-    "Polygons"
+    "Polygons",
   ];
 
-  const matchesParentCategory = searchQuery &&
-    parentCategoryTerms.some(term =>
-      term.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      searchQuery.toLowerCase().includes(term.toLowerCase())
+  const matchesParentCategory =
+    searchQuery &&
+    parentCategoryTerms.some(
+      (term) =>
+        term.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        searchQuery.toLowerCase().includes(term.toLowerCase()),
     );
 
   const matchesAnyTerm = !searchQuery || matchesParentCategory;
@@ -28,9 +30,12 @@ export default function FloodAreaLayerControl({
 
   return (
     <ComplexLayerControl title="Flood Polygons" autoShowHide>
-      <FloodAreasMenuBody
-        searchQuery={matchesParentCategory ? "" : searchQuery}
-      />
+      {(updateSelectedCount) => (
+        <FloodAreasMenuBody
+          searchQuery={matchesParentCategory ? "" : searchQuery}
+          updateSelectedCount={updateSelectedCount}
+        />
+      )}
     </ComplexLayerControl>
   );
 }

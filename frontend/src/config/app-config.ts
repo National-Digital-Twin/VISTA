@@ -32,8 +32,4 @@ if (!config.services.ontology) {
   );
 }
 
-const notify = import.meta.env.PROD
-  ? config.configErrors.push.bind(config.configErrors)
-  : console.warn;
-
 export default config;

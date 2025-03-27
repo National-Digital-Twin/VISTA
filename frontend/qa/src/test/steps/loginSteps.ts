@@ -2,9 +2,11 @@ import { Given, When, Then, setDefaultTimeout } from "@cucumber/cucumber";
 import { basePage } from "../../hooks/basePage";
 import LoginPage from "../../pages/loginPage";
 import LandingPage from "../../pages/landingPage";
+import LayersPage from "../../pages/layersPage";
 
 let loginPage: LoginPage;
 let landingPage: LandingPage;
+let layersPage: LayersPage;
 
 setDefaultTimeout(60 * 1000 * 2);
 
@@ -21,7 +23,7 @@ When("I click the Paralog menu", async function () {
 });
 
 Then("I should see the asset details and layers tab", async function () {
-  loginPage = new LoginPage(basePage.page);
-  await loginPage.verifyAssetDetailsTabIsDisplayed();
-  await loginPage.verifyLayersTabIsDisplayed();
+  layersPage = new LayersPage(basePage.page);
+  await layersPage.verifyAssetDetailsTabIsDisplayed();
+  await layersPage.verifyLayersTabIsDisplayed();
 });

@@ -19,7 +19,8 @@ export interface ConnectedAssetsProps {
 export default function ConnectedAssets({
   connectedAssets,
 }: ConnectedAssetsProps) {
-  const { assets } = useContext(ElementsContext);
+  const context = useContext(ElementsContext);
+  const assets = context?.assets ?? [];
 
   const sortedAssets = connectedAssets.toSorted(
     (a, b) => +isElementCached(assets, b.uri) - +isElementCached(assets, a.uri),
@@ -29,7 +30,7 @@ export default function ConnectedAssets({
     <ul>
       {sortedAssets.map((asset) => (
         <ConnectedAssetDetails
-          key={asset?.uri || asset.error.message}
+          key={asset?.uri || asset?.error?.message || "unknown"}
           error={asset?.error}
           uri={asset?.uri}
           name={asset?.name}

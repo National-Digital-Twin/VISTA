@@ -44,7 +44,7 @@ export default function ToolbarButton({
         sx={{
           backgroundColor: "white",
           color: "black",
-          borderRadius: "2px",
+          borderRadius: "4px",
           boxShadow: "0px 4px 8px 0px rgba(0,0,0,0.2)",
           fontSize: "2.0rem",
           padding: 1,
@@ -69,7 +69,10 @@ export default function ToolbarButton({
               style={{
                 width: "100%",
                 height: "100%",
-                transform: compassRotation !== undefined ? `rotate(${compassRotation}deg)` : undefined
+                transform:
+                  compassRotation !== undefined
+                    ? `rotate(${compassRotation}deg)`
+                    : undefined,
               }}
             />
           ) : (

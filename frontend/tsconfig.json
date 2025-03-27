@@ -4,11 +4,13 @@
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "module": "ESNext",
     "skipLibCheck": true,
+    "baseUrl": "src",
     "paths": {
       "common/*": ["../common/*"],
       "@shared-assets/*": [
         "../../node_modules/@national-digital-twin/ndtp-styling-assets/dist/assets"
-      ]
+      ],
+      "@/*": ["*"]
     },
 
     /* Bundler mode */

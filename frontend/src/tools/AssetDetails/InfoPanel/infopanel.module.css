@@ -3,7 +3,6 @@
   height: 100%;
   background-color: var(--col-bg-card);
   color: var(--col-fg);
-  padding: 1rem;
 }
 
 .infoHeader {
