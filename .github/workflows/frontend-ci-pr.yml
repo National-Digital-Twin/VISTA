@@ -89,10 +89,6 @@ jobs:
         working-directory: frontend
         run: yarn install --frozen-lockfile
 
-      - name: Run ESLint CI
-        working-directory: frontend
-        run: yarn run lint-ci
-
       - name: Run Linting
         working-directory: frontend
         run: yarn lint
