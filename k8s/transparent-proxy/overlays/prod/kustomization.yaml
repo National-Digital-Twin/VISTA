@@ -16,6 +16,6 @@ labels:
       env: prod
 
 images:
-  - name: paralog-transparent-proxy-image
+  - name: paralog-transparent-proxy-image:template
     newName: 537124944113.dkr.ecr.eu-west-2.amazonaws.com/paralog/transparent-proxy
     newTag: "to.be.replaced"

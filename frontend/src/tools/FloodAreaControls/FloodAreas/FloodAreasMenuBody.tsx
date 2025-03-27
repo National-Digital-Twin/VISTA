@@ -35,10 +35,13 @@ const useFloodAreaSharedStore = () =>
 export interface FloodAreasMenuBodyProps {
   /** Search query */
   readonly searchQuery?: string;
+  /** Function to update the selected count */
+  readonly updateSelectedCount?: (isSelected: boolean) => void;
 }
 
 export default function FloodAreasMenuBody({
   searchQuery = "",
+  updateSelectedCount,
 }: FloodAreasMenuBodyProps) {
   const { isError: isErrorFloodAreas, data: floodAreaNodes } =
     useFloodWatchAreas();
@@ -111,11 +114,17 @@ export default function FloodAreasMenuBody({
     );
   }, [selected, isLoading, polygonFeatures, setClickedFloodAreas]);
 
-  const onCheck = async (value) => {
-    const updatedSelectedAreas = selected.includes(value)
-      ? selected.filter((area) => area !== value)
-      : [...selected, value];
+  const onCheck = (value: string) => {
+    const isSelected = !selected.includes(value);
+    const updatedSelectedAreas = isSelected
+      ? [...selected, value]
+      : selected.filter((area) => area !== value);
+
     setSelected(updatedSelectedAreas);
+
+    if (updateSelectedCount) {
+      updateSelectedCount(updatedSelectedAreas.length > 0); // Notify parent about the new state
+    }
   };
 
   const handleDrawPolygon = () => {
@@ -192,7 +201,12 @@ export default function FloodAreasMenuBody({
       <MenuItemRow
         primaryText="Live Floods"
         checked={showLiveFloods}
-        onChange={toggleShowLiveFloods}
+        onChange={() => {
+          toggleShowLiveFloods();
+          if (updateSelectedCount) {
+            updateSelectedCount(!showLiveFloods); // Notify parent about the new state
+          }
+        }}
         searchQuery={searchQuery}
         terms={["Live Floods"]}
       />
@@ -206,6 +220,9 @@ export default function FloodAreasMenuBody({
           onChange={(event) => {
             event.stopPropagation();
             toggleFeature(feature.id);
+            if (updateSelectedCount) {
+              updateSelectedCount(!selectedFeatureIds[feature.id]); // Notify parent about the new state
+            }
           }}
         >
           <Box sx={{ display: "flex", alignItems: "left", flexGrow: 1 }}>
@@ -278,7 +295,9 @@ export default function FloodAreasMenuBody({
           terms={[node.label]}
           key={node.value}
           checked={selected.includes(node.value)}
-          onChange={() => onCheck(node.value)}
+          onChange={() => {
+            onCheck(node.value); // Call the updated onCheck function
+          }}
         />
       ))}
     </>

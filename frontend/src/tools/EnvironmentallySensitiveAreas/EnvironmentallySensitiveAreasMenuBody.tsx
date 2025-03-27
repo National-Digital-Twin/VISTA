@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import {
   EnvironmentallySensitiveAreasLayerId,
   layers,
@@ -9,10 +9,12 @@ import MenuItemRow from "@/components/MenuItemRow";
 
 export interface EnvironmentallySensitiveAreasMenuBodyProps {
   readonly searchQuery?: string;
+  readonly updateSelectedCount?: (isSelected: boolean) => void;
 }
 
 export function EnvironmentallySensitiveAreasMenuBody({
   searchQuery = "",
+  updateSelectedCount,
 }: Readonly<EnvironmentallySensitiveAreasMenuBodyProps>) {
   const { enabled, toggle } = useLayer("environmentally-sensitive-areas");
 
@@ -23,14 +25,35 @@ export function EnvironmentallySensitiveAreasMenuBody({
     (state) => state.toggleEnvironmentallySensitiveAreasLayer,
   );
 
+  // Track whether the component has mounted to prevent double increment
+  const hasMounted = useRef(false);
+
+  // Notify parent about the initial state when the component mounts
+  useEffect(() => {
+    if (updateSelectedCount && !hasMounted.current) {
+      const anyLayerEnabled = Object.values(enabledLayers).some(
+        (isEnabled) => isEnabled,
+      );
+      if (anyLayerEnabled) {
+        updateSelectedCount(true); // Notify parent only if any layer is enabled
+      }
+      hasMounted.current = true; // Mark as mounted
+    }
+  }, [enabledLayers, updateSelectedCount]);
+
   const handleClick = useCallback(
     (layerId: EnvironmentallySensitiveAreasLayerId) => {
       if (!enabled) {
         toggle();
       }
       toggleLayer(layerId);
+
+      if (updateSelectedCount) {
+        const isLayerEnabled = !enabledLayers[layerId]; // Determine the new state of the layer
+        updateSelectedCount(isLayerEnabled); // Notify parent about the new state
+      }
     },
-    [enabled, toggle, toggleLayer],
+    [enabled, toggle, toggleLayer, enabledLayers, updateSelectedCount],
   );
 
   return (

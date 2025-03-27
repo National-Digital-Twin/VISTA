@@ -19,11 +19,14 @@ export default function LowBridgeLayerControl({
 
   return (
     <ComplexLayerControl title="Bridges">
-      <SimpleLayerControl
-        layerName="low-bridges"
-        title="Low bridges"
-        searchQuery={searchQuery}
-      />
+      {(updateSelectedCount) => (
+        <SimpleLayerControl
+          layerName="low-bridges"
+          title="Low bridges"
+          searchQuery={searchQuery}
+          updateSelectedCount={updateSelectedCount}
+        />
+      )}
     </ComplexLayerControl>
   );
 }

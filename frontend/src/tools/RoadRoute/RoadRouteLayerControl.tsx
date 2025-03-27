@@ -24,7 +24,12 @@ export default function RoadRouteLayerControl({
 
   return (
     <ComplexLayerControl title="Road Route">
-      <RoadRouteMenuBody searchQuery={searchQuery} />
+      {(updateSelectedCount) => (
+        <RoadRouteMenuBody
+          searchQuery={searchQuery}
+          updateSelectedCount={updateSelectedCount}
+        />
+      )}
     </ComplexLayerControl>
   );
 }

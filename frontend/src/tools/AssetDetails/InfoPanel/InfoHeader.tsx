@@ -1,8 +1,7 @@
+import { Box, Link, SvgIcon } from "@mui/material";
 import React, { useId } from "react";
 import classNames from "classnames";
 import styles from "./infopanel.module.css";
-
-import GOOGLE_MAP_ICON from "./assets/google-map-icon.svg";
 
 export interface InfoHeaderProps {
   /** Additional classes to add to the top-level element */
@@ -58,23 +57,61 @@ export function StreetView({
   }
 
   return (
-    <div className={classNames(styles.streetViewContainer, className)}>
-      <a
+    <Box className={classNames(styles.streetViewContainer, className)}>
+      <Link
         href={`https://www.google.com/maps/@?${new URLSearchParams(params).toString()}`}
         target="_blank"
         rel="noreferrer"
         aria-labelledby={tooltipID}
         className={styles.streetViewLink}
       >
-        <img
-          src={GOOGLE_MAP_ICON}
-          alt="Google Maps"
-          className={styles.streetViewIcon}
-        />
-      </a>
-      <div id={tooltipID} role="tooltip" className={styles.streetViewTooltip}>
+        <SvgIcon className={styles.streetViewIcon}>
+          <svg
+            width="29"
+            height="28"
+            viewBox="0 0 29 28"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <circle
+              cx="14"
+              cy="4"
+              r="3.25"
+              stroke="#0E142B"
+              strokeWidth="1.5"
+            />
+            <circle
+              cx="25"
+              cy="7"
+              r="3.25"
+              stroke="#0E142B"
+              strokeWidth="1.5"
+            />
+            <circle
+              cx="19"
+              cy="24"
+              r="3.25"
+              stroke="#0E142B"
+              strokeWidth="1.5"
+            />
+            <circle
+              cx="4"
+              cy="13"
+              r="3.25"
+              stroke="#0E142B"
+              strokeWidth="1.5"
+            />
+            <path
+              d="M6.5 11L11.5 6M17 5.5H22M24 10L20 20.5M6.5 15L16.5 22"
+              stroke="#0E142B"
+              strokeWidth="1.5"
+            />
+          </svg>
+        </SvgIcon>
+      </Link>
+      <Box id={tooltipID} role="tooltip" className={styles.streetViewTooltip}>
         {label}
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 }

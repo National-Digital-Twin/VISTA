@@ -30,9 +30,12 @@ export default function FloodAreaLayerControl({
 
   return (
     <ComplexLayerControl title="Flood Polygons" autoShowHide>
-      <FloodAreasMenuBody
-        searchQuery={matchesParentCategory ? "" : searchQuery}
-      />
+      {(updateSelectedCount) => (
+        <FloodAreasMenuBody
+          searchQuery={matchesParentCategory ? "" : searchQuery}
+          updateSelectedCount={updateSelectedCount}
+        />
+      )}
     </ComplexLayerControl>
   );
 }
