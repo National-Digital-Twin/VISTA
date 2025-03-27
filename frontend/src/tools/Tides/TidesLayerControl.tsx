@@ -18,11 +18,14 @@ export default function TidesLayerControl({
 
   return (
     <ComplexLayerControl title="Tides">
-      <SimpleLayerControl
-        layerName="tides"
-        title="Tidal monitoring"
-        searchQuery={searchQuery}
-      />
+      {(updateSelectedCount) => (
+        <SimpleLayerControl
+          layerName="tides"
+          title="Tidal monitoring"
+          searchQuery={searchQuery}
+          updateSelectedCount={updateSelectedCount}
+        />
+      )}
     </ComplexLayerControl>
   );
 }

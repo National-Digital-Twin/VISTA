@@ -18,7 +18,9 @@ export default function VulnerablePeopleLayerControl({
 
   return (
     <ComplexLayerControl title="Vulnerable People">
-      <VulnerablePeopleControls />
+      {(updateSelectedCount) => (
+        <VulnerablePeopleControls updateSelectedCount={updateSelectedCount} />
+      )}
     </ComplexLayerControl>
   );
 }

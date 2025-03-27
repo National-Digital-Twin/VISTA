@@ -175,13 +175,16 @@ function AssessmentCategoryLayerControls({
 
   return (
     <ComplexLayerControl title={category}>
-      {Object.entries(assetsBySecondaryCategory).map(([category, types]) => (
-        <SecondaryCategoryControls
-          key={category}
-          types={types}
-          onClickType={handleTypeClick}
-        />
-      ))}
+      {(updateSelectedCount) =>
+        Object.entries(assetsBySecondaryCategory).map(([category, types]) => (
+          <SecondaryCategoryControls
+            key={category}
+            types={types}
+            onClickType={handleTypeClick}
+            updateSelectedCount={updateSelectedCount}
+          />
+        ))
+      }
     </ComplexLayerControl>
   );
 }
@@ -197,11 +200,13 @@ interface SecondaryCategoryControlsProps {
   };
 
   readonly onClickType: (typeURI: string) => void;
+  readonly updateSelectedCount: (isSelected: boolean) => void;
 }
 
 function SecondaryCategoryControls({
   types,
   onClickType,
+  updateSelectedCount,
 }: SecondaryCategoryControlsProps) {
   const selectedAssetTypes = useSharedStore(
     (state) => state.selectedAssetTypes,
@@ -225,7 +230,10 @@ function SecondaryCategoryControls({
               key={asset.type}
               asset={asset}
               isSelected={selectedAssetTypes[asset.type]}
-              onClickType={onClickType}
+              onClickType={(typeURI) => {
+                onClickType(typeURI);
+                updateSelectedCount(!selectedAssetTypes[typeURI]);
+              }}
             />
           ))}
       </ul>
@@ -248,16 +256,15 @@ interface AssetTypeControlsProps {
 function AssetTypeControls({
   asset,
   onClickType,
-  isSelected,
+  isSelected = false,
 }: AssetTypeControlsProps) {
-  const onClick = useCallback(() => {
-    onClickType(asset.type);
+  const handleToggle = useCallback(() => {
+    onClickType(asset.type); // Notify parent about the toggle
   }, [onClickType, asset]);
 
   return (
     <ListItem
       key={asset.type}
-      onClick={onClick}
       sx={{
         display: "flex",
         justifyContent: "space-between",
@@ -274,8 +281,8 @@ function AssetTypeControls({
         />
       </Box>
       <MaterialUISwitch
-        checked={isSelected}
-        onChange={onClick}
+        checked={isSelected} // Ensure the switch is always controlled
+        onChange={handleToggle} // Handle toggle only in onChange
         inputProps={{ "aria-label": "controlled" }}
       />
     </ListItem>
