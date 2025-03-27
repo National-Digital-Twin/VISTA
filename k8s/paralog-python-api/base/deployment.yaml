@@ -1,7 +1,8 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  annotations: {}
+  annotations:
+    reloader.stakater.com/auto: "true"
   labels:
     io.kompose.service: paralog-python-api
   name: paralog-python-api
@@ -14,10 +15,6 @@ spec:
     metadata:
       annotations:
         traffic.sidecar.istio.io/excludeOutboundPorts: "8200"
-      #        vault.hashicorp.com/agent-init-first: "true"
-      #        vault.hashicorp.com/agent-inject: "true"
-      #        vault.hashicorp.com/agent-cache-enable: "false"
-      #        vault.hashicorp.com/role: "paralog-python-api-role"
       labels:
         io.kompose.service: paralog-python-api
     spec:
@@ -30,7 +27,7 @@ spec:
             - configMapRef:
                 name: paralog-python-api-configs
             - secretRef:
-                name: paralog-python-api-static-secret
+                name: paralog-python-api-secret
           ports:
             - containerPort: 8000
               protocol: TCP
