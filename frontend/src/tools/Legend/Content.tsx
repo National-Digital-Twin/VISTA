@@ -1,32 +1,70 @@
 import React from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faRoad } from "@fortawesome/free-solid-svg-icons";
+import {
+  Box,
+  Card,
+  CardContent,
+  Typography,
+  List,
+  ListItem,
+} from "@mui/material";
 
 const LegendContent: React.FC = () => {
   return (
-    <>
-      <h3 className="menu-title">Legend</h3>
-      <div className="menu-item">
-        <div className="flex items-center">
-          <FontAwesomeIcon icon={faRoad} className="mr-2" />
-          <span className="font-semibold">Road Criticality</span>
-        </div>
-        <div className="mt-2 flex items-center space-x-4">
-          <div className="flex items-center">
-            <div className="w-4 h-1 bg-[#35C035] mr-1" />
-            <span className="text-sm">Low</span>
-          </div>
-          <div className="flex items-center">
-            <div className="w-4 h-1 bg-[#FFB60A] mr-1" />
-            <span className="text-sm">Medium</span>
-          </div>
-          <div className="flex items-center">
-            <div className="w-4 h-1 bg-[#FB3737] mr-1" />
-            <span className="text-sm">High</span>
-          </div>
-        </div>
-      </div>
-    </>
+    <Card sx={{ border: 0, boxShadow: 0 }}>
+      <CardContent sx={{ border: 0, padding: 0, boxShadow: 0 }}>
+        {/* Title */}
+        <Typography
+          variant="h5"
+          sx={{ marginBottom: "0.7em", marginTop: "0.7em" }}
+        >
+          Legend
+        </Typography>
+
+        {/* Subtitle */}
+        <Typography variant="body2" fontWeight="bold">
+          Road Criticality
+        </Typography>
+
+        {/* Legend Items */}
+        <List dense sx={{ paddingTop: 0 }}>
+          <ListItem sx={{ paddingLeft: 0 }}>
+            <Box
+              sx={{
+                width: "3em",
+                height: "0.5em",
+                backgroundColor: "#35C035",
+                marginRight: "0.5em",
+              }}
+            />
+            <Typography variant="body2">Low</Typography>
+          </ListItem>
+
+          <ListItem sx={{ paddingLeft: 0 }}>
+            <Box
+              sx={{
+                width: "3em",
+                height: "0.5em",
+                backgroundColor: "#FFB60A",
+                marginRight: "0.5em",
+              }}
+            />
+            <Typography variant="body2">Medium</Typography>
+          </ListItem>
+
+          <ListItem sx={{ paddingLeft: 0 }}>
+            <Box
+              sx={{
+                width: "3em",
+                height: "0.5em",
+                backgroundColor: "#FB3737",
+                marginRight: "0.5em",
+              }}
+            />
+            <Typography variant="body2">High</Typography>
+          </ListItem>
+        </List>
+      </CardContent>
+    </Card>
   );
 };
 

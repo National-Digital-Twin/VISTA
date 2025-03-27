@@ -1,20 +1,11 @@
 resources:
   - ../base/istio/authorizationpolicy/allow-ingress-authorization-policy.yaml
-  - ../base/istio/gateway.yaml
-  - ../base/istio/virtualService.yaml
   - service-account.yaml
   - deployment.yaml
   - service.yaml
-  - vault/vaultAuth.yaml
-  - vault/vaultStaticSecret.yaml
-  - vault/vaultAuthSecret.yaml
 
 labels:
   - pairs:
       app: paralog-transparent-proxy
       env: ENV_PLACEHOLDER
       app.kubernetes.io/name: paralog-transparent-proxy
-
-
-
-

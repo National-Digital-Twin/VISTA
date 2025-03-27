@@ -1,6 +1,6 @@
 import { memo } from "react";
-import classNames from "classnames";
 
+import Box from "@mui/material/Box";
 import { useTools } from "@/tools/useTools";
 
 export interface MapToolbarProps {
@@ -18,20 +18,24 @@ function ToolSideButtons() {
     return <SideButtons key={tool.TOOL_NAME} />;
   });
 
-  return <>{toolSideButtons}</>;
+  return <Box sx={{ height: "100%" }}>{toolSideButtons}</Box>;
 }
 
 const MToolSideButtons = memo(ToolSideButtons);
 
 export default function MapToolbar({ className }: MapToolbarProps) {
   return (
-    <div
-      className={classNames(
-        "font-body flex flex-col items-end space-y-2",
-        className,
-      )}
+    <Box
+      className={className}
+      sx={{
+        fontFamily: "body",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "start",
+        gap: 2,
+      }}
     >
       <MToolSideButtons />
-    </div>
+    </Box>
   );
 }

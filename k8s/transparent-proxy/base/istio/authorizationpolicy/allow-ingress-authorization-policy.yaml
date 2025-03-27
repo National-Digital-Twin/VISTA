@@ -1,4 +1,3 @@
-
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:
@@ -11,7 +10,7 @@ spec:
   rules:
     - from:
         - source:
-            principals : ["PLACE_HOLDER"]
+            principals: ["PLACE_HOLDER"]
       to:
         - operation:
-            methods: ["GET","POST"]
+            methods: ["GET", "POST"]

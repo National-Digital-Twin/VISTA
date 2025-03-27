@@ -3,16 +3,9 @@ resources:
 
 namespace: paralog
 patches:
-  - path: patches/gateway.yaml
-    target:
-      kind: Gateway
   - path: patches/allow-ingress.yaml
     target:
       kind: AuthorizationPolicy
-  - path: patches/virtualService.yaml
-    target:
-      kind: VirtualService
-      name: paralog-python-api
   - path: patches/service-account.yaml
     target:
       kind: ServiceAccount
@@ -23,10 +16,9 @@ labels:
       env: demo
 
 images:
-  - name: paralog-python-api-image
+  - name: paralog-python-api-image:template
     newName: 503561419905.dkr.ecr.eu-west-2.amazonaws.com/paralog/demo-paralog-python-api
-    newTag: '1739979400'
-
+    newTag: "1739979400"
 
 configMapGenerator:
   - name: paralog-python-api-configs

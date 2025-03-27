@@ -1,12 +1,8 @@
-import type React from "react";
-import type { IconDefinition } from "@fortawesome/fontawesome-common-types";
-
+import React, { useRef, useId, useState, useEffect, useCallback } from "react";
+import { IconDefinition } from "@fortawesome/fontawesome-common-types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
-
-import { useRef, useId, useState, useEffect, useCallback } from "react";
-import classNames from "classnames";
-
+import { Button, Box, Menu } from "@mui/material";
 import styles from "./style.module.css";
 
 export interface ToolbarDropdownProps {
@@ -14,32 +10,42 @@ export interface ToolbarDropdownProps {
   readonly icon?: IconDefinition;
   /** Title */
   readonly title: string;
+  /** Flag determines whether to add the sanbagContainer override class */
+  readonly applyOverrideForSandbag?: boolean;
   /** Children */
   readonly children:
     | React.ReactNode
     | ((props: { toggle: () => void }) => React.ReactNode);
-  /** Is this a large menu? */
-  readonly large?: boolean;
 }
 
 export default function ToolbarDropdown({
   icon,
   title,
+  applyOverrideForSandbag,
   children,
-  large = false,
 }: ToolbarDropdownProps) {
-  const wrapperRef = useRef<HTMLDivElement>();
+  const wrapperRef = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(false);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
-  const toggleDropdown = useCallback(() => {
+  const toggleDropdown = useCallback((event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
     setIsOpen((state) => !state);
   }, []);
 
-  const handleClickOutside = useCallback((event) => {
-    if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
-      setIsOpen(false);
-    }
+  const handleClose = useCallback(() => {
+    setIsOpen(false);
+    setAnchorEl(null);
   }, []);
+
+  const handleClickOutside = useCallback(
+    (event) => {
+      if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+        handleClose();
+      }
+    },
+    [handleClose],
+  );
 
   const menuId = useId();
 
@@ -51,8 +57,12 @@ export default function ToolbarDropdown({
   }, [handleClickOutside]);
 
   return (
-    <div
-      className={styles.toolbarDropdown}
+    <Box
+      className={
+        applyOverrideForSandbag
+          ? [styles.toolbarDropdown, styles.sandbagContainer].join(" ")
+          : styles.toolbarDropdown
+      }
       ref={wrapperRef}
       data-dropdown-open={isOpen}
     >
@@ -63,23 +73,26 @@ export default function ToolbarDropdown({
         title={title}
       />
 
-      <div
-        className={classNames(styles.dropdown, "menu", large && "menu-lg")}
-        role="menu"
-        aria-orientation="vertical"
-        aria-labelledby={menuId}
+      <Menu
+        id={menuId}
+        anchorEl={anchorEl}
+        open={isOpen}
+        onClose={handleClose}
+        MenuListProps={{
+          "aria-labelledby": menuId,
+        }}
       >
         {typeof children === "function"
           ? children({ toggle: toggleDropdown })
           : children}
-      </div>
-    </div>
+      </Menu>
+    </Box>
   );
 }
 
 interface ToolbarDropdownButtonProps {
   readonly id: string;
-  readonly onClick: () => void;
+  readonly onClick: (event: React.MouseEvent<HTMLElement>) => void;
   readonly icon?: IconDefinition;
   readonly title: string;
 }
@@ -90,21 +103,15 @@ function ToolbarDropdownButton({
   icon,
   title,
 }: ToolbarDropdownButtonProps) {
-  const buttonClasses = classNames(styles.toolbarDropdownButton, "btn");
-
   return (
-    <button type="button" id={id} className={buttonClasses} onClick={onClick}>
-      {icon && (
-        <FontAwesomeIcon
-          icon={icon}
-          className={styles.toolbarDropdownButtonIcon}
-        />
-      )}
+    <Button
+      id={id}
+      onClick={onClick}
+      startIcon={icon && <FontAwesomeIcon icon={icon} />}
+      endIcon={<FontAwesomeIcon icon={faChevronDown} />}
+      sx={{ backgroundColor: "#f0f0f0" }}
+    >
       {title}
-      <FontAwesomeIcon
-        icon={faChevronDown}
-        className={styles.toolbarDropdownButtonDisclosureTriangle}
-      />
-    </button>
+    </Button>
   );
 }

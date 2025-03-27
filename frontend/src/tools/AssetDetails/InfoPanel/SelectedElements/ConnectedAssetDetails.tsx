@@ -1,5 +1,5 @@
-import { noCase } from "change-case";
-import TypeIcon from "./TypeIcon";
+import { capitalCase } from "change-case";
+import { Box, Grid2, Typography } from "@mui/material";
 import styles from "./elements.module.css";
 import { getURIFragment } from "@/utils";
 
@@ -16,8 +16,6 @@ export interface ConnectedAssetDetailsProps {
   readonly criticality?: number;
   /** Connection strength, which is apparently different from criticality */
   readonly connectionStrength?: number;
-  /** Whether the connection is added(?) */
-  readonly isAdded: boolean;
 }
 
 export default function ConnectedAssetDetails({
@@ -27,7 +25,6 @@ export default function ConnectedAssetDetails({
   type,
   criticality,
   connectionStrength,
-  isAdded,
 }: ConnectedAssetDetailsProps) {
   if (error) {
     return <li className={styles.errorMessage}>{error.message}</li>;
@@ -35,22 +32,39 @@ export default function ConnectedAssetDetails({
 
   return (
     <li className={styles.connectedAssetDetails}>
-      <div className={styles.connectedAssetHeader}>
-        <TypeIcon size="sm" type={type} disabled={!isAdded} />
-        <div>
-          <h4>{name || uri}</h4>
-          <p className={styles.connectedAssetType}>
-            {noCase(getURIFragment(type))}
-          </p>
-          <p className={styles.connectedAssetUri}>{uri.split("#")[1]}</p>
-        </div>
-      </div>
-      <p className={styles.connectedAssetInfo}>
-        Criticality: {criticality || "N/D"}
-      </p>
-      <p className={styles.connectedAssetInfo}>
-        Connection Strength: {connectionStrength || "N/D"}
-      </p>
+      <Box className={styles.connectedAssetHeader}>
+        <Box>
+          <Typography variant="body1" fontWeight={900}>
+            {name || uri}
+          </Typography>
+          <Typography variant="body1" fontWeight={500}>
+            {uri.split("#")[1]}
+          </Typography>
+        </Box>
+      </Box>
+
+      <Grid2 container spacing={2}>
+        <Grid2 size={4}>
+          <Typography variant="body1">Type:</Typography>
+        </Grid2>
+        <Grid2 size={8}>
+          <Typography variant="body1">
+            {capitalCase(getURIFragment(type))}
+          </Typography>
+        </Grid2>
+        <Grid2 size={4}>
+          <Typography variant="body1">Criticality:</Typography>
+        </Grid2>
+        <Grid2 size={8}>
+          <Typography variant="body1">{criticality ?? "N/D"}</Typography>
+        </Grid2>
+        <Grid2 size={4}>
+          <Typography variant="body1">Connection Strength:</Typography>
+        </Grid2>
+        <Grid2 size={8}>
+          <Typography variant="body1">{connectionStrength ?? "N/D"}</Typography>
+        </Grid2>
+      </Grid2>
     </li>
   );
 }

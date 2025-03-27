@@ -202,6 +202,8 @@ function Details({ expand, details }: Readonly<DetailsProps>) {
           {icon?.icon && (
             <p className={styles.assetDetailsCriticality}>
               <i className="fa-solid fa-triangle-exclamation" />
+              {/*
+               */}
               Icon styles not found
             </p>
           )}

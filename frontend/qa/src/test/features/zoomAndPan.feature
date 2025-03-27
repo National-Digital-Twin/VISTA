@@ -6,12 +6,12 @@ Background:
 
    Scenario: Verify user can zoom in and out on the paralog map using zoom button
       When I zoom in and out using the zoom button
-      Then I should be able to compare zoom in and out screenshots
+      Then I am zoomed in and out
 
   Scenario: Verify user can zoom in and out on the paralog map
-      When I zoom in and out on the map
-      Then I should be able to see the zoom difference in the screenshots
+      When I zoom in and out on the map using the mouse wheel
+      Then I should be able to zoom in and out
 
   Scenario: Verify user can pan around on the paralog map
-      When I pan around the map
-      Then I should be able to compare the screenshots before and after panning
+      When I am on the map
+      Then I should be able to pan around the map

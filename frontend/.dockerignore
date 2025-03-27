@@ -1,2 +1,13 @@
 node_modules
 .env
+qa
+test
+.env-local
+.envrc
+.gitignore
+.npmrc
+.secrets.baseline
+CI_Dockerfile
+Dockerfile
+README.md
+SETUP.md

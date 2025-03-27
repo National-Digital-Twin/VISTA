@@ -1,6 +1,5 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
-import type { IconProp } from "@fortawesome/fontawesome-svg-core";
+import type { IconProp, SizeProp } from "@fortawesome/fontawesome-svg-core";
 import Tooltip from "@mui/material/Tooltip";
 import { IconButton } from "@mui/material";
 import Badge from "@mui/material/Badge";
@@ -8,25 +7,37 @@ import Badge from "@mui/material/Badge";
 export interface ToolbarButtonProps {
   /** The title shown on hover for the button */
   readonly title: string;
+  readonly width?: number;
+  readonly height?: number;
+  readonly hasNoMarginBottom?: boolean;
   /** The FontAwesome icon to be shown (preferred) */
   readonly icon?: IconProp;
+  /** The FontAwesome icon size to be shown (preferred) */
+  readonly iconSize?: SizeProp;
   /** The SVG source to be shown */
   readonly svgSrc?: string;
   /** Action on click */
   readonly onClick: () => void;
   /** Number to be shown as a badge (optional) */
   readonly badgeContent?: number;
+  /** Rotation angle for compass (optional) */
+  readonly compassRotation?: number;
 }
 
 export default function ToolbarButton({
   title,
+  width,
+  height,
+  hasNoMarginBottom,
   icon,
   svgSrc,
   onClick,
   badgeContent,
+  iconSize,
+  compassRotation,
 }: ToolbarButtonProps) {
   return (
-    <Tooltip title={title}>
+    <Tooltip title={title} enterDelay={500}>
       <IconButton
         aria-label={title}
         onClick={onClick}
@@ -36,9 +47,12 @@ export default function ToolbarButton({
           borderRadius: "2px",
           boxShadow: "0px 4px 8px 0px rgba(0,0,0,0.2)",
           fontSize: "2.0rem",
-          padding: "0.5rem",
-          width: "3.5rem",
-          height: "3.5rem",
+          padding: 1,
+          marginBottom: hasNoMarginBottom ? 0 : 1,
+          width: width ?? "6vh",
+          height: height ?? "6vh",
+          maxHeight: 75,
+          maxWidth: 75,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -52,10 +66,14 @@ export default function ToolbarButton({
             <img
               src={svgSrc}
               alt={title}
-              style={{ width: "100%", height: "100%" }}
+              style={{
+                width: "100%",
+                height: "100%",
+                transform: compassRotation !== undefined ? `rotate(${compassRotation}deg)` : undefined
+              }}
             />
           ) : (
-            icon && <FontAwesomeIcon icon={icon} />
+            icon && <FontAwesomeIcon icon={icon} size={iconSize || "1x"} />
           )}
         </Badge>
       </IconButton>

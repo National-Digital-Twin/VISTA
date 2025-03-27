@@ -14,32 +14,33 @@ spec:
     metadata:
       annotations:
         traffic.sidecar.istio.io/excludeOutboundPorts: "8200"
-        vault.hashicorp.com/agent-init-first: "true"
-        vault.hashicorp.com/agent-inject: "true"
-        vault.hashicorp.com/agent-cache-enable: "false"
-        vault.hashicorp.com/role: "paralog-python-api-role"
+      #        vault.hashicorp.com/agent-init-first: "true"
+      #        vault.hashicorp.com/agent-inject: "true"
+      #        vault.hashicorp.com/agent-cache-enable: "false"
+      #        vault.hashicorp.com/role: "paralog-python-api-role"
       labels:
         io.kompose.service: paralog-python-api
     spec:
       serviceAccountName: paralog-python-api-sa
       containers:
         - name: paralog-python-api-image
-          image: paralog-python-api-image
+          image: paralog-python-api-image:template
           imagePullPolicy: Always
           envFrom:
             - configMapRef:
                 name: paralog-python-api-configs
             - secretRef:
-               name: paralog-python-api-static-secret
-
+                name: paralog-python-api-static-secret
           ports:
             - containerPort: 8000
               protocol: TCP
           resources:
             requests:
-              cpu: "2"      # Minimum CPU your container is guaranteed.
-              memory: "2Gi"  # Minimum Memory your container is guaranteed.
+              cpu: "0.5" # Minimum CPU your container is guaranteed.
+              memory: "2Gi" # Minimum Memory your container is guaranteed.
+              ephemeral-storage: "1Gi" # Minimum Storage your container is guaranteed
             limits:
-              cpu: "3"     # Maximum CPU your container can use.
+              cpu: "3" # Maximum CPU your container can use.
               memory: "3Gi" # Maximum Memory your container can use.
+              ephemeral-storage: "5Gi" # Maximum Storage your container is guaranteed
       restartPolicy: Always

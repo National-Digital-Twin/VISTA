@@ -1,4 +1,3 @@
-import { faRoute } from "@fortawesome/free-solid-svg-icons";
 import { RoadRouteMenuBody } from "./RoadRouteMenuBody";
 import type { LayerControlProps } from "@/tools/Tool";
 
@@ -12,11 +11,16 @@ export default function RoadRouteLayerControl({
     return null;
   }
 
+  if (searchQuery &&
+    !("Road Route".toLowerCase().includes(searchQuery.toLowerCase()) ||
+      "road".toLowerCase().includes(searchQuery.toLowerCase()) ||
+      "route".toLowerCase().includes(searchQuery.toLowerCase()))) {
+    return null;
+  }
+
   return (
-    <ComplexLayerControl icon={faRoute} title="Road Route">
-      <div className="menu menu-lg">
-        <RoadRouteMenuBody searchQuery={searchQuery} />
-      </div>
+    <ComplexLayerControl title="Road Route">
+      <RoadRouteMenuBody searchQuery={searchQuery} />
     </ComplexLayerControl>
   );
 }

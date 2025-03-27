@@ -19,6 +19,7 @@ import Map, {
 } from "react-map-gl/maplibre";
 import { ErrorBoundary } from "react-error-boundary";
 
+import { Box } from "@mui/material";
 import { FLOOD_AREA_LAYERS, LINEAR_ASSET_LAYER } from "./layers";
 import { generateLinearAssetFeatures } from "./map-utils";
 import { useMapStyles } from "./mapStyles";
@@ -61,7 +62,6 @@ function CustomMapElements({ tool }: CustomMapElementsProps) {
   if (!tool.MapElements) {
     return null;
   }
-
   const MapElements = tool.MapElements;
   return <MapElements />;
 }
@@ -91,7 +91,6 @@ const MAllOverlays = memo(AllOverlays);
 
 function AllCustomMapElements() {
   const tools = useTools();
-
   return (
     <>
       {tools("map-element-order").map((tool) => (
@@ -249,93 +248,102 @@ export default function ParalogMap() {
   };
 
   return (
-    <MapStyleContextProvider
-      mapStyleKey={mapStyleKey}
-      setMapStyleKey={setMapStyleKey}
+    <Box
+      style={{
+        // maxHeight: "100%",
+        height: "100%",
+        width: "100%",
+        overflow: "hidden",
+      }}
     >
-      <ShowPointerCoordsContextProvider
-        showPointerCoords={showPointerCoords}
-        setShowPointerCoords={setShowPointerCoords}
+      <MapStyleContextProvider
+        mapStyleKey={mapStyleKey}
+        setMapStyleKey={setMapStyleKey}
       >
-        <ErrorBoundary FallbackComponent={ErrorFallback}>
-          <Map
-            id="paralogMap"
-            interactiveLayerIds={interactiveLayers}
-            initialViewState={{ ...VIEWSTATE }}
-            mapStyle={effectiveMapStyle.id}
-            attributionControl={false}
-            onClick={handleOnClick}
-            onMouseMove={handleOnMouseMove}
-            boxZoom={false}
-            styleDiffing
-            transformRequest={function (url, _resourceType) {
-              return TransformUrl(url);
-            }}
-          >
-            <DrawingModeContextProvider>
-              <ControlsOverlay />
-              <MBuiltinSources />
-              <MAllCustomMapElements />
-              {showBuildingLayer && (
-                <Layer
-                  source-layer="TopographicArea_2"
-                  id="OS/TopographicArea_2/Building/1_3D"
-                  type="fill-extrusion"
-                  source="esri"
-                  filter={["<=", "_symbol", 4]}
-                  minzoom={15}
-                  paint={{
-                    "fill-extrusion-color": "#A19786",
-                    "fill-extrusion-height": ["get", "RelHMax"],
-                    "fill-extrusion-opacity": [
-                      "interpolate",
-                      ["linear"],
-                      ["zoom"],
-                      15,
-                      0,
-                      16,
-                      0.9,
-                    ],
+        <ShowPointerCoordsContextProvider
+          showPointerCoords={showPointerCoords}
+          setShowPointerCoords={setShowPointerCoords}
+        >
+          <ErrorBoundary FallbackComponent={ErrorFallback}>
+            <Map
+              id="paralogMap"
+              interactiveLayerIds={interactiveLayers}
+              initialViewState={{ ...VIEWSTATE }}
+              mapStyle={effectiveMapStyle.id}
+              attributionControl={false}
+              onClick={handleOnClick}
+              onMouseMove={handleOnMouseMove}
+              boxZoom={false}
+              styleDiffing
+              transformRequest={function (url, _resourceType) {
+                return TransformUrl(url);
+              }}
+            >
+              <DrawingModeContextProvider>
+                <ControlsOverlay />
+                <MBuiltinSources />
+                <MAllCustomMapElements />
+                {showBuildingLayer && (
+                  <Layer
+                    source-layer="TopographicArea_2"
+                    id="OS/TopographicArea_2/Building/1_3D"
+                    type="fill-extrusion"
+                    source="esri"
+                    filter={["<=", "_symbol", 4]}
+                    minzoom={15}
+                    paint={{
+                      "fill-extrusion-color": "#A19786",
+                      "fill-extrusion-height": ["get", "RelHMax"],
+                      "fill-extrusion-opacity": [
+                        "interpolate",
+                        ["linear"],
+                        ["zoom"],
+                        15,
+                        0,
+                        16,
+                        0.9,
+                      ],
+                    }}
+                  />
+                )}
+                <Suspense fallback={null}>
+                  <PointAssets
+                    assets={assets}
+                    dependencies={dependencies}
+                    selectedElements={selectedElements}
+                    onElementClick={onElementClick}
+                  />
+                </Suspense>
+                <Suspense fallback={null}>
+                  <FloodMonitoringStations
+                    query={query}
+                    showStations={showStations}
+                  />
+                </Suspense>
+                <AttributionControl compact />
+                <ScaleControl
+                  position="bottom-right"
+                  style={{
+                    backgroundColor: "#27272780",
+                    color: "#F5F5F5",
+                    borderColor: "#949494",
                   }}
                 />
-              )}
-              <Suspense fallback={null}>
-                <PointAssets
-                  assets={assets}
-                  dependencies={dependencies}
-                  selectedElements={selectedElements}
-                  onElementClick={onElementClick}
-                />
-              </Suspense>
-              <Suspense fallback={null}>
-                <FloodMonitoringStations
-                  query={query}
-                  showStations={showStations}
-                />
-              </Suspense>
-              <AttributionControl compact />
-              <ScaleControl
-                position="bottom-right"
-                style={{
-                  backgroundColor: "#27272780",
-                  color: "#F5F5F5",
-                  borderColor: "#949494",
-                }}
-              />
-              <NavigationControl showZoom={false} showCompass={false} />
-            </DrawingModeContextProvider>
-          </Map>
+                <NavigationControl showZoom={false} showCompass={false} />
+              </DrawingModeContextProvider>
+            </Map>
 
-          <MAllOverlays />
+            <MAllOverlays />
 
-          <PointerCoordinates
-            show={showPointerCoords}
-            lat={mousePosition?.lat}
-            lng={mousePosition?.lng}
-          />
-          <FloodZones selectedFloodZones={selectedFloodZones} />
-        </ErrorBoundary>
-      </ShowPointerCoordsContextProvider>
-    </MapStyleContextProvider>
+            <PointerCoordinates
+              show={showPointerCoords}
+              lat={mousePosition?.lat}
+              lng={mousePosition?.lng}
+            />
+            <FloodZones selectedFloodZones={selectedFloodZones} />
+          </ErrorBoundary>
+        </ShowPointerCoordsContextProvider>
+      </MapStyleContextProvider>
+    </Box>
   );
 }

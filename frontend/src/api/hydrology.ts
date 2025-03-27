@@ -13,15 +13,15 @@ export enum STATION_TYPES {
 export type StationType = STATION_TYPES;
 
 const STATION_TYPES_MAP = {
-  "http://environment.data.gov.uk/flood-monitoring/def/core/GroundwaterDippedOnly":
+  "https://environment.data.gov.uk/flood-monitoring/def/core/GroundwaterDippedOnly":
     STATION_TYPES.GroundwaterDippedOnly,
-  "http://environment.data.gov.uk/flood-monitoring/def/core/Groundwater":
+  "https://environment.data.gov.uk/flood-monitoring/def/core/Groundwater":
     STATION_TYPES.Groundwater,
-  "http://environment.data.gov.uk/flood-monitoring/def/core/RainfallStation":
+  "https://environment.data.gov.uk/flood-monitoring/def/core/RainfallStation":
     STATION_TYPES.RainfallStation,
-  "http://environment.data.gov.uk/flood-monitoring/def/core/RiverFlow":
+  "https://environment.data.gov.uk/flood-monitoring/def/core/RiverFlow":
     STATION_TYPES.RiverFlow,
-  "http://environment.data.gov.uk/flood-monitoring/def/core/RiverLevel":
+  "https://environment.data.gov.uk/flood-monitoring/def/core/RiverLevel":
     STATION_TYPES.RiverLevel,
 };
 
@@ -66,37 +66,9 @@ export async function fetchStations() {
     types: item.type.map((itemType) => STATION_TYPES_MAP[itemType["@id"]]),
     measures: item.measures,
     RLOIid: item.RLOIid,
-    // // Example of item.measures:
-    // [
-    //   {
-    //     "@id": "http://environment.data.gov.uk/hydrology/id/measures/3c66c370-e349-4093-a596-9671726bdcba-level-max-86400-m-qualified",
-    //     "parameter": "level",
-    //     "period": 86400,
-    //     "valueStatistic": {
-    //       "@id": "http://environment.data.gov.uk/reference/def/core/maximum"
-    //     }
-    //   },
-    //   // ...
-    // ]
   }));
 
   return hydrologyItems;
-}
-
-// fetch station detail by id
-// export const fetchStationDetail = async (id) => {
-//   const url = `${BASE_URL}/stations/${id}`
-//   const response = await fetch(url);
-//   const json = await response.json();
-//   return json.items[0];
-// }
-
-function upgradeURLToHTTPS(url: string) {
-  if (url.startsWith("http:")) {
-    return "https:" + url.slice(5);
-  } else {
-    return url;
-  }
 }
 
 export const fetchReadings = async (
@@ -105,13 +77,13 @@ export const fetchReadings = async (
   endDate: Date,
 ) => {
   const url = `${measureUrl}/readings?maxeq-dateTime=${endDate.toISOString()}&mineq-dateTime=${startDate.toISOString()}`;
-  const response = await fetch(upgradeURLToHTTPS(url));
+  const response = await fetch(url);
   return await response.json();
 };
 
 export const fetchMostRecentReading = async (measureUrl: string) => {
   const url = `${measureUrl}/readings?latest`;
-  const response: Response = await fetch(upgradeURLToHTTPS(url));
+  const response: Response = await fetch(url);
   return await response.json();
 };
 

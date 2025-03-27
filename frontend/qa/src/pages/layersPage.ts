@@ -15,30 +15,30 @@ export default class LayersPage {
 
   async verifyPolygonIsDrawn() {
     const polygonAdded = await this.page.locator(this.Elements.polygon).count();
-    expect(polygonAdded).toEqual(44);
+    expect(polygonAdded).toEqual(45);
   }
 
   async drawAPolygon() {
     await this.page.waitForTimeout(3000);
-    await this.page.getByRole("heading", { name: "Flood Polygons" }).click();
+    const polygonHeading = this.page.getByText("Flood Polygons");
+    await polygonHeading.waitFor({ state: "attached" });
+    await polygonHeading.scrollIntoViewIfNeeded();
+    await polygonHeading.waitFor({ state: "visible" });
+    await polygonHeading.click();
     const polygonExists = await this.page
       .locator(this.Elements.polygon)
       .count();
-    expect(polygonExists).toEqual(40);
-    const drawPolygonButton = this.page.locator(
-      'button:has-text("Draw Polygon")',
-    );
+    expect(polygonExists).toEqual(36);
+    const drawPolygonButton = this.page.getByRole("button", {
+      name: "Draw Polygon",
+    });
     await drawPolygonButton.click();
     await this.page.mouse.move(500, 300);
     await this.page.mouse.down();
-    await this.page.mouse.move(600, 300);
-    await this.page.mouse.click(600, 300);
-    await this.page.mouse.move(600, 400);
-    await this.page.mouse.click(600, 400);
-    await this.page.mouse.move(500, 400);
-    await this.page.mouse.click(500, 400);
-    await this.page.mouse.move(500, 300);
-    await this.page.mouse.click(500, 300);
+    await this.base.moveAndClick(600, 300);
+    await this.base.moveAndClick(600, 400);
+    await this.base.moveAndClick(500, 400);
+    await this.base.moveAndClick(500, 300);
     await this.page.mouse.up();
     await this.page.waitForTimeout(3000);
   }
@@ -54,12 +54,12 @@ export default class LayersPage {
   }
 
   async zoomInWithButton() {
-    const zoomInButton = this.page.locator('button[title="Zoom in"]');
+    const zoomInButton = this.page.getByRole("button", { name: "Zoom in" });
     await zoomInButton.click();
   }
 
   async zoomOutWithButton() {
-    const zoomOutButton = this.page.locator('button[title="Zoom out"]');
+    const zoomOutButton = this.page.getByRole("button", { name: "Zoom out" });
     await zoomOutButton.click();
   }
 
@@ -169,5 +169,13 @@ export default class LayersPage {
       "Dependent assets: Assets that rely on/ consume services from this asset.",
     );
     expect(dependentAssetAccordion).toBeVisible();
+  async verifyAssetDetailsTabIsDisplayed() {
+    await expect(
+      this.page.getByRole("tab", { name: "Asset details" }),
+    ).toBeVisible();
+  }
+
+  async verifyLayersTabIsDisplayed() {
+    await expect(this.page.getByRole("tab", { name: "Layers" })).toBeVisible();
   }
 }

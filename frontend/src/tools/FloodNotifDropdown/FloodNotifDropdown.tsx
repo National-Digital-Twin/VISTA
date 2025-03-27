@@ -1,11 +1,14 @@
 import { useMemo, useRef } from "react";
+import Box from "@mui/material/Box";
 import { useBoolean, useOnClickOutside } from "usehooks-ts";
 import { useQuery } from "@tanstack/react-query";
+import Link from "@mui/material/Link";
 import FloodRiskAreas from "./FloodRiskAreas";
+import styles from "./style.module.css";
 import { fetchAllLiveStations } from "@/api/hydrology";
 import ToolbarButton from "@/components/Map/SideButtons/ToolbarButton";
 
-export default function FloodNotifDropdown() {
+export default function SideButtons() {
   const {
     value: isOpen,
     setFalse: closeWidget,
@@ -33,18 +36,30 @@ export default function FloodNotifDropdown() {
   useOnClickOutside(widgetRef, closeWidget);
 
   return (
-    <div className="pointer-events-auto relative" ref={widgetRef}>
+    <Box
+      sx={{ display: "flex", justifyContent: "end", pointerEvents: "auto" }}
+      ref={widgetRef}
+    >
+      {isOpen && (
+        <Box className={styles.floodPanel}>
+          <FloodRiskAreas atRiskAreas={atRiskAreas} />
+          <Link
+            component="button"
+            variant="body1"
+            onClick={closeWidget}
+            className={styles.closeButton}
+          >
+            Close
+          </Link>
+        </Box>
+      )}
       <ToolbarButton
         title="Flood Notifications"
         onClick={toggleWidget}
         svgSrc="/icons/Warning.svg"
         badgeContent={atRiskAreas.length}
       />
-      {isOpen && (
-        <div className="absolute top-0 right-0 pr-10 mt-2 mr-20 bg-card border border-neutral-outline rounded p-4 shadow-lg w-[350px] max-h-[40vh] overflow-y-auto">
-          <FloodRiskAreas atRiskAreas={atRiskAreas} />
-        </div>
-      )}
-    </div>
+    </Box>
   );
 }
+export const SIDE_BUTTON_ORDER = 0;

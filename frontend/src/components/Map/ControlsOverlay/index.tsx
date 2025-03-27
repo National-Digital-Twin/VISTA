@@ -1,14 +1,11 @@
-import { memo } from "react";
-import { Grid2 } from "@mui/material";
-import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
+import { memo, useMemo } from "react";
+import { Box, Grid2, Button, Tooltip } from "@mui/material";
+import { ChevronLeft, ChevronRight } from "@mui/icons-material";
 import { useBoolean } from "usehooks-ts";
-import styles from "./style.module.css";
 import { useTools } from "@/tools/useTools";
-import ToolbarButton from "@/components/ToolbarButton";
 import featureFlags from "@/config/feature-flags";
 import ControlPanel from "@/components/Map/ControlPanel";
 import MapToolbar from "@/components/Map/SideButtons/MapToolbar";
-
 interface ToolbarProps {
   readonly onOpenControlPanel?: () => void;
 }
@@ -16,14 +13,33 @@ interface ToolbarProps {
 function Toolbar({ onOpenControlPanel }: ToolbarProps) {
   const tools = useTools();
   return (
-    <div className={styles.controlsContainer}>
+    <Box
+      sx={{
+        display: "flex",
+        width: "100%",
+        marginTop: 1,
+        position: "relative",
+      }}
+    >
       {onOpenControlPanel && (
-        <ToolbarButton
-          icon={faChevronRight}
-          onClick={onOpenControlPanel}
-          title="Open control panel"
-          hideTitle
-        />
+        <Tooltip title="Close layer panel">
+          <Button
+            onClick={onOpenControlPanel}
+            aria-label="close layer panel"
+            sx={{
+              width: "6vh",
+              height: "6vh",
+              minWidth: "initial",
+              maxWidth: "48px",
+              maxHeight: "48px",
+              backgroundColor: "#ffffff",
+              color: "initial",
+              margin: "0",
+            }}
+          >
+            <ChevronLeft />
+          </Button>
+        </Tooltip>
       )}
       {tools("toolbar-order").map((tool) => {
         if (!tool.ToolbarTools) {
@@ -32,7 +48,7 @@ function Toolbar({ onOpenControlPanel }: ToolbarProps) {
         const ToolbarTools = tool.ToolbarTools;
         return <ToolbarTools key={tool.TOOL_NAME} />;
       })}
-    </div>
+    </Box>
   );
 }
 
@@ -46,37 +62,153 @@ export default function ControlsOverlay() {
     setFalse: hideControlPanel,
   } = useBoolean(true);
 
+  const {
+    value: dependantPanelOpen,
+    setTrue: showConnectedAssetsPanel,
+    setFalse: hideConnectedAssetsPanel,
+  } = useBoolean(false);
+
   const shouldShowControlPanel = featureFlags.uiNext && controlPanelOpen;
 
   return (
-    <Grid2 container className={styles.controlsOverlay}>
-      <Grid2 size={4} sx={{ padding: "10px" }}>
-        {shouldShowControlPanel && (
-          <ControlPanel
-            className={styles.controlPanel}
-            onClose={hideControlPanel}
-          />
-        )}
-      </Grid2>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
+        margin: 1,
+      }}
+    >
       <Grid2
-        size={8}
+        container
+        size={12}
         sx={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "flex-start",
-          alignItems: "flex-end",
-          padding: "10px",
+          flexGrow: 1,
+          minHeight: 0,
+          overflow: "hidden",
         }}
       >
-        <MToolbar
-          onOpenControlPanel={
-            featureFlags.uiNext && !controlPanelOpen && showControlPanel
-          }
-        />
-        <div style={{ marginTop: "10px" }}>
-          <MapToolbar className={styles.buttons} />
-        </div>
+        <Grid2
+          size={dependantPanelOpen ? 6 : 3}
+          sx={{
+            padding: 1,
+            height: "100%",
+            minHeight: 0,
+            overflow: "hidden",
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <Box
+            className="pointer-events-auto"
+            style={{ height: "100%", padding: "5px", maxHeight: "100%" }}
+          >
+            {shouldShowControlPanel && (
+              <ControlPanel
+                connectedAssetsPanelOpen={dependantPanelOpen}
+                hideConnectedAssets={hideConnectedAssetsPanel}
+                showConnectedAssets={showConnectedAssetsPanel}
+              />
+            )}
+            {!shouldShowControlPanel && (
+              <Tooltip title="Open layer panel">
+                <Button
+                  onClick={showControlPanel}
+                  aria-label="open layer panel"
+                  sx={{
+                    width: "6vh",
+                    height: "6vh",
+                    minWidth: "initial",
+                    maxWidth: "48px",
+                    maxHeight: "48px",
+                    backgroundColor: "#ffffff",
+                    color: "initial",
+                  }}
+                >
+                  <ChevronRight />
+                </Button>
+              </Tooltip>
+            )}
+          </Box>
+        </Grid2>
+        <Grid2 size={dependantPanelOpen ? 5 : 8}>
+          <Box sx={{ pointerEvents: "auto" }}>
+            {controlPanelOpen && ( // Only show close button when the panel is open
+              <MToolbar
+                onOpenControlPanel={() => {
+                  hideControlPanel(); // Hide Control Panel
+                  hideConnectedAssetsPanel(); // Also hide Connected Assets Panel
+                }}
+              />
+            )}
+          </Box>
+        </Grid2>
+        <Grid2
+          size={1}
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "flex-start",
+            alignItems: "flex-end",
+            padding: "10px",
+          }}
+        >
+          <Box
+            sx={{
+              marginTop: "10px",
+              maxHeight: "65vh",
+              pointerEvents: "auto",
+            }}
+          >
+            <MapToolbar />
+          </Box>
+        </Grid2>
       </Grid2>
-    </Grid2>
+      <Grid2
+        container
+        size={12}
+        sx={{
+          transition: "flex-grow 0.3s ease",
+          padding: 1,
+        }}
+      >
+        <Grid2 size={12}>
+          <Box sx={{ zIndex: 10000, backgroundColor: "pink" }}>
+            <DetailPanels />
+          </Box>
+        </Grid2>
+      </Grid2>
+    </Box>
+  );
+}
+
+function DetailPanels() {
+  const tools = useTools();
+
+  const detailPanels = useMemo(() => {
+    const panels: {
+      component: () => JSX.Element;
+      key: string;
+    }[] = [];
+
+    tools("definition-order").forEach((tool) => {
+      if (tool.DetailPanel) {
+        panels.push({
+          component: tool.DetailPanel,
+          key: tool.TOOL_NAME,
+        });
+      }
+    });
+
+    return panels;
+  }, [tools]);
+
+  return (
+    <Box sx={{ height: "100%" }}>
+      {detailPanels.map((detailPanel) => {
+        const Component = detailPanel.component;
+        return <Component key={detailPanel.key} />;
+      })}
+    </Box>
   );
 }
