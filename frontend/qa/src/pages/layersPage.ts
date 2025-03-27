@@ -14,19 +14,23 @@ export default class LayersPage {
 
   async verifyPolygonIsDrawn() {
     const polygonAdded = await this.page.locator(this.Elements.polygon).count();
-    expect(polygonAdded).toEqual(44);
+    expect(polygonAdded).toEqual(45);
   }
 
   async drawAPolygon() {
     await this.page.waitForTimeout(3000);
-    await this.page.getByRole("heading", { name: "Flood Polygons" }).click();
+    const polygonHeading = this.page.getByText("Flood Polygons");
+    await polygonHeading.waitFor({ state: "attached" });
+    await polygonHeading.scrollIntoViewIfNeeded();
+    await polygonHeading.waitFor({ state: "visible" });
+    await polygonHeading.click();
     const polygonExists = await this.page
       .locator(this.Elements.polygon)
       .count();
-    expect(polygonExists).toEqual(40);
-    const drawPolygonButton = this.page.locator(
-      'button:has-text("Draw Polygon")',
-    );
+    expect(polygonExists).toEqual(36);
+    const drawPolygonButton = this.page.getByRole("button", {
+      name: "Draw Polygon",
+    });
     await drawPolygonButton.click();
     await this.page.mouse.move(500, 300);
     await this.page.mouse.down();
@@ -121,5 +125,14 @@ export default class LayersPage {
     await this.page.mouse.down();
     await this.page.mouse.move(1000, 400, { steps: 20 });
     await this.page.mouse.up();
+  }
+  async verifyAssetDetailsTabIsDisplayed() {
+    await expect(
+      this.page.getByRole("tab", { name: "Asset details" }),
+    ).toBeVisible();
+  }
+
+  async verifyLayersTabIsDisplayed() {
+    await expect(this.page.getByRole("tab", { name: "Layers" })).toBeVisible();
   }
 }

@@ -20,30 +20,23 @@ export default class LoginPage {
     await expect(this.page).toHaveTitle("Sign-in");
   }
   async enterUserName(user: string) {
+    await expect(this.page.locator('[name="username"]')).toBeVisible();
     await this.page.locator('[name="username"]').fill(user);
-    await this.page.getByRole("button", { name: "Next" }).click();
   }
   async enterPassword(password: string) {
-    await expect(this.page).toHaveTitle("Enter your password");
+    await expect(this.page.locator('[name="password"]')).toBeVisible();
     await this.page.locator('[name="password"]').fill(password);
   }
-
-  async clickLoginButton() {
-    await this.page.getByRole("button", { name: "Continue" }).click();
+  async clickSigninButton() {
+    await expect(
+      this.page.getByRole("button", { name: "Sign in" }),
+    ).toBeVisible();
+    await this.page.getByRole("button", { name: "Sign in" }).click();
+    await this.page.waitForTimeout(2000);
   }
-
   async loginUser(user: string, password: string) {
     await this.enterUserName(user);
     await this.enterPassword(password);
-    await this.clickLoginButton();
-  }
-  async verifyAssetDetailsTabIsDisplayed() {
-    await expect(
-      this.page.getByRole("tab", { name: "Asset details" }),
-    ).toBeVisible();
-  }
-
-  async verifyLayersTabIsDisplayed() {
-    await expect(this.page.getByRole("tab", { name: "Layers" })).toBeVisible();
+    await this.clickSigninButton();
   }
 }

@@ -12,13 +12,10 @@ When("I zoom in and out using the zoom button", async function () {
   await layersPage.zoomOutWithButton();
 });
 
-Then(
-  "I am zoomed in and out",
-  async function () {
-    layersPage = new LayersPage(basePage.page);
-    await layersPage.zoomWithButtonWithScreenshotComparison();
-  },
-);
+Then("I am zoomed in and out", async function () {
+  layersPage = new LayersPage(basePage.page);
+  await layersPage.zoomWithButtonWithScreenshotComparison();
+});
 
 When("I zoom in and out on the map using the mouse wheel", async function () {
   layersPage = new LayersPage(basePage.page);
@@ -26,23 +23,17 @@ When("I zoom in and out on the map using the mouse wheel", async function () {
   await layersPage.zoomOutTheMap();
 });
 
-Then(
-  "I should be able to zoom in and out",
-  async function () {
-    layersPage = new LayersPage(basePage.page);
-    await layersPage.zoomOnTheMapWithScreenshotComparison();
-  },
-);
+Then("I should be able to zoom in and out", async function () {
+  layersPage = new LayersPage(basePage.page);
+  await layersPage.zoomOnTheMapWithScreenshotComparison();
+});
 
 When("I am on the map", async function () {
   layersPage = new LayersPage(basePage.page);
   await layersPage.panAroundTheMap();
 });
 
-Then(
-  "I should be able to pan around the map",
-  async function () {
-    layersPage = new LayersPage(basePage.page);
-    await layersPage.panWithScreenshotComparison();
-  },
-);
+Then("I should be able to pan around the map", async function () {
+  layersPage = new LayersPage(basePage.page);
+  await layersPage.panWithScreenshotComparison();
+});
