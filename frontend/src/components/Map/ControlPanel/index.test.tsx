@@ -24,6 +24,8 @@ jest.mock("@/tools/AssetDetails", () => ({
   }: any) => (
     <div data-testid="asset-details-panel">
       Asset Detail Panel
+      {/*
+       */}
       <button
         onClick={() => {
           showConnectedAssets();
