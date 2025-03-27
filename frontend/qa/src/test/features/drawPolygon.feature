@@ -5,5 +5,3 @@ Feature: Draw a polygon functionality
     And   I click the Paralog menu
     When  I draw a polygon
     Then  I should be able to verify a polygon is drawn successfully
-
-
