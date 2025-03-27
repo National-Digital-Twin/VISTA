@@ -86,6 +86,18 @@ export default function ControlPanel({
             aria-label="basic tabs example"
             variant="scrollable"
             scrollButtons="auto"
+            slotProps={{
+              indicator: {
+                component: "div",
+                className: "MuiTabs-indicator",
+                children: (
+                  <Typography
+                    component="span"
+                    className="MuiTabs-indicatorSpan"
+                  ></Typography>
+                ),
+              },
+            }}
             sx={{
               display: "flex",
               justifyContent: "center",
@@ -95,11 +107,16 @@ export default function ControlPanel({
               },
 
               "& .MuiTabs-indicator": {
-                width: "50px !important",
-                borderRadius: "5px 5px 0 0",
-                marginLeft: "90px",
+                display: "flex",
+                justifyContent: "center",
+                backgroundColor: "transparent",
                 height: "3px",
+              },
+              "& .MuiTabs-indicatorSpan": {
+                maxWidth: "25%",
+                width: "100% !important",
                 backgroundColor: "#3670b3",
+                borderRadius: "5px 5px 0 0",
               },
             }}
           >
