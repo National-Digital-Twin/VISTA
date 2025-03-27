@@ -1,8 +1,8 @@
 /* .appBody {
   grid-area: body; */
 
-  /* Make this the container for absolute positioning */
-  /* position: relative;
+/* Make this the container for absolute positioning */
+/* position: relative;
   display: block grid;
   grid:
     "content" 1fr

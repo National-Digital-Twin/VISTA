@@ -20,7 +20,9 @@
   transform: rotate(-90deg);
 }
 
-.toolbarDropdown[data-dropdown-open="true"]>.toolbarDropdownButton>.toolbarDropdownButtonDisclosureTriangle {
+.toolbarDropdown[data-dropdown-open="true"]
+  > .toolbarDropdownButton
+  > .toolbarDropdownButtonDisclosureTriangle {
   transform: rotate(0);
 }
 
@@ -34,7 +36,7 @@
   @apply rounded-md;
 }
 
-.toolbarDropdown[data-dropdown-open="false"]>.dropdown {
+.toolbarDropdown[data-dropdown-open="false"] > .dropdown {
   visibility: hidden;
 }
 

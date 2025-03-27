@@ -14,14 +14,15 @@ describe("AuthPrompt", () => {
   it("renders title and input", () => {
     render(<AuthPrompt />);
     expect(screen.getByText("Enter authentication key")).toBeInTheDocument();
-    expect(screen.getByPlaceholderText("XXXX-XXXX-XXXX-XXXX")).toBeInTheDocument();
+    expect(
+      screen.getByPlaceholderText("XXXX-XXXX-XXXX-XXXX"),
+    ).toBeInTheDocument();
   });
 
   it("shows custom error if provided", () => {
     render(<AuthPrompt error="Invalid key" />);
     expect(screen.getByText("Invalid key")).toBeInTheDocument();
   });
-
 
   it("disables submit button if onLogIn is not provided", () => {
     render(<AuthPrompt />);

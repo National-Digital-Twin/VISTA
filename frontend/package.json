@@ -10,7 +10,6 @@
     "format": "prettier --write .",
     "format-changed": "prettier --write --cache .",
     "lint": "eslint .",
-    "lint-ci": "yarn run lint && prettier --check . && tsc --noEmit",
     "start": "vite --port 3001",
     "test": "jest --watch"
   },

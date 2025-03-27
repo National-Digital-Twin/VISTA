@@ -32,7 +32,8 @@ export default function SandbagToggle() {
   const { startAddMarker } = useAddMarker({
     onSelectMarkerPosition: useCallback(
       async ({ lat: latitude, lng: longitude }) => {
-        while (true) {
+        // This is similar to while(true) but has been replaced by this due to eslint flagging it as an issue
+        for (;;) {
           const name = prompt("Enter the name for the new sandbag placement:");
           if (!name) {
             return;

@@ -93,7 +93,7 @@ AfterAll(async function () {
   await browser.close();
 });
 
-function attachFiles(img : any, videoPath : string, path : string) {
+function attachFiles(img: any, videoPath: string, path: string) {
   if (img) {
     this.attach(img, "image/png");
   }
