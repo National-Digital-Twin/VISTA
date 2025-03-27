@@ -107,7 +107,9 @@ function findLinesIntersectingPolygon(
   polygonFeatures: Feature<Geometry, GeoJsonProperties>[],
   lineStringFeatures: Feature<Geometry, GeoJsonProperties>[],
 ) {
-  if (isEmpty(polygonFeatures)) {return [];}
+  if (isEmpty(polygonFeatures)) {
+    return [];
+  }
 
   return lineStringFeatures.filter((lineString) =>
     polygonFeatures.some((polygon) =>

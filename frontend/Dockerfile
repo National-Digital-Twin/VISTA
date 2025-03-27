@@ -4,7 +4,6 @@ FROM node:23-alpine AS builder
 WORKDIR /app
 
 ARG MAP_TILER_TOKEN
-ARG MET_OFFICE_GLOBAL_SPOT_API_KEY
 ARG NPM_TOKEN
 
 RUN echo "registry=https://registry.yarnpkg.com/" > .npmrc && \
@@ -14,21 +13,19 @@ RUN echo "registry=https://registry.yarnpkg.com/" > .npmrc && \
 RUN yarn cache clean
 
 COPY package.json yarn.lock ./
-RUN yarn install --frozen-lockfile
+RUN yarn install --frozen-lockfile --ignore-scripts
 RUN rm -f .npmrc
 
 ENV VITE_ONTOLOGY_SERVICE_URL="/transparent-proxy"
 ENV VITE_PARALOG_API_URL="/paralog"
 
 ENV VITE_MAP_TILER_TOKEN=$MAP_TILER_TOKEN
-ENV VITE_AUTH_TEST_URL="/ndtp-python/ping/"
-ENV VITE_MET_OFFICE_GLOBAL_SPOT_API_KEY=$MET_OFFICE_GLOBAL_SPOT_API_KEY
 
 COPY . .
 RUN yarn build
 
 # Start a new stage from scratch
-FROM nginx:1.27 as runner
+FROM nginx:1.27.4 AS runner
 
 # Copy the built files from the builder stage to the runner stage
 COPY --from=builder /app/dist /usr/share/nginx/html

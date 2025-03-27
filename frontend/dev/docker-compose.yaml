@@ -1,30 +1,87 @@
+version: "3"
 services:
-  fuseki-server:
-    container_name: paralog-fuseki-server
+  zookeeper:
+    container_name: paralog-zookeeper
+    image: bitnami/zookeeper:latest
+    ports:
+      - "2181:2181"
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+  kafka:
+    container_name: paralog-kafka
+    image: "bitnami/kafka:latest"
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    volumes:
+      - ./kafka/server.properties:/bitnami/kafka/config/server.properties
+    environment:
+      - BITNAMI_DEBUG=true
+  secure-agent-graph:
+    container_name: paralog-sag
     environment:
       JAVA_OPTIONS: "-XX:MaxRAMPercentage=40.0"
+      JWKS_URL: "disabled"
     command:
-      - --ping
       - --config
-      - /fuseki/config.ttl
-    image: atomgraph/fuseki:latest
+      - /fuseki/config/config.ttl
+    image: paralog/secure-agent-graph
+    depends_on:
+      - kafka
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3030/$/ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    ports:
+      - 3030:3030
+  curl-knowledge:
+    image: curlimages/curl
+    command:
+      [
+        "curl",
+        "-X",
+        "POST",
+        "-H",
+        "Content-Type: text/turtle",
+        "--data-binary",
+        "@/work/iow.ttl",
+        "http://secure-agent-graph:3030/knowledge/upload",
+      ]
+    depends_on:
+      secure-agent-graph:
+        condition: service_healthy
     volumes:
-      - ${PWD}/config/config.ttl:/fuseki/config.ttl:ro
-      - ${PWD}/data:/fuseki/databases:ro
-    network_mode: host
-
+      - ./data/iow.ttl:/work/iow.ttl
+  curl-ontology:
+    image: curlimages/curl
+    command:
+      [
+        "curl",
+        "-X",
+        "POST",
+        "-H",
+        "Content-Type: text/turtle",
+        "--data-binary",
+        "@/work/ontology.ttl",
+        "http://secure-agent-graph:3030/ontology/upload",
+      ]
+    depends_on:
+      secure-agent-graph:
+        condition: service_healthy
+    volumes:
+      - ./data/ontology.ttl:/work/ontology.ttl
   api:
     container_name: smart-cache-paralog-api
     image: smart-cache-paralog-api
     ports:
       - 4001:4001
     environment:
-      JENA_URL: localhost
+      JENA_URL: secure-agent-graph
       JENA_PORT: 3030
       PORT: 4001
       JENA_DATASET: knowledge
-    network_mode: host
-
   transparent-proxy:
     container_name: paralog-transparent-proxy
     image: paralog-transparent-proxy
@@ -32,7 +89,6 @@ services:
       - 5013:80
     env_file:
       - "../.env"
-
   paralog-python-api:
     container_name: paralog-python-api
     image: paralog-python-api

@@ -19,6 +19,7 @@ import Map, {
 } from "react-map-gl/maplibre";
 import { ErrorBoundary } from "react-error-boundary";
 
+import { Box } from "@mui/material";
 import { FLOOD_AREA_LAYERS, LINEAR_ASSET_LAYER } from "./layers";
 import { generateLinearAssetFeatures } from "./map-utils";
 import { useMapStyles } from "./mapStyles";
@@ -61,7 +62,6 @@ function CustomMapElements({ tool }: CustomMapElementsProps) {
   if (!tool.MapElements) {
     return null;
   }
-
   const MapElements = tool.MapElements;
   return <MapElements />;
 }
@@ -91,7 +91,6 @@ const MAllOverlays = memo(AllOverlays);
 
 function AllCustomMapElements() {
   const tools = useTools();
-
   return (
     <>
       {tools("map-element-order").map((tool) => (
@@ -249,7 +248,14 @@ export default function ParalogMap() {
   };
 
   return (
-    <div style={{ height: "100%", width: "100%", overflow: "hidden" }}>
+    <Box
+      style={{
+        // maxHeight: "100%",
+        height: "100%",
+        width: "100%",
+        overflow: "hidden",
+      }}
+    >
       <MapStyleContextProvider
         mapStyleKey={mapStyleKey}
         setMapStyleKey={setMapStyleKey}
@@ -338,6 +344,6 @@ export default function ParalogMap() {
           </ErrorBoundary>
         </ShowPointerCoordsContextProvider>
       </MapStyleContextProvider>
-    </div>
+    </Box>
   );
 }

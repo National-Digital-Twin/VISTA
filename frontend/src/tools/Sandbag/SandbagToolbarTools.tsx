@@ -22,7 +22,8 @@ export default function SandbagToggle() {
   const { startAddMarker } = useAddMarker({
     onSelectMarkerPosition: useCallback(
       async ({ lat: latitude, lng: longitude }) => {
-        while (true) {
+        // This is similar to while(true) but has been replaced by this due to eslint flagging it as an issue
+        for (;;) {
           const name = prompt("Enter the name for the new sandbag placement:");
           if (!name) {
             return;
@@ -48,7 +49,7 @@ export default function SandbagToggle() {
   }
 
   return (
-    <ToolbarDropdown title="Sandbags">
+    <ToolbarDropdown title="Sandbags" applyOverrideForSandbag={true}>
       {!featureFlags.uiNext && (
         <Button onClick={toggle}>{enabled ? "Hide" : "Show"} Sandbags</Button>
       )}

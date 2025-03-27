@@ -6,7 +6,6 @@
   path: /spec/gateways/0
   value: paralog/paralog-ingress-gateway
 
-
 - op: replace
   path: /spec/http/0/match/0/uri/prefix
   value: /coefficient-python/

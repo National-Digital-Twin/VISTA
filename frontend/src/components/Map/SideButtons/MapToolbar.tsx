@@ -1,6 +1,6 @@
 import { memo } from "react";
 
-import { Box } from "@mui/system";
+import Box from "@mui/material/Box";
 import { useTools } from "@/tools/useTools";
 
 export interface MapToolbarProps {
@@ -18,7 +18,7 @@ function ToolSideButtons() {
     return <SideButtons key={tool.TOOL_NAME} />;
   });
 
-  return <div style={{ height: "100%" }}>{toolSideButtons}</div>;
+  return <Box sx={{ height: "100%" }}>{toolSideButtons}</Box>;
 }
 
 const MToolSideButtons = memo(ToolSideButtons);

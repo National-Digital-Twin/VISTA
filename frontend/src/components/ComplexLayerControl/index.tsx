@@ -65,9 +65,15 @@ export default function ComplexLayerControl({
         }}
         aria-expanded={expanded}
       >
-        <div style={{ borderLeft: "5px solid #e0e0e0", padding: "8px" }}>
+        <Box
+          sx={{
+            borderLeft: "5px solid #e0e0e0",
+            padding: "8px",
+            paddingTop: "0",
+          }}
+        >
           {children}
-        </div>
+        </Box>
       </Box>
     </Box>
   );

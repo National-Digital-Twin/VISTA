@@ -39,3 +39,13 @@
 .toolbarDropdown[data-dropdown-open="false"] > .dropdown {
   visibility: hidden;
 }
+
+.sandbagContainer {
+  position: absolute;
+  top: 0;
+  margin-left: 55px;
+
+  @media screen and (max-height: 767px) {
+    margin-left: 7vh;
+  }
+}

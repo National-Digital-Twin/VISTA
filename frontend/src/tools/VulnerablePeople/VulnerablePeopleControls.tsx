@@ -8,7 +8,11 @@ import { useDrawingMode } from "@/context/DrawingMode";
 import useSharedStore from "@/hooks/useSharedStore";
 import MenuItemRow from "@/components/MenuItemRow";
 
-export default function VulnerablePeopleControls() {
+export default function VulnerablePeopleControls({
+  searchQuery = "",
+}: Readonly<{
+  searchQuery?: string;
+}>) {
   const { enabled, toggle } = useLayer("vulnerable-people");
 
   const drawingModeCallbacks = useSharedStore(
@@ -18,6 +22,7 @@ export default function VulnerablePeopleControls() {
       onDeleteFeatures: state.deleteVulnerablePeopleFeatures,
     })),
   );
+
   const features = useSharedStore(
     useShallow((state) => state.vulnerablePeopleFeatures),
   );
@@ -93,8 +98,8 @@ export default function VulnerablePeopleControls() {
       primaryText="Vulnerable People Polygon"
       checked={enabled}
       onChange={toggle}
-      searchQuery=""
-      terms={["Vulnerable People"]}
+      searchQuery={searchQuery}
+      terms={["Vulnerable People", "polygon", "vulnerable"]}
       buttons={buttons}
     />
   );

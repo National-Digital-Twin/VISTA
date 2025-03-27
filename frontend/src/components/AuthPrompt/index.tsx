@@ -24,7 +24,9 @@ export default function AuthPrompt({
     (event: SyntheticEvent<HTMLFormElement>) => {
       event.preventDefault();
       if (onLogIn) {
-        onLogIn(event.currentTarget.elements["key"].value);
+        const form = event.currentTarget;
+        const keyInput = form.elements.namedItem("key") as HTMLInputElement;
+        onLogIn(keyInput.value);
       }
     },
     [onLogIn],
@@ -37,7 +39,7 @@ export default function AuthPrompt({
       <div className={styles.authPrompt}>
         <h2 className={styles.title}>Enter authentication key</h2>
         <form className={styles.authForm} onSubmit={onSubmit}>
-          <p className={styles.error}>{error || " "}</p>
+          <p className={styles.error}>{error ?? " "}</p>
           <label className="sr-only" htmlFor={keyId}>
             Authentication Key
           </label>

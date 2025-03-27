@@ -1,10 +1,10 @@
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import LayersOutlinedIcon from "@mui/icons-material/LayersOutlined";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 
 import "react-tabs/style/react-tabs.css";
-import { faLayerGroup, faCircleInfo } from "@fortawesome/free-solid-svg-icons";
 
 import React, { Suspense } from "react";
 import Typography from "@mui/material/Typography";
@@ -29,16 +29,20 @@ export default function ControlPanel({
 
   const [connectedAssetData, setConnectedAssetData] = React.useState<any>(null);
 
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
 
   const tabs = [
-    { name: "Layers", icon: faLayerGroup, Content: <LayersControlPanel /> },
+    {
+      name: "Layers",
+      icon: <LayersOutlinedIcon />,
+      content: <LayersControlPanel />,
+    },
     {
       name: "Asset Details",
-      icon: faCircleInfo,
-      Content: (
+      icon: <InfoOutlinedIcon />,
+      content: (
         <AssetDetailControlPanel
           showConnectedAssets={showConnectedAssets}
           setConnectedAssetData={setConnectedAssetData}
@@ -53,34 +57,49 @@ export default function ControlPanel({
         display: "flex",
         flexDirection: "row",
         height: "100%",
-
-        gap: 2,
+        gap: 0,
       }}
     >
       <Box
         sx={{
           width: "100%",
-          height: "70vh",
+          height: "100%",
           position: "relative",
           backgroundColor: "background.paper",
           display: "flex",
           flexDirection: "column",
+          borderRadius: 2,
+          boxShadow: 4,
         }}
       >
-        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+        <Box
+          sx={{
+            borderBottom: 1,
+            borderColor: "divider",
+            backgroundColor: "#f0f2f2",
+            borderRadius: 2,
+          }}
+        >
           <Tabs
             value={value}
             onChange={handleChange}
             aria-label="basic tabs example"
             variant="scrollable"
             scrollButtons="auto"
-            TabIndicatorProps={{
-              sx: {
-                display: "flex",
-                justifyContent: "center",
-                "& .MuiTabs-indicator": {
-                  width: "fit-content",
-                },
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+
+              "& .Mui-selected": {
+                color: "#3670b3",
+              },
+
+              "& .MuiTabs-indicator": {
+                width: "50px !important",
+                borderRadius: "5px 5px 0 0",
+                marginLeft: "90px",
+                height: "3px",
+                backgroundColor: "#3670b3",
               },
             }}
           >
@@ -93,16 +112,9 @@ export default function ControlPanel({
                       display: "flex",
                       flexDirection: "column",
                       alignItems: "center",
-                      paddingTop: 2,
+                      paddingTop: 0,
                     }}
                   >
-                    {entry.icon && (
-                      <FontAwesomeIcon
-                        className="inline mb-1"
-                        icon={entry.icon}
-                        size="2x"
-                      />
-                    )}
                     <Typography
                       sx={{ textTransform: "none", fontWeight: "bold" }}
                     >
@@ -112,14 +124,15 @@ export default function ControlPanel({
                 }
                 {...a11yProps(index)}
                 sx={{ flexBasis: "50%" }}
+                icon={entry.icon}
               ></Tab>
             ))}
           </Tabs>
         </Box>
-        <Box sx={{ flexGrow: 1, overflow: "hidden" }}>
+        <Box sx={{ flexGrow: 1, maxHeight: "100%", overflowY: "auto" }}>
           {tabs.map((entry, i) => (
             <TabPanel key={entry.name} index={i} value={value}>
-              <Suspense fallback="Loading...">{entry.Content}</Suspense>
+              <Suspense fallback="Loading...">{entry.content}</Suspense>
             </TabPanel>
           ))}
         </Box>

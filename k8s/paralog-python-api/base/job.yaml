@@ -11,7 +11,7 @@ spec:
       serviceAccountName: paralog-python-api-sa
       containers:
         - name: paralog-python-api-image
-          image: paralog-python-api-image
+          image: paralog-python-api-image:template
           imagePullPolicy: Always
           command: ["./entrypoint.sh"]
           envFrom:
@@ -19,6 +19,14 @@ spec:
                 name: paralog-python-api-configs
             - secretRef:
                 name: paralog-python-api-static-secret
+          resources:
+            requests:
+              cpu: "0.5" # Minimum CPU your container is guaranteed.
+              memory: "2Gi" # Minimum Memory your container is guaranteed.
+              ephemeral-storage: "2Gi"
+            limits:
+              cpu: "3" # Maximum CPU your container can use.
+              memory: "2Gi" # Maximum Memory your container can use.
       restartPolicy: Never
   ttlSecondsAfterFinished: 10
   backoffLimit: 4

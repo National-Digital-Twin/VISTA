@@ -1,4 +1,4 @@
-import { noCase } from "change-case";
+import { capitalCase } from "change-case";
 import TypeIcon from "./TypeIcon";
 import styles from "./elements.module.css";
 import { getURIFragment } from "@/utils";
@@ -37,16 +37,16 @@ export default function ConnectedAssetDetails({
         <div>
           <h4>{name || uri}</h4>
           <p className={styles.connectedAssetType}>
-            {noCase(getURIFragment(type))}
+            {capitalCase(getURIFragment(type))}
           </p>
           <p className={styles.connectedAssetUri}>{uri.split("#")[1]}</p>
         </div>
       </div>
       <p className={styles.connectedAssetInfo}>
-        Criticality: {criticality || "N/D"}
+        Criticality: {criticality ?? "N/D"}
       </p>
       <p className={styles.connectedAssetInfo}>
-        Connection Strength: {connectionStrength || "N/D"}
+        Connection Strength: {connectionStrength ?? "N/D"}
       </p>
     </li>
   );

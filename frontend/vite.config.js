@@ -45,6 +45,13 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/ndtp-python/, ""),
         secure: false,
       },
+      // Ontology proxy
+      "/ontology-proxy": {
+        target: "http://localhost:3030",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/ontology-proxy/, ""),
+        secure: false,
+      },
     },
   },
 });

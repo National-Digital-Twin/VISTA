@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   Card,
@@ -11,7 +10,8 @@ import {
   Tooltip,
 } from "@mui/material";
 import RoomIcon from "@mui/icons-material/Room";
-import ArrowRightIcon from "@mui/icons-material/ArrowRight";
+import { capitalCase } from "change-case";
+import ArrowRightAltIcon from "@mui/icons-material/ArrowRightAlt";
 import { fetchAssetInfo } from "@/api/combined";
 import { getURIFragment, isAsset, isDependency } from "@/utils";
 import { isEmpty } from "@/utils/isEmpty";
@@ -24,8 +24,8 @@ export interface ElementDefaultsProps {
 
 export default function ElementDetails({
   element,
-  showConnectedAssets,
   setConnectedAssetData,
+  showConnectedAssets,
 }: Readonly<ElementDefaultsProps>) {
   const elemIsAsset = isAsset(element);
 
@@ -38,13 +38,13 @@ export default function ElementDetails({
   const isLoading = assetInfo.isLoading;
   const isError = assetInfo.isError;
 
-  useEffect(() => {
+  const onClick = () => {
     if (elemIsAsset && assetInfo.data) {
       const details = element?.getDetails?.(assetInfo.data) || {};
       setConnectedAssetData(constructElementDetailsObject(element, details));
+      showConnectedAssets();
     }
-  }, [elemIsAsset, assetInfo.data, element, setConnectedAssetData]);
-
+  };
   if (isLoading) {
     return (
       <Box display="flex" justifyContent="center" mt={2}>
@@ -67,28 +67,19 @@ export default function ElementDetails({
   }
 
   if (isEmpty(element) || !details) {
-    return (
-      <Alert severity="warning" sx={{ mt: 2 }}>
-        Unable to retrieve details for this element.
-      </Alert>
-    );
+    return null;
   }
 
   // Extract type string after #
   const extractedType = details.type?.split("#").pop() || "Unknown";
 
   return (
-    <Card sx={{ mb: 1, p: 0.5 }} elevation={0}>
-      <CardContent>
-        <Box
-          display="flex"
-          justifyContent="space-between"
-          alignItems="start"
-          gap={2}
-        >
+    <Card sx={{ padding: 0, margin: 0 }} elevation={0}>
+      <CardContent sx={{ padding: 1, margin: 0 }}>
+        <Box display="flex" justifyContent="space-between" alignItems="start">
           {/* Left Column - Asset Title & Type (Left Aligned) */}
-          <Box sx={{ maxWidth: 150 }}>
-            <Typography variant="subtitle1" sx={{ fontWeight: 500 }}>
+          <Box sx={{ maxWidth: 250 }}>
+            <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
               {details.title || "Asset Details"}
             </Typography>
             <Typography variant="subtitle2">
@@ -99,15 +90,13 @@ export default function ElementDetails({
             <Box
               sx={{
                 backgroundColor: "#f0f0f0",
-                padding: "4px 8px",
                 borderRadius: "4px",
                 display: "inline-block",
                 fontWeight: 500,
-                fontSize: "0.875rem",
                 marginTop: "4px",
               }}
             >
-              {extractedType}
+              {capitalCase(extractedType)}
             </Box>
           </Box>
 
@@ -118,12 +107,14 @@ export default function ElementDetails({
               display="flex"
               alignItems="center"
               sx={{ cursor: "pointer", mb: 1, whiteSpace: "nowrap" }}
-              onClick={() => showConnectedAssets()}
+              onClick={() => {
+                onClick();
+              }}
             >
               <Typography variant="body2" sx={{ fontWeight: 500 }}>
                 View connected assets
               </Typography>
-              <ArrowRightIcon fontSize="small" sx={{ ml: 1 }} />
+              <ArrowRightAltIcon fontSize="small" sx={{ ml: 1 }} />
             </Box>
 
             {/* Google Street View */}
@@ -131,16 +122,22 @@ export default function ElementDetails({
               <Typography variant="body2" sx={{ fontWeight: 500, mr: 1 }}>
                 Google Street View
               </Typography>
-              <Tooltip title="Open Google Street View">
-                <IconButton
-                  component="a"
-                  href={`https://www.google.com/maps?q=${element?.uri}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <RoomIcon />
-                </IconButton>
-              </Tooltip>
+              {element?.lat && element?.lng ? (
+                <Tooltip title="Open Google Street View">
+                  <IconButton
+                    component="a"
+                    href={`https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${element?.lat},${element?.lng}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <RoomIcon />
+                  </IconButton>
+                </Tooltip>
+              ) : (
+                <Typography variant="body2" color="textSecondary">
+                  Coordinates not available
+                </Typography>
+              )}
             </Box>
           </Box>
         </Box>
@@ -150,7 +147,6 @@ export default function ElementDetails({
 }
 
 function constructElementDetailsObject(element: any, details: any) {
-  console.log("constructElementDetailsObject", element);
   return {
     dependent: element?.dependent || {},
     assetUri: element?.uri || "",
