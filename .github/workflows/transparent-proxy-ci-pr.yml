@@ -3,6 +3,8 @@ name: Transparent Proxy CI on PR
 on:
   workflow_call:
   pull_request:
+    branches-ignore:
+      - "main"
     paths:
       - "transparent-proxy/**"
       - ".github/workflows/transparent-proxy-ci-pr.yml"
