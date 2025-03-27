@@ -5,6 +5,7 @@ import typescriptParser from "@typescript-eslint/parser";
 import globals from "globals";
 import sonarjsPlugin from "eslint-plugin-sonarjs";
 import jsxA11yPlugin from "eslint-plugin-jsx-a11y";
+import pluginJest from "eslint-plugin-jest";
 
 import { fixupPluginRules } from "@eslint/compat";
 import { FlatCompat } from "@eslint/eslintrc";
@@ -23,14 +24,18 @@ function legacyPlugin(name, alias = name) {
   return fixupPluginRules(plugin);
 }
 
-const GLOBALS_FIXED = { ...globals.browser };
+const GLOBALS_FIXED = {
+  ...globals.browser,
+  ...globals.jest,
+  ...globals.node,
+};
 delete GLOBALS_FIXED["AudioWorkletGlobalScope "];
 GLOBALS_FIXED["JSX"] = false;
 
 /** @type {import("eslint").Linter.FlatConfig|import("eslint").Linter.FlatConfig[]} */
 export default [
   {
-    files: ["src/**/*.{js,jsx,ts,tsx}"],
+    files: ["src/**/*.{js,jsx,ts,tsx}", "**/*.spec.js', '**/*.test.js"],
     plugins: {
       react: reactPlugin,
       "react-hooks": hooksPlugin,
@@ -38,10 +43,11 @@ export default [
       import: legacyPlugin("eslint-plugin-import", "import"),
       sonarjs: sonarjsPlugin,
       "jsx-a11y": jsxA11yPlugin,
+      jest: pluginJest,
     },
     settings: {
       react: {
-        version: "18.3",
+        version: "19.0",
       },
     },
     languageOptions: {
@@ -190,6 +196,12 @@ export default [
       /* JSX Accessibility */
       "jsx-a11y/anchor-is-valid": "warn",
       "jsx-a11y/img-redundant-alt": "warn",
+      /* Jest */
+      "jest/no-disabled-tests": "warn",
+      "jest/no-focused-tests": "error",
+      "jest/no-identical-title": "error",
+      "jest/prefer-to-have-length": "warn",
+      "jest/valid-expect": "error",
     },
   },
   {
