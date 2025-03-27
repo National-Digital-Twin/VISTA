@@ -1,6 +1,8 @@
+import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import { useShallow } from "zustand/react/shallow";
-import { faTrashAlt, faDrawPolygon } from "@fortawesome/free-solid-svg-icons";
+
 import { useCallback, useEffect, useRef } from "react";
+
 import useStore from "./useStore";
 import featureFlags from "@/config/feature-flags";
 import useLayer from "@/hooks/useLayer";
@@ -53,10 +55,14 @@ export default function VulnerablePeopleControls({
       return;
     }
 
+    if (enabled) {
+      toggle();
+    }
+
     setSelected(null);
 
     drawingModeCallbacks.onDeleteFeatures([drawnFeature.id]);
-  }, [drawnFeature, setSelected, drawingModeCallbacks]);
+  }, [drawnFeature, enabled, toggle, setSelected, drawingModeCallbacks]);
 
   // Track whether the component has mounted to prevent double increment
   const hasMounted = useRef(false);
@@ -89,7 +95,7 @@ export default function VulnerablePeopleControls({
 
   if (drawnFeature) {
     buttons.push({
-      icon: faTrashAlt,
+      iconSvg: <DeleteOutlineOutlinedIcon />,
       name: "Delete Area",
       onClick: handleDeleteArea,
     });
@@ -97,7 +103,25 @@ export default function VulnerablePeopleControls({
 
   if (!drawnFeature && features.length === 0) {
     buttons.push({
-      icon: faDrawPolygon,
+      iconSvg: (
+        <svg
+          width="29"
+          height="28"
+          viewBox="0 0 29 28"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <circle cx="14" cy="4" r="3.25" stroke="#0E142B" strokeWidth="1.5" />
+          <circle cx="25" cy="7" r="3.25" stroke="#0E142B" strokeWidth="1.5" />
+          <circle cx="19" cy="24" r="3.25" stroke="#0E142B" strokeWidth="1.5" />
+          <circle cx="4" cy="13" r="3.25" stroke="#0E142B" strokeWidth="1.5" />
+          <path
+            d="M6.5 11L11.5 6M17 5.5H22M24 10L20 20.5M6.5 15L16.5 22"
+            stroke="#0E142B"
+            strokeWidth="1.5"
+          />
+        </svg>
+      ),
       name: "Draw Area",
       onClick: handleDrawRectangle,
     });

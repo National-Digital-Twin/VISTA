@@ -1,6 +1,6 @@
+import { faCompass } from "@fortawesome/free-solid-svg-icons";
 import { render, screen, fireEvent } from "@testing-library/react";
 import ToolbarButton from "./ToolbarButton";
-import { faCompass } from "@fortawesome/free-solid-svg-icons";
 
 // Mock FontAwesomeIcon to avoid rendering issues
 jest.mock("@fortawesome/react-fontawesome", () => ({
