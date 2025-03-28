@@ -40,17 +40,14 @@ const ConnectedAssetsPanel: React.FC<ConnectAssetPanelProps> = ({
   return (
     <Box
       sx={{
-        width: "100%",
-        height: "70vh",
-        maxHeight: "70vh",
         position: "relative",
         backgroundColor: "background.paper",
         display: "flex",
         flexDirection: "column",
         borderRadius: 2,
         boxShadow: 4,
-        marginLeft: 2,
         opacity: "0.95",
+        flex: "0 1 100%",
       }}
     >
       <Box

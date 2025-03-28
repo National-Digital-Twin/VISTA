@@ -29,13 +29,20 @@ export default function Filter() {
     <>
       {showFloodAreaControls && (
         <Box sx={{ paddingTop: 0, display: "flex", width: "100%" }}>
-          <Box sx={{ display: "flex", maxWidth: "45%", marginRight: "10px" }}>
+          <Box
+            sx={{
+              display: "flex",
+              maxWidth: "45%",
+              marginRight: "10px",
+              height: "100%",
+            }}
+          >
             <Card
               sx={{
                 boxShadow: 4,
                 marginLeft: 2,
                 height: "6vh",
-                maxHeight: 75,
+                maxHeight: 48,
                 marginBottom: 1,
               }}
             >
@@ -90,7 +97,7 @@ export default function Filter() {
               </CardContent>
             </Card>
           </Box>
-          <Box sx={{ display: "flex", width: "55%" }}>
+          <Box sx={{ display: "flex", width: "55%", height: "100%" }}>
             {(showPrimary || showSecondary) && (
               <Card
                 sx={{
@@ -98,7 +105,7 @@ export default function Filter() {
                   marginRight: 2,
                   overflow: "visible",
                   position: "relative",
-                  maxHeight: 75,
+                  maxHeight: 48,
                   height: "6vh",
                   marginBottom: 1,
                   width: "100%",

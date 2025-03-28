@@ -29,6 +29,9 @@ export default function HydrologyStations() {
     if (!data) {
       return [];
     }
+
+    console.log(data);
+
     return data.filter((item) =>
       item.types.some((typeId) => selectedStationTypes[typeId]),
     );
