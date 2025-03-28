@@ -68,7 +68,7 @@ export default function ComplexLayerControl({
         {icon && <FontAwesomeIcon icon={icon} style={{ marginRight: 8 }} />}
         <Typography variant="body1" sx={{ flexGrow: 1 }}>
           {title}
-          {!hideCount && ` (${selectedCount})`}
+          {!hideCount && selectedCount > 0 && ` (${selectedCount})`}
         </Typography>
         <IconButton size="small">
           <FontAwesomeIcon icon={expanded ? faChevronUp : faChevronDown} />

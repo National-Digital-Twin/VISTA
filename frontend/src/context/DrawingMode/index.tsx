@@ -25,6 +25,7 @@ import {
 } from "@/vendor/mapbox-gl-draw-circle";
 import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
 import "./maplibre-gl-draw.css";
+import "./maplibre-gl-map.css";
 import useSharedStore, { State } from "@/hooks/useSharedStore";
 
 /** Context for Drawing Mode */

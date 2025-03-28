@@ -2,6 +2,9 @@
 export default {
   content: ["./src/**/*.{jsx,js,tsx,ts}"],
   theme: {
+    fontFamily: {
+      sans: ["Roboto", '"Helvetica Neue"', "Arial", "sans-serif"],
+    },
     extend: {
       colors: {
         error: "#B80000",
