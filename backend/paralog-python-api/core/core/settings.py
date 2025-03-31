@@ -50,7 +50,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "ariadne_django",
-    "rest_framework"
+    "rest_framework",
 ]
 
 MIDDLEWARE = [

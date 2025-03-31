@@ -1,12 +1,13 @@
 """REST views for user details and sign-out functionality."""
 
-from django.views.decorators.http import require_GET
-from django.conf import settings
 import requests
+from django.conf import settings
 from django.http import HttpResponse, JsonResponse
+from django.views.decorators.http import require_GET
 from rest_framework.decorators import api_view
 
-@api_view(['GET'])
+
+@api_view(["GET"])
 @require_GET
 def user_details_view(request):
     """
@@ -14,7 +15,6 @@ def user_details_view(request):
 
     Returns a mock response if not in production.
     """
-
     if not settings.IS_PROD:
         return JsonResponse({"displayName": "Local User", "email": "local.user@local.com"})
 
@@ -27,11 +27,7 @@ def user_details_view(request):
 
     try:
         response = requests.get(
-            url=forward_url,
-            headers={
-            "X-Auth-Request-Access-Token": token
-            },
-            params=request.GET
+            url=forward_url, headers={"X-Auth-Request-Access-Token": token}, params=request.GET
         )
         return HttpResponse(
             response.content,
@@ -43,14 +39,13 @@ def user_details_view(request):
 
 
 @require_GET
-@api_view(['GET'])
+@api_view(["GET"])
 def signout_view():
     """
     Retrieve sign-out URLs for OAuth flow and redirection.
 
     Returns mock links if not in production.
     """
-
     if not settings.IS_PROD:
         return JsonResponse({"oAuthLogoutUrl": "/", "redirect": "/"})
 
@@ -59,18 +54,22 @@ def signout_view():
         response = requests.get(f"{settings.IDENTITY_API_URL}/api/v1/links/sign-out")
 
         if not response.ok:
-            return JsonResponse({
-                "error": (
-                    f"Error: {response.status_code} ({response.reason}) "
-                    "received when fetching sign-out links."
-                )
-            }, status=response.status_code)
+            return JsonResponse(
+                {
+                    "error": (
+                        f"Error: {response.status_code} ({response.reason}) "
+                        "received when fetching sign-out links."
+                    )
+                },
+                status=response.status_code,
+            )
 
         logout_redirect = response.json()
-        return JsonResponse({
-            "oAuthLogoutUrl": oauth_logout_url,
-            "redirect": logout_redirect.get("href", "/")
-        })
+        return JsonResponse(
+            {"oAuthLogoutUrl": oauth_logout_url, "redirect": logout_redirect.get("href", "/")}
+        )
 
     except requests.RequestException as e:
-        return JsonResponse({"error": "Failed to fetch sign-out link", "details": str(e)}, status=500)
+        return JsonResponse(
+            {"error": "Failed to fetch sign-out link", "details": str(e)}, status=500
+        )
