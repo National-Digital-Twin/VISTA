@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { useCallback, useState, type ReactNode } from "react";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
@@ -12,9 +12,13 @@ export interface ComplexLayerControlProps {
   /** Title of the layer */
   readonly title: string;
   /** Children */
-  readonly children: ReactNode;
+  readonly children:
+    | ReactNode
+    | ((updateSelectedCount: (isSelected: boolean) => void) => ReactNode);
+
   /** Automatic show and hide for search */
   readonly autoShowHide?: boolean;
+  readonly hideCount?: boolean;
 }
 
 export default function ComplexLayerControl({
@@ -22,8 +26,19 @@ export default function ComplexLayerControl({
   title,
   children,
   autoShowHide = false,
+  hideCount,
 }: ComplexLayerControlProps) {
   const { value: expanded, toggle } = useBoolean(false);
+  const [selectedCount, setSelectedCount] = useState(0);
+
+  const updateSelectedCount = useCallback((isSelected: boolean) => {
+    setSelectedCount((prevCount) => {
+      if (!isSelected && prevCount === 0) {
+        return prevCount; // Prevent decrementing below zero
+      }
+      return prevCount + (isSelected ? 1 : -1);
+    });
+  }, []);
 
   return (
     <Box
@@ -53,6 +68,7 @@ export default function ComplexLayerControl({
         {icon && <FontAwesomeIcon icon={icon} style={{ marginRight: 8 }} />}
         <Typography variant="body1" sx={{ flexGrow: 1 }}>
           {title}
+          {!hideCount && selectedCount > 0 && ` (${selectedCount})`}
         </Typography>
         <IconButton size="small">
           <FontAwesomeIcon icon={expanded ? faChevronUp : faChevronDown} />
@@ -65,9 +81,17 @@ export default function ComplexLayerControl({
         }}
         aria-expanded={expanded}
       >
-        <div style={{ borderLeft: "5px solid #e0e0e0", padding: "8px" }}>
-          {children}
-        </div>
+        <Box
+          sx={{
+            borderLeft: "5px solid #e0e0e0",
+            padding: "8px",
+            paddingTop: "0",
+          }}
+        >
+          {typeof children === "function"
+            ? children(updateSelectedCount)
+            : children}
+        </Box>
       </Box>
     </Box>
   );

@@ -15,7 +15,7 @@ describe("DevTools", () => {
     render(
       <DevTools enabled={false}>
         <div data-testid="app-content">App Content</div>
-      </DevTools>
+      </DevTools>,
     );
 
     expect(screen.getByTestId("app-content")).toBeInTheDocument();
@@ -26,7 +26,7 @@ describe("DevTools", () => {
     render(
       <DevTools enabled={true}>
         <div data-testid="app-content">App Content</div>
-      </DevTools>
+      </DevTools>,
     );
 
     // Fallback should be visible while lazy loading

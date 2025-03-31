@@ -375,8 +375,8 @@ html {
 body {
   display: block grid;
 
-  grid:
-    "header" auto "body" 1fr / 1fr;
+  grid: "header" auto "body" 1fr / 1fr;
+  height: 100vh;
 
   /* Typographic tweak for design */
   letter-spacing: 0.05em;

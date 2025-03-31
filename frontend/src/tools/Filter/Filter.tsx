@@ -1,13 +1,6 @@
 import { useContext, useCallback, useState, useEffect } from "react";
-import {
-  Box,
-  Card,
-  CardContent,
-  Grid2,
-  Slider,
-  Switch,
-  Typography,
-} from "@mui/material";
+import { Box, Card, CardContent, Slider, Typography } from "@mui/material";
+import MaterialUISwitch from "../../components/Switch";
 import useSharedStore from "@/hooks/useSharedStore";
 import useFloodWatchAreas from "@/hooks/queries/flood-areas/useFloodWatchAreas";
 import { ElementsContext } from "@/context/ElementContext";
@@ -35,20 +28,21 @@ export default function Filter() {
   return (
     <>
       {showFloodAreaControls && (
-        <Grid2
-          direction={"row"}
-          container
-          gap={1}
-          sx={{ paddingTop: 0 }}
-          size={12}
-        >
-          <Grid2 size={7}>
+        <Box sx={{ paddingTop: 0, display: "flex", width: "100%" }}>
+          <Box
+            sx={{
+              display: "flex",
+              maxWidth: "45%",
+              marginRight: "10px",
+              height: "100%",
+            }}
+          >
             <Card
               sx={{
-                boxShadow: 3,
+                boxShadow: 4,
                 marginLeft: 2,
                 height: "6vh",
-                maxHeight: 75,
+                maxHeight: 48,
                 marginBottom: 1,
               }}
             >
@@ -59,49 +53,62 @@ export default function Filter() {
                   alignItems: "center",
                   justifyContent: "space-between",
                   height: "100%",
+                  padding: 0,
+
+                  "&.MuiCardContent-root:last-child": {
+                    paddingBottom: 0,
+                  },
                 }}
               >
-                <Grid2 container size={12}>
-                  <Grid2
-                    size={6}
+                <Box sx={{ display: "flex" }}>
+                  <Box
                     sx={{
                       display: "flex",
                       borderRight: 1,
                       borderColor: "divider",
                     }}
                   >
-                    <Box display="flex" alignItems="center">
-                      <Switch
+                    <Box
+                      display="flex"
+                      alignItems="center"
+                      sx={{ marginLeft: "10px" }}
+                    >
+                      <Typography>Primary Assets</Typography>
+                      <MaterialUISwitch
                         checked={showPrimary}
                         onChange={toggleShowPrimary}
                       />
-                      <Typography>Primary Assets</Typography>
                     </Box>
-                  </Grid2>
-                  <Grid2 size={6} sx={{ display: "flex" }}>
-                    <Box display="flex" alignItems="center">
-                      <Switch
+                  </Box>
+                  <Box sx={{ display: "flex" }}>
+                    <Box
+                      display="flex"
+                      alignItems="center"
+                      sx={{ marginLeft: "10px" }}
+                    >
+                      <Typography>Dependent Assets</Typography>
+                      <MaterialUISwitch
                         checked={showSecondary}
                         onChange={toggleShowSecondary}
                       />
-                      <Typography>Dependent Assets</Typography>
                     </Box>
-                  </Grid2>
-                </Grid2>
+                  </Box>
+                </Box>
               </CardContent>
             </Card>
-          </Grid2>
-          <Grid2 size={4}>
+          </Box>
+          <Box sx={{ display: "flex", width: "55%", height: "100%" }}>
             {(showPrimary || showSecondary) && (
               <Card
                 sx={{
-                  boxShadow: 3,
+                  boxShadow: 4,
                   marginRight: 2,
                   overflow: "visible",
                   position: "relative",
-                  maxHeight: 75,
+                  maxHeight: 48,
                   height: "6vh",
                   marginBottom: 1,
+                  width: "100%",
                 }}
               >
                 <CardContent
@@ -118,8 +125,8 @@ export default function Filter() {
                 </CardContent>
               </Card>
             )}
-          </Grid2>
-        </Grid2>
+          </Box>
+        </Box>
       )}
     </>
   );

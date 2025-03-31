@@ -41,7 +41,7 @@ export default function SideButtons() {
       ref={widgetRef}
     >
       {isOpen && (
-        <Box className={styles.floodPanel}>
+        <Box boxShadow={4} className={styles.floodPanel}>
           <FloodRiskAreas atRiskAreas={atRiskAreas} />
           <Link
             component="button"

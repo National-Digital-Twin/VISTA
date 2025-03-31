@@ -1,10 +1,10 @@
 .floodRiskArea {
-  margin-top: 1.0em;
+  margin-top: 1em;
 }
 
 .closeButton {
   align-self: self-end;
-  padding: 2.0em;
+  padding: 2em;
   padding-bottom: 0.5em;
   padding-right: 0;
   text-decoration-style: -moz-none;
@@ -15,7 +15,7 @@
   flex-direction: column;
   position: absolute;
   right: 0;
-  margin-right: 9vh;
+  margin-right: 8vh;
   background-color: white;
   border-radius: 0.375em;
   padding: 2em;

@@ -13,11 +13,11 @@ export type ToolOrder =
 
 const ORDER_INDICES: Record<ToolOrder, (tool: Tool) => number> = {
   "definition-order": () => 0,
-  "side-button-order": (tool) => tool.SIDE_BUTTON_ORDER,
-  "toolbar-order": (tool) => tool.TOOLBAR_BUTTON_ORDER,
-  "map-element-order": (tool) => tool.MAP_ELEMENT_ORDER,
-  "control-panel-order": (tool) => tool.CONTROL_PANEL_TAB_ORDER,
-  "layer-control-order": (tool) => tool.LAYER_CONTROL_ORDER,
+  "side-button-order": (tool) => tool.SIDE_BUTTON_ORDER ?? 0,
+  "toolbar-order": (tool) => tool.TOOLBAR_BUTTON_ORDER ?? 0,
+  "map-element-order": (tool) => tool.MAP_ELEMENT_ORDER ?? 0,
+  "control-panel-order": (tool) => tool.CONTROL_PANEL_TAB_ORDER ?? 0,
+  "layer-control-order": (tool) => tool.LAYER_CONTROL_ORDER ?? 0,
 };
 
 function sortToolsByOrderIndex(
@@ -65,6 +65,6 @@ export function useTools(): (order: ToolOrder) => Tool[] {
 
   // Return a function that orders the tools (implementation not shown)
   return (order: ToolOrder) => {
-    return sortToolsInOrder(tools, order);
+    return sortToolsInOrder(tools ?? [], order);
   };
 }

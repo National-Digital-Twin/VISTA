@@ -29,7 +29,7 @@ export default function ControlPanel({
 
   const [connectedAssetData, setConnectedAssetData] = React.useState<any>(null);
 
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
 
@@ -56,20 +56,21 @@ export default function ControlPanel({
       sx={{
         display: "flex",
         flexDirection: "row",
-        height: "100%",
-        gap: 0,
+        gap: "10px",
+        flex: `1 1 ${connectedAssetsPanelOpen ? "100%" : "35%"}`,
       }}
     >
       <Box
         sx={{
-          width: "100%",
-          height: "100%",
           position: "relative",
           backgroundColor: "background.paper",
           display: "flex",
           flexDirection: "column",
           borderRadius: 2,
           boxShadow: 4,
+          flex: "0 1 100%",
+          overflowY: "hidden",
+          gap: "5px",
         }}
       >
         <Box
@@ -86,6 +87,18 @@ export default function ControlPanel({
             aria-label="basic tabs example"
             variant="scrollable"
             scrollButtons="auto"
+            slotProps={{
+              indicator: {
+                component: "div",
+                className: "MuiTabs-indicator",
+                children: (
+                  <Typography
+                    component="span"
+                    className="MuiTabs-indicatorSpan"
+                  ></Typography>
+                ),
+              },
+            }}
             sx={{
               display: "flex",
               justifyContent: "center",
@@ -95,11 +108,16 @@ export default function ControlPanel({
               },
 
               "& .MuiTabs-indicator": {
-                width: "50px !important",
-                borderRadius: "5px 5px 0 0",
-                marginLeft: "90px",
+                display: "flex",
+                justifyContent: "center",
+                backgroundColor: "transparent",
                 height: "3px",
+              },
+              "& .MuiTabs-indicatorSpan": {
+                maxWidth: "25%",
+                width: "100% !important",
                 backgroundColor: "#3670b3",
+                borderRadius: "5px 5px 0 0",
               },
             }}
           >
@@ -129,10 +147,12 @@ export default function ControlPanel({
             ))}
           </Tabs>
         </Box>
-        <Box sx={{ flexGrow: 1, maxHeight: "100%", overflowY: "auto" }}>
+        <Box sx={{ display: "flex", flex: "0 0 90%", overflowY: "auto" }}>
           {tabs.map((entry, i) => (
             <TabPanel key={entry.name} index={i} value={value}>
-              <Suspense fallback="Loading...">{entry.content}</Suspense>
+              <Box>
+                <Suspense fallback="Loading...">{entry.content}</Suspense>
+              </Box>
             </TabPanel>
           ))}
         </Box>

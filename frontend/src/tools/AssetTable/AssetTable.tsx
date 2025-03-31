@@ -48,6 +48,7 @@ export default function AssetTable() {
     <Box
       display="flex"
       flexDirection="column"
+      boxShadow={4}
       sx={{
         padding: "1em",
         zIndex: "1000",
@@ -59,7 +60,7 @@ export default function AssetTable() {
       width={assets.length > 0 ? "initial" : "21em"}
       top={assets.length > 0 ? "0" : "initial"}
       marginTop={assets.length > 0 ? "2vh" : "initial"}
-      marginRight={smallScreen ? "10vh" : "9vh"}
+      marginRight={smallScreen ? "10vh" : "8vh"}
       component={Paper}
     >
       <Box
@@ -75,6 +76,7 @@ export default function AssetTable() {
             <Button
               variant="contained"
               color="primary"
+              disableElevation
               sx={{ paddingLeft: "2.5em", paddingRight: "2.5em" }}
               onClick={downloadCSV}
             >
@@ -98,6 +100,7 @@ export default function AssetTable() {
               variant="contained"
               color="success"
               onClick={downloadXLSX}
+              disableElevation
               sx={{ paddingLeft: "2.5em", paddingRight: "2.5em" }}
             >
               <SvgIcon>
@@ -149,7 +152,7 @@ export default function AssetTable() {
               page={page}
               onPageChange={handleChangePage}
               rowsPerPage={rowsPerPage}
-              rowsPerPageOptions={[10, 25, 50]}
+              rowsPerPageOptions={[]}
             />
           </div>
         </TableContainer>

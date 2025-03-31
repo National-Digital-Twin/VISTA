@@ -1,7 +1,7 @@
 apiVersion: secrets.hashicorp.com/v1beta1
 kind: VaultAuth
 metadata:
-  name: paralog-transparent-proxy-static-auth
+  name: paralog-transparent-proxy-vault-auth
 spec:
   method: kubernetes
   mount: kubernetes

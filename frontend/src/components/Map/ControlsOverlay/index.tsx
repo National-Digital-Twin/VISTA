@@ -1,5 +1,5 @@
 import { memo, useMemo } from "react";
-import { Box, Grid2, Button, Tooltip } from "@mui/material";
+import { Box, Button, Tooltip } from "@mui/material";
 import { ChevronLeft, ChevronRight } from "@mui/icons-material";
 import { useBoolean } from "usehooks-ts";
 import { useTools } from "@/tools/useTools";
@@ -17,7 +17,6 @@ function Toolbar({ onOpenControlPanel }: ToolbarProps) {
       sx={{
         display: "flex",
         width: "100%",
-        marginTop: 1,
         position: "relative",
       }}
     >
@@ -32,7 +31,7 @@ function Toolbar({ onOpenControlPanel }: ToolbarProps) {
               minWidth: "initial",
               maxWidth: "48px",
               maxHeight: "48px",
-              backgroundColor: "#ffffff",
+              backgroundColor: "background.paper",
               color: "initial",
               margin: "0",
             }}
@@ -71,68 +70,55 @@ export default function ControlsOverlay() {
   const shouldShowControlPanel = featureFlags.uiNext && controlPanelOpen;
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        height: "100%",
-        margin: 1,
-      }}
-    >
-      <Grid2
-        container
-        size={12}
+    <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
+      <Box
         sx={{
-          flexGrow: 1,
+          display: "flex",
+          flexDirection: "row",
+          margin: 1,
           minHeight: 0,
-          overflow: "hidden",
+          flex: "1 0",
         }}
       >
-        <Grid2
-          size={dependantPanelOpen ? 6 : 3}
+        <Box
           sx={{
             padding: 1,
-            height: "100%",
             minHeight: 0,
             overflow: "hidden",
             display: "flex",
-            flexDirection: "column",
+            flexDirection: "row",
+            paddingTop: 0,
+            flex: "1 0 80%",
+            gap: "10px",
           }}
         >
-          <Box
-            className="pointer-events-auto"
-            style={{ height: "100%", padding: "5px", maxHeight: "100%" }}
-          >
-            {shouldShowControlPanel && (
-              <ControlPanel
-                connectedAssetsPanelOpen={dependantPanelOpen}
-                hideConnectedAssets={hideConnectedAssetsPanel}
-                showConnectedAssets={showConnectedAssetsPanel}
-              />
-            )}
-            {!shouldShowControlPanel && (
-              <Tooltip title="Open layer panel">
-                <Button
-                  onClick={showControlPanel}
-                  aria-label="open layer panel"
-                  sx={{
-                    width: "6vh",
-                    height: "6vh",
-                    minWidth: "initial",
-                    maxWidth: "48px",
-                    maxHeight: "48px",
-                    backgroundColor: "#ffffff",
-                    color: "initial",
-                  }}
-                >
-                  <ChevronRight />
-                </Button>
-              </Tooltip>
-            )}
-          </Box>
-        </Grid2>
-        <Grid2 size={dependantPanelOpen ? 5 : 8}>
-          <Box sx={{ pointerEvents: "auto" }}>
+          {shouldShowControlPanel && (
+            <ControlPanel
+              connectedAssetsPanelOpen={dependantPanelOpen}
+              hideConnectedAssets={hideConnectedAssetsPanel}
+              showConnectedAssets={showConnectedAssetsPanel}
+            />
+          )}
+          {!shouldShowControlPanel && (
+            <Tooltip title="Open layer panel">
+              <Button
+                onClick={showControlPanel}
+                aria-label="open layer panel"
+                sx={{
+                  width: "6vh",
+                  height: "6vh",
+                  minWidth: "initial",
+                  maxWidth: "48px",
+                  maxHeight: "48px",
+                  backgroundColor: "#ffffff",
+                  color: "initial",
+                }}
+              >
+                <ChevronRight />
+              </Button>
+            </Tooltip>
+          )}
+          <Box sx={{ flex: "1 1 100%", pointerEvents: "auto" }}>
             {controlPanelOpen && ( // Only show close button when the panel is open
               <MToolbar
                 onOpenControlPanel={() => {
@@ -142,42 +128,36 @@ export default function ControlsOverlay() {
               />
             )}
           </Box>
-        </Grid2>
-        <Grid2
-          size={1}
+        </Box>
+        <Box
           sx={{
             display: "flex",
             flexDirection: "column",
-            justifyContent: "flex-start",
             alignItems: "flex-end",
             padding: "10px",
+            paddingTop: "6px",
           }}
         >
           <Box
             sx={{
-              marginTop: "10px",
               maxHeight: "65vh",
               pointerEvents: "auto",
             }}
           >
             <MapToolbar />
           </Box>
-        </Grid2>
-      </Grid2>
-      <Grid2
-        container
-        size={12}
+        </Box>
+      </Box>
+      <Box
         sx={{
+          display: "flex",
           transition: "flex-grow 0.3s ease",
           padding: 1,
+          minHeight: 0,
         }}
       >
-        <Grid2 size={12}>
-          <Box sx={{ zIndex: 10000, backgroundColor: "pink" }}>
-            <DetailPanels />
-          </Box>
-        </Grid2>
-      </Grid2>
+        <DetailPanels />
+      </Box>
     </Box>
   );
 }
@@ -204,11 +184,11 @@ function DetailPanels() {
   }, [tools]);
 
   return (
-    <Box sx={{ height: "100%" }}>
+    <>
       {detailPanels.map((detailPanel) => {
         const Component = detailPanel.component;
         return <Component key={detailPanel.key} />;
       })}
-    </Box>
+    </>
   );
 }

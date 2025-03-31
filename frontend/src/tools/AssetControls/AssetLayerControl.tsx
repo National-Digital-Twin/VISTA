@@ -1,6 +1,5 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useMemo, useCallback } from "react";
-import { icon } from "@fortawesome/fontawesome-svg-core";
 import ListItem from "@mui/material/ListItem";
 import Box from "@mui/material/Box";
 import ListItemText from "@mui/material/ListItemText";
@@ -15,7 +14,6 @@ import { useGroupedAssets } from "@/hooks";
 import useSharedStore from "@/hooks/useSharedStore";
 
 import ComplexLayerControl from "@/components/ComplexLayerControl";
-import useFindIcon from "@/hooks/useFindIcon";
 import type { LayerControlProps } from "@/tools/Tool";
 import MaterialUISwitch from "@/components/Switch";
 
@@ -175,43 +173,18 @@ function AssessmentCategoryLayerControls({
     [selectedAssetTypes, deselectAssetType, selectAssetType],
   );
 
-  const representativeTypeURI = useMemo(() => {
-    const allTypes = Object.values(assetsBySecondaryCategory).flatMap((types) =>
-      Object.values(types),
-    );
-    allTypes.sort((a, b) => a.count - b.count);
-    if (allTypes.length > 0) {
-      return allTypes[0].type;
-    } else {
-      return "";
-    }
-  }, [assetsBySecondaryCategory]);
-
-  const iconStyles = useFindIcon(representativeTypeURI);
-  const fontAwesomeIconName = iconStyles.faIcon
-    ?.split(" ")
-    .pop()
-    ?.replace("fa-", "");
-
-  const hasAvailableFontAwesomeIcon = !!icon({
-    prefix: "fas",
-    iconName: fontAwesomeIconName,
-  });
-
   return (
-    <ComplexLayerControl
-      icon={
-        hasAvailableFontAwesomeIcon ? ["fas", fontAwesomeIconName] : undefined
+    <ComplexLayerControl title={category}>
+      {(updateSelectedCount) =>
+        Object.entries(assetsBySecondaryCategory).map(([category, types]) => (
+          <SecondaryCategoryControls
+            key={category}
+            types={types}
+            onClickType={handleTypeClick}
+            updateSelectedCount={updateSelectedCount}
+          />
+        ))
       }
-      title={category}
-    >
-      {Object.entries(assetsBySecondaryCategory).map(([category, types]) => (
-        <SecondaryCategoryControls
-          key={category}
-          types={types}
-          onClickType={handleTypeClick}
-        />
-      ))}
     </ComplexLayerControl>
   );
 }
@@ -227,11 +200,13 @@ interface SecondaryCategoryControlsProps {
   };
 
   readonly onClickType: (typeURI: string) => void;
+  readonly updateSelectedCount: (isSelected: boolean) => void;
 }
 
 function SecondaryCategoryControls({
   types,
   onClickType,
+  updateSelectedCount,
 }: SecondaryCategoryControlsProps) {
   const selectedAssetTypes = useSharedStore(
     (state) => state.selectedAssetTypes,
@@ -255,7 +230,10 @@ function SecondaryCategoryControls({
               key={asset.type}
               asset={asset}
               isSelected={selectedAssetTypes[asset.type]}
-              onClickType={onClickType}
+              onClickType={(typeURI) => {
+                onClickType(typeURI);
+                updateSelectedCount(!selectedAssetTypes[typeURI]);
+              }}
             />
           ))}
       </ul>
@@ -278,16 +256,15 @@ interface AssetTypeControlsProps {
 function AssetTypeControls({
   asset,
   onClickType,
-  isSelected,
+  isSelected = false,
 }: AssetTypeControlsProps) {
-  const onClick = useCallback(() => {
-    onClickType(asset.type);
+  const handleToggle = useCallback(() => {
+    onClickType(asset.type); // Notify parent about the toggle
   }, [onClickType, asset]);
 
   return (
     <ListItem
       key={asset.type}
-      onClick={onClick}
       sx={{
         display: "flex",
         justifyContent: "space-between",
@@ -299,12 +276,13 @@ function AssetTypeControls({
       <Box>
         <ListItemText
           primary={capitalize(formatAltText(asset.styles.alt))}
-          secondary={`(${asset.count})`}
+          secondary={`Count: ${asset.count}`}
+          sx={{ marginTop: "3px", marginBottom: "3px" }}
         />
       </Box>
       <MaterialUISwitch
-        checked={isSelected}
-        onChange={onClick}
+        checked={isSelected} // Ensure the switch is always controlled
+        onChange={handleToggle} // Handle toggle only in onChange
         inputProps={{ "aria-label": "controlled" }}
       />
     </ListItem>

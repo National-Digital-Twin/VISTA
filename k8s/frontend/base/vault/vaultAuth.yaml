@@ -1,0 +1,12 @@
+apiVersion: secrets.hashicorp.com/v1beta1
+kind: VaultAuth
+metadata:
+  name: paralog-frontend-static-auth
+spec:
+  method: kubernetes
+  mount: kubernetes
+  kubernetes:
+    role: paralog-frontend-role
+    serviceAccount: paralog-frontend-sa
+    audiences:
+      - vault

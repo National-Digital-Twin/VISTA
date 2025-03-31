@@ -24,13 +24,18 @@ const STATION_MENU_ITEMS = [
 export default function HydrologyLayerControl({
   searchQuery,
 }: Readonly<LayerControlProps>) {
-  const complexLayerMatches = !searchQuery ||
-  "Hydrology monitoring".toLowerCase().includes(searchQuery.toLowerCase()) ||
-  ["hydrology", "monitoring", "water"].some(term =>
-    term.toLowerCase().includes(searchQuery.toLowerCase()));
+  const complexLayerMatches =
+    !searchQuery ||
+    "Hydrology monitoring".toLowerCase().includes(searchQuery.toLowerCase()) ||
+    ["hydrology", "monitoring", "water"].some((term) =>
+      term.toLowerCase().includes(searchQuery.toLowerCase()),
+    );
 
-  const anyStationMatches = !searchQuery || STATION_MENU_ITEMS.some(item =>
-    item.label.toLowerCase().includes(searchQuery.toLowerCase()));
+  const anyStationMatches =
+    !searchQuery ||
+    STATION_MENU_ITEMS.some((item) =>
+      item.label.toLowerCase().includes(searchQuery.toLowerCase()),
+    );
 
   if (!complexLayerMatches && !anyStationMatches) {
     return null;
@@ -38,17 +43,24 @@ export default function HydrologyLayerControl({
 
   return (
     <ComplexLayerControl title="Hydrology monitoring" autoShowHide>
-      <MonitoringStationControlPanelBody searchQuery={searchQuery} />
+      {(updateSelectedCount) => (
+        <MonitoringStationControlPanelBody
+          searchQuery={searchQuery}
+          updateSelectedCount={updateSelectedCount}
+        />
+      )}
     </ComplexLayerControl>
   );
 }
 
 interface MonitoringStationControlPanelBodyProps {
   readonly searchQuery: string;
+  readonly updateSelectedCount: (isSelected: boolean) => void;
 }
 
 function MonitoringStationControlPanelBody({
   searchQuery,
+  updateSelectedCount,
 }: MonitoringStationControlPanelBodyProps) {
   return (
     <div>
@@ -58,6 +70,7 @@ function MonitoringStationControlPanelBody({
           label={menuItem.label}
           key={menuItem.type}
           searchQuery={searchQuery}
+          updateSelectedCount={updateSelectedCount}
         />
       ))}
     </div>
@@ -68,12 +81,14 @@ interface MonitoringStationTypeButtonProps {
   readonly type: StationType;
   readonly label: string;
   readonly searchQuery: string;
+  readonly updateSelectedCount: (isSelected: boolean) => void;
 }
 
 function MonitoringStationTypeButton({
   type,
   label,
   searchQuery,
+  updateSelectedCount,
 }: MonitoringStationTypeButtonProps) {
   const selectedStationTypes = useStore((state) => state.selectedStationTypes);
   const toggleSelectedStationType = useStore(
@@ -84,7 +99,13 @@ function MonitoringStationTypeButton({
 
   const onToggle = useCallback(() => {
     toggleSelectedStationType(type);
-  }, [type, toggleSelectedStationType]);
+    updateSelectedCount(!isStationTypeSelected); // Notify parent about the new state
+  }, [
+    type,
+    toggleSelectedStationType,
+    isStationTypeSelected,
+    updateSelectedCount,
+  ]);
 
   return (
     <MenuItemRow
