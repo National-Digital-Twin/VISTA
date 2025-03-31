@@ -77,7 +77,7 @@ export default function ControlsOverlay() {
           flexDirection: "row",
           margin: 1,
           minHeight: 0,
-          flex: "1 0"
+          flex: "1 0",
         }}
       >
         <Box
