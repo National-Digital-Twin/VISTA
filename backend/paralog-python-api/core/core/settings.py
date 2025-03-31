@@ -27,6 +27,9 @@ IS_PROD = ENVIRONMENT == "production"
 
 SECRET_KEY = env("DJANGO_SECRET_KEY", default=env.NOTSET if IS_PROD else get_secret_key(BASE_DIR))
 
+LANDING_PAGE_URL = env("LANDING_PAGE_URL", default="http://localhost:3000")
+IDENTITY_API_URL = env("IDENTITY_API_URL", default="http://localhost:3001")
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
@@ -47,6 +50,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "ariadne_django",
+    "rest_framework"
 ]
 
 MIDDLEWARE = [

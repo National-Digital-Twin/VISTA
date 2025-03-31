@@ -11,13 +11,39 @@ import {
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import config from "@/config/app-config";
+import { signout } from "@/utils/signout";
 
 /** Overall header of the application */
 
-const PageHeader = ({ appName }) => {
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+const PageHeader = ({ appName }: { appName: string }) => {
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+
+  const [user, setUser] = useState<any>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch(config.services.user);
+
+        if (!res.ok) {throw new Error(`Error: ${res.statusText}`);}
+        const json = await res.json();
+        setUser(json);
+      } catch (err: any) {
+        setError(err.message);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const handleSignOut = () => {
+    signout();
+    handleClose();
+  }
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -57,9 +83,11 @@ const PageHeader = ({ appName }) => {
               "aria-labelledby": "basic-button",
             }}
           >
-            <MenuItem disabled>test@ndtp.co.uk</MenuItem>
+            <MenuItem disabled>
+              {user?.email ?? (error ? "Error loading user" : "Loading...")}
+            </MenuItem>
             <Divider component="li" />
-            <MenuItem onClick={handleClose} sx={{ paddingLeft: "10px" }}>
+            <MenuItem onClick={handleSignOut} sx={{ paddingLeft: "10px" }}>
               <Box
                 sx={{
                   display: "flex",
