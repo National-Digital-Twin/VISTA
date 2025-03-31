@@ -76,7 +76,8 @@ export default function ControlsOverlay() {
           display: "flex",
           flexDirection: "row",
           margin: 1,
-          height: "70%",
+          minHeight: 0,
+          flex: "1 0",
         }}
       >
         <Box
@@ -152,7 +153,7 @@ export default function ControlsOverlay() {
           display: "flex",
           transition: "flex-grow 0.3s ease",
           padding: 1,
-          height: "30%",
+          minHeight: 0,
         }}
       >
         <DetailPanels />

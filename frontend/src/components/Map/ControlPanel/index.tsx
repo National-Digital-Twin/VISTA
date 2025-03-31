@@ -147,7 +147,7 @@ export default function ControlPanel({
             ))}
           </Tabs>
         </Box>
-        <Box sx={{ display: "flex", flex: "0 0 100%", overflowY: "auto" }}>
+        <Box sx={{ display: "flex", flex: "0 0 90%", overflowY: "auto" }}>
           {tabs.map((entry, i) => (
             <TabPanel key={entry.name} index={i} value={value}>
               <Box>
