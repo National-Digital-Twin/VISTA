@@ -16,13 +16,12 @@ def user_details_view(request):
     forward_url = f"{settings.IDENTITY_API_URL}/api/v1/user-details"
 
     try:
-        response = requests.request(
+        response = requests.get(
             method=request.method,
             url=forward_url,
             headers={
             "X-Auth-Request-Access-Token": token
             },
-            data=request.body,
             params=request.GET
         )
         return HttpResponse(
