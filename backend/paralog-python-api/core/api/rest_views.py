@@ -19,7 +19,6 @@ def user_details_view(request):
 
     try:
         response = requests.get(
-            method=request.method,
             url=forward_url,
             headers={
             "X-Auth-Request-Access-Token": token
