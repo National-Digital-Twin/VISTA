@@ -85,8 +85,11 @@ export default class LayersPage {
   }
   async drawAndClickVulnerableArea() {
     await this.page.waitForTimeout(3000);
-    await this.page.getByRole("heading", { name: "Vulnerable People" }).click();
-    const drawPolygonButton = this.page.locator('button:has-text("Draw Area")');
+    const vulnerablePeopleText= this.page.getByText('Vulnerable People', { exact: true });
+    await vulnerablePeopleText.waitFor({ state: "attached" });
+    await vulnerablePeopleText.scrollIntoViewIfNeeded();
+    vulnerablePeopleText.click();
+    const drawPolygonButton = this.page.getByRole('button', { name: 'Draw Area' });
     await drawPolygonButton.click();
     await this.page.waitForTimeout(2000);
     await this.page.mouse.click(850, 300);
@@ -103,14 +106,14 @@ export default class LayersPage {
       .locator("div._idCardItem_1nzqt_20")
       .allTextContents();
     expect(detailsElements).toEqual([
-      "Name: Philip Romeo",
-      "Year of Birth: 1954",
-      "UPRN: 10090466223.0",
-      "Primary Support Reason: nan",
-      "Disability: No conditions",
-      "Coordinates: 50.71163324269709, -1.251859667094288",
-      "Alert Category: nan",
-      "Alert Detail: nan",
+      "Name: Kevin Tango",
+      "Year of Birth: 1967",
+      "UPRN: 10023714076.0",
+      "Primary Support Reason: Sensory Support: Vi",
+      "Disability: Activities limited a lot",
+      "Coordinates: 50.72441687384, -1.2554246699389502",
+      "Alert Category: Comorbidities",
+      "Alert Detail: Open-Angle Glaucoma",
     ]);
   }
 
