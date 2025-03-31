@@ -1,12 +1,22 @@
+"""
+REST views for user details and sign-out functionality.
+"""
+
 from django.views.decorators.http import require_GET
 from django.conf import settings
 import requests
 from django.http import HttpResponse, JsonResponse
 from rest_framework.decorators import api_view
 
-@require_GET
 @api_view(['GET'])
+@require_GET
 def user_details_view(request):
+    """
+    Retrieve authenticated user details by forwarding the request to the identity API.
+
+    Returns a mock response if not in production.
+    """
+
     if not settings.IS_PROD:
         return JsonResponse({"displayName": "Local User", "email": "local.user@local.com"})
 
@@ -36,7 +46,13 @@ def user_details_view(request):
 
 @require_GET
 @api_view(['GET'])
-def signout_view(request):
+def signout_view():
+    """
+    Retrieve sign-out URLs for OAuth flow and redirection.
+
+    Returns mock links if not in production.
+    """
+
     if not settings.IS_PROD:
         return JsonResponse({"oAuthLogoutUrl": "/", "redirect": "/"})
 
@@ -46,7 +62,10 @@ def signout_view(request):
 
         if not response.ok:
             return JsonResponse({
-                "error": f"Error: {response.status_code} ({response.reason}) received when fetching sign-out links."
+                "error": (
+                    f"Error: {response.status_code} ({response.reason}) "
+                    "received when fetching sign-out links."
+                )
             }, status=response.status_code)
 
         logout_redirect = response.json()
