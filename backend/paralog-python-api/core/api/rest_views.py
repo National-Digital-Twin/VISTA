@@ -1,6 +1,4 @@
-"""
-REST views for user details and sign-out functionality.
-"""
+"""REST views for user details and sign-out functionality."""
 
 from django.views.decorators.http import require_GET
 from django.conf import settings

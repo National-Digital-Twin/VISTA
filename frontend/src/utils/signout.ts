@@ -2,7 +2,7 @@ import config from "@/config/app-config";
 
 async function clearServiceWorkerCaches() {
   // Clear service worker cache
-  if ('caches' in window) {
+  if ("caches" in window) {
     await caches.keys().then((cacheNames) => {
       Promise.all(cacheNames.map((cacheName) => caches.delete(cacheName)));
     });
@@ -22,14 +22,18 @@ export const signout = async () => {
         const logoutLinks = await response.json();
         await clearServiceWorkerCaches();
         clearLocalAndSessionStorage();
-        await fetch(logoutLinks.oAuthLogoutUrl, { method: 'GET', redirect: 'manual', credentials: 'include' });
+        await fetch(logoutLinks.oAuthLogoutUrl, {
+          method: "GET",
+          redirect: "manual",
+          credentials: "include",
+        });
         document.location = logoutLinks.redirect;
       } else {
-        document.location = '/';
+        document.location = "/";
       }
     },
     () => {
-      document.location = '/';
-    }
+      document.location = "/";
+    },
   );
 };

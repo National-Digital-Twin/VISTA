@@ -29,7 +29,9 @@ const PageHeader = ({ appName }: { appName: string }) => {
       try {
         const res = await fetch(config.services.user);
 
-        if (!res.ok) {throw new Error(`Error: ${res.statusText}`);}
+        if (!res.ok) {
+          throw new Error(`Error: ${res.statusText}`);
+        }
         const json = await res.json();
         setUser(json);
       } catch (err: any) {
@@ -43,7 +45,7 @@ const PageHeader = ({ appName }: { appName: string }) => {
   const handleSignOut = () => {
     signout();
     handleClose();
-  }
+  };
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
