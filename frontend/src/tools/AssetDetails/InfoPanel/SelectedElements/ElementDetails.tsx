@@ -77,9 +77,14 @@ export default function ElementDetails({
     <Card sx={{ padding: 0, margin: 0 }} elevation={0}>
       <CardContent sx={{ padding: 1, margin: 0 }}>
         <Box sx={{ display: "flex", flexDirection: "column" }}>
-          <Box display="flex" justifyContent="space-between" alignItems="start">
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="start"
+            sx={{ gap: "10px" }}
+          >
             {/* Left Column - Asset Title & Type (Left Aligned) */}
-            <Box sx={{ maxWidth: 250 }}>
+            <Box sx={{ flex: "0 0 50%", maxWidth: 250 }}>
               <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
                 {details.title || "Asset Details"}
               </Typography>
@@ -89,12 +94,21 @@ export default function ElementDetails({
             </Box>
 
             {/* Right Column - View Connected Assets & Google Street View */}
-            <Box display="flex" flexDirection="column" alignItems="flex-end">
+            <Box
+              display="flex"
+              flexDirection="column"
+              alignItems="start"
+              sx={{ paddingTop: "5px", flex: "0 0 50%" }}
+            >
               {/* View Connected Assets */}
               <Box
                 display="flex"
                 alignItems="center"
-                sx={{ cursor: "pointer", mb: 1, whiteSpace: "nowrap" }}
+                sx={{
+                  cursor: "pointer",
+                  mb: 1,
+                  whiteSpace: "nowrap",
+                }}
                 onClick={() => {
                   onClick();
                 }}
