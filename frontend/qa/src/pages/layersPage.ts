@@ -128,47 +128,27 @@ export default class LayersPage {
     await this.page.mouse.up();
   }
   async clickTransportInfrastructure() {
-    const transportInfra = this.page.getByRole("heading", {
-      name: "Transport Infrastructure",
-    });
+    const transportInfra = this.page.getByText('Transport Infrastructure');
     await transportInfra.waitFor({ state: "visible" });
     await transportInfra.click();
+    await this.page.waitForTimeout(1000);
+    await this.page.getByRole('listitem').filter({ hasText: 'RoadCount: 16' }).getByRole('checkbox', { name: 'controlled' }).check();
+    await this.page.waitForTimeout(1000);
+    await this.page.getByRole('listitem').filter({ hasText: 'BridgeCount: 37' }).getByRole('checkbox', { name: 'controlled' }).check();;
     await this.page.waitForTimeout(3000);
-    const road = this.page.getByText("Road (16)");
-    await road.waitFor({ state: "visible" });
-    await road.click();
-    await this.page.waitForTimeout(1000);
-    const bridge = this.page.getByText("Bridge (37)");
-    await bridge.waitFor({ state: "visible" });
-    await bridge.click();
-    await this.page.waitForTimeout(1000);
-    const bridgeItem = this.page.getByText(
-      "A3055 Lake Hill - Sandown to Lake Rail BridgebridgeTS025B",
-    );
-    await bridgeItem.waitFor({ state: "visible" });
-    await bridgeItem.click();
-    await this.page.waitForTimeout(5000);
-    const assetDetailsTab = this.page.getByRole("tab", {
-      name: "Asset details",
-    });
-    await assetDetailsTab.waitFor({ state: "visible" });
-    await assetDetailsTab.click();
-    const assetHeading = this.page.getByRole("heading", {
-      name: "A3055 Lake Hill - Sandown to Lake Rail Bridge",
-    });
-    await assetHeading.waitFor({ state: "visible" });
-    await assetHeading.click();
-    const dependentAssets = this.page.getByRole("heading", {
-      name: "2 dependent assets",
-    });
-    await dependentAssets.waitFor({ state: "visible" });
-    await dependentAssets.click();
+    await this.page.locator('div').filter({ hasText: /^A3054 Caul bourne Mill Race BridgebridgeTS048$/ }).nth(1).click();
+    await this.page.waitForTimeout(3000);
+    await this.page.getByText('Asset Details').click();
+    await this.page.waitForTimeout(3000);
+    await this.page.getByText('View connected assets').click();
+    await this.page.waitForTimeout(3000);
+   
   }
   async assetsWithinAccordionIsVisible() {
-    const dependentAssetAccordion = this.page.getByText(
-      "Dependent assets: Assets that rely on/ consume services from this asset.",
-    );
+    const dependentAssetAccordion = this.page.getByRole('heading', { name: 'Road - A3054 Yarmouth to Newport' })
     expect(dependentAssetAccordion).toBeVisible();
+  }
+
   async verifyAssetDetailsTabIsDisplayed() {
     await expect(
       this.page.getByRole("tab", { name: "Asset details" }),
