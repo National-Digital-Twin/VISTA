@@ -1,8 +1,10 @@
+from django.views.decorators.http import require_GET
 from django.conf import settings
 import requests
 from django.http import HttpResponse, JsonResponse
 from rest_framework.decorators import api_view
 
+@require_GET
 @api_view(['GET'])
 def user_details_view(request):
     if not settings.IS_PROD:
@@ -33,7 +35,7 @@ def user_details_view(request):
         return JsonResponse({"error": "Error forwarding request", "details": str(e)}, status=500)
 
 
-
+@require_GET
 @api_view(['GET'])
 def signout_view(request):
     if not settings.IS_PROD:
