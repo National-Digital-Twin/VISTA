@@ -53,6 +53,7 @@ jobs:
 
       - name: Configure Poetry
         run: |
+          python -m venv venv
           source venv/bin/activate
           poetry config virtualenvs.in-project true
           poetry config virtualenvs.create false
@@ -60,6 +61,7 @@ jobs:
 
       - name: Install Python Dependencies
         run: |
+          python -m venv venv
           source venv/bin/activate
           cd backend
           poetry install --no-root
