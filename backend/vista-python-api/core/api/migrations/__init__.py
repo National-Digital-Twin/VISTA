@@ -1,1 +1,1 @@
-"""Paralog Backend Migrations."""
+"""vista Backend Migrations."""

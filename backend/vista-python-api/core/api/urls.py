@@ -1,4 +1,4 @@
-"""Paralog Backend URLs with GraphQL View constructor."""
+"""vista Backend URLs with GraphQL View constructor."""
 
 from django.urls import path
 

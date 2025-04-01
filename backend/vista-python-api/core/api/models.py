@@ -1,4 +1,4 @@
-"""Paralog Backend Models."""
+"""vista Backend Models."""
 
 from decimal import ROUND_DOWN, Decimal
 

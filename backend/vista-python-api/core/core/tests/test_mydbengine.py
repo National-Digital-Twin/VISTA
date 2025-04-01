@@ -16,8 +16,8 @@ def test_mydbengine():
         assert DatabaseWrapper(
             {
                 "ENGINE": "core.mydbengine",
-                "NAME": "paralog",
-                "USER": "paralog",
+                "NAME": "vista",
+                "USER": "vista",
                 "HOST": "example.com",
                 "PORT": 5432,
                 "REGION": "eu-west-2",
@@ -27,11 +27,11 @@ def test_mydbengine():
         ).get_connection_params() == {
             "client_encoding": "UTF8",
             "cursor_factory": mock.ANY,
-            "dbname": "paralog",
+            "dbname": "vista",
             "host": "example.com",
             "password": mock.sentinel.example,
             "port": 5432,
             "sslmode": "verify-full",
             "sslrootcert": "system",
-            "user": "paralog",
+            "user": "vista",
         }

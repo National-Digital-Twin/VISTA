@@ -92,8 +92,8 @@ DATABASES = (
     {
         "default": {
             "ENGINE": "core.mydbengine",
-            "NAME": "paralog",
-            "USER": "paralog",
+            "NAME": "vista",
+            "USER": "vista",
             "HOST": env("DB_HOSTNAME"),
             "PORT": 5432,
             "REGION": "eu-west-2",

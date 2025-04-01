@@ -1,6 +1,6 @@
 # vista-python-api
 
-Provides Data to the paralog app.
+Provides Data to the vista app.
 
 ## Project cheatsheet
 
