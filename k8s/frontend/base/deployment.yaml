@@ -4,22 +4,22 @@ metadata:
   annotations:
     reloader.stakater.com/auto: "true"
   labels:
-    io.kompose.service: paralog-frontend
-  name: paralog-frontend
+    io.kompose.service: vista-frontend
+  name: vista-frontend
 spec:
   replicas: 1
   selector:
     matchLabels:
-      io.kompose.service: paralog-frontend
+      io.kompose.service: vista-frontend
   template:
     metadata:
       annotations: {}
       labels:
-        io.kompose.service: paralog-frontend
+        io.kompose.service: vista-frontend
     spec:
-      serviceAccountName: paralog-frontend-sa
+      serviceAccountName: vista-frontend-sa
       containers:
-        - image: paralog-frontend-image:template
+        - image: vista-frontend-image:template
           env:
             - name: IMAGE_DIGEST
               value: "none"

@@ -1,7 +1,7 @@
 - op: replace
   path: /spec/hosts/0
-  value: paralog.app.ndtp.co.uk
+  value: vista.app.ndtp.co.uk
 
 - op: replace
   path: /spec/gateways/0
-  value: paralog/paralog-ingress-gateway
+  value: vista/vista-ingress-gateway

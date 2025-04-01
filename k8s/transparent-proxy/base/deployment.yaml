@@ -4,24 +4,24 @@ metadata:
   annotations:
     reloader.stakater.com/auto: "true"
   labels:
-    io.kompose.service: paralog-transparent-proxy
-  name: paralog-transparent-proxy
+    io.kompose.service: vista-transparent-proxy
+  name: vista-transparent-proxy
 spec:
   replicas: 1
   selector:
     matchLabels:
-      io.kompose.service: paralog-transparent-proxy
+      io.kompose.service: vista-transparent-proxy
   template:
     metadata:
       annotations:
         traffic.sidecar.istio.io/excludeOutboundPorts: "8200"
       labels:
-        io.kompose.service: paralog-transparent-proxy
+        io.kompose.service: vista-transparent-proxy
     spec:
-      serviceAccountName: paralog-transparent-proxy-sa
+      serviceAccountName: vista-transparent-proxy-sa
       containers:
-        - name: paralog-transparent-proxy-image
-          image: paralog-transparent-proxy-image:template
+        - name: vista-transparent-proxy-image
+          image: vista-transparent-proxy-image:template
           resources:
             limits:
               memory: "2Gi"
@@ -32,7 +32,7 @@ spec:
           imagePullPolicy: Always
           envFrom:
             - secretRef:
-                name: paralog-transparent-proxy-secrets
+                name: vista-transparent-proxy-secrets
           ports:
             - containerPort: 80
               protocol: TCP

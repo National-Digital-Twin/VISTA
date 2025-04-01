@@ -1,0 +1,26 @@
+resources:
+  - ../../base
+
+namespace: vista
+patches:
+  - path: patches/allow-ingress.yaml
+    target:
+      kind: AuthorizationPolicy
+  - path: patches/service-account.yaml
+    target:
+      kind: ServiceAccount
+      name: vista-python-api-sa
+
+labels:
+  - pairs:
+      env: demo
+
+images:
+  - name: vista-python-api-image:template
+    newName: 503561419905.dkr.ecr.eu-west-2.amazonaws.com/vista/demo-vista-python-api
+    newTag: "1739979400"
+
+configMapGenerator:
+  - name: vista-python-api-configs
+    envs:
+      - params.env

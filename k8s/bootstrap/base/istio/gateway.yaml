@@ -1,7 +1,7 @@
 apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
 metadata:
-  name: paralog-ingress-gateway
+  name: vista-ingress-gateway
 spec:
   selector:
     app: istio-ingress
