@@ -47,8 +47,9 @@ jobs:
       - name: Install Poetry
         if: steps.venv-cache.outcome!= 'restored'
         run: |
+          python -m venv venv
           source venv/bin/activate
-          pip install poetry --constraint=.github/workflows/constraints.txt
+          python -m pip install poetry --constraint=.github/workflows/constraints.txt
 
       - name: Configure Poetry
         run: |
