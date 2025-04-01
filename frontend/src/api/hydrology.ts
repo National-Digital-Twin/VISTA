@@ -13,15 +13,15 @@ export enum STATION_TYPES {
 export type StationType = STATION_TYPES;
 
 const STATION_TYPES_MAP = {
-  "https://environment.data.gov.uk/flood-monitoring/def/core/GroundwaterDippedOnly":
+  "http://environment.data.gov.uk/flood-monitoring/def/core/GroundwaterDippedOnly":
     STATION_TYPES.GroundwaterDippedOnly,
-  "https://environment.data.gov.uk/flood-monitoring/def/core/Groundwater":
+  "http://environment.data.gov.uk/flood-monitoring/def/core/Groundwater":
     STATION_TYPES.Groundwater,
-  "https://environment.data.gov.uk/flood-monitoring/def/core/RainfallStation":
+  "http://environment.data.gov.uk/flood-monitoring/def/core/RainfallStation":
     STATION_TYPES.RainfallStation,
-  "https://environment.data.gov.uk/flood-monitoring/def/core/RiverFlow":
+  "http://environment.data.gov.uk/flood-monitoring/def/core/RiverFlow":
     STATION_TYPES.RiverFlow,
-  "https://environment.data.gov.uk/flood-monitoring/def/core/RiverLevel":
+  "http://environment.data.gov.uk/flood-monitoring/def/core/RiverLevel":
     STATION_TYPES.RiverLevel,
 };
 
@@ -71,19 +71,27 @@ export async function fetchStations() {
   return hydrologyItems;
 }
 
+function upgradeURLToHTTPS(url: string) {
+  if (url.startsWith("http:")) {
+    return "https:" + url.slice(5);
+  } else {
+    return url;
+  }
+}
+
 export const fetchReadings = async (
   measureUrl: string,
   startDate: Date,
   endDate: Date,
 ) => {
   const url = `${measureUrl}/readings?maxeq-dateTime=${endDate.toISOString()}&mineq-dateTime=${startDate.toISOString()}`;
-  const response = await fetch(url);
+  const response = await fetch(upgradeURLToHTTPS(url));
   return await response.json();
 };
 
 export const fetchMostRecentReading = async (measureUrl: string) => {
   const url = `${measureUrl}/readings?latest`;
-  const response: Response = await fetch(url);
+  const response: Response = await fetch(upgradeURLToHTTPS(url));
   return await response.json();
 };
 

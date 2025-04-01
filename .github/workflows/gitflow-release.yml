@@ -69,7 +69,7 @@ jobs:
     uses: ./.github/workflows/backend-cd-push-to-ECR.yml
     with:
       aws_account_number: "${{ vars.DEMO_AWS_ACCOUNT_ID }}"
-      repo_name: "paralog/python-api"
+      repo_name: "vista/python-api"
       app_name: "backend"
       version: ${{ needs.versioning.outputs.version }}
 
@@ -80,7 +80,7 @@ jobs:
       VITE_MAP_TILER_TOKEN: ${{ secrets.VITE_MAP_TILER_TOKEN }}
     with:
       aws_account_number: "${{ vars.DEMO_AWS_ACCOUNT_ID }}"
-      repo_name: "paralog/frontend"
+      repo_name: "vista/frontend"
       app_name: "frontend"
       version: ${{ needs.versioning.outputs.version }}
       environment: demo
@@ -90,7 +90,7 @@ jobs:
     uses: ./.github/workflows/transparent-proxy-cd-push-to-ECR.yml
     with:
       aws_account_number: "${{ vars.DEMO_AWS_ACCOUNT_ID }}"
-      repo_name: "paralog/transparent-proxy"
+      repo_name: "vista/transparent-proxy"
       app_name: "transparent-proxy"
       version: ${{ needs.versioning.outputs.version }}
 

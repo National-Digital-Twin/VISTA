@@ -1,7 +1,7 @@
 resources:
   - ../../base
 
-namespace: paralog
+namespace: vista
 patches:
   - path: patches/allow-ingress.yaml
     target:
@@ -9,13 +9,13 @@ patches:
   - path: patches/service-account.yaml
     target:
       kind: ServiceAccount
-      name: paralog-transparent-proxy-sa
+      name: vista-transparent-proxy-sa
 
 labels:
   - pairs:
       env: prod
 
 images:
-  - name: paralog-transparent-proxy-image:template
-    newName: 537124944113.dkr.ecr.eu-west-2.amazonaws.com/paralog/transparent-proxy
+  - name: vista-transparent-proxy-image:template
+    newName: 537124944113.dkr.ecr.eu-west-2.amazonaws.com/vista/transparent-proxy
     newTag: "to.be.replaced"

@@ -8,6 +8,6 @@ resources:
 
 labels:
   - pairs:
-      app: paralog-frontend
+      app: vista-frontend
       env: ENV_PLACEHOLDER
-      app.kubernetes.io/name: paralog-frontend
+      app.kubernetes.io/name: vista-frontend

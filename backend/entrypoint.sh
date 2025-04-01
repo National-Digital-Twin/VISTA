@@ -13,7 +13,7 @@ apt-get install -y postgresql-client
 
 # Run the query
 echo "Running the query..."
-PGPASSWORD="$POSTGRES_PASSWORD" psql -h "$DB_HOSTNAME" -U paralog -c "GRANT rds_iam TO paralog;" >> /dev/null 2>&1
+PGPASSWORD="$POSTGRES_PASSWORD" psql -h "$DB_HOSTNAME" -U vista -c "GRANT rds_iam TO vista;" >> /dev/null 2>&1
 
 if [[ $? -eq 0 ]]; then
   echo "Query executed successfully."
@@ -24,4 +24,4 @@ fi
 
 echo "Run migrate"
 # Run db migration
-/venv/bin/python3 /paralog-python-api/core/manage.py migrate
+/venv/bin/python3 /vista-python-api/core/manage.py migrate

@@ -2,13 +2,22 @@ apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 
 metadata:
-  name: paralog-virtual-service
+  name: vista-virtual-service
 spec:
   hosts:
     - placeholder
   gateways:
     - placeholder
   http:
+    # Block any request to /ndtp-python/api/graphql or URLs starting with it
+    - match:
+        - uri:
+            prefix: /ndtp-python/api/graphql
+      fault:
+        abort:
+          httpStatus: 403
+          percentage:
+            value: 100
     - match:
         - uri:
             prefix: /ndtp-python/
@@ -16,17 +25,17 @@ spec:
         uri: "/"
       route:
         - destination:
-            host: paralog-python-api
+            host: vista-python-api
             port:
               number: 80
     - match:
         - uri:
-            prefix: /paralog/
+            prefix: /vista/
       rewrite:
         uri: "/"
       route:
         - destination:
-            host: smart-cache-paralog-api
+            host: smart-cache-vista-api
             port:
               number: 80
     - match:
@@ -36,7 +45,7 @@ spec:
         uri: "/"
       route:
         - destination:
-            host: paralog-transparent-proxy
+            host: vista-transparent-proxy
             port:
               number: 80
     - match:
@@ -48,6 +57,6 @@ spec:
           rewrite: /\2
       route:
         - destination:
-            host: paralog-frontend
+            host: vista-frontend
             port:
               number: 80

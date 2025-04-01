@@ -5,11 +5,13 @@ const config = {
     maptilerToken: import.meta.env.VITE_MAP_TILER_TOKEN,
   },
   api: {
-    url: import.meta.env.VITE_PARALOG_API_URL || "/paralog",
+    url: import.meta.env.VITE_VISTA_API_URL || "/vista",
   },
   services: {
     ontology: import.meta.env.VITE_ONTOLOGY_SERVICE_URL || "/transparent-proxy",
     ndtpPython: "/ndtp-python/api/graphql/",
+    user: "/ndtp-python/api/user/",
+    signout: "/ndtp-python/api/auth/signout/",
   },
   weather: {
     url: import.meta.env.WEATHER_API_URL || "/transparent-proxy/weather",

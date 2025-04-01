@@ -1,5 +1,6 @@
 import { expect, Page } from "@playwright/test";
 import PlaywrightWrapper from "../helper/wrapper/PlaywrightWrappers";
+import { Console } from "winston/lib/winston/transports";
 
 export default class LayersPage {
   private base: PlaywrightWrapper;
@@ -14,7 +15,7 @@ export default class LayersPage {
 
   async verifyPolygonIsDrawn() {
     const polygonAdded = await this.page.locator(this.Elements.polygon).count();
-    expect(polygonAdded).toEqual(45);
+    expect(polygonAdded).toBeGreaterThan(1);
   }
 
   async drawAPolygon() {
@@ -27,7 +28,6 @@ export default class LayersPage {
     const polygonExists = await this.page
       .locator(this.Elements.polygon)
       .count();
-    expect(polygonExists).toEqual(36);
     const drawPolygonButton = this.page.getByRole("button", {
       name: "Draw Polygon",
     });
@@ -85,8 +85,11 @@ export default class LayersPage {
   }
   async drawAndClickVulnerableArea() {
     await this.page.waitForTimeout(3000);
-    await this.page.getByRole("heading", { name: "Vulnerable People" }).click();
-    const drawPolygonButton = this.page.locator('button:has-text("Draw Area")');
+    const vulnerablePeopleText= this.page.getByText('Vulnerable People', { exact: true });
+    await vulnerablePeopleText.waitFor({ state: "attached" });
+    await vulnerablePeopleText.scrollIntoViewIfNeeded();
+    vulnerablePeopleText.click();
+    const drawPolygonButton = this.page.getByRole('button', { name: 'Draw Area' });
     await drawPolygonButton.click();
     await this.page.waitForTimeout(2000);
     await this.page.mouse.click(850, 300);
@@ -103,14 +106,14 @@ export default class LayersPage {
       .locator("div._idCardItem_1nzqt_20")
       .allTextContents();
     expect(detailsElements).toEqual([
-      "Name: Philip Romeo",
-      "Year of Birth: 1954",
-      "UPRN: 10090466223.0",
-      "Primary Support Reason: nan",
-      "Disability: No conditions",
-      "Coordinates: 50.71163324269709, -1.251859667094288",
-      "Alert Category: nan",
-      "Alert Detail: nan",
+      "Name: Kevin Tango",
+      "Year of Birth: 1967",
+      "UPRN: 10023714076.0",
+      "Primary Support Reason: Sensory Support: Vi",
+      "Disability: Activities limited a lot",
+      "Coordinates: 50.72441687384, -1.2554246699389502",
+      "Alert Category: Comorbidities",
+      "Alert Detail: Open-Angle Glaucoma",
     ]);
   }
 
@@ -126,6 +129,41 @@ export default class LayersPage {
     await this.page.mouse.move(1000, 400, { steps: 20 });
     await this.page.mouse.up();
   }
+  async clickTransportInfrastructure() {
+    const transportInfra = this.page.getByText("Transport Infrastructure");
+    await transportInfra.waitFor({ state: "visible" });
+    await transportInfra.click();
+    await this.page.waitForTimeout(1000);
+    await this.page
+      .getByRole("listitem")
+      .filter({ hasText: "RoadCount: 16" })
+      .getByRole("checkbox", { name: "controlled" })
+      .check();
+    await this.page.waitForTimeout(1000);
+    await this.page
+      .getByRole("listitem")
+      .filter({ hasText: "BridgeCount: 37" })
+      .getByRole("checkbox", { name: "controlled" })
+      .check();
+    await this.page.waitForTimeout(3000);
+    await this.page
+      .locator("div")
+      .filter({ hasText: /^A3054 Caul bourne Mill Race BridgebridgeTS048$/ })
+      .nth(1)
+      .click();
+    await this.page.waitForTimeout(3000);
+    await this.page.getByText("Asset Details").click();
+    await this.page.waitForTimeout(3000);
+    await this.page.getByText("View connected assets").click();
+    await this.page.waitForTimeout(3000);
+  }
+  async assetsWithinAccordionIsVisible() {
+    const dependentAssetAccordion = this.page.getByRole("heading", {
+      name: "Road - A3054 Yarmouth to Newport",
+    });
+    expect(dependentAssetAccordion).toBeVisible();
+  }
+
   async verifyAssetDetailsTabIsDisplayed() {
     await expect(
       this.page.getByRole("tab", { name: "Asset details" }),

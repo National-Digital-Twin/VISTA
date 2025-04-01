@@ -1,3 +1,5 @@
+import { Box, Typography } from "@mui/material";
+
 export interface PointerCoordinatesProps {
   /** Whether the coördinates should be shown */
   readonly show: boolean;
@@ -17,11 +19,21 @@ export default function PointerCoordinates({
     return null;
   }
   return (
-    <div className="flex items-center gap-x-2">
-      <div className="uppercase border w-fit px-2">lat, lng</div>
-      <p className="text-xs">
+    <Box
+      sx={{
+        display: "flex",
+        alignContent: "end",
+        gap: "2px",
+        position: "absolute",
+        width: "100%",
+        bottom: "0",
+        backgroundColor: "background.paper",
+      }}
+    >
+      <Box className="uppercase border w-fit px-2">lat, lng</Box>
+      <Typography className="text-xs">
         {lat}, {lng}
-      </p>
-    </div>
+      </Typography>
+    </Box>
   );
 }

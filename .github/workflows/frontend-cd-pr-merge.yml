@@ -61,7 +61,7 @@ jobs:
     uses: ./.github/workflows/frontend-cd-push-to-ECR.yml
     with:
       aws_account_number: "${{ vars.DEV_AWS_ACCOUNT_ID }}"
-      repo_name: "paralog/frontend"
+      repo_name: "vista/frontend"
       app_name: "frontend"
       version: ${{ needs.versioning.outputs.version }}
       environment: development

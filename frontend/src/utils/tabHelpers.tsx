@@ -22,6 +22,7 @@ export function TabPanel(props: Readonly<TabPanelProps>) {
       sx={{
         maxHeight: "100%",
         height: "100%",
+        width: "100%",
       }}
       role="tabpanel"
       hidden={value !== index}

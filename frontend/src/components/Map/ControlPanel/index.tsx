@@ -56,20 +56,21 @@ export default function ControlPanel({
       sx={{
         display: "flex",
         flexDirection: "row",
-        height: "100%",
-        gap: 0,
+        gap: "10px",
+        flex: `1 1 ${connectedAssetsPanelOpen ? "100%" : "35%"}`,
       }}
     >
       <Box
         sx={{
-          width: "100%",
-          height: "100%",
           position: "relative",
           backgroundColor: "background.paper",
           display: "flex",
           flexDirection: "column",
           borderRadius: 2,
           boxShadow: 4,
+          flex: "0 1 100%",
+          overflowY: "hidden",
+          gap: "5px",
         }}
       >
         <Box
@@ -146,10 +147,12 @@ export default function ControlPanel({
             ))}
           </Tabs>
         </Box>
-        <Box sx={{ flexGrow: 1, maxHeight: "100%", overflowY: "auto" }}>
+        <Box sx={{ display: "flex", flex: "0 0 90%", overflowY: "auto" }}>
           {tabs.map((entry, i) => (
             <TabPanel key={entry.name} index={i} value={value}>
-              <Suspense fallback="Loading...">{entry.content}</Suspense>
+              <Box>
+                <Suspense fallback="Loading...">{entry.content}</Suspense>
+              </Box>
             </TabPanel>
           ))}
         </Box>

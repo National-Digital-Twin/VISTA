@@ -57,6 +57,6 @@ jobs:
     uses: ./.github/workflows/backend-cd-push-to-ECR.yml
     with:
       aws_account_number: "${{ vars.DEV_AWS_ACCOUNT_ID }}"
-      repo_name: "paralog/python-api"
+      repo_name: "vista/python-api"
       app_name: "backend"
       version: ${{ needs.versioning.outputs.version }}

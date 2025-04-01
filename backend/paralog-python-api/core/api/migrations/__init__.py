@@ -1,1 +1,0 @@
-"""Paralog Backend Migrations."""

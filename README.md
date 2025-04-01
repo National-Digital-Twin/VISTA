@@ -1,15 +1,15 @@
-## Paralog 2.0.1
+## Vista 2.0.1
 
-**Paralog is a web application used to evaluate high value assets**
+**Vista is a web application used to evaluate high value assets**
 
-Paralog is a tool which can be used to get a better understanding of high value
+Vista is a tool which can be used to get a better understanding of high value
 assets within regions in the UK. It allows analysts to better understand the
 impact of high value assets which in turn allows them to make better decisions
 quickly.
 
 ## Components
 
-Paralog comprises four main components:
+Vista comprises four main components:
 
 1. **Frontend**: A React application found in [`frontend`](frontend).
 2. **Backend**: A Python API used to provide or proxy various APIs outside the security perimeter, found in [`backend`](backend).
@@ -24,7 +24,7 @@ For detailed setup instructions, please refer to the [SETUP.md](SETUP.md) file. 
 
 2. **Frontend Setup**: Navigate to the `frontend` directory, configure npm and Yarn with GitHub packages, install dependencies, and start the application.
 
-3. **Backend Setup**: Set up AWS credentials, login to AWS ECR, and follow the instructions in `backend/paralog-python-api/README.md`.
+3. **Backend Setup**: Set up AWS credentials, login to AWS ECR, and follow the instructions in `backend/vista-python-api/README.md`.
 
 4. **Deployment Nodes**: Follow the instructions in [deploy/README.md](deploy/README.md) for environment-specific setup and deployment procedures.
 
@@ -43,4 +43,4 @@ See [RUNNING_CODE_DEV_TOOLS.md](./developer_docs/RUNNING_CODE_DEV_TOOLS.md) for 
 
 ## Contributors
 
-The development of these works has been made possible with thanks to our [contributors](https://github.com/National-Digital-Twin/Paralog/graphs/contributors).
+The development of these works has been made possible with thanks to our [contributors](https://github.com/National-Digital-Twin/vista/graphs/contributors).

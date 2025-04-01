@@ -1,4 +1,4 @@
-# Paralog exclusions
+# Vista exclusions
 core/db.sqlite3
 **/data.geojson
 **/sandownryde.geojson
@@ -163,8 +163,8 @@ dmypy.json
 cython_debug/
 
 
-paralog-python-api/core/cache/
-paralog-python-api/core/.django-secret-key
+vista-python-api/core/cache/
+vista-python-api/core/.django-secret-key
 # PyCharm
 #  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
 #  be found at https://github.com/github/gitignore/blob/main/Global/JetBrains.gitignore

@@ -1,0 +1,14 @@
+resources:
+  - vault/vaultAuth.yaml
+  - vault/vaultStaticSecret.yaml
+  - ../base/istio/authorizationpolicy/allow-ingress-authorization-policy.yaml
+  - service-account.yaml
+  - deployment.yaml
+  - service.yaml
+  - job.yaml
+
+labels:
+  - pairs:
+      app: vista-python-api
+      env: ENV_PLACEHOLDER
+      app.kubernetes.io/name: vista-python-api

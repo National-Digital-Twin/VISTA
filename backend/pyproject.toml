@@ -2,17 +2,13 @@
 # 📜 Poetry
 ###########
 [tool.poetry]
-name = "paralog_python_api"
+name = "vista_python_api"
 version = "2.0.1"
-description = "Provides Data to the paralog app."
+description = "Provides Data to the vista app."
 authors = ["NDTP <digitaltwins@dft.gov.uk>"]
 license = "UNLICENSED"
 classifiers = ["Private :: Do Not Upload"]
-packages = [
-  { include = "paralog_python_api", from = "paralog_python_api" },
-  # Add more packages here, e.g.
-  # { include = "module_name", from = "paralog_python_api" },
-]
+package-mode = false
 
 [tool.poetry.dependencies]
 python = ">=3.12.5,<3.13"
@@ -41,6 +37,8 @@ jinja2 = "3.1.6"
 starlette = "0.40.0"
 tornado = "6.4.2"
 virtualenv = "20.26.6"
+djangorestframework = "^3.16.0"
+requests = "^2.32.3"
 
 [tool.poetry.dev-dependencies]
 # Everything below here is alphabetically sorted
@@ -143,13 +141,13 @@ indent-style = "space"
 # 📣 Towncrier
 ##############
 [tool.towncrier]
-package = "paralog_python_api"
+package = "vista_python_api"
 package_dir = "."
 filename = "CHANGELOG.md"
 directory = ".changelog/"
 template = ".changelog/template.md"
 title_format = "## [{version}] - {project_date}"
-issue_format = "[#{issue}](https://github.com/national-digital-twin/Paralog/issues/{issue})"
+issue_format = "[#{issue}](https://github.com/national-digital-twin/vista/issues/{issue})"
 start_string = "<!-- TOWNCRIER -->\n"
 underlines = ["", ""]
 
@@ -208,7 +206,7 @@ name = "Maintenance Changes"
 showcontent = true
 
 [tool.pytest.ini_options]
-pythonpath = "paralog-python-api/core"
+pythonpath = "vista-python-api/core"
 addopts = [
   "--strict-config",
   "--strict-markers",

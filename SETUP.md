@@ -1,6 +1,6 @@
-# Paralog Setup Guide
+# Vista Setup Guide
 
-This guide provides instructions for setting up the Paralog project, which consists of frontend, backend, deploy, and transparent-proxy components.
+This guide provides instructions for setting up the Vista project, which consists of frontend, backend, deploy, and transparent-proxy components.
 
 ## Table of Contents
 
@@ -76,7 +76,7 @@ Full instructions can be found [here](./backend/README.md)
 2. Set up AWS credentials in `~/.aws/credentials`:
 
    ```
-   [paralog]
+   [vista]
    aws_access_key_id=SECRET_KEY
    aws_secret_access_key=SECRET_ACCESS_KEY
    ```
@@ -84,10 +84,10 @@ Full instructions can be found [here](./backend/README.md)
 3. Login to AWS ECR:
 
    ```sh
-   aws ecr --profile=paralog get-login-password --region eu-west-2 | docker login --username AWS --password-stdin 098669589541.dkr.ecr.eu-west-2.amazonaws.com
+   aws ecr --profile=vista get-login-password --region eu-west-2 | docker login --username AWS --password-stdin 098669589541.dkr.ecr.eu-west-2.amazonaws.com
    ```
 
-4. Follow the instructions in the `backend/paralog-python-api/README.md` file for setting up the Python API.
+4. Follow the instructions in the `backend/vista-python-api/README.md` file for setting up the Python API.
 
 ## Deploy Setup
 
@@ -106,12 +106,12 @@ Full instructions can be found [here](./transparent-proxy/README.md)
 2. Build the Docker image:
 
    ```sh
-   docker build --tag paralog-transparent-proxy:latest .
+   docker build --tag vista-transparent-proxy:latest .
    ```
 
 3. Run the container with required environment variables:
    ```sh
-   docker run -ti -p 5013:80 --env ADMIRALTY_API_KEY=... --env REALTIME_TRAINS_API_KEY=... paralog-transparent-proxy:latest
+   docker run -ti -p 5013:80 --env ADMIRALTY_API_KEY=... --env REALTIME_TRAINS_API_KEY=... vista-transparent-proxy:latest
    ```
 
 ## Additional Notes
