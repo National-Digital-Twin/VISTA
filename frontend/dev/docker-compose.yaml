@@ -73,8 +73,8 @@ services:
     volumes:
       - ./data/ontology.ttl:/work/ontology.ttl
   api:
-    container_name: smart-cache-paralog-api
-    image: smart-cache-paralog-api
+    container_name: smart-cache-vista-api
+    image: smart-cache-vista-api
     ports:
       - 4001:4001
     environment:
@@ -89,9 +89,9 @@ services:
       - 5013:80
     env_file:
       - "../.env"
-  paralog-python-api:
-    container_name: paralog-python-api
-    image: paralog-python-api
+  vista-python-api:
+    container_name: vista-python-api
+    image: vista-python-api
     ports:
       - 8000:8000
     env_file:

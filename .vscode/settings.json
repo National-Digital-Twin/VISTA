@@ -11,13 +11,15 @@
   // Python-specific settings
   "python.languageServer": "Pylance",
   "python.analysis.extraPaths": [
-    "paralog_python_api",
-    "./paralog-python-api/core"
+    "vista_python_api",
+    "./vista-python-api/core"
   ],
   "python.analysis.typeCheckingMode": "off",
   "python.testing.unittestEnabled": false,
   "python.testing.pytestEnabled": true,
-  "python.testing.pytestArgs": ["tests"],
+  "python.testing.pytestArgs": [
+    "tests"
+  ],
   // Python files only
   "[python]": {
     // isort on save

@@ -5,7 +5,7 @@ metadata:
 spec:
   selector:
     matchLabels:
-      io.kompose.service: paralog-transparent-proxy
+      io.kompose.service: vista-transparent-proxy
   action: ALLOW
   rules:
     - from:

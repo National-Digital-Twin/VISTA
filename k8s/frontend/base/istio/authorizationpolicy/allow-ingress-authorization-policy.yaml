@@ -5,7 +5,7 @@ metadata:
 spec:
   selector:
     matchLabels:
-      io.kompose.service: paralog-frontend
+      io.kompose.service: vista-frontend
   action: ALLOW
   rules:
     - from:
@@ -17,4 +17,4 @@ spec:
       when:
         - key: request.auth.claims[groups]
           values:
-            - paralog_access
+            - vista_access

@@ -71,11 +71,7 @@ jobs:
     strategy:
       matrix:
         repo_name:
-          [
-            "paralog/frontend",
-            "paralog/python-api",
-            "paralog/transparent-proxy",
-          ]
+          ["vista/frontend", "vista/python-api", "vista/transparent-proxy"]
     steps:
       # Set up AWS credentials for the source account
       - name: Set up AWS Credentials for Source Account
