@@ -53,6 +53,7 @@ jobs:
       - name: Configure Poetry
         run: |
           source venv/bin/activate
+          python -m pip install poetry --constraint=.github/workflows/constraints.txt
           poetry config virtualenvs.in-project true
           poetry config virtualenvs.create false
           poetry config virtualenvs.path venv
