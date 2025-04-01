@@ -3,10 +3,12 @@
 import requests
 from django.conf import settings
 from django.http import HttpResponse, JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET
 from rest_framework.decorators import api_view
 
 
+@csrf_exempt
 @api_view(["GET"])
 @require_GET
 def user_details_view(request):
@@ -38,6 +40,7 @@ def user_details_view(request):
         return JsonResponse({"error": "Error forwarding request", "details": str(e)}, status=500)
 
 
+@csrf_exempt
 @require_GET
 @api_view(["GET"])
 def signout_view():
