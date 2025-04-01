@@ -1,0 +1,119 @@
+type Query {
+  hello: String!
+  roadRoute(routeInput: RoadRouteInput!): RoadRoute
+  sandbagPlacement(name: String!): [SandbagPlacement]
+  sandbagPlacements: [SandbagPlacement!]!
+  roadSegment(roadSegmentInput: RoadSegmentInput!): RoadSegment
+  vulnerablePeople(
+    vulnerablePeopleInput: VulnerablePeopleInput!
+  ): [VulnerablePerson!]!
+  lowBridges(lowBridgeInput: LowBridgeInput!): [LowBridge!]
+}
+
+enum Vehicle {
+  Car
+  EmergencyVehicle
+  HGV
+}
+
+input RoadRouteInput {
+  startLat: Float!
+  startLon: Float!
+  endLat: Float!
+  endLon: Float!
+  floodExtent: GeoJSON
+  vehicle: Vehicle
+}
+
+input RoadSegmentInput {
+  coordinates: String!
+  direction: String!
+  dayOfWeek: String!
+  time: String!
+}
+
+input VulnerablePeopleInput {
+  latMin: Float!
+  latMax: Float!
+  lonMin: Float!
+  lonMax: Float!
+}
+
+input LowBridgeInput {
+  latMin: Float!
+  latMax: Float!
+  lonMin: Float!
+  lonMax: Float!
+}
+
+type RoadRoute {
+  routeGeojson: GeoJSON!
+}
+
+type SandbagPlacement {
+  id: ID!
+  name: String!
+  latitude: Float!
+  longitude: Float!
+}
+
+input SandbagPlacementInput {
+  name: String!
+  latitude: Float!
+  longitude: Float!
+}
+
+type ValidationError {
+  field: String
+  messages: [String!]!
+}
+
+type MutateSandbagPlacementResult {
+  sandbagPlacement: SandbagPlacement
+  errors: [ValidationError!]
+  success: Boolean!
+}
+type Mutation {
+  createSandbagPlacement(
+    sandbagPlacementInput: SandbagPlacementInput!
+  ): MutateSandbagPlacementResult
+  updateSandbagPlacement(
+    sandbagPlacementInput: SandbagPlacementInput!
+  ): MutateSandbagPlacementResult
+  deleteSandbagPlacement(name: String!): MutateSandbagPlacementResult
+}
+
+type RoadSegment {
+  volume: Int
+  averageSpeed: Int
+  busyness: Int
+}
+
+type VulnerablePerson {
+  mockIndividualIndex: String!
+  mockPropertyIndex: String!
+  mockFirstName: String!
+  mockLastName: String!
+  mockSex: String!
+  mockYearOfBirth: Int
+  mockDisability: String!
+  mockAscPrimarySupportReason: String!
+  mockAddressLine1: String!
+  mockAlertCategory: String!
+  mockAlertDetail: String!
+  uprn: String
+  postcodeLocator: String!
+  latitude: Float!
+  longitude: Float!
+}
+
+type LowBridge {
+  name: String!
+  dimensionIn: Int!
+  localId: String!
+  direction: String
+  latitude: Float!
+  longitude: Float!
+}
+
+scalar GeoJSON

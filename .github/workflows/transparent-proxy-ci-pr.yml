@@ -64,12 +64,12 @@ jobs:
       - name: Build Docker Image
         working-directory: transparent-proxy
         run: |
-          docker build -t paralog/transparent-proxy:latest .
+          docker build -t vista/transparent-proxy:latest .
 
       - name: Run Trivy Scan on Docker Image
         uses: aquasecurity/trivy-action@0.28.0
         with:
-          image-ref: "paralog/transparent-proxy:latest"
+          image-ref: "vista/transparent-proxy:latest"
           format: "table"
           exit-code: "1"
           ignore-unfixed: true

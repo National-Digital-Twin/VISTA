@@ -59,6 +59,6 @@ jobs:
     uses: ./.github/workflows/transparent-proxy-cd-push-to-ECR.yml
     with:
       aws_account_number: "${{ vars.DEV_AWS_ACCOUNT_ID }}"
-      repo_name: "paralog/transparent-proxy"
+      repo_name: "vista/transparent-proxy"
       app_name: "transparent-proxy"
       version: ${{ needs.versioning.outputs.version }}

@@ -173,12 +173,12 @@ jobs:
       - name: Build Docker Image
         working-directory: frontend
         run: |
-          docker build -t paralog/frontend:latest -f CI_Dockerfile .
+          docker build -t vista/frontend:latest -f CI_Dockerfile .
 
       - name: Run Docker Image
         run: |
           docker images
-          docker run --rm -d -p 80:80 --name frontend paralog/frontend:latest
+          docker run --rm -d -p 80:80 --name frontend vista/frontend:latest
           docker ps
           sleep 10
           docker logs frontend
@@ -197,7 +197,7 @@ jobs:
       - name: Run Trivy Scan on Docker Image
         uses: aquasecurity/trivy-action@0.28.0
         with:
-          image-ref: "paralog/frontend:latest"
+          image-ref: "vista/frontend:latest"
           format: "table"
           exit-code: "1"
           ignore-unfixed: true

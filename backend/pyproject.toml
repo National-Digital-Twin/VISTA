@@ -2,7 +2,7 @@
 # 📜 Poetry
 ###########
 [tool.poetry]
-name = "paralog_python_api"
+name = "vista_python_api"
 version = "2.0.1"
 description = "Provides Data to the paralog app."
 authors = ["NDTP <digitaltwins@dft.gov.uk>"]
@@ -141,7 +141,7 @@ indent-style = "space"
 # 📣 Towncrier
 ##############
 [tool.towncrier]
-package = "paralog_python_api"
+package = "vista_python_api"
 package_dir = "."
 filename = "CHANGELOG.md"
 directory = ".changelog/"
@@ -206,7 +206,7 @@ name = "Maintenance Changes"
 showcontent = true
 
 [tool.pytest.ini_options]
-pythonpath = "paralog-python-api/core"
+pythonpath = "vista-python-api/core"
 addopts = [
   "--strict-config",
   "--strict-markers",
