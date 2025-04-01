@@ -5,7 +5,7 @@ const config = {
     maptilerToken: import.meta.env.VITE_MAP_TILER_TOKEN,
   },
   api: {
-    url: import.meta.env.VITE_VISTA_API_URL || "/paralog",
+    url: import.meta.env.VITE_VISTA_API_URL || "/vista",
   },
   services: {
     ontology: import.meta.env.VITE_ONTOLOGY_SERVICE_URL || "/transparent-proxy",

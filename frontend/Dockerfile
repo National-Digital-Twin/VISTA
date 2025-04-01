@@ -17,7 +17,7 @@ RUN yarn install --frozen-lockfile --ignore-scripts
 RUN rm -f .npmrc
 
 ENV VITE_ONTOLOGY_SERVICE_URL="/transparent-proxy"
-ENV VITE_VISTA_API_URL="/paralog"
+ENV VITE_VISTA_API_URL="/vista"
 
 ENV VITE_MAP_TILER_TOKEN=$MAP_TILER_TOKEN
 
