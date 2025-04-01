@@ -44,7 +44,7 @@ export default function App() {
       }}
     >
       <Box sx={{ flexShrink: 0 }}>
-        <PageHeader appName="Vista" />
+        <PageHeader appName="VISTA" />
       </Box>
       <Box sx={{ flexGrow: 1, overflow: "hidden" }}>
         <AppBody />
