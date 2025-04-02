@@ -43,7 +43,7 @@ def user_details_view(request):
 @csrf_exempt
 @require_GET
 @api_view(["GET"])
-def signout_view():
+def signout_view(_request):
     """
     Retrieve sign-out URLs for OAuth flow and redirection.
 
