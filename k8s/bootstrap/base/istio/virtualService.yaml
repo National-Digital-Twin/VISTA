@@ -13,11 +13,9 @@ spec:
     - match:
         - uri:
             prefix: /ndtp-python/api/graphql
-      fault:
-        abort:
-          httpStatus: 403
-          percentage:
-            value: 100
+      direct_response:
+        status: 403
+        body: "Forbidden"
     - match:
         - uri:
             prefix: /ndtp-python/
