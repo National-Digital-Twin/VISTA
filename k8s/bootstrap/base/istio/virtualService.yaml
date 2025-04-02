@@ -14,7 +14,7 @@ spec:
         - uri:
             prefix: /ndtp-python/api/graphql
           method:
-            regex: "^(?!GET$).*"
+            exact: GET
       rewrite:
         uri: "/"
       route:
