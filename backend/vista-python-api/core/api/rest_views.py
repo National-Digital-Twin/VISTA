@@ -18,7 +18,9 @@ def user_details_view(request):
     Returns a mock response if not in production.
     """
     if not settings.IS_PROD:
-        return JsonResponse({"displayName": "Local User", "email": "local.user@local.com"})
+        return JsonResponse(
+            {"content": {"displayName": "Local User", "email": "local.user@local.com"}}
+        )
 
     token = request.headers.get("X-Auth-Request-Access-Token")
 
