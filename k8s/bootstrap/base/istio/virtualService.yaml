@@ -1,4 +1,4 @@
-apiVersion: networking.istio.io/v1alpha3
+apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
 
 metadata:
@@ -13,11 +13,13 @@ spec:
     - match:
         - uri:
             prefix: /ndtp-python/api/graphql
-      fault:
-        abort:
-          httpStatus: 403
-          percentage:
-            value: 100
+      rewrite:
+        uri: "/"
+      route:
+        - destination:
+            host: vista-frontend
+            port:
+              number: 80
     - match:
         - uri:
             prefix: /ndtp-python/
