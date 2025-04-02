@@ -1,19 +1,19 @@
 resources:
   - ../../base
 
-namespace: vista
+namespace: paralog
 
 patches:
   - path: patches/service-account.yaml
     target:
       kind: ServiceAccount
-      name: vista-frontend-sa
+      name: paralog-frontend-sa
 
 labels:
   - pairs:
       env: demo
 
 images:
-  - name: vista-frontend-image:template
-    newName: 503561419905.dkr.ecr.eu-west-2.amazonaws.com/vista/demo-frontend
+  - name: paralog-frontend-image:template
+    newName: 503561419905.dkr.ecr.eu-west-2.amazonaws.com/paralog/demo-frontend
     newTag: "remove-auth-2"
