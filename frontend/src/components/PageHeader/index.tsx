@@ -33,7 +33,7 @@ const PageHeader = ({ appName }: { appName: string }) => {
           throw new Error(`Error: ${res.statusText}`);
         }
         const json = await res.json();
-        setUser(json);
+        setUser(json?.content);
       } catch (err: any) {
         setError(err.message);
       }

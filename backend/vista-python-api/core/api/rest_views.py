@@ -18,7 +18,9 @@ def user_details_view(request):
     Returns a mock response if not in production.
     """
     if not settings.IS_PROD:
-        return JsonResponse({"displayName": "Local User", "email": "local.user@local.com"})
+        return JsonResponse(
+            {"content": {"displayName": "Local User", "email": "local.user@local.com"}}
+        )
 
     token = request.headers.get("X-Auth-Request-Access-Token")
 
@@ -43,7 +45,7 @@ def user_details_view(request):
 @csrf_exempt
 @require_GET
 @api_view(["GET"])
-def signout_view():
+def signout_view(_request):
     """
     Retrieve sign-out URLs for OAuth flow and redirection.
 
