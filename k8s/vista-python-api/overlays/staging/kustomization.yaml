@@ -17,8 +17,8 @@ labels:
 
 images:
   - name: vista-python-api-image:template
-    newName: 503561419905.dkr.ecr.eu-west-2.amazonaws.com/vista/demo-vista-python-api
-    newTag: "1739979400"
+    newName: 503561419905.dkr.ecr.eu-west-2.amazonaws.com/vista/python-api
+    newTag: "0.90.3"
 
 configMapGenerator:
   - name: vista-python-api-configs
