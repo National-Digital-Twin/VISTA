@@ -18,5 +18,5 @@ labels:
 
 images:
   - name: vista-transparent-proxy-image:template
-    newName: 503561419905.dkr.ecr.eu-west-2.amazonaws.com/vista/demo-transparent-proxy
+    newName: 503561419905.dkr.ecr.eu-west-2.amazonaws.com/vista/transparent-proxy
     newTag: "latest"

@@ -15,5 +15,5 @@ labels:
 
 images:
   - name: vista-frontend-image:template
-    newName: 503561419905.dkr.ecr.eu-west-2.amazonaws.com/vista/demo-frontend
+    newName: 503561419905.dkr.ecr.eu-west-2.amazonaws.com/vista/frontend
     newTag: "remove-auth-2"
