@@ -1,7 +1,7 @@
 resources:
   - ../../base
 
-namespace: paralog
+namespace: vista
 patches:
   - path: patches/allow-ingress.yaml
     target:
@@ -9,18 +9,18 @@ patches:
   - path: patches/service-account.yaml
     target:
       kind: ServiceAccount
-      name: paralog-python-api-sa
+      name: vista-python-api-sa
 
 labels:
   - pairs:
-      env: demo
+      env: staging
 
 images:
-  - name: paralog-python-api-image:template
-    newName: 503561419905.dkr.ecr.eu-west-2.amazonaws.com/paralog/demo-paralog-python-api
+  - name: vista-python-api-image:template
+    newName: 503561419905.dkr.ecr.eu-west-2.amazonaws.com/vista/demo-vista-python-api
     newTag: "1739979400"
 
 configMapGenerator:
-  - name: paralog-python-api-configs
+  - name: vista-python-api-configs
     envs:
       - params.env

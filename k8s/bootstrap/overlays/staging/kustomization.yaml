@@ -1,7 +1,7 @@
 resources:
   - ../../base
 
-namespace: paralog
+namespace: vista
 
 patches:
   - path: patches/virtualService.yaml

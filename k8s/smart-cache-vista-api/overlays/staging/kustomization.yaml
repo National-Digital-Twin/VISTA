@@ -1,7 +1,7 @@
 resources:
   - ../../base
 
-namespace: paralog
+namespace: vista
 patches:
   - path: patches/allow-ingress.yaml
     target:
@@ -9,18 +9,18 @@ patches:
   - path: patches/service-account.yaml
     target:
       kind: ServiceAccount
-      name: smart-cache-paralog-api-sa
+      name: smart-cache-vista-api-sa
 
 labels:
   - pairs:
-      env: demo
+      env: staging
 
 images:
-  - name: smart-cache-paralog-api-image:template
-    newName: 503561419905.dkr.ecr.eu-west-2.amazonaws.com/paralog/smart-cache-paralog-api
+  - name: smart-cache-vista-api-image:template
+    newName: 503561419905.dkr.ecr.eu-west-2.amazonaws.com/vista/smart-cache-vista-api
     newTag: "1739898581"
 
 configMapGenerator:
-  - name: smart-cache-paralog-api-configs
+  - name: smart-cache-vista-api-configs
     envs:
       - params.env

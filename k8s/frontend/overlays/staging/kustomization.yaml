@@ -8,10 +8,12 @@ patches:
     target:
       kind: ServiceAccount
       name: vista-frontend-sa
+
 labels:
   - pairs:
-      env: dev
+      env: staging
+
 images:
   - name: vista-frontend-image:template
-    newName: 537124944113.dkr.ecr.eu-west-2.amazonaws.com/vista/frontend
+    newName: 503561419905.dkr.ecr.eu-west-2.amazonaws.com/vista/frontend
     newTag: "remove-auth-2"

@@ -13,7 +13,7 @@ patches:
 
 labels:
   - pairs:
-      env: demo
+      env: staging
 
 images:
   - name: smart-cache-vista-api-image:template
