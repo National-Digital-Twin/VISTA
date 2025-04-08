@@ -13,6 +13,13 @@ You will need to build images for the services listed above locally with specifi
 
 The Secure agent graph is a docker image that needs to be built with the tag `paralog/secure-agent-graph`. The docker file to build the image can be found in this directory. Before building the image you will need to generate a personal access token (classic) on GitHub and run the following command to login to the GitHub container registry `echo <my-pat-token> | docker login ghcr.io -u <my-username> --password-stdin`
 
+You will then need to populate the secure agent graph with data. You can find data files in the `/frontend/dev/data` directory. The data can be uploaded using the following commands:
+
+```
+curl -X POST -H "Content-Type: text/turtle" --data-binary "@iow.ttl" http://localhost:3030/knowledge/upload
+curl -X POST -H "Content-Type: text/turtle" --data-binary "@ontology.ttl" http://localhost:3030/ontology/upload
+```
+
 The Smart cache paralog API can be found [here](https://github.com/National-Digital-Twin/smart-cache-vista-api) and needs to be built with the tag `smart-cache-vista-api`.
 
 The Paralog python API is a Django graphQL API contained in the backend folder of this repository. This needs to be built with the tag `vista-python-api`.
