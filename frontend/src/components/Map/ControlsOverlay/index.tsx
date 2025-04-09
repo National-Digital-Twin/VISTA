@@ -154,6 +154,9 @@ export default function ControlsOverlay() {
           transition: "flex-grow 0.3s ease",
           padding: 1,
           minHeight: 0,
+          maxHeight: "25vh",
+          marginLeft: "8px",
+          marginRight: "10px",
         }}
       >
         <DetailPanels />

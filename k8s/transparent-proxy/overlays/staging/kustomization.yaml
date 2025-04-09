@@ -20,3 +20,8 @@ images:
   - name: vista-transparent-proxy-image:template
     newName: 503561419905.dkr.ecr.eu-west-2.amazonaws.com/vista/transparent-proxy
     newTag: "latest"
+
+configMapGenerator:
+  - name: vista-transparent-proxy-configs
+    envs:
+      - params.env
