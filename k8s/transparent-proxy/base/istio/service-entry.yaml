@@ -1,10 +1,10 @@
 apiVersion: networking.istio.io/v1beta1
 kind: ServiceEntry
 metadata:
-  name: vista-transparent-proxy-se
+  name: realtime-trains-se
 spec:
   hosts:
-    - vista-transparent-proxy.vista.svc.cluster.local
+    - api.rtt.io
   location: MESH_EXTERNAL
   ports:
     - number: 443

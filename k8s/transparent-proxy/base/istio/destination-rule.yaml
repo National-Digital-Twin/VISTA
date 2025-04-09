@@ -1,9 +1,9 @@
 apiVersion: networking.istio.io/v1beta1
 kind: DestinationRule
 metadata:
-  name: vista-transparent-proxy-dr
+  name: realtime-trains-dr
 spec:
-  host: vista-transparent-proxy.vista.svc.cluster.local
+  host: api.rtt.io
   trafficPolicy:
     connectionPool:
       tcp:
