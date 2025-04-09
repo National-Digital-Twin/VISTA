@@ -22,8 +22,6 @@ export default function DetailsPanel({
         borderRadius: 2,
         boxShadow: 4,
         width: "100%",
-        marginRight: "8px",
-        marginLeft: "8px",
         flex: "1 0 auto",
       }}
       data-expanded={isOpen}

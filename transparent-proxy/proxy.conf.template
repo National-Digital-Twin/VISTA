@@ -1,3 +1,5 @@
+error_log  /var/log/nginx/error.log  $LOG_LEVEL;
+
 proxy_cache_path /tmp/nginx_cache
   levels=1:2
   keys_zone=tp_cache:100m
