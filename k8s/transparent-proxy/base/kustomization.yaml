@@ -2,6 +2,8 @@ resources:
   - vault/vaultStaticSecret.yaml
   - vault/vaultAuth.yaml
   - ../base/istio/authorizationpolicy/allow-ingress-authorization-policy.yaml
+  - ../base/istio/destination-rule.yaml
+  - ../base/istio/service-entry.yaml
   - service-account.yaml
   - deployment.yaml
   - service.yaml
