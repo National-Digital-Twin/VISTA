@@ -16,6 +16,7 @@ spec:
       annotations:
         traffic.sidecar.istio.io/inject: "false"
         traffic.sidecar.istio.io/excludeOutboundPorts: "8200"
+        traffic.sidecar.istio.io/agentLogLevel: trace
       labels:
         io.kompose.service: vista-transparent-proxy
     spec:
