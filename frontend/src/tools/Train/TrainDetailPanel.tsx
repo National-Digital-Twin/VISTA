@@ -25,7 +25,7 @@ export default function TrainDetailPanel() {
   const { data: arrivalData, isLoading: isArrivalsLoading } = useQuery({
     queryKey: ["train-arrivals", selectedStation],
     queryFn: () => fetchTrainArrivals(stationObj?.NLC || ""),
-    enabled: !!selectedStation,
+    enabled: !!selectedStation && !!departureData,
   });
 
   const isLoading = isDeparturesLoading || isArrivalsLoading;

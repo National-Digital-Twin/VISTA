@@ -27,6 +27,7 @@ server {
   server_name localhost *.ndtp.co.uk;
 
   resolver kube-dns.kube-system.svc.cluster.local valid=1m;
+  # resolver 8.8.8.8 valid=1m;
 
   # Proxy config
   proxy_cache_valid 200 302 10m;
