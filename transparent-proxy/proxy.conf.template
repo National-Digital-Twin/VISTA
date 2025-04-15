@@ -111,6 +111,7 @@ server {
   location /realtime-trains/ {
     proxy_pass https://${REALTIME_TRAINS_HOST}/api/v1/;
     proxy_set_header Authorization "Basic $REALTIME_TRAINS_API_KEY";
+    proxy_set_header Cookie "";
   }
 
   # Met Office weather API
