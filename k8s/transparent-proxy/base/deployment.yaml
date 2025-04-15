@@ -16,9 +16,6 @@ spec:
       annotations:
         sidecar.istio.io/logLevel: trace
         traffic.sidecar.istio.io/excludeOutboundPorts: "8200"
-        proxy.istio.io/config: |
-          proxyMetadata:
-            ISTIO_META_INTERCEPTION_MODE: NONE
       labels:
         io.kompose.service: vista-transparent-proxy
     spec:
