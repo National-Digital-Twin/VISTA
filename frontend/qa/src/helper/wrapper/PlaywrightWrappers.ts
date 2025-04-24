@@ -9,6 +9,11 @@ export default class PlaywrightWrapper {
     });
   }
 
+  // Custom sleep function
+  async customSleep(ms: number): Promise<void> {
+    return new Promise((resolve) => { setTimeout(resolve, ms); });
+  }
+
   async waitAndClick(locator: Locator) {
     await locator.waitFor({
       state: "visible",

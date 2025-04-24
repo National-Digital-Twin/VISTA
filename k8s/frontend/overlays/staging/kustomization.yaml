@@ -4,6 +4,7 @@ resources:
 namespace: vista
 
 patches:
+  - path: patches/deployment.yaml
   - path: patches/service-account.yaml
     target:
       kind: ServiceAccount

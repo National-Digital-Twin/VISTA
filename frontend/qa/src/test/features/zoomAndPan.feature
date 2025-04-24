@@ -2,7 +2,7 @@ Feature: Zoom and pan functionality on paralog
 
 Background:
     Given I login to the ndtp app with the user credentials
-    And   I click the Paralog menu
+    And   I click the Vista menu
 
    Scenario: Verify user can zoom in and out on the paralog map using zoom button
       When I zoom in and out using the zoom button

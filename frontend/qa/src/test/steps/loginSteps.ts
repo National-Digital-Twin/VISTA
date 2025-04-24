@@ -17,7 +17,7 @@ Given("I login to the ndtp app with the user credentials", async function () {
   await loginPage.loginUser(process.env.USERNAME, process.env.PASSWORD);
 });
 
-When("I click the Paralog menu", async function () {
+When("I click the Vista menu", async function () {
   landingPage = new LandingPage(basePage.page);
   await landingPage.clickMenuByName();
 });
