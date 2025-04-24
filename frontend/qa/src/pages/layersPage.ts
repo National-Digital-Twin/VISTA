@@ -54,12 +54,12 @@ export default class LayersPage {
 
   async zoomInWithButton() {
     const zoomInButton = this.page.getByRole("button", { name: "Zoom in" });
-    await zoomInButton.click();
+    await zoomInButton.click({ force: true });
   }
 
   async zoomOutWithButton() {
     const zoomOutButton = this.page.getByRole("button", { name: "Zoom out" });
-    await zoomOutButton.click();
+    await zoomOutButton.click({ force: true });
   }
 
   async zoomOnTheMapWithScreenshotComparison() {
@@ -166,7 +166,7 @@ export default class LayersPage {
 
   async verifyAssetDetailsTabIsDisplayed() {
     await expect(
-      this.page.getByRole("tab", { name: "Asset details" }),
+      this.page.getByRole("tab", { name: "Asset Details" }),
     ).toBeVisible();
   }
 

@@ -17,6 +17,7 @@ export default class LoginPage {
 
   async navigateToLoginPage(url: string) {
     await this.base.goto(url);
+    await this.base.customSleep(2000);
     await expect(this.page).toHaveTitle("Sign-in");
   }
   async enterUserName(user: string) {
