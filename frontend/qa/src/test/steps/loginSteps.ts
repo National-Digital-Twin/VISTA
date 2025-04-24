@@ -14,7 +14,7 @@ Given("I login to the ndtp app with the user credentials", async function () {
   loginPage = new LoginPage(basePage.page);
   await loginPage.navigateToLoginPage(process.env.BASEURL);
   basePage.logger.info("Navigated to the application");
-  await loginPage.loginUser(process.env.USERNAME, process.env.PASSWORD);
+  await loginPage.loginUser(process.env.TESTUSER, process.env.TESTPASS);
 });
 
 When("I click the Vista menu", async function () {

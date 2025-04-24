@@ -1,12 +1,5 @@
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: vista-frontend
-spec:
-  template:
-    spec:
-      containers:
-        - name: frontend
-          env:
-            - name: ENV
-              value: "DEV"
+- op: add
+  path: /spec/template/spec/containers/0/env/-
+  value:
+    name: ENV
+    value: "DEV"

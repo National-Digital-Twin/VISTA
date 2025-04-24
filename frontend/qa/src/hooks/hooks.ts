@@ -1,112 +1,89 @@
-import { BeforeAll, AfterAll, Before, After, Status } from "@cucumber/cucumber";
-import { Browser, BrowserContext } from "@playwright/test";
-import { basePage } from "./basePage";
-import { invokeBrowser } from "../helper/browsers/browserManager";
-import { getEnv } from "../helper/env/env";
-import { createLogger } from "winston";
-import { options } from "../helper/util/logger";
-const fs = require("fs-extra");
+import { After, AfterAll, Before, BeforeAll, Status } from '@cucumber/cucumber';
+import { Browser, BrowserContext } from '@playwright/test';
+import { createLogger } from 'winston';
+import * as fs from 'fs-extra';
+import { basePage } from './basePage';
+import { invokeBrowser } from '../helper/browsers/browserManager';
+import { getEnv } from '../helper/env/env';
+import { options } from '../helper/util/logger';
 
 let browser: Browser;
 let context: BrowserContext;
 
-BeforeAll(async function () {
+BeforeAll(async () => {
   getEnv();
   browser = await invokeBrowser();
 });
-// It will trigger for not auth scenarios
-Before({ tags: "not @auth" }, async function ({ pickle }) {
-  const scenarioName = pickle.name + pickle.id;
-  context = await browser.newContext({
-    recordVideo: {
-      dir: "test-results/videos",
-    },
-  });
-  await context.tracing.start({
-    name: scenarioName,
-    title: pickle.name,
-    sources: true,
-    screenshots: true,
-    snapshots: true,
-  });
-  const page = await context.newPage();
-  basePage.page = page;
-  basePage.logger = createLogger(options(scenarioName));
-});
 
-// It will trigger for auth scenarios
-Before({ tags: "@auth" }, async function ({ pickle }) {
+Before(async ({ pickle }) => {
   const scenarioName = pickle.name + pickle.id;
   context = await browser.newContext({
-    storageState: getStorageState(pickle.name),
     recordVideo: {
-      dir: "test-results/videos",
-    },
+      dir: 'test-results/videos'
+    }
   });
   await context.tracing.start({
     name: scenarioName,
     title: pickle.name,
     sources: true,
     screenshots: true,
-    snapshots: true,
+    snapshots: true
   });
-  const page = await context.newPage();
-  basePage.page = page;
+  basePage.page = await context.newPage();
   basePage.logger = createLogger(options(scenarioName));
 });
 
 After(async function TestCaseHook({ pickle, result }) {
-  let videoPath: string | undefined;
-  let img: Buffer | undefined;
   const path = `./test-results/trace/${pickle.id}.zip`;
+  let videoPath: string;
+  let img: Buffer;
 
+  // Capture screenshot and video if the test passes
   if (result?.status === Status.PASSED) {
-    try {
-      img = await basePage.page.screenshot({
-        path: `./test-results/screenshots/${pickle.name}.png`,
-        type: "png",
-      });
+    img = await basePage.page.screenshot({
+      path: `./test-results/screenshots/${pickle.name}.png`,
+      type: 'png'
+    });
 
-      const video = basePage.page.video();
-      if (video) {
-        videoPath = await video.path();
-      } else {
-        console.warn("No video recorded for this test.");
-      }
-    } catch (error) {
-      console.error("Error capturing screenshot or video:", error);
+    // Ensure video path exists before reading it
+    const video = basePage.page.video();
+    if (video) {
+      videoPath = await video.path();
+    } else {
+      // eslint-disable-next-line no-console
+      console.warn('No video recorded for this test.');
     }
   }
 
+  // Stop tracing and save artifacts
   await context.tracing.stop({ path });
-  await basePage.page?.close();
+  await basePage.page.close();
   await context.close();
 
-  console.log("FS Module:", fs); // Debugging line
+  // Attach the screenshot, video, and trace file if the test passed
+  if (result?.status === Status.PASSED) {
+    this.attach(img, 'image/png');
+
+    // Ensure video file exists before attaching
+    if (videoPath && fs.existsSync(videoPath)) {
+      const videoData = fs.readFileSync(videoPath);
+      this.attach(videoData, 'video/webm');
+    } else {
+      // eslint-disable-next-line no-console
+      console.warn('Video file not found or not recorded.');
+    }
+
+    // Attach the trace file
+    if (fs.existsSync(path)) {
+      const traceFileLink = `<a href="https://trace.playwright.dev/">Open ${path}</a>`;
+      this.attach(`Trace file: ${traceFileLink}`, 'text/html');
+    } else {
+      // eslint-disable-next-line no-console
+      console.log('File does not exist.');
+    }
+  }
 });
 
-AfterAll(async function () {
+AfterAll(async () => {
   await browser.close();
 });
-
-function getStorageState(user: string):
-  | string
-  | {
-      cookies: {
-        name: string;
-        value: string;
-        domain: string;
-        path: string;
-        expires: number;
-        httpOnly: boolean;
-        secure: boolean;
-        sameSite: "Strict" | "Lax" | "None";
-      }[];
-      origins: {
-        origin: string;
-        localStorage: { name: string; value: string }[];
-      }[];
-    } {
-  if (user.endsWith("admin")) return "src/helper/auth/admin.json";
-  else if (user.endsWith("lead")) return "src/helper/auth/lead.json";
-}
