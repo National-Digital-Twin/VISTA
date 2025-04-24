@@ -38,7 +38,7 @@ node js needs to be latest or minimum version 22
 2. Extract and open in the VS-Code
 3. `npm i` to install the dependencies
 4. `npx playwright install` to install the browsers
-5. Get the Test User login details from the secret vault in Kubernetes. If it hasn't been created for this enviroment, refer to [Setting Up a new Test User](#setting-up-a-new-test-user) below.
+5. Get the Test User login details from the secret vault in Kubernetes. If it hasn't been created for this environment, refer to [Setting Up a new Test User](#setting-up-a-new-test-user) below.
 6. Populate the `TESTUSER` and `TESTPASS` values in the env file with the appropriate values
 7. Populate the `BASEURL` value with the appropriate URL
 8. `cd frontend/qa` to get to the relevant folder
