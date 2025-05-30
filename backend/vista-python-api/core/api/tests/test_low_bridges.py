@@ -13,7 +13,7 @@ from api import models
 
 @pytest.mark.django_db
 def test_low_bridges_query(client):
-    """Test vulnerable people query."""
+    """Test low bridge query."""
     baker.make(
         models.LowBridge,
         local_id="example id",

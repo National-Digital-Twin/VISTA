@@ -13,9 +13,6 @@ const config = {
     user: "/ndtp-python/api/user/",
     signout: "/ndtp-python/api/auth/signout/",
   },
-  weather: {
-    url: import.meta.env.WEATHER_API_URL || "/transparent-proxy/weather",
-  },
   configErrors: [] as string[],
 };
 

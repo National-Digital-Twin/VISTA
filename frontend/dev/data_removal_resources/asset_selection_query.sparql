@@ -1,0 +1,4 @@
+SELECT ?s
+WHERE {{
+  ?s a <http://ies.data.gov.uk/ontology/ies4#{type}> .
+}}
