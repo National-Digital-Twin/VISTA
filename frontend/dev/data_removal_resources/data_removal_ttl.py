@@ -15,7 +15,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import os, json, requests
+import os
+import json
+import requests
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -37,10 +39,10 @@ asset_types = asset_types_string.split("\n")
 
 for type in asset_types:
     asset_result = requests.post(
-            f"{fuseki_url}/query",
-            headers={"Content-Type": "application/sparql-query"},
-            data=asset_selection_query.format(type=type).encode("utf-8"),
-        )
+        f"{fuseki_url}/query",
+        headers={"Content-Type": "application/sparql-query"},
+        data=asset_selection_query.format(type=type).encode("utf-8"),
+    )
     data = json.loads(asset_result.text)
     assets = [binding["s"]["value"] for binding in data["results"]["bindings"]]
 
@@ -52,4 +54,3 @@ for type in asset_types:
             headers={"Content-Type": "application/sparql-update"},
             data=query.encode("utf-8"),
         )
-

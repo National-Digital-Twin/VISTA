@@ -11,7 +11,7 @@ from model_bakery import baker
 from api import models
 
 
-@pytest.mark.django_db()
+@pytest.mark.django_db
 def test_traffic_data_query_blank(client):
     """Test blank traffic data query."""
     query = """
@@ -37,7 +37,7 @@ def test_traffic_data_query_blank(client):
     ).json() == {"data": {"roadSegment": None}}
 
 
-@pytest.mark.django_db()
+@pytest.mark.django_db
 def test_traffic_data_query(client):
     """Test traffic data query."""
     baker.make(

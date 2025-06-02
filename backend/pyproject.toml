@@ -55,6 +55,9 @@ pytest-django = "^4.9.0"
 model-bakery = "^1.19.5"
 cattrs = "^24.1.2"
 
+[tool.poetry.group.dev.dependencies]
+ruff = "0.6.4"
+
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
