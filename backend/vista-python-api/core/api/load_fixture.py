@@ -49,7 +49,7 @@ def _process_fixture(
     for entity in fixture_data:
         if entity["model"] != expected_modelname:
             raise ValueError(
-                f"Fixture entity with incorrect model {entity["model"]!r}, "
+                f"Fixture entity with incorrect model {entity['model']!r}, "
                 f"expected {expected_modelname!r}"
             )
 

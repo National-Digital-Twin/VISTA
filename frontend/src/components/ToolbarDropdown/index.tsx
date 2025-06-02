@@ -10,8 +10,6 @@ export interface ToolbarDropdownProps {
   readonly icon?: IconDefinition;
   /** Title */
   readonly title: string;
-  /** Flag determines whether to add the sanbagContainer override class */
-  readonly applyOverrideForSandbag?: boolean;
   /** Children */
   readonly children:
     | React.ReactNode
@@ -21,7 +19,6 @@ export interface ToolbarDropdownProps {
 export default function ToolbarDropdown({
   icon,
   title,
-  applyOverrideForSandbag,
   children,
 }: ToolbarDropdownProps) {
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -58,11 +55,7 @@ export default function ToolbarDropdown({
 
   return (
     <Box
-      className={
-        applyOverrideForSandbag
-          ? [styles.toolbarDropdown, styles.sandbagContainer].join(" ")
-          : styles.toolbarDropdown
-      }
+      className={styles.toolbarDropdown}
       ref={wrapperRef}
       data-dropdown-open={isOpen}
     >
