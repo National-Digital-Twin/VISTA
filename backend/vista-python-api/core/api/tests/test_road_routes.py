@@ -278,7 +278,7 @@ def test_road_route_same_start_end(client):
     }
 
 
-@pytest.mark.django_db
+@pytest.mark.django_db()
 def test_road_route_query_vehicle(client):
     """Test road route query with a vehicle."""
     baker.make(

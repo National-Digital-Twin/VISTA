@@ -1,6 +1,5 @@
 """vista Backend Models."""
 
-from decimal import ROUND_DOWN, Decimal
 
 from django.db import models
 

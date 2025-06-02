@@ -1,6 +1,5 @@
 """Create your resolvers here."""
 
-import datetime
 import json
 from dataclasses import dataclass
 from typing import TYPE_CHECKING

@@ -1,3 +1,6 @@
 # Going to accept the following vulnerabilities in the base debian image as we are not immediately vulnerable to these anda fix is eventually going to be pushed up to the main nginx container.
 # TODO: update nginx image when fix is published
 CVE-2024-56406
+
+# The below CVE was published 30/5/25 and NGINX have not yet released a patched Docker image.
+CVE-2025-4598

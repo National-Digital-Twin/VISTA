@@ -1,13 +1,13 @@
 """Tests for models, mostly __str__ method coverage."""
 
-from decimal import Decimal
 
 import pytest
 from model_bakery import baker
 
 from api import models
 
-@pytest.mark.django_db
+
+@pytest.mark.django_db()
 def test_traffic_data():
     """Test TrafficData.__str__."""
     assert (
@@ -24,7 +24,7 @@ def test_traffic_data():
     )
 
 
-@pytest.mark.django_db
+@pytest.mark.django_db()
 def test_low_bridge():
     """Test LowBridge.__str__."""
     assert (
@@ -42,7 +42,7 @@ def test_low_bridge():
     )
 
 
-@pytest.mark.django_db
+@pytest.mark.django_db()
 def test_narrow_road():
     """Test NarrowRoad.__str__."""
     assert (
