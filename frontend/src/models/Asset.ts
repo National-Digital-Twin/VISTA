@@ -21,6 +21,11 @@ export interface AssetGeometryNode {
   lon2: string;
 }
 
+export enum AssetState {
+  Live,
+  Static,
+}
+
 export default class Asset {
   #countColorScale: ColorScale | null = null;
   #criticalitySumColorScale: ColorScale | null = null;
@@ -33,10 +38,12 @@ export default class Asset {
   lng: number;
   geometry: AssetGeometryNode[];
   dependent: any;
+  description: string;
   styles: FoundIcon;
   elementType: "asset";
   primaryCategory?: string;
   secondaryCategory?: string;
+  state: AssetState = AssetState.Static;
 
   constructor({
     uri,
@@ -45,9 +52,11 @@ export default class Asset {
     lng,
     geometry,
     dependent,
+    description,
     styles,
     primaryCategory,
     secondaryCategory,
+    state,
   }: {
     uri: string;
     type: string;
@@ -55,9 +64,11 @@ export default class Asset {
     lng: number;
     geometry: AssetGeometryNode[];
     dependent: any;
+    description: string;
     styles: FoundIcon;
     primaryCategory?: string;
     secondaryCategory?: string;
+    state: AssetState;
   }) {
     this.uri = uri;
     this.id = this.uri.split("#")[1];
@@ -66,10 +77,12 @@ export default class Asset {
     this.lng = lng;
     this.geometry = geometry;
     this.dependent = dependent;
+    this.description = description;
     this.styles = styles;
     this.elementType = "asset";
     this.primaryCategory = primaryCategory;
     this.secondaryCategory = secondaryCategory;
+    this.state = state === undefined ? AssetState.Static : state;
     Object.preventExtensions(this);
   }
 
@@ -200,14 +213,11 @@ export default class Asset {
   }
 
   getDetails(assetInfo) {
-    if (!assetInfo) {
-      return undefined;
-    }
     return {
-      title: assetInfo?.name,
+      title: assetInfo?.name || "Name unknown",
       criticality: this.dependent.criticalitySum,
-      type: assetInfo?.assetType,
-      desc: assetInfo?.desc,
+      type: assetInfo?.assetType || this.type,
+      desc: assetInfo?.desc || this.description,
       criticalityColor: this.criticalityColor,
       id: this.id,
       uri: this.uri,
