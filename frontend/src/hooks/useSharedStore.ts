@@ -16,6 +16,7 @@ export interface State {
   minCriticality: number;
   selectedFloodAreas: NonNullable<Feature["id"]>[];
   floodAreaFeatures: Feature<Polygon>[];
+  drawnFeatures: Feature<Polygon>[];
   selectedFloodAreaFeatureIds: Record<NonNullable<Feature["id"]>, boolean>;
 
   selectAssetType: (assetType: any) => void;
@@ -130,6 +131,7 @@ export default createStore<State>("application-state-storage", (set) => ({
   selectedFloodAreas: [],
   setSelectedFloodAreas: (floodAreas) =>
     set(() => ({ selectedFloodAreas: floodAreas })),
+  drawnFeatures: [],
   floodAreaFeatures: [],
   addFloodAreaFeatures: (features) =>
     set((state) => ({

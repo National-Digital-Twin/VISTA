@@ -6,11 +6,14 @@ import { useTools } from "@/tools/useTools";
 import featureFlags from "@/config/feature-flags";
 import ControlPanel from "@/components/Map/ControlPanel";
 import MapToolbar from "@/components/Map/SideButtons/MapToolbar";
+import PolygonToolbar from "@/components/Map/SideButtons/PolygonToolbar";
+
 interface ToolbarProps {
   readonly onOpenControlPanel?: () => void;
+  readonly showPolygonToolbar?: boolean;
 }
 
-function Toolbar({ onOpenControlPanel }: ToolbarProps) {
+function Toolbar({ onOpenControlPanel, showPolygonToolbar }: ToolbarProps) {
   const tools = useTools();
   return (
     <Box
@@ -40,6 +43,7 @@ function Toolbar({ onOpenControlPanel }: ToolbarProps) {
           </Button>
         </Tooltip>
       )}
+      {showPolygonToolbar && <PolygonToolbar />}
       {tools("toolbar-order").map((tool) => {
         if (!tool.ToolbarTools) {
           return null;
@@ -68,6 +72,9 @@ export default function ControlsOverlay() {
   } = useBoolean(false);
 
   const shouldShowControlPanel = featureFlags.uiNext && controlPanelOpen;
+
+  const { value: showPolygonToolbar, toggle: togglePolygonToolbar } =
+    useBoolean(false);
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
@@ -125,6 +132,7 @@ export default function ControlsOverlay() {
                   hideControlPanel(); // Hide Control Panel
                   hideConnectedAssetsPanel(); // Also hide Connected Assets Panel
                 }}
+                showPolygonToolbar={showPolygonToolbar}
               />
             )}
           </Box>
@@ -144,7 +152,7 @@ export default function ControlsOverlay() {
               pointerEvents: "auto",
             }}
           >
-            <MapToolbar />
+            <MapToolbar onClickFunc={togglePolygonToolbar} />
           </Box>
         </Box>
       </Box>

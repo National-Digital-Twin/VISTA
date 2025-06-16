@@ -16,11 +16,16 @@ import Map, {
   useMap,
   AttributionControl,
   NavigationControl,
+  LngLatBounds,
 } from "react-map-gl/maplibre";
 import { ErrorBoundary } from "react-error-boundary";
 
 import { Box } from "@mui/material";
-import { FLOOD_AREA_LAYERS, LINEAR_ASSET_LAYER } from "./layers";
+import {
+  FLOOD_AREA_LAYERS,
+  LINEAR_ASSET_LAYER,
+  BUILDING_LAYERS,
+} from "./layers";
 import { generateLinearAssetFeatures } from "./map-utils";
 import { useMapStyles } from "./mapStyles";
 
@@ -31,6 +36,7 @@ import ControlsOverlay from "./ControlsOverlay";
 
 import PointerCoordinates from "./PointerCoords";
 import FloodZones from "./FloodZones";
+import { fetchBuildingAssets } from "@/api/live-assets";
 import type Tool from "@/tools/Tool";
 import { useTools } from "@/tools/useTools";
 import { ErrorFallback } from "@/lib";
@@ -41,6 +47,7 @@ import { ElementsContext } from "@/context/ElementContext";
 import { DrawingModeContextProvider } from "@/context/DrawingMode";
 import { MapStyleContextProvider } from "@/context/MapStyle";
 import { ShowPointerCoordsContextProvider } from "@/context/ShowPointerCoords";
+import { TooltipProvider } from "@/context/DrawingMode/TooltipContext";
 
 const FloodMonitoringStations = lazy(() => import("./FloodMonitoringStations"));
 const PointAssets = lazy(() => import("./PointAssets"));
@@ -113,6 +120,20 @@ interface ToolSourceType {
   layers: LayerProps[];
 }
 
+const generateSources = (source: ToolSourceType) => (
+  <Source
+    key={source.id}
+    id={source.id}
+    type={GEOJSON}
+    data={{ type: FEATURE_COLLECTION, features: source.features }}
+    generateId
+  >
+    {source.layers.map((layer) => (
+      <Layer key={layer.id} {...layer} />
+    ))}
+  </Source>
+);
+
 function BuiltinSources() {
   const { assets, clickedFloodAreas, selectedElements, liveFloodAreas } =
     useContext(ElementsContext);
@@ -143,20 +164,6 @@ function BuiltinSources() {
     });
     return allSources;
   }, [linearAssets, floodAreas, liveFloodAreas]);
-
-  const generateSources = (source: ToolSourceType) => (
-    <Source
-      key={source.id}
-      id={source.id}
-      type={GEOJSON}
-      data={{ type: FEATURE_COLLECTION, features: source.features }}
-      generateId
-    >
-      {source.layers.map((layer) => (
-        <Layer key={layer.id} {...layer} />
-      ))}
-    </Source>
-  );
 
   return <>{sources.map(generateSources)}</>;
 }
@@ -219,6 +226,7 @@ export default function ParalogMap() {
 
   const [showPointerCoords, setShowPointerCoords] = useState(false);
   const [showBuildingLayer, setShowBuildingLayer] = useState(false);
+  const [dynamicSources, setDynamicSources] = useState<ToolSourceType[]>([]);
 
   const [mousePosition, setMousePosition] = useState(undefined);
 
@@ -279,58 +287,61 @@ export default function ParalogMap() {
                 return TransformUrl(url);
               }}
             >
-              <DrawingModeContextProvider>
-                <ControlsOverlay />
-                <MBuiltinSources />
-                <MAllCustomMapElements />
-                {showBuildingLayer && (
-                  <Layer
-                    source-layer="TopographicArea_2"
-                    id="OS/TopographicArea_2/Building/1_3D"
-                    type="fill-extrusion"
-                    source="esri"
-                    filter={["<=", "_symbol", 4]}
-                    minzoom={15}
-                    paint={{
-                      "fill-extrusion-color": "#A19786",
-                      "fill-extrusion-height": ["get", "RelHMax"],
-                      "fill-extrusion-opacity": [
-                        "interpolate",
-                        ["linear"],
-                        ["zoom"],
-                        15,
-                        0,
-                        16,
-                        0.9,
-                      ],
+              <TooltipProvider>
+                <DrawingModeContextProvider>
+                  <ControlsOverlay />
+                  <MBuiltinSources />
+                  <>{dynamicSources.map(generateSources)}</>
+                  <MAllCustomMapElements />
+                  {showBuildingLayer && (
+                    <Layer
+                      source-layer="TopographicArea_2"
+                      id="OS/TopographicArea_2/Building/1_3D"
+                      type="fill-extrusion"
+                      source="esri"
+                      filter={["<=", "_symbol", 4]}
+                      minzoom={15}
+                      paint={{
+                        "fill-extrusion-color": "#A19786",
+                        "fill-extrusion-height": ["get", "RelHMax"],
+                        "fill-extrusion-opacity": [
+                          "interpolate",
+                          ["linear"],
+                          ["zoom"],
+                          15,
+                          0,
+                          16,
+                          0.9,
+                        ],
+                      }}
+                    />
+                  )}
+                  <Suspense fallback={null}>
+                    <PointAssets
+                      assets={assets}
+                      dependencies={dependencies}
+                      selectedElements={selectedElements}
+                      onElementClick={onElementClick}
+                    />
+                  </Suspense>
+                  <Suspense fallback={null}>
+                    <FloodMonitoringStations
+                      query={query}
+                      showStations={showStations}
+                    />
+                  </Suspense>
+                  <AttributionControl compact />
+                  <ScaleControl
+                    position="bottom-right"
+                    style={{
+                      backgroundColor: "#27272780",
+                      color: "#F5F5F5",
+                      borderColor: "#949494",
                     }}
                   />
-                )}
-                <Suspense fallback={null}>
-                  <PointAssets
-                    assets={assets}
-                    dependencies={dependencies}
-                    selectedElements={selectedElements}
-                    onElementClick={onElementClick}
-                  />
-                </Suspense>
-                <Suspense fallback={null}>
-                  <FloodMonitoringStations
-                    query={query}
-                    showStations={showStations}
-                  />
-                </Suspense>
-                <AttributionControl compact />
-                <ScaleControl
-                  position="bottom-right"
-                  style={{
-                    backgroundColor: "#27272780",
-                    color: "#F5F5F5",
-                    borderColor: "#949494",
-                  }}
-                />
-                <NavigationControl showZoom={false} showCompass={false} />
-              </DrawingModeContextProvider>
+                  <NavigationControl showZoom={false} showCompass={false} />
+                </DrawingModeContextProvider>
+              </TooltipProvider>
             </Map>
 
             <MAllOverlays />
