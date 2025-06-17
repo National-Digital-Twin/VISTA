@@ -10,12 +10,6 @@ export const TOOL_NAME = "Polygon controls";
 export function CircleCreationButton() {
   const drawingModeCallbacks = useSharedStore(
     useShallow((state) => ({
-      features: state.floodAreaFeatures,
-      selectedFeatureIds: state.selectedFloodAreaFeatureIds,
-      selected: state.selectedFloodAreas,
-      setSelected: state.setSelectedFloodAreas,
-      toggleFeature: state.toggleFloodAreaFeature,
-      setFeatures: state.setFloodAreaFeatures,
       onAddFeatures: state.addFloodAreaFeatures,
       onUpdateFeatures: state.updateFloodAreaFeatures,
       onDeleteFeatures: state.deleteFloodAreaFeatures,
@@ -23,7 +17,7 @@ export function CircleCreationButton() {
   );
 
   const { startDrawing, features } = useDrawingMode(
-    (state) => state.dynamicProximityFeatures,
+    (state) => state.floodAreaFeatures,
     drawingModeCallbacks,
   );
 

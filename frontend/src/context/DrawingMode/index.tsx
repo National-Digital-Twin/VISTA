@@ -177,6 +177,8 @@ export const useDrawingMode = <T extends Feature>(
         drawingMode,
         drawingMode === "draw_circle" ? options : undefined,
       );
+
+      map.on("draw.delete", handleDrawEvent);
       map.on("draw.create", handleDrawCreate);
       map.on("draw.modechange", handleModeChange);
       if (drawingMode === "drag_circle") {

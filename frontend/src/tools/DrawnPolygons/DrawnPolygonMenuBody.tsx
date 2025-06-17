@@ -11,9 +11,9 @@ import {
 import useSharedStore from "@/hooks/useSharedStore";
 import { ElementsContext } from "@/context/ElementContext";
 import { useFloodAreaPolygons } from "@/hooks";
-import { useDrawingMode } from "@/context/DrawingMode";
 import useFloodWatchAreas from "@/hooks/queries/flood-areas/useFloodWatchAreas";
 import MenuItemRow from "@/components/MenuItemRow";
+import { useTooltips } from "@/context/DrawingMode/TooltipContext";
 
 const useFloodAreaSharedStore = () =>
   useSharedStore(
@@ -59,14 +59,6 @@ export default function DrawnPolygonMenuBody({
     : [];
   const { polygonFeatures, isLoading } = useFloodAreaPolygons(floodPolygonUris);
 
-  const { startDrawing } = useDrawingMode(
-    (state) =>
-      state.floodAreaFeatures.filter(
-        (feature) => state.selectedFloodAreaFeatureIds[feature.id],
-      ),
-    drawingModeCallbacks,
-  );
-
   const { setClickedFloodAreas } = useContext(ElementsContext);
 
   const [editingPolygonId, setEditingPolygonId] = useState(null);
@@ -110,9 +102,11 @@ export default function DrawnPolygonMenuBody({
     );
   }, [selected, isLoading, polygonFeatures, setClickedFloodAreas]);
 
+  const { removeTooltip } = useTooltips();
+
   const handleDeleteFeature = (featureId: NonNullable<Feature["id"]>) => {
     if (window.confirm("Delete this drawn polygon?")) {
-      drawingModeCallbacks.onDeleteFeatures([featureId]);
+      drawingModeCallbacks.onDeleteFeatures([featureId], removeTooltip);
     }
   };
 

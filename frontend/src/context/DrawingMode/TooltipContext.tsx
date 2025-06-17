@@ -22,7 +22,7 @@ export const TooltipProvider: React.FC<{ children: React.ReactNode }> = ({
     setTooltips((prev) => ({ ...prev, [id]: data }));
   };
 
-  const removeTooltip = (id: string) => {
+  const removeTooltip = (id: NonNullable<string | number | undefined>) => {
     setTooltips((prev) => {
       const updated = { ...prev };
       delete updated[id];
