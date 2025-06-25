@@ -8,7 +8,7 @@ type TooltipData = {
 type TooltipContextType = {
   tooltips: Record<string, TooltipData>;
   setTooltip: (id: string, data: TooltipData) => void;
-  removeTooltip: (id: string) => void;
+  removeTooltip: (id: NonNullable<string | number | undefined>) => void;
 };
 
 const TooltipContext = createContext<TooltipContextType | null>(null);
@@ -39,6 +39,8 @@ export const TooltipProvider: React.FC<{ children: React.ReactNode }> = ({
 
 export const useTooltips = () => {
   const ctx = useContext(TooltipContext);
-  if (!ctx) throw new Error("useTooltips must be used within TooltipProvider");
+  if (!ctx) {
+    throw new Error("useTooltips must be used within TooltipProvider");
+  }
   return ctx;
 };

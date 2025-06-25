@@ -16,16 +16,11 @@ import Map, {
   useMap,
   AttributionControl,
   NavigationControl,
-  LngLatBounds,
 } from "react-map-gl/maplibre";
 import { ErrorBoundary } from "react-error-boundary";
 
 import { Box } from "@mui/material";
-import {
-  FLOOD_AREA_LAYERS,
-  LINEAR_ASSET_LAYER,
-  BUILDING_LAYERS,
-} from "./layers";
+import { FLOOD_AREA_LAYERS, LINEAR_ASSET_LAYER } from "./layers";
 import { generateLinearAssetFeatures } from "./map-utils";
 import { useMapStyles } from "./mapStyles";
 
@@ -36,7 +31,6 @@ import ControlsOverlay from "./ControlsOverlay";
 
 import PointerCoordinates from "./PointerCoords";
 import FloodZones from "./FloodZones";
-import { fetchBuildingAssets } from "@/api/live-assets";
 import type Tool from "@/tools/Tool";
 import { useTools } from "@/tools/useTools";
 import { ErrorFallback } from "@/lib";
@@ -226,7 +220,6 @@ export default function ParalogMap() {
 
   const [showPointerCoords, setShowPointerCoords] = useState(false);
   const [showBuildingLayer, setShowBuildingLayer] = useState(false);
-  const [dynamicSources, setDynamicSources] = useState<ToolSourceType[]>([]);
 
   const [mousePosition, setMousePosition] = useState(undefined);
 
@@ -291,7 +284,6 @@ export default function ParalogMap() {
                 <DrawingModeContextProvider>
                   <ControlsOverlay />
                   <MBuiltinSources />
-                  <>{dynamicSources.map(generateSources)}</>
                   <MAllCustomMapElements />
                   {showBuildingLayer && (
                     <Layer

@@ -1,6 +1,5 @@
 import type { Feature, Polygon, Position } from "geojson";
 import createStore from "./createStore";
-import { useTooltips } from "@/context/DrawingMode/TooltipContext";
 
 interface DynamicProximityFeatureProperties {
   isCircle: true;
@@ -148,7 +147,9 @@ export default createStore<State>("application-state-storage", (set) => ({
   updateFloodAreaFeatures: updateFeatures("floodAreaFeatures", set),
   deleteFloodAreaFeatures: (featureIds, removeTooltip) =>
     set((state) => {
-      for (const id of featureIds) removeTooltip(id);
+      for (const id of featureIds) {
+        removeTooltip(id);
+      }
       return {
         floodAreaFeatures: state.floodAreaFeatures.filter(
           (f) => !featureIds.includes(f.id),

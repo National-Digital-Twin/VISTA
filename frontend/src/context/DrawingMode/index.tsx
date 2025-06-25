@@ -12,11 +12,16 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import { MapRef, useControl, useMap } from "react-map-gl/maplibre";
-import type { Feature, Polygon } from "geojson";
+import { useControl, useMap } from "react-map-gl/maplibre";
+import type { Feature } from "geojson";
 import { useShallow } from "zustand/react/shallow";
 import RectangleMode from "mapbox-gl-draw-rectangle-mode";
+import { area as turf_area, center as turf_center } from "@turf/turf";
+import { Popup } from "maplibre-gl";
+
 import { drawStyles } from "./theme";
+import { useTooltips } from "./TooltipContext";
+
 import {
   CircleMode,
   DirectMode,
@@ -27,21 +32,11 @@ import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
 import "./maplibre-gl-draw.css";
 import "./maplibre-gl-map.css";
 import useSharedStore, { State } from "@/hooks/useSharedStore";
-import { Map, Marker, Popup } from "maplibre-gl";
-import {
-  polygon as turf_polygon,
-  area as turf_area,
-  center as turf_center,
-  feature,
-} from "@turf/turf";
-import { useTooltips } from "./TooltipContext";
 
 /** Context for Drawing Mode */
 interface DrawingModeContextValue {
   readonly draw: MapboxDraw;
   readonly isMapLoaded: boolean;
-  updateTooltip: (features: any) => void;
-  removeTooltip: (id: string) => void;
 }
 const DrawingModeContext = createContext<DrawingModeContextValue | null>(null);
 
@@ -64,33 +59,6 @@ export function DrawingModeContextProvider({
   const { paralogMap: map } = useMap();
   const [isMapLoaded, setIsMapLoaded] = useState(map.loaded());
 
-  const { setTooltip, removeTooltip } = useTooltips();
-
-  const updateTooltip = (features: any[]) => {
-    for (const feature of features) {
-      if (
-        feature.geometry.type === "Polygon" ||
-        feature.properties?.type === "circle"
-      ) {
-        const id = feature.id;
-        const center = turf_center(feature).geometry.coordinates as [
-          number,
-          number,
-        ];
-        const area = turf_area(feature) / 1_000_000;
-
-        if (map && isMapLoaded) {
-          new Popup({ closeButton: false })
-            .setLngLat(center)
-            .setText(`${area.toFixed(2)} km`)
-            .addTo(map.getMap());
-        }
-
-        setTooltip(id, { center, area });
-      }
-    }
-  };
-
   const draw = useControl(
     () =>
       new (MapboxDraw as any)({
@@ -111,8 +79,8 @@ export function DrawingModeContextProvider({
   }, [map]);
 
   const contextValue = useMemo(
-    () => ({ draw, isMapLoaded, updateTooltip, removeTooltip }),
-    [draw, isMapLoaded, updateTooltip, removeTooltip],
+    () => ({ draw, isMapLoaded }),
+    [draw, isMapLoaded],
   );
 
   return (
@@ -157,13 +125,69 @@ export const useDrawingMode = <T extends Feature>(
   const { paralogMap: map } = useMap();
   const features = useSharedStore(useShallow(selector));
 
+  const { setTooltip, removeTooltip } = useTooltips();
+
+  /** Process Draw Events */
+  const processDrawEvent = useCallback(
+    (event: DrawUpdateEvent | DrawDeleteEvent, relevantFeatures: Feature[]) => {
+      if (event.type === "draw.update") {
+        onUpdateFeatures(relevantFeatures);
+      } else if (event.type === "draw.delete") {
+        const featureIds = relevantFeatures.map(({ id }) => id as string);
+        onDeleteFeatures(featureIds);
+        for (const id in featureIds) {
+          removeTooltip(id);
+        }
+      }
+    },
+    [onUpdateFeatures, onDeleteFeatures, removeTooltip],
+  );
+
+  /** Handle Draw Event */
+  const handleDrawEvent = useCallback(
+    (event: DrawUpdateEvent | DrawDeleteEvent) => {
+      const relevantFeatures = event.features.filter((feature) =>
+        features.some((existing) => existing.id === feature.id),
+      );
+      if (relevantFeatures.length) {
+        processDrawEvent(event, relevantFeatures);
+      }
+    },
+    [features, processDrawEvent],
+  );
+
   /** Start Drawing */
   const startDrawing = useCallback(
     ({ drawingMode, options }: UseDrawShapeOptions) => {
+      const updateTooltip = (features: any[]) => {
+        for (const feature of features) {
+          if (
+            feature.geometry.type === "Polygon" ||
+            feature.properties?.type === "circle"
+          ) {
+            const id = feature.id;
+            const center = turf_center(feature).geometry.coordinates as [
+              number,
+              number,
+            ];
+            const area = turf_area(feature) / 1_000_000;
+
+            if (map && isMapLoaded) {
+              new Popup({ closeButton: false })
+                .setLngLat(center)
+                .setText(`${area.toFixed(2)} km`)
+                .addTo(map.getMap());
+            }
+
+            setTooltip(id, { center, area });
+          }
+        }
+      };
+
       const handleDrawCreate = (event: DrawCreateEvent) => {
         onAddFeatures(event.features);
         if (drawingMode === "drag_circle") {
-          context.updateTooltip(event.features);
+          updateTooltip(event.features);
         }
         map.off("draw.create", handleDrawCreate);
       };
@@ -182,40 +206,11 @@ export const useDrawingMode = <T extends Feature>(
       map.on("draw.create", handleDrawCreate);
       map.on("draw.modechange", handleModeChange);
       if (drawingMode === "drag_circle") {
-        map.on("draw.update", (e) => context.updateTooltip(e.features));
-        map.on("draw.selectionchange", (e) =>
-          context.updateTooltip(e.features),
-        );
+        map.on("draw.update", (e) => updateTooltip(e.features));
+        map.on("draw.selectionchange", (e) => updateTooltip(e.features));
       }
     },
-    [draw, map, onAddFeatures],
-  );
-
-  /** Process Draw Events */
-  const processDrawEvent = useCallback(
-    (event: DrawUpdateEvent | DrawDeleteEvent, relevantFeatures: Feature[]) => {
-      if (event.type === "draw.update") {
-        onUpdateFeatures(relevantFeatures);
-      } else if (event.type === "draw.delete") {
-        const featureIds = relevantFeatures.map(({ id }) => id as string);
-        onDeleteFeatures(featureIds);
-        for (const id in featureIds) context.removeTooltip(id);
-      }
-    },
-    [onUpdateFeatures, onDeleteFeatures],
-  );
-
-  /** Handle Draw Event */
-  const handleDrawEvent = useCallback(
-    (event: DrawUpdateEvent | DrawDeleteEvent) => {
-      const relevantFeatures = event.features.filter((feature) =>
-        features.some((existing) => existing.id === feature.id),
-      );
-      if (relevantFeatures.length) {
-        processDrawEvent(event, relevantFeatures);
-      }
-    },
-    [features, processDrawEvent],
+    [draw, map, onAddFeatures, handleDrawEvent, setTooltip, isMapLoaded],
   );
 
   /** Attach Event Listeners */

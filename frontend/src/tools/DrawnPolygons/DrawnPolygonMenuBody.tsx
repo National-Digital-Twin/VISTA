@@ -21,7 +21,6 @@ const useFloodAreaSharedStore = () =>
       features: state.floodAreaFeatures,
       selectedFeatureIds: state.selectedFloodAreaFeatureIds,
       selected: state.selectedFloodAreas,
-      setSelected: state.setSelectedFloodAreas,
       toggleFeature: state.toggleFloodAreaFeature,
       setFeatures: state.setFloodAreaFeatures,
       onAddFeatures: state.addFloodAreaFeatures,
@@ -50,7 +49,6 @@ export default function DrawnPolygonMenuBody({
     features,
     selectedFeatureIds,
     selected,
-    setSelected,
     ...drawingModeCallbacks
   } = useFloodAreaSharedStore();
 

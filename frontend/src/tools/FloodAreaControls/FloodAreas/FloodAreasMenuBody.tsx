@@ -1,17 +1,8 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import { useShallow } from "zustand/react/shallow";
-import type { Feature } from "geojson";
-import {
-  Box,
-  IconButton,
-  ListItemText,
-  SvgIcon,
-  TextField,
-} from "@mui/material";
 import useSharedStore from "@/hooks/useSharedStore";
 import { ElementsContext } from "@/context/ElementContext";
 import { useFloodAreaPolygons } from "@/hooks";
-import { useDrawingMode } from "@/context/DrawingMode";
 import useFloodWatchAreas from "@/hooks/queries/flood-areas/useFloodWatchAreas";
 import MenuItemRow from "@/components/MenuItemRow";
 
@@ -46,59 +37,14 @@ export default function FloodAreasMenuBody({
   const { isError: isErrorFloodAreas, data: floodAreaNodes } =
     useFloodWatchAreas();
 
-  const {
-    setFeatures,
-    toggleFeature,
-    features,
-    selectedFeatureIds,
-    selected,
-    showLiveFloods,
-    toggleShowLiveFloods,
-    setSelected,
-    ...drawingModeCallbacks
-  } = useFloodAreaSharedStore();
+  const { selected, showLiveFloods, toggleShowLiveFloods, setSelected } =
+    useFloodAreaSharedStore();
 
   const floodPolygonUris = floodAreaNodes
     ? floodAreaNodes.map((node) => node.value)
     : [];
   const { polygonFeatures, isLoading } = useFloodAreaPolygons(floodPolygonUris);
-
-  const { startDrawing } = useDrawingMode(
-    (state) =>
-      state.floodAreaFeatures.filter(
-        (feature) => state.selectedFloodAreaFeatureIds[feature.id],
-      ),
-    drawingModeCallbacks,
-  );
-
   const { setClickedFloodAreas } = useContext(ElementsContext);
-
-  const [editingPolygonId, setEditingPolygonId] = useState(null);
-  const [editedPolygonName, setEditedPolygonName] = useState("");
-
-  const handleEditPolygonName = (featureId) => {
-    const feature = features.find((feature) => feature.id === featureId);
-    setEditingPolygonId(featureId);
-    setEditedPolygonName(feature.properties.name || "");
-  };
-
-  const handleSavePolygonName = (featureId) => {
-    const updatedFeatures = features.map((feature) => {
-      if (feature.id === featureId) {
-        return {
-          ...feature,
-          properties: {
-            ...feature.properties,
-            name: editedPolygonName,
-          },
-        };
-      }
-      return feature;
-    });
-    setFeatures(updatedFeatures);
-    setEditingPolygonId(null);
-    setEditedPolygonName("");
-  };
 
   useEffect(() => {
     if (isLoading || !polygonFeatures) {
@@ -124,16 +70,6 @@ export default function FloodAreasMenuBody({
 
     if (updateSelectedCount) {
       updateSelectedCount(updatedSelectedAreas.length > 0); // Notify parent about the new state
-    }
-  };
-
-  const handleDrawPolygon = () => {
-    startDrawing({ drawingMode: "draw_polygon" });
-  };
-
-  const handleDeleteFeature = (featureId: NonNullable<Feature["id"]>) => {
-    if (window.confirm("Delete this drawn polygon?")) {
-      drawingModeCallbacks.onDeleteFeatures([featureId]);
     }
   };
 

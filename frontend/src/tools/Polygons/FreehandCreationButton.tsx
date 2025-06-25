@@ -1,8 +1,9 @@
 import { useCallback } from "react";
+import { useShallow } from "zustand/react/shallow";
+
 import ToolbarButton from "@/components/Map/SideButtons/ToolbarButton";
 import { useDrawingMode } from "@/context/DrawingMode";
 import useSharedStore from "@/hooks/useSharedStore";
-import { useShallow } from "zustand/react/shallow";
 
 export const TOOL_NAME = "Polygon controls";
 
