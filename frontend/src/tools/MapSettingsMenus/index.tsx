@@ -5,12 +5,12 @@ import PolygonCreationButton from "./PolygonCreationButton";
 
 export const TOOL_NAME = "Map settings menus";
 
-export function SideButtons({ onClickFunc }) {
+export function SideButtons() {
   return (
     <>
       <MapStyleButton />
       <ClearMapLayersButton />
-      <PolygonCreationButton onClickFunc={onClickFunc} />
+      <PolygonCreationButton />
       <MapSettingsButton />
     </>
   );

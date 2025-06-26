@@ -1,4 +1,4 @@
-import { memo, useMemo } from "react";
+import React, { memo, useMemo } from "react";
 import { Box, Button, Tooltip } from "@mui/material";
 import { ChevronLeft, ChevronRight } from "@mui/icons-material";
 import { useBoolean } from "usehooks-ts";
@@ -7,14 +7,16 @@ import featureFlags from "@/config/feature-flags";
 import ControlPanel from "@/components/Map/ControlPanel";
 import MapToolbar from "@/components/Map/SideButtons/MapToolbar";
 import PolygonToolbar from "@/components/Map/SideButtons/PolygonToolbar";
+import { usePolygonToolbarStore } from "@/tools/Polygons/useStore";
 
 interface ToolbarProps {
   readonly onOpenControlPanel?: () => void;
-  readonly showPolygonToolbar?: boolean;
 }
 
-function Toolbar({ onOpenControlPanel, showPolygonToolbar }: ToolbarProps) {
+function Toolbar({ onOpenControlPanel }: ToolbarProps) {
   const tools = useTools();
+  const { isActive: showPolygonToolbar } = usePolygonToolbarStore();
+
   return (
     <Box
       sx={{
@@ -73,9 +75,6 @@ export default function ControlsOverlay() {
 
   const shouldShowControlPanel = featureFlags.uiNext && controlPanelOpen;
 
-  const { value: showPolygonToolbar, toggle: togglePolygonToolbar } =
-    useBoolean(false);
-
   return (
     <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
       <Box
@@ -132,7 +131,6 @@ export default function ControlsOverlay() {
                   hideControlPanel(); // Hide Control Panel
                   hideConnectedAssetsPanel(); // Also hide Connected Assets Panel
                 }}
-                showPolygonToolbar={showPolygonToolbar}
               />
             )}
           </Box>
@@ -152,7 +150,7 @@ export default function ControlsOverlay() {
               pointerEvents: "auto",
             }}
           >
-            <MapToolbar onClickFunc={togglePolygonToolbar} />
+            <MapToolbar />
           </Box>
         </Box>
       </Box>
@@ -178,7 +176,7 @@ function DetailPanels() {
 
   const detailPanels = useMemo(() => {
     const panels: {
-      component: () => JSX.Element;
+      component: () => React.JSX.Element;
       key: string;
     }[] = [];
 
