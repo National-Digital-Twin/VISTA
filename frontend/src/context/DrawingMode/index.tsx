@@ -2,6 +2,7 @@ import MapboxDraw, {
   DrawCreateEvent,
   DrawCustomMode,
   DrawDeleteEvent,
+  DrawModeChangeEvent,
   DrawUpdateEvent,
 } from "@mapbox/mapbox-gl-draw";
 import React, {
@@ -92,6 +93,9 @@ export function DrawingModeContextProvider({
 
 /** Callback Types */
 interface DrawShapeCallbacks {
+  onDrawingStart?: () => void;
+  onDrawingEnd?: () => void;
+
   onAddFeatures: (features: Feature[]) => void;
   onUpdateFeatures: (features: Feature[]) => void;
   onDeleteFeatures: (features: NonNullable<Feature["id"]>[]) => void;
@@ -112,7 +116,13 @@ export const useDrawingMode = <T extends Feature>(
       keyof { [K in keyof State as State[K] extends Function ? K : never]: any }
     >,
   ) => T[],
-  { onAddFeatures, onUpdateFeatures, onDeleteFeatures }: DrawShapeCallbacks,
+  {
+    onDrawingStart,
+    onDrawingEnd,
+    onAddFeatures,
+    onUpdateFeatures,
+    onDeleteFeatures,
+  }: DrawShapeCallbacks,
 ) => {
   const context = useContext(DrawingModeContext);
   if (!context) {
@@ -159,6 +169,10 @@ export const useDrawingMode = <T extends Feature>(
   /** Start Drawing */
   const startDrawing = useCallback(
     ({ drawingMode, options }: UseDrawShapeOptions) => {
+      if (!map) {
+        return;
+      }
+
       const updateTooltip = (features: any[]) => {
         for (const feature of features) {
           if (
@@ -192,10 +206,16 @@ export const useDrawingMode = <T extends Feature>(
         map.off("draw.create", handleDrawCreate);
       };
 
-      const handleModeChange = () => {
+      const handleModeChange = (event: DrawModeChangeEvent) => {
+        if (event.mode === "simple_select") {
+          onDrawingEnd?.();
+        }
+
         map.off("draw.create", handleDrawCreate);
         map.off("draw.modechange", handleModeChange);
       };
+
+      onDrawingStart?.();
 
       draw.changeMode(
         drawingMode,
@@ -210,7 +230,16 @@ export const useDrawingMode = <T extends Feature>(
         map.on("draw.selectionchange", (e) => updateTooltip(e.features));
       }
     },
-    [draw, map, onAddFeatures, handleDrawEvent, setTooltip, isMapLoaded],
+    [
+      draw,
+      map,
+      onDrawingStart,
+      onDrawingEnd,
+      onAddFeatures,
+      handleDrawEvent,
+      setTooltip,
+      isMapLoaded,
+    ],
   );
 
   /** Attach Event Listeners */

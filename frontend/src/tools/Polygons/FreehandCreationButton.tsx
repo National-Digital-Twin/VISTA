@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
 
 import ToolbarButton from "@/components/Map/SideButtons/ToolbarButton";
@@ -22,12 +22,21 @@ export function FreehandCreationButton() {
     })),
   );
 
+  const [isDrawing, setIsDrawing] = useState(false);
   const { startDrawing } = useDrawingMode(
     (state) =>
       state.floodAreaFeatures.filter(
         (feature) => state.selectedFloodAreaFeatureIds[feature.id],
       ),
-    drawingModeCallbacks,
+    {
+      onDrawingStart: () => {
+        setIsDrawing(true);
+      },
+      onDrawingEnd: () => {
+        setIsDrawing(false);
+      },
+      ...drawingModeCallbacks,
+    },
   );
 
   const drawCircle = useCallback(() => {
@@ -39,6 +48,7 @@ export function FreehandCreationButton() {
       title="Draw freehand"
       onClick={drawCircle}
       svgSrc="icons/draw_shape.svg"
+      active={isDrawing}
     />
   );
 }

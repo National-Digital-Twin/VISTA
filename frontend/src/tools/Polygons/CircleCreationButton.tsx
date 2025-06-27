@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
 
 import ToolbarButton from "@/components/Map/SideButtons/ToolbarButton";
@@ -16,10 +16,16 @@ export function CircleCreationButton() {
     })),
   );
 
-  const { startDrawing } = useDrawingMode(
-    (state) => state.floodAreaFeatures,
-    drawingModeCallbacks,
-  );
+  const [isDrawing, setIsDrawing] = useState(false);
+  const { startDrawing } = useDrawingMode((state) => state.floodAreaFeatures, {
+    onDrawingStart: () => {
+      setIsDrawing(true);
+    },
+    onDrawingEnd: () => {
+      setIsDrawing(false);
+    },
+    ...drawingModeCallbacks,
+  });
 
   const drawCircle = useCallback(() => {
     startDrawing({
@@ -32,6 +38,7 @@ export function CircleCreationButton() {
       title="Draw circle"
       onClick={drawCircle}
       svgSrc="icons/draw_circle.svg"
+      active={isDrawing}
     />
   );
 }
