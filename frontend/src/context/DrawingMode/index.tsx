@@ -58,6 +58,12 @@ export function DrawingModeContextProvider({
   readonly children: React.ReactNode;
 }) {
   const { paralogMap: map } = useMap();
+  if (!map) {
+    throw new Error(
+      "DrawingModeContextProvider must be used within a ParalogMap component",
+    );
+  }
+
   const [isMapLoaded, setIsMapLoaded] = useState(map.loaded());
 
   const draw = useControl(
@@ -125,14 +131,15 @@ export const useDrawingMode = <T extends Feature>(
   }: DrawShapeCallbacks,
 ) => {
   const context = useContext(DrawingModeContext);
-  if (!context) {
+  const { paralogMap: map } = useMap();
+  if (!context || !map) {
     throw new Error(
       "useDrawingMode must be used within DrawingModeContextProvider",
     );
   }
 
   const { draw, isMapLoaded } = context;
-  const { paralogMap: map } = useMap();
+
   const features = useSharedStore(useShallow(selector));
 
   const { setTooltip, removeTooltip } = useTooltips();
@@ -169,10 +176,6 @@ export const useDrawingMode = <T extends Feature>(
   /** Start Drawing */
   const startDrawing = useCallback(
     ({ drawingMode, options }: UseDrawShapeOptions) => {
-      if (!map) {
-        return;
-      }
-
       const updateTooltip = (features: any[]) => {
         for (const feature of features) {
           if (
@@ -217,7 +220,7 @@ export const useDrawingMode = <T extends Feature>(
 
       onDrawingStart?.();
 
-      draw.changeMode(
+      draw.changeMode<string>(
         drawingMode,
         drawingMode === "draw_circle" ? options : undefined,
       );
@@ -244,9 +247,6 @@ export const useDrawingMode = <T extends Feature>(
 
   /** Attach Event Listeners */
   useEffect(() => {
-    if (!map) {
-      return;
-    }
     map.on("draw.update", handleDrawEvent);
     map.on("draw.delete", handleDrawEvent);
     return () => {
@@ -261,7 +261,9 @@ export const useDrawingMode = <T extends Feature>(
       return;
     }
     features.forEach(draw.add);
-    return () => draw.delete(features.map(({ id }) => id as string));
+    return () => {
+      draw.delete(features.map(({ id }) => id as string));
+    };
   }, [draw, features, isMapLoaded]);
 
   return { startDrawing, features };
