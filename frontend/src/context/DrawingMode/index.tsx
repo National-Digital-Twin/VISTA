@@ -4,6 +4,7 @@ import MapboxDraw, {
   DrawDeleteEvent,
   DrawModeChangeEvent,
   DrawUpdateEvent,
+  MapMouseEvent,
 } from "@mapbox/mapbox-gl-draw";
 import React, {
   createContext,
@@ -17,8 +18,12 @@ import { useControl, useMap } from "react-map-gl/maplibre";
 import type { Feature } from "geojson";
 import { useShallow } from "zustand/react/shallow";
 import RectangleMode from "mapbox-gl-draw-rectangle-mode";
-import { area as turf_area, center as turf_center } from "@turf/turf";
 import { Popup } from "maplibre-gl";
+import {
+  area as turf_area,
+  center as turf_center,
+  circle as turf_circle,
+} from "@turf/turf";
 
 import { drawStyles } from "./theme";
 import { useTooltips } from "./TooltipContext";
@@ -206,16 +211,18 @@ export const useDrawingMode = <T extends Feature>(
         if (drawingMode === "drag_circle") {
           updateTooltip(event.features);
         }
+        onDrawingEnd?.();
         map.off("draw.create", handleDrawCreate);
       };
 
       const handleModeChange = (event: DrawModeChangeEvent) => {
         if (event.mode === "simple_select") {
-          onDrawingEnd?.();
+          onDrawingEnd?.(); // signal that drawing was cancelled
         }
 
         map.off("draw.create", handleDrawCreate);
         map.off("draw.modechange", handleModeChange);
+        map.off("click", handleDragCircleClick);
       };
 
       onDrawingStart?.();
@@ -224,6 +231,47 @@ export const useDrawingMode = <T extends Feature>(
         drawingMode,
         drawingMode === "draw_circle" ? options : undefined,
       );
+
+      const handleDragCircleClick = (e: MapMouseEvent) => {
+        const radius = prompt("Enter radius in km", "1");
+        if (!radius) {
+          return;
+        }
+
+        const { lng, lat } = e.lngLat;
+        const center = [lng, lat];
+        const circleFeature = turf_circle(center, Number(radius), {
+          units: "kilometers",
+        });
+
+        const feature = {
+          id: crypto.randomUUID(),
+          type: "Feature" as const,
+          geometry: circleFeature.geometry,
+          properties: {
+            isCircle: true,
+            center: center,
+            radiusInKm: Number(radius),
+            type: "circle",
+          },
+        };
+
+        handleDrawCreate({
+          type: "draw.create",
+          features: [feature],
+          target: e.target,
+        });
+
+        draw.changeMode("simple_select", { featureIds: [feature.id] });
+
+        onDrawingEnd?.();
+
+        map.off("click", handleDragCircleClick);
+      };
+
+      if (drawingMode === "drag_circle") {
+        map.on("click", handleDragCircleClick);
+      }
 
       map.on("draw.delete", handleDrawEvent);
       map.on("draw.create", handleDrawCreate);
