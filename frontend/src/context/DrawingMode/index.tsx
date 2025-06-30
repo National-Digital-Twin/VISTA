@@ -4,7 +4,6 @@ import MapboxDraw, {
   DrawDeleteEvent,
   DrawModeChangeEvent,
   DrawUpdateEvent,
-  MapMouseEvent,
 } from "@mapbox/mapbox-gl-draw";
 import React, {
   createContext,
@@ -12,20 +11,17 @@ import React, {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import { useControl, useMap } from "react-map-gl/maplibre";
 import type { Feature } from "geojson";
 import { useShallow } from "zustand/react/shallow";
 import RectangleMode from "mapbox-gl-draw-rectangle-mode";
-import { Popup } from "maplibre-gl";
-import {
-  area as turf_area,
-  center as turf_center,
-  circle as turf_circle,
-} from "@turf/turf";
+import { circle as turf_circle, distance as turf_distance } from "@turf/turf";
+import { MapMouseEvent, Marker } from "maplibre-gl";
 
-import { drawStyles } from "./theme";
+import { drawStyles, radiusLabelStyles } from "./theme";
 import { useTooltips } from "./TooltipContext";
 
 import {
@@ -147,7 +143,12 @@ export const useDrawingMode = <T extends Feature>(
 
   const features = useSharedStore(useShallow(selector));
 
-  const { setTooltip, removeTooltip } = useTooltips();
+  const { removeTooltip } = useTooltips();
+
+  const radiusMarkerRef = useRef<{
+    line: any;
+    label: Marker | null;
+  }>({ line: null, label: null });
 
   /** Process Draw Events */
   const processDrawEvent = useCallback(
@@ -178,39 +179,156 @@ export const useDrawingMode = <T extends Feature>(
     [features, processDrawEvent],
   );
 
+  const updateRadiusLabel = useCallback(
+    (centerCoords: [number, number], edgeCoords: [number, number]) => {
+      const radiusKm = turf_distance(centerCoords, edgeCoords, {
+        units: "kilometers",
+      });
+
+      // Calculate the right edge of the circle
+      const latRadians = (centerCoords[1] * Math.PI) / 180;
+      const kmPerDegreeLng = 111.32 * Math.cos(latRadians);
+      const rightEdge: [number, number] = [
+        centerCoords[0] + radiusKm / kmPerDegreeLng,
+        centerCoords[1],
+      ];
+
+      // Create main radius line (horizontal from center to right edge)
+      const radiusLine = {
+        type: "Feature" as const,
+        geometry: {
+          type: "LineString" as const,
+          coordinates: [centerCoords, rightEdge],
+        },
+        properties: {},
+      };
+
+      // Create perpendicular line at center
+      const perpOffset = 0.001;
+      const perpLine = {
+        type: "Feature" as const,
+        geometry: {
+          type: "LineString" as const,
+          coordinates: [
+            [centerCoords[0], centerCoords[1] - perpOffset],
+            [centerCoords[0], centerCoords[1] + perpOffset],
+          ],
+        },
+        properties: {},
+      };
+
+      // Get the underlying maplibre instance
+      const mapLibre = (map as any).getMap();
+
+      // Add/update radius lines
+      if (!mapLibre.getSource("radius-line-source")) {
+        mapLibre.addSource("radius-line-source", {
+          type: "geojson",
+          data: { type: "FeatureCollection", features: [radiusLine, perpLine] },
+        });
+
+        mapLibre.addLayer({
+          id: "radius-line-layer",
+          source: "radius-line-source",
+          type: "line",
+          paint: {
+            "line-color": "#000000",
+            "line-width": 1,
+          },
+        });
+      } else {
+        mapLibre.getSource("radius-line-source").setData({
+          type: "FeatureCollection",
+          features: [radiusLine, perpLine],
+        });
+      }
+
+      const radiusText = `${radiusKm.toFixed(1)}km`;
+      const midpoint: [number, number] = [
+        (centerCoords[0] + rightEdge[0]) / 2,
+        (centerCoords[1] + rightEdge[1]) / 2,
+      ];
+
+      if (radiusMarkerRef.current.label) {
+        radiusMarkerRef.current.label.setLngLat(midpoint);
+        const element = radiusMarkerRef.current.label.getElement();
+        element.textContent = radiusText;
+      } else {
+        const labelElement = document.createElement("div");
+        Object.assign(labelElement.style, radiusLabelStyles);
+        labelElement.textContent = radiusText;
+
+        const newLabel = new Marker({
+          element: labelElement,
+          anchor: "center",
+        })
+          .setLngLat(midpoint)
+          .addTo(mapLibre);
+
+        radiusMarkerRef.current.label = newLabel;
+      }
+    },
+    [map],
+  );
+
+  const removeRadiusLabel = useCallback(() => {
+    const mapLibre = (map as any).getMap();
+
+    // Remove line layer and source
+    if (mapLibre.getLayer("radius-line-layer")) {
+      mapLibre.removeLayer("radius-line-layer");
+    }
+    if (mapLibre.getSource("radius-line-source")) {
+      mapLibre.removeSource("radius-line-source");
+    }
+
+    // Remove HTML marker
+    if (radiusMarkerRef.current.label) {
+      radiusMarkerRef.current.label.remove();
+    }
+
+    radiusMarkerRef.current = { line: null, label: null };
+  }, [map]);
+
   /** Start Drawing */
   const startDrawing = useCallback(
     ({ drawingMode, options }: UseDrawShapeOptions) => {
-      const updateTooltip = (features: any[]) => {
-        for (const feature of features) {
-          if (
-            feature.geometry.type === "Polygon" ||
-            feature.properties?.type === "circle"
-          ) {
-            const id = feature.id;
-            const center = turf_center(feature).geometry.coordinates as [
-              number,
-              number,
-            ];
-            const area = turf_area(feature) / 1_000_000;
+      let isDragging = false;
+      let dragCenter: [number, number] | null = null;
 
-            if (map && isMapLoaded) {
-              new Popup({ closeButton: false })
-                .setLngLat(center)
-                .setText(`${area.toFixed(2)} km`)
-                .addTo(map.getMap());
-            }
-
-            setTooltip(id, { center, area });
-          }
+      const handleMouseMove = (e: MapMouseEvent) => {
+        if (!isDragging || drawingMode !== "drag_circle" || !dragCenter) {
+          return;
         }
+
+        const edge: [number, number] = [e.lngLat.lng, e.lngLat.lat];
+        updateRadiusLabel(dragCenter, edge);
+      };
+
+      const handleMouseDown = (e: MapMouseEvent) => {
+        if (drawingMode === "drag_circle") {
+          isDragging = true;
+          dragCenter = [e.lngLat.lng, e.lngLat.lat];
+          map.on("mousemove", handleMouseMove);
+        }
+      };
+
+      const handleMouseUp = () => {
+        isDragging = false;
+        dragCenter = null;
+        map.off("mousemove", handleMouseMove);
+        removeRadiusLabel();
+      };
+
+      const removeMouseListeners = () => {
+        map.off("mousemove", handleMouseMove);
+        map.off("mousedown", handleMouseDown);
+        map.off("mouseup", handleMouseUp);
       };
 
       const handleDrawCreate = (event: DrawCreateEvent) => {
         onAddFeatures(event.features);
-        if (drawingMode === "drag_circle") {
-          updateTooltip(event.features);
-        }
+        removeMouseListeners();
         onDrawingEnd?.();
         map.off("draw.create", handleDrawCreate);
       };
@@ -219,7 +337,8 @@ export const useDrawingMode = <T extends Feature>(
         if (event.mode === "simple_select") {
           onDrawingEnd?.(); // signal that drawing was cancelled
         }
-
+        removeRadiusLabel();
+        removeMouseListeners();
         map.off("draw.create", handleDrawCreate);
         map.off("draw.modechange", handleModeChange);
         map.off("click", handleDragCircleClick);
@@ -232,8 +351,14 @@ export const useDrawingMode = <T extends Feature>(
         drawingMode === "draw_circle" ? options : undefined,
       );
 
+      // Set up mouse event listeners for drag_circle mode
+      if (drawingMode === "drag_circle") {
+        map.on("mousedown", handleMouseDown);
+        map.on("mouseup", handleMouseUp);
+      }
+
       const handleDragCircleClick = (e: MapMouseEvent) => {
-        const radius = prompt("Enter radius in km", "1");
+        const radius = prompt("Enter radius in km", "2");
         if (!radius) {
           return;
         }
@@ -259,7 +384,7 @@ export const useDrawingMode = <T extends Feature>(
         handleDrawCreate({
           type: "draw.create",
           features: [feature],
-          target: e.target,
+          target: e.target as any,
         });
 
         draw.changeMode("simple_select", { featureIds: [feature.id] });
@@ -276,10 +401,6 @@ export const useDrawingMode = <T extends Feature>(
       map.on("draw.delete", handleDrawEvent);
       map.on("draw.create", handleDrawCreate);
       map.on("draw.modechange", handleModeChange);
-      if (drawingMode === "drag_circle") {
-        map.on("draw.update", (e) => updateTooltip(e.features));
-        map.on("draw.selectionchange", (e) => updateTooltip(e.features));
-      }
     },
     [
       draw,
@@ -288,8 +409,8 @@ export const useDrawingMode = <T extends Feature>(
       onDrawingEnd,
       onAddFeatures,
       handleDrawEvent,
-      setTooltip,
-      isMapLoaded,
+      updateRadiusLabel,
+      removeRadiusLabel,
     ],
   );
 

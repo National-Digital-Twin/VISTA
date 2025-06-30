@@ -5,6 +5,16 @@ const orange = "#fbb03b";
 const white = "#fff";
 const red = "#ff0000";
 
+// Radius label styles for drag circle mode
+export const radiusLabelStyles = {
+  fontSize: "12px",
+  fontWeight: "bold",
+  color: "black",
+  pointerEvents: "none",
+  textShadow: "1px 1px 1px white",
+  transform: "translate(-50%, -50%)",
+};
+
 export const drawStyles = [
   // Polygons
   //   Solid fill
