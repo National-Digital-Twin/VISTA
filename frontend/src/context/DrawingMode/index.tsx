@@ -23,6 +23,7 @@ import { MapMouseEvent, Marker } from "maplibre-gl";
 
 import { drawStyles, radiusLabelStyles } from "./theme";
 import { useTooltips } from "./TooltipContext";
+import RadiusDialog from "./RadiusDialog";
 
 import {
   CircleMode,
@@ -39,6 +40,7 @@ import useSharedStore, { State } from "@/hooks/useSharedStore";
 interface DrawingModeContextValue {
   readonly draw: MapboxDraw;
   readonly isMapLoaded: boolean;
+  readonly showRadiusDialog: (onConfirm: (radius: number) => void) => void;
 }
 const DrawingModeContext = createContext<DrawingModeContextValue | null>(null);
 
@@ -66,6 +68,10 @@ export function DrawingModeContextProvider({
   }
 
   const [isMapLoaded, setIsMapLoaded] = useState(map.loaded());
+  const [isRadiusDialogOpen, setIsRadiusDialogOpen] = useState(false);
+  const [radiusDialogData, setRadiusDialogData] = useState<{
+    onConfirm: (radius: number) => void;
+  } | null>(null);
 
   const draw = useControl(
     () =>
@@ -86,14 +92,44 @@ export function DrawingModeContextProvider({
     };
   }, [map]);
 
+  const showRadiusDialog = useCallback(
+    (onConfirm: (radius: number) => void) => {
+      setRadiusDialogData({ onConfirm });
+      setIsRadiusDialogOpen(true);
+    },
+    [],
+  );
+
+  const handleRadiusConfirm = useCallback(
+    (radius: number) => {
+      if (radiusDialogData) {
+        radiusDialogData.onConfirm(radius);
+      }
+      setIsRadiusDialogOpen(false);
+      setRadiusDialogData(null);
+    },
+    [radiusDialogData],
+  );
+
+  const handleRadiusDialogClose = useCallback(() => {
+    setIsRadiusDialogOpen(false);
+    setRadiusDialogData(null);
+  }, []);
+
   const contextValue = useMemo(
-    () => ({ draw, isMapLoaded }),
-    [draw, isMapLoaded],
+    () => ({ draw, isMapLoaded, showRadiusDialog }),
+    [draw, isMapLoaded, showRadiusDialog],
   );
 
   return (
     <DrawingModeContext.Provider value={contextValue}>
       {children}
+      <RadiusDialog
+        open={isRadiusDialogOpen}
+        onClose={handleRadiusDialogClose}
+        onConfirm={handleRadiusConfirm}
+        defaultRadius={2}
+      />
     </DrawingModeContext.Provider>
   );
 }
@@ -139,7 +175,7 @@ export const useDrawingMode = <T extends Feature>(
     );
   }
 
-  const { draw, isMapLoaded } = context;
+  const { draw, isMapLoaded, showRadiusDialog } = context;
 
   const features = useSharedStore(useShallow(selector));
 
@@ -358,40 +394,34 @@ export const useDrawingMode = <T extends Feature>(
       }
 
       const handleDragCircleClick = (e: MapMouseEvent) => {
-        const radius = prompt("Enter radius in km", "2");
-        if (!radius) {
-          return;
-        }
+        showRadiusDialog((radius: number) => {
+          const center = [e.lngLat.lng, e.lngLat.lat];
+          const circleFeature = turf_circle(center, radius, {
+            units: "kilometers",
+          });
 
-        const { lng, lat } = e.lngLat;
-        const center = [lng, lat];
-        const circleFeature = turf_circle(center, Number(radius), {
-          units: "kilometers",
+          const feature = {
+            id: crypto.randomUUID(),
+            type: "Feature" as const,
+            geometry: circleFeature.geometry,
+            properties: {
+              isCircle: true,
+              center: center,
+              radiusInKm: radius,
+              type: "circle",
+            },
+          };
+
+          handleDrawCreate({
+            type: "draw.create",
+            features: [feature],
+            target: e.target as any,
+          });
+
+          draw.changeMode("simple_select", { featureIds: [feature.id] });
+          onDrawingEnd?.();
+          map.off("click", handleDragCircleClick);
         });
-
-        const feature = {
-          id: crypto.randomUUID(),
-          type: "Feature" as const,
-          geometry: circleFeature.geometry,
-          properties: {
-            isCircle: true,
-            center: center,
-            radiusInKm: Number(radius),
-            type: "circle",
-          },
-        };
-
-        handleDrawCreate({
-          type: "draw.create",
-          features: [feature],
-          target: e.target as any,
-        });
-
-        draw.changeMode("simple_select", { featureIds: [feature.id] });
-
-        onDrawingEnd?.();
-
-        map.off("click", handleDragCircleClick);
       };
 
       if (drawingMode === "drag_circle") {
@@ -411,6 +441,7 @@ export const useDrawingMode = <T extends Feature>(
       handleDrawEvent,
       updateRadiusLabel,
       removeRadiusLabel,
+      showRadiusDialog,
     ],
   );
 
