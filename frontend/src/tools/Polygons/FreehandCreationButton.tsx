@@ -26,7 +26,8 @@ export function FreehandCreationButton() {
   const { startDrawing } = useDrawingMode(
     (state) =>
       state.floodAreaFeatures.filter(
-        (feature) => state.selectedFloodAreaFeatureIds[feature.id],
+        (feature) =>
+          feature.id && state.selectedFloodAreaFeatureIds[feature.id],
       ),
     {
       onDrawingStart: () => {

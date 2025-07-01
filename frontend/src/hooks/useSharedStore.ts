@@ -15,7 +15,7 @@ export interface State {
   showLiveFloods: boolean;
   minCriticality: number;
   selectedFloodAreas: NonNullable<Feature["id"]>[];
-  floodAreaFeatures: Feature<Polygon>[];
+  floodAreaFeatures: Feature[];
   drawnFeatures: Feature<Polygon>[];
   selectedFloodAreaFeatureIds: Record<NonNullable<Feature["id"]>, boolean>;
 
@@ -29,11 +29,11 @@ export interface State {
   setMinCriticality: (criticality: number) => void;
 
   setSelectedFloodAreas: (floodAreas: NonNullable<Feature["id"]>[]) => void;
-  addFloodAreaFeatures: (features: Feature<Polygon>[]) => void;
-  updateFloodAreaFeatures: (features: Feature<Polygon>[]) => void;
+  addFloodAreaFeatures: (features: Feature[]) => void;
+  updateFloodAreaFeatures: (features: Feature[]) => void;
   deleteFloodAreaFeatures: (featureIds: NonNullable<Feature["id"]>[]) => void;
   toggleFloodAreaFeature: (featureId: NonNullable<Feature["id"]>) => void;
-  setFloodAreaFeatures: (features: Feature<Polygon>[]) => void;
+  setFloodAreaFeatures: (features: Feature[]) => void;
 
   dynamicProximityFeatures: Feature<
     Polygon,
