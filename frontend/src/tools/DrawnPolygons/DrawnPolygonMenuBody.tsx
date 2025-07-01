@@ -72,7 +72,7 @@ export default function DrawnPolygonMenuBody({
     }
 
     setEditingPolygonId(featureId);
-    setEditedPolygonName(feature.properties?.name || "");
+    setEditedPolygonName(feature.properties?.name ?? "");
   };
 
   const handleSavePolygonName = (featureId: string) => {
@@ -162,7 +162,7 @@ export default function DrawnPolygonMenuBody({
                 <>
                   <Box>
                     <ListItemText
-                      primary={feature.properties?.name || ` area ${index + 1}`}
+                      primary={feature.properties?.name ?? ` area ${index + 1}`}
                     />
                   </Box>
                   <IconButton

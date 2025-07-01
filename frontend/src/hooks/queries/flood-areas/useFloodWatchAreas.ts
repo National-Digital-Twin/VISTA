@@ -20,7 +20,7 @@ const useFloodWatchAreas = () => {
         );
       }
 
-      const children = (floodWatchArea?.flood_areas || []).map(
+      const children = (floodWatchArea?.flood_areas ?? []).map(
         (floodArea: any) => {
           const floodAreaPolygonUri = floodArea?.polygon_uri || undefined;
           const floodAreaName = floodArea?.name || floodArea?.uri;

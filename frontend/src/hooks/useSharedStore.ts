@@ -97,7 +97,7 @@ function deleteFeatures<
 >(key: Key, set: SetFunction) {
   return (featureIds: NonNullable<T["id"]>[]) =>
     set((state) => ({
-      [key]: state[key].filter((f) => !featureIds.includes(f.id!)),
+      [key]: state[key].filter((f) => f.id && !featureIds.includes(f.id)),
     }));
 }
 
@@ -146,7 +146,7 @@ export default createStore<State>("application-state-storage", (set) => ({
     set((state) => {
       return {
         floodAreaFeatures: state.floodAreaFeatures.filter(
-          (f) => !featureIds.includes(f.id!),
+          (f) => f.id && !featureIds.includes(f.id),
         ),
         selectedFloodAreaFeatureIds: Object.fromEntries(
           Object.entries(state.selectedFloodAreaFeatureIds).filter(

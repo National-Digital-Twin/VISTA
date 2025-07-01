@@ -12,10 +12,10 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 
 interface RadiusDialogProps {
-  open: boolean;
-  onClose: () => void;
-  onConfirm: (radius: number) => void;
-  defaultRadius?: number;
+  readonly open: boolean;
+  readonly onClose: () => void;
+  readonly onConfirm: (radius: number) => void;
+  readonly defaultRadius?: number;
 }
 
 export default function RadiusDialog({
@@ -96,7 +96,7 @@ export default function RadiusDialog({
             onChange={handleInputChange}
             onKeyDown={handleKeyPress}
             error={!!error}
-            helperText={error || "Enter the radius of the circle in kilometers"}
+            helperText={error ?? "Enter the radius of the circle in kilometers"}
             variant="outlined"
             type="number"
             inputProps={{
