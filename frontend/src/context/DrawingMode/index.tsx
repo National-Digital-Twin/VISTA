@@ -289,6 +289,7 @@ export const useDrawingMode = <T extends Feature>(
         const newLabel = new Marker({
           element: labelElement,
           anchor: "center",
+          offset: [0, -10], // above the line
         })
           .setLngLat(midpoint)
           .addTo(mapLibre);

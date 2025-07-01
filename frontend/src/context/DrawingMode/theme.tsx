@@ -11,8 +11,8 @@ export const radiusLabelStyles = {
   fontWeight: "bold",
   color: "black",
   pointerEvents: "none",
-  textShadow: "1px 1px 1px white",
-  transform: "translate(-50%, -50%)",
+  textShadow:
+    "1px 1px 1px white, -1px -1px 1px white, 1px -1px 1px white, -1px 1px 1px white",
 };
 
 export const drawStyles = [
