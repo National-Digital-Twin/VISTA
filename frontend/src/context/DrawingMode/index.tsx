@@ -20,11 +20,8 @@ import { useShallow } from "zustand/react/shallow";
 import RectangleMode from "mapbox-gl-draw-rectangle-mode";
 import { circle as turf_circle, distance as turf_distance } from "@turf/turf";
 import { MapMouseEvent, Marker } from "maplibre-gl";
-
 import { drawStyles, radiusLabelStyles } from "./theme";
-import { useTooltips } from "./TooltipContext";
 import RadiusDialog from "./RadiusDialog";
-
 import {
   CircleMode,
   DirectMode,
@@ -179,8 +176,6 @@ export const useDrawingMode = <T extends Feature>(
 
   const features = useSharedStore(useShallow(selector));
 
-  const { removeTooltip } = useTooltips();
-
   const radiusMarkerRef = useRef<{
     line: any;
     label: Marker | null;
@@ -194,12 +189,9 @@ export const useDrawingMode = <T extends Feature>(
       } else if (event.type === "draw.delete") {
         const featureIds = relevantFeatures.map(({ id }) => id as string);
         onDeleteFeatures(featureIds);
-        for (const id in featureIds) {
-          removeTooltip(id);
-        }
       }
     },
-    [onUpdateFeatures, onDeleteFeatures, removeTooltip],
+    [onUpdateFeatures, onDeleteFeatures],
   );
 
   /** Handle Draw Event */

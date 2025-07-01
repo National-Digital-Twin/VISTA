@@ -31,10 +31,7 @@ export interface State {
   setSelectedFloodAreas: (floodAreas: NonNullable<Feature["id"]>[]) => void;
   addFloodAreaFeatures: (features: Feature<Polygon>[]) => void;
   updateFloodAreaFeatures: (features: Feature<Polygon>[]) => void;
-  deleteFloodAreaFeatures: (
-    featureIds: NonNullable<Feature["id"]>[],
-    removeTooltip: (id: string) => void,
-  ) => void;
+  deleteFloodAreaFeatures: (featureIds: NonNullable<Feature["id"]>[]) => void;
   toggleFloodAreaFeature: (featureId: NonNullable<Feature["id"]>) => void;
   setFloodAreaFeatures: (features: Feature<Polygon>[]) => void;
 
@@ -100,7 +97,7 @@ function deleteFeatures<
 >(key: Key, set: SetFunction) {
   return (featureIds: NonNullable<T["id"]>[]) =>
     set((state) => ({
-      [key]: state[key].filter((f) => !featureIds.includes(f.id)),
+      [key]: state[key].filter((f) => !featureIds.includes(f.id!)),
     }));
 }
 
@@ -145,14 +142,11 @@ export default createStore<State>("application-state-storage", (set) => ({
       },
     })),
   updateFloodAreaFeatures: updateFeatures("floodAreaFeatures", set),
-  deleteFloodAreaFeatures: (featureIds, removeTooltip) =>
+  deleteFloodAreaFeatures: (featureIds) =>
     set((state) => {
-      for (const id of featureIds) {
-        removeTooltip(id);
-      }
       return {
         floodAreaFeatures: state.floodAreaFeatures.filter(
-          (f) => !featureIds.includes(f.id),
+          (f) => !featureIds.includes(f.id!),
         ),
         selectedFloodAreaFeatureIds: Object.fromEntries(
           Object.entries(state.selectedFloodAreaFeatureIds).filter(

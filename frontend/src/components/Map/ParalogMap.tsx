@@ -41,7 +41,6 @@ import { ElementsContext } from "@/context/ElementContext";
 import { DrawingModeContextProvider } from "@/context/DrawingMode";
 import { MapStyleContextProvider } from "@/context/MapStyle";
 import { ShowPointerCoordsContextProvider } from "@/context/ShowPointerCoords";
-import { TooltipProvider } from "@/context/DrawingMode/TooltipContext";
 
 const FloodMonitoringStations = lazy(() => import("./FloodMonitoringStations"));
 const PointAssets = lazy(() => import("./PointAssets"));
@@ -280,60 +279,58 @@ export default function ParalogMap() {
                 return TransformUrl(url);
               }}
             >
-              <TooltipProvider>
-                <DrawingModeContextProvider>
-                  <ControlsOverlay />
-                  <MBuiltinSources />
-                  <MAllCustomMapElements />
-                  {showBuildingLayer && (
-                    <Layer
-                      source-layer="TopographicArea_2"
-                      id="OS/TopographicArea_2/Building/1_3D"
-                      type="fill-extrusion"
-                      source="esri"
-                      filter={["<=", "_symbol", 4]}
-                      minzoom={15}
-                      paint={{
-                        "fill-extrusion-color": "#A19786",
-                        "fill-extrusion-height": ["get", "RelHMax"],
-                        "fill-extrusion-opacity": [
-                          "interpolate",
-                          ["linear"],
-                          ["zoom"],
-                          15,
-                          0,
-                          16,
-                          0.9,
-                        ],
-                      }}
-                    />
-                  )}
-                  <Suspense fallback={null}>
-                    <PointAssets
-                      assets={assets}
-                      dependencies={dependencies}
-                      selectedElements={selectedElements}
-                      onElementClick={onElementClick}
-                    />
-                  </Suspense>
-                  <Suspense fallback={null}>
-                    <FloodMonitoringStations
-                      query={query}
-                      showStations={showStations}
-                    />
-                  </Suspense>
-                  <AttributionControl compact />
-                  <ScaleControl
-                    position="bottom-right"
-                    style={{
-                      backgroundColor: "#27272780",
-                      color: "#F5F5F5",
-                      borderColor: "#949494",
+              <DrawingModeContextProvider>
+                <ControlsOverlay />
+                <MBuiltinSources />
+                <MAllCustomMapElements />
+                {showBuildingLayer && (
+                  <Layer
+                    source-layer="TopographicArea_2"
+                    id="OS/TopographicArea_2/Building/1_3D"
+                    type="fill-extrusion"
+                    source="esri"
+                    filter={["<=", "_symbol", 4]}
+                    minzoom={15}
+                    paint={{
+                      "fill-extrusion-color": "#A19786",
+                      "fill-extrusion-height": ["get", "RelHMax"],
+                      "fill-extrusion-opacity": [
+                        "interpolate",
+                        ["linear"],
+                        ["zoom"],
+                        15,
+                        0,
+                        16,
+                        0.9,
+                      ],
                     }}
                   />
-                  <NavigationControl showZoom={false} showCompass={false} />
-                </DrawingModeContextProvider>
-              </TooltipProvider>
+                )}
+                <Suspense fallback={null}>
+                  <PointAssets
+                    assets={assets}
+                    dependencies={dependencies}
+                    selectedElements={selectedElements}
+                    onElementClick={onElementClick}
+                  />
+                </Suspense>
+                <Suspense fallback={null}>
+                  <FloodMonitoringStations
+                    query={query}
+                    showStations={showStations}
+                  />
+                </Suspense>
+                <AttributionControl compact />
+                <ScaleControl
+                  position="bottom-right"
+                  style={{
+                    backgroundColor: "#27272780",
+                    color: "#F5F5F5",
+                    borderColor: "#949494",
+                  }}
+                />
+                <NavigationControl showZoom={false} showCompass={false} />
+              </DrawingModeContextProvider>
             </Map>
 
             <MAllOverlays />
