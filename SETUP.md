@@ -106,12 +106,12 @@ Full instructions can be found [here](./transparent-proxy/README.md)
 2. Build the Docker image:
 
    ```sh
-   docker build --tag vista-transparent-proxy:latest .
+   docker build --tag paralog-transparent-proxy:latest .
    ```
 
 3. Run the container with required environment variables:
    ```sh
-   docker run -ti -p 5013:80 --env ADMIRALTY_API_KEY=... --env REALTIME_TRAINS_API_KEY=... vista-transparent-proxy:latest
+   docker run -ti -p 5013:80 --env ADMIRALTY_API_KEY=... --env REALTIME_TRAINS_API_KEY=... paralog-transparent-proxy:latest
    ```
 
 ## Additional Notes
