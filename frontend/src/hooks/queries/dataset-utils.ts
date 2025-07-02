@@ -62,10 +62,6 @@ export interface RawAsset {
   secondaryCategory: string;
 }
 
-// function hasParts(asset: AssetData) {
-//   return asset?.partCount > 0;
-// }
-
 /**
  * Generate a centroid point from a GeoJSON Polygon geometry
  * @param polygonFeature A GeoJSON Feature with Polygon geometry
@@ -122,9 +118,6 @@ export async function createAssets(): Promise<Asset[]> {
       });
 
       return mappedAssets;
-
-      // const uri = asset?.uri;
-      // const geometry = hasParts(asset) ? await getAssetGeometry(asset.uri) : [];
     }),
   );
 
