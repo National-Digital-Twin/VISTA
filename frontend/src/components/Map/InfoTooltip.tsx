@@ -11,7 +11,7 @@ export interface InfoTooltipProps {
 export default function InfoTooltip({ element }: InfoTooltipProps) {
   const elemIsAsset = isAsset(element);
 
-  const { data, isLoading, isError } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ["asset-info", element?.uri],
     queryFn: () => fetchAssetInfo(element?.uri),
     enabled: elemIsAsset,
@@ -23,12 +23,6 @@ export default function InfoTooltip({ element }: InfoTooltipProps) {
 
   if (isLoading) {
     return <p>Fetching element details...</p>;
-  }
-
-  if (isError) {
-    return (
-      <p>An error occurred while fetching information for {element.uri}</p>
-    );
   }
 
   const details = elemIsAsset ? element.getDetails(data) : element.getDetails();

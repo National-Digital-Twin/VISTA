@@ -53,8 +53,9 @@ interface AssetData {
   dependentCriticalitySum: number;
 }
 
-interface RawAsset {
-  name: string;
+export interface RawAsset {
+  description?: string;
+  buildinguse?: string;
   type: string;
   styles: FoundIcon;
   primaryCategory: string;
@@ -94,7 +95,7 @@ export async function createAssets(): Promise<Asset[]> {
   const mappedAssets: Asset[][] = await Promise.all(
     rawAssets.map(async (rawAsset: RawAsset): Promise<Asset[]> => {
       let mappedAssets: Asset[] = [];
-      let ngdAsset = await fetchBuildingAssets(undefined, rawAsset.name);
+      let ngdAsset = await fetchBuildingAssets(undefined, rawAsset);
       ngdAsset.features.forEach((feature: Feature) => {
         let coordinates = isPolygonFeature(feature)
           ? getCentroid(feature).geometry?.coordinates
@@ -102,7 +103,7 @@ export async function createAssets(): Promise<Asset[]> {
         const type = rawAsset?.type;
         mappedAssets.push(
           new Asset({
-            uri: "",
+            uri: `http://ndtp.co.uk/Building_${feature.id}`,
             type,
             lng: coordinates[0],
             lat: coordinates[1],
@@ -111,6 +112,7 @@ export async function createAssets(): Promise<Asset[]> {
               count: 0,
               criticalitySum: 0,
             },
+            description: rawAsset.description ?? "",
             styles: rawAsset.styles,
             primaryCategory: rawAsset.primaryCategory,
             secondaryCategory: rawAsset.secondaryCategory,
