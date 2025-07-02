@@ -3,6 +3,17 @@
 const blue = "#3bb2d0";
 const orange = "#fbb03b";
 const white = "#fff";
+const red = "#ff0000";
+
+// Radius label styles for drag circle mode
+export const radiusLabelStyles = {
+  fontSize: "12px",
+  fontWeight: "bold",
+  color: "black",
+  pointerEvents: "none",
+  textShadow:
+    "1px 1px 1px white, -1px -1px 1px white, 1px -1px 1px white, -1px 1px 1px white",
+};
 
 export const drawStyles = [
   // Polygons
@@ -13,7 +24,7 @@ export const drawStyles = [
     type: "fill",
     filter: ["all", ["==", "$type", "Polygon"]],
     paint: {
-      "fill-color": ["case", ["==", ["get", "active"], "true"], orange, blue],
+      "fill-color": ["case", ["==", ["get", "active"], "true"], red, blue],
       "fill-opacity": 0.1,
     },
   },
@@ -30,7 +41,7 @@ export const drawStyles = [
       "line-join": "round",
     },
     paint: {
-      "line-color": ["case", ["==", ["get", "active"], "true"], orange, blue],
+      "line-color": ["case", ["==", ["get", "active"], "true"], red, blue],
       "line-dasharray": [
         "case",
         // ["==", ["get", "active"], "true"],

@@ -113,6 +113,20 @@ interface ToolSourceType {
   layers: LayerProps[];
 }
 
+const generateSources = (source: ToolSourceType) => (
+  <Source
+    key={source.id}
+    id={source.id}
+    type={GEOJSON}
+    data={{ type: FEATURE_COLLECTION, features: source.features }}
+    generateId
+  >
+    {source.layers.map((layer) => (
+      <Layer key={layer.id} {...layer} />
+    ))}
+  </Source>
+);
+
 function BuiltinSources() {
   const { assets, clickedFloodAreas, selectedElements, liveFloodAreas } =
     useContext(ElementsContext);
@@ -143,20 +157,6 @@ function BuiltinSources() {
     });
     return allSources;
   }, [linearAssets, floodAreas, liveFloodAreas]);
-
-  const generateSources = (source: ToolSourceType) => (
-    <Source
-      key={source.id}
-      id={source.id}
-      type={GEOJSON}
-      data={{ type: FEATURE_COLLECTION, features: source.features }}
-      generateId
-    >
-      {source.layers.map((layer) => (
-        <Layer key={layer.id} {...layer} />
-      ))}
-    </Source>
-  );
 
   return <>{sources.map(generateSources)}</>;
 }

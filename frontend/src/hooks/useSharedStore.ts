@@ -15,7 +15,8 @@ export interface State {
   showLiveFloods: boolean;
   minCriticality: number;
   selectedFloodAreas: NonNullable<Feature["id"]>[];
-  floodAreaFeatures: Feature<Polygon>[];
+  floodAreaFeatures: Feature[];
+  drawnFeatures: Feature<Polygon>[];
   selectedFloodAreaFeatureIds: Record<NonNullable<Feature["id"]>, boolean>;
 
   selectAssetType: (assetType: any) => void;
@@ -28,11 +29,11 @@ export interface State {
   setMinCriticality: (criticality: number) => void;
 
   setSelectedFloodAreas: (floodAreas: NonNullable<Feature["id"]>[]) => void;
-  addFloodAreaFeatures: (features: Feature<Polygon>[]) => void;
-  updateFloodAreaFeatures: (features: Feature<Polygon>[]) => void;
+  addFloodAreaFeatures: (features: Feature[]) => void;
+  updateFloodAreaFeatures: (features: Feature[]) => void;
   deleteFloodAreaFeatures: (featureIds: NonNullable<Feature["id"]>[]) => void;
   toggleFloodAreaFeature: (featureId: NonNullable<Feature["id"]>) => void;
-  setFloodAreaFeatures: (features: Feature<Polygon>[]) => void;
+  setFloodAreaFeatures: (features: Feature[]) => void;
 
   dynamicProximityFeatures: Feature<
     Polygon,
@@ -96,7 +97,7 @@ function deleteFeatures<
 >(key: Key, set: SetFunction) {
   return (featureIds: NonNullable<T["id"]>[]) =>
     set((state) => ({
-      [key]: state[key].filter((f) => !featureIds.includes(f.id)),
+      [key]: state[key].filter((f) => f.id && !featureIds.includes(f.id)),
     }));
 }
 
@@ -130,6 +131,7 @@ export default createStore<State>("application-state-storage", (set) => ({
   selectedFloodAreas: [],
   setSelectedFloodAreas: (floodAreas) =>
     set(() => ({ selectedFloodAreas: floodAreas })),
+  drawnFeatures: [],
   floodAreaFeatures: [],
   addFloodAreaFeatures: (features) =>
     set((state) => ({
@@ -144,7 +146,7 @@ export default createStore<State>("application-state-storage", (set) => ({
     set((state) => {
       return {
         floodAreaFeatures: state.floodAreaFeatures.filter(
-          (f) => !featureIds.includes(f.id),
+          (f) => f.id && !featureIds.includes(f.id),
         ),
         selectedFloodAreaFeatureIds: Object.fromEntries(
           Object.entries(state.selectedFloodAreaFeatureIds).filter(

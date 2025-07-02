@@ -14,7 +14,10 @@ export default interface Tool {
   Overlay?: () => JSX.Element;
 
   /** Side buttons (the small buttons on the right) */
-  SideButtons?: () => JSX.Element;
+  SideButtons?: (onClickFunc?: any) => JSX.Element;
+
+  /** Polygon buttons (the small buttons on the top) */
+  PolygonButtons?: () => JSX.Element;
 
   /** Toolbar tools (large elements along the top, such as filters or the search bar) */
   ToolbarTools?: () => JSX.Element;
@@ -39,6 +42,9 @@ export default interface Tool {
 
   /** Side button order index */
   SIDE_BUTTON_ORDER?: number;
+
+  /** Polygon button order index */
+  POLYGON_BUTTON_ORDER: number;
 
   /** Toolbar button order index */
   TOOLBAR_BUTTON_ORDER?: number;
