@@ -22,6 +22,8 @@ export interface ToolbarButtonProps {
   readonly badgeContent?: number;
   /** Rotation angle for compass (optional) */
   readonly compassRotation?: number;
+  /** Whether the button is in active state */
+  readonly active?: boolean;
 }
 
 export default function ToolbarButton({
@@ -35,6 +37,7 @@ export default function ToolbarButton({
   badgeContent,
   iconSize,
   compassRotation,
+  active = false,
 }: ToolbarButtonProps) {
   return (
     <Tooltip title={title} enterDelay={500}>
@@ -42,8 +45,8 @@ export default function ToolbarButton({
         aria-label={title}
         onClick={onClick}
         sx={{
-          backgroundColor: "white",
-          color: "black",
+          backgroundColor: active ? "#3670B3" : "white",
+          color: active ? "white" : "black",
           borderRadius: "4px",
           boxShadow: "0px 4px 8px 0px rgba(0,0,0,0.2)",
           fontSize: "2.0rem",
@@ -57,7 +60,10 @@ export default function ToolbarButton({
           alignItems: "center",
           justifyContent: "center",
           "&:hover": {
-            backgroundColor: "#f0f0f0",
+            backgroundColor: active ? "#2a5a8f" : "#f0f0f0",
+          },
+          "& img": {
+            filter: active ? "brightness(0) invert(100%)" : "none",
           },
         }}
       >

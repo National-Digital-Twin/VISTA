@@ -14,6 +14,8 @@ const TOOLS: (false | (() => Promise<Tool>))[] = [
   () => import("./CompassControls"),
   () => import("./ZoomControls"),
   () => import("./LayersControlPanel"),
+  () => import("./Polygons"),
+  () => import("./DrawnPolygons"),
   featureFlags.feedbackWidget && (() => import("./FeedbackWidget")),
   () => import("./DynamicProximity"),
   () => import("./FloodAreaControls"),

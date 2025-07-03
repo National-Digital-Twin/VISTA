@@ -63,4 +63,44 @@ describe("ToolbarButton", () => {
     const button = screen.getByRole("button", { name: /test button/i });
     expect(button).toHaveAttribute("aria-label", "Test Button");
   });
+
+  it("applies active state styling when active prop is true", () => {
+    render(
+      <ToolbarButton
+        {...defaultProps}
+        icon={undefined}
+        svgSrc="/test-icon.svg"
+        active={true}
+      />,
+    );
+
+    const button = screen.getByRole("button", { name: /test button/i });
+    expect(button).toHaveStyle({
+      backgroundColor: "rgb(42, 90, 143)",
+      color: "white",
+    });
+
+    const img = screen.getByRole("img");
+    expect(img).toHaveStyle({ filter: "brightness(0) invert(100%)" });
+  });
+
+  it("applies default styling when active prop is false", () => {
+    render(
+      <ToolbarButton
+        {...defaultProps}
+        icon={undefined}
+        svgSrc="/test-icon.svg"
+        active={false}
+      />,
+    );
+
+    const button = screen.getByRole("button", { name: /test button/i });
+    expect(button).toHaveStyle({
+      backgroundColor: "rgb(240, 240, 240)",
+      color: "black",
+    });
+
+    const img = screen.getByRole("img");
+    expect(img).toHaveStyle({ filter: "none" });
+  });
 });
