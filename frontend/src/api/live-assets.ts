@@ -53,8 +53,8 @@ const iowBounds = LngLatBounds.convert([
 ]);
 
 export const fetchBuildingAssets = async (
-  bounds: LngLatBounds = iowBounds,
   building: RawAsset,
+  bounds: LngLatBounds = iowBounds,
 ): Promise<FeatureCollection> => {
   const bbox = bounds.toArray().toString();
   const filter = buildApiFilters(building);

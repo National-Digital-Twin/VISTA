@@ -79,7 +79,7 @@ export async function createAssets(): Promise<Asset[]> {
   const mappedAssets: Asset[][] = await Promise.all(
     rawAssets.map(async (rawAsset: RawAsset): Promise<Asset[]> => {
       const mappedAssets: Asset[] = [];
-      const ngdAsset = await fetchBuildingAssets(undefined, rawAsset);
+      const ngdAsset = await fetchBuildingAssets(rawAsset);
       ngdAsset.features.forEach((feature: Feature) => {
         const coordinates = isPolygonFeature(feature)
           ? getCentroid(feature).geometry?.coordinates

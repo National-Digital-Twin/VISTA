@@ -82,7 +82,7 @@ export default class Asset {
     this.elementType = "asset";
     this.primaryCategory = primaryCategory;
     this.secondaryCategory = secondaryCategory;
-    this.state = state === undefined ? AssetState.Static : state;
+    this.state = state ?? AssetState.Static;
     Object.preventExtensions(this);
   }
 
@@ -214,10 +214,10 @@ export default class Asset {
 
   getDetails(assetInfo) {
     return {
-      title: assetInfo?.name || "Name unknown",
+      title: assetInfo?.name ?? "Name unknown",
       criticality: this.dependent.criticalitySum,
-      type: assetInfo?.assetType || this.type,
-      desc: assetInfo?.desc || this.description,
+      type: assetInfo?.assetType ?? this.type,
+      desc: assetInfo?.desc ?? this.description,
       criticalityColor: this.criticalityColor,
       id: this.id,
       uri: this.uri,

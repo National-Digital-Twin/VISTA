@@ -60,7 +60,7 @@ export default function ElementDetails({
 
   const onClick = () => {
     if (elemIsAsset) {
-      const details = element?.getDetails?.(data) || {};
+      const details = element?.getDetails?.(data) ?? {};
       setConnectedAssetData(constructElementDetailsObject(element, details));
       showConnectedAssets();
     }
@@ -68,7 +68,7 @@ export default function ElementDetails({
 
   let details = undefined;
   if (elemIsAsset) {
-    details = element?.getDetails?.(data) || {};
+    details = element?.getDetails?.(data) ?? {};
   }
 
   if (isEmpty(element) || !details) {
