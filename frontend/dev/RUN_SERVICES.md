@@ -20,11 +20,12 @@ curl -X POST -H "Content-Type: text/turtle" --data-binary "@iow.ttl" http://loca
 curl -X POST -H "Content-Type: text/turtle" --data-binary "@ontology.ttl" http://localhost:3030/ontology/upload
 ```
 
-The Smart cache paralog API can be found [here](https://github.com/National-Digital-Twin/smart-cache-vista-api) and needs to be built with the tag `smart-cache-vista-api`.
+The Smart cache paralog API can be found [here](https://github.com/National-Digital-Twin/smart-cache-paralog-api) and needs to be built with the tag `smart-cache-vista-api`.
 
 The Paralog python API is a Django graphQL API contained in the backend folder of this repository. This needs to be built with the tag `vista-python-api`.
 
-The Transparent proxy is an nginx reverse proxy contained in the transparent-proxy folder of this repository. This needs to be built using the tag `paralog-transparent-proxy`.
+The Transparent proxy is an nginx reverse proxy contained in the transparent-proxy folder of this repository. This needs to be built using the tag `vista-transparent-proxy`, you must first update the proxy.conf.template to change
+the resolver.
 
 ## Copy and populate the env file
 
