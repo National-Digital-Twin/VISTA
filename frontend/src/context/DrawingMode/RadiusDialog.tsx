@@ -15,16 +15,14 @@ interface RadiusDialogProps {
   readonly open: boolean;
   readonly onClose: () => void;
   readonly onConfirm: (radius: number) => void;
-  readonly defaultRadius?: number;
 }
 
 export default function RadiusDialog({
   open,
   onClose,
   onConfirm,
-  defaultRadius = 2,
 }: RadiusDialogProps) {
-  const [radius, setRadius] = useState<string>(defaultRadius.toString());
+  const [radius, setRadius] = useState<string>("");
   const [error, setError] = useState<string>("");
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -45,12 +43,14 @@ export default function RadiusDialog({
     const numRadius = parseFloat(radius);
     if (!isNaN(numRadius) && numRadius > 0) {
       onConfirm(numRadius);
+      setRadius("");
+      setError("");
       onClose();
     }
   };
 
   const handleCancel = () => {
-    setRadius(defaultRadius.toString());
+    setRadius("");
     setError("");
     onClose();
   };

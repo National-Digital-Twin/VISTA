@@ -125,7 +125,6 @@ export function DrawingModeContextProvider({
         open={isRadiusDialogOpen}
         onClose={handleRadiusDialogClose}
         onConfirm={handleRadiusConfirm}
-        defaultRadius={2}
       />
     </DrawingModeContext.Provider>
   );
