@@ -103,4 +103,36 @@ describe("ToolbarButton", () => {
     const img = screen.getByRole("img");
     expect(img).toHaveStyle({ filter: "none" });
   });
+
+  it("applies disabled state styling when disabled prop is true", () => {
+    render(
+      <ToolbarButton
+        {...defaultProps}
+        icon={undefined}
+        svgSrc="/test-icon.svg"
+        disabled={true}
+      />,
+    );
+
+    const button = screen.getByRole("button", { name: /test button/i });
+    expect(button).toBeDisabled();
+    expect(button).toHaveStyle({
+      backgroundColor: "rgb(170, 180, 190)",
+      color: "rgb(93, 90, 90)",
+    });
+
+    const img = screen.getByRole("img");
+    expect(img).toHaveStyle({ filter: "grayscale(100%) opacity(0.5)" });
+  });
+
+  it("does not call onClick when disabled", () => {
+    const mockOnClick = jest.fn();
+    render(
+      <ToolbarButton {...defaultProps} onClick={mockOnClick} disabled={true} />,
+    );
+
+    const button = screen.getByRole("button", { name: /test button/i });
+    fireEvent.click(button);
+    expect(mockOnClick).not.toHaveBeenCalled();
+  });
 });

@@ -1,11 +1,10 @@
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import { useShallow } from "zustand/react/shallow";
 
+import { usePolygonToolbarStore } from "./useStore";
 import ToolbarButton from "@/components/Map/SideButtons/ToolbarButton";
 import { useDrawingMode } from "@/context/DrawingMode";
 import useSharedStore from "@/hooks/useSharedStore";
-
-export const TOOL_NAME = "Polygon controls";
 
 export function CircleCreationButton() {
   const drawingModeCallbacks = useSharedStore(
@@ -16,22 +15,28 @@ export function CircleCreationButton() {
     })),
   );
 
-  const [isDrawing, setIsDrawing] = useState(false);
+  const { setActiveDrawingMode, activeDrawingMode } = usePolygonToolbarStore();
+  const isDrawing = activeDrawingMode === "drag_circle";
+  const isDisabled = activeDrawingMode !== null && !isDrawing;
+
   const { startDrawing } = useDrawingMode((state) => state.floodAreaFeatures, {
     onDrawingStart: () => {
-      setIsDrawing(true);
+      setActiveDrawingMode("drag_circle");
     },
     onDrawingEnd: () => {
-      setIsDrawing(false);
+      setActiveDrawingMode(null);
     },
     ...drawingModeCallbacks,
   });
 
   const drawCircle = useCallback(() => {
+    if (isDrawing) {
+      return;
+    }
     startDrawing({
       drawingMode: "drag_circle",
     });
-  }, [startDrawing]);
+  }, [startDrawing, isDrawing]);
 
   return (
     <ToolbarButton
@@ -39,6 +44,7 @@ export function CircleCreationButton() {
       onClick={drawCircle}
       svgSrc="icons/draw_circle.svg"
       active={isDrawing}
+      disabled={isDisabled}
     />
   );
 }
