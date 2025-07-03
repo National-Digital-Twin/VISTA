@@ -1,11 +1,9 @@
+import { centroid } from "@turf/turf";
+import type { Feature, GeoJsonProperties, Point, Polygon } from "geojson";
 import { Asset, Dependency } from "@/models";
 import type { FoundIcon } from "@/hooks/useFindIcon";
 import { AssetState } from "@/models/Asset";
 import { fetchBuildingAssets } from "@/api/combined";
-import { centroid } from "@turf/turf";
-import type { Feature, GeoJsonProperties, Point, Polygon } from "geojson";
-import useFindIcon from "@/hooks/useFindIcon";
-import { assertAbstractType } from "graphql";
 
 interface DependencyData {
   dependencyUri: string;
@@ -41,16 +39,6 @@ export function createDependencies(dependencies: DependencyData[]) {
         osmID: dependency.osmID,
       }),
   );
-}
-
-interface AssetData {
-  uri: string;
-  type: string;
-  partCount: number;
-  lat: number;
-  lon: number;
-  dependentCount: number;
-  dependentCriticalitySum: number;
 }
 
 export interface RawAsset {
@@ -90,10 +78,10 @@ export async function createAssets(): Promise<Asset[]> {
 
   const mappedAssets: Asset[][] = await Promise.all(
     rawAssets.map(async (rawAsset: RawAsset): Promise<Asset[]> => {
-      let mappedAssets: Asset[] = [];
-      let ngdAsset = await fetchBuildingAssets(undefined, rawAsset);
+      const mappedAssets: Asset[] = [];
+      const ngdAsset = await fetchBuildingAssets(undefined, rawAsset);
       ngdAsset.features.forEach((feature: Feature) => {
-        let coordinates = isPolygonFeature(feature)
+        const coordinates = isPolygonFeature(feature)
           ? getCentroid(feature).geometry?.coordinates
           : [0, 0];
         const type = rawAsset?.type;

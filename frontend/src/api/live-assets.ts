@@ -53,7 +53,7 @@ const iowBounds = LngLatBounds.convert([
 ]);
 
 export const fetchBuildingAssets = async (
-  bounds: maplibregl.LngLatBounds = iowBounds,
+  bounds: LngLatBounds = iowBounds,
   building: RawAsset,
 ): Promise<FeatureCollection> => {
   const bbox = bounds.toArray().toString();
