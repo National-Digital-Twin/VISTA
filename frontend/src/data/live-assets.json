@@ -1,0 +1,274 @@
+[
+    {
+        "description": "Telephone Exchange",
+        "type": "http://ies.data.gov.uk/ontology/ies4#TelecommunicationsExchange",
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#TelecommunicationsExchange",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "TE",
+            "alt": "TelecommunicationsExchange",
+            "shape": "cirle",
+            "faUnicode": "\uf8d3",
+            "faIcon": "fa-solid fa-phone-rotary"
+        },
+        "primaryCategory": "Essential Services",
+        "secondaryCategory": "Utility Infrastructure"
+    },
+    {
+        "description": "Telecommunications Facility",
+        "type": "http://ies.data.gov.uk/ontology/ies4#TelecommunicationsComplex",
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#TelecommunicationsComplex",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "TC",
+            "alt": "TelecommunicationsComplex",
+            "shape": "cirle",
+            "faUnicode": "/ue585",
+            "faIcon": "fa-solid fa-tower-cell"
+        },
+        "primaryCategory": "Essential Services",
+        "secondaryCategory": "Utility Infrastructure"
+    },
+    {
+        "description": "Water Distribution Facility",
+        "type": "http://ies.data.gov.uk/ontology/ies4#WaterDistributionComplex",
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#WaterDistributionComplex",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "WDC",
+            "alt": "WaterDistributionComplex",
+            "shape": "cirle",
+            "faUnicode": "\uf043",
+            "faIcon": "fa-solid fa-droplet"
+        },
+        "primaryCategory": "Transport and Infrastructure",
+        "secondaryCategory": "Utility Infrastructure"
+    },
+    {
+        "description": "Water Treatment Facility",
+        "type": "http://ies.data.gov.uk/ontology/ies4#WaterExtractionComplex",
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#WaterExtractionComplex",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "WEC",
+            "alt": "WaterExtractionComplex",
+            "shape": "cirle",
+            "faUnicode": "\ue4b5",
+            "faIcon": "fa-thin fa-arrow-up-from-ground-water"
+        },
+        "primaryCategory": "Transport and Infrastructure",
+        "secondaryCategory": "Utility Infrastructure"
+    },
+    {
+        "description": "Waste Water Treatment Works",
+        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterTreatmentComplex",
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterTreatmentComplex",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "WTC",
+            "alt": "WastewaterTreatmentComplex",
+            "shape": "cirle",
+            "faUnicode": "\ue58c",
+            "faIcon": "fa-light fa-truck-droplet"
+        },
+        "primaryCategory": "Wastewater Management",
+        "secondaryCategory": "Wastewater Infrastructure"
+    },
+    {
+        "buildinguse": "Commercial Activity: Animal Services",
+        "type": "http://ies.data.gov.uk/ontology/ies4#VeterinaryHospital",
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#VeterinaryHospital",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "VH",
+            "alt": "VeterinaryHospital",
+            "shape": "cirle",
+            "faUnicode": "\ue573",
+            "faIcon": "fa-light fa-shield-dog"
+        },
+        "primaryCategory": "Essential Services",
+        "secondaryCategory": "Miscellaneous"
+    },
+    {
+        "description": "Solar Power Facility",
+        "type": "http://ies.data.gov.uk/ontology/ies4#PhotovoltaicPowerGenerationComplex",
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#PhotovoltaicPowerGenerationComplex",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "PPG",
+            "alt": "PhotovoltaicPowerGenerationComplex",
+            "shape": "cirle",
+            "faUnicode": "\uf75a",
+            "faIcon": "fa-solid fa-solar-panel"
+        },
+        "primaryCategory": "Essential Services",
+        "secondaryCategory": "Energy"
+    },
+    {
+        "description": "Children's Nursery",
+        "type": "http://ies.data.gov.uk/ontology/ies4#PreSchool",
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#PreSchool",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "PS",
+            "alt": "PreSchool",
+            "shape": "cirle",
+            "faUnicode": "\uf549",
+            "faIcon": "fa-regular fa-school"
+        },
+        "primaryCategory": "Public Safety and Shelter",
+        "secondaryCategory": "Learning and Non Residential Institutions"
+    },
+    {
+        "description": "Crematorium",
+        "type": "http://ies.data.gov.uk/ontology/ies4#Crematorium",
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#Crematorium",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "C",
+            "alt": "Crematorium",
+            "shape": "cirle",
+            "faUnicode": "\uf720",
+            "faIcon": "fa-solid fa-tombstone"
+        },
+        "primaryCategory": "Miscellaneous",
+        "secondaryCategory": "Commercial, Business and Service"
+    },
+    {
+        "description": "Sports Or Exercise Facility",
+        "type": "http://ies.data.gov.uk/ontology/ies4#OutdoorStadium",
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#OutdoorStadium",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "OS",
+            "alt": "OutdoorStadium",
+            "shape": "cirle",
+            "faUnicode": "\uf02b",
+            "faIcon": "fa-solid fa-tag"
+        },
+        "primaryCategory": "Public Safety and Shelter",
+        "secondaryCategory": "Public Assembly Points"
+    },
+    {
+        "description": "Sports Pavilion",
+        "type": "http://ies.data.gov.uk/ontology/ies4#SportsGround",
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#SportsGround",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "SG",
+            "alt": "SportsGround",
+            "shape": "cirle",
+            "faUnicode": "\uf02b",
+            "faIcon": "fa-solid fa-tag"
+        },
+        "primaryCategory": "Public Safety and Shelter",
+        "secondaryCategory": "Public Assembly Points"
+    },
+    {
+        "buildinguse": "Commercial Activity: Industrial Or Manufacturing",
+        "type": "http://ies.data.gov.uk/ontology/ies4#IndustrialSpace",
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#IndustrialSpace",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "IS",
+            "alt": "IndustrialSpace",
+            "shape": "cirle",
+            "faUnicode": "\uf02b",
+            "faIcon": "fa-solid fa-tag"
+        },
+        "primaryCategory": "Recovery and Support",
+        "secondaryCategory": "Industrial and Commercial"
+    },
+    {
+        "buildinguse": "Commercial Activity: Retail",
+        "type": "http://ies.data.gov.uk/ontology/ies4#RetailKiosk",
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#RetailKiosk",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "RK",
+            "alt": "RetailKiosk",
+            "shape": "cirle",
+            "faUnicode": "\uf02b",
+            "faIcon": "fa-solid fa-tag"
+        },
+        "primaryCategory": "Recovery and Support",
+        "secondaryCategory": "Industrial and Commercial"
+    },
+    {
+        "description": "Community Meeting Place",
+        "type": "http://ies.data.gov.uk/ontology/ies4#CommunityCentre",
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#CommunityCentre",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "CC",
+            "alt": "CommunityCentre",
+            "shape": "cirle",
+            "faUnicode": "\ue56e",
+            "faIcon": "fa-solid fa-school-flag"
+        },
+        "primaryCategory": "Public Safety and Shelter",
+        "secondaryCategory": "Shelters and Relief Centers"
+    },
+    {
+        "description": "Temporary Or Holiday Accommodation Building",
+        "type": "http://ies.data.gov.uk/ontology/ies4#Hotel",
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#Hotel",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "H",
+            "alt": "Hotel",
+            "shape": "cirle",
+            "faUnicode": "\uf0fd",
+            "faIcon": "fa-solid fa-square-h"
+        },
+        "primaryCategory": "Recovery and Support",
+        "secondaryCategory": "Residential"
+    },
+    {
+        "description": "Lifeboat Station",
+        "type": "http://ies.data.gov.uk/ontology/ies4#LifeboatStation",
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#LifeboatStation",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "LS",
+            "alt": "LifeboatStation",
+            "shape": "cirle",
+            "faUnicode": "\uf1cd",
+            "faIcon": "fa-solid fa-life-ring"
+        },
+        "primaryCategory": "Essential Services",
+        "secondaryCategory": "Third Sector"
+    },
+    {
+        "description": "Fire Station",
+        "type": "http://ies.data.gov.uk/ontology/ies4#FireBrigadeComplex",
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#FireBrigadeComplex",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "FBC",
+            "alt": "FireBrigadeComplex",
+            "shape": "cirle",
+            "faUnicode": "\ue41a",
+            "faIcon": "fa-solid fa-hose-reel"
+        },
+        "primaryCategory": "Essential Services",
+        "secondaryCategory": "Emergency Services"
+    }
+]

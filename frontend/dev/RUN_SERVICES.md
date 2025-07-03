@@ -33,6 +33,7 @@ Copy over the `.env-local` to the `.env` file and populate the following config 
 
 - MET_OFFICE_GLOBAL_SPOT_API_KEY
 - OS_API_KEY
+- OS_NGD_API_KEY
 - ADMIRALTY_API_KEY
 - REALTIME_TRAINS_API_KEY
 - IA_URL

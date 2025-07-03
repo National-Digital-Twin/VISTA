@@ -37,6 +37,8 @@ for asset in assets_for_evaluation:
     type = asset["type"].split("#")[1]
     if type is not None and type not in asset_types:
         assets_to_keep.append(asset)
+    else:
+        print(asset)
 
 with open("output.json", "w", encoding="utf-8") as f:
     json.dump(assets_to_keep, f, indent=4)
