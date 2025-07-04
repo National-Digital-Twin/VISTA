@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { noCase } from "change-case";
 import { getURIFragment, isAsset } from "@/utils";
 import { fetchAssetInfo } from "@/api/combined";
+import { AssetState } from "@/models/Asset";
 
 export interface InfoTooltipProps {
   /** Map element for which this is the tooltip */
@@ -10,11 +11,12 @@ export interface InfoTooltipProps {
 
 export default function InfoTooltip({ element }: InfoTooltipProps) {
   const elemIsAsset = isAsset(element);
+  const elemIsStatic = element.state === AssetState.Static;
 
   const { data, isLoading } = useQuery({
     queryKey: ["asset-info", element?.uri],
     queryFn: () => fetchAssetInfo(element?.uri),
-    enabled: elemIsAsset,
+    enabled: elemIsAsset && elemIsStatic,
   });
 
   if (!element) {
