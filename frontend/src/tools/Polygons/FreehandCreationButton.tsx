@@ -1,11 +1,10 @@
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import { useShallow } from "zustand/react/shallow";
 
+import { usePolygonToolbarStore } from "./useStore";
 import ToolbarButton from "@/components/Map/SideButtons/ToolbarButton";
 import { useDrawingMode } from "@/context/DrawingMode";
 import useSharedStore from "@/hooks/useSharedStore";
-
-export const TOOL_NAME = "Polygon controls";
 
 export function FreehandCreationButton() {
   const drawingModeCallbacks = useSharedStore(
@@ -22,7 +21,10 @@ export function FreehandCreationButton() {
     })),
   );
 
-  const [isDrawing, setIsDrawing] = useState(false);
+  const { setActiveDrawingMode, activeDrawingMode } = usePolygonToolbarStore();
+  const isDrawing = activeDrawingMode === "draw_polygon";
+  const isDisabled = activeDrawingMode !== null && !isDrawing;
+
   const { startDrawing } = useDrawingMode(
     (state) =>
       state.floodAreaFeatures.filter(
@@ -31,25 +33,29 @@ export function FreehandCreationButton() {
       ),
     {
       onDrawingStart: () => {
-        setIsDrawing(true);
+        setActiveDrawingMode("draw_polygon");
       },
       onDrawingEnd: () => {
-        setIsDrawing(false);
+        setActiveDrawingMode(null);
       },
       ...drawingModeCallbacks,
     },
   );
 
-  const drawCircle = useCallback(() => {
+  const drawPolygon = useCallback(() => {
+    if (isDrawing) {
+      return;
+    }
     startDrawing({ drawingMode: "draw_polygon" });
-  }, [startDrawing]);
+  }, [startDrawing, isDrawing]);
 
   return (
     <ToolbarButton
       title="Draw freehand"
-      onClick={drawCircle}
+      onClick={drawPolygon}
       svgSrc="icons/draw_shape.svg"
       active={isDrawing}
+      disabled={isDisabled}
     />
   );
 }

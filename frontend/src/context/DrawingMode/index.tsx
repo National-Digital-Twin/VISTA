@@ -359,12 +359,19 @@ export const useDrawingMode = <T extends Feature>(
         removeMouseListeners();
         onDrawingEnd?.();
         map.off("draw.create", handleDrawCreate);
+        map.off("draw.modechange", handleModeChange);
+        map.off("click", handleDragCircleClick);
       };
 
       const handleModeChange = (event: DrawModeChangeEvent) => {
         if (event.mode === "simple_select") {
-          onDrawingEnd?.(); // signal that drawing was cancelled
+          // drawing cancelled
+          if (drawingMode === "drag_circle") {
+            map.getMap().dragPan.enable();
+          }
+          onDrawingEnd?.();
         }
+
         removeRadiusLabel();
         removeMouseListeners();
         map.off("draw.create", handleDrawCreate);
@@ -410,9 +417,10 @@ export const useDrawingMode = <T extends Feature>(
             target: e.target as any,
           });
 
+          // re-enable drag pan (disabled by DragCircleMode)
+          map.getMap().dragPan.enable();
+
           draw.changeMode("simple_select", { featureIds: [feature.id] });
-          onDrawingEnd?.();
-          map.off("click", handleDragCircleClick);
         });
       };
 
