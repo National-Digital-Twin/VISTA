@@ -13,8 +13,8 @@
     "lint:fix": "eslint . --fix",
     "start": "vite --port 3001",
     "test": "jest",
-    "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "test:watch": "jest --watch"
   },
   "browserslist": {
     "production": [
