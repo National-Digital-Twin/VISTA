@@ -1,5 +1,6 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import React from "react";
 import ConnectedAssetsPanel from ".";
 import useProviders from "@/hooks/queries/useProviders";
 
