@@ -72,4 +72,3 @@ updates:
       docker-dependencies:
         patterns:
           - "*"
-
