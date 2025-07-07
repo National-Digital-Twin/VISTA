@@ -2,9 +2,10 @@ export default {
   preset: "ts-jest",
   testEnvironment: "jest-environment-jsdom",
   transform: {
-    "^.+\\.(ts|tsx)$": ["ts-jest", { tsconfig: "tsconfig.jest.json" }],
+    "^.+\\.([tj]s|[tj]sx)$": ["ts-jest", { tsconfig: "tsconfig.jest.json" }],
     "^.+\\.svg$": "jest-transformer-svg",
   },
+  transformIgnorePatterns: ["<rootDir>/node_modules/(?!change-case)"],
   moduleNameMapper: {
     "^common/(.*)$": "<rootDir>/../common/$1",
     "^(.*).svg\\?react$": "$1.svg",
