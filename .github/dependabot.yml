@@ -1,5 +1,6 @@
 version: 2
 updates:
+
   - package-ecosystem: "github-actions"
     directory: "/"
     target-branch: "develop"
@@ -9,6 +10,12 @@ updates:
       actions-updates:
         patterns:
           - "*"
+    allow:
+      - dependency-type: "direct"
+        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+      - dependency-type: "indirect"
+        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+
   - package-ecosystem: "pip"
     directory: "/backend"
     target-branch: "develop"
@@ -18,6 +25,12 @@ updates:
       python-dependencies:
         patterns:
           - "*"
+    allow:
+      - dependency-type: "direct"
+        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+      - dependency-type: "indirect"
+        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+
   - package-ecosystem: "npm"
     directory: "/frontend"
     target-branch: "develop"
@@ -27,6 +40,12 @@ updates:
       js-dependencies:
         patterns:
           - "*"
+    allow:
+      - dependency-type: "direct"
+        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+      - dependency-type: "indirect"
+        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+
   - package-ecosystem: "npm"
     directory: "/frontend/qa"
     target-branch: "develop"
@@ -36,6 +55,12 @@ updates:
       js-dependencies:
         patterns:
           - "*"
+    allow:
+      - dependency-type: "direct"
+        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+      - dependency-type: "indirect"
+        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+
   - package-ecosystem: "docker"
     directory: "/frontend"
     target-branch: "develop"
@@ -45,6 +70,12 @@ updates:
       docker-dependencies:
         patterns:
           - "*"
+    allow:
+      - dependency-type: "direct"
+        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+      - dependency-type: "indirect"
+        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+
   - package-ecosystem: "docker"
     directory: "/frontend/dev"
     target-branch: "develop"
@@ -54,6 +85,12 @@ updates:
       docker-dependencies:
         patterns:
           - "*"
+    allow:
+      - dependency-type: "direct"
+        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+      - dependency-type: "indirect"
+        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+
   - package-ecosystem: "docker"
     directory: "/backend"
     target-branch: "develop"
@@ -63,6 +100,12 @@ updates:
       docker-dependencies:
         patterns:
           - "*"
+    allow:
+      - dependency-type: "direct"
+        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+      - dependency-type: "indirect"
+        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+
   - package-ecosystem: "docker"
     directory: "/transparent-proxy"
     target-branch: "develop"
@@ -72,3 +115,8 @@ updates:
       docker-dependencies:
         patterns:
           - "*"
+    allow:
+      - dependency-type: "direct"
+        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+      - dependency-type: "indirect"
+        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
