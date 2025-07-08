@@ -32,6 +32,8 @@ import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
 import "./maplibre-gl-draw.css";
 import "./maplibre-gl-map.css";
 import useSharedStore, { State } from "@/hooks/useSharedStore";
+import DrawnPolygonProvider from "@/tools/DrawnPolygons/DrawnPolygonProvider";
+import DynamicProximityProvider from "@/tools/DynamicProximity/DynamicProximityProvider";
 
 /** Context for Drawing Mode */
 interface DrawingModeContextValue {
@@ -120,7 +122,9 @@ export function DrawingModeContextProvider({
 
   return (
     <DrawingModeContext.Provider value={contextValue}>
-      {children}
+      <DrawnPolygonProvider>
+        <DynamicProximityProvider>{children}</DynamicProximityProvider>
+      </DrawnPolygonProvider>
       <RadiusDialog
         open={isRadiusDialogOpen}
         onClose={handleRadiusDialogClose}
