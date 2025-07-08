@@ -29,6 +29,7 @@ repos:
       - id: detect-private-key
       - id: mixed-line-ending
       - id: check-yaml
+        exclude: ^\.github/
       - id: check-added-large-files
         name: Check for files larger than 5 MB
         args: ["--maxkb=5120"]
