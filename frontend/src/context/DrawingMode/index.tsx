@@ -206,6 +206,13 @@ export const useDrawingMode = <T extends Feature>(
     [features, processDrawEvent],
   );
 
+  const setCursor = useCallback(
+    (cursor: string) => {
+      map.getCanvasContainer().style.cursor = cursor;
+    },
+    [map],
+  );
+
   const updateRadiusLabel = useCallback(
     (centerCoords: [number, number], edgeCoords: [number, number]) => {
       const radiusKm = turf_distance(centerCoords, edgeCoords, {
@@ -357,6 +364,7 @@ export const useDrawingMode = <T extends Feature>(
       const handleDrawCreate = (event: DrawCreateEvent) => {
         onAddFeatures(event.features);
         removeMouseListeners();
+        setCursor("grab");
         onDrawingEnd?.();
         map.off("draw.create", handleDrawCreate);
         map.off("draw.modechange", handleModeChange);
@@ -368,6 +376,7 @@ export const useDrawingMode = <T extends Feature>(
           // drawing cancelled
           if (drawingMode === "drag_circle") {
             map.getMap().dragPan.enable();
+            setCursor("grab");
           }
           onDrawingEnd?.();
         }
@@ -419,6 +428,7 @@ export const useDrawingMode = <T extends Feature>(
 
           // re-enable drag pan (disabled by DragCircleMode)
           map.getMap().dragPan.enable();
+          setCursor("grab");
 
           draw.changeMode("simple_select", { featureIds: [feature.id] });
         });
@@ -426,6 +436,7 @@ export const useDrawingMode = <T extends Feature>(
 
       if (drawingMode === "drag_circle") {
         map.on("click", handleDragCircleClick);
+        setCursor("crosshair");
       }
 
       map.on("draw.delete", handleDrawEvent);
@@ -442,6 +453,7 @@ export const useDrawingMode = <T extends Feature>(
       updateRadiusLabel,
       removeRadiusLabel,
       showRadiusDialog,
+      setCursor,
     ],
   );
 
