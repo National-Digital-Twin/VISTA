@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { createAssets, createDependencies } from "./dataset-utils";
+import { createDependencies } from "./dataset-utils";
 import { Asset, Dependency } from "@/models";
 import { fetchAssessmentDependencies } from "@/api/combined";
 
@@ -28,11 +28,7 @@ const useGroupedAssets = ({
     queryFn: async () => {
       const rawAssets = (await import("@/data/coeff-assets-with-geometry.json"))
         .default as any[];
-      const staticAssets = Array.from(rawAssets).map(
-        (asset) => new Asset(asset),
-      );
-      const liveAssets = await createAssets();
-      const allAssets: Asset[] = [...staticAssets, ...liveAssets];
+      const allAssets = Array.from(rawAssets).map((asset) => new Asset(asset));
       const assetTypes = allAssets
         .map((asset) => asset.type)
         .filter((value, index, self) => self.indexOf(value) === index);

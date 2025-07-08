@@ -15,7 +15,6 @@ import ArrowRightAltIcon from "@mui/icons-material/ArrowRightAlt";
 import { fetchAssetInfo } from "@/api/combined";
 import { getURIFragment, isAsset, isDependency } from "@/utils";
 import { isEmpty } from "@/utils/isEmpty";
-import { AssetState } from "@/models/Asset";
 
 export interface ElementDefaultsProps {
   readonly element: any;
@@ -29,10 +28,9 @@ export default function ElementDetails({
   showConnectedAssets,
 }: Readonly<ElementDefaultsProps>) {
   const elemIsAsset = isAsset(element);
-  const elemIsStatic = element.state === AssetState.Static;
 
   const assetInfo = useQuery({
-    enabled: elemIsAsset && elemIsStatic,
+    enabled: elemIsAsset,
     queryKey: ["asset-info", element?.uri || ""],
     queryFn: () => fetchAssetInfo(element?.uri || ""),
   });
@@ -40,6 +38,13 @@ export default function ElementDetails({
   const isLoading = assetInfo.isLoading;
   const isError = assetInfo.isError;
 
+  const onClick = () => {
+    if (elemIsAsset && assetInfo.data) {
+      const details = element?.getDetails?.(assetInfo.data) || {};
+      setConnectedAssetData(constructElementDetailsObject(element, details));
+      showConnectedAssets();
+    }
+  };
   if (isLoading) {
     return (
       <Box display="flex" justifyContent="center" mt={2}>
@@ -48,7 +53,7 @@ export default function ElementDetails({
     );
   }
 
-  if (isError && elemIsStatic) {
+  if (isError) {
     return (
       <Alert severity="error" sx={{ mt: 2 }}>
         Error fetching details for {element?.uri || "this asset"}
@@ -56,19 +61,9 @@ export default function ElementDetails({
     );
   }
 
-  const data = assetInfo.data;
-
-  const onClick = () => {
-    if (elemIsAsset) {
-      const details = element?.getDetails?.(data) ?? {};
-      setConnectedAssetData(constructElementDetailsObject(element, details));
-      showConnectedAssets();
-    }
-  };
-
   let details = undefined;
   if (elemIsAsset) {
-    details = element?.getDetails?.(data) ?? {};
+    details = element?.getDetails?.(assetInfo.data) || {};
   }
 
   if (isEmpty(element) || !details) {

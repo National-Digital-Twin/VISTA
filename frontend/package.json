@@ -10,7 +10,6 @@
     "format": "prettier --write .",
     "format-changed": "prettier --write --cache .",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
     "start": "vite --port 3001",
     "test": "jest",
     "test:coverage": "jest --coverage",
