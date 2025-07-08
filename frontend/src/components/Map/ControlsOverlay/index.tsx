@@ -30,6 +30,7 @@ function Toolbar({ onOpenControlPanel }: ToolbarProps) {
           <Button
             onClick={onOpenControlPanel}
             aria-label="close layer panel"
+            disabled={showPolygonToolbar} // can't close the control panel if the polygon toolbar is open
             sx={{
               width: "6vh",
               height: "6vh",
@@ -73,7 +74,12 @@ export default function ControlsOverlay() {
     setFalse: hideConnectedAssetsPanel,
   } = useBoolean(false);
 
-  const shouldShowControlPanel = featureFlags.uiNext && controlPanelOpen;
+  const { isActive: showPolygonToolbar } = usePolygonToolbarStore();
+
+  // if the polygon drawing is active, we should show the control panel as the controls for
+  // the drawing are part of the control panel and its toolbar
+  const shouldShowControlPanel =
+    featureFlags.uiNext && (controlPanelOpen || showPolygonToolbar);
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
@@ -125,7 +131,7 @@ export default function ControlsOverlay() {
             </Tooltip>
           )}
           <Box sx={{ flex: "1 1 100%", pointerEvents: "auto" }}>
-            {controlPanelOpen && ( // Only show close button when the panel is open
+            {shouldShowControlPanel && ( // Only show close button when the panel is open
               <MToolbar
                 onOpenControlPanel={() => {
                   hideControlPanel(); // Hide Control Panel
