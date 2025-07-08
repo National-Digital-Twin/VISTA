@@ -1,0 +1,15 @@
+query vulnerablePeople($input: VulnerablePeopleInput!) {
+  vulnerablePeople(vulnerablePeopleInput: $input) {
+    mockIndividualIndex
+    mockFirstName
+    mockLastName
+    mockYearOfBirth
+    uprn
+    mockAscPrimarySupportReason
+    mockDisability
+    mockAlertCategory
+    mockAlertDetail
+    latitude
+    longitude
+  }
+}

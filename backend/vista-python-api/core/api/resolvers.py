@@ -1,20 +1,23 @@
 """Create your resolvers here."""
 
+import datetime
 import json
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
-from ariadne import QueryType
+from ariadne import MutationType, QueryType
+from django.db import models
 from django.utils.dateparse import parse_time
 
 import api.routing as rt
 from api.circle_to_polygon import Center
-from api.models import LowBridge, NarrowRoad, TrafficData
+from api.models import LowBridge, NarrowRoad, SandbagPlacement, TrafficData, VulnerablePerson
 
 if TYPE_CHECKING:
     from .types import GeoJSON
 
 query = QueryType()
+mutation = MutationType()
 
 
 @dataclass(frozen=True)
@@ -82,6 +85,83 @@ def resolve_road_route(*_, route_input):
     return {"route_geojson": route_geojson}
 
 
+@query.field("sandbagPlacement")
+def resolve_sandbag_placement(*_, name):
+    """Return SandbagPlacements by name."""
+    return SandbagPlacement.objects.filter(name=name)
+
+
+@query.field("sandbagPlacements")
+def resolve_sandbag_placements(*_):
+    """Return all SandbagPlacements."""
+    return SandbagPlacement.objects.all()
+
+
+@dataclass(frozen=True)
+class SandbagValidationError:
+    """An Error related to Sandbags."""
+
+    field: str
+    messages: list[str]
+
+
+@dataclass(frozen=True)
+class MutateSandbagPlacementResult:
+    """Result of mutating SandbagPlacement."""
+
+    sandbag_placement: SandbagPlacement | None
+    errors: list[SandbagValidationError]
+    success: bool
+
+
+@mutation.field("createSandbagPlacement")
+def resolve_create_sandbag_placement(*_, sandbag_placement_input):
+    """Create SandbagPlacements from a name, latitude and longitude."""
+    return MutateSandbagPlacementResult(
+        sandbag_placement=SandbagPlacement.objects.create(
+            name=sandbag_placement_input["name"],
+            latitude=sandbag_placement_input["latitude"],
+            longitude=sandbag_placement_input["longitude"],
+        ),
+        errors=[],
+        success=True,
+    )
+
+
+@mutation.field("updateSandbagPlacement")
+def resolve_update_sandbag_placement(*_, sandbag_placement_input):
+    """Update a named SandbagPlace to have a new latitude and longitude."""
+    try:
+        sandbag_placement = SandbagPlacement.objects.get(name=sandbag_placement_input["name"])
+    except SandbagPlacement.DoesNotExist as e:
+        return MutateSandbagPlacementResult(
+            sandbag_placement=None,
+            errors=[SandbagValidationError(field="name", messages=[str(e)])],
+            success=False,
+        )
+    sandbag_placement.latitude = sandbag_placement_input["latitude"]
+    sandbag_placement.longitude = sandbag_placement_input["longitude"]
+    sandbag_placement.save()
+    return MutateSandbagPlacementResult(
+        sandbag_placement=sandbag_placement, errors=[], success=True
+    )
+
+
+@mutation.field("deleteSandbagPlacement")
+def resolve_delete_sandbag_placement(*_, name):
+    """Delete a named SandbagPlace."""
+    try:
+        sandbag_placement = SandbagPlacement.objects.get(name=name)
+    except SandbagPlacement.DoesNotExist as e:
+        return MutateSandbagPlacementResult(
+            sandbag_placement=None,
+            errors=[SandbagValidationError(field="name", messages=[str(e)])],
+            success=False,
+        )
+    sandbag_placement.delete()
+    return MutateSandbagPlacementResult(sandbag_placement=None, errors=[], success=True)
+
+
 @query.field("roadSegment")
 def resolve_road_segment(*_, road_segment_input):
     """Return traffic data given coordinates, direction at a specific day + time."""
@@ -101,6 +181,27 @@ def resolve_road_segment(*_, road_segment_input):
             "busyness": traffic_data.busyness,
         }
     return None
+
+
+@query.field("vulnerablePeople")
+def resolve_vulnerable_people(*_, vulnerable_people_input):
+    """Return vulnerable people info within a given lat lon bounding box."""
+    lat_min = vulnerable_people_input.get("lat_min")
+    lat_max = vulnerable_people_input.get("lat_max")
+    lon_min = vulnerable_people_input.get("lon_min")
+    lon_max = vulnerable_people_input.get("lon_max")
+    current_year = datetime.datetime.now(tz=datetime.UTC).year
+    disability_conditions = [
+        "Activities not limited",
+        "Activities limited a little",
+        "Activities limited a lot",
+    ]
+    return VulnerablePerson.objects.filter(
+        latitude__gte=lat_min, latitude__lte=lat_max, longitude__gte=lon_min, longitude__lte=lon_max
+    ).filter(
+        models.Q(mock_year_of_birth__lte=current_year - 60)
+        | models.Q(mock_disability__in=disability_conditions)
+    )
 
 
 @query.field("lowBridges")

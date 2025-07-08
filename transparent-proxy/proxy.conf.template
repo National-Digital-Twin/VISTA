@@ -100,10 +100,38 @@ server {
     proxy_hide_header Set-Cookie;
   }
 
+  # Admiralty
+  location /admiralty-tidal-discovery/ {
+    proxy_pass https://admiraltyapi.azure-api.net/uktidalapi/api/;
+    proxy_set_header Ocp-Apim-Subscription-Key $ADMIRALTY_API_KEY;
+    proxy_set_header Cookie "";
+    proxy_set_header X-Auth-Request-Access-Token "";
+    proxy_set_header X-Auth-Request-Email "";
+    proxy_set_header X-Auth-Request-User "";
+    proxy_set_header Authorization "";
+    proxy_hide_header Set-Cookie;
+  }
+
   # Realtime Trains
   location /realtime-trains/ {
     proxy_pass https://${REALTIME_TRAINS_HOST}/api/v1/;
     proxy_set_header Authorization "Basic $REALTIME_TRAINS_API_KEY";
+    proxy_set_header Cookie "";
+    proxy_set_header X-Auth-Request-Access-Token "";
+    proxy_set_header X-Auth-Request-Email "";
+    proxy_set_header X-Auth-Request-User "";
+    proxy_set_header Authorization "";
+    proxy_hide_header Set-Cookie;
+  }
+
+  # Met Office weather API
+  location /weather/ {
+    proxy_buffer_size 128k;
+    proxy_buffers 4 256k;
+    proxy_busy_buffers_size 256k;
+
+    proxy_pass https://data.hub.api.metoffice.gov.uk/;
+    proxy_set_header apiKey $MET_OFFICE_GLOBAL_SPOT_API_KEY; # pragma: allowlist-secret
     proxy_set_header Cookie "";
     proxy_set_header X-Auth-Request-Access-Token "";
     proxy_set_header X-Auth-Request-Email "";

@@ -1,0 +1,15 @@
+mutation updateSandbagPlacement($input: SandbagPlacementInput!) {
+  updateSandbagPlacement(sandbagPlacementInput: $input) {
+    sandbagPlacement {
+      id
+      name
+      latitude
+      longitude
+    }
+    errors {
+      field
+      messages
+    }
+    success
+  }
+}

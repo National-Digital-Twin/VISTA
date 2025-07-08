@@ -1,0 +1,15 @@
+mutation createSandbagPlacement($input: SandbagPlacementInput!) {
+  createSandbagPlacement(sandbagPlacementInput: $input) {
+    sandbagPlacement {
+      id
+      name
+      latitude
+      longitude
+    }
+    errors {
+      field
+      messages
+    }
+    success
+  }
+}

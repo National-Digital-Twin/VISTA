@@ -5,10 +5,15 @@ const featureFlags = {
    * Enables showing a route between two points on the map selected by the user
    */
   routing: true,
+  sandbag: true,
   // Next-generation UI with a control panel
   uiNext: true,
   pageHeader: false,
   feedbackWidget: false,
+  /**
+   * Enables showing markers for the position of vulnerable people within a drawn area
+   */
+  vulnerablePeople: true,
   /**
    * Enables showing areas marked as environmentally sensitive as translucent polygons
    */
