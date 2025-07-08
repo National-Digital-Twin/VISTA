@@ -19,15 +19,22 @@ export function CircleCreationButton() {
   const isDrawing = activeDrawingMode === "drag_circle";
   const isDisabled = activeDrawingMode !== null && !isDrawing;
 
-  const { startDrawing } = useDrawingMode((state) => state.floodAreaFeatures, {
-    onDrawingStart: () => {
-      setActiveDrawingMode("drag_circle");
+  const { startDrawing } = useDrawingMode(
+    (state) =>
+      state.floodAreaFeatures.filter(
+        (feature) =>
+          feature.id && state.selectedFloodAreaFeatureIds[feature.id],
+      ),
+    {
+      onDrawingStart: () => {
+        setActiveDrawingMode("drag_circle");
+      },
+      onDrawingEnd: () => {
+        setActiveDrawingMode(null);
+      },
+      ...drawingModeCallbacks,
     },
-    onDrawingEnd: () => {
-      setActiveDrawingMode(null);
-    },
-    ...drawingModeCallbacks,
-  });
+  );
 
   const drawCircle = useCallback(() => {
     if (isDrawing) {
