@@ -38,7 +38,6 @@ COPY --from=builder /venv /venv
 RUN apt-get update && \
     apt-get upgrade -y --allow-downgrades \
     && apt-get install -y --allow-downgrades bash \
-    linux-libc-dev=6.1.133-1 \
     && rm -rf /var/lib/apt/lists/*
 
 # copy payload code only
