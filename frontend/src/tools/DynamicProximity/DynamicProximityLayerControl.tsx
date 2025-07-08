@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import useDynamicProximity from "./useDynamicProximity";
+import { useDynamicProximityDrawingContext } from "./DynamicProximityProvider";
 import ComplexLayerControl from "@/components/ComplexLayerControl";
 import SearchConditional from "@/components/SearchConditional";
 import type { LayerControlProps } from "@/tools/Tool";
@@ -39,7 +39,7 @@ function DynamicProximityMenuItem({
   radiusKm,
   onClick,
 }: DynamicProximityMenuItemProps) {
-  const { startDrawingWithRange } = useDynamicProximity();
+  const { startDrawingWithRange } = useDynamicProximityDrawingContext();
 
   const clicked = useCallback(() => {
     startDrawingWithRange(radiusKm);
