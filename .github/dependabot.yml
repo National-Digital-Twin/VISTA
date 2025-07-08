@@ -10,9 +10,9 @@ updates:
       actions-updates:
         patterns:
           - "*"
-    ignore:
-      - dependency-type: "all"
-        update-types: ["version-update:semver-major"]
+        update-types:
+          - "minor"
+          - "patch"
 
   - package-ecosystem: "pip"
     directory: "/backend"
@@ -23,9 +23,9 @@ updates:
       python-dependencies:
         patterns:
           - "*"
-    ignore:
-      - dependency-type: "all"
-        update-types: ["version-update:semver-major"]
+        update-types:
+          - "minor"
+          - "patch"
 
   - package-ecosystem: "npm"
     directory: "/frontend"
@@ -36,9 +36,9 @@ updates:
       js-dependencies:
         patterns:
           - "*"
-    ignore:
-      - dependency-type: "all"
-        update-types: ["version-update:semver-major"]
+        update-types:
+          - "minor"
+          - "patch"
 
   - package-ecosystem: "npm"
     directory: "/frontend/qa"
@@ -49,9 +49,9 @@ updates:
       js-dependencies:
         patterns:
           - "*"
-    ignore:
-      - dependency-type: "all"
-        update-types: ["version-update:semver-major"]
+        update-types:
+          - "minor"
+          - "patch"
 
   - package-ecosystem: "docker"
     directory: "/frontend"
@@ -62,9 +62,9 @@ updates:
       docker-dependencies:
         patterns:
           - "*"
-    ignore:
-      - dependency-type: "all"
-        update-types: ["version-update:semver-major"]
+        update-types:
+          - "minor"
+          - "patch"
 
   - package-ecosystem: "docker"
     directory: "/frontend/dev"
@@ -75,9 +75,9 @@ updates:
       docker-dependencies:
         patterns:
           - "*"
-    ignore:
-      - dependency-type: "all"
-        update-types: ["version-update:semver-major"]
+        update-types:
+          - "minor"
+          - "patch"
 
   - package-ecosystem: "docker"
     directory: "/backend"
@@ -88,9 +88,9 @@ updates:
       docker-dependencies:
         patterns:
           - "*"
-    ignore:
-      - dependency-type: "all"
-        update-types: ["version-update:semver-major"]
+        update-types:
+          - "minor"
+          - "patch"
 
   - package-ecosystem: "docker"
     directory: "/transparent-proxy"
@@ -101,6 +101,6 @@ updates:
       docker-dependencies:
         patterns:
           - "*"
-    ignore:
-      - dependency-type: "all"
-        update-types: ["version-update:semver-major"]
+        update-types:
+          - "minor"
+          - "patch"
