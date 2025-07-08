@@ -76,7 +76,7 @@ describe("ToolbarButton", () => {
 
     const button = screen.getByRole("button", { name: /test button/i });
     expect(button).toHaveStyle({
-      backgroundColor: "rgb(42, 90, 143)",
+      backgroundColor: "#3670B3",
       color: "white",
     });
 
@@ -96,7 +96,7 @@ describe("ToolbarButton", () => {
 
     const button = screen.getByRole("button", { name: /test button/i });
     expect(button).toHaveStyle({
-      backgroundColor: "rgb(240, 240, 240)",
+      backgroundColor: "white",
       color: "black",
     });
 
