@@ -1,6 +1,7 @@
 import DrawnPolygonMenuBody from "./DrawnPolygonMenuBody";
 import type { LayerControlProps } from "@/tools/Tool";
 import ComplexLayerControl from "@/components/ComplexLayerControl";
+import useSharedStore from "@/hooks/useSharedStore";
 
 export default function DrawnPolygonLayerControl({
   searchQuery,
@@ -17,7 +18,9 @@ export default function DrawnPolygonLayerControl({
 
   const matchesAnyTerm = !searchQuery || matchesParentCategory;
 
-  if (!matchesAnyTerm) {
+  const features = useSharedStore((state) => state.floodAreaFeatures);
+
+  if (!matchesAnyTerm || !features?.length) {
     return null;
   }
 
