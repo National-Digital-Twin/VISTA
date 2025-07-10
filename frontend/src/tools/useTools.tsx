@@ -6,6 +6,7 @@ import TOOLS from "./tools";
 export type ToolOrder =
   | "definition-order"
   | "side-button-order"
+  | "polygon-button-order"
   | "toolbar-order"
   | "map-element-order"
   | "control-panel-order"
@@ -14,6 +15,7 @@ export type ToolOrder =
 const ORDER_INDICES: Record<ToolOrder, (tool: Tool) => number> = {
   "definition-order": () => 0,
   "side-button-order": (tool) => tool.SIDE_BUTTON_ORDER ?? 0,
+  "polygon-button-order": (tool) => tool.POLYGON_BUTTON_ORDER ?? 0,
   "toolbar-order": (tool) => tool.TOOLBAR_BUTTON_ORDER ?? 0,
   "map-element-order": (tool) => tool.MAP_ELEMENT_ORDER ?? 0,
   "control-panel-order": (tool) => tool.CONTROL_PANEL_TAB_ORDER ?? 0,

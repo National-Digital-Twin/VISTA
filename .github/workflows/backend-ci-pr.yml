@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: Apache-2.0
+# © Crown Copyright 2025. This work has been developed by the National Digital Twin Programme and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+
 name: Backend CI on PR
 
 on:
@@ -253,7 +256,7 @@ jobs:
           fi
 
       - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@0.32.0
         with:
           image-ref: "vista/python-api:latest"
           format: "table"

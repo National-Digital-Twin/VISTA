@@ -63,4 +63,76 @@ describe("ToolbarButton", () => {
     const button = screen.getByRole("button", { name: /test button/i });
     expect(button).toHaveAttribute("aria-label", "Test Button");
   });
+
+  it("applies active state styling when active prop is true", () => {
+    render(
+      <ToolbarButton
+        {...defaultProps}
+        icon={undefined}
+        svgSrc="/test-icon.svg"
+        active={true}
+      />,
+    );
+
+    const button = screen.getByRole("button", { name: /test button/i });
+    expect(button).toHaveStyle({
+      backgroundColor: "#3670B3",
+      color: "white",
+    });
+
+    const img = screen.getByRole("img");
+    expect(img).toHaveStyle({ filter: "brightness(0) invert(100%)" });
+  });
+
+  it("applies default styling when active prop is false", () => {
+    render(
+      <ToolbarButton
+        {...defaultProps}
+        icon={undefined}
+        svgSrc="/test-icon.svg"
+        active={false}
+      />,
+    );
+
+    const button = screen.getByRole("button", { name: /test button/i });
+    expect(button).toHaveStyle({
+      backgroundColor: "white",
+      color: "black",
+    });
+
+    const img = screen.getByRole("img");
+    expect(img).toHaveStyle({ filter: "none" });
+  });
+
+  it("applies disabled state styling when disabled prop is true", () => {
+    render(
+      <ToolbarButton
+        {...defaultProps}
+        icon={undefined}
+        svgSrc="/test-icon.svg"
+        disabled={true}
+      />,
+    );
+
+    const button = screen.getByRole("button", { name: /test button/i });
+    expect(button).toBeDisabled();
+    expect(button).toHaveStyle({
+      backgroundColor: "rgb(170, 180, 190)",
+      color: "rgb(93, 90, 90)",
+    });
+
+    const img = screen.getByRole("img");
+    expect(img).toHaveStyle({ filter: "grayscale(100%) opacity(0.5)" });
+  });
+
+  it("does not call onClick when disabled", () => {
+    const mockOnClick = jest.fn();
+    render(
+      <ToolbarButton {...defaultProps} onClick={mockOnClick} disabled={true} />,
+    );
+
+    const button = screen.getByRole("button", { name: /test button/i });
+    fireEvent.click(button);
+    expect(mockOnClick).not.toHaveBeenCalled();
+  });
 });

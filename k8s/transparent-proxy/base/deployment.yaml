@@ -14,6 +14,7 @@ spec:
   template:
     metadata:
       annotations:
+        sidecar.istio.io/logLevel: trace
         traffic.sidecar.istio.io/excludeOutboundPorts: "8200"
       labels:
         io.kompose.service: vista-transparent-proxy
@@ -33,6 +34,8 @@ spec:
           envFrom:
             - secretRef:
                 name: vista-transparent-proxy-secrets
+            - configMapRef:
+                name: vista-transparent-proxy-configs
           ports:
             - containerPort: 80
               protocol: TCP

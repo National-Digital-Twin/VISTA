@@ -77,3 +77,4 @@ repos:
         types_or: [yaml]
         additional_dependencies:
           - "prettier@3.5.3"
+        exclude: ^\.github/

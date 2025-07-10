@@ -1,6 +1,7 @@
 import { Source, Layer, Marker, MarkerDragEvent } from "react-map-gl/maplibre";
 import type { LngLat } from "react-map-gl";
 import { useCallback, useEffect, useMemo } from "react";
+import { useShallow } from "zustand/react/shallow";
 import { useRoadRouteSharedStore } from "./useStore";
 import useFloodExtents from "./useFloodExtents";
 import { useRoadRouteLazyQuery } from "@/api/paralog-python";
@@ -19,13 +20,15 @@ export default function RoadRouteMapElements() {
     setStartPosition,
     setEndPosition,
     vehicleType,
-  } = useRoadRouteSharedStore((state) => ({
-    startPosition: state.startPosition,
-    endPosition: state.endPosition,
-    setStartPosition: state.setStartPosition,
-    setEndPosition: state.setEndPosition,
-    vehicleType: state.vehicleType,
-  }));
+  } = useRoadRouteSharedStore(
+    useShallow((state) => ({
+      startPosition: state.startPosition,
+      endPosition: state.endPosition,
+      setStartPosition: state.setStartPosition,
+      setEndPosition: state.setEndPosition,
+      vehicleType: state.vehicleType,
+    })),
+  );
 
   const handleStartPositionDragEnd = useCallback(
     (event: MarkerDragEvent) => setStartPosition(event.lngLat as LngLat),

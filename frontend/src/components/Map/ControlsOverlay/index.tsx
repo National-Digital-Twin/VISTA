@@ -1,4 +1,4 @@
-import { memo, useMemo } from "react";
+import React, { memo, useMemo } from "react";
 import { Box, Button, Tooltip } from "@mui/material";
 import { ChevronLeft, ChevronRight } from "@mui/icons-material";
 import { useBoolean } from "usehooks-ts";
@@ -6,12 +6,17 @@ import { useTools } from "@/tools/useTools";
 import featureFlags from "@/config/feature-flags";
 import ControlPanel from "@/components/Map/ControlPanel";
 import MapToolbar from "@/components/Map/SideButtons/MapToolbar";
+import PolygonToolbar from "@/components/Map/SideButtons/PolygonToolbar";
+import { usePolygonToolbarStore } from "@/tools/Polygons/useStore";
+
 interface ToolbarProps {
   readonly onOpenControlPanel?: () => void;
 }
 
 function Toolbar({ onOpenControlPanel }: ToolbarProps) {
   const tools = useTools();
+  const { isActive: showPolygonToolbar } = usePolygonToolbarStore();
+
   return (
     <Box
       sx={{
@@ -25,6 +30,7 @@ function Toolbar({ onOpenControlPanel }: ToolbarProps) {
           <Button
             onClick={onOpenControlPanel}
             aria-label="close layer panel"
+            disabled={showPolygonToolbar} // can't close the control panel if the polygon toolbar is open
             sx={{
               width: "6vh",
               height: "6vh",
@@ -40,6 +46,7 @@ function Toolbar({ onOpenControlPanel }: ToolbarProps) {
           </Button>
         </Tooltip>
       )}
+      {showPolygonToolbar && <PolygonToolbar />}
       {tools("toolbar-order").map((tool) => {
         if (!tool.ToolbarTools) {
           return null;
@@ -67,7 +74,12 @@ export default function ControlsOverlay() {
     setFalse: hideConnectedAssetsPanel,
   } = useBoolean(false);
 
-  const shouldShowControlPanel = featureFlags.uiNext && controlPanelOpen;
+  const { isActive: showPolygonToolbar } = usePolygonToolbarStore();
+
+  // if the polygon drawing is active, we should show the control panel as the controls for
+  // the drawing are part of the control panel and its toolbar
+  const shouldShowControlPanel =
+    featureFlags.uiNext && (controlPanelOpen || showPolygonToolbar);
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
@@ -119,7 +131,7 @@ export default function ControlsOverlay() {
             </Tooltip>
           )}
           <Box sx={{ flex: "1 1 100%", pointerEvents: "auto" }}>
-            {controlPanelOpen && ( // Only show close button when the panel is open
+            {shouldShowControlPanel && ( // Only show close button when the panel is open
               <MToolbar
                 onOpenControlPanel={() => {
                   hideControlPanel(); // Hide Control Panel
@@ -154,6 +166,9 @@ export default function ControlsOverlay() {
           transition: "flex-grow 0.3s ease",
           padding: 1,
           minHeight: 0,
+          maxHeight: "25vh",
+          marginLeft: "8px",
+          marginRight: "10px",
         }}
       >
         <DetailPanels />
@@ -167,7 +182,7 @@ function DetailPanels() {
 
   const detailPanels = useMemo(() => {
     const panels: {
-      component: () => JSX.Element;
+      component: () => React.JSX.Element;
       key: string;
     }[] = [];
 

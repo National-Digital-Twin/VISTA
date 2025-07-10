@@ -1,9 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
 import { fetchAllFloodAreas } from "@/api/combined";
 
+export type FloodWatchArea = {
+  value: string;
+  label: string;
+  children: Omit<FloodWatchArea, "children">[];
+};
+
 const useFloodWatchAreas = () => {
-  const generateFloodAreaNodes = (data) => {
-    const nodes = data.map((floodWatchArea) => {
+  const generateFloodAreaNodes = (data: any): FloodWatchArea[] => {
+    const nodes = data.map((floodWatchArea: any) => {
       const floodWatchAreaUri = floodWatchArea?.uri;
       const floodWatchAreaPolygonUri = floodWatchArea?.polygon_uri;
       const floodWatchAreaName = floodWatchArea?.name || floodWatchArea?.uri;
@@ -14,20 +20,22 @@ const useFloodWatchAreas = () => {
         );
       }
 
-      const children = (floodWatchArea?.flood_areas || []).map((floodArea) => {
-        const floodAreaPolygonUri = floodArea?.polygon_uri || undefined;
-        const floodAreaName = floodArea?.name || floodArea?.uri;
+      const children = (floodWatchArea?.flood_areas ?? []).map(
+        (floodArea: any) => {
+          const floodAreaPolygonUri = floodArea?.polygon_uri || undefined;
+          const floodAreaName = floodArea?.name || floodArea?.uri;
 
-        if (!floodAreaPolygonUri) {
-          throw new Error(
-            `Flood area polygon for ${floodWatchAreaUri} is not defined`,
-          );
-        }
-        return {
-          value: floodAreaPolygonUri,
-          label: floodAreaName,
-        };
-      });
+          if (!floodAreaPolygonUri) {
+            throw new Error(
+              `Flood area polygon for ${floodWatchAreaUri} is not defined`,
+            );
+          }
+          return {
+            value: floodAreaPolygonUri,
+            label: floodAreaName,
+          };
+        },
+      );
 
       return {
         value: floodWatchAreaPolygonUri,

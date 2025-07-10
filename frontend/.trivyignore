@@ -1,4 +1,19 @@
-# Going to accept the following vulnerabilities in the base debian image as we are not immediately vulnerable to these and# a fix is eventually going to be pushed up to the main nginx container.
-# TODO: update nginx image when fix is published
-CVE-2024-55549
-CVE-2025-24855
+# Going to accept the following vulnerabilities in the base debian image as we are not immediately
+# vulnerable to these (not used by nginx) and a fix is eventually going to be pushed up to the nginx image
+
+# perl-base: A heap buffer overflow vulnerability was discovered in Perl
+CVE-2024-56406
+
+# libavif15
+CVE-2025-48174  # libavif15: integer overflow in stream.c
+
+# libicu72
+CVE-2025-5222   # libicu72: Stack buffer overflow in SRBRoot::addTag
+
+# libxml2
+CVE-2024-25062  # libxml2: use-after-free in XMLReader
+CVE-2024-56171  # libxml2: Use-After-Free vulnerability
+CVE-2025-24928  # libxml2: Stack buffer overflow in xmlSnprintfElements
+CVE-2025-27113  # libxml2: NULL Pointer Dereference in xmlPatMatch
+CVE-2025-32414  # libxml2: Out-of-Bounds Read vulnerability
+CVE-2025-32415  # libxml2: Out-of-bounds Read in xmlSchemaIDCFillNodeTables

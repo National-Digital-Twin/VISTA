@@ -9,7 +9,7 @@ services:
       - ALLOW_ANONYMOUS_LOGIN=yes
   kafka:
     container_name: paralog-kafka
-    image: "bitnami/kafka:latest"
+    image: "bitnami/kafka:3.9.0"
     depends_on:
       - zookeeper
     ports:
@@ -83,12 +83,14 @@ services:
       PORT: 4001
       JENA_DATASET: knowledge
   transparent-proxy:
-    container_name: paralog-transparent-proxy
-    image: paralog-transparent-proxy
+    container_name: vista-transparent-proxy
+    image: vista-transparent-proxy
     ports:
       - 5013:80
     env_file:
       - "../.env"
+    depends_on:
+      - secure-agent-graph
   vista-python-api:
     container_name: vista-python-api
     image: vista-python-api

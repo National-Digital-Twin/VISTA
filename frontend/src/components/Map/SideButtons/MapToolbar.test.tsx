@@ -1,9 +1,10 @@
 import { render, screen } from "@testing-library/react";
 import MapToolbar from "./MapToolbar";
+import { ToolOrder } from "@/tools/useTools";
 
 // ✅ Mock useTools to return mock side buttons
 jest.mock("@/tools/useTools", () => ({
-  useTools: jest.fn(() => [
+  useTools: jest.fn(() => (_order: ToolOrder) => [
     {
       TOOL_NAME: "ToolWithButtons",
       SideButtons: () => <div data-testid="side-button">Side Button A</div>,
@@ -28,9 +29,8 @@ describe("MapToolbar", () => {
   });
 
   it("applies additional className if provided", () => {
-    render(<MapToolbar className="custom-toolbar" />);
-    expect(screen.getByRole("presentation").className).toContain(
-      "custom-toolbar",
-    );
+    const { container } = render(<MapToolbar className="custom-toolbar" />);
+    const toolbarElement = container.firstChild as HTMLElement;
+    expect(toolbarElement).toHaveClass("custom-toolbar");
   });
 });

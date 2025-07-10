@@ -1,9 +1,0 @@
-apiVersion: security.istio.io/v1
-kind: AuthorizationPolicy
-metadata:
-  name: allow-ingress-to-paralog-python-api
-spec:
-  rules:
-    - from:
-        - source:
-            principals: ["cluster.local/ns/istio-ingress/sa/istio-ingress"]

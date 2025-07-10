@@ -9,7 +9,7 @@ export default class LandingPage {
 
   //Object Locators
   private readonly Elements = {
-    menuParalog: "Paralog",
+    menuParalog: "Vista",
   };
 
   async verifyDemoLandingPage() {
