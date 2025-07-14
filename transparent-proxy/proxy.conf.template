@@ -112,6 +112,7 @@ server {
     proxy_set_header X-Auth-Request-User "";
     proxy_set_header Authorization "";
     proxy_hide_header Set-Cookie;
+    add_header X-Cache-Status $upstream_cache_status always;
   }
 
   # Realtime Trains

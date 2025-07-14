@@ -110,6 +110,7 @@ const elementsReducer = (state: State, action: Action) => {
       assets.forEach((asset) => {
         asset.setCountColorScale(minTotalCount, maxTotalCount);
         asset.setCriticalitySumColorScale(minCriticalitySum, maxCriticalitySum);
+        asset.setClassificationColorScale();
       });
 
       return { ...state, assets };

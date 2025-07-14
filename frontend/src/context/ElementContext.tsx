@@ -112,7 +112,8 @@ export function ElementsProvider({ children }: ElementsProviderProps) {
   const {
     getAssetsByTypes,
     getDependenciesByTypes,
-    isLoading: isAssetsLoading,
+    isLoadingDependencies: isLoadingDependencies,
+    isLoadingAssets: isLoadingAssets,
   } = useGroupedAssets({});
 
   const { data: liveFloodAreasRaw } = useLiveFloodAreas();
@@ -150,7 +151,7 @@ export function ElementsProvider({ children }: ElementsProviderProps) {
   const { getDependentAssets } = useGroupedAssets({});
 
   const primaryAssetsAtRiskFromDrawn = useMemo(() => {
-    if (isAssetsLoading) {
+    if (isLoadingAssets) {
       return [];
     }
     const selectedDrawnFeatures = drawnFloodAreaFeatures.filter(
@@ -162,14 +163,14 @@ export function ElementsProvider({ children }: ElementsProviderProps) {
   }, [
     drawnFloodAreaFeatures,
     findAssetsInPolygons,
-    isAssetsLoading,
+    isLoadingAssets,
     selectedDrawnFloodAreaFeatureIds,
   ]);
 
   const cachedAssetsAtRisk = useMemo(() => ({}), []);
 
   const primaryAssetsAtRiskFromReal = useMemo(() => {
-    if (isAssetsLoading) {
+    if (isLoadingAssets) {
       return [];
     }
     const features: any[] = Object.values(clickedFloodAreas).flatMap((p) => p);
@@ -187,18 +188,18 @@ export function ElementsProvider({ children }: ElementsProviderProps) {
       (feature) => newCache[feature.properties.FWS_TACODE],
     );
   }, [
-    isAssetsLoading,
+    isLoadingAssets,
     clickedFloodAreas,
     cachedAssetsAtRisk,
     findAssetsInPolygons,
   ]);
 
   const primaryAssetsAtRiskFromLive = useMemo(() => {
-    if (isAssetsLoading) {
+    if (isLoadingAssets) {
       return [];
     }
     return findAssetsInPolygons({ polygons: liveFloodAreas });
-  }, [isAssetsLoading, findAssetsInPolygons, liveFloodAreas]);
+  }, [isLoadingAssets, findAssetsInPolygons, liveFloodAreas]);
 
   const primaryAssetsAtRisk = useMemo(
     () =>
@@ -215,7 +216,7 @@ export function ElementsProvider({ children }: ElementsProviderProps) {
   const [dependenciesByFloodArea, assetsByFloodArea] = useMemo(() => {
     let assetsAtRisk = showPrimary ? primaryAssetsAtRisk : [];
     let dependenciesByFloodArea;
-    if (showSecondary && !isAssetsLoading) {
+    if (showSecondary && !isLoadingDependencies) {
       const {
         dependencies: dependenciesAtRisk,
         dependentAssets: secondaryAssetsAtRisk,
@@ -230,7 +231,7 @@ export function ElementsProvider({ children }: ElementsProviderProps) {
     showPrimary,
     primaryAssetsAtRisk,
     showSecondary,
-    isAssetsLoading,
+    isLoadingDependencies,
     getDependentAssets,
   ]);
 
@@ -250,7 +251,7 @@ export function ElementsProvider({ children }: ElementsProviderProps) {
 
   const [assetsMatchingSelectedTypes, dependenciesMatchingSelectedTypes] =
     useMemo(() => {
-      if (isAssetsLoading) {
+      if (isLoadingDependencies || isLoadingAssets) {
         return [[], []];
       }
       const selectedTypes = Object.keys(selectedAssetTypes).filter(
@@ -260,7 +261,8 @@ export function ElementsProvider({ children }: ElementsProviderProps) {
       const dependenciesToShow = getDependenciesByTypes(selectedTypes);
       return [assetsMatchingTypes, dependenciesToShow];
     }, [
-      isAssetsLoading,
+      isLoadingDependencies,
+      isLoadingAssets,
       selectedAssetTypes,
       getAssetsByTypes,
       getDependenciesByTypes,

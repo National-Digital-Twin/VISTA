@@ -56,10 +56,12 @@ function AssessmentAssetLayerControls({
   assessment,
   searchQuery,
 }: AssessmentAssetLayerControlsProps) {
-  const { isLoading, isError, filteredAssets } = useGroupedAssets({
-    assessment,
-    searchFilter: searchQuery,
-  });
+  const { isLoadingAssets: isLoadingAssets, filteredAssets } = useGroupedAssets(
+    {
+      assessment,
+      searchFilter: searchQuery,
+    },
+  );
 
   const sortedCategories = useMemo(() => {
     const categoriesWithCriticality = (filteredAssets || []).reduce(
@@ -91,7 +93,7 @@ function AssessmentAssetLayerControls({
     );
   }, [filteredAssets]);
 
-  if (isError || isLoading) {
+  if (isLoadingAssets) {
     return null;
   }
 
