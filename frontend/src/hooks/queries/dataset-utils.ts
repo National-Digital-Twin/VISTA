@@ -182,6 +182,9 @@ function mapLinearAsset(
   assetSpecification: AssetSpecification,
 ): Asset {
   const type = assetSpecification.type;
+  const description = assetSpecification.type.includes("#")
+    ? assetSpecification.type.split("#")[1]
+    : "";
   const asset = new Asset({
     uri: `http://ndtp.co.uk/${feature.type}_${feature.id}`,
     type,
@@ -190,7 +193,7 @@ function mapLinearAsset(
       count: 0,
       criticalitySum: 0,
     },
-    description: assetSpecification.type.split("#")[1] ?? "",
+    description,
     styles: assetSpecification.styles,
     primaryCategory: assetSpecification.primaryCategory,
     secondaryCategory: assetSpecification.secondaryCategory,
