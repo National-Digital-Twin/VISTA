@@ -56,15 +56,16 @@ function isMatchForAssetSpecificationFilters(
   assetSpecification: AssetSpecification,
   feature: Feature,
 ): boolean {
-  let isMatch = true;
   if (assetSpecification.filters) {
-    assetSpecification.filters.forEach((f) => {
-      isMatch =
+    const filtersToMatch = assetSpecification.filters.length;
+    const matchedFilters = assetSpecification.filters.filter(
+      (f) =>
         feature.properties?.[f.filterName] &&
-        feature.properties[f.filterName] === f.filterValue;
-    });
+        feature.properties[f.filterName] === f.filterValue,
+    );
+    return filtersToMatch === matchedFilters.length;
   }
-  return isMatch;
+  return true;
 }
 
 /**

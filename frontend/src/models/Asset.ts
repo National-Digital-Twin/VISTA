@@ -119,11 +119,15 @@ export default class Asset {
     this.#criticalitySumColorScale = getColorScale(min, max);
   }
 
+  get typeClassificationPriorityMap() {
+    const classifications = AssetClassificationsByType[this.type];
+    return classifications.map((c) => c.priority);
+  }
+
   setClassificationColorScale() {
     if (this.type in AssetClassificationsByType) {
-      const classifications = AssetClassificationsByType[this.type];
-      const max = Math.max(...classifications.map((c) => c.priority));
-      const min = Math.min(...classifications.map((c) => c.priority));
+      const max = Math.max(...this.typeClassificationPriorityMap);
+      const min = Math.min(...this.typeClassificationPriorityMap);
       this.#classificationColorScale = getColorScale(min, max);
     }
   }

@@ -148,7 +148,10 @@ function mapPointAsset(
   assetSpecification: AssetSpecification,
 ): Asset {
   const coordinates = getCoordinatesforPointAsset(feature);
-  const type = assetSpecification?.type;
+  const type = assetSpecification.type;
+  const description = assetSpecification.type.includes("#")
+    ? assetSpecification.type.split("#")[1]
+    : "";
   return new Asset({
     uri: `http://ndtp.co.uk/Building_${feature.id}`,
     type,
@@ -160,7 +163,7 @@ function mapPointAsset(
       count: 0,
       criticalitySum: 0,
     },
-    description: assetSpecification.type.split("#")[1] ?? "",
+    description,
     styles: assetSpecification.styles,
     primaryCategory: assetSpecification.primaryCategory,
     secondaryCategory: assetSpecification.secondaryCategory,
@@ -178,7 +181,7 @@ function mapLinearAsset(
   feature: Feature,
   assetSpecification: AssetSpecification,
 ): Asset {
-  const type = assetSpecification?.type;
+  const type = assetSpecification.type;
   const asset = new Asset({
     uri: `http://ndtp.co.uk/${feature.type}_${feature.id}`,
     type,
