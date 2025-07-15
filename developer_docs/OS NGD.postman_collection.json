@@ -1,0 +1,1554 @@
+{
+	"info": {
+		"_postman_id": "f97d57b2-33bb-4c54-ab59-fd770c884c75",
+		"name": "OS NGD",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "8916099"
+	},
+	"item": [
+		{
+			"name": "Telecommunications Exchange",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.os.uk/features/ngd/ofa/v1/collections/bld-fts-building-4/items?bbox=-1.585464,50.562959,-0.926285,50.761219&key={{key}}&filter=description='Telephone Exchange'",
+					"protocol": "https",
+					"host": [
+						"api",
+						"os",
+						"uk"
+					],
+					"path": [
+						"features",
+						"ngd",
+						"ofa",
+						"v1",
+						"collections",
+						"bld-fts-building-4",
+						"items"
+					],
+					"query": [
+						{
+							"key": "bbox",
+							"value": "-1.585464,50.562959,-0.926285,50.761219",
+							"description": "Coordinates for a bounding box covering the Isle of Wight"
+						},
+						{
+							"key": "key",
+							"value": "{{key}}"
+						},
+						{
+							"key": "filter",
+							"value": "description='Telephone Exchange'"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Telecommunications Complex",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.os.uk/features/ngd/ofa/v1/collections/bld-fts-building-4/items?bbox=-1.585464,50.562959,-0.926285,50.761219&key={{key}}&filter=description='Telecommunications Facility'",
+					"protocol": "https",
+					"host": [
+						"api",
+						"os",
+						"uk"
+					],
+					"path": [
+						"features",
+						"ngd",
+						"ofa",
+						"v1",
+						"collections",
+						"bld-fts-building-4",
+						"items"
+					],
+					"query": [
+						{
+							"key": "bbox",
+							"value": "-1.585464,50.562959,-0.926285,50.761219",
+							"description": "Coordinates for a bounding box covering the Isle of Wight"
+						},
+						{
+							"key": "key",
+							"value": "{{key}}"
+						},
+						{
+							"key": "filter",
+							"value": "description='Telecommunications Facility'"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Water Distribution Complex",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.os.uk/features/ngd/ofa/v1/collections/bld-fts-building-4/items?bbox=-1.585464,50.562959,-0.926285,50.761219&key={{key}}&filter=description='Water Distribution Facility'",
+					"protocol": "https",
+					"host": [
+						"api",
+						"os",
+						"uk"
+					],
+					"path": [
+						"features",
+						"ngd",
+						"ofa",
+						"v1",
+						"collections",
+						"bld-fts-building-4",
+						"items"
+					],
+					"query": [
+						{
+							"key": "bbox",
+							"value": "-1.585464,50.562959,-0.926285,50.761219",
+							"description": "Coordinates for a bounding box covering the Isle of Wight"
+						},
+						{
+							"key": "key",
+							"value": "{{key}}"
+						},
+						{
+							"key": "filter",
+							"value": "description='Water Distribution Facility'"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Water Extraction Complex",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.os.uk/features/ngd/ofa/v1/collections/bld-fts-building-4/items?bbox=-1.585464,50.562959,-0.926285,50.761219&key={{key}}&filter=description='Water Treatment Facility'",
+					"protocol": "https",
+					"host": [
+						"api",
+						"os",
+						"uk"
+					],
+					"path": [
+						"features",
+						"ngd",
+						"ofa",
+						"v1",
+						"collections",
+						"bld-fts-building-4",
+						"items"
+					],
+					"query": [
+						{
+							"key": "bbox",
+							"value": "-1.585464,50.562959,-0.926285,50.761219",
+							"description": "Coordinates for a bounding box covering the Isle of Wight"
+						},
+						{
+							"key": "key",
+							"value": "{{key}}"
+						},
+						{
+							"key": "filter",
+							"value": "description='Water Treatment Facility'"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Wastewater Treatment Complex",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.os.uk/features/ngd/ofa/v1/collections/bld-fts-building-4/items?bbox=-1.585464,50.562959,-0.926285,50.761219&key={{key}}&filter=description='Waste Water Treatment Works'",
+					"protocol": "https",
+					"host": [
+						"api",
+						"os",
+						"uk"
+					],
+					"path": [
+						"features",
+						"ngd",
+						"ofa",
+						"v1",
+						"collections",
+						"bld-fts-building-4",
+						"items"
+					],
+					"query": [
+						{
+							"key": "bbox",
+							"value": "-1.585464,50.562959,-0.926285,50.761219",
+							"description": "Coordinates for a bounding box covering the Isle of Wight"
+						},
+						{
+							"key": "key",
+							"value": "{{key}}"
+						},
+						{
+							"key": "filter",
+							"value": "description='Waste Water Treatment Works'"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Veterinary Hospital",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.os.uk/features/ngd/ofa/v1/collections/bld-fts-building-4/items?bbox=-1.585464,50.562959,-0.926285,50.761219&key={{key}}&filter=buildinguse='Commercial Activity: Animal Services'",
+					"protocol": "https",
+					"host": [
+						"api",
+						"os",
+						"uk"
+					],
+					"path": [
+						"features",
+						"ngd",
+						"ofa",
+						"v1",
+						"collections",
+						"bld-fts-building-4",
+						"items"
+					],
+					"query": [
+						{
+							"key": "bbox",
+							"value": "-1.585464,50.562959,-0.926285,50.761219",
+							"description": "Coordinates for a bounding box covering the Isle of Wight"
+						},
+						{
+							"key": "key",
+							"value": "{{key}}"
+						},
+						{
+							"key": "filter",
+							"value": "buildinguse='Commercial Activity: Animal Services'"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Photovoltaic Power Generation Complex",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.os.uk/features/ngd/ofa/v1/collections/bld-fts-building-4/items?bbox=-1.585464,50.562959,-0.926285,50.761219&key={{key}}&filter=description='Solar Power Facility'",
+					"protocol": "https",
+					"host": [
+						"api",
+						"os",
+						"uk"
+					],
+					"path": [
+						"features",
+						"ngd",
+						"ofa",
+						"v1",
+						"collections",
+						"bld-fts-building-4",
+						"items"
+					],
+					"query": [
+						{
+							"key": "bbox",
+							"value": "-1.585464,50.562959,-0.926285,50.761219",
+							"description": "Coordinates for a bounding box covering the Isle of Wight"
+						},
+						{
+							"key": "key",
+							"value": "{{key}}"
+						},
+						{
+							"key": "filter",
+							"value": "description='Solar Power Facility'"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Pre-school",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.os.uk/features/ngd/ofa/v1/collections/bld-fts-building-4/items?bbox=-1.585464,50.562959,-0.926285,50.761219&key={{key}}&filter=description='Children's Nursery'",
+					"protocol": "https",
+					"host": [
+						"api",
+						"os",
+						"uk"
+					],
+					"path": [
+						"features",
+						"ngd",
+						"ofa",
+						"v1",
+						"collections",
+						"bld-fts-building-4",
+						"items"
+					],
+					"query": [
+						{
+							"key": "bbox",
+							"value": "-1.585464,50.562959,-0.926285,50.761219",
+							"description": "Coordinates for a bounding box covering the Isle of Wight"
+						},
+						{
+							"key": "key",
+							"value": "{{key}}"
+						},
+						{
+							"key": "filter",
+							"value": "description='Children's Nursery'"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Crematorium",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.os.uk/features/ngd/ofa/v1/collections/bld-fts-building-4/items?bbox=-1.585464,50.562959,-0.926285,50.761219&key={{key}}&filter=description='Crematorium'",
+					"protocol": "https",
+					"host": [
+						"api",
+						"os",
+						"uk"
+					],
+					"path": [
+						"features",
+						"ngd",
+						"ofa",
+						"v1",
+						"collections",
+						"bld-fts-building-4",
+						"items"
+					],
+					"query": [
+						{
+							"key": "bbox",
+							"value": "-1.585464,50.562959,-0.926285,50.761219",
+							"description": "Coordinates for a bounding box covering the Isle of Wight"
+						},
+						{
+							"key": "key",
+							"value": "{{key}}"
+						},
+						{
+							"key": "filter",
+							"value": "description='Crematorium'"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Outdoor Stadium",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.os.uk/features/ngd/ofa/v1/collections/bld-fts-building-4/items?bbox=-1.585464,50.562959,-0.926285,50.761219&key={{key}}&filter=description='Sports or Exercise Facility'",
+					"protocol": "https",
+					"host": [
+						"api",
+						"os",
+						"uk"
+					],
+					"path": [
+						"features",
+						"ngd",
+						"ofa",
+						"v1",
+						"collections",
+						"bld-fts-building-4",
+						"items"
+					],
+					"query": [
+						{
+							"key": "bbox",
+							"value": "-1.585464,50.562959,-0.926285,50.761219",
+							"description": "Coordinates for a bounding box covering the Isle of Wight"
+						},
+						{
+							"key": "key",
+							"value": "{{key}}"
+						},
+						{
+							"key": "filter",
+							"value": "description='Sports or Exercise Facility'"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Sports Ground",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.os.uk/features/ngd/ofa/v1/collections/bld-fts-building-4/items?bbox=-1.585464,50.562959,-0.926285,50.761219&key={{key}}&filter=description='Sports Pavilion'",
+					"protocol": "https",
+					"host": [
+						"api",
+						"os",
+						"uk"
+					],
+					"path": [
+						"features",
+						"ngd",
+						"ofa",
+						"v1",
+						"collections",
+						"bld-fts-building-4",
+						"items"
+					],
+					"query": [
+						{
+							"key": "bbox",
+							"value": "-1.585464,50.562959,-0.926285,50.761219",
+							"description": "Coordinates for a bounding box covering the Isle of Wight"
+						},
+						{
+							"key": "key",
+							"value": "{{key}}"
+						},
+						{
+							"key": "filter",
+							"value": "description='Sports Pavilion'"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Industrial Space",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.os.uk/features/ngd/ofa/v1/collections/bld-fts-building-4/items?bbox=-1.585464,50.562959,-0.926285,50.761219&key={{key}}&filter=buildinguse='Commercial Activity: Industrial Or Manufacturing'",
+					"protocol": "https",
+					"host": [
+						"api",
+						"os",
+						"uk"
+					],
+					"path": [
+						"features",
+						"ngd",
+						"ofa",
+						"v1",
+						"collections",
+						"bld-fts-building-4",
+						"items"
+					],
+					"query": [
+						{
+							"key": "bbox",
+							"value": "-1.585464,50.562959,-0.926285,50.761219",
+							"description": "Coordinates for a bounding box covering the Isle of Wight"
+						},
+						{
+							"key": "key",
+							"value": "{{key}}"
+						},
+						{
+							"key": "filter",
+							"value": "buildinguse='Commercial Activity: Industrial Or Manufacturing'"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Retail",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.os.uk/features/ngd/ofa/v1/collections/bld-fts-building-4/items?bbox=-1.585464,50.562959,-0.926285,50.761219&key={{key}}&filter=buildinguse='Commercial Activity: Retail'",
+					"protocol": "https",
+					"host": [
+						"api",
+						"os",
+						"uk"
+					],
+					"path": [
+						"features",
+						"ngd",
+						"ofa",
+						"v1",
+						"collections",
+						"bld-fts-building-4",
+						"items"
+					],
+					"query": [
+						{
+							"key": "bbox",
+							"value": "-1.585464,50.562959,-0.926285,50.761219",
+							"description": "Coordinates for a bounding box covering the Isle of Wight"
+						},
+						{
+							"key": "key",
+							"value": "{{key}}"
+						},
+						{
+							"key": "filter",
+							"value": "buildinguse='Commercial Activity: Retail'"
+						},
+						{
+							"key": "offset",
+							"value": "100",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Community Centre",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.os.uk/features/ngd/ofa/v1/collections/bld-fts-building-4/items?bbox=-1.585464,50.562959,-0.926285,50.761219&key={{key}}&filter=description='Community Meeting Place'",
+					"protocol": "https",
+					"host": [
+						"api",
+						"os",
+						"uk"
+					],
+					"path": [
+						"features",
+						"ngd",
+						"ofa",
+						"v1",
+						"collections",
+						"bld-fts-building-4",
+						"items"
+					],
+					"query": [
+						{
+							"key": "bbox",
+							"value": "-1.585464,50.562959,-0.926285,50.761219",
+							"description": "Coordinates for a bounding box covering the Isle of Wight"
+						},
+						{
+							"key": "key",
+							"value": "{{key}}"
+						},
+						{
+							"key": "filter",
+							"value": "description='Community Meeting Place'"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Hotel",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.os.uk/features/ngd/ofa/v1/collections/bld-fts-building-4/items?bbox=-1.585464,50.562959,-0.926285,50.761219&key={{key}}&filter=description='Temporary Or Holiday Accommodation Building'",
+					"protocol": "https",
+					"host": [
+						"api",
+						"os",
+						"uk"
+					],
+					"path": [
+						"features",
+						"ngd",
+						"ofa",
+						"v1",
+						"collections",
+						"bld-fts-building-4",
+						"items"
+					],
+					"query": [
+						{
+							"key": "bbox",
+							"value": "-1.585464,50.562959,-0.926285,50.761219",
+							"description": "Coordinates for a bounding box covering the Isle of Wight"
+						},
+						{
+							"key": "key",
+							"value": "{{key}}"
+						},
+						{
+							"key": "filter",
+							"value": "description='Temporary Or Holiday Accommodation Building'"
+						},
+						{
+							"key": "offset",
+							"value": "100",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Lifeboat Station",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.os.uk/features/ngd/ofa/v1/collections/bld-fts-building-4/items?bbox=-1.585464,50.562959,-0.926285,50.761219&key={{key}}&filter=description='Lifeboat Station'",
+					"protocol": "https",
+					"host": [
+						"api",
+						"os",
+						"uk"
+					],
+					"path": [
+						"features",
+						"ngd",
+						"ofa",
+						"v1",
+						"collections",
+						"bld-fts-building-4",
+						"items"
+					],
+					"query": [
+						{
+							"key": "bbox",
+							"value": "-1.585464,50.562959,-0.926285,50.761219",
+							"description": "Coordinates for a bounding box covering the Isle of Wight"
+						},
+						{
+							"key": "key",
+							"value": "{{key}}"
+						},
+						{
+							"key": "filter",
+							"value": "description='Lifeboat Station'"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Fire Brigade Complex",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.os.uk/features/ngd/ofa/v1/collections/bld-fts-building-4/items?bbox=-1.585464,50.562959,-0.926285,50.761219&key={{key}}&filter=description='Fire Station'",
+					"protocol": "https",
+					"host": [
+						"api",
+						"os",
+						"uk"
+					],
+					"path": [
+						"features",
+						"ngd",
+						"ofa",
+						"v1",
+						"collections",
+						"bld-fts-building-4",
+						"items"
+					],
+					"query": [
+						{
+							"key": "bbox",
+							"value": "-1.585464,50.562959,-0.926285,50.761219",
+							"description": "Coordinates for a bounding box covering the Isle of Wight"
+						},
+						{
+							"key": "key",
+							"value": "{{key}}"
+						},
+						{
+							"key": "filter",
+							"value": "description='Fire Station'"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Streets",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.os.uk/features/ngd/ofa/v1/collections/trn-ntwk-street-1/items?bbox=-1.585464,50.562959,-0.926285,50.761219&key={{key}}",
+					"protocol": "https",
+					"host": [
+						"api",
+						"os",
+						"uk"
+					],
+					"path": [
+						"features",
+						"ngd",
+						"ofa",
+						"v1",
+						"collections",
+						"trn-ntwk-street-1",
+						"items"
+					],
+					"query": [
+						{
+							"key": "bbox",
+							"value": "-1.585464,50.562959,-0.926285,50.761219"
+						},
+						{
+							"key": "key",
+							"value": "{{key}}"
+						},
+						{
+							"key": "offset",
+							"value": "100",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Highway Roundabout",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.os.uk/features/ngd/ofa/v1/collections/trn-ntwk-roadlink-4/items?bbox=-1.585464,50.562959,-0.926285,50.761219&key={{key}}&filter=description='Roundabout'",
+					"protocol": "https",
+					"host": [
+						"api",
+						"os",
+						"uk"
+					],
+					"path": [
+						"features",
+						"ngd",
+						"ofa",
+						"v1",
+						"collections",
+						"trn-ntwk-roadlink-4",
+						"items"
+					],
+					"query": [
+						{
+							"key": "bbox",
+							"value": "-1.585464,50.562959,-0.926285,50.761219"
+						},
+						{
+							"key": "key",
+							"value": "{{key}}"
+						},
+						{
+							"key": "filter",
+							"value": "description='Roundabout'"
+						},
+						{
+							"key": "offset",
+							"value": "100",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Bridge",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.os.uk/features/ngd/ofa/v1/collections/str-fts-compoundstructure-2/items?bbox=-1.585464,50.562959,-0.926285,50.761219&key={{key}}&filter=description='Bridge'",
+					"protocol": "https",
+					"host": [
+						"api",
+						"os",
+						"uk"
+					],
+					"path": [
+						"features",
+						"ngd",
+						"ofa",
+						"v1",
+						"collections",
+						"str-fts-compoundstructure-2",
+						"items"
+					],
+					"query": [
+						{
+							"key": "bbox",
+							"value": "-1.585464,50.562959,-0.926285,50.761219",
+							"description": "Coordinates for a bounding box covering the Isle of Wight"
+						},
+						{
+							"key": "key",
+							"value": "{{key}}"
+						},
+						{
+							"key": "filter",
+							"value": "description='Bridge'"
+						},
+						{
+							"key": "offset",
+							"value": "100",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Pier",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.os.uk/features/ngd/ofa/v1/collections/str-fts-compoundstructure-2/items?bbox=-1.585464,50.562959,-0.926285,50.761219&key={{key}}&filter=description='Leisure Pier'",
+					"protocol": "https",
+					"host": [
+						"api",
+						"os",
+						"uk"
+					],
+					"path": [
+						"features",
+						"ngd",
+						"ofa",
+						"v1",
+						"collections",
+						"str-fts-compoundstructure-2",
+						"items"
+					],
+					"query": [
+						{
+							"key": "bbox",
+							"value": "-1.585464,50.562959,-0.926285,50.761219",
+							"description": "Coordinates for a bounding box covering the Isle of Wight"
+						},
+						{
+							"key": "key",
+							"value": "{{key}}"
+						},
+						{
+							"key": "filter",
+							"value": "description='Leisure Pier'"
+						},
+						{
+							"key": "offset",
+							"value": "100",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Heavy Rail Complex",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.os.uk/features/ngd/ofa/v1/collections/trn-ntwk-railwaylink-1/items?bbox=-1.585464,50.562959,-0.926285,50.761219&key={{key}}&filter=operationalstatus='Active'",
+					"protocol": "https",
+					"host": [
+						"api",
+						"os",
+						"uk"
+					],
+					"path": [
+						"features",
+						"ngd",
+						"ofa",
+						"v1",
+						"collections",
+						"trn-ntwk-railwaylink-1",
+						"items"
+					],
+					"query": [
+						{
+							"key": "bbox",
+							"value": "-1.585464,50.562959,-0.926285,50.761219",
+							"description": "Coordinates for a bounding box covering the Isle of Wight"
+						},
+						{
+							"key": "key",
+							"value": "{{key}}"
+						},
+						{
+							"key": "offset",
+							"value": "100",
+							"disabled": true
+						},
+						{
+							"key": "filter",
+							"value": "operationalstatus='Active'",
+							"description": "Only fetch active railway lines"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Railway Station",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.os.uk/features/ngd/ofa/v1/collections/trn-ntwk-railwaynode-1/items?bbox=-1.585464,50.562959,-0.926285,50.761219&key={{key}}&filter=description='Station'",
+					"protocol": "https",
+					"host": [
+						"api",
+						"os",
+						"uk"
+					],
+					"path": [
+						"features",
+						"ngd",
+						"ofa",
+						"v1",
+						"collections",
+						"trn-ntwk-railwaynode-1",
+						"items"
+					],
+					"query": [
+						{
+							"key": "bbox",
+							"value": "-1.585464,50.562959,-0.926285,50.761219",
+							"description": "Coordinates for a bounding box covering the Isle of Wight"
+						},
+						{
+							"key": "key",
+							"value": "{{key}}"
+						},
+						{
+							"key": "offset",
+							"value": "100",
+							"disabled": true
+						},
+						{
+							"key": "filter",
+							"value": "description='Station'"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Railway Junction",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.os.uk/features/ngd/ofa/v1/collections/trn-ntwk-railwaynode-1/items?bbox=-1.585464,50.562959,-0.926285,50.761219&key={{key}}&filter=description='Junction'",
+					"protocol": "https",
+					"host": [
+						"api",
+						"os",
+						"uk"
+					],
+					"path": [
+						"features",
+						"ngd",
+						"ofa",
+						"v1",
+						"collections",
+						"trn-ntwk-railwaynode-1",
+						"items"
+					],
+					"query": [
+						{
+							"key": "bbox",
+							"value": "-1.585464,50.562959,-0.926285,50.761219"
+						},
+						{
+							"key": "key",
+							"value": "{{key}}"
+						},
+						{
+							"key": "filter",
+							"value": "description='Junction'"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Culvert",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.os.uk/features/ngd/ofa/v1/collections/wtr-ntwk-waterlink-1/items?bbox=-1.585464,50.562959,-0.926285,50.761219&key={{key}}",
+					"protocol": "https",
+					"host": [
+						"api",
+						"os",
+						"uk"
+					],
+					"path": [
+						"features",
+						"ngd",
+						"ofa",
+						"v1",
+						"collections",
+						"wtr-ntwk-waterlink-1",
+						"items"
+					],
+					"query": [
+						{
+							"key": "bbox",
+							"value": "-1.585464,50.562959,-0.926285,50.761219",
+							"description": "Coordinates for a bounding box covering the Isle of Wight"
+						},
+						{
+							"key": "key",
+							"value": "{{key}}"
+						},
+						{
+							"key": "filter",
+							"value": "description='Drain'",
+							"description": "Note that only one filter can be enabled at a time.",
+							"disabled": true
+						},
+						{
+							"key": "filter",
+							"value": "description='Watercourse'",
+							"description": "Note that only one filter can be enabled at a time.",
+							"disabled": true
+						},
+						{
+							"key": "filter",
+							"value": "description='Leat'",
+							"description": "Note that only one filter can be enabled at a time.",
+							"disabled": true
+						},
+						{
+							"key": "offset",
+							"value": "100",
+							"disabled": true
+						}
+					]
+				},
+				"description": "Culverts can be detemined using the `physicalcontainment` field in `wtr-ntwk-waterlink-1` (if the value is `In Culvert`). However, this is not a filterable field in the OS NGD API and so further filtering is required in-memory."
+			},
+			"response": []
+		},
+		{
+			"name": "Level Crossing",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.os.uk/features/ngd/ofa/v1/collections/trn-rami-routingstructure-1/items?bbox=-1.585464,50.562959,-0.926285,50.761219&key={{key}}&filter=description='Level Crossing Fully Barriered'",
+					"protocol": "https",
+					"host": [
+						"api",
+						"os",
+						"uk"
+					],
+					"path": [
+						"features",
+						"ngd",
+						"ofa",
+						"v1",
+						"collections",
+						"trn-rami-routingstructure-1",
+						"items"
+					],
+					"query": [
+						{
+							"key": "bbox",
+							"value": "-1.585464,50.562959,-0.926285,50.761219",
+							"description": "Coordinates for a bounding box covering the Isle of Wight"
+						},
+						{
+							"key": "key",
+							"value": "{{key}}"
+						},
+						{
+							"key": "filter",
+							"value": "description='Level Crossing Fully Barriered'",
+							"description": "Note that only one filter can be enabled at a time."
+						},
+						{
+							"key": "filter",
+							"value": "description='Level Crossing Part Barriered'",
+							"description": "Note that only one filter can be enabled at a time.",
+							"disabled": true
+						},
+						{
+							"key": "filter",
+							"value": "description='Level Crossing Unbarriered'",
+							"description": "Note that only one filter can be enabled at a time.",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Slipway",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.os.uk/features/ngd/ofa/v1/collections/lnd-fts-land-3/items?bbox=-1.585464,50.562959,-0.926285,50.761219&key={{key}}&filter=description='Slipway'",
+					"protocol": "https",
+					"host": [
+						"api",
+						"os",
+						"uk"
+					],
+					"path": [
+						"features",
+						"ngd",
+						"ofa",
+						"v1",
+						"collections",
+						"lnd-fts-land-3",
+						"items"
+					],
+					"query": [
+						{
+							"key": "bbox",
+							"value": "-1.585464,50.562959,-0.926285,50.761219",
+							"description": "Coordinates for a bounding box covering the Isle of Wight"
+						},
+						{
+							"key": "key",
+							"value": "{{key}}"
+						},
+						{
+							"key": "filter",
+							"value": "description='Slipway'"
+						},
+						{
+							"key": "offset",
+							"value": "100",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Tunnel",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.os.uk/features/ngd/ofa/v1/collections/trn-ntwk-roadlink-4/items?bbox=-1.585464,50.562959,-0.926285,50.761219&key={{key}}&filter=roadstructure='In Tunnel'",
+					"protocol": "https",
+					"host": [
+						"api",
+						"os",
+						"uk"
+					],
+					"path": [
+						"features",
+						"ngd",
+						"ofa",
+						"v1",
+						"collections",
+						"trn-ntwk-roadlink-4",
+						"items"
+					],
+					"query": [
+						{
+							"key": "bbox",
+							"value": "-1.585464,50.562959,-0.926285,50.761219",
+							"description": "Coordinates for a bounding box covering the Isle of Wight"
+						},
+						{
+							"key": "key",
+							"value": "{{key}}"
+						},
+						{
+							"key": "filter",
+							"value": "roadstructure='In Tunnel'"
+						},
+						{
+							"key": "offset",
+							"value": "100",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Cycle Path",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.os.uk/features/ngd/ofa/v1/collections/trn-rami-highwaydedication-1/items?bbox=-1.585464,50.562959,-0.926285,50.761219&key={{key}}&filter=description='Cycle Track Or Cycle Way'",
+					"protocol": "https",
+					"host": [
+						"api",
+						"os",
+						"uk"
+					],
+					"path": [
+						"features",
+						"ngd",
+						"ofa",
+						"v1",
+						"collections",
+						"trn-rami-highwaydedication-1",
+						"items"
+					],
+					"query": [
+						{
+							"key": "bbox",
+							"value": "-1.585464,50.562959,-0.926285,50.761219",
+							"description": "Coordinates for a bounding box covering the Isle of Wight"
+						},
+						{
+							"key": "key",
+							"value": "{{key}}"
+						},
+						{
+							"key": "filter",
+							"value": "description='Cycle Track Or Cycle Way'"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Woodland",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.os.uk/features/ngd/ofa/v1/collections/gnm-fts-namedarea-1/items?bbox=-1.585464,50.562959,-0.926285,50.761219&key={{key}}&filter=description='Named Woodland Or Forest'",
+					"protocol": "https",
+					"host": [
+						"api",
+						"os",
+						"uk"
+					],
+					"path": [
+						"features",
+						"ngd",
+						"ofa",
+						"v1",
+						"collections",
+						"gnm-fts-namedarea-1",
+						"items"
+					],
+					"query": [
+						{
+							"key": "bbox",
+							"value": "-1.585464,50.562959,-0.926285,50.761219",
+							"description": "Coordinates for a bounding box covering the Isle of Wight"
+						},
+						{
+							"key": "key",
+							"value": "{{key}}"
+						},
+						{
+							"key": "filter",
+							"value": "description='Named Woodland Or Forest'"
+						},
+						{
+							"key": "offset",
+							"value": "100",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Hill",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.os.uk/features/ngd/ofa/v1/collections/gnm-fts-namedarea-1/items?bbox=-1.585464,50.562959,-0.926285,50.761219&key={{key}}&filter=description='Named Hill Or Mountain'",
+					"protocol": "https",
+					"host": [
+						"api",
+						"os",
+						"uk"
+					],
+					"path": [
+						"features",
+						"ngd",
+						"ofa",
+						"v1",
+						"collections",
+						"gnm-fts-namedarea-1",
+						"items"
+					],
+					"query": [
+						{
+							"key": "bbox",
+							"value": "-1.585464,50.562959,-0.926285,50.761219"
+						},
+						{
+							"key": "key",
+							"value": "{{key}}"
+						},
+						{
+							"key": "filter",
+							"value": "description='Named Hill Or Mountain'"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Reservoir",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.os.uk/features/ngd/ofa/v1/collections/wtr-fts-water-3/items?bbox=-1.585464,50.562959,-0.926285,50.761219&key={{key}}&filter=description='Open Reservoir'",
+					"protocol": "https",
+					"host": [
+						"api",
+						"os",
+						"uk"
+					],
+					"path": [
+						"features",
+						"ngd",
+						"ofa",
+						"v1",
+						"collections",
+						"wtr-fts-water-3",
+						"items"
+					],
+					"query": [
+						{
+							"key": "bbox",
+							"value": "-1.585464,50.562959,-0.926285,50.761219",
+							"description": "Coordinates for a bounding box covering the Isle of Wight"
+						},
+						{
+							"key": "key",
+							"value": "{{key}}"
+						},
+						{
+							"key": "filter",
+							"value": "description='Open Reservoir'"
+						},
+						{
+							"key": "offset",
+							"value": "100",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Underpass",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.os.uk/features/ngd/ofa/v1/collections/str-fts-compoundstructure-2/items?bbox=-1.585464,50.562959,-0.926285,50.761219&key={{key}}&filter=description='Underpass'",
+					"protocol": "https",
+					"host": [
+						"api",
+						"os",
+						"uk"
+					],
+					"path": [
+						"features",
+						"ngd",
+						"ofa",
+						"v1",
+						"collections",
+						"str-fts-compoundstructure-2",
+						"items"
+					],
+					"query": [
+						{
+							"key": "bbox",
+							"value": "-1.585464,50.562959,-0.926285,50.761219",
+							"description": "Coordinates for a bounding box covering the Isle of Wight"
+						},
+						{
+							"key": "key",
+							"value": "{{key}}"
+						},
+						{
+							"key": "filter",
+							"value": "description='Underpass'",
+							"description": "Note that there are no known underpasses on the Isle of Wight."
+						},
+						{
+							"key": "offset",
+							"value": "100",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Petrol Station",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.os.uk/features/ngd/ofa/v1/collections/lus-fts-site-2/items?bbox=-1.585464,50.562959,-0.926285,50.761219&key={{key}}&filter=description='Filling Station'",
+					"protocol": "https",
+					"host": [
+						"api",
+						"os",
+						"uk"
+					],
+					"path": [
+						"features",
+						"ngd",
+						"ofa",
+						"v1",
+						"collections",
+						"lus-fts-site-2",
+						"items"
+					],
+					"query": [
+						{
+							"key": "bbox",
+							"value": "-1.585464,50.562959,-0.926285,50.761219",
+							"description": "Coordinates for a bounding box covering the Isle of Wight"
+						},
+						{
+							"key": "key",
+							"value": "{{key}}"
+						},
+						{
+							"key": "filter",
+							"value": "description='Filling Station'",
+							"description": "Note that only one filter can be enabled at a time."
+						},
+						{
+							"key": "filter",
+							"value": "description='Vehicle Charging Site'",
+							"description": "Note that only one filter can be enabled at a time.",
+							"disabled": true
+						},
+						{
+							"key": "offset",
+							"value": "100",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Mortuary",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.os.uk/features/ngd/ofa/v1/collections/lus-fts-site-2/items?bbox=-1.585464,50.562959,-0.926285,50.761219&key={{key}}&filter=description='Mortuary'",
+					"protocol": "https",
+					"host": [
+						"api",
+						"os",
+						"uk"
+					],
+					"path": [
+						"features",
+						"ngd",
+						"ofa",
+						"v1",
+						"collections",
+						"lus-fts-site-2",
+						"items"
+					],
+					"query": [
+						{
+							"key": "bbox",
+							"value": "-1.585464,50.562959,-0.926285,50.761219",
+							"description": "Coordinates for a bounding box covering the Isle of Wight"
+						},
+						{
+							"key": "key",
+							"value": "{{key}}"
+						},
+						{
+							"key": "filter",
+							"value": "description='Mortuary'"
+						},
+						{
+							"key": "offset",
+							"value": "100",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

@@ -2,12 +2,12 @@ import { useCallback } from "react";
 import {
   booleanPointInPolygon,
   booleanIntersects,
-  lineString,
+  multiLineString,
 } from "@turf/turf";
 import useGroupedAssets from "./queries/useGroupedAssets";
 
 export default function useAssetsInPolygons() {
-  const { allAssets } = useGroupedAssets({});
+  const { assets } = useGroupedAssets({});
 
   const findAssetsOverlappingPolygon = useCallback(
     (polygonFeatures, assets) => {
@@ -16,7 +16,7 @@ export default function useAssetsInPolygons() {
           if (asset.isPointAsset) {
             return booleanPointInPolygon([asset.lng, asset.lat], feature);
           } else if (asset.isLinearAsset) {
-            const assetGeometry = lineString(asset.createSegmentCoords());
+            const assetGeometry = multiLineString(asset.createSegmentCoords());
             return booleanIntersects(feature, assetGeometry);
           } else {
             console.warn("Unknown geometry for asset", asset);
@@ -30,9 +30,9 @@ export default function useAssetsInPolygons() {
 
   const findAssetsInPolygons = useCallback(
     ({ polygons }) => {
-      return findAssetsOverlappingPolygon(polygons, allAssets);
+      return findAssetsOverlappingPolygon(polygons, assets);
     },
-    [allAssets, findAssetsOverlappingPolygon],
+    [assets, findAssetsOverlappingPolygon],
   );
 
   return { findAssetsInPolygons };
