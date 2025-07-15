@@ -60,8 +60,7 @@ function isMatchForAssetSpecificationFilters(
   if (assetSpecification.filters) {
     assetSpecification.filters.forEach((f) => {
       isMatch =
-        feature.properties &&
-        feature.properties[f.filterName] &&
+        feature.properties?.[f.filterName] &&
         feature.properties[f.filterName] === f.filterValue;
     });
   }
@@ -87,9 +86,7 @@ function mapNGDToGeoJSON(
       geometry: f.geometry,
       properties: f.properties,
       id:
-        f.properties &&
-        f.properties.uprnreference &&
-        f.properties.uprnreference.length > 0
+        f.properties?.uprnreference && f.properties.uprnreference.length > 0
           ? f.properties.uprnreference[0].uprn
           : f.id,
     }));

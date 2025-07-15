@@ -552,6 +552,23 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
+        "description": ["Underpass"],
+        "type": "http://ies.data.gov.uk/ontology/ies4#Underpass",
+        "collection": "str-fts-compoundstructure-2",
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#Underpass",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "U",
+            "alt": "Underpass",
+            "shape": "cirle",
+            "faUnicode": "\uf02b",
+            "faIcon": "fa-solid fa-tag"
+        },
+        "primaryCategory": "Transport and Infrastructure",
+        "secondaryCategory": "Transport Infrastructure"
+    },
+    {
         "description": ["Filling Station", "Vehicle Charging Site"],
         "type": "http://ies.data.gov.uk/ontology/ies4#MotorVehicleFuellingOrChargingStation",
         "collection": "lus-fts-site-2",

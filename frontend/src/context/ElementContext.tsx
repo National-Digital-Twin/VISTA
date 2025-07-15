@@ -112,8 +112,8 @@ export function ElementsProvider({ children }: ElementsProviderProps) {
   const {
     getAssetsByTypes,
     getDependenciesByTypes,
-    isLoadingDependencies: isLoadingDependencies,
-    isLoadingAssets: isLoadingAssets,
+    isLoadingDependencies,
+    isLoadingAssets,
   } = useGroupedAssets({});
 
   const { data: liveFloodAreasRaw } = useLiveFloodAreas();

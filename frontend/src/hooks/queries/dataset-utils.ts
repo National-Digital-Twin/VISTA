@@ -11,7 +11,7 @@ import type {
 import { Asset, Dependency } from "@/models";
 import type { FoundIcon } from "@/hooks/useFindIcon";
 import { AssetState } from "@/models/Asset";
-import { fetchLiveAssets as fetchLiveAssets } from "@/api/combined";
+import { fetchLiveAssets } from "@/api/combined";
 
 interface DependencyData {
   dependencyUri: string;

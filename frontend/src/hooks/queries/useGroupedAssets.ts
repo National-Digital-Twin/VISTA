@@ -44,7 +44,9 @@ const useGroupedAssets = ({
     queryKey: ["assets-with-dependencies", assessment ?? ""],
     enabled: !!assets,
     queryFn: async () => {
-      if (!assets) {return;}
+      if (!assets) {
+        return;
+      }
       const assetTypes = assets
         .map((asset: { type: any }) => asset.type)
         .filter((value, index, self) => self.indexOf(value) === index);
@@ -67,7 +69,9 @@ const useGroupedAssets = ({
   }
 
   const filteredAssets = useMemo(() => {
-    if (!assets) {return [];}
+    if (!assets) {
+      return [];
+    }
 
     return assets.filter(
       (asset) =>
@@ -101,7 +105,9 @@ const useGroupedAssets = ({
   };
 
   const getDependentAssets = (assets: Asset[]) => {
-    if (!dependencies || !filteredAssets) {return [];}
+    if (!dependencies || !filteredAssets) {
+      return [];
+    }
     const providerUris = new Set(assets.map((asset) => asset.uri));
     const filteredDependencies =
       dependencies?.filter(({ provider }) => providerUris.has(provider.uri)) ||
