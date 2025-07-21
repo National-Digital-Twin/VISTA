@@ -33,6 +33,7 @@ interface AssetClassFilter {
 export interface AssetSpecification {
   type: string;
   collection: string;
+  source: string;
   filters?: AssetClassFilter[];
   showAsPoint?: boolean;
   description?: string[];

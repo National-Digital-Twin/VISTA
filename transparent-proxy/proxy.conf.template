@@ -26,8 +26,8 @@ server {
 
   server_name localhost *.ndtp.co.uk;
 
-  resolver kube-dns.kube-system.svc.cluster.local valid=1m;
-  # resolver 8.8.8.8 valid=1m;
+  # resolver kube-dns.kube-system.svc.cluster.local valid=1m;
+  resolver 8.8.8.8 valid=1m;
 
   # Proxy config
   proxy_cache_valid 200 302 10m;
@@ -106,6 +106,20 @@ server {
     rewrite ^/os-ngd/(.*) /$1 break;
 
     proxy_pass https://api.os.uk/$uri$is_args$args$api_key_qs;
+    proxy_set_header Cookie "";
+    proxy_set_header X-Auth-Request-Access-Token "";
+    proxy_set_header X-Auth-Request-Email "";
+    proxy_set_header X-Auth-Request-User "";
+    proxy_set_header Authorization "";
+    proxy_hide_header Set-Cookie;
+    add_header X-Cache-Status $upstream_cache_status always;
+  }
+
+  # NAPTAN
+  location /naptan/ {
+    rewrite ^/naptan/(.*) /$1 break;
+
+    proxy_pass https://naptan.api.dft.gov.uk/$uri$is_args$args;
     proxy_set_header Cookie "";
     proxy_set_header X-Auth-Request-Access-Token "";
     proxy_set_header X-Auth-Request-Email "";

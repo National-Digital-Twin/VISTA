@@ -2,6 +2,7 @@
     {
         "description": ["Telephone Exchange"],
         "type": "http://ies.data.gov.uk/ontology/ies4#TelecommunicationsExchange",
+        "source": "os_ngd",
         "collection": "bld-fts-building-4",
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#TelecommunicationsExchange",
@@ -19,6 +20,7 @@
     {
         "description": ["Telecommunications Facility"],
         "type": "http://ies.data.gov.uk/ontology/ies4#TelecommunicationsComplex",
+        "source": "os_ngd",
         "collection": "bld-fts-building-4",
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#TelecommunicationsComplex",
@@ -36,6 +38,7 @@
     {
         "description": ["Water Distribution Facility"],
         "type": "http://ies.data.gov.uk/ontology/ies4#WaterDistributionComplex",
+        "source": "os_ngd",
         "collection": "bld-fts-building-4",
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#WaterDistributionComplex",
@@ -53,6 +56,7 @@
     {
         "description": ["Water Treatment Facility"],
         "type": "http://ies.data.gov.uk/ontology/ies4#WaterExtractionComplex",
+        "source": "os_ngd",
         "collection": "bld-fts-building-4",
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#WaterExtractionComplex",
@@ -70,6 +74,7 @@
     {
         "description": ["Waste Water Treatment Works"],
         "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterTreatmentComplex",
+        "source": "os_ngd",
         "collection": "bld-fts-building-4",
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterTreatmentComplex",
@@ -87,6 +92,7 @@
     {
         "buildinguse": "Commercial Activity: Animal Services",
         "type": "http://ies.data.gov.uk/ontology/ies4#VeterinaryHospital",
+        "source": "os_ngd",
         "collection": "bld-fts-building-4",
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#VeterinaryHospital",
@@ -104,6 +110,7 @@
     {
         "description": ["Solar Power Facility"],
         "type": "http://ies.data.gov.uk/ontology/ies4#PhotovoltaicPowerGenerationComplex",
+        "source": "os_ngd",
         "collection": "bld-fts-building-4",
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#PhotovoltaicPowerGenerationComplex",
@@ -121,6 +128,7 @@
     {
         "description": ["Children's Nursery"],
         "type": "http://ies.data.gov.uk/ontology/ies4#PreSchool",
+        "source": "os_ngd",
         "collection": "bld-fts-building-4",
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#PreSchool",
@@ -138,6 +146,7 @@
     {
         "description": ["Crematorium"],
         "type": "http://ies.data.gov.uk/ontology/ies4#Crematorium",
+        "source": "os_ngd",
         "collection": "bld-fts-building-4",
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#Crematorium",
@@ -155,6 +164,7 @@
     {
         "description": ["Sports Or Exercise Facility"],
         "type": "http://ies.data.gov.uk/ontology/ies4#OutdoorStadium",
+        "source": "os_ngd",
         "collection": "bld-fts-building-4",
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#OutdoorStadium",
@@ -172,6 +182,7 @@
     {
         "description": ["Sports Pavilion"],
         "type": "http://ies.data.gov.uk/ontology/ies4#SportsGround",
+        "source": "os_ngd",
         "collection": "bld-fts-building-4",
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#SportsGround",
@@ -189,6 +200,7 @@
     {
         "buildinguse": "Commercial Activity: Industrial Or Manufacturing",
         "type": "http://ies.data.gov.uk/ontology/ies4#IndustrialSpace",
+        "source": "os_ngd",
         "collection": "bld-fts-building-4",
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#IndustrialSpace",
@@ -206,6 +218,7 @@
     {
         "buildinguse": "Commercial Activity: Retail",
         "type": "http://ies.data.gov.uk/ontology/ies4#RetailKiosk",
+        "source": "os_ngd",
         "collection": "bld-fts-building-4",
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#RetailKiosk",
@@ -223,6 +236,7 @@
     {
         "description": ["Community Meeting Place"],
         "type": "http://ies.data.gov.uk/ontology/ies4#CommunityCentre",
+        "source": "os_ngd",
         "collection": "bld-fts-building-4",
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#CommunityCentre",
@@ -240,6 +254,7 @@
     {
         "description": ["Temporary Or Holiday Accommodation Building"],
         "type": "http://ies.data.gov.uk/ontology/ies4#Hotel",
+        "source": "os_ngd",
         "collection": "bld-fts-building-4",
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#Hotel",
@@ -257,6 +272,7 @@
     {
         "description": ["Lifeboat Station"],
         "type": "http://ies.data.gov.uk/ontology/ies4#LifeboatStation",
+        "source": "os_ngd",
         "collection": "bld-fts-building-4",
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#LifeboatStation",
@@ -274,6 +290,7 @@
     {
         "description": ["Fire Station"],
         "type": "http://ies.data.gov.uk/ontology/ies4#FireBrigadeComplex",
+        "source": "os_ngd",
         "collection": "bld-fts-building-4",
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#FireBrigadeComplex",
@@ -290,6 +307,7 @@
     },
     {
         "type": "http://ies.data.gov.uk/ontology/ies4#Road",
+        "source": "os_ngd",
         "collection": "trn-ntwk-street-1",
         "classificationField": "roadclassification",
         "styles": {
@@ -308,6 +326,7 @@
     {
         "description": ["Roundabout"],
         "type": "http://ies.data.gov.uk/ontology/ies4#HighwayRoundabout",
+        "source": "os_ngd",
         "collection": "trn-ntwk-roadlink-4",
         "showAsPoint": true,
         "styles": {
@@ -326,6 +345,7 @@
     {
         "description": ["Bridge"],
         "type": "http://ies.data.gov.uk/ontology/ies4#Bridge",
+        "source": "os_ngd",
         "collection": "str-fts-compoundstructure-2",
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#Bridge",
@@ -343,6 +363,7 @@
     {
         "description": "Leisure Pier",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pier",
+        "source": "os_ngd",
         "collection": "str-fts-compoundstructure-2",
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#Pier",
@@ -359,6 +380,7 @@
     },
     {
         "type": "http://ies.data.gov.uk/ontology/ies4#HeavyRailComplex",
+        "source": "os_ngd",
         "collection": "trn-ntwk-railwaylink-1",
         "classificationField": "description",
         "styles": {
@@ -377,6 +399,7 @@
     {
         "description": ["Station"],
         "type": "http://ies.data.gov.uk/ontology/ies4#RailwayStation",
+        "source": "os_ngd",
         "collection": "trn-ntwk-railwaynode-1",
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#RailwayStation",
@@ -394,6 +417,7 @@
     {
         "description": ["Junction"],
         "type": "http://ies.data.gov.uk/ontology/ies4#RailwayJunction",
+        "source": "os_ngd",
         "collection": "trn-ntwk-railwaynode-1",
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#RailwayJunction",
@@ -411,6 +435,7 @@
     {
         "description": ["Drain", "Watercourse", "Leat"],
         "type": "http://ies.data.gov.uk/ontology/ies4#Culvert",
+        "source": "os_ngd",
         "collection": "wtr-ntwk-waterlink-1",
         "filters": [
             {
@@ -434,6 +459,7 @@
     {
         "description": ["Level Crossing Fully Barriered", "Level Crossing Part Barriered", "Level Crossing Unbarriered"],
         "type": "http://ies.data.gov.uk/ontology/ies4#LevelCrossing",
+        "source": "os_ngd",
         "collection": "trn-rami-routingstructure-1",
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#LevelCrossing",
@@ -451,6 +477,7 @@
     {
         "description": ["Slipway"],
         "type": "http://ies.data.gov.uk/ontology/ies4#Slipway",
+        "source": "os_ngd",
         "collection": "lnd-fts-land-3",
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#Slipway",
@@ -467,6 +494,7 @@
     },
     {
         "type": "http://ies.data.gov.uk/ontology/ies4#Tunnel",
+        "source": "os_ngd",
         "collection": "trn-ntwk-roadlink-4",
         "roadstructure": "In Tunnel",
         "showAsPoint": true,
@@ -486,6 +514,7 @@
     {
         "description": ["Cycle Track Or Cycle Way"],
         "type": "http://ies.data.gov.uk/ontology/ies4#CycleTrack",
+        "source": "os_ngd",
         "collection": "trn-rami-highwaydedication-1",
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#CycleTrack",
@@ -503,6 +532,7 @@
     {
         "description": ["Named Woodland Or Forest"],
         "type": "http://ies.data.gov.uk/ontology/ies4#Woodland",
+        "source": "os_ngd",
         "collection": "gnm-fts-namedarea-1",
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#Woodland",
@@ -520,6 +550,7 @@
     {
         "description": ["Named Hill Or Mountain"],
         "type": "http://ies.data.gov.uk/ontology/ies4#Hill",
+        "source": "os_ngd",
         "collection": "gnm-fts-namedarea-1",
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#Hill",
@@ -537,6 +568,7 @@
     {
         "description": ["Open Reservoir"],
         "type": "http://ies.data.gov.uk/ontology/ies4#WaterReservoir",
+        "source": "os_ngd",
         "collection": "wtr-fts-water-3",
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#WaterReservoir",
@@ -554,6 +586,7 @@
     {
         "description": ["Underpass"],
         "type": "http://ies.data.gov.uk/ontology/ies4#Underpass",
+        "source": "os_ngd",
         "collection": "str-fts-compoundstructure-2",
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#Underpass",
@@ -571,6 +604,7 @@
     {
         "description": ["Filling Station", "Vehicle Charging Site"],
         "type": "http://ies.data.gov.uk/ontology/ies4#MotorVehicleFuellingOrChargingStation",
+        "source": "os_ngd",
         "collection": "lus-fts-site-2",
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#MotorVehicleFuellingOrChargingStation",
@@ -588,6 +622,7 @@
     {
         "description": ["Mortuary"],
         "type": "http://ies.data.gov.uk/ontology/ies4#Mortuary",
+        "source": "os_ngd",
         "collection": "lus-fts-site-2",
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#Mortuary",
@@ -601,5 +636,28 @@
         },
         "primaryCategory": "Miscellaneous",
         "secondaryCategory": "Commercial, Business and Service"
+    },
+    {
+        "type": "http://ies.data.gov.uk/ontology/ies4#BusStop",
+        "source": "naptan",
+        "filters": [
+            {
+                "filterName": "StopType",
+                "filterValue": "BCT"
+            }
+        ],
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#BusStop",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "U",
+            "alt": "Bus Stop",
+            "shape": "circle",
+            "faUnicode": "\uf02b",
+            "faIcon": "fa-solid fa-bus"
+        },
+        "primaryCategory": "Transport and Infrastructure",
+        "secondaryCategory": "Transport Infrastructure"
+
     }
 ]

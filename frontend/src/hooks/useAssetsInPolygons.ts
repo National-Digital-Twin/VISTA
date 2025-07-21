@@ -7,10 +7,11 @@ import {
 import useGroupedAssets from "./queries/useGroupedAssets";
 
 export default function useAssetsInPolygons() {
-  const { assets } = useGroupedAssets({});
+  const { assets, isLoadingAssets } = useGroupedAssets({});
 
   const findAssetsOverlappingPolygon = useCallback(
     (polygonFeatures, assets) => {
+      if (isLoadingAssets) return [];
       return assets.filter((asset) => {
         return polygonFeatures.some((feature) => {
           if (asset.isPointAsset) {
@@ -32,7 +33,7 @@ export default function useAssetsInPolygons() {
     ({ polygons }) => {
       return findAssetsOverlappingPolygon(polygons, assets);
     },
-    [assets, findAssetsOverlappingPolygon],
+    [assets],
   );
 
   return { findAssetsInPolygons };
