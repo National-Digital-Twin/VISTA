@@ -414,29 +414,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov306",
-        "type": "http://ies.data.gov.uk/ontology/ies4#NursingHome",
-        "lat": 50.710648,
-        "lng": -1.2811222,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#NursingHome",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "NH",
-            "alt": "NursingHome",
-            "shape": "cirle",
-            "faUnicode": "\ue53c",
-            "faIcon": "fa-sharp fa-solid fa-person-cane"
-        },
-        "primaryCategory": "Essential Services",
-        "secondaryCategory": "Health and social care"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL195",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.6708336906,
@@ -1102,29 +1079,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov623",
-        "type": "http://ies.data.gov.uk/ontology/ies4#NursingHome",
-        "lat": 50.632156,
-        "lng": -1.1825228,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#NursingHome",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "NH",
-            "alt": "NursingHome",
-            "shape": "cirle",
-            "faUnicode": "\ue53c",
-            "faIcon": "fa-sharp fa-solid fa-person-cane"
-        },
-        "primaryCategory": "Essential Services",
-        "secondaryCategory": "Health and social care"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL160",
@@ -2229,29 +2183,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov751",
-        "type": "http://ies.data.gov.uk/ontology/ies4#NursingHome",
-        "lat": 50.725258,
-        "lng": -1.2339334,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#NursingHome",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "NH",
-            "alt": "NursingHome",
-            "shape": "cirle",
-            "faUnicode": "\ue53c",
-            "faIcon": "fa-sharp fa-solid fa-person-cane"
-        },
-        "primaryCategory": "Essential Services",
-        "secondaryCategory": "Health and social care"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL286",
@@ -13729,29 +13660,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov566",
-        "type": "http://ies.data.gov.uk/ontology/ies4#NursingHome",
-        "lat": 50.626927,
-        "lng": -1.1832073,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#NursingHome",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "NH",
-            "alt": "NursingHome",
-            "shape": "cirle",
-            "faUnicode": "\ue53c",
-            "faIcon": "fa-sharp fa-solid fa-person-cane"
-        },
-        "primaryCategory": "Essential Services",
-        "secondaryCategory": "Health and social care"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL021",
