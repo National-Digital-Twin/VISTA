@@ -12,16 +12,25 @@ interface NaptanStop {
 
 export class NaptanDataSourceHandler extends DataSourceHandler {
   protected createGeoJsonPointFeature(stop: NaptanStop): Feature {
-    const { longitude, latitude, ATCOCode, ...properties } = stop;
+    const {
+      Longitude: longitude,
+      Latitude: latitude,
+      ATCOCode: atcoCode,
+      CommonName: name,
+      ...properties
+    } = stop;
 
     return {
-      id: ATCOCode,
+      id: atcoCode,
       type: "Feature",
       geometry: {
         type: "Point",
         coordinates: [longitude, latitude],
       },
-      properties,
+      properties: {
+        ...properties,
+        name,
+      },
     };
   }
   /**

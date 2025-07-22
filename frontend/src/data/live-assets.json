@@ -644,6 +644,10 @@
             {
                 "filterName": "StopType",
                 "filterValue": "BCT"
+            },
+            {
+                "filterName": "Status",
+                "filterValue": "active"
             }
         ],
         "styles": {
@@ -653,7 +657,7 @@
             "iconFallbackText": "U",
             "alt": "Bus Stop",
             "shape": "circle",
-            "faUnicode": "\uf02b",
+            "faUnicode": "\uf207",
             "faIcon": "fa-solid fa-bus"
         },
         "primaryCategory": "Transport and Infrastructure",

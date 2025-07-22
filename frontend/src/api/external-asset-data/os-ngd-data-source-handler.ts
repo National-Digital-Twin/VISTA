@@ -146,14 +146,14 @@ export class OsNgdDataSourceHandler extends DataSourceHandler {
       .filter((f) =>
         this.isMatchForAssetSpecificationFilters(assetSpecification, f),
       )
-      .map((f) => ({
-        type: "Feature",
-        geometry: f.geometry,
-        properties: f.properties,
-        id:
-          f.properties?.uprnreference && f.properties.uprnreference.length > 0
-            ? f.properties.uprnreference[0].uprn
-            : f.id,
-      }));
+      .map((f) => {
+        return {
+          ...f,
+          properties: {
+            ...f.properties,
+            name: (f.properties as { name1_text: string }).name1_text,
+          },
+        };
+      });
   }
 }

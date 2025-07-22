@@ -156,7 +156,7 @@ function mapPointAsset(
   return new Asset({
     uri: `http://ndtp.co.uk/Building_${feature.id}`,
     type,
-    name: feature.properties?.name1_text,
+    name: feature.properties?.name,
     lng: coordinates[0],
     lat: coordinates[1],
     geometry: feature.geometry,
