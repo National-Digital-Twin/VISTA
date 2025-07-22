@@ -663,5 +663,21 @@
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Transport Infrastructure"
 
+    },
+    {
+        "type": "http://ies.data.gov.uk/ontology/ies4#NursingHome",
+        "source": "cqc",
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#NursingHome",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "NH",
+            "alt": "NursingHome",
+            "shape": "cirle",
+            "faUnicode": "\ue53c",
+            "faIcon": "fa-sharp fa-solid fa-person-cane"
+        },
+        "primaryCategory": "Essential Services",
+        "secondaryCategory": "Health and social care"
     }
 ]

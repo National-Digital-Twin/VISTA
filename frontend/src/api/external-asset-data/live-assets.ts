@@ -1,9 +1,10 @@
 import { LngLatBounds } from "maplibre-gl";
 import type { FeatureCollection } from "geojson";
-import { AssetSpecification } from "@/hooks/queries/dataset-utils";
 import { DataSourceHandler } from "./data-source-handler";
 import { OsNgdDataSourceHandler } from "./os-ngd-data-source-handler";
 import { NaptanDataSourceHandler } from "./naptan-data-source-handler";
+import { CQCDataSourceHandler } from "./cqc-data-source-handler";
+import { AssetSpecification } from "@/hooks/queries/dataset-utils";
 
 const iowBounds = LngLatBounds.convert([
   [-1.585464, 50.562959],
@@ -13,6 +14,7 @@ const iowBounds = LngLatBounds.convert([
 export const handlerRegistry: Record<string, DataSourceHandler> = {
   os_ngd: new OsNgdDataSourceHandler(iowBounds.toArray().toString()),
   naptan: new NaptanDataSourceHandler("230"),
+  cqc: new CQCDataSourceHandler("Isle of Wight"),
 };
 
 /**

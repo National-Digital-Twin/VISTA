@@ -62,7 +62,17 @@ function Details({ details }: DetailsProps) {
         <p className="text-sm uppercase">{noCase(getURIFragment(type))}</p>
       )}
       <p>{id}</p>
-      {desc && <p>{desc}</p>}
+      {desc && (
+        <p
+          style={{
+            wordBreak: "break-word",
+            overflowWrap: "break-word",
+            whiteSpace: "pre-line",
+          }}
+        >
+          {desc}
+        </p>
+      )}
     </div>
   );
 }

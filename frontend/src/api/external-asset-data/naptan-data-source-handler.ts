@@ -1,7 +1,7 @@
-import { AssetSpecification } from "@/hooks/queries/dataset-utils";
 import type { Feature } from "geojson";
-import { DataSourceHandler } from "./data-source-handler";
 import Papa from "papaparse";
+import { DataSourceHandler } from "./data-source-handler";
+import { AssetSpecification } from "@/hooks/queries/dataset-utils";
 
 interface NaptanStop {
   longitude: number;
@@ -40,7 +40,7 @@ export class NaptanDataSourceHandler extends DataSourceHandler {
    * @returns
    */
   public buildUrlsForDataSource(
-    assetSpecification: AssetSpecification,
+    _assetSpecification: AssetSpecification,
   ): string[] {
     return [
       `/transparent-proxy/naptan/v1/access-nodes?dataFormat=csv&atcoAreaCodes=${this.locator}`,
@@ -66,7 +66,7 @@ export class NaptanDataSourceHandler extends DataSourceHandler {
     assetSpecification: AssetSpecification,
     url: string,
   ): Promise<Feature[]> {
-    let features: Feature[] = [];
+    const features: Feature[] = [];
     const parsedData = await this.fetchCsvFromUrl(url);
     const stops = parsedData.data;
     for (const stop of stops) {
