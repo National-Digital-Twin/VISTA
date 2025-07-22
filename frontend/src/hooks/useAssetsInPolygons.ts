@@ -11,7 +11,9 @@ export default function useAssetsInPolygons() {
 
   const findAssetsOverlappingPolygon = useCallback(
     (polygonFeatures, assets) => {
-      if (isLoadingAssets) return [];
+      if (isLoadingAssets) {
+        return [];
+      }
       return assets.filter((asset) => {
         return polygonFeatures.some((feature) => {
           if (asset.isPointAsset) {
@@ -26,14 +28,14 @@ export default function useAssetsInPolygons() {
         });
       });
     },
-    [],
+    [isLoadingAssets],
   );
 
   const findAssetsInPolygons = useCallback(
     ({ polygons }) => {
       return findAssetsOverlappingPolygon(polygons, assets);
     },
-    [assets],
+    [assets, findAssetsOverlappingPolygon],
   );
 
   return { findAssetsInPolygons };
