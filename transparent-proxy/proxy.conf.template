@@ -150,6 +150,8 @@ server {
 
   # CQC API
   location /cqc/ {
+    proxy_cache long_cache;
+
     rewrite ^/cqc/(.*) /$1 break;
 
     proxy_pass https://api.service.cqc.org.uk/$uri$is_args$args;
