@@ -155,14 +155,6 @@ export default class Asset {
     return this.assetClassification?.priority;
   }
 
-  get isPointAsset() {
-    return !this.hasGeometry() || this.geometry.type === "Point";
-  }
-
-  get isLinearAsset() {
-    return this.hasGeometry() && this.geometry.type !== "Point";
-  }
-
   get shortType() {
     return getShortType(this.type);
   }

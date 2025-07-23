@@ -19,9 +19,9 @@ export default function useAssetsInPolygons() {
       return assets.filter((asset) => {
         return polygonFeatures.some((feature) => {
           try {
-            if (asset.isPointAsset) {
-              return booleanPointInPolygon([asset.lng!, asset.lat!], feature);
-            } else if (asset.isLinearAsset) {
+            if (asset.lng && asset.lat) {
+              return booleanPointInPolygon([asset.lng, asset.lat], feature);
+            } else if (asset.hasGeometry()) {
               const assetGeometry = multiLineString(
                 asset.createSegmentCoords(),
               );
