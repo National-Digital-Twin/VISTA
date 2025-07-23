@@ -1,4 +1,7 @@
-import { AssetSpecification } from "@/hooks/queries/dataset-utils";
+import {
+  AssetClassFilter,
+  AssetSpecification,
+} from "@/hooks/queries/dataset-utils";
 import type { Feature } from "geojson";
 
 export abstract class DataSourceHandler {
@@ -39,14 +42,33 @@ export abstract class DataSourceHandler {
   ): boolean {
     if (assetSpecification.filters) {
       const filtersToMatch = assetSpecification.filters.length;
-      const matchedFilters = assetSpecification.filters.filter(
-        (f) =>
-          feature.properties?.[f.filterName] &&
-          feature.properties[f.filterName] === f.filterValue,
+      const matchedFilters = assetSpecification.filters.filter((f) =>
+        this.isMatchForAssetSpecificationFilter(f, feature),
       );
       return filtersToMatch === matchedFilters.length;
     }
     return true;
+  }
+
+  private isMatchForAssetSpecificationFilter(
+    filter: AssetClassFilter,
+    feature: Feature,
+  ) {
+    if (Array.isArray(filter.filterValue)) {
+      for (const filterValue of filter.filterValue) {
+        if (
+          feature.properties &&
+          feature.properties[filter.filterName] === filterValue
+        ) {
+          return true;
+        }
+      }
+    } else {
+      return (
+        feature.properties &&
+        feature.properties[filter.filterName] === filter.filterValue
+      );
+    }
   }
 
   abstract buildUrlsForDataSource(

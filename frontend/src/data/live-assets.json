@@ -397,24 +397,6 @@
         "secondaryCategory": "Transport Infrastructure"
     },
     {
-        "description": ["Station"],
-        "type": "http://ies.data.gov.uk/ontology/ies4#RailwayStation",
-        "source": "os_ngd",
-        "collection": "trn-ntwk-railwaynode-1",
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#RailwayStation",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "RS",
-            "alt": "RailwayStation",
-            "shape": "cirle",
-            "faUnicode": "\uf238",
-            "faIcon": "fa-regular fa-train"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
-    },
-    {
         "description": ["Junction"],
         "type": "http://ies.data.gov.uk/ontology/ies4#RailwayJunction",
         "source": "os_ngd",
@@ -638,6 +620,58 @@
         "secondaryCategory": "Commercial, Business and Service"
     },
     {
+        "type": "http://ies.data.gov.uk/ontology/ies4#RailwayStation",
+        "source": "naptan",
+        "filters": [
+            {
+                "filterName": "StopType",
+                "filterValue": ["RSE", "TMU"]
+            },
+            {
+                "filterName": "Status",
+                "filterValue": "active"
+            }
+        ],
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#RailwayStation",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "RS",
+            "alt": "RailwayStation",
+            "shape": "cirle",
+            "faUnicode": "\uf238",
+            "faIcon": "fa-regular fa-train"
+        },
+        "primaryCategory": "Transport and Infrastructure",
+        "secondaryCategory": "Transport Infrastructure"
+    },
+    {
+        "type": "http://ies.data.gov.uk/ontology/ies4#BusStation",
+        "source": "naptan",
+        "filters": [
+            {
+                "filterName": "StopType",
+                "filterValue": "BCS"
+            },
+            {
+                "filterName": "Status",
+                "filterValue": "active"
+            }
+        ],
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#BusStation",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "B",
+            "alt": "Bus Station",
+            "shape": "circle",
+            "faUnicode": "\uf207",
+            "faIcon": "fa-solid fa-bus"
+        },
+        "primaryCategory": "Transport and Infrastructure",
+        "secondaryCategory": "Transport Infrastructure"
+    },
+    {
         "type": "http://ies.data.gov.uk/ontology/ies4#BusStop",
         "source": "naptan",
         "filters": [
@@ -654,7 +688,7 @@
             "classUri": "http://ies.data.gov.uk/ontology/ies4#BusStop",
             "backgroundColor": "#242400",
             "color": "#FFFD04",
-            "iconFallbackText": "U",
+            "iconFallbackText": "B",
             "alt": "Bus Stop",
             "shape": "circle",
             "faUnicode": "\uf207",
@@ -662,6 +696,31 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Transport Infrastructure"
-
+    },
+    {
+        "type": "http://ies.data.gov.uk/ontology/ies4#FerryPort",
+        "source": "naptan",
+        "filters": [
+            {
+                "filterName": "StopType",
+                "filterValue": "FTD"
+            },
+            {
+                "filterName": "Status",
+                "filterValue": "active"
+            }
+        ],
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#FerryPort",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "FP",
+            "alt": "FerryPort",
+            "shape": "cirle",
+            "faUnicode": "\ue4ea",
+            "faIcon": "fa-regular fa-ferry"
+        },
+        "primaryCategory": "Transport and Infrastructure",
+        "secondaryCategory": "Transport Infrastructure"
     }
 ]

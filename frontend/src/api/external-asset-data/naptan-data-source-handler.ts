@@ -1,5 +1,5 @@
 import { AssetSpecification } from "@/hooks/queries/dataset-utils";
-import type { Feature } from "geojson";
+import type { Feature, GeoJsonProperties, Geometry } from "geojson";
 import { DataSourceHandler } from "./data-source-handler";
 import Papa from "papaparse";
 
@@ -11,28 +11,6 @@ interface NaptanStop {
 }
 
 export class NaptanDataSourceHandler extends DataSourceHandler {
-  protected createGeoJsonPointFeature(stop: NaptanStop): Feature {
-    const {
-      Longitude: longitude,
-      Latitude: latitude,
-      ATCOCode: atcoCode,
-      CommonName: name,
-      ...properties
-    } = stop;
-
-    return {
-      id: atcoCode,
-      type: "Feature",
-      geometry: {
-        type: "Point",
-        coordinates: [longitude, latitude],
-      },
-      properties: {
-        ...properties,
-        name,
-      },
-    };
-  }
   /**
    * A function to build a list of NAPTAN URLs.
    *
@@ -47,6 +25,12 @@ export class NaptanDataSourceHandler extends DataSourceHandler {
     ];
   }
 
+  /**
+   * Fetches CSV data from a given URL and parses it.
+   *
+   * @param url A URL
+   * @returns Parsed CSV data as a list of {@link NaptanStop}
+   */
   async fetchCsvFromUrl(url: string) {
     return await fetch(url)
       .then((res) => res.text())
@@ -72,8 +56,73 @@ export class NaptanDataSourceHandler extends DataSourceHandler {
     for (const stop of stops) {
       features.push(this.createGeoJsonPointFeature(stop));
     }
-    return features.filter((f) =>
+    const seenLocations = new Set<String>();
+    const featureForAssetType = features.filter((f) =>
       this.isMatchForAssetSpecificationFilters(assetSpecification, f),
     );
+    return featureForAssetType.reduce<GeoJSON.Feature[]>(
+      (acc, f) =>
+        this.mergeAssetsWithSameNameAtSameLocation(acc, f, seenLocations),
+      [],
+    );
+  }
+
+  /**
+   * Evaluates whether a feature has already been marked for inclusion and if not pushes it to a list.
+   *
+   * @param featuresToInclude A list of features which have been marked for inclusion.
+   * @param featureToEvaluate A featture to evaluate for inclusion.
+   * @param seenLocations A list of locations which have already been seen.
+   * @returns
+   */
+  private mergeAssetsWithSameNameAtSameLocation(
+    featuresToInclude: Feature<Geometry, GeoJsonProperties>[],
+    featureToEvaluate: Feature<Geometry, GeoJsonProperties>,
+    seenLocations: Set<String>,
+  ) {
+    if (!featureToEvaluate.properties || !featureToEvaluate.properties.name) {
+      featuresToInclude.push({ ...featureToEvaluate });
+    } else {
+      const location = `${featureToEvaluate.properties.name}_${featureToEvaluate.properties.LocalityName}`;
+      if (seenLocations.has(location)) return featuresToInclude;
+      seenLocations.add(location);
+      featuresToInclude.push({ ...featureToEvaluate });
+    }
+    return featuresToInclude;
+  }
+
+  /**
+   * Creates a GeoJSON feature from a given data point.
+   * @param stop an instance of {@link NaptanStop}
+   * @returns
+   */
+  private createGeoJsonPointFeature(stop: NaptanStop): Feature {
+    const {
+      Longitude: longitude,
+      Latitude: latitude,
+      ATCOCode: atcoCode,
+      CommonName: name,
+      ...properties
+    } = stop;
+
+    return {
+      id: atcoCode,
+      type: "Feature",
+      geometry: {
+        type: "Point",
+        coordinates: [
+          this.convertToNumberIfString(longitude),
+          this.convertToNumberIfString(latitude),
+        ],
+      },
+      properties: {
+        ...properties,
+        name,
+      },
+    };
+  }
+
+  private convertToNumberIfString(val: number | string): number {
+    return typeof val === "string" ? Number(val) : val;
   }
 }

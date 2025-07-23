@@ -230,29 +230,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W088",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WaterReservoir",
-        "lat": 50.678504,
-        "lng": -1.1520667,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WaterReservoir",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WR",
-            "alt": "WaterReservoir",
-            "shape": "cirle",
-            "faUnicode": "\ue452",
-            "faIcon": "fa-solid fa-tank-water"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Utility Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#W040",
         "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
         "lat": 50.739617,
@@ -757,29 +734,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#T026",
-        "type": "http://ies.data.gov.uk/ontology/ies4#FerryPort",
-        "lat": 50.706569,
-        "lng": -1.500494,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#FerryPort",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "FP",
-            "alt": "FerryPort",
-            "shape": "cirle",
-            "faUnicode": "\ue4ea",
-            "faIcon": "fa-regular fa-ferry"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL119",
@@ -1610,29 +1564,6 @@
         "secondaryCategory": "Public Assembly Points"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W087",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WaterReservoir",
-        "lat": 50.674989,
-        "lng": -1.5497109,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WaterReservoir",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WR",
-            "alt": "WaterReservoir",
-            "shape": "cirle",
-            "faUnicode": "\ue452",
-            "faIcon": "fa-solid fa-tank-water"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Utility Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL156",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.6948488534,
@@ -1792,29 +1723,6 @@
         },
         "primaryCategory": "Miscellaneous",
         "secondaryCategory": "Agricultural and Natural Assets"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#T029",
-        "type": "http://ies.data.gov.uk/ontology/ies4#FerryPort",
-        "lat": 50.73905,
-        "lng": -1.16037,
-        "geometry": [],
-        "dependent": {
-            "count": 1,
-            "criticalitySum": 3
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#FerryPort",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "FP",
-            "alt": "FerryPort",
-            "shape": "cirle",
-            "faUnicode": "\ue4ea",
-            "faIcon": "fa-regular fa-ferry"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#Gov091",
@@ -2576,29 +2484,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W090",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WaterReservoir",
-        "lat": 50.622403,
-        "lng": -1.2131846,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WaterReservoir",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WR",
-            "alt": "WaterReservoir",
-            "shape": "cirle",
-            "faUnicode": "\ue452",
-            "faIcon": "fa-solid fa-tank-water"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Utility Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#W030",
         "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
         "lat": 50.731549,
@@ -3126,29 +3011,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#T024",
-        "type": "http://ies.data.gov.uk/ontology/ies4#FerryPort",
-        "lat": 50.759141,
-        "lng": -1.2905877,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#FerryPort",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "FP",
-            "alt": "FerryPort",
-            "shape": "cirle",
-            "faUnicode": "\ue4ea",
-            "faIcon": "fa-regular fa-ferry"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL108",
@@ -4485,29 +4347,6 @@
         "secondaryCategory": "Shelters and Relief Centers"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov097",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WaterReservoir",
-        "lat": null,
-        "lng": null,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WaterReservoir",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WR",
-            "alt": "WaterReservoir",
-            "shape": "cirle",
-            "faUnicode": "\ue452",
-            "faIcon": "fa-solid fa-tank-water"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Utility Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#Gov360",
         "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
         "lat": 50.588516,
@@ -4825,29 +4664,6 @@
             "shape": "cirle",
             "faUnicode": "\ue2c4",
             "faIcon": "fa-light fa-utility-pole-double"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W089",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WaterReservoir",
-        "lat": 50.642683,
-        "lng": -1.2874345,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WaterReservoir",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WR",
-            "alt": "WaterReservoir",
-            "shape": "cirle",
-            "faUnicode": "\ue452",
-            "faIcon": "fa-solid fa-tank-water"
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
@@ -7222,29 +7038,6 @@
         "secondaryCategory": "Transport Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#T025",
-        "type": "http://ies.data.gov.uk/ontology/ies4#FerryPort",
-        "lat": 50.763106,
-        "lng": -1.2960338,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#FerryPort",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "FP",
-            "alt": "FerryPort",
-            "shape": "cirle",
-            "faUnicode": "\ue4ea",
-            "faIcon": "fa-regular fa-ferry"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#E003",
         "type": "http://ies.data.gov.uk/ontology/ies4#HighVoltageElectricitySubstationComplex",
         "lat": 50.745509,
@@ -8878,29 +8671,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W094",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WaterReservoir",
-        "lat": 50.623437,
-        "lng": -1.361774,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WaterReservoir",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WR",
-            "alt": "WaterReservoir",
-            "shape": "cirle",
-            "faUnicode": "\ue452",
-            "faIcon": "fa-solid fa-tank-water"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Utility Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#W033",
         "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
         "lat": 50.670096,
@@ -10327,29 +10097,6 @@
         "secondaryCategory": "Transport Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#T027",
-        "type": "http://ies.data.gov.uk/ontology/ies4#FerryPort",
-        "lat": 50.733355,
-        "lng": -1.214176,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#FerryPort",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "FP",
-            "alt": "FerryPort",
-            "shape": "cirle",
-            "faUnicode": "\ue4ea",
-            "faIcon": "fa-regular fa-ferry"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#W058",
         "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
         "lat": 50.723999,
@@ -11038,29 +10785,6 @@
         },
         "primaryCategory": "Public Safety and Shelter",
         "secondaryCategory": "Public Assembly Points"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#T028",
-        "type": "http://ies.data.gov.uk/ontology/ies4#FerryPort",
-        "lat": 50.733093,
-        "lng": -1.1585777,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#FerryPort",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "FP",
-            "alt": "FerryPort",
-            "shape": "cirle",
-            "faUnicode": "\ue4ea",
-            "faIcon": "fa-regular fa-ferry"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#Gov289",

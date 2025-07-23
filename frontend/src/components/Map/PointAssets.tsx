@@ -156,6 +156,7 @@ function MarkerWithTooltip({
 }: MarkerWithTooltipProps) {
   const { showCpsIconsForAssetTypes } = useSharedStore();
   const selectTrainStation = useTrainStore((state) => state.selectTrainStation);
+  const deselectStation = useTrainStore((state) => state.deselectTrainStation);
   const featureType = feature.properties.type;
   const iconStyles = useFindIcon(featureType);
 
@@ -187,6 +188,8 @@ function MarkerWithTooltip({
 
         if (stationName) {
           selectTrainStation(stationName);
+        } else {
+          deselectStation();
         }
       }
     },

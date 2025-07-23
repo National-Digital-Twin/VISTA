@@ -4,7 +4,7 @@ import { DataSourceHandler } from "./data-source-handler";
 
 type FilterField = "description" | "type";
 type Filters = Partial<Record<FilterField, string | string[]>>;
-type Link = {
+export type Link = {
   href: string;
   rel?: string;
   type?: string;
@@ -46,7 +46,7 @@ export class OsNgdDataSourceHandler extends DataSourceHandler {
           `filter=${encodeURIComponent(key)}='${encodeURIComponent(val)}'`,
       )
       .join("&");
-    return `?bbox=${this.locator}&${filter}`;
+    return filter ? `?bbox=${this.locator}&${filter}` : `?bbox=${this.locator}`;
   }
 
   /**

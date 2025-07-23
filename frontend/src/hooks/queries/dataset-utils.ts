@@ -25,9 +25,9 @@ interface DependencyData {
   osmID: string;
 }
 
-interface AssetClassFilter {
+export interface AssetClassFilter {
   filterName: string;
-  filterValue: string;
+  filterValue: string | string[];
 }
 
 export interface AssetSpecification {
