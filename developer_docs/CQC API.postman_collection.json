@@ -1,0 +1,81 @@
+{
+	"info": {
+		"_postman_id": "2eb16fd4-47d4-45af-91a1-ece9d30ad91a",
+		"name": "CQC API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "8916099"
+	},
+	"item": [
+		{
+			"name": "Get Providers/Locations",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Ocp-Apim-Subscription-Key",
+						"value": "",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://api.service.cqc.org.uk/public/v1/locations?localAuthority=Isle of Wight&careHome=Y",
+					"protocol": "https",
+					"host": [
+						"api",
+						"service",
+						"cqc",
+						"org",
+						"uk"
+					],
+					"path": [
+						"public",
+						"v1",
+						"locations"
+					],
+					"query": [
+						{
+							"key": "localAuthority",
+							"value": "Isle of Wight"
+						},
+						{
+							"key": "careHome",
+							"value": "Y"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Location by ID",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Ocp-Apim-Subscription-Key",
+						"value": "",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://api.service.cqc.org.uk/public/v1/locations/1-106035602",
+					"protocol": "https",
+					"host": [
+						"api",
+						"service",
+						"cqc",
+						"org",
+						"uk"
+					],
+					"path": [
+						"public",
+						"v1",
+						"locations",
+						"1-106035602"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

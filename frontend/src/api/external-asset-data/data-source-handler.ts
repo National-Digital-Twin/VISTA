@@ -1,5 +1,5 @@
-import { AssetSpecification } from "@/hooks/queries/dataset-utils";
 import type { Feature } from "geojson";
+import { AssetSpecification } from "@/hooks/queries/dataset-utils";
 
 export abstract class DataSourceHandler {
   protected readonly locator: string;
