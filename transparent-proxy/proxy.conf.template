@@ -148,6 +148,21 @@ server {
     proxy_hide_header Set-Cookie;
   }
 
+  # CQC API
+  location /cqc/ {
+    rewrite ^/cqc/(.*) /$1 break;
+
+    proxy_pass https://api.service.cqc.org.uk/$uri$is_args$args;
+    proxy_set_header Ocp-Apim-Subscription-Key $CQC_API_KEY;
+    proxy_set_header Cookie "";
+    proxy_set_header X-Auth-Request-Access-Token "";
+    proxy_set_header X-Auth-Request-Email "";
+    proxy_set_header X-Auth-Request-User "";
+    proxy_set_header Authorization "";
+    proxy_hide_header Set-Cookie;
+    add_header X-Cache-Status $upstream_cache_status always;
+  }
+
   ## END UPSTREAM DEFINITIONS
 
   if ($upstream_http_content_type ~* "(text/html|application/xhtml+xml|text/javascript|application/javascript)") {

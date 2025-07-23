@@ -150,11 +150,14 @@ function mapPointAsset(
 ): Asset {
   const coordinates = getCoordinatesforPointAsset(feature);
   const type = assetSpecification.type;
-  const description = assetSpecification.type.includes("#")
-    ? assetSpecification.type.split("#")[1]
-    : "";
+
+  let description = feature.properties?.description;
+  if (!description && assetSpecification.type.includes("#")) {
+    description = assetSpecification.type.split("#")[1];
+  }
+
   return new Asset({
-    uri: `http://ndtp.co.uk/Building_${feature.id}`,
+    uri: `http://ndtp.co.uk/Building#${feature.id}`,
     type,
     name: feature.properties?.name,
     lng: coordinates[0],

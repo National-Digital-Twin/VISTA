@@ -1,6 +1,6 @@
-import { AssetSpecification } from "@/hooks/queries/dataset-utils";
 import type { Feature } from "geojson";
 import { DataSourceHandler } from "./data-source-handler";
+import { AssetSpecification } from "@/hooks/queries/dataset-utils";
 
 type FilterField = "description" | "type";
 type Filters = Partial<Record<FilterField, string | string[]>>;
