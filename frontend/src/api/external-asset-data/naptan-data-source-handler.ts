@@ -56,7 +56,7 @@ export class NaptanDataSourceHandler extends DataSourceHandler {
     for (const stop of stops) {
       features.push(this.createGeoJsonPointFeature(stop));
     }
-    const seenLocations = new Set<String>();
+    const seenLocations = new Set<string>();
     const featureForAssetType = features.filter((f) =>
       this.isMatchForAssetSpecificationFilters(assetSpecification, f),
     );
@@ -78,9 +78,9 @@ export class NaptanDataSourceHandler extends DataSourceHandler {
   private mergeAssetsWithSameNameAtSameLocation(
     featuresToInclude: Feature<Geometry, GeoJsonProperties>[],
     featureToEvaluate: Feature<Geometry, GeoJsonProperties>,
-    seenLocations: Set<String>,
+    seenLocations: Set<string>,
   ) {
-    if (!featureToEvaluate.properties || !featureToEvaluate.properties.name) {
+    if (!featureToEvaluate.properties?.name) {
       featuresToInclude.push({ ...featureToEvaluate });
     } else {
       const location = `${featureToEvaluate.properties.name}_${featureToEvaluate.properties.LocalityName}`;
