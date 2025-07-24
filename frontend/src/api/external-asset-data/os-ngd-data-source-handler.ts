@@ -2,9 +2,13 @@ import type { Feature } from "geojson";
 import { DataSourceHandler } from "./data-source-handler";
 import { AssetSpecification } from "@/hooks/queries/dataset-utils";
 
-type FilterField = "description" | "type";
-type Filters = Partial<Record<FilterField, string | string[]>>;
-export type Link = {
+type Filters = {
+  description?: string | string[];
+  type?: string | string[];
+  cqlFilter?: string;
+};
+
+type Link = {
   href: string;
   rel?: string;
   type?: string;
@@ -40,12 +44,23 @@ export class OsNgdDataSourceHandler extends DataSourceHandler {
       }
     }
 
-    const filter: string = filters
+    let filter: string = filters
       .map(
         ([key, val]) =>
           `filter=${encodeURIComponent(key)}='${encodeURIComponent(val)}'`,
       )
       .join("&");
+
+    if (allFilters.cqlFilter) {
+      if (filters.length > 0) {
+        console.warn(
+          "Do not specify other filters when using cqlFilter",
+          allFilters,
+        );
+      }
+      filter = `&filter=${encodeURIComponent(allFilters.cqlFilter)}`;
+    }
+
     return filter ? `?bbox=${this.locator}&${filter}` : `?bbox=${this.locator}`;
   }
 

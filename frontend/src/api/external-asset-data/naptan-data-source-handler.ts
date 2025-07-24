@@ -60,7 +60,7 @@ export class NaptanDataSourceHandler extends DataSourceHandler {
     const featureForAssetType = features.filter((f) =>
       this.isMatchForAssetSpecificationFilters(assetSpecification, f),
     );
-    return featureForAssetType.reduce<GeoJSON.Feature[]>(
+    return featureForAssetType.reduce<Feature[]>(
       (acc, f) =>
         this.mergeAssetsWithSameNameAtSameLocation(acc, f, seenLocations),
       [],
@@ -84,7 +84,9 @@ export class NaptanDataSourceHandler extends DataSourceHandler {
       featuresToInclude.push({ ...featureToEvaluate });
     } else {
       const location = `${featureToEvaluate.properties.name}_${featureToEvaluate.properties.LocalityName}`;
-      if (seenLocations.has(location)) return featuresToInclude;
+      if (seenLocations.has(location)) {
+        return featuresToInclude;
+      }
       seenLocations.add(location);
       featuresToInclude.push({ ...featureToEvaluate });
     }

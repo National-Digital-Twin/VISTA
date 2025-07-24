@@ -200,6 +200,7 @@ function MarkerWithTooltip({
       latitude,
       longitude,
       selectTrainStation,
+      deselectStation,
     ],
   );
 

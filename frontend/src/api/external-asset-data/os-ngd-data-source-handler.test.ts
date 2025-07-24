@@ -21,7 +21,7 @@ describe("buildUrlsForDataSource", () => {
       collection: "Test",
     } as AssetSpecification;
     const urls = handler.buildUrlsForDataSource(assetSpecification);
-    expect(urls.length).toBe(1);
+    expect(urls).toHaveLength(1);
     expect(urls[0]).toBe(
       "/transparent-proxy/os-ngd/features/ngd/ofa/v1/collections/Test/items?bbox=test-locator",
     );
@@ -33,7 +33,7 @@ describe("buildUrlsForDataSource", () => {
       description: ["first desc", "second desc"],
     } as AssetSpecification;
     const urls = handler.buildUrlsForDataSource(assetSpecification);
-    expect(urls.length).toBe(2);
+    expect(urls).toHaveLength(2);
     expect(urls).toEqual([
       "/transparent-proxy/os-ngd/features/ngd/ofa/v1/collections/Test/items?bbox=test-locator&filter=description='first%20desc'",
       "/transparent-proxy/os-ngd/features/ngd/ofa/v1/collections/Test/items?bbox=test-locator&filter=description='second%20desc'",
@@ -72,7 +72,7 @@ describe("fetchDataForAssetSpecification", () => {
     )) as Feature<Point>[];
 
     expect(fetch).toHaveBeenCalledWith("");
-    expect(result.length).toBe(1);
+    expect(result).toHaveLength(1);
     expect(result[0].id).toBe(featureId);
     expect(result[0].type).toBe("Feature");
     expect(result[0].geometry.coordinates).toStrictEqual([[[1, 2]]]);
@@ -97,7 +97,7 @@ describe("fetchDataForAssetSpecification", () => {
       "",
     )) as Feature<Point>[];
 
-    expect(result.length).toBe(2);
+    expect(result).toHaveLength(2);
     expect(fetch).toHaveBeenCalledWith("");
     expect(fetch).toHaveBeenCalledWith("test");
   });
