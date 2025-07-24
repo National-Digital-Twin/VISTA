@@ -35,6 +35,7 @@ export interface AssetSpecification {
   collection: string;
   source: string;
   filters?: AssetClassFilter[];
+  cqlFilter?: string;
   showAsPoint?: boolean;
   description?: string[];
   buildinguse?: string;

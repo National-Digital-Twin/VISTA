@@ -1,6 +1,6 @@
 import type { FeatureCollection } from "geojson";
-import { AssetSpecification } from "@/hooks/queries/dataset-utils";
 import { handlerRegistry } from "./handler-registry";
+import { AssetSpecification } from "@/hooks/queries/dataset-utils";
 
 /**
  * A function which fetches data based on an asset specification and a bounding box.

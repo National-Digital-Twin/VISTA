@@ -39,8 +39,12 @@ describe("fetchLiveAssets", () => {
       { type: "Feature", geometry: null, properties: { id: 2 } },
     ];
     mockFetchData.mockImplementation(async (_spec, url) => {
-      if (url === urls[0]) return features1;
-      if (url === urls[1]) return features2;
+      if (url === urls[0]) {
+        return features1;
+      }
+      if (url === urls[1]) {
+        return features2;
+      }
       return [];
     });
 

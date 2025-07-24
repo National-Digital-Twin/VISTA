@@ -108,6 +108,24 @@
         "secondaryCategory": "Miscellaneous"
     },
     {
+        "description": ["Animal Treatment Site"],
+        "type": "http://ies.data.gov.uk/ontology/ies4#VeterinaryHospital",
+        "source": "os_ngd",
+        "collection": "lus-fts-site-2",
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#VeterinaryHospital",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "VH",
+            "alt": "VeterinaryHospital",
+            "shape": "cirle",
+            "faUnicode": "\ue573",
+            "faIcon": "fa-light fa-shield-dog"
+        },
+        "primaryCategory": "Essential Services",
+        "secondaryCategory": "Miscellaneous"
+    },
+    {
         "description": ["Solar Power Facility"],
         "type": "http://ies.data.gov.uk/ontology/ies4#PhotovoltaicPowerGenerationComplex",
         "source": "os_ngd",
@@ -667,6 +685,181 @@
             "shape": "circle",
             "faUnicode": "\uf207",
             "faIcon": "fa-solid fa-bus"
+        },
+        "primaryCategory": "Transport and Infrastructure",
+        "secondaryCategory": "Transport Infrastructure"
+    },
+    {
+        "description": ["Marina"],
+        "type": "http://ies.data.gov.uk/ontology/ies4#Quay",
+        "source": "os_ngd",
+        "collection": "lus-fts-site-2",
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#Quay",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "Q",
+            "alt": "Quay",
+            "shape": "cirle",
+            "faUnicode": "\uf02b",
+            "faIcon": "fa-solid fa-tag"
+        },
+        "primaryCategory": "Transport and Infrastructure",
+        "secondaryCategory": "Maritime Infrastructure"
+    },
+    {
+        "description": ["Business Or Industrial Park"],
+        "type": "http://ies.data.gov.uk/ontology/ies4#IndustrialPark",
+        "source": "os_ngd",
+        "collection": "lus-fts-site-2",
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#IndustrialPark",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "IP",
+            "alt": "IndustrialPark",
+            "shape": "cirle",
+            "faUnicode": "\uf3b3",
+            "faIcon": "fa-regular fa-industry-windows"
+        },
+        "primaryCategory": "Recovery and Support",
+        "secondaryCategory": "Industrial and Commercial"
+    },
+    {
+        "type": "http://ies.data.gov.uk/ontology/ies4#OpenGrassland",
+        "source": "os_ngd",
+        "collection": "lnd-fts-land-3",
+        "cqlFilter": "description='Bare Earth Or Grass' AND geometry_area_m2 > 10000",
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#OpenGrassland",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "OG",
+            "alt": "OpenGrassland",
+            "shape": "cirle",
+            "faUnicode": "\uf02b",
+            "faIcon": "fa-solid fa-tag"
+        },
+        "primaryCategory": "Recovery and Support",
+        "secondaryCategory": "Agricultural and Natural Assets"
+    },
+    {
+        "description": ["Biogas Power Station"],
+        "type": "http://ies.data.gov.uk/ontology/ies4#BiomassPowerGenerationComplex",
+        "source": "os_ngd",
+        "collection": "bld-fts-building-4",
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#BiomassPowerGenerationComplex",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "BPG",
+            "alt": "BiomassPowerGenerationComplex",
+            "shape": "cirle",
+            "faUnicode": "\uf4d8",
+            "faIcon": "fa-solid fa-seedling"
+        },
+        "primaryCategory": "Essential Services",
+        "secondaryCategory": "Energy"
+    },
+    {
+        "description": ["Pumping Station"],
+        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
+        "source": "os_ngd",
+        "collection": "bld-fts-building-4",
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "WCN",
+            "alt": "WastewaterCollectionNetwork",
+            "shape": "cirle",
+            "faUnicode": "\ue194",
+            "faIcon": "fa-light fa-grate-droplet"
+        },
+        "primaryCategory": "Wastewater Management",
+        "secondaryCategory": "Wastewater Infrastructure"
+    },
+    {
+        "description": ["Waste Water Treatment Works"],
+        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterDisposalComplex",
+        "source": "os_ngd",
+        "collection": "lus-fts-site-2",
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterDisposalComplex",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "WDC",
+            "alt": "WastewaterDisposalComplex",
+            "shape": "cirle",
+            "faUnicode": "\ue58c",
+            "faIcon": "fa-solid fa-truck-droplet"
+        },
+        "primaryCategory": "Wastewater Management",
+        "secondaryCategory": "Wastewater Infrastructure"
+    },
+    {
+        "description": ["Public Car Park"],
+        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
+        "source": "os_ngd",
+        "collection": "lus-fts-site-2",
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "CP",
+            "alt": "CarPark",
+            "shape": "cirle",
+            "faUnicode": "\uf540",
+            "faIcon": "fa-regular fa-square-parking"
+        },
+        "primaryCategory": "Transport and Infrastructure",
+        "secondaryCategory": "Transport Infrastructure"
+    },
+    {
+        "description": ["Roofed Storage Tank"],
+        "filters": [
+            {
+                "filterName": "nlud_groupdescription",
+                "filterValue": "Energy production and distribution"
+            }
+        ],
+        "type": "http://ies.data.gov.uk/ontology/ies4#LiquidFuelStorageComplex",
+        "source": "os_ngd",
+        "collection": "str-fts-structure-3",
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#LiquidFuelStorageComplex",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "LFS",
+            "alt": "LiquidFuelStorageComplex",
+            "shape": "cirle",
+            "faUnicode": "\uf1c0",
+            "faIcon": "fa-regular fa-database"
+        },
+        "primaryCategory": "Essential Services",
+        "secondaryCategory": "Utility Infrastructure"
+    },
+    {
+        "cqlFilter": "restriction='Maximum Height'",
+        "filters": [
+            {
+                "filterName": "structure",
+                "filterValue": "Bridge Over Road"
+            }
+        ],
+        "type": "http://ies.data.gov.uk/ontology/ies4#LowBridge",
+        "source": "os_ngd",
+        "collection": "trn-rami-restriction-1",
+        "showAsPoint": true,
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#LowBridge",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "LB",
+            "alt": "LowBridge",
+            "shape": "cirle",
+            "faUnicode": "\uf02b",
+            "faIcon": "fa-solid fa-tag"
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Transport Infrastructure"

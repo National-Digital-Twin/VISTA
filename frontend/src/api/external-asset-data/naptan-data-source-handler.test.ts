@@ -1,7 +1,7 @@
-import { Feature, Geometry, Point } from "geojson";
+import { Feature, Point } from "geojson";
+import Papa from "papaparse";
 import { NaptanDataSourceHandler } from "./naptan-data-source-handler";
 import { AssetSpecification } from "@/hooks/queries/dataset-utils";
-import Papa from "papaparse";
 
 global.fetch = jest.fn();
 jest.mock("papaparse", () => ({
@@ -13,7 +13,7 @@ describe("buildUrlsForDataSource", () => {
 
   it("returns the correct URL", () => {
     const urls = handler.buildUrlsForDataSource({} as AssetSpecification);
-    expect(urls.length).toBe(1);
+    expect(urls).toHaveLength(1);
     expect(urls[0]).toBe(
       "/transparent-proxy/naptan/v1/access-nodes?dataFormat=csv&atcoAreaCodes=test-locator",
     );
@@ -41,7 +41,7 @@ describe("fetchDataForAssetSpecification", () => {
       "",
     )) as Feature<Point>[];
 
-    expect(result.length).toBe(2);
+    expect(result).toHaveLength(2);
     expect(result[0].id).toBe("test1");
     expect(result[1].id).toBe("test2");
     expect(result[0].geometry.type).toBe("Point");
@@ -65,7 +65,7 @@ describe("fetchDataForAssetSpecification", () => {
       {} as AssetSpecification,
       "",
     )) as Feature<Point>[];
-    expect(result.length).toBe(1);
+    expect(result).toHaveLength(1);
     expect(result[0].id).toBe("test1");
     expect(result[0].geometry.type).toBe("Point");
     expect(result[0].geometry.coordinates).toStrictEqual([1, 2]);
