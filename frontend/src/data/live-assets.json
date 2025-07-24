@@ -90,24 +90,6 @@
         "secondaryCategory": "Wastewater Infrastructure"
     },
     {
-        "buildinguse": "Commercial Activity: Animal Services",
-        "type": "http://ies.data.gov.uk/ontology/ies4#VeterinaryHospital",
-        "source": "os_ngd",
-        "collection": "bld-fts-building-4",
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#VeterinaryHospital",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "VH",
-            "alt": "VeterinaryHospital",
-            "shape": "cirle",
-            "faUnicode": "\ue573",
-            "faIcon": "fa-light fa-shield-dog"
-        },
-        "primaryCategory": "Essential Services",
-        "secondaryCategory": "Miscellaneous"
-    },
-    {
         "description": ["Animal Treatment Site"],
         "type": "http://ies.data.gov.uk/ontology/ies4#VeterinaryHospital",
         "source": "os_ngd",
