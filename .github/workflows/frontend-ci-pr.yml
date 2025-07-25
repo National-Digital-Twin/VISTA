@@ -36,7 +36,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "23.x"
+          node-version: "24.x"
           cache: yarn
           cache-dependency-path: frontend/yarn.lock
 
@@ -81,7 +81,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "23.x"
+          node-version: "24.x"
           cache: yarn
           cache-dependency-path: frontend/yarn.lock
 
@@ -131,7 +131,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "23.x"
+          node-version: "24.x"
           cache: yarn
           cache-dependency-path: frontend/yarn.lock
 
@@ -181,7 +181,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "23.x"
+          node-version: "24.x"
           cache: yarn
           cache-dependency-path: frontend/yarn.lock
 

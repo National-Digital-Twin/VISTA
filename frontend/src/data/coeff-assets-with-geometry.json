@@ -161,29 +161,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov170",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.686676,
-        "lng": -1.5304322,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#Ed005",
         "type": "http://ies.data.gov.uk/ontology/ies4#FurtherEducationalCollege",
         "lat": 50.722792,
@@ -230,52 +207,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W088",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WaterReservoir",
-        "lat": 50.678504,
-        "lng": -1.1520667,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WaterReservoir",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WR",
-            "alt": "WaterReservoir",
-            "shape": "cirle",
-            "faUnicode": "\ue452",
-            "faIcon": "fa-solid fa-tank-water"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W040",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-        "lat": 50.739617,
-        "lng": -1.3283103,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WCN",
-            "alt": "WastewaterCollectionNetwork",
-            "shape": "cirle",
-            "faUnicode": "\ue194",
-            "faIcon": "fa-light fa-grate-droplet"
-        },
-        "primaryCategory": "Wastewater Management",
-        "secondaryCategory": "Wastewater Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#Gov042",
         "type": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
         "lat": 50.691608,
@@ -299,29 +230,6 @@
         "secondaryCategory": "Learning and Non Residential Institutions"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W051",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-        "lat": 50.716417,
-        "lng": -1.3011338,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WCN",
-            "alt": "WastewaterCollectionNetwork",
-            "shape": "cirle",
-            "faUnicode": "\ue194",
-            "faIcon": "fa-light fa-grate-droplet"
-        },
-        "primaryCategory": "Wastewater Management",
-        "secondaryCategory": "Wastewater Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL220",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.7192344157,
@@ -343,29 +251,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W065",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-        "lat": 50.653915,
-        "lng": -1.2119794,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WCN",
-            "alt": "WastewaterCollectionNetwork",
-            "shape": "cirle",
-            "faUnicode": "\ue194",
-            "faIcon": "fa-light fa-grate-droplet"
-        },
-        "primaryCategory": "Wastewater Management",
-        "secondaryCategory": "Wastewater Infrastructure"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#Gov605",
@@ -412,29 +297,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov306",
-        "type": "http://ies.data.gov.uk/ontology/ies4#NursingHome",
-        "lat": 50.710648,
-        "lng": -1.2811222,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#NursingHome",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "NH",
-            "alt": "NursingHome",
-            "shape": "cirle",
-            "faUnicode": "\ue53c",
-            "faIcon": "fa-sharp fa-solid fa-person-cane"
-        },
-        "primaryCategory": "Essential Services",
-        "secondaryCategory": "Health and social care"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL195",
@@ -529,52 +391,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W050",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-        "lat": 50.732973,
-        "lng": -1.1631709,
-        "geometry": [],
-        "dependent": {
-            "count": 29,
-            "criticalitySum": 65
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WCN",
-            "alt": "WastewaterCollectionNetwork",
-            "shape": "cirle",
-            "faUnicode": "\ue194",
-            "faIcon": "fa-light fa-grate-droplet"
-        },
-        "primaryCategory": "Wastewater Management",
-        "secondaryCategory": "Wastewater Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov155",
-        "type": "http://ies.data.gov.uk/ontology/ies4#IndustrialPark",
-        "lat": 50.691961,
-        "lng": -1.520979,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#IndustrialPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "IP",
-            "alt": "IndustrialPark",
-            "shape": "cirle",
-            "faUnicode": "\uf3b3",
-            "faIcon": "fa-regular fa-industry-windows"
-        },
-        "primaryCategory": "Recovery and Support",
-        "secondaryCategory": "Industrial and Commercial"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL246",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.6836580594,
@@ -621,29 +437,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov768",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.707752,
-        "lng": -1.4809095,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#Gov154",
         "type": "http://ies.data.gov.uk/ontology/ies4#CommunityCentre",
         "lat": 50.681103,
@@ -665,29 +458,6 @@
         },
         "primaryCategory": "Public Safety and Shelter",
         "secondaryCategory": "Shelters and Relief Centers"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov237",
-        "type": "http://ies.data.gov.uk/ontology/ies4#IndustrialPark",
-        "lat": 50.709007,
-        "lng": -1.2951116,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#IndustrialPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "IP",
-            "alt": "IndustrialPark",
-            "shape": "cirle",
-            "faUnicode": "\uf3b3",
-            "faIcon": "fa-regular fa-industry-windows"
-        },
-        "primaryCategory": "Recovery and Support",
-        "secondaryCategory": "Industrial and Commercial"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL032",
@@ -759,29 +529,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#T026",
-        "type": "http://ies.data.gov.uk/ontology/ies4#FerryPort",
-        "lat": 50.706569,
-        "lng": -1.500494,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#FerryPort",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "FP",
-            "alt": "FerryPort",
-            "shape": "cirle",
-            "faUnicode": "\ue4ea",
-            "faIcon": "fa-regular fa-ferry"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL119",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.6085211691,
@@ -849,29 +596,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W002",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-        "lat": 50.604484,
-        "lng": -1.3195097,
-        "geometry": [],
-        "dependent": {
-            "count": 1,
-            "criticalitySum": 3
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WCN",
-            "alt": "WastewaterCollectionNetwork",
-            "shape": "cirle",
-            "faUnicode": "\ue194",
-            "faIcon": "fa-light fa-grate-droplet"
-        },
-        "primaryCategory": "Wastewater Management",
-        "secondaryCategory": "Wastewater Infrastructure"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL098",
@@ -989,29 +713,6 @@
         "secondaryCategory": "Learning and Non Residential Institutions"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov553",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.722254,
-        "lng": -1.1168242,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL007",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.731296221,
@@ -1033,29 +734,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W081",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-        "lat": 50.703356,
-        "lng": -1.4130853,
-        "geometry": [],
-        "dependent": {
-            "count": 1,
-            "criticalitySum": 3
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WCN",
-            "alt": "WastewaterCollectionNetwork",
-            "shape": "cirle",
-            "faUnicode": "\ue194",
-            "faIcon": "fa-light fa-grate-droplet"
-        },
-        "primaryCategory": "Wastewater Management",
-        "secondaryCategory": "Wastewater Infrastructure"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL207",
@@ -1102,29 +780,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov623",
-        "type": "http://ies.data.gov.uk/ontology/ies4#NursingHome",
-        "lat": 50.632156,
-        "lng": -1.1825228,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#NursingHome",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "NH",
-            "alt": "NursingHome",
-            "shape": "cirle",
-            "faUnicode": "\ue53c",
-            "faIcon": "fa-sharp fa-solid fa-person-cane"
-        },
-        "primaryCategory": "Essential Services",
-        "secondaryCategory": "Health and social care"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL160",
@@ -1242,52 +897,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov171",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.681908,
-        "lng": -1.5211521,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W063",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-        "lat": 50.70197,
-        "lng": -1.2913512,
-        "geometry": [],
-        "dependent": {
-            "count": 1,
-            "criticalitySum": 3
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WCN",
-            "alt": "WastewaterCollectionNetwork",
-            "shape": "cirle",
-            "faUnicode": "\ue194",
-            "faIcon": "fa-light fa-grate-droplet"
-        },
-        "primaryCategory": "Wastewater Management",
-        "secondaryCategory": "Wastewater Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL242",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.6916144771,
@@ -1309,52 +918,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov502",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.662519,
-        "lng": -1.1342725,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov702",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.604204,
-        "lng": -1.182244,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL076",
@@ -1610,29 +1173,6 @@
         "secondaryCategory": "Public Assembly Points"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W087",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WaterReservoir",
-        "lat": 50.674989,
-        "lng": -1.5497109,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WaterReservoir",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WR",
-            "alt": "WaterReservoir",
-            "shape": "cirle",
-            "faUnicode": "\ue452",
-            "faIcon": "fa-solid fa-tank-water"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Utility Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL156",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.6948488534,
@@ -1654,29 +1194,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov596",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.626086,
-        "lng": -1.1774678,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL192",
@@ -1794,52 +1311,6 @@
         "secondaryCategory": "Agricultural and Natural Assets"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#T029",
-        "type": "http://ies.data.gov.uk/ontology/ies4#FerryPort",
-        "lat": 50.73905,
-        "lng": -1.16037,
-        "geometry": [],
-        "dependent": {
-            "count": 1,
-            "criticalitySum": 3
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#FerryPort",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "FP",
-            "alt": "FerryPort",
-            "shape": "cirle",
-            "faUnicode": "\ue4ea",
-            "faIcon": "fa-regular fa-ferry"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov091",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.760791,
-        "lng": -1.2984209,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL221",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.7210622567,
@@ -1930,29 +1401,6 @@
         },
         "primaryCategory": "Essential Services",
         "secondaryCategory": "Health and social care"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W029",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-        "lat": 50.724598,
-        "lng": -1.2253021,
-        "geometry": [],
-        "dependent": {
-            "count": 5,
-            "criticalitySum": 14
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WCN",
-            "alt": "WastewaterCollectionNetwork",
-            "shape": "cirle",
-            "faUnicode": "\ue194",
-            "faIcon": "fa-light fa-grate-droplet"
-        },
-        "primaryCategory": "Wastewater Management",
-        "secondaryCategory": "Wastewater Infrastructure"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL225",
@@ -2047,52 +1495,6 @@
         "secondaryCategory": "Public Assembly Points"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W038",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-        "lat": 50.719145,
-        "lng": -1.3678416,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WCN",
-            "alt": "WastewaterCollectionNetwork",
-            "shape": "cirle",
-            "faUnicode": "\ue194",
-            "faIcon": "fa-light fa-grate-droplet"
-        },
-        "primaryCategory": "Wastewater Management",
-        "secondaryCategory": "Wastewater Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W061",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-        "lat": 50.708293,
-        "lng": -1.4997251,
-        "geometry": [],
-        "dependent": {
-            "count": 4,
-            "criticalitySum": 11
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WCN",
-            "alt": "WastewaterCollectionNetwork",
-            "shape": "cirle",
-            "faUnicode": "\ue194",
-            "faIcon": "fa-light fa-grate-droplet"
-        },
-        "primaryCategory": "Wastewater Management",
-        "secondaryCategory": "Wastewater Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL202",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.6816812932,
@@ -2137,29 +1539,6 @@
         },
         "primaryCategory": "Public Safety and Shelter",
         "secondaryCategory": "Shelters and Relief Centers"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#F019",
-        "type": "http://ies.data.gov.uk/ontology/ies4#LiquidFuelStorageComplex",
-        "lat": 50.748784,
-        "lng": -1.2880935,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#LiquidFuelStorageComplex",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "LFS",
-            "alt": "LiquidFuelStorageComplex",
-            "shape": "cirle",
-            "faUnicode": "\uf1c0",
-            "faIcon": "fa-regular fa-database"
-        },
-        "primaryCategory": "Essential Services",
-        "secondaryCategory": "Utility Infrastructure"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#Gov227",
@@ -2231,29 +1610,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov751",
-        "type": "http://ies.data.gov.uk/ontology/ies4#NursingHome",
-        "lat": 50.725258,
-        "lng": -1.2339334,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#NursingHome",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "NH",
-            "alt": "NursingHome",
-            "shape": "cirle",
-            "faUnicode": "\ue53c",
-            "faIcon": "fa-sharp fa-solid fa-person-cane"
-        },
-        "primaryCategory": "Essential Services",
-        "secondaryCategory": "Health and social care"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL286",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.7125021482,
@@ -2298,29 +1654,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov706",
-        "type": "http://ies.data.gov.uk/ontology/ies4#IndustrialPark",
-        "lat": 50.598352,
-        "lng": -1.2086967,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#IndustrialPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "IP",
-            "alt": "IndustrialPark",
-            "shape": "cirle",
-            "faUnicode": "\uf3b3",
-            "faIcon": "fa-regular fa-industry-windows"
-        },
-        "primaryCategory": "Recovery and Support",
-        "secondaryCategory": "Industrial and Commercial"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#Ed003",
@@ -2438,75 +1771,6 @@
         "secondaryCategory": "Learning and Non Residential Institutions"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov251",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.698594,
-        "lng": -1.2967685,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W041",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-        "lat": 50.759179,
-        "lng": -1.292416,
-        "geometry": [],
-        "dependent": {
-            "count": 2,
-            "criticalitySum": 6
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WCN",
-            "alt": "WastewaterCollectionNetwork",
-            "shape": "cirle",
-            "faUnicode": "\ue194",
-            "faIcon": "fa-light fa-grate-droplet"
-        },
-        "primaryCategory": "Wastewater Management",
-        "secondaryCategory": "Wastewater Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov352",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.698977,
-        "lng": -1.2828439,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL026",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.6698700407,
@@ -2530,29 +1794,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov511",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.594616,
-        "lng": -1.2027831,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL181",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.6936899751,
@@ -2574,52 +1815,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W090",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WaterReservoir",
-        "lat": 50.622403,
-        "lng": -1.2131846,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WaterReservoir",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WR",
-            "alt": "WaterReservoir",
-            "shape": "cirle",
-            "faUnicode": "\ue452",
-            "faIcon": "fa-solid fa-tank-water"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W030",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-        "lat": 50.731549,
-        "lng": -1.1830618,
-        "geometry": [],
-        "dependent": {
-            "count": 5,
-            "criticalitySum": 11
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WCN",
-            "alt": "WastewaterCollectionNetwork",
-            "shape": "cirle",
-            "faUnicode": "\ue194",
-            "faIcon": "fa-light fa-grate-droplet"
-        },
-        "primaryCategory": "Wastewater Management",
-        "secondaryCategory": "Wastewater Infrastructure"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL102",
@@ -2666,52 +1861,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W028",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-        "lat": 50.695493,
-        "lng": -1.505383,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WCN",
-            "alt": "WastewaterCollectionNetwork",
-            "shape": "cirle",
-            "faUnicode": "\ue194",
-            "faIcon": "fa-light fa-grate-droplet"
-        },
-        "primaryCategory": "Wastewater Management",
-        "secondaryCategory": "Wastewater Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov252",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.698594,
-        "lng": -1.2967685,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#Gov077",
@@ -2875,29 +2024,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W048",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-        "lat": 50.707032,
-        "lng": -1.5164495,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WCN",
-            "alt": "WastewaterCollectionNetwork",
-            "shape": "cirle",
-            "faUnicode": "\ue194",
-            "faIcon": "fa-light fa-grate-droplet"
-        },
-        "primaryCategory": "Wastewater Management",
-        "secondaryCategory": "Wastewater Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL081",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.7040557033,
@@ -3013,29 +2139,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W047",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-        "lat": 50.718799,
-        "lng": -1.1591877,
-        "geometry": [],
-        "dependent": {
-            "count": 9,
-            "criticalitySum": 16
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WCN",
-            "alt": "WastewaterCollectionNetwork",
-            "shape": "cirle",
-            "faUnicode": "\ue194",
-            "faIcon": "fa-light fa-grate-droplet"
-        },
-        "primaryCategory": "Wastewater Management",
-        "secondaryCategory": "Wastewater Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#Gov467",
         "type": "http://ies.data.gov.uk/ontology/ies4#CommunityCentre",
         "lat": 50.654722,
@@ -3057,29 +2160,6 @@
         },
         "primaryCategory": "Public Safety and Shelter",
         "secondaryCategory": "Shelters and Relief Centers"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov168",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.683738,
-        "lng": -1.5289045,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL064",
@@ -3128,29 +2208,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#T024",
-        "type": "http://ies.data.gov.uk/ontology/ies4#FerryPort",
-        "lat": 50.759141,
-        "lng": -1.2905877,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#FerryPort",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "FP",
-            "alt": "FerryPort",
-            "shape": "cirle",
-            "faUnicode": "\ue4ea",
-            "faIcon": "fa-regular fa-ferry"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL108",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.6834092292,
@@ -3174,29 +2231,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#E005",
-        "type": "http://ies.data.gov.uk/ontology/ies4#BiomassPowerGenerationComplex",
-        "lat": 50.675059,
-        "lng": -1.2532336,
-        "geometry": [],
-        "dependent": {
-            "count": 1,
-            "criticalitySum": 3
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#BiomassPowerGenerationComplex",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "BPG",
-            "alt": "BiomassPowerGenerationComplex",
-            "shape": "cirle",
-            "faUnicode": "\uf4d8",
-            "faIcon": "fa-solid fa-seedling"
-        },
-        "primaryCategory": "Essential Services",
-        "secondaryCategory": "Energy"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#Gov356",
         "type": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
         "lat": 50.586719,
@@ -3218,29 +2252,6 @@
         },
         "primaryCategory": "Public Safety and Shelter",
         "secondaryCategory": "Learning and Non Residential Institutions"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W039",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-        "lat": 50.764368,
-        "lng": -1.2969035,
-        "geometry": [],
-        "dependent": {
-            "count": 1,
-            "criticalitySum": 3
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WCN",
-            "alt": "WastewaterCollectionNetwork",
-            "shape": "cirle",
-            "faUnicode": "\ue194",
-            "faIcon": "fa-light fa-grate-droplet"
-        },
-        "primaryCategory": "Wastewater Management",
-        "secondaryCategory": "Wastewater Infrastructure"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL101",
@@ -3335,29 +2346,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W044",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterDisposalComplex",
-        "lat": 50.696463,
-        "lng": -1.533407,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterDisposalComplex",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WDC",
-            "alt": "WastewaterDisposalComplex",
-            "shape": "cirle",
-            "faUnicode": "\ue58c",
-            "faIcon": "fa-solid fa-truck-droplet"
-        },
-        "primaryCategory": "Wastewater Management",
-        "secondaryCategory": "Wastewater Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL072",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.7033484081,
@@ -3379,29 +2367,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov296",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.696056,
-        "lng": -1.2919359,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL233",
@@ -3448,29 +2413,6 @@
         },
         "primaryCategory": "Public Safety and Shelter",
         "secondaryCategory": "Public Assembly Points"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W019",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-        "lat": 50.721271,
-        "lng": -1.1094195,
-        "geometry": [],
-        "dependent": {
-            "count": 1,
-            "criticalitySum": 2
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WCN",
-            "alt": "WastewaterCollectionNetwork",
-            "shape": "cirle",
-            "faUnicode": "\ue194",
-            "faIcon": "fa-light fa-grate-droplet"
-        },
-        "primaryCategory": "Wastewater Management",
-        "secondaryCategory": "Wastewater Infrastructure"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#Gov328",
@@ -3749,52 +2691,6 @@
         "secondaryCategory": "Health and social care"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov590",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.630286,
-        "lng": -1.1723752,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov589",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.638808,
-        "lng": -1.1706842,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#Gov456",
         "type": "http://ies.data.gov.uk/ontology/ies4#CommunityCentre",
         "lat": 50.710435,
@@ -3864,29 +2760,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W066",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-        "lat": 50.756382,
-        "lng": -1.330353,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WCN",
-            "alt": "WastewaterCollectionNetwork",
-            "shape": "cirle",
-            "faUnicode": "\ue194",
-            "faIcon": "fa-light fa-grate-droplet"
-        },
-        "primaryCategory": "Wastewater Management",
-        "secondaryCategory": "Wastewater Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#Gov299",
         "type": "http://ies.data.gov.uk/ontology/ies4#CommunityCentre",
         "lat": 50.69801,
@@ -3931,52 +2804,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov591",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.630286,
-        "lng": -1.1723752,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov018",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.684153,
-        "lng": -1.0878559,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL082",
@@ -4117,29 +2944,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov286",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.700358,
-        "lng": -1.2969828,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL235",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.6997701113,
@@ -4186,29 +2990,6 @@
         "secondaryCategory": "Learning and Non Residential Institutions"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov314",
-        "type": "http://ies.data.gov.uk/ontology/ies4#Quay",
-        "lat": 50.70668,
-        "lng": -1.2895383,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#Quay",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "Q",
-            "alt": "Quay",
-            "shape": "cirle",
-            "faUnicode": "\uf02b",
-            "faIcon": "fa-solid fa-tag"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Maritime Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#Gov753",
         "type": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
         "lat": 50.616478,
@@ -4232,29 +3013,6 @@
         "secondaryCategory": "Learning and Non Residential Institutions"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov592",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.630286,
-        "lng": -1.1723752,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL017",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.7149851256,
@@ -4276,29 +3034,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W015",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-        "lat": 50.716599,
-        "lng": -1.2880994,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WCN",
-            "alt": "WastewaterCollectionNetwork",
-            "shape": "cirle",
-            "faUnicode": "\ue194",
-            "faIcon": "fa-light fa-grate-droplet"
-        },
-        "primaryCategory": "Wastewater Management",
-        "secondaryCategory": "Wastewater Infrastructure"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL229",
@@ -4345,29 +3080,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Transport Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W056",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterDisposalComplex",
-        "lat": 50.626192,
-        "lng": -1.1734084,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterDisposalComplex",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WDC",
-            "alt": "WastewaterDisposalComplex",
-            "shape": "cirle",
-            "faUnicode": "\ue58c",
-            "faIcon": "fa-solid fa-truck-droplet"
-        },
-        "primaryCategory": "Wastewater Management",
-        "secondaryCategory": "Wastewater Infrastructure"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL144",
@@ -4485,52 +3197,6 @@
         "secondaryCategory": "Shelters and Relief Centers"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov097",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WaterReservoir",
-        "lat": null,
-        "lng": null,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WaterReservoir",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WR",
-            "alt": "WaterReservoir",
-            "shape": "cirle",
-            "faUnicode": "\ue452",
-            "faIcon": "fa-solid fa-tank-water"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov360",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.588516,
-        "lng": -1.2797197,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#Gov206",
         "type": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
         "lat": 50.712836,
@@ -4575,29 +3241,6 @@
         },
         "primaryCategory": "Public Safety and Shelter",
         "secondaryCategory": "Shelters and Relief Centers"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov304",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.70652,
-        "lng": -1.2839893,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL172",
@@ -4690,29 +3333,6 @@
         },
         "primaryCategory": "Miscellaneous",
         "secondaryCategory": "Residential"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W021",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-        "lat": 50.717936,
-        "lng": -1.2831072,
-        "geometry": [],
-        "dependent": {
-            "count": 1,
-            "criticalitySum": 3
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WCN",
-            "alt": "WastewaterCollectionNetwork",
-            "shape": "cirle",
-            "faUnicode": "\ue194",
-            "faIcon": "fa-light fa-grate-droplet"
-        },
-        "primaryCategory": "Wastewater Management",
-        "secondaryCategory": "Wastewater Infrastructure"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL100",
@@ -4830,29 +3450,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W089",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WaterReservoir",
-        "lat": 50.642683,
-        "lng": -1.2874345,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WaterReservoir",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WR",
-            "alt": "WaterReservoir",
-            "shape": "cirle",
-            "faUnicode": "\ue452",
-            "faIcon": "fa-solid fa-tank-water"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Utility Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#Gov765",
         "type": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
         "lat": 50.703645,
@@ -4922,29 +3519,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov295",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.697969,
-        "lng": -1.2960132,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#E026",
         "type": "http://ies.data.gov.uk/ontology/ies4#HighVoltageElectricitySubstationComplex",
         "lat": 50.810117,
@@ -4966,29 +3540,6 @@
         },
         "primaryCategory": "Essential Services",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W042",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterDisposalComplex",
-        "lat": 50.705654,
-        "lng": -1.4968359,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterDisposalComplex",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WDC",
-            "alt": "WastewaterDisposalComplex",
-            "shape": "cirle",
-            "faUnicode": "\ue58c",
-            "faIcon": "fa-solid fa-truck-droplet"
-        },
-        "primaryCategory": "Wastewater Management",
-        "secondaryCategory": "Wastewater Infrastructure"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL132",
@@ -5081,52 +3632,6 @@
         },
         "primaryCategory": "Public Safety and Shelter",
         "secondaryCategory": "Learning and Non Residential Institutions"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W011",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-        "lat": 50.597945,
-        "lng": -1.1835252,
-        "geometry": [],
-        "dependent": {
-            "count": 1,
-            "criticalitySum": 2
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WCN",
-            "alt": "WastewaterCollectionNetwork",
-            "shape": "cirle",
-            "faUnicode": "\ue194",
-            "faIcon": "fa-light fa-grate-droplet"
-        },
-        "primaryCategory": "Wastewater Management",
-        "secondaryCategory": "Wastewater Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov594",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.629956,
-        "lng": -1.1791959,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL150",
@@ -5336,29 +3841,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W005",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterDisposalComplex",
-        "lat": 50.614665,
-        "lng": -1.2220627,
-        "geometry": [],
-        "dependent": {
-            "count": 1,
-            "criticalitySum": 2
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterDisposalComplex",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WDC",
-            "alt": "WastewaterDisposalComplex",
-            "shape": "cirle",
-            "faUnicode": "\ue58c",
-            "faIcon": "fa-solid fa-truck-droplet"
-        },
-        "primaryCategory": "Wastewater Management",
-        "secondaryCategory": "Wastewater Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL047",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.7175596318,
@@ -5451,29 +3933,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W055",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-        "lat": 50.682282,
-        "lng": -1.5159678,
-        "geometry": [],
-        "dependent": {
-            "count": 5,
-            "criticalitySum": 15
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WCN",
-            "alt": "WastewaterCollectionNetwork",
-            "shape": "cirle",
-            "faUnicode": "\ue194",
-            "faIcon": "fa-light fa-grate-droplet"
-        },
-        "primaryCategory": "Wastewater Management",
-        "secondaryCategory": "Wastewater Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL104",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.6989739558,
@@ -5564,29 +4023,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W059",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-        "lat": 50.762643,
-        "lng": -1.2956249,
-        "geometry": [],
-        "dependent": {
-            "count": 6,
-            "criticalitySum": 17
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WCN",
-            "alt": "WastewaterCollectionNetwork",
-            "shape": "cirle",
-            "faUnicode": "\ue194",
-            "faIcon": "fa-light fa-grate-droplet"
-        },
-        "primaryCategory": "Wastewater Management",
-        "secondaryCategory": "Wastewater Infrastructure"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL056",
@@ -5727,29 +4163,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W036",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-        "lat": 50.685999,
-        "lng": -1.5435612,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WCN",
-            "alt": "WastewaterCollectionNetwork",
-            "shape": "cirle",
-            "faUnicode": "\ue194",
-            "faIcon": "fa-light fa-grate-droplet"
-        },
-        "primaryCategory": "Wastewater Management",
-        "secondaryCategory": "Wastewater Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#E011",
         "type": "http://ies.data.gov.uk/ontology/ies4#LowVoltageElectricitySubstationComplex",
         "lat": 50.681092,
@@ -5819,29 +4232,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W009",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-        "lat": 50.667008,
-        "lng": -1.1844791,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WCN",
-            "alt": "WastewaterCollectionNetwork",
-            "shape": "cirle",
-            "faUnicode": "\ue194",
-            "faIcon": "fa-light fa-grate-droplet"
-        },
-        "primaryCategory": "Wastewater Management",
-        "secondaryCategory": "Wastewater Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL012",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.7204423862,
@@ -5886,29 +4276,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov282",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.704573,
-        "lng": -1.2905756,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL159",
@@ -6003,29 +4370,6 @@
         "secondaryCategory": "Public Assembly Points"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov498",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.654938,
-        "lng": -1.1539904,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#Gov555",
         "type": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
         "lat": 50.700261,
@@ -6118,29 +4462,6 @@
         "secondaryCategory": "Agricultural and Natural Assets"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W008",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-        "lat": 50.761405,
-        "lng": -1.2886961,
-        "geometry": [],
-        "dependent": {
-            "count": 5,
-            "criticalitySum": 14
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WCN",
-            "alt": "WastewaterCollectionNetwork",
-            "shape": "cirle",
-            "faUnicode": "\ue194",
-            "faIcon": "fa-light fa-grate-droplet"
-        },
-        "primaryCategory": "Wastewater Management",
-        "secondaryCategory": "Wastewater Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL193",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.6948286271,
@@ -6162,29 +4483,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov696",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.595049,
-        "lng": -1.2030301,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#Gov280",
@@ -6279,29 +4577,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov698",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.593217,
-        "lng": -1.2113117,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#Ed007",
         "type": "http://ies.data.gov.uk/ontology/ies4#FurtherEducationalCollege",
         "lat": 50.706102,
@@ -6348,75 +4623,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov214",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.701992,
-        "lng": -1.2935599,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov176",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.632809,
-        "lng": -1.2530546,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov143",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.762472,
-        "lng": -1.2882262,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#Gov740",
         "type": "http://ies.data.gov.uk/ontology/ies4#CommunityCentre",
         "lat": 50.726539,
@@ -6438,29 +4644,6 @@
         },
         "primaryCategory": "Public Safety and Shelter",
         "secondaryCategory": "Shelters and Relief Centers"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov015",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.685989,
-        "lng": -1.0766514,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#M015",
@@ -6624,29 +4807,6 @@
         "secondaryCategory": "Learning and Non Residential Institutions"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov137",
-        "type": "http://ies.data.gov.uk/ontology/ies4#IndustrialPark",
-        "lat": 50.743331,
-        "lng": -1.271523,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#IndustrialPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "IP",
-            "alt": "IndustrialPark",
-            "shape": "cirle",
-            "faUnicode": "\uf3b3",
-            "faIcon": "fa-regular fa-industry-windows"
-        },
-        "primaryCategory": "Recovery and Support",
-        "secondaryCategory": "Industrial and Commercial"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL155",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.6936337258,
@@ -6691,29 +4851,6 @@
         },
         "primaryCategory": "Public Safety and Shelter",
         "secondaryCategory": "Learning and Non Residential Institutions"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov499",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.650985,
-        "lng": -1.1619544,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#Gov005",
@@ -6783,52 +4920,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov470",
-        "type": "http://ies.data.gov.uk/ontology/ies4#IndustrialPark",
-        "lat": 50.661105,
-        "lng": -1.1499464,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#IndustrialPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "IP",
-            "alt": "IndustrialPark",
-            "shape": "cirle",
-            "faUnicode": "\uf3b3",
-            "faIcon": "fa-regular fa-industry-windows"
-        },
-        "primaryCategory": "Recovery and Support",
-        "secondaryCategory": "Industrial and Commercial"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov694",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.597619,
-        "lng": -1.1858197,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL004",
@@ -6992,29 +5083,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#F020",
-        "type": "http://ies.data.gov.uk/ontology/ies4#LiquidFuelStorageComplex",
-        "lat": 50.74521,
-        "lng": -1.2873115,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#LiquidFuelStorageComplex",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "LFS",
-            "alt": "LiquidFuelStorageComplex",
-            "shape": "cirle",
-            "faUnicode": "\uf1c0",
-            "faIcon": "fa-regular fa-database"
-        },
-        "primaryCategory": "Essential Services",
-        "secondaryCategory": "Utility Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#Gov174",
         "type": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
         "lat": 50.63525,
@@ -7036,29 +5104,6 @@
         },
         "primaryCategory": "Public Safety and Shelter",
         "secondaryCategory": "Learning and Non Residential Institutions"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov759",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.615701,
-        "lng": -1.2222153,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#Gov226",
@@ -7199,52 +5244,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov190",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.649229,
-        "lng": -1.1691853,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#T025",
-        "type": "http://ies.data.gov.uk/ontology/ies4#FerryPort",
-        "lat": 50.763106,
-        "lng": -1.2960338,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#FerryPort",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "FP",
-            "alt": "FerryPort",
-            "shape": "cirle",
-            "faUnicode": "\ue4ea",
-            "faIcon": "fa-regular fa-ferry"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#E003",
         "type": "http://ies.data.gov.uk/ontology/ies4#HighVoltageElectricitySubstationComplex",
         "lat": 50.745509,
@@ -7266,29 +5265,6 @@
         },
         "primaryCategory": "Essential Services",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W069",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-        "lat": 50.701373,
-        "lng": -1.0992751,
-        "geometry": [],
-        "dependent": {
-            "count": 3,
-            "criticalitySum": 9
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WCN",
-            "alt": "WastewaterCollectionNetwork",
-            "shape": "cirle",
-            "faUnicode": "\ue194",
-            "faIcon": "fa-light fa-grate-droplet"
-        },
-        "primaryCategory": "Wastewater Management",
-        "secondaryCategory": "Wastewater Infrastructure"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#Gov043",
@@ -7452,52 +5428,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W025",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-        "lat": 50.678139,
-        "lng": -1.0997623,
-        "geometry": [],
-        "dependent": {
-            "count": 1,
-            "criticalitySum": 2
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WCN",
-            "alt": "WastewaterCollectionNetwork",
-            "shape": "cirle",
-            "faUnicode": "\ue194",
-            "faIcon": "fa-light fa-grate-droplet"
-        },
-        "primaryCategory": "Wastewater Management",
-        "secondaryCategory": "Wastewater Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov334",
-        "type": "http://ies.data.gov.uk/ontology/ies4#IndustrialPark",
-        "lat": 50.709007,
-        "lng": -1.2951116,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#IndustrialPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "IP",
-            "alt": "IndustrialPark",
-            "shape": "cirle",
-            "faUnicode": "\uf3b3",
-            "faIcon": "fa-regular fa-industry-windows"
-        },
-        "primaryCategory": "Recovery and Support",
-        "secondaryCategory": "Industrial and Commercial"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL226",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.7303836074,
@@ -7590,52 +5520,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#F001",
-        "type": "http://ies.data.gov.uk/ontology/ies4#LiquidFuelStorageComplex",
-        "lat": 50.755962,
-        "lng": -1.2927906,
-        "geometry": [],
-        "dependent": {
-            "count": 1,
-            "criticalitySum": 3
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#LiquidFuelStorageComplex",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "LFS",
-            "alt": "LiquidFuelStorageComplex",
-            "shape": "cirle",
-            "faUnicode": "\uf1c0",
-            "faIcon": "fa-regular fa-database"
-        },
-        "primaryCategory": "Essential Services",
-        "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov336",
-        "type": "http://ies.data.gov.uk/ontology/ies4#IndustrialPark",
-        "lat": 50.709007,
-        "lng": -1.2951116,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#IndustrialPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "IP",
-            "alt": "IndustrialPark",
-            "shape": "cirle",
-            "faUnicode": "\uf3b3",
-            "faIcon": "fa-regular fa-industry-windows"
-        },
-        "primaryCategory": "Recovery and Support",
-        "secondaryCategory": "Industrial and Commercial"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL121",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.6138971565,
@@ -7659,29 +5543,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W053",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-        "lat": 50.721968,
-        "lng": -1.1147471,
-        "geometry": [],
-        "dependent": {
-            "count": 1,
-            "criticalitySum": 3
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WCN",
-            "alt": "WastewaterCollectionNetwork",
-            "shape": "cirle",
-            "faUnicode": "\ue194",
-            "faIcon": "fa-light fa-grate-droplet"
-        },
-        "primaryCategory": "Wastewater Management",
-        "secondaryCategory": "Wastewater Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL095",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.6995459836,
@@ -7703,52 +5564,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov335",
-        "type": "http://ies.data.gov.uk/ontology/ies4#IndustrialPark",
-        "lat": 50.709007,
-        "lng": -1.2951116,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#IndustrialPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "IP",
-            "alt": "IndustrialPark",
-            "shape": "cirle",
-            "faUnicode": "\uf3b3",
-            "faIcon": "fa-regular fa-industry-windows"
-        },
-        "primaryCategory": "Recovery and Support",
-        "secondaryCategory": "Industrial and Commercial"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov402",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.73286,
-        "lng": -1.1574341,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL096",
@@ -7797,29 +5612,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W014",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-        "lat": 50.689875,
-        "lng": -1.5388943,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WCN",
-            "alt": "WastewaterCollectionNetwork",
-            "shape": "cirle",
-            "faUnicode": "\ue194",
-            "faIcon": "fa-light fa-grate-droplet"
-        },
-        "primaryCategory": "Wastewater Management",
-        "secondaryCategory": "Wastewater Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL262",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.6556842732,
@@ -7841,29 +5633,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov634",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.699815,
-        "lng": -1.1060168,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#R004",
@@ -7958,29 +5727,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W045",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-        "lat": 50.725979,
-        "lng": -1.2260586,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WCN",
-            "alt": "WastewaterCollectionNetwork",
-            "shape": "cirle",
-            "faUnicode": "\ue194",
-            "faIcon": "fa-light fa-grate-droplet"
-        },
-        "primaryCategory": "Wastewater Management",
-        "secondaryCategory": "Wastewater Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL261",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.6540827769,
@@ -8073,29 +5819,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W012",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterDisposalComplex",
-        "lat": 50.683057,
-        "lng": -1.516342,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterDisposalComplex",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WDC",
-            "alt": "WastewaterDisposalComplex",
-            "shape": "cirle",
-            "faUnicode": "\ue58c",
-            "faIcon": "fa-solid fa-truck-droplet"
-        },
-        "primaryCategory": "Wastewater Management",
-        "secondaryCategory": "Wastewater Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#E002",
         "type": "http://ies.data.gov.uk/ontology/ies4#LowVoltageElectricitySubstationComplex",
         "lat": 50.74572,
@@ -8117,75 +5840,6 @@
         },
         "primaryCategory": "Essential Services",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov332",
-        "type": "http://ies.data.gov.uk/ontology/ies4#IndustrialPark",
-        "lat": 50.709007,
-        "lng": -1.2951116,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#IndustrialPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "IP",
-            "alt": "IndustrialPark",
-            "shape": "cirle",
-            "faUnicode": "\uf3b3",
-            "faIcon": "fa-regular fa-industry-windows"
-        },
-        "primaryCategory": "Recovery and Support",
-        "secondaryCategory": "Industrial and Commercial"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov778",
-        "type": "http://ies.data.gov.uk/ontology/ies4#OpenGrassland",
-        "lat": 50.703645,
-        "lng": -1.4980328,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#OpenGrassland",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "OG",
-            "alt": "OpenGrassland",
-            "shape": "cirle",
-            "faUnicode": "\uf02b",
-            "faIcon": "fa-solid fa-tag"
-        },
-        "primaryCategory": "Recovery and Support",
-        "secondaryCategory": "Agricultural and Natural Assets"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W037",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-        "lat": 50.70818,
-        "lng": -1.2148659,
-        "geometry": [],
-        "dependent": {
-            "count": 2,
-            "criticalitySum": 4
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WCN",
-            "alt": "WastewaterCollectionNetwork",
-            "shape": "cirle",
-            "faUnicode": "\ue194",
-            "faIcon": "fa-light fa-grate-droplet"
-        },
-        "primaryCategory": "Wastewater Management",
-        "secondaryCategory": "Wastewater Infrastructure"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL051",
@@ -8303,29 +5957,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov394",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.729847,
-        "lng": -1.1649126,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL016",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.7152730521,
@@ -8395,29 +6026,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov761",
-        "type": "http://ies.data.gov.uk/ontology/ies4#IndustrialPark",
-        "lat": 50.616494,
-        "lng": -1.2224425,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#IndustrialPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "IP",
-            "alt": "IndustrialPark",
-            "shape": "cirle",
-            "faUnicode": "\uf3b3",
-            "faIcon": "fa-regular fa-industry-windows"
-        },
-        "primaryCategory": "Recovery and Support",
-        "secondaryCategory": "Industrial and Commercial"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#Gov135",
         "type": "http://ies.data.gov.uk/ontology/ies4#CommunityCentre",
         "lat": 50.746076,
@@ -8462,29 +6070,6 @@
         },
         "primaryCategory": "Essential Services",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W043",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterDisposalComplex",
-        "lat": 50.725189,
-        "lng": -1.2262133,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterDisposalComplex",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WDC",
-            "alt": "WastewaterDisposalComplex",
-            "shape": "cirle",
-            "faUnicode": "\ue58c",
-            "faIcon": "fa-solid fa-truck-droplet"
-        },
-        "primaryCategory": "Wastewater Management",
-        "secondaryCategory": "Wastewater Infrastructure"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#Gov236",
@@ -8533,29 +6118,6 @@
         "secondaryCategory": "Public Assembly Points"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W026",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-        "lat": 50.633145,
-        "lng": -1.1685638,
-        "geometry": [],
-        "dependent": {
-            "count": 1,
-            "criticalitySum": 1
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WCN",
-            "alt": "WastewaterCollectionNetwork",
-            "shape": "cirle",
-            "faUnicode": "\ue194",
-            "faIcon": "fa-light fa-grate-droplet"
-        },
-        "primaryCategory": "Wastewater Management",
-        "secondaryCategory": "Wastewater Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#Gov544",
         "type": "http://ies.data.gov.uk/ontology/ies4#ResidentialBuilding",
         "lat": 50.723896,
@@ -8602,29 +6164,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W064",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-        "lat": 50.704416,
-        "lng": -1.4911564,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WCN",
-            "alt": "WastewaterCollectionNetwork",
-            "shape": "cirle",
-            "faUnicode": "\ue194",
-            "faIcon": "fa-light fa-grate-droplet"
-        },
-        "primaryCategory": "Wastewater Management",
-        "secondaryCategory": "Wastewater Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL085",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.7016061478,
@@ -8648,29 +6187,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W074",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-        "lat": 50.654596,
-        "lng": -1.2797002,
-        "geometry": [],
-        "dependent": {
-            "count": 1,
-            "criticalitySum": 3
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WCN",
-            "alt": "WastewaterCollectionNetwork",
-            "shape": "cirle",
-            "faUnicode": "\ue194",
-            "faIcon": "fa-light fa-grate-droplet"
-        },
-        "primaryCategory": "Wastewater Management",
-        "secondaryCategory": "Wastewater Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL161",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.7090498421,
@@ -8692,29 +6208,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov539",
-        "type": "http://ies.data.gov.uk/ontology/ies4#OpenGrassland",
-        "lat": 50.655849,
-        "lng": -1.1667485,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#OpenGrassland",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "OG",
-            "alt": "OpenGrassland",
-            "shape": "cirle",
-            "faUnicode": "\uf02b",
-            "faIcon": "fa-solid fa-tag"
-        },
-        "primaryCategory": "Recovery and Support",
-        "secondaryCategory": "Agricultural and Natural Assets"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL259",
@@ -8832,29 +6325,6 @@
         "secondaryCategory": "Shelters and Relief Centers"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov287",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.697195,
-        "lng": -1.2974124,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL231",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.7329059433,
@@ -8876,52 +6346,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W094",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WaterReservoir",
-        "lat": 50.623437,
-        "lng": -1.361774,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WaterReservoir",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WR",
-            "alt": "WaterReservoir",
-            "shape": "cirle",
-            "faUnicode": "\ue452",
-            "faIcon": "fa-solid fa-tank-water"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W033",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-        "lat": 50.670096,
-        "lng": -1.2084256,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WCN",
-            "alt": "WastewaterCollectionNetwork",
-            "shape": "cirle",
-            "faUnicode": "\ue194",
-            "faIcon": "fa-light fa-grate-droplet"
-        },
-        "primaryCategory": "Wastewater Management",
-        "secondaryCategory": "Wastewater Infrastructure"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL014",
@@ -9039,29 +6463,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W024",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-        "lat": 50.589955,
-        "lng": -1.2210007,
-        "geometry": [],
-        "dependent": {
-            "count": 1,
-            "criticalitySum": 2
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WCN",
-            "alt": "WastewaterCollectionNetwork",
-            "shape": "cirle",
-            "faUnicode": "\ue194",
-            "faIcon": "fa-light fa-grate-droplet"
-        },
-        "primaryCategory": "Wastewater Management",
-        "secondaryCategory": "Wastewater Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL232",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.6999976125,
@@ -9106,29 +6507,6 @@
         },
         "primaryCategory": "Miscellaneous",
         "secondaryCategory": "Residential"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov522",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.654264,
-        "lng": -1.1551625,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#Gov060",
@@ -9198,52 +6576,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov316",
-        "type": "http://ies.data.gov.uk/ontology/ies4#IndustrialPark",
-        "lat": 50.7169,
-        "lng": -1.2756014,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#IndustrialPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "IP",
-            "alt": "IndustrialPark",
-            "shape": "cirle",
-            "faUnicode": "\uf3b3",
-            "faIcon": "fa-regular fa-industry-windows"
-        },
-        "primaryCategory": "Recovery and Support",
-        "secondaryCategory": "Industrial and Commercial"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov338",
-        "type": "http://ies.data.gov.uk/ontology/ies4#IndustrialPark",
-        "lat": 50.709007,
-        "lng": -1.2951116,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#IndustrialPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "IP",
-            "alt": "IndustrialPark",
-            "shape": "cirle",
-            "faUnicode": "\uf3b3",
-            "faIcon": "fa-regular fa-industry-windows"
-        },
-        "primaryCategory": "Recovery and Support",
-        "secondaryCategory": "Industrial and Commercial"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL068",
@@ -9476,29 +6808,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov409",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.729381,
-        "lng": -1.1651051,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL184",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.6980914966,
@@ -9520,29 +6829,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov088",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.75882,
-        "lng": -1.2949925,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#Gov646",
@@ -9752,29 +7038,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov169",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.688374,
-        "lng": -1.5367431,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL205",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.6861958561,
@@ -9844,29 +7107,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov290",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.698562,
-        "lng": -1.2943194,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#Gov747",
         "type": "http://ies.data.gov.uk/ontology/ies4#CommunityCentre",
         "lat": 50.724368,
@@ -9911,144 +7151,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov331",
-        "type": "http://ies.data.gov.uk/ontology/ies4#IndustrialPark",
-        "lat": 50.70935,
-        "lng": -1.2967918,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#IndustrialPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "IP",
-            "alt": "IndustrialPark",
-            "shape": "cirle",
-            "faUnicode": "\uf3b3",
-            "faIcon": "fa-regular fa-industry-windows"
-        },
-        "primaryCategory": "Recovery and Support",
-        "secondaryCategory": "Industrial and Commercial"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov771",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.703645,
-        "lng": -1.4980328,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov115",
-        "type": "http://ies.data.gov.uk/ontology/ies4#IndustrialPark",
-        "lat": 50.746128,
-        "lng": -1.308459,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#IndustrialPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "IP",
-            "alt": "IndustrialPark",
-            "shape": "cirle",
-            "faUnicode": "\uf3b3",
-            "faIcon": "fa-regular fa-industry-windows"
-        },
-        "primaryCategory": "Recovery and Support",
-        "secondaryCategory": "Industrial and Commercial"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W031",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-        "lat": 50.651794,
-        "lng": -1.1706254,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WCN",
-            "alt": "WastewaterCollectionNetwork",
-            "shape": "cirle",
-            "faUnicode": "\ue194",
-            "faIcon": "fa-light fa-grate-droplet"
-        },
-        "primaryCategory": "Wastewater Management",
-        "secondaryCategory": "Wastewater Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov703",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.594067,
-        "lng": -1.198893,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W035",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-        "lat": 50.613823,
-        "lng": -1.1766781,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WCN",
-            "alt": "WastewaterCollectionNetwork",
-            "shape": "cirle",
-            "faUnicode": "\ue194",
-            "faIcon": "fa-light fa-grate-droplet"
-        },
-        "primaryCategory": "Wastewater Management",
-        "secondaryCategory": "Wastewater Infrastructure"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL211",
@@ -10143,29 +7245,6 @@
         "secondaryCategory": "Residential"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov716",
-        "type": "http://ies.data.gov.uk/ontology/ies4#IndustrialPark",
-        "lat": 50.598352,
-        "lng": -1.2086967,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#IndustrialPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "IP",
-            "alt": "IndustrialPark",
-            "shape": "cirle",
-            "faUnicode": "\uf3b3",
-            "faIcon": "fa-regular fa-industry-windows"
-        },
-        "primaryCategory": "Recovery and Support",
-        "secondaryCategory": "Industrial and Commercial"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL278",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.7483203361,
@@ -10258,29 +7337,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov642",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.680581,
-        "lng": -1.5400186,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#Gov247",
         "type": "http://ies.data.gov.uk/ontology/ies4#CommunityCentre",
         "lat": 50.70246,
@@ -10302,75 +7358,6 @@
         },
         "primaryCategory": "Public Safety and Shelter",
         "secondaryCategory": "Shelters and Relief Centers"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov014",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.686688,
-        "lng": -1.0809553,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#T027",
-        "type": "http://ies.data.gov.uk/ontology/ies4#FerryPort",
-        "lat": 50.733355,
-        "lng": -1.214176,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#FerryPort",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "FP",
-            "alt": "FerryPort",
-            "shape": "cirle",
-            "faUnicode": "\ue4ea",
-            "faIcon": "fa-regular fa-ferry"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W058",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-        "lat": 50.723999,
-        "lng": -1.1240167,
-        "geometry": [],
-        "dependent": {
-            "count": 7,
-            "criticalitySum": 15
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WCN",
-            "alt": "WastewaterCollectionNetwork",
-            "shape": "cirle",
-            "faUnicode": "\ue194",
-            "faIcon": "fa-light fa-grate-droplet"
-        },
-        "primaryCategory": "Wastewater Management",
-        "secondaryCategory": "Wastewater Infrastructure"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#E016",
@@ -10603,29 +7590,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov349",
-        "type": "http://ies.data.gov.uk/ontology/ies4#IndustrialPark",
-        "lat": 50.711266,
-        "lng": -1.2938597,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#IndustrialPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "IP",
-            "alt": "IndustrialPark",
-            "shape": "cirle",
-            "faUnicode": "\uf3b3",
-            "faIcon": "fa-regular fa-industry-windows"
-        },
-        "primaryCategory": "Recovery and Support",
-        "secondaryCategory": "Industrial and Commercial"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL111",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.598057507,
@@ -10695,29 +7659,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W017",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterDisposalComplex",
-        "lat": 50.768182,
-        "lng": -1.3074676,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterDisposalComplex",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WDC",
-            "alt": "WastewaterDisposalComplex",
-            "shape": "cirle",
-            "faUnicode": "\ue58c",
-            "faIcon": "fa-solid fa-truck-droplet"
-        },
-        "primaryCategory": "Wastewater Management",
-        "secondaryCategory": "Wastewater Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL023",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.683856789,
@@ -10762,29 +7703,6 @@
         },
         "primaryCategory": "Public Safety and Shelter",
         "secondaryCategory": "Learning and Non Residential Institutions"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov039",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.642894,
-        "lng": -1.3964712,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL125",
@@ -10856,29 +7774,6 @@
         "secondaryCategory": "Agricultural and Natural Assets"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov593",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.633359,
-        "lng": -1.1759128,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL037",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.7134129309,
@@ -10900,52 +7795,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W020",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterDisposalComplex",
-        "lat": 50.704852,
-        "lng": -1.2906847,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterDisposalComplex",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WDC",
-            "alt": "WastewaterDisposalComplex",
-            "shape": "cirle",
-            "faUnicode": "\ue58c",
-            "faIcon": "fa-solid fa-truck-droplet"
-        },
-        "primaryCategory": "Wastewater Management",
-        "secondaryCategory": "Wastewater Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W049",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-        "lat": 50.704498,
-        "lng": -1.3065223,
-        "geometry": [],
-        "dependent": {
-            "count": 2,
-            "criticalitySum": 6
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WCN",
-            "alt": "WastewaterCollectionNetwork",
-            "shape": "cirle",
-            "faUnicode": "\ue194",
-            "faIcon": "fa-light fa-grate-droplet"
-        },
-        "primaryCategory": "Wastewater Management",
-        "secondaryCategory": "Wastewater Infrastructure"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL124",
@@ -11040,52 +7889,6 @@
         "secondaryCategory": "Public Assembly Points"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#T028",
-        "type": "http://ies.data.gov.uk/ontology/ies4#FerryPort",
-        "lat": 50.733093,
-        "lng": -1.1585777,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#FerryPort",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "FP",
-            "alt": "FerryPort",
-            "shape": "cirle",
-            "faUnicode": "\ue4ea",
-            "faIcon": "fa-regular fa-ferry"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov289",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.699277,
-        "lng": -1.2877528,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#R014",
         "type": "http://ies.data.gov.uk/ontology/ies4#ResidentialBuilding",
         "lat": 50.670656,
@@ -11107,52 +7910,6 @@
         },
         "primaryCategory": "Miscellaneous",
         "secondaryCategory": "Residential"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov501",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.656464,
-        "lng": -1.1994027,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov315",
-        "type": "http://ies.data.gov.uk/ontology/ies4#Quay",
-        "lat": 50.704883,
-        "lng": -1.2927093,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#Quay",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "Q",
-            "alt": "Quay",
-            "shape": "cirle",
-            "faUnicode": "\uf02b",
-            "faIcon": "fa-solid fa-tag"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Maritime Infrastructure"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#Gov119",
@@ -11178,29 +7935,6 @@
         "secondaryCategory": "Public Assembly Points"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov699",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.591082,
-        "lng": -1.2228751,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#Gov022",
         "type": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
         "lat": 50.724522,
@@ -11222,29 +7956,6 @@
         },
         "primaryCategory": "Public Safety and Shelter",
         "secondaryCategory": "Learning and Non Residential Institutions"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov204",
-        "type": "http://ies.data.gov.uk/ontology/ies4#IndustrialPark",
-        "lat": 50.662217,
-        "lng": -1.254654,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#IndustrialPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "IP",
-            "alt": "IndustrialPark",
-            "shape": "cirle",
-            "faUnicode": "\uf3b3",
-            "faIcon": "fa-regular fa-industry-windows"
-        },
-        "primaryCategory": "Recovery and Support",
-        "secondaryCategory": "Industrial and Commercial"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL240",
@@ -11291,29 +8002,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W057",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterDisposalComplex",
-        "lat": 50.728952,
-        "lng": -1.1529985,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterDisposalComplex",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WDC",
-            "alt": "WastewaterDisposalComplex",
-            "shape": "cirle",
-            "faUnicode": "\ue58c",
-            "faIcon": "fa-solid fa-truck-droplet"
-        },
-        "primaryCategory": "Wastewater Management",
-        "secondaryCategory": "Wastewater Infrastructure"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL122",
@@ -11477,29 +8165,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov053",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.587715,
-        "lng": -1.3093545,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#R007",
         "type": "http://ies.data.gov.uk/ontology/ies4#ResidentialBuilding",
         "lat": 50.683184,
@@ -11615,75 +8280,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W046",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-        "lat": 50.6447,
-        "lng": -1.200437,
-        "geometry": [],
-        "dependent": {
-            "count": 1,
-            "criticalitySum": 2
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WCN",
-            "alt": "WastewaterCollectionNetwork",
-            "shape": "cirle",
-            "faUnicode": "\ue194",
-            "faIcon": "fa-light fa-grate-droplet"
-        },
-        "primaryCategory": "Wastewater Management",
-        "secondaryCategory": "Wastewater Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W032",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-        "lat": 50.689914,
-        "lng": -1.0692977,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WCN",
-            "alt": "WastewaterCollectionNetwork",
-            "shape": "cirle",
-            "faUnicode": "\ue194",
-            "faIcon": "fa-light fa-grate-droplet"
-        },
-        "primaryCategory": "Wastewater Management",
-        "secondaryCategory": "Wastewater Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov066",
-        "type": "http://ies.data.gov.uk/ontology/ies4#IndustrialPark",
-        "lat": 50.749682,
-        "lng": -1.30268,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#IndustrialPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "IP",
-            "alt": "IndustrialPark",
-            "shape": "cirle",
-            "faUnicode": "\uf3b3",
-            "faIcon": "fa-regular fa-industry-windows"
-        },
-        "primaryCategory": "Recovery and Support",
-        "secondaryCategory": "Industrial and Commercial"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#R008",
         "type": "http://ies.data.gov.uk/ontology/ies4#ResidentialBuilding",
         "lat": 50.687478,
@@ -11705,29 +8301,6 @@
         },
         "primaryCategory": "Miscellaneous",
         "secondaryCategory": "Residential"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W052",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterDisposalComplex",
-        "lat": 50.726912,
-        "lng": -1.2243856,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterDisposalComplex",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WDC",
-            "alt": "WastewaterDisposalComplex",
-            "shape": "cirle",
-            "faUnicode": "\ue58c",
-            "faIcon": "fa-solid fa-truck-droplet"
-        },
-        "primaryCategory": "Wastewater Management",
-        "secondaryCategory": "Wastewater Infrastructure"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#Gov378",
@@ -11868,75 +8441,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W027",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-        "lat": 50.685549,
-        "lng": -1.5388942,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WCN",
-            "alt": "WastewaterCollectionNetwork",
-            "shape": "cirle",
-            "faUnicode": "\ue194",
-            "faIcon": "fa-light fa-grate-droplet"
-        },
-        "primaryCategory": "Wastewater Management",
-        "secondaryCategory": "Wastewater Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W023",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterDisposalComplex",
-        "lat": 50.735151,
-        "lng": -1.2111277,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterDisposalComplex",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WDC",
-            "alt": "WastewaterDisposalComplex",
-            "shape": "cirle",
-            "faUnicode": "\ue58c",
-            "faIcon": "fa-solid fa-truck-droplet"
-        },
-        "primaryCategory": "Wastewater Management",
-        "secondaryCategory": "Wastewater Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov648",
-        "type": "http://ies.data.gov.uk/ontology/ies4#IndustrialPark",
-        "lat": 50.598352,
-        "lng": -1.2086967,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#IndustrialPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "IP",
-            "alt": "IndustrialPark",
-            "shape": "cirle",
-            "faUnicode": "\uf3b3",
-            "faIcon": "fa-regular fa-industry-windows"
-        },
-        "primaryCategory": "Recovery and Support",
-        "secondaryCategory": "Industrial and Commercial"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL142",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.6390538046,
@@ -12004,29 +8508,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov167",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.670916,
-        "lng": -1.5118393,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#Gov419",
@@ -12259,52 +8740,6 @@
         "secondaryCategory": "Health and social care"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov647",
-        "type": "http://ies.data.gov.uk/ontology/ies4#IndustrialPark",
-        "lat": 50.598352,
-        "lng": -1.2086967,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#IndustrialPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "IP",
-            "alt": "IndustrialPark",
-            "shape": "cirle",
-            "faUnicode": "\uf3b3",
-            "faIcon": "fa-regular fa-industry-windows"
-        },
-        "primaryCategory": "Recovery and Support",
-        "secondaryCategory": "Industrial and Commercial"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W018",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-        "lat": 50.766788,
-        "lng": -1.30149,
-        "geometry": [],
-        "dependent": {
-            "count": 1,
-            "criticalitySum": 3
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WCN",
-            "alt": "WastewaterCollectionNetwork",
-            "shape": "cirle",
-            "faUnicode": "\ue194",
-            "faIcon": "fa-light fa-grate-droplet"
-        },
-        "primaryCategory": "Wastewater Management",
-        "secondaryCategory": "Wastewater Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL110",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.5978155852,
@@ -12489,75 +8924,6 @@
         "secondaryCategory": "Shelters and Relief Centers"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov410",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.728703,
-        "lng": -1.1646638,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov701",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.595606,
-        "lng": -1.2029077,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov333",
-        "type": "http://ies.data.gov.uk/ontology/ies4#IndustrialPark",
-        "lat": 50.710855,
-        "lng": -1.295792,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#IndustrialPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "IP",
-            "alt": "IndustrialPark",
-            "shape": "cirle",
-            "faUnicode": "\uf3b3",
-            "faIcon": "fa-regular fa-industry-windows"
-        },
-        "primaryCategory": "Recovery and Support",
-        "secondaryCategory": "Industrial and Commercial"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL270",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.6664989653,
@@ -12604,52 +8970,6 @@
         "secondaryCategory": "Agricultural and Natural Assets"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W082",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-        "lat": 50.688381,
-        "lng": -1.4234221,
-        "geometry": [],
-        "dependent": {
-            "count": 1,
-            "criticalitySum": 3
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WCN",
-            "alt": "WastewaterCollectionNetwork",
-            "shape": "cirle",
-            "faUnicode": "\ue194",
-            "faIcon": "fa-light fa-grate-droplet"
-        },
-        "primaryCategory": "Wastewater Management",
-        "secondaryCategory": "Wastewater Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov337",
-        "type": "http://ies.data.gov.uk/ontology/ies4#IndustrialPark",
-        "lat": 50.693617,
-        "lng": -1.2813399,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#IndustrialPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "IP",
-            "alt": "IndustrialPark",
-            "shape": "cirle",
-            "faUnicode": "\uf3b3",
-            "faIcon": "fa-regular fa-industry-windows"
-        },
-        "primaryCategory": "Recovery and Support",
-        "secondaryCategory": "Industrial and Commercial"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL028",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.6628982323,
@@ -12694,29 +9014,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov458",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.728703,
-        "lng": -1.1646638,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#M020",
@@ -12788,29 +9085,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov019",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.688799,
-        "lng": -1.072689,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL065",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.7430504455,
@@ -12878,29 +9152,6 @@
         },
         "primaryCategory": "Public Safety and Shelter",
         "secondaryCategory": "Learning and Non Residential Institutions"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W060",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-        "lat": 50.588514,
-        "lng": -1.2221263,
-        "geometry": [],
-        "dependent": {
-            "count": 1,
-            "criticalitySum": 2
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WCN",
-            "alt": "WastewaterCollectionNetwork",
-            "shape": "cirle",
-            "faUnicode": "\ue194",
-            "faIcon": "fa-light fa-grate-droplet"
-        },
-        "primaryCategory": "Wastewater Management",
-        "secondaryCategory": "Wastewater Infrastructure"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL277",
@@ -13064,29 +9315,6 @@
         "secondaryCategory": "Learning and Non Residential Institutions"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov071",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.750595,
-        "lng": -1.3015425,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#Gov389",
         "type": "http://ies.data.gov.uk/ontology/ies4#PublicPark",
         "lat": 50.723035,
@@ -13108,29 +9336,6 @@
         },
         "primaryCategory": "Public Safety and Shelter",
         "secondaryCategory": "Public Assembly Points"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov469",
-        "type": "http://ies.data.gov.uk/ontology/ies4#IndustrialPark",
-        "lat": 50.66333,
-        "lng": -1.1503732,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#IndustrialPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "IP",
-            "alt": "IndustrialPark",
-            "shape": "cirle",
-            "faUnicode": "\uf3b3",
-            "faIcon": "fa-regular fa-industry-windows"
-        },
-        "primaryCategory": "Recovery and Support",
-        "secondaryCategory": "Industrial and Commercial"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#Gov737",
@@ -13156,75 +9361,6 @@
         "secondaryCategory": "Public Assembly Points"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov595",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.628569,
-        "lng": -1.1801391,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W013",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-        "lat": 50.671532,
-        "lng": -1.5107433,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WCN",
-            "alt": "WastewaterCollectionNetwork",
-            "shape": "cirle",
-            "faUnicode": "\ue194",
-            "faIcon": "fa-light fa-grate-droplet"
-        },
-        "primaryCategory": "Wastewater Management",
-        "secondaryCategory": "Wastewater Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W022",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-        "lat": 50.734813,
-        "lng": -1.210354,
-        "geometry": [],
-        "dependent": {
-            "count": 1,
-            "criticalitySum": 2
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WCN",
-            "alt": "WastewaterCollectionNetwork",
-            "shape": "cirle",
-            "faUnicode": "\ue194",
-            "faIcon": "fa-light fa-grate-droplet"
-        },
-        "primaryCategory": "Wastewater Management",
-        "secondaryCategory": "Wastewater Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL222",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.7233984072,
@@ -13246,29 +9382,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov695",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.594021,
-        "lng": -1.202666,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL258",
@@ -13317,75 +9430,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov500",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.657665,
-        "lng": -1.149287,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov076",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.765893,
-        "lng": -1.3097417,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov052",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.600743,
-        "lng": -1.3288612,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL019",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.7045603365,
@@ -13407,29 +9451,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W010",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterDisposalComplex",
-        "lat": 50.725448,
-        "lng": -1.2245939,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterDisposalComplex",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WDC",
-            "alt": "WastewaterDisposalComplex",
-            "shape": "cirle",
-            "faUnicode": "\ue58c",
-            "faIcon": "fa-solid fa-truck-droplet"
-        },
-        "primaryCategory": "Wastewater Management",
-        "secondaryCategory": "Wastewater Infrastructure"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL036",
@@ -13478,29 +9499,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W016",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-        "lat": 50.656144,
-        "lng": -1.1479422,
-        "geometry": [],
-        "dependent": {
-            "count": 2,
-            "criticalitySum": 2
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WCN",
-            "alt": "WastewaterCollectionNetwork",
-            "shape": "cirle",
-            "faUnicode": "\ue194",
-            "faIcon": "fa-light fa-grate-droplet"
-        },
-        "primaryCategory": "Wastewater Management",
-        "secondaryCategory": "Wastewater Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL113",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.5993244031,
@@ -13547,29 +9545,6 @@
         "secondaryCategory": "Public Assembly Points"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov700",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.595142,
-        "lng": -1.2035371,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL074",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.7030830442,
@@ -13591,29 +9566,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov400",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.732609,
-        "lng": -1.162483,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#Gov023",
@@ -13662,52 +9614,6 @@
         "secondaryCategory": "Shelters and Relief Centers"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W034",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-        "lat": 50.592248,
-        "lng": -1.2051117,
-        "geometry": [],
-        "dependent": {
-            "count": 2,
-            "criticalitySum": 5
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WCN",
-            "alt": "WastewaterCollectionNetwork",
-            "shape": "cirle",
-            "faUnicode": "\ue194",
-            "faIcon": "fa-light fa-grate-droplet"
-        },
-        "primaryCategory": "Wastewater Management",
-        "secondaryCategory": "Wastewater Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov674",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.594021,
-        "lng": -1.202666,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL252",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.6407738365,
@@ -13731,29 +9637,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov566",
-        "type": "http://ies.data.gov.uk/ontology/ies4#NursingHome",
-        "lat": 50.626927,
-        "lng": -1.1832073,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#NursingHome",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "NH",
-            "alt": "NursingHome",
-            "shape": "cirle",
-            "faUnicode": "\ue53c",
-            "faIcon": "fa-sharp fa-solid fa-person-cane"
-        },
-        "primaryCategory": "Essential Services",
-        "secondaryCategory": "Health and social care"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL021",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.6846475058,
@@ -13775,29 +9658,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov051",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.597559,
-        "lng": -1.3164587,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#Gov676",
@@ -13915,75 +9775,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov549",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.719254,
-        "lng": -1.1102652,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W062",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-        "lat": 50.695382,
-        "lng": -1.0920982,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WCN",
-            "alt": "WastewaterCollectionNetwork",
-            "shape": "cirle",
-            "faUnicode": "\ue194",
-            "faIcon": "fa-light fa-grate-droplet"
-        },
-        "primaryCategory": "Wastewater Management",
-        "secondaryCategory": "Wastewater Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov718",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.594927,
-        "lng": -1.19707,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL003",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.7399855142,
@@ -14099,29 +9890,6 @@
         "secondaryCategory": "Shelters and Relief Centers"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#W054",
-        "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterDisposalComplex",
-        "lat": 50.684038,
-        "lng": -1.5232254,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterDisposalComplex",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "WDC",
-            "alt": "WastewaterDisposalComplex",
-            "shape": "cirle",
-            "faUnicode": "\ue58c",
-            "faIcon": "fa-solid fa-truck-droplet"
-        },
-        "primaryCategory": "Wastewater Management",
-        "secondaryCategory": "Wastewater Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL239",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.6970502291,
@@ -14214,29 +9982,6 @@
         "secondaryCategory": "Learning and Non Residential Institutions"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov343",
-        "type": "http://ies.data.gov.uk/ontology/ies4#IndustrialPark",
-        "lat": 50.706516,
-        "lng": -1.2935769,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#IndustrialPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "IP",
-            "alt": "IndustrialPark",
-            "shape": "cirle",
-            "faUnicode": "\uf3b3",
-            "faIcon": "fa-regular fa-industry-windows"
-        },
-        "primaryCategory": "Recovery and Support",
-        "secondaryCategory": "Industrial and Commercial"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL250",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.6390613081,
@@ -14258,29 +10003,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov697",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.595321,
-        "lng": -1.2086769,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL062",
@@ -14375,29 +10097,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov150",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.761776,
-        "lng": -1.2875704,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL093",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.6996885597,
@@ -14419,52 +10118,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov742",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.7242,
-        "lng": -1.2303664,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov329",
-        "type": "http://ies.data.gov.uk/ontology/ies4#IndustrialPark",
-        "lat": 50.70935,
-        "lng": -1.2967918,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#IndustrialPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "IP",
-            "alt": "IndustrialPark",
-            "shape": "cirle",
-            "faUnicode": "\uf3b3",
-            "faIcon": "fa-regular fa-industry-windows"
-        },
-        "primaryCategory": "Recovery and Support",
-        "secondaryCategory": "Industrial and Commercial"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL177",
@@ -14513,29 +10166,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov399",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.724423,
-        "lng": -1.1510117,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#E007",
         "type": "http://ies.data.gov.uk/ontology/ies4#LowVoltageElectricitySubstationComplex",
         "lat": 50.703494,
@@ -14580,29 +10210,6 @@
         },
         "primaryCategory": "Public Safety and Shelter",
         "secondaryCategory": "Learning and Non Residential Institutions"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov413",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.607446,
-        "lng": -1.2696373,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#Gov484",
@@ -14720,29 +10327,6 @@
         "secondaryCategory": "Public Assembly Points"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov330",
-        "type": "http://ies.data.gov.uk/ontology/ies4#IndustrialPark",
-        "lat": 50.710304,
-        "lng": -1.2970041,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#IndustrialPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "IP",
-            "alt": "IndustrialPark",
-            "shape": "cirle",
-            "faUnicode": "\uf3b3",
-            "faIcon": "fa-regular fa-industry-windows"
-        },
-        "primaryCategory": "Recovery and Support",
-        "secondaryCategory": "Industrial and Commercial"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL078",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.702534466,
@@ -14833,29 +10417,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov045",
-        "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-        "lat": 50.690825,
-        "lng": -1.3133776,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "CP",
-            "alt": "CarPark",
-            "shape": "cirle",
-            "faUnicode": "\uf540",
-            "faIcon": "fa-regular fa-square-parking"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL079",
@@ -15017,29 +10578,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov100",
-        "type": "http://ies.data.gov.uk/ontology/ies4#IndustrialPark",
-        "lat": 50.751107,
-        "lng": -1.2943663,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#IndustrialPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "IP",
-            "alt": "IndustrialPark",
-            "shape": "cirle",
-            "faUnicode": "\uf3b3",
-            "faIcon": "fa-regular fa-industry-windows"
-        },
-        "primaryCategory": "Recovery and Support",
-        "secondaryCategory": "Industrial and Commercial"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#Gov232",

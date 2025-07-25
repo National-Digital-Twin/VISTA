@@ -25,15 +25,17 @@ interface DependencyData {
   osmID: string;
 }
 
-interface AssetClassFilter {
+export interface AssetClassFilter {
   filterName: string;
-  filterValue: string;
+  filterValue: string | string[];
 }
 
 export interface AssetSpecification {
   type: string;
   collection: string;
+  source: string;
   filters?: AssetClassFilter[];
+  cqlFilter?: string;
   showAsPoint?: boolean;
   description?: string[];
   buildinguse?: string;
@@ -149,13 +151,16 @@ function mapPointAsset(
 ): Asset {
   const coordinates = getCoordinatesforPointAsset(feature);
   const type = assetSpecification.type;
-  const description = assetSpecification.type.includes("#")
-    ? assetSpecification.type.split("#")[1]
-    : "";
+
+  let description = feature.properties?.description;
+  if (!description && assetSpecification.type.includes("#")) {
+    description = assetSpecification.type.split("#")[1];
+  }
+
   return new Asset({
-    uri: `http://ndtp.co.uk/Building_${feature.id}`,
+    uri: `http://ndtp.co.uk/Building#${feature.id}`,
     type,
-    name: feature.properties?.name1_text,
+    name: feature.properties?.name,
     lng: coordinates[0],
     lat: coordinates[1],
     geometry: feature.geometry,

@@ -25761,6 +25761,12 @@ ies:LiquidFuelStorageComplex
         rdfs:subClassOf  ies:Facility;
         ndtp:style        "{\"defaultStyles\": {\"dark\": {\"backgroundColor\": \"#242400\", \"color\": \"#FFFD04\"}, \"light\": {\"backgroundColor\": \"#FFFD04\", \"color\": \"#242400\"}, \"shape\": \"cirle\", \"borderRadius\": \"9999px\", \"borderWidth\": \"2px\", \"selectedBorderWidth\": \"3px\"}, \"defaultIcons\": {\"riIcon\": \"REQUIRED_REMIX\", \"faIcon\": \"fa-regular fa-database\", \"faUnicode\": \"\\uf1c0\", \"faClass\": \"fa-regular\"}}" .
 
+
+ies:BusStop
+        rdf:type         rdfs:Class;
+        rdfs:subClassOf  ies:Facility;
+        ndtp:style        "{\"defaultStyles\": {\"dark\": {\"backgroundColor\": \"#242400\", \"color\": \"#FFFD04\"}, \"light\": {\"backgroundColor\": \"#FFFD04\", \"color\": \"#242400\"}, \"shape\": \"cirle\", \"borderRadius\": \"9999px\", \"borderWidth\": \"2px\", \"selectedBorderWidth\": \"3px\"}, \"defaultIcons\": {\"riIcon\": \"REQUIRED_REMIX\", \"faIcon\": \"fa-regular fa-bus\", \"faUnicode\": \"\\uf1c0\", \"faClass\": \"fa-regular\"}}" .
+
 <http://ies.data.gov.uk/diagrams#EAID_A72D9272_DF55_4e58_9174_3F9F168438A0_EAID_9CCC6160_9988_4beb_A7A1_250893DBD9F1>
         rdf:type        ndtp:DiagramRelationship;
         ndtp:inDiagram   <http://ies.data.gov.uk/diagrams#EAID_A72D9272_DF55_4e58_9174_3F9F168438A0>;

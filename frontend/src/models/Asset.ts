@@ -155,14 +155,6 @@ export default class Asset {
     return this.assetClassification?.priority;
   }
 
-  get isPointAsset() {
-    return !this.hasGeometry();
-  }
-
-  get isLinearAsset() {
-    return this.hasGeometry();
-  }
-
   get shortType() {
     return getShortType(this.type);
   }
@@ -227,12 +219,11 @@ export default class Asset {
     };
   }
 
-  createSegmentCoords(): Position[][] | Position[] {
-    if (
-      this.geometry.type === "MultiLineString" ||
-      this.geometry.type === "LineString"
-    ) {
+  createSegmentCoords(): Position[][] {
+    if (this.geometry.type === "MultiLineString") {
       return this.geometry.coordinates;
+    } else if (this.geometry.type === "LineString") {
+      return [this.geometry.coordinates];
     } else {
       return [];
     }
