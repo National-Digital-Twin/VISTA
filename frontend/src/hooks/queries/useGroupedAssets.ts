@@ -123,6 +123,10 @@ const useGroupedAssets = ({
     };
   };
 
+  if (assetsError) {
+    console.error("Error loading assets:", assetsError);
+  }
+
   return {
     isLoadingDependencies: assetsLoading,
     isDependenciesError: !!dependenciesError,
