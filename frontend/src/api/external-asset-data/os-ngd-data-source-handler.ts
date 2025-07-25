@@ -58,7 +58,7 @@ export class OsNgdDataSourceHandler extends DataSourceHandler {
           allFilters,
         );
       }
-      filter = `&filter=${encodeURIComponent(allFilters.cqlFilter)}`;
+      filter = `filter=${encodeURIComponent(allFilters.cqlFilter)}`;
     }
 
     return filter ? `?bbox=${this.locator}&${filter}` : `?bbox=${this.locator}`;
