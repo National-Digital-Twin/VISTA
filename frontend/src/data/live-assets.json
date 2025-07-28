@@ -711,7 +711,13 @@
         "type": "http://ies.data.gov.uk/ontology/ies4#OpenGrassland",
         "source": "os_ngd",
         "collection": "lnd-fts-land-3",
-        "cqlFilter": "description='Bare Earth Or Grass' AND geometry_area_m2 > 10000",
+        "filters": [
+            {
+                "filterName": "description",
+                "filterValue": "Bare Earth Or Grass"
+            }
+        ],
+        "cqlFilter": "geometry_area_m2 > 10000",
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#OpenGrassland",
             "backgroundColor": "#242400",
