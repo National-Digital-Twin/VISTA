@@ -1380,29 +1380,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#M026",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
-        "lat": 50.724898,
-        "lng": -1.2298024,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PD",
-            "alt": "PharmaceuticalDispensary",
-            "shape": "cirle",
-            "faUnicode": "\uf486",
-            "faIcon": "fa-solid fa-prescription-bottle-medical"
-        },
-        "primaryCategory": "Essential Services",
-        "secondaryCategory": "Health and social care"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL225",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.7301353706,
@@ -2599,29 +2576,6 @@
         "secondaryCategory": "Health and social care"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#M008",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
-        "lat": 50.761523,
-        "lng": -1.2978536,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PD",
-            "alt": "PharmaceuticalDispensary",
-            "shape": "cirle",
-            "faUnicode": "\uf486",
-            "faIcon": "fa-solid fa-prescription-bottle-medical"
-        },
-        "primaryCategory": "Essential Services",
-        "secondaryCategory": "Health and social care"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#Gov132",
         "type": "http://ies.data.gov.uk/ontology/ies4#ArableFarmLand",
         "lat": 50.746076,
@@ -2666,29 +2620,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#M017",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
-        "lat": 50.68347,
-        "lng": -1.5270671,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PD",
-            "alt": "PharmaceuticalDispensary",
-            "shape": "cirle",
-            "faUnicode": "\uf486",
-            "faIcon": "fa-solid fa-prescription-bottle-medical"
-        },
-        "primaryCategory": "Essential Services",
-        "secondaryCategory": "Health and social care"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#Gov456",
@@ -3126,29 +3057,6 @@
         },
         "primaryCategory": "Public Safety and Shelter",
         "secondaryCategory": "Shelters and Relief Centers"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#M006",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
-        "lat": 50.750944,
-        "lng": -1.301754,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PD",
-            "alt": "PharmaceuticalDispensary",
-            "shape": "cirle",
-            "faUnicode": "\uf486",
-            "faIcon": "fa-solid fa-prescription-bottle-medical"
-        },
-        "primaryCategory": "Essential Services",
-        "secondaryCategory": "Health and social care"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#Gov545",
@@ -4644,29 +4552,6 @@
         },
         "primaryCategory": "Public Safety and Shelter",
         "secondaryCategory": "Shelters and Relief Centers"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#M015",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
-        "lat": 50.706162,
-        "lng": -1.4999744,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PD",
-            "alt": "PharmaceuticalDispensary",
-            "shape": "cirle",
-            "faUnicode": "\uf486",
-            "faIcon": "fa-solid fa-prescription-bottle-medical"
-        },
-        "primaryCategory": "Essential Services",
-        "secondaryCategory": "Health and social care"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL010",
@@ -8717,29 +8602,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#M004",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
-        "lat": 50.757807,
-        "lng": -1.2885096,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PD",
-            "alt": "PharmaceuticalDispensary",
-            "shape": "cirle",
-            "faUnicode": "\uf486",
-            "faIcon": "fa-solid fa-prescription-bottle-medical"
-        },
-        "primaryCategory": "Essential Services",
-        "secondaryCategory": "Health and social care"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL110",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.5978155852,
@@ -9014,29 +8876,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#M020",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
-        "lat": 50.682316,
-        "lng": -1.524177,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PD",
-            "alt": "PharmaceuticalDispensary",
-            "shape": "cirle",
-            "faUnicode": "\uf486",
-            "faIcon": "fa-solid fa-prescription-bottle-medical"
-        },
-        "primaryCategory": "Essential Services",
-        "secondaryCategory": "Health and social care"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#E008",
@@ -10647,5 +10486,680 @@
         },
         "primaryCategory": "Miscellaneous",
         "secondaryCategory": "Residential"
+    },
+    {
+        "uri": "https://www.iow.gov.uk/DigitalTwin#PHARM_FTM73",
+        "name": "YARMOUTH PHARMACY",
+        "type": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
+        "lat": 50.7065103,
+        "lng": -1.5006425,
+        "state": 0,
+        "geometry": [],
+        "dependent": {
+            "count": 0,
+            "criticalitySum": 0
+        },
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "PD",
+            "alt": "PharmaceuticalDispensary",
+            "shape": "cirle",
+            "faUnicode": "\uf486",
+            "faIcon": "fa-solid fa-prescription-bottle-medical"
+        },
+        "primaryCategory": "Essential Services",
+        "secondaryCategory": "Health and social care"
+    },
+    {
+        "uri": "https://www.iow.gov.uk/DigitalTwin#PHARM_FLE22",
+        "name": "BOOTS",
+        "type": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
+        "lat": 50.7286415,
+        "lng": -1.1633822,
+        "state": 0,
+        "geometry": [],
+        "dependent": {
+            "count": 0,
+            "criticalitySum": 0
+        },
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "PD",
+            "alt": "PharmaceuticalDispensary",
+            "shape": "cirle",
+            "faUnicode": "\uf486",
+            "faIcon": "fa-solid fa-prescription-bottle-medical"
+        },
+        "primaryCategory": "Essential Services",
+        "secondaryCategory": "Health and social care"
+    },
+    {
+        "uri": "https://www.iow.gov.uk/DigitalTwin#PHARM_FMJ77",
+        "name": "BOOTS",
+        "type": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
+        "lat": 50.6540958,
+        "lng": -1.1553225578330764,
+        "state": 0,
+        "geometry": [],
+        "dependent": {
+            "count": 0,
+            "criticalitySum": 0
+        },
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "PD",
+            "alt": "PharmaceuticalDispensary",
+            "shape": "cirle",
+            "faUnicode": "\uf486",
+            "faIcon": "fa-solid fa-prescription-bottle-medical"
+        },
+        "primaryCategory": "Essential Services",
+        "secondaryCategory": "Health and social care"
+    },
+    {
+        "uri": "https://www.iow.gov.uk/DigitalTwin#PHARM_FYX55",
+        "name": "BOOTS",
+        "type": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
+        "lat": 50.6296917,
+        "lng": -1.1782585,
+        "state": 0,
+        "geometry": [],
+        "dependent": {
+            "count": 0,
+            "criticalitySum": 0
+        },
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "PD",
+            "alt": "PharmaceuticalDispensary",
+            "shape": "cirle",
+            "faUnicode": "\uf486",
+            "faIcon": "fa-solid fa-prescription-bottle-medical"
+        },
+        "primaryCategory": "Essential Services",
+        "secondaryCategory": "Health and social care"
+    },
+    {
+        "uri": "https://www.iow.gov.uk/DigitalTwin#PHARM_FHV72",
+        "name": "BOOTS",
+        "type": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
+        "lat": 50.6905729,
+        "lng": -1.08871,
+        "state": 0,
+        "geometry": [],
+        "dependent": {
+            "count": 0,
+            "criticalitySum": 0
+        },
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "PD",
+            "alt": "PharmaceuticalDispensary",
+            "shape": "cirle",
+            "faUnicode": "\uf486",
+            "faIcon": "fa-solid fa-prescription-bottle-medical"
+        },
+        "primaryCategory": "Essential Services",
+        "secondaryCategory": "Health and social care"
+    },
+    {
+        "uri": "https://www.iow.gov.uk/DigitalTwin#PHARM_FGQ63",
+        "name": "GIBBS & GURNELL",
+        "type": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
+        "lat": 50.7304136,
+        "lng": -1.1623208,
+        "state": 0,
+        "geometry": [],
+        "dependent": {
+            "count": 0,
+            "criticalitySum": 0
+        },
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "PD",
+            "alt": "PharmaceuticalDispensary",
+            "shape": "cirle",
+            "faUnicode": "\uf486",
+            "faIcon": "fa-solid fa-prescription-bottle-medical"
+        },
+        "primaryCategory": "Essential Services",
+        "secondaryCategory": "Health and social care"
+    },
+    {
+        "uri": "https://www.iow.gov.uk/DigitalTwin#PHARM_FA116",
+        "name": "DAY LEWIS PHARMACY",
+        "type": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
+        "lat": 50.69887585,
+        "lng": -1.3153336355105931,
+        "state": 0,
+        "geometry": [],
+        "dependent": {
+            "count": 0,
+            "criticalitySum": 0
+        },
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "PD",
+            "alt": "PharmaceuticalDispensary",
+            "shape": "cirle",
+            "faUnicode": "\uf486",
+            "faIcon": "fa-solid fa-prescription-bottle-medical"
+        },
+        "primaryCategory": "Essential Services",
+        "secondaryCategory": "Health and social care"
+    },
+    {
+        "uri": "https://www.iow.gov.uk/DigitalTwin#PHARM_FA781",
+        "name": "DAY LEWIS PHARMACY",
+        "type": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
+        "lat": 50.648713,
+        "lng": -1.1683637,
+        "state": 0,
+        "geometry": [],
+        "dependent": {
+            "count": 0,
+            "criticalitySum": 0
+        },
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "PD",
+            "alt": "PharmaceuticalDispensary",
+            "shape": "cirle",
+            "faUnicode": "\uf486",
+            "faIcon": "fa-solid fa-prescription-bottle-medical"
+        },
+        "primaryCategory": "Essential Services",
+        "secondaryCategory": "Health and social care"
+    },
+    {
+        "uri": "https://www.iow.gov.uk/DigitalTwin#PHARM_FQF26",
+        "name": "JHOOTS PHARMACY",
+        "type": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
+        "lat": 50.7510653,
+        "lng": -1.3017511,
+        "state": 0,
+        "geometry": [],
+        "dependent": {
+            "count": 0,
+            "criticalitySum": 0
+        },
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "PD",
+            "alt": "PharmaceuticalDispensary",
+            "shape": "cirle",
+            "faUnicode": "\uf486",
+            "faIcon": "fa-solid fa-prescription-bottle-medical"
+        },
+        "primaryCategory": "Essential Services",
+        "secondaryCategory": "Health and social care"
+    },
+    {
+        "uri": "https://www.iow.gov.uk/DigitalTwin#PHARM_FC408",
+        "name": "SEAVIEW PHARMACY",
+        "type": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
+        "lat": 50.71936,
+        "lng": -1.1098798,
+        "state": 0,
+        "geometry": [],
+        "dependent": {
+            "count": 0,
+            "criticalitySum": 0
+        },
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "PD",
+            "alt": "PharmaceuticalDispensary",
+            "shape": "cirle",
+            "faUnicode": "\uf486",
+            "faIcon": "fa-solid fa-prescription-bottle-medical"
+        },
+        "primaryCategory": "Essential Services",
+        "secondaryCategory": "Health and social care"
+    },
+    {
+        "uri": "https://www.iow.gov.uk/DigitalTwin#PHARM_FFF06",
+        "name": "DAY LEWIS PHARMACY",
+        "type": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
+        "lat": 50.7249044,
+        "lng": -1.2300528,
+        "state": 0,
+        "geometry": [],
+        "dependent": {
+            "count": 0,
+            "criticalitySum": 0
+        },
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "PD",
+            "alt": "PharmaceuticalDispensary",
+            "shape": "cirle",
+            "faUnicode": "\uf486",
+            "faIcon": "fa-solid fa-prescription-bottle-medical"
+        },
+        "primaryCategory": "Essential Services",
+        "secondaryCategory": "Health and social care"
+    },
+    {
+        "uri": "https://www.iow.gov.uk/DigitalTwin#PHARM_FJV26",
+        "name": "BOOTS",
+        "type": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
+        "lat": 50.7270918,
+        "lng": -1.1516476,
+        "state": 0,
+        "geometry": [],
+        "dependent": {
+            "count": 0,
+            "criticalitySum": 0
+        },
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "PD",
+            "alt": "PharmaceuticalDispensary",
+            "shape": "cirle",
+            "faUnicode": "\uf486",
+            "faIcon": "fa-solid fa-prescription-bottle-medical"
+        },
+        "primaryCategory": "Essential Services",
+        "secondaryCategory": "Health and social care"
+    },
+    {
+        "uri": "https://www.iow.gov.uk/DigitalTwin#PHARM_FA040",
+        "name": "DAY LEWIS PHARMACY",
+        "type": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
+        "lat": 50.5918131,
+        "lng": -1.2594695,
+        "state": 0,
+        "geometry": [],
+        "dependent": {
+            "count": 0,
+            "criticalitySum": 0
+        },
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "PD",
+            "alt": "PharmaceuticalDispensary",
+            "shape": "cirle",
+            "faUnicode": "\uf486",
+            "faIcon": "fa-solid fa-prescription-bottle-medical"
+        },
+        "primaryCategory": "Essential Services",
+        "secondaryCategory": "Health and social care"
+    },
+    {
+        "uri": "https://www.iow.gov.uk/DigitalTwin#PHARM_FC669",
+        "name": "JHOOTS PHARMACY",
+        "type": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
+        "lat": 50.5947171,
+        "lng": -1.2032202,
+        "state": 0,
+        "geometry": [],
+        "dependent": {
+            "count": 0,
+            "criticalitySum": 0
+        },
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "PD",
+            "alt": "PharmaceuticalDispensary",
+            "shape": "cirle",
+            "faUnicode": "\uf486",
+            "faIcon": "fa-solid fa-prescription-bottle-medical"
+        },
+        "primaryCategory": "Essential Services",
+        "secondaryCategory": "Health and social care"
+    },
+    {
+        "uri": "https://www.iow.gov.uk/DigitalTwin#PHARM_FQA82",
+        "name": "DAY LEWIS PHARMACY",
+        "type": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
+        "lat": 50.631358899999995,
+        "lng": -1.1782304998488415,
+        "state": 0,
+        "geometry": [],
+        "dependent": {
+            "count": 0,
+            "criticalitySum": 0
+        },
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "PD",
+            "alt": "PharmaceuticalDispensary",
+            "shape": "cirle",
+            "faUnicode": "\uf486",
+            "faIcon": "fa-solid fa-prescription-bottle-medical"
+        },
+        "primaryCategory": "Essential Services",
+        "secondaryCategory": "Health and social care"
+    },
+    {
+        "uri": "https://www.iow.gov.uk/DigitalTwin#PHARM_FN103",
+        "name": "BOOTS",
+        "type": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
+        "lat": 50.686067,
+        "lng": -1.5137416,
+        "state": 0,
+        "geometry": [],
+        "dependent": {
+            "count": 0,
+            "criticalitySum": 0
+        },
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "PD",
+            "alt": "PharmaceuticalDispensary",
+            "shape": "cirle",
+            "faUnicode": "\uf486",
+            "faIcon": "fa-solid fa-prescription-bottle-medical"
+        },
+        "primaryCategory": "Essential Services",
+        "secondaryCategory": "Health and social care"
+    },
+    {
+        "uri": "https://www.iow.gov.uk/DigitalTwin#PHARM_FGT82",
+        "name": "DAY LEWIS PHARMACY",
+        "type": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
+        "lat": 50.6990918,
+        "lng": -1.2982829,
+        "state": 0,
+        "geometry": [],
+        "dependent": {
+            "count": 0,
+            "criticalitySum": 0
+        },
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "PD",
+            "alt": "PharmaceuticalDispensary",
+            "shape": "cirle",
+            "faUnicode": "\uf486",
+            "faIcon": "fa-solid fa-prescription-bottle-medical"
+        },
+        "primaryCategory": "Essential Services",
+        "secondaryCategory": "Health and social care"
+    },
+    {
+        "uri": "https://www.iow.gov.uk/DigitalTwin#PHARM_FWD47",
+        "name": "KEMKAY CHEMIST",
+        "type": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
+        "lat": 50.682895,
+        "lng": -1.526186,
+        "state": 0,
+        "geometry": [],
+        "dependent": {
+            "count": 0,
+            "criticalitySum": 0
+        },
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "PD",
+            "alt": "PharmaceuticalDispensary",
+            "shape": "cirle",
+            "faUnicode": "\uf486",
+            "faIcon": "fa-solid fa-prescription-bottle-medical"
+        },
+        "primaryCategory": "Essential Services",
+        "secondaryCategory": "Health and social care"
+    },
+    {
+        "uri": "https://www.iow.gov.uk/DigitalTwin#PHARM_FJN73",
+        "name": "REGENT PHARMACY",
+        "type": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
+        "lat": 50.7580888,
+        "lng": -1.2876675,
+        "state": 0,
+        "geometry": [],
+        "dependent": {
+            "count": 0,
+            "criticalitySum": 0
+        },
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "PD",
+            "alt": "PharmaceuticalDispensary",
+            "shape": "cirle",
+            "faUnicode": "\uf486",
+            "faIcon": "fa-solid fa-prescription-bottle-medical"
+        },
+        "primaryCategory": "Essential Services",
+        "secondaryCategory": "Health and social care"
+    },
+    {
+        "uri": "https://www.iow.gov.uk/DigitalTwin#PHARM_FKL95",
+        "name": "REGENT PHARMACY",
+        "type": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
+        "lat": 50.63156725,
+        "lng": -1.1782576365357258,
+        "state": 0,
+        "geometry": [],
+        "dependent": {
+            "count": 0,
+            "criticalitySum": 0
+        },
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "PD",
+            "alt": "PharmaceuticalDispensary",
+            "shape": "cirle",
+            "faUnicode": "\uf486",
+            "faIcon": "fa-solid fa-prescription-bottle-medical"
+        },
+        "primaryCategory": "Essential Services",
+        "secondaryCategory": "Health and social care"
+    },
+    {
+        "uri": "https://www.iow.gov.uk/DigitalTwin#PHARM_FW282",
+        "name": "JHOOTS PHARMACY",
+        "type": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
+        "lat": 50.7330498,
+        "lng": -1.1596024,
+        "state": 0,
+        "geometry": [],
+        "dependent": {
+            "count": 0,
+            "criticalitySum": 0
+        },
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "PD",
+            "alt": "PharmaceuticalDispensary",
+            "shape": "cirle",
+            "faUnicode": "\uf486",
+            "faIcon": "fa-solid fa-prescription-bottle-medical"
+        },
+        "primaryCategory": "Essential Services",
+        "secondaryCategory": "Health and social care"
+    },
+    {
+        "uri": "https://www.iow.gov.uk/DigitalTwin#PHARM_FWK53",
+        "name": "DAY LEWIS PHARMACY",
+        "type": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
+        "lat": 50.7615234,
+        "lng": -1.2978814,
+        "state": 0,
+        "geometry": [],
+        "dependent": {
+            "count": 0,
+            "criticalitySum": 0
+        },
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "PD",
+            "alt": "PharmaceuticalDispensary",
+            "shape": "cirle",
+            "faUnicode": "\uf486",
+            "faIcon": "fa-solid fa-prescription-bottle-medical"
+        },
+        "primaryCategory": "Essential Services",
+        "secondaryCategory": "Health and social care"
+    },
+    {
+        "uri": "https://www.iow.gov.uk/DigitalTwin#PHARM_FK266",
+        "name": "BOOTS",
+        "type": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
+        "lat": 50.59516885,
+        "lng": -1.2060163921045195,
+        "state": 0,
+        "geometry": [],
+        "dependent": {
+            "count": 0,
+            "criticalitySum": 0
+        },
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "PD",
+            "alt": "PharmaceuticalDispensary",
+            "shape": "cirle",
+            "faUnicode": "\uf486",
+            "faIcon": "fa-solid fa-prescription-bottle-medical"
+        },
+        "primaryCategory": "Essential Services",
+        "secondaryCategory": "Health and social care"
+    },
+    {
+        "uri": "https://www.iow.gov.uk/DigitalTwin#PHARM_FL055",
+        "name": "JHOOTS PHARMACY",
+        "type": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
+        "lat": 50.759266,
+        "lng": -1.2873033,
+        "state": 0,
+        "geometry": [],
+        "dependent": {
+            "count": 0,
+            "criticalitySum": 0
+        },
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "PD",
+            "alt": "PharmaceuticalDispensary",
+            "shape": "cirle",
+            "faUnicode": "\uf486",
+            "faIcon": "fa-solid fa-prescription-bottle-medical"
+        },
+        "primaryCategory": "Essential Services",
+        "secondaryCategory": "Health and social care"
+    },
+    {
+        "uri": "https://www.iow.gov.uk/DigitalTwin#PHARM_FKG39",
+        "name": "JHOOTS PHARMACY",
+        "type": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
+        "lat": 50.6510668,
+        "lng": -1.1612016,
+        "state": 0,
+        "geometry": [],
+        "dependent": {
+            "count": 0,
+            "criticalitySum": 0
+        },
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "PD",
+            "alt": "PharmaceuticalDispensary",
+            "shape": "cirle",
+            "faUnicode": "\uf486",
+            "faIcon": "fa-solid fa-prescription-bottle-medical"
+        },
+        "primaryCategory": "Essential Services",
+        "secondaryCategory": "Health and social care"
+    },
+    {
+        "uri": "https://www.iow.gov.uk/DigitalTwin#PHARM_FAA43",
+        "name": "TESCO INSTORE PHARMACY",
+        "type": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
+        "lat": 50.7096862,
+        "lng": -1.1460136,
+        "state": 0,
+        "geometry": [],
+        "dependent": {
+            "count": 0,
+            "criticalitySum": 0
+        },
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "PD",
+            "alt": "PharmaceuticalDispensary",
+            "shape": "cirle",
+            "faUnicode": "\uf486",
+            "faIcon": "fa-solid fa-prescription-bottle-medical"
+        },
+        "primaryCategory": "Essential Services",
+        "secondaryCategory": "Health and social care"
+    },
+    {
+        "uri": "https://www.iow.gov.uk/DigitalTwin#PHARM_FG781",
+        "name": "BOOTS",
+        "type": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
+        "lat": 50.7003152,
+        "lng": -1.2945588,
+        "state": 0,
+        "geometry": [],
+        "dependent": {
+            "count": 0,
+            "criticalitySum": 0
+        },
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#PharmaceuticalDispensary",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "PD",
+            "alt": "PharmaceuticalDispensary",
+            "shape": "cirle",
+            "faUnicode": "\uf486",
+            "faIcon": "fa-solid fa-prescription-bottle-medical"
+        },
+        "primaryCategory": "Essential Services",
+        "secondaryCategory": "Health and social care"
     }
 ]
