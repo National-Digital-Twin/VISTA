@@ -46,7 +46,7 @@ interface DetailsProps {
 }
 
 function Details({ details }: DetailsProps) {
-  const { id, title, type, desc } = details;
+  const { title, type, desc } = details;
 
   return (
     <div

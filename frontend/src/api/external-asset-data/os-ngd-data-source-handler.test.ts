@@ -66,7 +66,7 @@ describe("fetchDataForAssetSpecification", () => {
 
   const featureId = "99af3e40-aae5-40cd-9bb4-3aeef3b30269";
   const name = "Name of place";
-  let response = {
+  const response = {
     links: [] as Link[],
     features: [
       {

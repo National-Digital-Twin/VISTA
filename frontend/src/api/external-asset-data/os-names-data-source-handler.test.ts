@@ -1,6 +1,6 @@
 import { Feature, Point } from "geojson";
-import { AssetSpecification } from "@/hooks/queries/dataset-utils";
 import { OsNamesDataSourceHandler } from "./os-names-data-source-handler";
+import { AssetSpecification } from "@/hooks/queries/dataset-utils";
 
 global.fetch = jest.fn();
 
@@ -33,15 +33,17 @@ describe("fetchDataForAssetSpecification", () => {
 
   const featureId = "osgb1000000011111111";
   const name = "Place X";
+  const data = {
+    ID: featureId,
+    NAME1: name,
+    NAME2: undefined as unknown,
+    GEOMETRY_X: 429157,
+    GEOMETRY_Y: 623009,
+  };
   const response = {
     results: [
       {
-        GAZETTEER_ENTRY: {
-          ID: featureId,
-          NAME1: name,
-          GEOMETRY_X: 429157,
-          GEOMETRY_Y: 623009,
-        },
+        GAZETTEER_ENTRY: data,
       },
     ],
   };
@@ -62,5 +64,19 @@ describe("fetchDataForAssetSpecification", () => {
       -1.5400079624974126, 55.499999613061284,
     ]);
     expect(result[0].properties?.name).toBe(name);
+  });
+
+  it("returns `NAME2` when given as name", async () => {
+    const primary_name = "Place Y";
+    data.NAME2 = primary_name;
+    response.results = [{ GAZETTEER_ENTRY: data }];
+    mockFetch(response);
+
+    const result = (await handler.fetchDataForAssetSpecification(
+      {} as AssetSpecification,
+      "",
+    )) as Feature<Point>[];
+
+    expect(result[0].properties?.name).toBe(primary_name);
   });
 });

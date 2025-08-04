@@ -1,8 +1,8 @@
 import proj4 from "proj4";
 
-import { AssetSpecification } from "@/hooks/queries/dataset-utils";
 import { Feature } from "geojson";
 import { DataSourceHandler } from "./data-source-handler";
+import { AssetSpecification } from "@/hooks/queries/dataset-utils";
 
 proj4.defs(
   "EPSG:27700",
@@ -49,7 +49,7 @@ export class OsNamesDataSourceHandler extends DataSourceHandler {
           ),
         },
         properties: {
-          name: data.NAME1,
+          name: data.NAME2 ?? data.NAME1,
         },
       };
     });
