@@ -4,6 +4,7 @@
         "type": "http://ies.data.gov.uk/ontology/ies4#TelecommunicationsExchange",
         "source": "os_ngd",
         "collection": "bld-fts-building-4",
+        "expectedCount": 16,
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#TelecommunicationsExchange",
             "backgroundColor": "#242400",
@@ -22,6 +23,7 @@
         "type": "http://ies.data.gov.uk/ontology/ies4#TelecommunicationsComplex",
         "source": "os_ngd",
         "collection": "bld-fts-building-4",
+        "expectedCount": 4,
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#TelecommunicationsComplex",
             "backgroundColor": "#242400",
@@ -40,6 +42,7 @@
         "type": "http://ies.data.gov.uk/ontology/ies4#WaterDistributionComplex",
         "source": "os_ngd",
         "collection": "bld-fts-building-4",
+        "expectedCount": 2,
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#WaterDistributionComplex",
             "backgroundColor": "#242400",
@@ -58,6 +61,7 @@
         "type": "http://ies.data.gov.uk/ontology/ies4#WaterExtractionComplex",
         "source": "os_ngd",
         "collection": "bld-fts-building-4",
+        "expectedCount": 5,
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#WaterExtractionComplex",
             "backgroundColor": "#242400",
@@ -76,6 +80,7 @@
         "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterTreatmentComplex",
         "source": "os_ngd",
         "collection": "bld-fts-building-4",
+        "expectedCount": 17,
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterTreatmentComplex",
             "backgroundColor": "#242400",
@@ -94,6 +99,7 @@
         "type": "http://ies.data.gov.uk/ontology/ies4#VeterinaryHospital",
         "source": "os_ngd",
         "collection": "lus-fts-site-2",
+        "expectedCount": 2,
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#VeterinaryHospital",
             "backgroundColor": "#242400",
@@ -112,6 +118,7 @@
         "type": "http://ies.data.gov.uk/ontology/ies4#PhotovoltaicPowerGenerationComplex",
         "source": "os_ngd",
         "collection": "bld-fts-building-4",
+        "expectedCount": 9,
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#PhotovoltaicPowerGenerationComplex",
             "backgroundColor": "#242400",
@@ -130,6 +137,7 @@
         "type": "http://ies.data.gov.uk/ontology/ies4#PreSchool",
         "source": "os_ngd",
         "collection": "bld-fts-building-4",
+        "expectedCount": 22,
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#PreSchool",
             "backgroundColor": "#242400",
@@ -148,6 +156,7 @@
         "type": "http://ies.data.gov.uk/ontology/ies4#Crematorium",
         "source": "os_ngd",
         "collection": "bld-fts-building-4",
+        "expectedCount": 1,
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#Crematorium",
             "backgroundColor": "#242400",
@@ -166,6 +175,7 @@
         "type": "http://ies.data.gov.uk/ontology/ies4#OutdoorStadium",
         "source": "os_ngd",
         "collection": "bld-fts-building-4",
+        "expectedCount": 2,
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#OutdoorStadium",
             "backgroundColor": "#242400",
@@ -184,6 +194,7 @@
         "type": "http://ies.data.gov.uk/ontology/ies4#SportsGround",
         "source": "os_ngd",
         "collection": "bld-fts-building-4",
+        "expectedCount": 33,
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#SportsGround",
             "backgroundColor": "#242400",
@@ -202,6 +213,7 @@
         "type": "http://ies.data.gov.uk/ontology/ies4#IndustrialSpace",
         "source": "os_ngd",
         "collection": "bld-fts-building-4",
+        "expectedCount": 526,
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#IndustrialSpace",
             "backgroundColor": "#242400",
@@ -220,6 +232,7 @@
         "type": "http://ies.data.gov.uk/ontology/ies4#RetailKiosk",
         "source": "os_ngd",
         "collection": "bld-fts-building-4",
+        "expectedCount": 817,
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#RetailKiosk",
             "backgroundColor": "#242400",
@@ -238,6 +251,7 @@
         "type": "http://ies.data.gov.uk/ontology/ies4#CommunityCentre",
         "source": "os_ngd",
         "collection": "bld-fts-building-4",
+        "expectedCount": 93,
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#CommunityCentre",
             "backgroundColor": "#242400",
@@ -256,6 +270,7 @@
         "type": "http://ies.data.gov.uk/ontology/ies4#Hotel",
         "source": "os_ngd",
         "collection": "bld-fts-building-4",
+        "expectedCount": 733,
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#Hotel",
             "backgroundColor": "#242400",
@@ -274,6 +289,7 @@
         "type": "http://ies.data.gov.uk/ontology/ies4#LifeboatStation",
         "source": "os_ngd",
         "collection": "bld-fts-building-4",
+        "expectedCount": 2,
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#LifeboatStation",
             "backgroundColor": "#242400",
@@ -292,6 +308,7 @@
         "type": "http://ies.data.gov.uk/ontology/ies4#FireBrigadeComplex",
         "source": "os_ngd",
         "collection": "bld-fts-building-4",
+        "expectedCount": 10,
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#FireBrigadeComplex",
             "backgroundColor": "#242400",
@@ -310,6 +327,7 @@
         "source": "os_ngd",
         "collection": "trn-ntwk-street-1",
         "classificationField": "roadclassification",
+        "expectedCount": 6512,
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#Road",
             "backgroundColor": "#242400",
@@ -328,6 +346,7 @@
         "type": "http://ies.data.gov.uk/ontology/ies4#HighwayRoundabout",
         "source": "os_ngd",
         "collection": "trn-ntwk-roadlink-4",
+        "expectedCount": 165,
         "showAsPoint": true,
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#HighwayRoundabout",
@@ -347,6 +366,7 @@
         "type": "http://ies.data.gov.uk/ontology/ies4#Bridge",
         "source": "os_ngd",
         "collection": "str-fts-compoundstructure-2",
+        "expectedCount": 187,
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#Bridge",
             "backgroundColor": "#242400",
@@ -365,6 +385,7 @@
         "type": "http://ies.data.gov.uk/ontology/ies4#Pier",
         "source": "os_ngd",
         "collection": "str-fts-compoundstructure-2",
+        "expectedCount": 5,
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#Pier",
             "backgroundColor": "#242400",
@@ -383,6 +404,7 @@
         "source": "os_ngd",
         "collection": "trn-ntwk-railwaylink-1",
         "classificationField": "description",
+        "expectedCount": 223,
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#HeavyRailComplex",
             "backgroundColor": "#242400",
@@ -401,6 +423,7 @@
         "type": "http://ies.data.gov.uk/ontology/ies4#RailwayJunction",
         "source": "os_ngd",
         "collection": "trn-ntwk-railwaynode-1",
+        "expectedCount": 24,
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#RailwayJunction",
             "backgroundColor": "#242400",
@@ -415,10 +438,11 @@
         "secondaryCategory": "Transport Infrastructure"
     },
     {
-        "description": ["Drain", "Watercourse", "Leat"],
+        "description": ["Drain"],
         "type": "http://ies.data.gov.uk/ontology/ies4#Culvert",
         "source": "os_ngd",
         "collection": "wtr-ntwk-waterlink-1",
+        "expectedCount": 2548,
         "filters": [
             {
                 "filterName": "physicalcontainment",
@@ -439,10 +463,99 @@
         "secondaryCategory": "Transport Infrastructure"
     },
     {
-        "description": ["Level Crossing Fully Barriered", "Level Crossing Part Barriered", "Level Crossing Unbarriered"],
+        "description": ["Watercourse"],
+        "type": "http://ies.data.gov.uk/ontology/ies4#Culvert",
+        "source": "os_ngd",
+        "collection": "wtr-ntwk-waterlink-1",
+        "expectedCount": 6538,
+        "filters": [
+            {
+                "filterName": "physicalcontainment",
+                "filterValue": "In Culvert"
+            }
+        ],
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#Culvert",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "C",
+            "alt": "Culvert",
+            "shape": "cirle",
+            "faUnicode": "\uf02b",
+            "faIcon": "fa-solid fa-tag"
+        },
+        "primaryCategory": "Transport and Infrastructure",
+        "secondaryCategory": "Transport Infrastructure"
+    },
+    {
+        "description": ["Leat"],
+        "type": "http://ies.data.gov.uk/ontology/ies4#Culvert",
+        "source": "os_ngd",
+        "collection": "wtr-ntwk-waterlink-1",
+        "expectedCount": 4,
+        "filters": [
+            {
+                "filterName": "physicalcontainment",
+                "filterValue": "In Culvert"
+            }
+        ],
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#Culvert",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "C",
+            "alt": "Culvert",
+            "shape": "cirle",
+            "faUnicode": "\uf02b",
+            "faIcon": "fa-solid fa-tag"
+        },
+        "primaryCategory": "Transport and Infrastructure",
+        "secondaryCategory": "Transport Infrastructure"
+    },
+    {
+        "description": ["Level Crossing Fully Barriered"],
         "type": "http://ies.data.gov.uk/ontology/ies4#LevelCrossing",
         "source": "os_ngd",
         "collection": "trn-rami-routingstructure-1",
+        "expectedCount": 7,
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#LevelCrossing",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "LC",
+            "alt": "LevelCrossing",
+            "shape": "cirle",
+            "faUnicode": "\uf02b",
+            "faIcon": "fa-solid fa-tag"
+        },
+        "primaryCategory": "Transport and Infrastructure",
+        "secondaryCategory": "Transport Infrastructure"
+    },
+    {
+        "description": ["Level Crossing Part Barriered"],
+        "type": "http://ies.data.gov.uk/ontology/ies4#LevelCrossing",
+        "source": "os_ngd",
+        "collection": "trn-rami-routingstructure-1",
+        "expectedCount": 0,
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#LevelCrossing",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "LC",
+            "alt": "LevelCrossing",
+            "shape": "cirle",
+            "faUnicode": "\uf02b",
+            "faIcon": "fa-solid fa-tag"
+        },
+        "primaryCategory": "Transport and Infrastructure",
+        "secondaryCategory": "Transport Infrastructure"
+    },
+    {
+        "description": ["Level Crossing Unbarriered"],
+        "type": "http://ies.data.gov.uk/ontology/ies4#LevelCrossing",
+        "source": "os_ngd",
+        "collection": "trn-rami-routingstructure-1",
+        "expectedCount": 1,
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#LevelCrossing",
             "backgroundColor": "#242400",
@@ -461,6 +574,7 @@
         "type": "http://ies.data.gov.uk/ontology/ies4#Slipway",
         "source": "os_ngd",
         "collection": "lnd-fts-land-3",
+        "expectedCount": 375,
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#Slipway",
             "backgroundColor": "#242400",
@@ -479,6 +593,7 @@
         "source": "os_ngd",
         "collection": "trn-ntwk-roadlink-4",
         "roadstructure": "In Tunnel",
+        "expectedCount": 1,
         "showAsPoint": true,
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#Tunnel",
@@ -498,6 +613,7 @@
         "type": "http://ies.data.gov.uk/ontology/ies4#CycleTrack",
         "source": "os_ngd",
         "collection": "trn-rami-highwaydedication-1",
+        "expectedCount": 8,
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#CycleTrack",
             "backgroundColor": "#242400",
@@ -516,6 +632,7 @@
         "type": "http://ies.data.gov.uk/ontology/ies4#Woodland",
         "source": "os_ngd",
         "collection": "gnm-fts-namedarea-1",
+        "expectedCount": 356,
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#Woodland",
             "backgroundColor": "#242400",
@@ -534,6 +651,7 @@
         "type": "http://ies.data.gov.uk/ontology/ies4#Hill",
         "source": "os_ngd",
         "collection": "gnm-fts-namedarea-1",
+        "expectedCount": 35,
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#Hill",
             "backgroundColor": "#242400",
@@ -552,6 +670,7 @@
         "type": "http://ies.data.gov.uk/ontology/ies4#WaterReservoir",
         "source": "os_ngd",
         "collection": "wtr-fts-water-3",
+        "expectedCount": 15,
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#WaterReservoir",
             "backgroundColor": "#242400",
@@ -570,6 +689,7 @@
         "type": "http://ies.data.gov.uk/ontology/ies4#Underpass",
         "source": "os_ngd",
         "collection": "str-fts-compoundstructure-2",
+        "expectedCount": 0,
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#Underpass",
             "backgroundColor": "#242400",
@@ -588,6 +708,7 @@
         "type": "http://ies.data.gov.uk/ontology/ies4#MotorVehicleFuellingOrChargingStation",
         "source": "os_ngd",
         "collection": "lus-fts-site-2",
+        "expectedCount": 12,
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#MotorVehicleFuellingOrChargingStation",
             "backgroundColor": "#242400",
@@ -606,6 +727,7 @@
         "type": "http://ies.data.gov.uk/ontology/ies4#Mortuary",
         "source": "os_ngd",
         "collection": "lus-fts-site-2",
+        "expectedCount": 3,
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#Mortuary",
             "backgroundColor": "#242400",
@@ -676,6 +798,7 @@
         "type": "http://ies.data.gov.uk/ontology/ies4#Quay",
         "source": "os_ngd",
         "collection": "lus-fts-site-2",
+        "expectedCount": 7,
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#Quay",
             "backgroundColor": "#242400",
@@ -694,6 +817,7 @@
         "type": "http://ies.data.gov.uk/ontology/ies4#IndustrialPark",
         "source": "os_ngd",
         "collection": "lus-fts-site-2",
+        "expectedCount": 48,
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#IndustrialPark",
             "backgroundColor": "#242400",
@@ -718,6 +842,7 @@
             }
         ],
         "cqlFilter": "geometry_area_m2 > 10000",
+        "expectedCount": 7408,
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#OpenGrassland",
             "backgroundColor": "#242400",
@@ -736,6 +861,7 @@
         "type": "http://ies.data.gov.uk/ontology/ies4#BiomassPowerGenerationComplex",
         "source": "os_ngd",
         "collection": "bld-fts-building-4",
+        "expectedCount": 1,
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#BiomassPowerGenerationComplex",
             "backgroundColor": "#242400",
@@ -754,6 +880,7 @@
         "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
         "source": "os_ngd",
         "collection": "bld-fts-building-4",
+        "expectedCount": 27,
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
             "backgroundColor": "#242400",
@@ -772,6 +899,7 @@
         "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterDisposalComplex",
         "source": "os_ngd",
         "collection": "lus-fts-site-2",
+        "expectedCount": 27,
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#WastewaterDisposalComplex",
             "backgroundColor": "#242400",
@@ -790,6 +918,7 @@
         "type": "http://ies.data.gov.uk/ontology/ies4#CarPark",
         "source": "os_ngd",
         "collection": "lus-fts-site-2",
+        "expectedCount": 136,
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#CarPark",
             "backgroundColor": "#242400",
@@ -814,6 +943,7 @@
         "type": "http://ies.data.gov.uk/ontology/ies4#LiquidFuelStorageComplex",
         "source": "os_ngd",
         "collection": "str-fts-structure-3",
+        "expectedCount": 152,
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#LiquidFuelStorageComplex",
             "backgroundColor": "#242400",
@@ -838,6 +968,7 @@
         "type": "http://ies.data.gov.uk/ontology/ies4#LowBridge",
         "source": "os_ngd",
         "collection": "trn-rami-restriction-1",
+        "expectedCount": 9,
         "showAsPoint": true,
         "styles": {
             "classUri": "http://ies.data.gov.uk/ontology/ies4#LowBridge",
@@ -920,5 +1051,206 @@
         },
         "primaryCategory": "Essential Services",
         "secondaryCategory": "Health and social care"
+    },
+    {
+        "type": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
+        "description": ["Primary_Education"],
+        "source": "os_names",
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "PS",
+            "alt": "PrimarySchool",
+            "shape": "cirle",
+            "faUnicode": "\uf549",
+            "faIcon": "fa-regular fa-school"
+        },
+        "primaryCategory": "Public Safety and Shelter",
+        "secondaryCategory": "Learning and Non Residential Institutions"
+    },
+    {
+        "type": "http://ies.data.gov.uk/ontology/ies4#SecondarySchool",
+        "description": ["Secondary_Education"],
+        "source": "os_names",
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#SecondarySchool",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "SS",
+            "alt": "SecondarySchool",
+            "shape": "cirle",
+            "faUnicode": "\ue56e",
+            "faIcon": "fa-sharp fa-solid fa-school-flag"
+        },
+        "primaryCategory": "Public Safety and Shelter",
+        "secondaryCategory": "Learning and Non Residential Institutions"
+    },
+    {
+        "type": "http://ies.data.gov.uk/ontology/ies4#FurtherEducationalCollege",
+        "description": ["Secondary_Education"],
+        "source": "os_names",
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#FurtherEducationalCollege",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "FEC",
+            "alt": "FurtherEducationalCollege",
+            "shape": "cirle",
+            "faUnicode": "\uf549",
+            "faIcon": "fa-regular fa-school"
+        },
+        "primaryCategory": "Public Safety and Shelter",
+        "secondaryCategory": "Learning and Non Residential Institutions"
+    },
+    {
+        "type": "http://ies.data.gov.uk/ontology/ies4#Hospital",
+        "description": ["Hospital"],
+        "source": "os_names",
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#Hospital",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "H",
+            "alt": "Hospital",
+            "shape": "cirle",
+            "faUnicode": "\uf0f8",
+            "faIcon": "fa-solid fa-hospital"
+        },
+        "primaryCategory": "Essential Services",
+        "secondaryCategory": "Health and social care"
+    },
+    {
+        "description": ["Gas Distribution Or Storage Facility"],
+        "type": "http://ies.data.gov.uk/ontology/ies4#GasDistributionComplex",
+        "source": "os_ngd",
+        "collection": "bld-fts-building-4",
+        "expectedCount": 1,
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#GasDistributionComplex",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "GDC",
+            "alt": "GasDistributionComplex",
+            "shape": "cirle",
+            "faUnicode": "\uf46a",
+            "faIcon": "fa-regular fa-fire-flame-simple"
+        },
+        "primaryCategory": "Essential Services",
+        "secondaryCategory": "Utility Infrastructure"
+    },
+    {
+        "description": ["Power Station"],
+        "type": "http://ies.data.gov.uk/ontology/ies4#OilFiredPowerGenerationComplex",
+        "source": "os_ngd",
+        "collection": "bld-fts-building-4",
+        "expectedCount": 1,
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#OilFiredPowerGenerationComplex",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "OFP",
+            "alt": "OilFiredPowerGenerationComplex",
+            "shape": "cirle",
+            "faUnicode": "\ue0b7",
+            "faIcon": "fa-regular fa-bolt-lightning"
+        },
+        "primaryCategory": "Essential Services",
+        "secondaryCategory": "Energy"
+    },
+    {
+        "description": ["Public Park Or Garden"],
+        "type": "http://ies.data.gov.uk/ontology/ies4#PublicPark",
+        "source": "os_ngd",
+        "collection": "lus-fts-site-2",
+        "expectedCount": 22,
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#PublicPark",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "PP",
+            "alt": "PublicPark",
+            "shape": "cirle",
+            "faUnicode": "\ue2e7",
+            "faIcon": "fa-sharp fa-solid fa-bench-tree"
+        },
+        "primaryCategory": "Public Safety and Shelter",
+        "secondaryCategory": "Public Assembly Points"
+    },
+    {
+        "cqlFilter": "name1_text LIKE '%Country Park%'",
+        "type": "http://ies.data.gov.uk/ontology/ies4#CountryPark",
+        "source": "os_ngd",
+        "collection": "lus-fts-site-2",
+        "expectedCount": 5,
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#CountryPark",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "CP",
+            "alt": "CountryPark",
+            "shape": "cirle",
+            "faUnicode": "\ue2e7",
+            "faIcon": "fa-sharp fa-solid fa-bench-tree"
+        },
+        "primaryCategory": "Recovery and Support",
+        "secondaryCategory": "Agricultural and Natural Assets"
+    },
+    {
+        "cqlFilter": "name1_text LIKE '%Reserve%'",
+        "type": "http://ies.data.gov.uk/ontology/ies4#NatureReserve",
+        "source": "os_ngd",
+        "collection": "lus-fts-site-2",
+        "expectedCount": 1,
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#NatureReserve",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "NR",
+            "alt": "NatureReserve",
+            "shape": "cirle",
+            "faUnicode": "\uf1bb",
+            "faIcon": "fa-regular fa-tree"
+        },
+        "primaryCategory": "Recovery and Support",
+        "secondaryCategory": "Agricultural and Natural Assets"
+    },
+    {
+        "description": "Livestock Pen",
+        "type": "http://ies.data.gov.uk/ontology/ies4#Farmyard",
+        "source": "os_ngd",
+        "collection": "lnd-fts-land-3",
+        "expectedCount": 2,
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#Farmyard",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "F",
+            "alt": "Farmyard",
+            "shape": "cirle",
+            "faUnicode": "\uf02b",
+            "faIcon": "fa-solid fa-tag"
+        },
+        "primaryCategory": "Recovery and Support",
+        "secondaryCategory": "Agricultural and Natural Assets"
+    },
+    {
+        "cqlFilter": "oslandusetierb AEQUALS ['Fisheries']",
+        "type": "http://ies.data.gov.uk/ontology/ies4#Fishery",
+        "source": "os_ngd",
+        "collection": "lus-fts-site-2",
+        "expectedCount": 2,
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#Fishery",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "F",
+            "alt": "Fishery",
+            "shape": "cirle",
+            "faUnicode": "\uf02b",
+            "faIcon": "fa-solid fa-tag"
+        },
+        "primaryCategory": "Miscellaneous",
+        "secondaryCategory": "Agricultural and Natural Assets"
     }
 ]

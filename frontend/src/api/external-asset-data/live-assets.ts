@@ -18,12 +18,11 @@ export const fetchLiveAssets = async (
   };
   const handler = handlerRegistry[assetSpecification.source];
   const urls: string[] = handler.buildUrlsForDataSource(assetSpecification);
-  for (const url of urls) {
-    const features = await handler.fetchDataForAssetSpecification(
-      assetSpecification,
-      url,
-    );
-    result.features.push(...features);
-  }
+  const allFeatures = await Promise.all(
+    urls.map((url) =>
+      handler.fetchDataForAssetSpecification(assetSpecification, url),
+    ),
+  );
+  result.features.push(...allFeatures.flat());
   return result;
 };

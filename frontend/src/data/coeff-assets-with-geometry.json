@@ -115,29 +115,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov041",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-        "lat": 50.694542,
-        "lng": -1.3108882,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PS",
-            "alt": "PrimarySchool",
-            "shape": "cirle",
-            "faUnicode": "\uf549",
-            "faIcon": "fa-regular fa-school"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Learning and Non Residential Institutions"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL213",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.7022465339,
@@ -159,29 +136,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Ed005",
-        "type": "http://ies.data.gov.uk/ontology/ies4#FurtherEducationalCollege",
-        "lat": 50.722792,
-        "lng": -1.1743031,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#FurtherEducationalCollege",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "FEC",
-            "alt": "FurtherEducationalCollege",
-            "shape": "cirle",
-            "faUnicode": "\uf549",
-            "faIcon": "fa-regular fa-school"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Learning and Non Residential Institutions"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL035",
@@ -207,29 +161,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov042",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-        "lat": 50.691608,
-        "lng": -1.3121062,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PS",
-            "alt": "PrimarySchool",
-            "shape": "cirle",
-            "faUnicode": "\uf549",
-            "faIcon": "fa-regular fa-school"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Learning and Non Residential Institutions"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL220",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.7192344157,
@@ -251,29 +182,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov605",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-        "lat": 50.638174,
-        "lng": -1.1750791,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PS",
-            "alt": "PrimarySchool",
-            "shape": "cirle",
-            "faUnicode": "\uf549",
-            "faIcon": "fa-regular fa-school"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Learning and Non Residential Institutions"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL251",
@@ -621,29 +529,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov372",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-        "lat": 50.725801,
-        "lng": -1.1574615,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PS",
-            "alt": "PrimarySchool",
-            "shape": "cirle",
-            "faUnicode": "\uf549",
-            "faIcon": "fa-regular fa-school"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Learning and Non Residential Institutions"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL183",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.6973288255,
@@ -665,52 +550,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov116",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-        "lat": 50.75413,
-        "lng": -1.28427,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PS",
-            "alt": "PrimarySchool",
-            "shape": "cirle",
-            "faUnicode": "\uf549",
-            "faIcon": "fa-regular fa-school"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Learning and Non Residential Institutions"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov061",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-        "lat": 50.752682,
-        "lng": -1.3048363,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PS",
-            "alt": "PrimarySchool",
-            "shape": "cirle",
-            "faUnicode": "\uf549",
-            "faIcon": "fa-regular fa-school"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Learning and Non Residential Institutions"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL007",
@@ -1035,29 +874,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov418",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PublicPark",
-        "lat": 50.723035,
-        "lng": -1.1444492,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PublicPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PP",
-            "alt": "PublicPark",
-            "shape": "cirle",
-            "faUnicode": "\ue2e7",
-            "faIcon": "fa-sharp fa-solid fa-bench-tree"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Public Assembly Points"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL112",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.598381454,
@@ -1102,29 +918,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov225",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-        "lat": 50.695757,
-        "lng": -1.2990055,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PS",
-            "alt": "PrimarySchool",
-            "shape": "cirle",
-            "faUnicode": "\uf549",
-            "faIcon": "fa-regular fa-school"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Learning and Non Residential Institutions"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL173",
@@ -1219,29 +1012,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov780",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PublicPark",
-        "lat": 50.7064613,
-        "lng": -1.492713,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PublicPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PP",
-            "alt": "PublicPark",
-            "shape": "cirle",
-            "faUnicode": "\ue2e7",
-            "faIcon": "fa-sharp fa-solid fa-bench-tree"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Public Assembly Points"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL040",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.7185790713,
@@ -1286,29 +1056,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov722",
-        "type": "http://ies.data.gov.uk/ontology/ies4#Fishery",
-        "lat": 50.594067,
-        "lng": -1.198893,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#Fishery",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "F",
-            "alt": "Fishery",
-            "shape": "cirle",
-            "faUnicode": "\uf02b",
-            "faIcon": "fa-solid fa-tag"
-        },
-        "primaryCategory": "Miscellaneous",
-        "secondaryCategory": "Agricultural and Natural Assets"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL221",
@@ -1449,52 +1196,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov194",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PublicPark",
-        "lat": 50.653067,
-        "lng": -1.1841971,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PublicPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PP",
-            "alt": "PublicPark",
-            "shape": "cirle",
-            "faUnicode": "\ue2e7",
-            "faIcon": "fa-sharp fa-solid fa-bench-tree"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Public Assembly Points"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov339",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PublicPark",
-        "lat": 50.700407,
-        "lng": -1.2872684,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PublicPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PP",
-            "alt": "PublicPark",
-            "shape": "cirle",
-            "faUnicode": "\ue2e7",
-            "faIcon": "fa-sharp fa-solid fa-bench-tree"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Public Assembly Points"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL202",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.6816812932,
@@ -1539,29 +1240,6 @@
         },
         "primaryCategory": "Public Safety and Shelter",
         "secondaryCategory": "Shelters and Relief Centers"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov227",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-        "lat": 50.698861,
-        "lng": -1.2859325,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PS",
-            "alt": "PrimarySchool",
-            "shape": "cirle",
-            "faUnicode": "\uf549",
-            "faIcon": "fa-regular fa-school"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Learning and Non Residential Institutions"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL075",
@@ -1656,29 +1334,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Ed003",
-        "type": "http://ies.data.gov.uk/ontology/ies4#FurtherEducationalCollege",
-        "lat": 50.762679,
-        "lng": -1.3090801,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#FurtherEducationalCollege",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "FEC",
-            "alt": "FurtherEducationalCollege",
-            "shape": "cirle",
-            "faUnicode": "\uf549",
-            "faIcon": "fa-regular fa-school"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Learning and Non Residential Institutions"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL029",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.6580743507,
@@ -1723,52 +1378,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov453",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PublicPark",
-        "lat": 50.723035,
-        "lng": -1.1444492,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PublicPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PP",
-            "alt": "PublicPark",
-            "shape": "cirle",
-            "faUnicode": "\ue2e7",
-            "faIcon": "fa-sharp fa-solid fa-bench-tree"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Public Assembly Points"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov032",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-        "lat": 50.680147,
-        "lng": -1.1443514,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PS",
-            "alt": "PrimarySchool",
-            "shape": "cirle",
-            "faUnicode": "\uf549",
-            "faIcon": "fa-regular fa-school"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Learning and Non Residential Institutions"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL026",
@@ -1932,29 +1541,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov269",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PublicPark",
-        "lat": 50.705239,
-        "lng": -1.2847594,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PublicPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PP",
-            "alt": "PublicPark",
-            "shape": "cirle",
-            "faUnicode": "\ue2e7",
-            "faIcon": "fa-sharp fa-solid fa-bench-tree"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Public Assembly Points"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#R013",
         "type": "http://ies.data.gov.uk/ontology/ies4#ResidentialBuilding",
         "lat": 50.681189,
@@ -1976,29 +1562,6 @@
         },
         "primaryCategory": "Miscellaneous",
         "secondaryCategory": "Residential"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov497",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PublicPark",
-        "lat": 50.65372,
-        "lng": -1.1620472,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PublicPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PP",
-            "alt": "PublicPark",
-            "shape": "cirle",
-            "faUnicode": "\ue2e7",
-            "faIcon": "fa-sharp fa-solid fa-bench-tree"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Public Assembly Points"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL117",
@@ -2231,29 +1794,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov356",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-        "lat": 50.586719,
-        "lng": -1.2843663,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PS",
-            "alt": "PrimarySchool",
-            "shape": "cirle",
-            "faUnicode": "\uf549",
-            "faIcon": "fa-regular fa-school"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Learning and Non Residential Institutions"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL101",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.6975595567,
@@ -2392,29 +1932,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov743",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PublicPark",
-        "lat": 50.720448,
-        "lng": -1.2424548,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PublicPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PP",
-            "alt": "PublicPark",
-            "shape": "cirle",
-            "faUnicode": "\ue2e7",
-            "faIcon": "fa-sharp fa-solid fa-bench-tree"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Public Assembly Points"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#Gov328",
         "type": "http://ies.data.gov.uk/ontology/ies4#CommunityCentre",
         "lat": 50.698861,
@@ -2459,29 +1976,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov387",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PublicPark",
-        "lat": 50.721711,
-        "lng": -1.1843095,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PublicPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PP",
-            "alt": "PublicPark",
-            "shape": "cirle",
-            "faUnicode": "\ue2e7",
-            "faIcon": "fa-sharp fa-solid fa-bench-tree"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Public Assembly Points"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#E006",
@@ -2574,29 +2068,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov353",
-        "type": "http://ies.data.gov.uk/ontology/ies4#Hospital",
-        "lat": 50.711101,
-        "lng": -1.3008871,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#Hospital",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "H",
-            "alt": "Hospital",
-            "shape": "cirle",
-            "faUnicode": "\uf0f8",
-            "faIcon": "fa-solid fa-hospital"
-        },
-        "primaryCategory": "Essential Services",
-        "secondaryCategory": "Health and social care"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#M008",
@@ -2712,29 +2183,6 @@
         },
         "primaryCategory": "Public Safety and Shelter",
         "secondaryCategory": "Shelters and Relief Centers"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Ed001",
-        "type": "http://ies.data.gov.uk/ontology/ies4#FurtherEducationalCollege",
-        "lat": 50.697228,
-        "lng": -1.3134258,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#FurtherEducationalCollege",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "FEC",
-            "alt": "FurtherEducationalCollege",
-            "shape": "cirle",
-            "faUnicode": "\uf549",
-            "faIcon": "fa-regular fa-school"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Learning and Non Residential Institutions"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL055",
@@ -2898,29 +2346,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#E001",
-        "type": "http://ies.data.gov.uk/ontology/ies4#OilFiredPowerGenerationComplex",
-        "lat": 50.746912,
-        "lng": -1.2862509,
-        "geometry": [],
-        "dependent": {
-            "count": 1,
-            "criticalitySum": 3
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#OilFiredPowerGenerationComplex",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "OFP",
-            "alt": "OilFiredPowerGenerationComplex",
-            "shape": "cirle",
-            "faUnicode": "\ue0b7",
-            "faIcon": "fa-regular fa-bolt-lightning"
-        },
-        "primaryCategory": "Essential Services",
-        "secondaryCategory": "Energy"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL011",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.7231602702,
@@ -2965,52 +2390,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov123",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-        "lat": 50.760057,
-        "lng": -1.278636,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PS",
-            "alt": "PrimarySchool",
-            "shape": "cirle",
-            "faUnicode": "\uf549",
-            "faIcon": "fa-regular fa-school"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Learning and Non Residential Institutions"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov753",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-        "lat": 50.616478,
-        "lng": -1.2213968,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PS",
-            "alt": "PrimarySchool",
-            "shape": "cirle",
-            "faUnicode": "\uf549",
-            "faIcon": "fa-regular fa-school"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Learning and Non Residential Institutions"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL017",
@@ -3197,29 +2576,6 @@
         "secondaryCategory": "Shelters and Relief Centers"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov206",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-        "lat": 50.712836,
-        "lng": -1.1176669,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PS",
-            "alt": "PrimarySchool",
-            "shape": "cirle",
-            "faUnicode": "\uf549",
-            "faIcon": "fa-regular fa-school"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Learning and Non Residential Institutions"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#Gov649",
         "type": "http://ies.data.gov.uk/ontology/ies4#CommunityCentre",
         "lat": 50.594705,
@@ -3358,52 +2714,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov210",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-        "lat": 50.665404,
-        "lng": -1.2060425,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PS",
-            "alt": "PrimarySchool",
-            "shape": "cirle",
-            "faUnicode": "\uf549",
-            "faIcon": "fa-regular fa-school"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Learning and Non Residential Institutions"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov386",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-        "lat": 50.72326,
-        "lng": -1.1468818,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PS",
-            "alt": "PrimarySchool",
-            "shape": "cirle",
-            "faUnicode": "\uf549",
-            "faIcon": "fa-regular fa-school"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Learning and Non Residential Institutions"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#E013",
         "type": "http://ies.data.gov.uk/ontology/ies4#LowVoltageElectricitySubstationComplex",
         "lat": 50.63418,
@@ -3448,29 +2758,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov765",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-        "lat": 50.703645,
-        "lng": -1.4980328,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PS",
-            "alt": "PrimarySchool",
-            "shape": "cirle",
-            "faUnicode": "\uf549",
-            "faIcon": "fa-regular fa-school"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Learning and Non Residential Institutions"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL039",
@@ -3565,29 +2852,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov067",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PublicPark",
-        "lat": 50.756849,
-        "lng": -1.296605,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PublicPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PP",
-            "alt": "PublicPark",
-            "shape": "cirle",
-            "faUnicode": "\ue2e7",
-            "faIcon": "fa-sharp fa-solid fa-bench-tree"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Public Assembly Points"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL248",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.6356177521,
@@ -3680,29 +2944,6 @@
         "secondaryCategory": "Shelters and Relief Centers"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov187",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-        "lat": 50.647017,
-        "lng": -1.1781067,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PS",
-            "alt": "PrimarySchool",
-            "shape": "cirle",
-            "faUnicode": "\uf549",
-            "faIcon": "fa-regular fa-school"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Learning and Non Residential Institutions"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#R001",
         "type": "http://ies.data.gov.uk/ontology/ies4#ResidentialBuilding",
         "lat": 50.681927,
@@ -3724,29 +2965,6 @@
         },
         "primaryCategory": "Miscellaneous",
         "secondaryCategory": "Residential"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov444",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-        "lat": 50.71769,
-        "lng": -1.1675934,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PS",
-            "alt": "PrimarySchool",
-            "shape": "cirle",
-            "faUnicode": "\uf549",
-            "faIcon": "fa-regular fa-school"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Learning and Non Residential Institutions"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL066",
@@ -3979,29 +3197,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov567",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-        "lat": 50.629798,
-        "lng": -1.1822951,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PS",
-            "alt": "PrimarySchool",
-            "shape": "cirle",
-            "faUnicode": "\uf549",
-            "faIcon": "fa-regular fa-school"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Learning and Non Residential Institutions"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL276",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.744307562,
@@ -4069,52 +3264,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov557",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-        "lat": 50.700261,
-        "lng": -1.4363262,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PS",
-            "alt": "PrimarySchool",
-            "shape": "cirle",
-            "faUnicode": "\uf549",
-            "faIcon": "fa-regular fa-school"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Learning and Non Residential Institutions"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Ed006",
-        "type": "http://ies.data.gov.uk/ontology/ies4#FurtherEducationalCollege",
-        "lat": 50.600135,
-        "lng": -1.2183882,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#FurtherEducationalCollege",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "FEC",
-            "alt": "FurtherEducationalCollege",
-            "shape": "cirle",
-            "faUnicode": "\uf549",
-            "faIcon": "fa-regular fa-school"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Learning and Non Residential Institutions"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#Gov274",
@@ -4347,52 +3496,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov629",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PublicPark",
-        "lat": 50.697614,
-        "lng": -1.1134214,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PublicPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PP",
-            "alt": "PublicPark",
-            "shape": "cirle",
-            "faUnicode": "\ue2e7",
-            "faIcon": "fa-sharp fa-solid fa-bench-tree"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Public Assembly Points"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov555",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-        "lat": 50.700261,
-        "lng": -1.4363262,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PS",
-            "alt": "PrimarySchool",
-            "shape": "cirle",
-            "faUnicode": "\uf549",
-            "faIcon": "fa-regular fa-school"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Learning and Non Residential Institutions"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL070",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.7402601533,
@@ -4437,29 +3540,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov766",
-        "type": "http://ies.data.gov.uk/ontology/ies4#Farmyard",
-        "lat": 50.700029,
-        "lng": -1.4813345,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#Farmyard",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "F",
-            "alt": "Farmyard",
-            "shape": "cirle",
-            "faUnicode": "\uf02b",
-            "faIcon": "fa-solid fa-tag"
-        },
-        "primaryCategory": "Recovery and Support",
-        "secondaryCategory": "Agricultural and Natural Assets"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL193",
@@ -4575,29 +3655,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Ed007",
-        "type": "http://ies.data.gov.uk/ontology/ies4#FurtherEducationalCollege",
-        "lat": 50.706102,
-        "lng": -1.2965429,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#FurtherEducationalCollege",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "FEC",
-            "alt": "FurtherEducationalCollege",
-            "shape": "cirle",
-            "faUnicode": "\uf549",
-            "faIcon": "fa-regular fa-school"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Learning and Non Residential Institutions"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL027",
@@ -4784,29 +3841,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov523",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-        "lat": 50.657429,
-        "lng": -1.1601846,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PS",
-            "alt": "PrimarySchool",
-            "shape": "cirle",
-            "faUnicode": "\uf549",
-            "faIcon": "fa-regular fa-school"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Learning and Non Residential Institutions"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL155",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.6936337258,
@@ -4828,75 +3862,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov466",
-        "type": "http://ies.data.gov.uk/ontology/ies4#SecondarySchool",
-        "lat": 50.657192,
-        "lng": -1.1672058,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#SecondarySchool",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "SS",
-            "alt": "SecondarySchool",
-            "shape": "cirle",
-            "faUnicode": "\ue56e",
-            "faIcon": "fa-sharp fa-solid fa-school-flag"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Learning and Non Residential Institutions"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov005",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-        "lat": 50.675505,
-        "lng": -1.2415224,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PS",
-            "alt": "PrimarySchool",
-            "shape": "cirle",
-            "faUnicode": "\uf549",
-            "faIcon": "fa-regular fa-school"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Learning and Non Residential Institutions"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov231",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-        "lat": 50.707791,
-        "lng": -1.3053549,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PS",
-            "alt": "PrimarySchool",
-            "shape": "cirle",
-            "faUnicode": "\uf549",
-            "faIcon": "fa-regular fa-school"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Learning and Non Residential Institutions"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL130",
@@ -5060,121 +4025,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#E027",
-        "type": "http://ies.data.gov.uk/ontology/ies4#GasDistributionComplex",
-        "lat": 50.753241,
-        "lng": -1.3347356,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#GasDistributionComplex",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "GDC",
-            "alt": "GasDistributionComplex",
-            "shape": "cirle",
-            "faUnicode": "\uf46a",
-            "faIcon": "fa-regular fa-fire-flame-simple"
-        },
-        "primaryCategory": "Essential Services",
-        "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov174",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-        "lat": 50.63525,
-        "lng": -1.2577954,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PS",
-            "alt": "PrimarySchool",
-            "shape": "cirle",
-            "faUnicode": "\uf549",
-            "faIcon": "fa-regular fa-school"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Learning and Non Residential Institutions"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov226",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-        "lat": 50.699497,
-        "lng": -1.3047552,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PS",
-            "alt": "PrimarySchool",
-            "shape": "cirle",
-            "faUnicode": "\uf549",
-            "faIcon": "fa-regular fa-school"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Learning and Non Residential Institutions"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov166",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PublicPark",
-        "lat": null,
-        "lng": null,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PublicPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PP",
-            "alt": "PublicPark",
-            "shape": "cirle",
-            "faUnicode": "\ue2e7",
-            "faIcon": "fa-sharp fa-solid fa-bench-tree"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Public Assembly Points"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov625",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-        "lat": 50.698639,
-        "lng": -1.1121561,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PS",
-            "alt": "PrimarySchool",
-            "shape": "cirle",
-            "faUnicode": "\uf549",
-            "faIcon": "fa-regular fa-school"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Learning and Non Residential Institutions"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL241",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.6933133329,
@@ -5267,29 +4117,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov043",
-        "type": "http://ies.data.gov.uk/ontology/ies4#SecondarySchool",
-        "lat": 50.696789,
-        "lng": -1.3152021,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#SecondarySchool",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "SS",
-            "alt": "SecondarySchool",
-            "shape": "cirle",
-            "faUnicode": "\ue56e",
-            "faIcon": "fa-sharp fa-solid fa-school-flag"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Learning and Non Residential Institutions"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#E019",
         "type": "http://ies.data.gov.uk/ontology/ies4#LowVoltageElectricitySubstationComplex",
         "lat": 50.719325,
@@ -5311,29 +4138,6 @@
         },
         "primaryCategory": "Essential Services",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov228",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-        "lat": 50.706182,
-        "lng": -1.2802416,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PS",
-            "alt": "PrimarySchool",
-            "shape": "cirle",
-            "faUnicode": "\uf549",
-            "faIcon": "fa-regular fa-school"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Learning and Non Residential Institutions"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL090",
@@ -5380,29 +4184,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov375",
-        "type": "http://ies.data.gov.uk/ontology/ies4#SecondarySchool",
-        "lat": 50.723737,
-        "lng": -1.1744565,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#SecondarySchool",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "SS",
-            "alt": "SecondarySchool",
-            "shape": "cirle",
-            "faUnicode": "\ue56e",
-            "faIcon": "fa-sharp fa-solid fa-school-flag"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Learning and Non Residential Institutions"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL227",
@@ -5750,29 +4531,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov370",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-        "lat": 50.72116,
-        "lng": -1.149994,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PS",
-            "alt": "PrimarySchool",
-            "shape": "cirle",
-            "faUnicode": "\uf549",
-            "faIcon": "fa-regular fa-school"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Learning and Non Residential Institutions"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL043",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.718547615,
@@ -5980,29 +4738,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov177",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PublicPark",
-        "lat": 50.760232,
-        "lng": -1.3243291,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PublicPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PP",
-            "alt": "PublicPark",
-            "shape": "cirle",
-            "faUnicode": "\ue2e7",
-            "faIcon": "fa-sharp fa-solid fa-bench-tree"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Public Assembly Points"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL143",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.6361444297,
@@ -6070,52 +4805,6 @@
         },
         "primaryCategory": "Essential Services",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov236",
-        "type": "http://ies.data.gov.uk/ontology/ies4#SecondarySchool",
-        "lat": 50.689867,
-        "lng": -1.2931474,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#SecondarySchool",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "SS",
-            "alt": "SecondarySchool",
-            "shape": "cirle",
-            "faUnicode": "\ue56e",
-            "faIcon": "fa-sharp fa-solid fa-school-flag"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Learning and Non Residential Institutions"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov259",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PublicPark",
-        "lat": 50.715895,
-        "lng": -1.2890308,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PublicPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PP",
-            "alt": "PublicPark",
-            "shape": "cirle",
-            "faUnicode": "\ue2e7",
-            "faIcon": "fa-sharp fa-solid fa-bench-tree"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Public Assembly Points"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#Gov544",
@@ -6233,29 +4922,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov362",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-        "lat": 50.73681,
-        "lng": -1.314012,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PS",
-            "alt": "PrimarySchool",
-            "shape": "cirle",
-            "faUnicode": "\uf549",
-            "faIcon": "fa-regular fa-school"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Learning and Non Residential Institutions"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL185",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.694914795,
@@ -6277,29 +4943,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov725",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-        "lat": 50.599849,
-        "lng": -1.2199614,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PS",
-            "alt": "PrimarySchool",
-            "shape": "cirle",
-            "faUnicode": "\uf549",
-            "faIcon": "fa-regular fa-school"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Learning and Non Residential Institutions"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#Gov754",
@@ -6417,29 +5060,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov038",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-        "lat": 50.641552,
-        "lng": -1.3961773,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PS",
-            "alt": "PrimarySchool",
-            "shape": "cirle",
-            "faUnicode": "\uf549",
-            "faIcon": "fa-regular fa-school"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Learning and Non Residential Institutions"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL008",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.7292263607,
@@ -6507,29 +5127,6 @@
         },
         "primaryCategory": "Miscellaneous",
         "secondaryCategory": "Residential"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov060",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-        "lat": 50.760428,
-        "lng": -1.3054859,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PS",
-            "alt": "PrimarySchool",
-            "shape": "cirle",
-            "faUnicode": "\uf549",
-            "faIcon": "fa-regular fa-school"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Learning and Non Residential Institutions"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL073",
@@ -6739,29 +5336,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Ed004",
-        "type": "http://ies.data.gov.uk/ontology/ies4#FurtherEducationalCollege",
-        "lat": 50.711378,
-        "lng": -1.2828814,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#FurtherEducationalCollege",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "FEC",
-            "alt": "FurtherEducationalCollege",
-            "shape": "cirle",
-            "faUnicode": "\uf549",
-            "faIcon": "fa-regular fa-school"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Learning and Non Residential Institutions"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#T001",
         "type": "http://ies.data.gov.uk/ontology/ies4#Airport",
         "lat": 50.678218,
@@ -6854,29 +5428,6 @@
         "secondaryCategory": "Shelters and Relief Centers"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov635",
-        "type": "http://ies.data.gov.uk/ontology/ies4#SecondarySchool",
-        "lat": 50.677794,
-        "lng": -1.5424943,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#SecondarySchool",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "SS",
-            "alt": "SecondarySchool",
-            "shape": "cirle",
-            "faUnicode": "\ue56e",
-            "faIcon": "fa-sharp fa-solid fa-school-flag"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Learning and Non Residential Institutions"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL148",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.6624911851,
@@ -6967,29 +5518,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov636",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-        "lat": 50.677364,
-        "lng": -1.5362146,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PS",
-            "alt": "PrimarySchool",
-            "shape": "cirle",
-            "faUnicode": "\uf549",
-            "faIcon": "fa-regular fa-school"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Learning and Non Residential Institutions"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#Gov650",
@@ -7266,29 +5794,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Ed002",
-        "type": "http://ies.data.gov.uk/ontology/ies4#FurtherEducationalCollege",
-        "lat": 50.693777,
-        "lng": -1.3107437,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#FurtherEducationalCollege",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "FEC",
-            "alt": "FurtherEducationalCollege",
-            "shape": "cirle",
-            "faUnicode": "\uf549",
-            "faIcon": "fa-regular fa-school"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Learning and Non Residential Institutions"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL022",
@@ -7613,29 +6118,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov474",
-        "type": "http://ies.data.gov.uk/ontology/ies4#NatureReserve",
-        "lat": 50.659866,
-        "lng": -1.1415508,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#NatureReserve",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "NR",
-            "alt": "NatureReserve",
-            "shape": "cirle",
-            "faUnicode": "\uf1bb",
-            "faIcon": "fa-regular fa-tree"
-        },
-        "primaryCategory": "Recovery and Support",
-        "secondaryCategory": "Agricultural and Natural Assets"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL197",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.6749259814,
@@ -7680,29 +6162,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Ed008",
-        "type": "http://ies.data.gov.uk/ontology/ies4#FurtherEducationalCollege",
-        "lat": 50.657383,
-        "lng": -1.1587,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#FurtherEducationalCollege",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "FEC",
-            "alt": "FurtherEducationalCollege",
-            "shape": "cirle",
-            "faUnicode": "\uf549",
-            "faIcon": "fa-regular fa-school"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Learning and Non Residential Institutions"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL125",
@@ -7866,29 +6325,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov103",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PublicPark",
-        "lat": 50.755175,
-        "lng": -1.3130323,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PublicPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PP",
-            "alt": "PublicPark",
-            "shape": "cirle",
-            "faUnicode": "\ue2e7",
-            "faIcon": "fa-sharp fa-solid fa-bench-tree"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Public Assembly Points"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#R014",
         "type": "http://ies.data.gov.uk/ontology/ies4#ResidentialBuilding",
         "lat": 50.670656,
@@ -7933,29 +6369,6 @@
         },
         "primaryCategory": "Public Safety and Shelter",
         "secondaryCategory": "Public Assembly Points"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov022",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-        "lat": 50.724522,
-        "lng": -1.1876467,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PS",
-            "alt": "PrimarySchool",
-            "shape": "cirle",
-            "faUnicode": "\uf549",
-            "faIcon": "fa-regular fa-school"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Learning and Non Residential Institutions"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL240",
@@ -8071,75 +6484,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov779",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PublicPark",
-        "lat": 50.7045137,
-        "lng": -1.49501,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PublicPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PP",
-            "alt": "PublicPark",
-            "shape": "cirle",
-            "faUnicode": "\ue2e7",
-            "faIcon": "fa-sharp fa-solid fa-bench-tree"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Public Assembly Points"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov385",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-        "lat": 50.726873,
-        "lng": -1.1477938,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PS",
-            "alt": "PrimarySchool",
-            "shape": "cirle",
-            "faUnicode": "\uf549",
-            "faIcon": "fa-regular fa-school"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Learning and Non Residential Institutions"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov230",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-        "lat": 50.69801,
-        "lng": -1.2834817,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PS",
-            "alt": "PrimarySchool",
-            "shape": "cirle",
-            "faUnicode": "\uf549",
-            "faIcon": "fa-regular fa-school"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Learning and Non Residential Institutions"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL203",
@@ -8303,29 +6647,6 @@
         "secondaryCategory": "Residential"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov378",
-        "type": "http://ies.data.gov.uk/ontology/ies4#Farmyard",
-        "lat": 50.717496,
-        "lng": -1.1770025,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#Farmyard",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "F",
-            "alt": "Farmyard",
-            "shape": "cirle",
-            "faUnicode": "\uf02b",
-            "faIcon": "fa-solid fa-tag"
-        },
-        "primaryCategory": "Recovery and Support",
-        "secondaryCategory": "Agricultural and Natural Assets"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL247",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.6347261905,
@@ -8347,29 +6668,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov056",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-        "lat": 50.654835,
-        "lng": -1.3073667,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PS",
-            "alt": "PrimarySchool",
-            "shape": "cirle",
-            "faUnicode": "\uf549",
-            "faIcon": "fa-regular fa-school"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Learning and Non Residential Institutions"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL126",
@@ -8510,29 +6808,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov419",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PublicPark",
-        "lat": 50.725398,
-        "lng": -1.1295868,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PublicPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PP",
-            "alt": "PublicPark",
-            "shape": "cirle",
-            "faUnicode": "\ue2e7",
-            "faIcon": "fa-sharp fa-solid fa-bench-tree"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Public Assembly Points"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL271",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.669009917,
@@ -8554,29 +6829,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov055",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-        "lat": 50.654835,
-        "lng": -1.3073667,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PS",
-            "alt": "PrimarySchool",
-            "shape": "cirle",
-            "faUnicode": "\uf549",
-            "faIcon": "fa-regular fa-school"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Learning and Non Residential Institutions"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL264",
@@ -8786,29 +7038,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov235",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-        "lat": 50.701321,
-        "lng": -1.2852721,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PS",
-            "alt": "PrimarySchool",
-            "shape": "cirle",
-            "faUnicode": "\uf549",
-            "faIcon": "fa-regular fa-school"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Learning and Non Residential Institutions"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL105",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.6817009051,
@@ -8945,29 +7174,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov652",
-        "type": "http://ies.data.gov.uk/ontology/ies4#NatureReserve",
-        "lat": 50.600645,
-        "lng": -1.1928609,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#NatureReserve",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "NR",
-            "alt": "NatureReserve",
-            "shape": "cirle",
-            "faUnicode": "\uf1bb",
-            "faIcon": "fa-regular fa-tree"
-        },
-        "primaryCategory": "Recovery and Support",
-        "secondaryCategory": "Agricultural and Natural Assets"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL028",
@@ -9131,29 +7337,6 @@
         "secondaryCategory": "Shelters and Relief Centers"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov374",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-        "lat": 50.725727,
-        "lng": -1.1760367,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PS",
-            "alt": "PrimarySchool",
-            "shape": "cirle",
-            "faUnicode": "\uf549",
-            "faIcon": "fa-regular fa-school"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Learning and Non Residential Institutions"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL277",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.7467605138,
@@ -9175,29 +7358,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov739",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-        "lat": 50.725835,
-        "lng": -1.2369559,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PS",
-            "alt": "PrimarySchool",
-            "shape": "cirle",
-            "faUnicode": "\uf549",
-            "faIcon": "fa-regular fa-school"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Learning and Non Residential Institutions"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#Gov350",
@@ -9290,75 +7450,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov476",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-        "lat": 50.657927,
-        "lng": -1.1518995,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PS",
-            "alt": "PrimarySchool",
-            "shape": "cirle",
-            "faUnicode": "\uf549",
-            "faIcon": "fa-regular fa-school"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Learning and Non Residential Institutions"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov389",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PublicPark",
-        "lat": 50.723035,
-        "lng": -1.1444492,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PublicPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PP",
-            "alt": "PublicPark",
-            "shape": "cirle",
-            "faUnicode": "\ue2e7",
-            "faIcon": "fa-sharp fa-solid fa-bench-tree"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Public Assembly Points"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov737",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PublicPark",
-        "lat": 50.733776,
-        "lng": -1.2807825,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PublicPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PP",
-            "alt": "PublicPark",
-            "shape": "cirle",
-            "faUnicode": "\ue2e7",
-            "faIcon": "fa-sharp fa-solid fa-bench-tree"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Public Assembly Points"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL222",
@@ -9522,29 +7613,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov057",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PublicPark",
-        "lat": 50.687056,
-        "lng": -1.5355104,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PublicPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PP",
-            "alt": "PublicPark",
-            "shape": "cirle",
-            "faUnicode": "\ue2e7",
-            "faIcon": "fa-sharp fa-solid fa-bench-tree"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Public Assembly Points"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL074",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.7030830442,
@@ -9658,29 +7726,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov676",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PublicPark",
-        "lat": 50.592276,
-        "lng": -1.2150426,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PublicPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PP",
-            "alt": "PublicPark",
-            "shape": "cirle",
-            "faUnicode": "\ue2e7",
-            "faIcon": "fa-sharp fa-solid fa-bench-tree"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Public Assembly Points"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL088",
@@ -9844,29 +7889,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov063",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-        "lat": 50.751432,
-        "lng": -1.3045856,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PS",
-            "alt": "PrimarySchool",
-            "shape": "cirle",
-            "faUnicode": "\uf549",
-            "faIcon": "fa-regular fa-school"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Learning and Non Residential Institutions"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#Gov070",
         "type": "http://ies.data.gov.uk/ontology/ies4#CommunityCentre",
         "lat": 50.759756,
@@ -10028,29 +8050,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov234",
-        "type": "http://ies.data.gov.uk/ontology/ies4#SecondarySchool",
-        "lat": 50.711574,
-        "lng": -1.2825527,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#SecondarySchool",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "SS",
-            "alt": "SecondarySchool",
-            "shape": "cirle",
-            "faUnicode": "\ue56e",
-            "faIcon": "fa-sharp fa-solid fa-school-flag"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Learning and Non Residential Institutions"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL057",
         "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
         "lat": 50.7345764516,
@@ -10189,29 +8188,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov117",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-        "lat": 50.746076,
-        "lng": -1.2775184,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PS",
-            "alt": "PrimarySchool",
-            "shape": "cirle",
-            "faUnicode": "\uf549",
-            "faIcon": "fa-regular fa-school"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Learning and Non Residential Institutions"
-    },
-    {
         "uri": "https://www.iow.gov.uk/DigitalTwin#Gov484",
         "type": "http://ies.data.gov.uk/ontology/ies4#CommunityCentre",
         "lat": 50.651034,
@@ -10302,29 +8278,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov146",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PublicPark",
-        "lat": 50.744338,
-        "lng": -1.280153,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PublicPark",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PP",
-            "alt": "PublicPark",
-            "shape": "cirle",
-            "faUnicode": "\ue2e7",
-            "faIcon": "fa-sharp fa-solid fa-bench-tree"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Public Assembly Points"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL078",
@@ -10509,29 +8462,6 @@
         },
         "primaryCategory": "Transport and Infrastructure",
         "secondaryCategory": "Utility Infrastructure"
-    },
-    {
-        "uri": "https://www.iow.gov.uk/DigitalTwin#Gov062",
-        "type": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-        "lat": 50.761261,
-        "lng": -1.3172676,
-        "geometry": [],
-        "dependent": {
-            "count": 0,
-            "criticalitySum": 0
-        },
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#PrimarySchool",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "PS",
-            "alt": "PrimarySchool",
-            "shape": "cirle",
-            "faUnicode": "\uf549",
-            "faIcon": "fa-regular fa-school"
-        },
-        "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Learning and Non Residential Institutions"
     },
     {
         "uri": "https://www.iow.gov.uk/DigitalTwin#PYL042",

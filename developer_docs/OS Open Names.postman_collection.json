@@ -1,0 +1,174 @@
+{
+	"info": {
+		"_postman_id": "af91c739-7f46-4d8d-bb87-9a2bb07880cf",
+		"name": "OS Open Names",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "8916099"
+	},
+	"item": [
+		{
+			"name": "Secondary Schools",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.os.uk/search/names/v1/find?key={{names_key}}&query=Wight&fq=BBOX:425000,80000,470000,97000&fq=LOCAL_TYPE:Secondary_Education",
+					"protocol": "https",
+					"host": [
+						"api",
+						"os",
+						"uk"
+					],
+					"path": [
+						"search",
+						"names",
+						"v1",
+						"find"
+					],
+					"query": [
+						{
+							"key": "key",
+							"value": "{{names_key}}"
+						},
+						{
+							"key": "query",
+							"value": "Wight"
+						},
+						{
+							"key": "fq",
+							"value": "BBOX:425000,80000,470000,97000"
+						},
+						{
+							"key": "fq",
+							"value": "LOCAL_TYPE:Secondary_Education"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Primary Schools",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.os.uk/search/names/v1/find?key={{names_key}}&fq=LOCAL_TYPE:Primary_Education&query=Wight&fq=BBOX:425000,80000,470000,97000",
+					"protocol": "https",
+					"host": [
+						"api",
+						"os",
+						"uk"
+					],
+					"path": [
+						"search",
+						"names",
+						"v1",
+						"find"
+					],
+					"query": [
+						{
+							"key": "key",
+							"value": "{{names_key}}"
+						},
+						{
+							"key": "fq",
+							"value": "LOCAL_TYPE:Primary_Education"
+						},
+						{
+							"key": "query",
+							"value": "Wight"
+						},
+						{
+							"key": "fq",
+							"value": "BBOX:425000,80000,470000,97000"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Further Education",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.os.uk/search/names/v1/find?key={{names_key}}&query=Wight&fq=BBOX:425000,80000,470000,97000&fq=LOCAL_TYPE:Further_Education",
+					"protocol": "https",
+					"host": [
+						"api",
+						"os",
+						"uk"
+					],
+					"path": [
+						"search",
+						"names",
+						"v1",
+						"find"
+					],
+					"query": [
+						{
+							"key": "key",
+							"value": "{{names_key}}"
+						},
+						{
+							"key": "query",
+							"value": "Wight"
+						},
+						{
+							"key": "fq",
+							"value": "BBOX:425000,80000,470000,97000"
+						},
+						{
+							"key": "fq",
+							"value": "LOCAL_TYPE:Further_Education"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Hospitals",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.os.uk/search/names/v1/find?key={{names_key}}&query=Wight&fq=BBOX:425000,80000,470000,97000&fq=LOCAL_TYPE:Hospital",
+					"protocol": "https",
+					"host": [
+						"api",
+						"os",
+						"uk"
+					],
+					"path": [
+						"search",
+						"names",
+						"v1",
+						"find"
+					],
+					"query": [
+						{
+							"key": "key",
+							"value": "{{names_key}}"
+						},
+						{
+							"key": "query",
+							"value": "Wight"
+						},
+						{
+							"key": "fq",
+							"value": "BBOX:425000,80000,470000,97000"
+						},
+						{
+							"key": "fq",
+							"value": "LOCAL_TYPE:Hospital"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

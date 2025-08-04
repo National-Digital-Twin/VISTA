@@ -25761,8 +25761,12 @@ ies:LiquidFuelStorageComplex
         rdfs:subClassOf  ies:Facility;
         ndtp:style        "{\"defaultStyles\": {\"dark\": {\"backgroundColor\": \"#242400\", \"color\": \"#FFFD04\"}, \"light\": {\"backgroundColor\": \"#FFFD04\", \"color\": \"#242400\"}, \"shape\": \"cirle\", \"borderRadius\": \"9999px\", \"borderWidth\": \"2px\", \"selectedBorderWidth\": \"3px\"}, \"defaultIcons\": {\"riIcon\": \"REQUIRED_REMIX\", \"faIcon\": \"fa-regular fa-database\", \"faUnicode\": \"\\uf1c0\", \"faClass\": \"fa-regular\"}}" .
 
-
 ies:BusStop
+        rdf:type         rdfs:Class;
+        rdfs:subClassOf  ies:Facility;
+        ndtp:style        "{\"defaultStyles\": {\"dark\": {\"backgroundColor\": \"#242400\", \"color\": \"#FFFD04\"}, \"light\": {\"backgroundColor\": \"#FFFD04\", \"color\": \"#242400\"}, \"shape\": \"cirle\", \"borderRadius\": \"9999px\", \"borderWidth\": \"2px\", \"selectedBorderWidth\": \"3px\"}, \"defaultIcons\": {\"riIcon\": \"REQUIRED_REMIX\", \"faIcon\": \"fa-regular fa-bus\", \"faUnicode\": \"\\uf1c0\", \"faClass\": \"fa-regular\"}}" .
+
+ies:BusStation
         rdf:type         rdfs:Class;
         rdfs:subClassOf  ies:Facility;
         ndtp:style        "{\"defaultStyles\": {\"dark\": {\"backgroundColor\": \"#242400\", \"color\": \"#FFFD04\"}, \"light\": {\"backgroundColor\": \"#FFFD04\", \"color\": \"#242400\"}, \"shape\": \"cirle\", \"borderRadius\": \"9999px\", \"borderWidth\": \"2px\", \"selectedBorderWidth\": \"3px\"}, \"defaultIcons\": {\"riIcon\": \"REQUIRED_REMIX\", \"faIcon\": \"fa-regular fa-bus\", \"faUnicode\": \"\\uf1c0\", \"faClass\": \"fa-regular\"}}" .

@@ -34,6 +34,7 @@ export interface AssetSpecification {
   type: string;
   collection: string;
   source: string;
+  expectedCount: number;
   filters?: AssetClassFilter[];
   cqlFilter?: string;
   showAsPoint?: boolean;
@@ -152,11 +153,6 @@ function mapPointAsset(
   const coordinates = getCoordinatesforPointAsset(feature);
   const type = assetSpecification.type;
 
-  let description = feature.properties?.description;
-  if (!description && assetSpecification.type.includes("#")) {
-    description = assetSpecification.type.split("#")[1];
-  }
-
   return new Asset({
     uri: `http://ndtp.co.uk/Building#${feature.id}`,
     type,
@@ -168,7 +164,6 @@ function mapPointAsset(
       count: 0,
       criticalitySum: 0,
     },
-    description,
     styles: assetSpecification.styles,
     primaryCategory: assetSpecification.primaryCategory,
     secondaryCategory: assetSpecification.secondaryCategory,

@@ -61,7 +61,6 @@ function Details({ details }: DetailsProps) {
       {type && (
         <p className="text-sm uppercase">{noCase(getURIFragment(type))}</p>
       )}
-      <p>{id}</p>
       {desc && (
         <p
           style={{
