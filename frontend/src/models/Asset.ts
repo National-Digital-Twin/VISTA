@@ -44,7 +44,7 @@ export default class Asset {
   lng: number | undefined;
   geometry: Geometry;
   dependent: any;
-  description: string;
+  description?: string;
   styles: FoundIcon;
   elementType: "asset";
   primaryCategory?: string;
@@ -74,7 +74,7 @@ export default class Asset {
     lng?: number;
     geometry: Geometry;
     dependent: any;
-    description: string;
+    description?: string;
     styles: FoundIcon;
     primaryCategory?: string;
     secondaryCategory?: string;

@@ -46,7 +46,7 @@ interface DetailsProps {
 }
 
 function Details({ details }: DetailsProps) {
-  const { id, title, type, desc } = details;
+  const { title, type, desc } = details;
 
   return (
     <div
@@ -61,7 +61,6 @@ function Details({ details }: DetailsProps) {
       {type && (
         <p className="text-sm uppercase">{noCase(getURIFragment(type))}</p>
       )}
-      <p>{id}</p>
       {desc && (
         <p
           style={{

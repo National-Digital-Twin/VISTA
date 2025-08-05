@@ -22,6 +22,7 @@ interface NGDFeatureCollection {
   type: "FeatureCollection";
   links: Link[];
   features: Feature[];
+  numberReturned: number;
 }
 
 const filterableFields = ["buildinguse", "roadstructure"];
@@ -96,9 +97,16 @@ export class OsNgdDataSourceHandler extends DataSourceHandler {
     const queryStrings: string[] = this.buildQueryStrings(assetSpecification);
     const urls: string[] = [];
     for (const queryString of queryStrings) {
-      urls.push(
-        `/transparent-proxy/os-ngd/features/ngd/ofa/v1/collections/${assetSpecification.collection}/items${queryString}`,
-      );
+      const url = `/transparent-proxy/os-ngd/features/ngd/ofa/v1/collections/${assetSpecification.collection}/items${queryString}`;
+      const count = assetSpecification.expectedCount;
+      if (count && count > 0) {
+        const numberPages = Math.ceil(count / 100);
+        for (let i = 0; i < numberPages; i++) {
+          urls.push(`${url}&offset=${i}00`);
+        }
+      } else {
+        urls.push(url);
+      }
     }
     return urls;
   }
@@ -128,6 +136,7 @@ export class OsNgdDataSourceHandler extends DataSourceHandler {
     url?: string,
   ): Promise<Feature[]> {
     const allFeatures: Feature[] = [];
+    const paginate = !url?.includes("offset=");
     while (url !== undefined) {
       const ngdFeatureCollection: NGDFeatureCollection =
         await this.fetchFromUrl(url);
@@ -136,13 +145,31 @@ export class OsNgdDataSourceHandler extends DataSourceHandler {
         assetSpecification,
       );
       allFeatures.push(...features);
-      const nextUrl = ngdFeatureCollection.links.find(
-        (item) => item.rel === "next",
-      )?.href;
-      url = nextUrl && this.transformUrl(nextUrl);
+      if (paginate) {
+        url = this.getNextUrl(ngdFeatureCollection.links);
+      } else {
+        const onLastPage =
+          assetSpecification.expectedCount - this.getOffset(url) < 100;
+        if (onLastPage && ngdFeatureCollection.numberReturned === 100) {
+          url = this.getNextUrl(ngdFeatureCollection.links);
+        } else {
+          break;
+        }
+      }
     }
 
     return allFeatures;
+  }
+
+  private getNextUrl(links: Link[]): string | undefined {
+    const nextUrl = links.find((item) => item.rel === "next")?.href;
+    return nextUrl && this.transformUrl(nextUrl);
+  }
+
+  private getOffset(url: string): number {
+    const urlFragments = url.split("offset=");
+    const offsetStr = urlFragments[1];
+    return Number(offsetStr);
   }
 
   /**

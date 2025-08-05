@@ -1,7 +1,7 @@
 {
 	"info": {
 		"_postman_id": "f97d57b2-33bb-4c54-ab59-fd770c884c75",
-		"name": "OS NGD",
+		"name": "OS NGD (VISTA)",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "8916099"
 	},
@@ -217,7 +217,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "https://api.os.uk/features/ngd/ofa/v1/collections/bld-fts-building-4/items?bbox=-1.585464,50.562959,-0.926285,50.761219&key={{key}}&filter=buildinguse='Commercial Activity: Animal Services'",
+					"raw": "https://api.os.uk/features/ngd/ofa/v1/collections/lus-fts-site-2/items?bbox=-1.585464,50.562959,-0.926285,50.761219&key={{key}}&filter=description='Animal Treatment Site'",
 					"protocol": "https",
 					"host": [
 						"api",
@@ -230,7 +230,7 @@
 						"ofa",
 						"v1",
 						"collections",
-						"bld-fts-building-4",
+						"lus-fts-site-2",
 						"items"
 					],
 					"query": [
@@ -245,7 +245,7 @@
 						},
 						{
 							"key": "filter",
-							"value": "buildinguse='Commercial Activity: Animal Services'"
+							"value": "description='Animal Treatment Site'"
 						}
 					]
 				}
@@ -714,7 +714,7 @@
 			"response": []
 		},
 		{
-			"name": "Streets",
+			"name": "Roads",
 			"request": {
 				"method": "GET",
 				"header": [],
@@ -1030,7 +1030,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "https://api.os.uk/features/ngd/ofa/v1/collections/wtr-ntwk-waterlink-1/items?bbox=-1.585464,50.562959,-0.926285,50.761219&key={{key}}",
+					"raw": "https://api.os.uk/features/ngd/ofa/v1/collections/wtr-ntwk-waterlink-1/items?bbox=-1.585464,50.562959,-0.926285,50.761219&key={{key}}&filter=description='Leat'",
 					"protocol": "https",
 					"host": [
 						"api",
@@ -1071,8 +1071,7 @@
 						{
 							"key": "filter",
 							"value": "description='Leat'",
-							"description": "Note that only one filter can be enabled at a time.",
-							"disabled": true
+							"description": "Note that only one filter can be enabled at a time."
 						},
 						{
 							"key": "offset",
@@ -1091,7 +1090,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "https://api.os.uk/features/ngd/ofa/v1/collections/trn-rami-routingstructure-1/items?bbox=-1.585464,50.562959,-0.926285,50.761219&key={{key}}&filter=description='Level Crossing Fully Barriered'",
+					"raw": "https://api.os.uk/features/ngd/ofa/v1/collections/trn-rami-routingstructure-1/items?bbox=-1.585464,50.562959,-0.926285,50.761219&key={{key}}&filter=description='Level Crossing Unbarriered'",
 					"protocol": "https",
 					"host": [
 						"api",
@@ -1120,7 +1119,8 @@
 						{
 							"key": "filter",
 							"value": "description='Level Crossing Fully Barriered'",
-							"description": "Note that only one filter can be enabled at a time."
+							"description": "Note that only one filter can be enabled at a time.",
+							"disabled": true
 						},
 						{
 							"key": "filter",
@@ -1131,8 +1131,48 @@
 						{
 							"key": "filter",
 							"value": "description='Level Crossing Unbarriered'",
-							"description": "Note that only one filter can be enabled at a time.",
-							"disabled": true
+							"description": "Note that only one filter can be enabled at a time."
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Low Bridge",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.os.uk/features/ngd/ofa/v1/collections/trn-rami-restriction-1/items?bbox=-1.585464,50.562959,-0.926285,50.761219&key={{key}}&filter=restriction='Maximum Height' ",
+					"protocol": "https",
+					"host": [
+						"api",
+						"os",
+						"uk"
+					],
+					"path": [
+						"features",
+						"ngd",
+						"ofa",
+						"v1",
+						"collections",
+						"trn-rami-restriction-1",
+						"items"
+					],
+					"query": [
+						{
+							"key": "bbox",
+							"value": "-1.585464,50.562959,-0.926285,50.761219",
+							"description": "Coordinates for a bounding box covering the Isle of Wight"
+						},
+						{
+							"key": "key",
+							"value": "{{key}}"
+						},
+						{
+							"key": "filter",
+							"value": "restriction='Maximum Height' "
 						}
 					]
 				}
@@ -1359,6 +1399,51 @@
 			"response": []
 		},
 		{
+			"name": "Farmyard",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.os.uk/features/ngd/ofa/v1/collections/lnd-fts-land-3/items?bbox=-1.585464,50.562959,-0.926285,50.761219&key={{key}}&filter=description='Livestock Pen'",
+					"protocol": "https",
+					"host": [
+						"api",
+						"os",
+						"uk"
+					],
+					"path": [
+						"features",
+						"ngd",
+						"ofa",
+						"v1",
+						"collections",
+						"lnd-fts-land-3",
+						"items"
+					],
+					"query": [
+						{
+							"key": "bbox",
+							"value": "-1.585464,50.562959,-0.926285,50.761219"
+						},
+						{
+							"key": "key",
+							"value": "{{key}}"
+						},
+						{
+							"key": "filter",
+							"value": "description='Livestock Pen'"
+						},
+						{
+							"key": "offset",
+							"value": "100",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Reservoir",
 			"request": {
 				"method": "GET",
@@ -1437,14 +1522,13 @@
 							"value": "{{key}}"
 						},
 						{
-							"key": "filter",
-							"value": "description='Underpass'",
-							"description": "Note that there are no known underpasses on the Isle of Wight."
-						},
-						{
 							"key": "offset",
 							"value": "100",
 							"disabled": true
+						},
+						{
+							"key": "filter",
+							"value": "description='Underpass'"
 						}
 					]
 				}
@@ -1544,6 +1628,337 @@
 							"key": "offset",
 							"value": "100",
 							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Liquid Fuel Storage Complex",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.os.uk/features/ngd/ofa/v1/collections/str-fts-structure-3/items?bbox=-1.585464,50.562959,-0.926285,50.761219&key={{key}}&filter=description='Roofed Storage Tank'",
+					"protocol": "https",
+					"host": [
+						"api",
+						"os",
+						"uk"
+					],
+					"path": [
+						"features",
+						"ngd",
+						"ofa",
+						"v1",
+						"collections",
+						"str-fts-structure-3",
+						"items"
+					],
+					"query": [
+						{
+							"key": "bbox",
+							"value": "-1.585464,50.562959,-0.926285,50.761219"
+						},
+						{
+							"key": "key",
+							"value": "{{key}}"
+						},
+						{
+							"key": "filter",
+							"value": "description='Roofed Storage Tank'"
+						},
+						{
+							"key": "offset",
+							"value": "100",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Gas Distribution Complex",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.os.uk/features/ngd/ofa/v1/collections/bld-fts-building-4/items?bbox=-1.585464,50.562959,-0.926285,50.761219&key={{key}}&filter=description='Gas Distribution Or Storage Facility'",
+					"protocol": "https",
+					"host": [
+						"api",
+						"os",
+						"uk"
+					],
+					"path": [
+						"features",
+						"ngd",
+						"ofa",
+						"v1",
+						"collections",
+						"bld-fts-building-4",
+						"items"
+					],
+					"query": [
+						{
+							"key": "bbox",
+							"value": "-1.585464,50.562959,-0.926285,50.761219"
+						},
+						{
+							"key": "key",
+							"value": "{{key}}"
+						},
+						{
+							"key": "filter",
+							"value": "description='Gas Distribution Or Storage Facility'"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Oil Fired Power Generation Complex",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.os.uk/features/ngd/ofa/v1/collections/bld-fts-building-4/items?bbox=-1.585464,50.562959,-0.926285,50.761219&key={{key}}&filter=description='Power Station'",
+					"protocol": "https",
+					"host": [
+						"api",
+						"os",
+						"uk"
+					],
+					"path": [
+						"features",
+						"ngd",
+						"ofa",
+						"v1",
+						"collections",
+						"bld-fts-building-4",
+						"items"
+					],
+					"query": [
+						{
+							"key": "bbox",
+							"value": "-1.585464,50.562959,-0.926285,50.761219"
+						},
+						{
+							"key": "key",
+							"value": "{{key}}"
+						},
+						{
+							"key": "filter",
+							"value": "description='Power Station'"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Open Grassland",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.os.uk/features/ngd/ofa/v1/collections/lnd-fts-land-3/items?bbox=-1.585464,50.562959,-0.926285,50.761219&key={{key}}&filter=geometry_area_m2%20>%2010000",
+					"protocol": "https",
+					"host": [
+						"api",
+						"os",
+						"uk"
+					],
+					"path": [
+						"features",
+						"ngd",
+						"ofa",
+						"v1",
+						"collections",
+						"lnd-fts-land-3",
+						"items"
+					],
+					"query": [
+						{
+							"key": "bbox",
+							"value": "-1.585464,50.562959,-0.926285,50.761219"
+						},
+						{
+							"key": "key",
+							"value": "{{key}}"
+						},
+						{
+							"key": "filter",
+							"value": "geometry_area_m2%20>%2010000",
+							"description": "description%3D%27Bare%20Earth%20Or%20Grass%27%20AND%20"
+						},
+						{
+							"key": "offset",
+							"value": "100",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Fisheries",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.os.uk/features/ngd/ofa/v1/collections/lus-fts-site-2/items?bbox=-1.585464,50.562959,-0.926285,50.761219&key={{key}}&filter=oslandusetierb AEQUALS ['Fisheries']",
+					"protocol": "https",
+					"host": [
+						"api",
+						"os",
+						"uk"
+					],
+					"path": [
+						"features",
+						"ngd",
+						"ofa",
+						"v1",
+						"collections",
+						"lus-fts-site-2",
+						"items"
+					],
+					"query": [
+						{
+							"key": "bbox",
+							"value": "-1.585464,50.562959,-0.926285,50.761219"
+						},
+						{
+							"key": "key",
+							"value": "{{key}}"
+						},
+						{
+							"key": "filter",
+							"value": "oslandusetierb AEQUALS ['Fisheries']"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Public Park",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.os.uk/features/ngd/ofa/v1/collections/lus-fts-site-2/items?bbox=-1.585464,50.562959,-0.926285,50.761219&key={{key}}&filter=description = 'Public Park Or Garden'",
+					"protocol": "https",
+					"host": [
+						"api",
+						"os",
+						"uk"
+					],
+					"path": [
+						"features",
+						"ngd",
+						"ofa",
+						"v1",
+						"collections",
+						"lus-fts-site-2",
+						"items"
+					],
+					"query": [
+						{
+							"key": "bbox",
+							"value": "-1.585464,50.562959,-0.926285,50.761219"
+						},
+						{
+							"key": "key",
+							"value": "{{key}}"
+						},
+						{
+							"key": "filter",
+							"value": "description = 'Public Park Or Garden'"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Nature Reserve",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.os.uk/features/ngd/ofa/v1/collections/lus-fts-site-2/items?bbox=-1.585464,50.562959,-0.926285,50.761219&key={{key}}&filter=name1_text LIKE '%Reserve%'",
+					"protocol": "https",
+					"host": [
+						"api",
+						"os",
+						"uk"
+					],
+					"path": [
+						"features",
+						"ngd",
+						"ofa",
+						"v1",
+						"collections",
+						"lus-fts-site-2",
+						"items"
+					],
+					"query": [
+						{
+							"key": "bbox",
+							"value": "-1.585464,50.562959,-0.926285,50.761219"
+						},
+						{
+							"key": "key",
+							"value": "{{key}}"
+						},
+						{
+							"key": "filter",
+							"value": "name1_text LIKE '%Reserve%'"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Country Park",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.os.uk/features/ngd/ofa/v1/collections/lus-fts-site-2/items?bbox=-1.585464,50.562959,-0.926285,50.761219&key={{key}}&filter=name1_text LIKE '%Country Park%'",
+					"protocol": "https",
+					"host": [
+						"api",
+						"os",
+						"uk"
+					],
+					"path": [
+						"features",
+						"ngd",
+						"ofa",
+						"v1",
+						"collections",
+						"lus-fts-site-2",
+						"items"
+					],
+					"query": [
+						{
+							"key": "bbox",
+							"value": "-1.585464,50.562959,-0.926285,50.761219"
+						},
+						{
+							"key": "key",
+							"value": "{{key}}"
+						},
+						{
+							"key": "filter",
+							"value": "name1_text LIKE '%Country Park%'"
 						}
 					]
 				}

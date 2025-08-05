@@ -71,7 +71,7 @@ export class NaptanDataSourceHandler extends DataSourceHandler {
    * Evaluates whether a feature has already been marked for inclusion and if not pushes it to a list.
    *
    * @param featuresToInclude A list of features which have been marked for inclusion.
-   * @param featureToEvaluate A featture to evaluate for inclusion.
+   * @param featureToEvaluate A feature to evaluate for inclusion.
    * @param seenLocations A list of locations which have already been seen.
    * @returns
    */
