@@ -138,8 +138,11 @@ export class OsNgdDataSourceHandler extends DataSourceHandler {
     const allFeatures: Feature[] = [];
     const paginate = !url?.includes("offset=");
     while (url !== undefined) {
-      const ngdFeatureCollection: NGDFeatureCollection =
-        await this.fetchFromUrl(url);
+      const currentUrl = url; // capture the value for this iteration
+
+      const ngdFeatureCollection: NGDFeatureCollection = await this.limit(
+        () => currentUrl && this.fetchFromUrlWithRetry(currentUrl),
+      );
       const features = this.mapNGDToGeoJSON(
         ngdFeatureCollection,
         assetSpecification,
@@ -149,7 +152,7 @@ export class OsNgdDataSourceHandler extends DataSourceHandler {
         url = this.getNextUrl(ngdFeatureCollection.links);
       } else {
         const onLastPage =
-          assetSpecification.expectedCount - this.getOffset(url) < 100;
+          assetSpecification.expectedCount - this.getOffset(currentUrl) < 100;
         if (onLastPage && ngdFeatureCollection.numberReturned === 100) {
           url = this.getNextUrl(ngdFeatureCollection.links);
         } else {
