@@ -89,10 +89,10 @@ describe("fetchDataForAssetSpecification", () => {
 
     const result = (await handler.fetchDataForAssetSpecification(
       {} as AssetSpecification,
-      "",
+      "test-url",
     )) as Feature<Point>[];
 
-    expect(fetch).toHaveBeenCalledWith("");
+    expect(fetch).toHaveBeenCalledWith("test-url");
     expect(result).toHaveLength(1);
     expect(result[0].id).toBe(featureId);
     expect(result[0].type).toBe("Feature");
@@ -115,12 +115,12 @@ describe("fetchDataForAssetSpecification", () => {
 
     const result = (await handler.fetchDataForAssetSpecification(
       {} as AssetSpecification,
-      "",
+      "first",
     )) as Feature<Point>[];
 
     expect(result).toHaveLength(2);
     expect(fetch).toHaveBeenCalledTimes(2);
-    expect(fetch).toHaveBeenCalledWith("");
+    expect(fetch).toHaveBeenCalledWith("first");
     expect(fetch).toHaveBeenCalledWith("test");
   });
 

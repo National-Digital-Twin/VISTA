@@ -62,6 +62,7 @@
     "mapbox-gl-draw-geodesic": "^2.3.1",
     "mapbox-gl-draw-rectangle-mode": "^1.0.4",
     "maplibre-gl": "^5.2.0",
+    "p-limit": "3",
     "papaparse": "^5.5.3",
     "primeicons": "^7.0.0",
     "primereact": "^10.9.3",

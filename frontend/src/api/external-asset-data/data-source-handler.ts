@@ -1,4 +1,6 @@
 import type { Feature } from "geojson";
+import pLimit from "p-limit";
+
 import {
   AssetClassFilter,
   AssetSpecification,
@@ -6,9 +8,53 @@ import {
 
 export abstract class DataSourceHandler {
   protected readonly locator: string;
+  protected readonly limit;
 
   constructor(locator: string) {
     this.locator = locator;
+    this.limit = pLimit(10);
+  }
+
+  /**
+   * A function to fetch data from an external API and retry on error, with exponential backoff.
+   *
+   * @param url a URL which can be used to fetch data
+   * @param options HTTP options
+   * @param retries the number of times to retry the question
+   * @param backoff the base amount of backoff in ms
+   * @returns a JSON representation of the response
+   */
+  async fetchFromUrlWithRetry(url: string, retries = 5, backoff = 500) {
+    for (let attempt = 0; attempt <= retries; attempt++) {
+      try {
+        const response = await fetch(url);
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status} on ${url}`);
+        }
+
+        return await response.json();
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err);
+        if (attempt < retries) {
+          const delay = backoff * Math.pow(2, attempt) + Math.random() * 100;
+          console.warn(
+            `Retrying ${url}, attempt ${attempt + 1} after ${delay}ms`,
+          );
+          await this.sleep(delay);
+        } else {
+          throw new Error(
+            `Failed to fetch ${url} after ${retries + 1} attempts: ${message}`,
+          );
+        }
+      }
+    }
+  }
+
+  private sleep(ms: number): Promise<void> {
+    return new Promise((resolve) => {
+      setTimeout(() => resolve(), ms);
+    });
   }
 
   /**
