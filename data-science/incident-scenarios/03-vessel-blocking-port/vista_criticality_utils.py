@@ -272,6 +272,81 @@ def compute_exposure_score(assets_df, flood_files, heat_files=None, landslide_fi
     assets_df['exposure_score'] = exposure_scores
     return assets_df
 
+def compute_exposure_score_v2(assets_df, flood_files, heat_files=None, landslide_files=None):
+    """
+    Computes exposure score based on asset intersection with hazard layers and
+    adds it as a new column to the assets_df.
+    """
+    exposure_scores = []
+    
+    # Load and combine hazard layers using the recommended union_all() method
+    try:
+        flood_layers = [gpd.read_file(f) for f in flood_files]
+        if flood_layers:
+            all_flood_gdf = pd.concat(flood_layers, ignore_index=True)
+            flood_geom = all_flood_gdf.geometry.union_all()
+        else:
+            flood_geom = None
+    except Exception as e:
+        print(f"Could not process flood files: {e}")
+        flood_geom = None
+
+    heat_geom = None
+    if heat_files:
+        try:
+            heat_layers = [gpd.read_file(f) for f in heat_files]
+            if heat_layers:
+                all_heat_gdf = pd.concat(heat_layers, ignore_index=True)
+                heat_geom = all_heat_gdf.geometry.union_all()
+        except Exception as e:
+            print(f"Could not process heat files: {e}")
+            heat_geom = None
+
+    landslide_geom = None
+    if landslide_files:
+        try:
+            landslide_layers = [gpd.read_file(f) for f in landslide_files]
+            if landslide_layers:
+                all_landslide_gdf = pd.concat(landslide_layers, ignore_index=True)
+                landslide_geom = all_landslide_gdf.geometry.union_all()
+        except Exception as e:
+            print(f"Could not process landslide files: {e}")
+            landslide_geom = None
+
+    # Create GeoDataFrame for assets
+    geometry = [Point(xy) for xy in zip(assets_df['long'], assets_df['lat'])]
+    assets_gdf = gpd.GeoDataFrame(assets_df, geometry=geometry, crs="EPSG:4326")
+    assets_gdf_proj = assets_gdf.to_crs("EPSG:27700")
+    
+    flood_geom_proj = None
+    if flood_geom and not flood_geom.is_empty:
+        # Reproject the combined flood geometry for distance calculations
+        flood_geom_proj = gpd.GeoSeries([flood_geom], crs="EPSG:4326").to_crs("EPSG:27700").union_all()
+
+    for index, asset in assets_gdf.iterrows():
+        asset_geom = asset.geometry
+        
+        intersects_flood = flood_geom and not flood_geom.is_empty and asset_geom.intersects(flood_geom)
+        intersects_heat = heat_geom and not heat_geom.is_empty and asset_geom.intersects(heat_geom)
+        intersects_landslide = landslide_geom and not landslide_geom.is_empty and asset_geom.intersects(landslide_geom)
+
+        score = 0
+        if intersects_flood:
+            if intersects_heat or intersects_landslide:
+                score = 3
+            else:
+                score = 2
+        elif flood_geom_proj:
+            asset_geom_proj = assets_gdf_proj.loc[index].geometry
+            distance_to_flood = asset_geom_proj.distance(flood_geom_proj)
+            if distance_to_flood <= 500:
+                score = 1
+        
+        exposure_scores.append(score)
+    
+    assets_df['exposure_score'] = exposure_scores
+    return assets_df
+
 
 def haversine_distance(lat1, lon1, lat2, lon2):
     """
@@ -363,7 +438,7 @@ def compute_redundancy_score(df):
     df['redundancy_score'] = scores
     return df
 
-def compute_asset_resilience_score(G):
+def compute_asset_score(G):
     """
     Computes the overall asset resilience score for each asset in the graph.
 
@@ -404,8 +479,8 @@ def compute_asset_resilience_score(G):
         resilience_score = criticality + dependency + redundancy + exposure
         
         # Add the final score to the node's attributes
-        node_data['asset_resilience_score'] = resilience_score
-    print(f"Added resilience_score to assets.")
+        node_data['asset_score'] = resilience_score
+    print(f"Added asset_score to assets.")
     #network_score = round(total_asset_score / G.number_of_nodes(), 2) if G.number_of_nodes() > 0 else 0
         
     return G
@@ -420,8 +495,8 @@ def simulate_failure(G, failed_node, threshold=1):
         min_dependency = min(G.edges[path[i], path[i+1]]["weight"] for i in range(len(path)-1))
         
         if min_dependency >= threshold:
-            #print(f"Propagated failure to: {neighbor} (via dependency {min_dependency})")
-            print(f"Propagated failure to: {neighbor} ")
+            print(f"Propagated failure to: {neighbor} (via dependency {min_dependency})")
+            #print(f"Propagated failure to: {neighbor} ")
             G.nodes[neighbor]["status"] = "failed"
             failed.append(neighbor)
     return failed
@@ -480,7 +555,7 @@ def check_node_and_edges(G, node_id):
         for successor in successors:
             edge_data = G.get_edge_data(node_id, successor)
             weight = edge_data.get('weight', 'N/A')
-            print(f"  -> {node_id} depends on {successor} with dependency_score (weight): {weight}")
+            print(f"  -> {node_id} impacts {successor} with dependency_score (weight): {weight}")
 
     # --- Print Incoming Edges (Dependents) ---
     print("\n[Incoming Dependencies (...depend on this asset)]")
@@ -491,9 +566,10 @@ def check_node_and_edges(G, node_id):
         for predecessor in predecessors:
             edge_data = G.get_edge_data(predecessor, node_id)
             weight = edge_data.get('weight', 'N/A')
-            print(f"  <- {predecessor} depends on {node_id} with dependency_score (weight): {weight}")
+            print(f"  <- {predecessor} is parent to {node_id} with dependency_score (weight): {weight}")
     
     print("-" * (25 + len(node_id)))
+
 
 def filter_graph_by_criticality(graph, threshold):
     """
@@ -770,3 +846,58 @@ def graph_to_dataframe(G):
     
     return df
 
+def graph_to_dataframe_ordered(G, column_order):
+    """
+    Converts a graph with node attributes back to a pandas DataFrame.
+
+    Args:
+        G (nx.DiGraph): The NetworkX graph to convert.
+        column_order (list): A list of column names in the desired order for the output DataFrame.
+
+    Returns:
+        pd.DataFrame: A DataFrame representation of the graph's nodes and their attributes.
+    """
+    # Extract node data into a list of dictionaries
+    node_data = []
+    for node, attrs in G.nodes(data=True):
+        # Start with the node's ID as 'Asset_ID'
+        record = {'Asset_ID': node}
+        # Add all other attributes
+        record.update(attrs)
+        node_data.append(record)
+    
+    if not node_data:
+        # Return an empty DataFrame with the specified columns if the graph is empty
+        return pd.DataFrame(columns=column_order)
+
+    # Create the DataFrame
+    df = pd.DataFrame(node_data)
+    
+    # Ensure all columns from the desired order exist in the DataFrame, adding them with None if they don't
+    for col in column_order:
+        if col not in df.columns:
+            df[col] = None
+            
+    # Reorder the DataFrame columns
+    df = df[column_order]
+    
+    return df
+
+def remove_node_attributes(G, attributes_to_remove):
+    """
+    Removes one or more attributes from all nodes in the graph.
+
+    Args:
+        G (nx.DiGraph): The existing NetworkX directed graph.
+        attributes_to_remove (list): A list of attribute names (strings) to remove.
+
+    Returns:
+        nx.DiGraph: The graph with the specified attributes removed from its nodes.
+    """
+    for node in G.nodes():
+        for attr in attributes_to_remove:
+            if attr in G.nodes[node]:
+                del G.nodes[node][attr]
+    
+    print(f"Remove the following attributes from all nodes: {', '.join(attributes_to_remove)}")
+    return G
