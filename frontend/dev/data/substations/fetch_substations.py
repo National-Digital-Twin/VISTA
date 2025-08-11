@@ -21,6 +21,7 @@ from shapely.geometry import box
 BBOX = (-1.824417, 50.532539, -0.780029, 50.829)
 OUTPUT_FILE = "high_voltage_substations.json"
 
+
 def download_zip(url, dest_path):
     print(f"Downloading {url}...")
     r = requests.get(url)
