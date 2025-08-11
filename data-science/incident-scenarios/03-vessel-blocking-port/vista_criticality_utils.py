@@ -733,77 +733,40 @@ def remove_dependency_from_graph(G, dependency_df):
     print(f"Removed {removed_count} dependencies.")
     return G
 
-# # --- Example Usage ---
-# if __name__ == '__main__':
-#     # 1. Create an initial graph with some assets
-#     G = nx.DiGraph()
-#     initial_assets = [
-#         {'Asset_ID': 'PGS01', 'Asset_Type': 'PowerGen/Substation', 'criticality_score': 3},
-#         {'Asset_ID': 'TRF01', 'Asset_Type': 'Transformer', 'criticality_score': 2},
-#     ]
-#     for asset in initial_assets:
-#         G.add_node(asset['Asset_ID'], **asset)
+def graph_to_dataframe(G):
+    """
+    Converts a graph with node attributes back to a pandas DataFrame.
+
+    Args:
+        G (nx.DiGraph): The NetworkX graph to convert.
+        
+
+    Returns:
+        pd.DataFrame: A DataFrame representation of the graph's nodes and their attributes.
+    """
+    # Extract node data into a list of dictionaries
+    node_data = []
+    for node, attrs in G.nodes(data=True):
+        # Start with the node's ID as 'Asset_ID'
+        record = {'Asset_ID': node}
+        # Add all other attributes
+        record.update(attrs)
+        node_data.append(record)
     
-#     print("--- Initial Graph ---")
-#     print("Nodes:", G.nodes(data=True))
-#     print("Edges:", G.edges(data=True))
-#     print("-" * 25)
+    # if not node_data:
+    #     # Return an empty DataFrame with the specified columns if the graph is empty
+    #     return pd.DataFrame(columns=column_order)
 
-#     # 2. Create a DataFrame with new assets to add
-#     new_assets_data = {
-#         'Asset_ID': ['HS01', 'JN05'],
-#         'Asset_Type': ['Hospital', 'Junction'],
-#         'Asset_Name': ['Main Hospital', 'Crossroads'],
-#         'criticality_score': [5, 1]
-#     }
-#     new_assets_df = pd.DataFrame(new_assets_data)
-
-#     # 3. Add the new assets to the graph
-#     print("\n--- Adding New Assets ---")
-#     G = add_new_assets_to_graph(G, new_assets_df)
-#     print("Nodes after adding assets:", G.nodes(data=True))
-#     print("-" * 25)
-
-#     # 4. Create a DataFrame with new dependencies to add
-#     new_dependencies_data = {
-#         'from_asset': ['PGS01', 'TRF01', 'TRF01'],
-#         'to_asset': ['TRF01', 'HS01', 'JN05'],
-#         'connection': ['PGS01-->TRF01', 'TRF01-->HS01', 'TRF01-->JN05'],
-#         'dependency_score': [3, 4, 2]
-#     }
-#     new_dependencies_df = pd.DataFrame(new_dependencies_data)
-
-#     # 5. Add the new dependencies to the graph
-#     print("\n--- Adding New Dependencies ---")
-#     G = add_new_dependency_to_graph(G, new_dependencies_df)
-#     print("Nodes after adding dependencies:", G.nodes(data=True))
-#     print("Edges after adding dependencies:", G.edges(data=True))
-#     print("-" * 25)
-
-#     # 6. Create a DataFrame with a dependency to remove
-#     dependencies_to_remove_data = {
-#         'from_asset': ['TRF01'],
-#         'to_asset': ['JN05']
-#     }
-#     dependencies_to_remove_df = pd.DataFrame(dependencies_to_remove_data)
-
-#     # 7. Remove the dependency
-#     print("\n--- Removing a Dependency ---")
-#     G = remove_dependency_from_graph(G, dependencies_to_remove_df)
-#     print("Edges after removing dependency:", G.edges(data=True))
-#     print("-" * 25)
+    # Create the DataFrame
+    df = pd.DataFrame(node_data)
     
-#     # 8. Create a DataFrame with an asset to remove
-#     assets_to_remove_data = {
-#         'Asset_ID': ['HS01']
-#     }
-#     assets_to_remove_df = pd.DataFrame(assets_to_remove_data)
-
-#     # 9. Remove the asset (and its connected edges)
-#     print("\n--- Removing an Asset ---")
-#     G = remove_assets_from_graph(G, assets_to_remove_df)
-#     print("Nodes after removing asset:", G.nodes(data=True))
-#     print("Edges after removing asset:", G.edges(data=True))
-#     print("-" * 25)
-
+    # # Ensure all columns from the desired order exist in the DataFrame, adding them with None if they don't
+    # for col in column_order:
+    #     if col not in df.columns:
+    #         df[col] = None
+            
+    # Reorder the DataFrame columns
+    # df = df[column_order]
+    
+    return df
 
