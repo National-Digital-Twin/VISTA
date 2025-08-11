@@ -15,7 +15,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import fileinput, json, os
+import fileinput
+import json
+import os
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -33,14 +35,20 @@ def build_replacements():
         if "#" in props["uri"]:
             old_id = props["uri"].split("#")[1]
             replacements[old_id] = props["id"]
-            replacements[f"https://www.iow.gov.uk/DigitalTwin#{old_id}"] = f"http://ndtp.co.uk/Building#{props["id"]}"
-            replacements[f"https://www.iow.gov.uk/DigitalTwin#{props["id"]}"] = f"http://ndtp.co.uk/Building#{props["id"]}"
-            print(f"{props["description"]} - {props["id"]} - {props["uri"]} - {props["type"]} - {props["dependent.criticalitySum"]}")
+            replacements[f"https://www.iow.gov.uk/DigitalTwin#{old_id}"] = (
+                f"http://ndtp.co.uk/Building#{props["id"]}"
+            )
+            replacements[f"https://www.iow.gov.uk/DigitalTwin#{props["id"]}"] = (
+                f"http://ndtp.co.uk/Building#{props["id"]}"
+            )
+            print(
+                f"{props["description"]} - {props["id"]} - {props["uri"]} - {props["type"]} - {props["dependent.criticalitySum"]}"
+            )
     return replacements
 
 replacements = build_replacements()
 
-with fileinput.FileInput(assets_file, inplace=True, backup='.bak') as file:
+with fileinput.FileInput(assets_file, inplace=True, backup=".bak") as file:
     for line in file:
         for old, new in replacements.items():
             line = line.replace(old, new)

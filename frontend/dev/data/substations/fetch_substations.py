@@ -18,26 +18,26 @@ import zipfile
 import geopandas as gpd
 from shapely.geometry import box
 
-BBOX = (-1.824417,50.532539,-0.780029,50.829)
+BBOX = (-1.824417, 50.532539, -0.780029, 50.829)
 OUTPUT_FILE = "high_voltage_substations.json"
 
 def download_zip(url, dest_path):
     print(f"Downloading {url}...")
     r = requests.get(url)
-    with open(dest_path, 'wb') as f:
+    with open(dest_path, "wb") as f:
         f.write(r.content)
     print("Download complete.")
 
 def extract_zip(zip_path, extract_to):
     print(f"Extracting {zip_path}...")
-    with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+    with zipfile.ZipFile(zip_path, "r") as zip_ref:
         zip_ref.extractall(extract_to)
     print("Extraction complete.")
 
 def find_shapefile(directory):
     for root, dirs, files in os.walk(directory):
         for file in files:
-            if file.endswith('.shp'):
+            if file.endswith(".shp"):
                 return os.path.join(root, file)
     raise FileNotFoundError("No .shp file found in extracted data.")
 
@@ -66,18 +66,18 @@ def create_asset(record: Dict) -> Dict:
             "alt": "HighVoltageElectricitySubstationComplex",
             "shape": "cirle",
             "faUnicode": "\ue2c4",
-            "faIcon": "fa-solid fa-utility-pole-double"
+            "faIcon": "fa-solid fa-utility-pole-double",
         },
         "primaryCategory": "Essential Services",
-        "secondaryCategory": "Utility Infrastructure"
+        "secondaryCategory": "Utility Infrastructure",
     }
 
     return asset
 
 def main():
     # Step 1: Download and extract
-    dir_path = 'substations'
-    download_zip('https://www.nationalgrid.com/document/81216/download', f"${dir_path}.zip")
+    dir_path = "substations"
+    download_zip("https://www.nationalgrid.com/document/81216/download", f"${dir_path}.zip")
     extract_zip(f"${dir_path}.zip", dir_path)
 
     # Step 2: Read shapefile
@@ -90,7 +90,7 @@ def main():
         print(f"Reprojecting from {gdf.crs} to WGS 84 (EPSG:4326)...")
         gdf = gdf.to_crs(epsg=4326)
 
-    gdf['centroid'] = gdf.geometry.centroid
+    gdf["centroid"] = gdf.geometry.centroid
 
     # Step 4: Filter by bounding box
     print(f"Filtering data for the Isle of Wight (bounding box {BBOX})...")
