@@ -24,24 +24,6 @@ def test_traffic_data():
 
 
 @pytest.mark.django_db
-def test_low_bridge():
-    """Test LowBridge.__str__."""
-    assert (
-        f"{
-            baker.make(
-                models.LowBridge,
-                name='example name',
-                dimension_in=984,
-                height_meters=2.5,
-                latitude=60.0,
-                longitude=-1.2,
-            )
-        }"
-        == "example name (2.5m) at 60.0, -1.2"
-    )
-
-
-@pytest.mark.django_db
 def test_narrow_road():
     """Test NarrowRoad.__str__."""
     assert (

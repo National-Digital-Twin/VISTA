@@ -9,7 +9,7 @@ from django.utils.dateparse import parse_time
 
 import api.routing as rt
 from api.circle_to_polygon import Center
-from api.models import LowBridge, NarrowRoad, TrafficData
+from api.models import NarrowRoad, TrafficData
 
 if TYPE_CHECKING:
     from .types import GeoJSON
@@ -58,7 +58,6 @@ def _get_points(vehicle):
     v = _VEHICLES[vehicle]
 
     queries = [
-        LowBridge.objects.filter(height_meters__lte=v.height_meters),
         NarrowRoad.objects.filter(width_meters__lte=v.width_meters),
     ]
     return [Center(lat=p.latitude, lon=p.longitude) for query in queries for p in query]
@@ -101,15 +100,3 @@ def resolve_road_segment(*_, road_segment_input):
             "busyness": traffic_data.busyness,
         }
     return None
-
-
-@query.field("lowBridges")
-def resolve_low_bridges(*_, low_bridge_input):
-    """Return the locations of low bridges."""
-    lat_min = low_bridge_input.get("lat_min")
-    lat_max = low_bridge_input.get("lat_max")
-    lon_min = low_bridge_input.get("lon_min")
-    lon_max = low_bridge_input.get("lon_max")
-    return LowBridge.objects.filter(
-        latitude__gte=lat_min, latitude__lte=lat_max, longitude__gte=lon_min, longitude__lte=lon_max
-    )

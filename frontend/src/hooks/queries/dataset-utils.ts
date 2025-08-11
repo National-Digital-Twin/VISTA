@@ -4,6 +4,7 @@ import type {
   GeoJsonProperties,
   LineString,
   MultiLineString,
+  MultiPoint,
   MultiPolygon,
   Point,
   Polygon,
@@ -11,7 +12,7 @@ import type {
 import { Asset, Dependency } from "@/models";
 import type { FoundIcon } from "@/hooks/useFindIcon";
 import { AssetState } from "@/models/Asset";
-import { fetchLiveAssets } from "@/api/combined";
+import { fetchAssetInfo, fetchLiveAssets } from "@/api/combined";
 
 interface DependencyData {
   dependencyUri: string;
@@ -45,6 +46,7 @@ export interface AssetSpecification {
   styles: FoundIcon;
   primaryCategory: string;
   secondaryCategory: string;
+  knownIds?: string[];
 }
 
 export function createDependencies(dependencies: DependencyData[]) {
@@ -108,6 +110,15 @@ function isPointFeature(
 }
 
 /**
+ * Type guard to check if a feature is a MultiPoint
+ */
+function isMultiPointFeature(
+  feature: Feature,
+): feature is Feature<MultiPoint, GeoJsonProperties> {
+  return feature.geometry?.type === "MultiPoint";
+}
+
+/**
  * Type guard to check if a feature is a MultiLineString
  */
 function isMultiLineStringFeature(
@@ -135,9 +146,24 @@ function getCoordinatesforPointAsset(feature: Feature): number[] {
     return getCentroid(feature).geometry?.coordinates;
   } else if (isPointFeature(feature)) {
     return feature.geometry.coordinates;
+  } else if (isMultiPointFeature(feature)) {
+    const coordinates = feature.geometry.coordinates;
+    return coordinates[0].map(
+      (_, i) =>
+        coordinates.reduce((sum, p) => sum + p[i], 0) / coordinates.length,
+    );
   } else {
     return [0, 0];
   }
+}
+
+/**
+ * A function to build the URI of an asset given an ID.
+ * @param id the ID of the asset
+ * @returns the URI of the asset
+ */
+function getAssetUri(id: string): string {
+  return `http://ndtp.co.uk/Building#${id}`;
 }
 
 /**
@@ -149,12 +175,13 @@ function getCoordinatesforPointAsset(feature: Feature): number[] {
 function mapPointAsset(
   feature: Feature,
   assetSpecification: AssetSpecification,
+  staticDataForAssetClass: any[],
 ): Asset {
   const coordinates = getCoordinatesforPointAsset(feature);
   const type = assetSpecification.type;
 
-  return new Asset({
-    uri: `http://ndtp.co.uk/Building#${feature.id}`,
+  const asset = new Asset({
+    uri: getAssetUri(String(feature.id)),
     type,
     name: feature.properties?.name,
     lng: coordinates[0],
@@ -167,8 +194,23 @@ function mapPointAsset(
     styles: assetSpecification.styles,
     primaryCategory: assetSpecification.primaryCategory,
     secondaryCategory: assetSpecification.secondaryCategory,
-    state: AssetState.Live,
   });
+
+  if (assetSpecification.knownIds?.includes(String(feature.id))) {
+    asset.state = AssetState.Static;
+    const staticDataForAsset = staticDataForAssetClass.filter((d) =>
+      d.uri.includes(feature.id),
+    )[0];
+    if (staticDataForAsset) {
+      asset.dependent.count = staticDataForAsset.dependentCount;
+      asset.dependent.criticalitySum =
+        staticDataForAsset.dependentCriticalitySum;
+    }
+  } else {
+    asset.state = AssetState.Live;
+  }
+
+  return asset;
 }
 
 /**
@@ -213,6 +255,20 @@ function mapLinearAsset(
 }
 
 /**
+ * A function which fetches data for any known assets from the Secure Agent Graph using the URI of the asset.
+ * @param assetUris An array of known assets for which data is stored in the Secure Agent Graph.
+ * @returns An array of asset data.
+ */
+async function fetchDataForAssetClass(assetUris: string[]): Promise<any[]> {
+  return await Promise.all(
+    assetUris.map(
+      async (uri: string): Promise<any> =>
+        await fetchAssetInfo(getAssetUri(uri)),
+    ),
+  );
+}
+
+/**
  * A function to create an array of assets, using an asset specification.
  * @returns an array of Asset
  */
@@ -230,14 +286,19 @@ export async function createAssets(): Promise<Asset[]> {
       async (assetClass: AssetSpecification): Promise<Asset[]> => {
         const mappedAssets: Asset[] = [];
         const liveAssets = await fetchLiveAssets(assetClass);
+        const staticDataForAssetClass = await fetchDataForAssetClass(
+          assetClass.knownIds ?? [],
+        );
+
         liveAssets.features.forEach((feature: Feature) => {
           let asset: Asset;
           if (
             isPointFeature(feature) ||
+            isMultiPointFeature(feature) ||
             isPolygonFeature(feature) ||
             isMultiPolygonFeature(feature)
           ) {
-            asset = mapPointAsset(feature, assetClass);
+            asset = mapPointAsset(feature, assetClass, staticDataForAssetClass);
             mappedAssets.push(asset);
           }
           if (

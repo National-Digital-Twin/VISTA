@@ -288,13 +288,6 @@ def test_road_route_query_vehicle(client):
         latitude=50.650268,
         longitude=-1.163656,
     )
-    baker.make(
-        models.LowBridge,
-        dimension_in=138,
-        height_meters=3.3,
-        latitude=50.6560609,
-        longitude=-1.1502422,
-    )
 
     query = """
     query getRoadRoute($floodExtent: GeoJSON){

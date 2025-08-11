@@ -8,7 +8,6 @@ const TOOLS: (false | (() => Promise<Tool>))[] = [
   () => import("./Filter"),
   featureFlags.assetTable && (() => import("./AssetTable")),
   featureFlags.routing && (() => import("./RoadRoute")),
-  () => import("./LowBridge"),
   () => import("./Legend"),
   () => import("./MapSettingsMenus"),
   () => import("./CompassControls"),
