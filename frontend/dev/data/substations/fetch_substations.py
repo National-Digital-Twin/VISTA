@@ -28,11 +28,13 @@ def download_zip(url, dest_path):
         f.write(r.content)
     print("Download complete.")
 
+
 def extract_zip(zip_path, extract_to):
     print(f"Extracting {zip_path}...")
     with zipfile.ZipFile(zip_path, "r") as zip_ref:
         zip_ref.extractall(extract_to)
     print("Extraction complete.")
+
 
 def find_shapefile(directory):
     for root, dirs, files in os.walk(directory):
@@ -40,6 +42,7 @@ def find_shapefile(directory):
             if file.endswith(".shp"):
                 return os.path.join(root, file)
     raise FileNotFoundError("No .shp file found in extracted data.")
+
 
 def filter_by_bbox(gdf, bbox):
     minx, miny, maxx, maxy = bbox
@@ -74,6 +77,7 @@ def create_asset(record: Dict) -> Dict:
 
     return asset
 
+
 def main():
     # Step 1: Download and extract
     dir_path = "substations"
@@ -105,6 +109,7 @@ def main():
     print(f"Writing {len(assets)} assets to {OUTPUT_FILE}...")
     with open(OUTPUT_FILE, "w") as f:
         json.dump(assets, f, indent=2)
+
 
 if __name__ == "__main__":
     main()

@@ -25,6 +25,7 @@ load_dotenv()
 assets_file = os.environ.get("ASSETS_FILE")
 input_geojson_file = os.environ.get("INPUT_FILE")
 
+
 def build_replacements():
     geojson_data = open(input_geojson_file)
     data = json.load(geojson_data)
@@ -45,6 +46,7 @@ def build_replacements():
                 f"{props["description"]} - {props["id"]} - {props["uri"]} - {props["type"]} - {props["dependent.criticalitySum"]}"
             )
     return replacements
+
 
 replacements = build_replacements()
 
