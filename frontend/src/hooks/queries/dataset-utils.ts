@@ -198,12 +198,6 @@ function mapPointAsset(
 
   if (assetSpecification.knownIds?.includes(String(feature.id))) {
     asset.state = AssetState.Static;
-    if (
-      asset.type ===
-      "http://ies.data.gov.uk/ontology/ies4#LowVoltageElectricitySubstationComplex"
-    ) {
-      console.log("here");
-    }
     const staticDataForAsset = staticDataForAssetClass.filter((d) =>
       d.uri.includes(feature.id),
     )[0];
