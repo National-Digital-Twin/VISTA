@@ -239,7 +239,7 @@ jobs:
       - name: Run Docker image
         run: |
           docker images
-          docker run --rm -d -p 8000:8000 --name backend vista/python-api:latest
+          docker run -d -p 8000:8000 --name backend vista/python-api:latest
           docker ps
           sleep 10
           docker logs backend
@@ -269,3 +269,4 @@ jobs:
         if: always()
         run: |
           docker stop backend
+          docker rm backend
