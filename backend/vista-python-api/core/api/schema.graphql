@@ -2,7 +2,6 @@ type Query {
   hello: String!
   roadRoute(routeInput: RoadRouteInput!): RoadRoute
   roadSegment(roadSegmentInput: RoadSegmentInput!): RoadSegment
-  lowBridges(lowBridgeInput: LowBridgeInput!): [LowBridge!]
 }
 
 enum Vehicle {
@@ -27,13 +26,6 @@ input RoadSegmentInput {
   time: String!
 }
 
-input LowBridgeInput {
-  latMin: Float!
-  latMax: Float!
-  lonMin: Float!
-  lonMax: Float!
-}
-
 type RoadRoute {
   routeGeojson: GeoJSON!
 }
@@ -47,15 +39,6 @@ type RoadSegment {
   volume: Int
   averageSpeed: Int
   busyness: Int
-}
-
-type LowBridge {
-  name: String!
-  dimensionIn: Int!
-  localId: String!
-  direction: String
-  latitude: Float!
-  longitude: Float!
 }
 
 scalar GeoJSON

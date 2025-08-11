@@ -49,7 +49,7 @@ export default class Asset {
   elementType: "asset";
   primaryCategory?: string;
   secondaryCategory?: string;
-  state: AssetState = AssetState.Static;
+  state?: AssetState = AssetState.Static;
   classification?: string;
 
   constructor({
@@ -78,7 +78,7 @@ export default class Asset {
     styles: FoundIcon;
     primaryCategory?: string;
     secondaryCategory?: string;
-    state: AssetState;
+    state?: AssetState;
     classification?: string;
   }) {
     this.uri = uri;

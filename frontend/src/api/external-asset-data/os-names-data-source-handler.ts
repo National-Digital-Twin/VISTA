@@ -32,7 +32,7 @@ export class OsNamesDataSourceHandler extends DataSourceHandler {
     url: string,
   ): Promise<Feature[]> {
     const response = await this.fetchFromUrl(url);
-    return this.mapResponseToFeatures(response);
+    return response.results ? this.mapResponseToFeatures(response) : [];
   }
 
   private mapResponseToFeatures(response): Feature[] {

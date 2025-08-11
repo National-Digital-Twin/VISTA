@@ -2,8 +2,7 @@
 
 from django.contrib import admin
 
-from api.models import LowBridge, TrafficData
+from api.models import TrafficData
 
 # Register your models here.
 admin.site.register(TrafficData)
-admin.site.register(LowBridge)

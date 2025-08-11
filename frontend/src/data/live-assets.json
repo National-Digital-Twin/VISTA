@@ -16,7 +16,8 @@
             "faIcon": "fa-solid fa-phone-rotary"
         },
         "primaryCategory": "Essential Services",
-        "secondaryCategory": "Utility Infrastructure"
+        "secondaryCategory": "Utility Infrastructure",
+        "knownIds": ["54a935ca-da81-4cb0-8bca-606f87b84ded", "61677448-e733-4a46-b1bc-ff07f42fcbda", "6774180a-8e65-4fc1-bae6-05b070f60421", "76ec5861-d37b-4390-a57b-c84812a13a4c", "7bca0241-4d52-4bd0-8004-c0549c1b79d3", "7fe30554-480d-4b67-b5e8-1514cfe36afe", "99c359d3-9c15-4e22-b7ec-4c939d5897e9", "a61f1f40-fabd-4688-a733-98cbe775cf46", "c2a11dcb-3fa8-4223-8c36-d8d15e723dc5", "cb5b6165-74e7-4851-9779-5517ea7cc0d2", "cd9da11e-7a21-40d0-b323-1eb0630d2b50"]
     },
     {
         "description": ["Telecommunications Facility"],
@@ -92,7 +93,8 @@
             "faIcon": "fa-light fa-truck-droplet"
         },
         "primaryCategory": "Wastewater Management",
-        "secondaryCategory": "Wastewater Infrastructure"
+        "secondaryCategory": "Wastewater Infrastructure",
+        "knownIds": ["5ace9379-7091-4df7-90d0-56d6d0507eb3", "fe2fb6ef-c327-43e8-b3df-8dce9e7c4483"]
     },
     {
         "description": ["Animal Treatment Site"],
@@ -130,7 +132,8 @@
             "faIcon": "fa-solid fa-solar-panel"
         },
         "primaryCategory": "Essential Services",
-        "secondaryCategory": "Energy"
+        "secondaryCategory": "Energy",
+        "knownIds": ["7e36b821-5094-4421-8784-4c97a03e8a06", "7f99f365-d495-4f0e-8066-d7c9f79ebb78", "0f88d435-56b7-44bb-909c-af44cd9559c9", "f5814caf-42ea-4ba9-a3fd-acdd1895cde0", "db010aeb-3f99-4a88-8db4-9df72e29efd0"]
     },
     {
         "description": ["Children's Nursery"],
@@ -168,7 +171,8 @@
             "faIcon": "fa-solid fa-tombstone"
         },
         "primaryCategory": "Miscellaneous",
-        "secondaryCategory": "Commercial, Business and Service"
+        "secondaryCategory": "Commercial, Business and Service",
+        "knownIds": ["9baa5ab7-ceae-4208-8fbb-b5c6cabaf4be"]
     },
     {
         "description": ["Sports Or Exercise Facility"],
@@ -187,7 +191,8 @@
             "faIcon": "fa-solid fa-tag"
         },
         "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Public Assembly Points"
+        "secondaryCategory": "Public Assembly Points",
+        "knownIds": ["a6b5475e-111f-40ea-9378-58ae09113dbf"]
     },
     {
         "description": ["Sports Pavilion"],
@@ -206,7 +211,8 @@
             "faIcon": "fa-solid fa-tag"
         },
         "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Public Assembly Points"
+        "secondaryCategory": "Public Assembly Points",
+        "knownIds": ["8b32c1c8-0b52-41be-8970-42204b42e41f"]
     },
     {
         "buildinguse": "Commercial Activity: Industrial Or Manufacturing",
@@ -263,7 +269,8 @@
             "faIcon": "fa-solid fa-school-flag"
         },
         "primaryCategory": "Public Safety and Shelter",
-        "secondaryCategory": "Shelters and Relief Centers"
+        "secondaryCategory": "Shelters and Relief Centers",
+        "knownIds": ["1c2dd9d5-2692-4b49-bb02-7365bfa400e9"]
     },
     {
         "description": ["Temporary Or Holiday Accommodation Building"],
@@ -301,7 +308,8 @@
             "faIcon": "fa-solid fa-life-ring"
         },
         "primaryCategory": "Essential Services",
-        "secondaryCategory": "Third Sector"
+        "secondaryCategory": "Third Sector",
+        "knownIds": ["9fe3c8b3-e03e-4b12-8f92-9d16c47ee797"]
     },
     {
         "description": ["Fire Station"],
@@ -320,7 +328,8 @@
             "faIcon": "fa-solid fa-hose-reel"
         },
         "primaryCategory": "Essential Services",
-        "secondaryCategory": "Emergency Services"
+        "secondaryCategory": "Emergency Services",
+        "knownIds": ["358f5d48-3420-4790-9557-a2761090b8a8"]
     },
     {
         "type": "http://ies.data.gov.uk/ontology/ies4#Road",
@@ -378,7 +387,8 @@
             "faIcon": "fa-solid fa-tag"
         },
         "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Transport Infrastructure"
+        "secondaryCategory": "Transport Infrastructure",
+        "knownIds": ["18aa1600-4bde-475a-9dbd-4a64cee09c74", "1929d494-544c-49b7-b815-5a52e61794ce", "2a764639-fa8c-459a-b96a-8e8a09e5a154", "2ef7e32f-2f31-4d37-9844-0ad6c730bcb1", "304c9361-290a-4162-a5e1-658cee58dff0", "46b632b4-5bbb-46dd-a405-ee8a268a2106", "58b78c2e-8930-4ee3-9c81-00586834f45e", "5e735817-001b-4d79-94ea-995c35bd0fef", "6e4d2633-9ed9-4837-96b4-f0d39d71411f", "763e125b-cc15-4134-b49d-011202859116", "7febe7e8-c7c0-43fb-8a8a-45ef5dd09338", "8f3b8e86-33d4-4c5d-8f64-4ba0be6ad80a", "9b36d852-2bd7-4aa9-a075-d1ac2b1a84a4", "bc8fb8ff-0985-4c45-b4d8-b652101ff393", "c276941e-341a-413c-8141-a6fa19bc7c1d", "c3f9c1f2-4ec2-4422-92e2-bad58367b82f", "d7cf1c79-3974-446a-b1fc-10fbc3e57c03", "d8e74be9-b29e-48cb-97fa-955a994f4305", "f75bfa4d-277f-4c86-8233-bd489ae83b3a"]
     },
     {
         "description": "Leisure Pier",
@@ -682,7 +692,8 @@
             "faIcon": "fa-solid fa-tank-water"
         },
         "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Utility Infrastructure"
+        "secondaryCategory": "Utility Infrastructure",
+        "knownIds": ["8ee6d1f3-f6fa-464f-b4b2-97922237746d"]
     },
     {
         "description": ["Underpass"],
@@ -873,7 +884,8 @@
             "faIcon": "fa-solid fa-seedling"
         },
         "primaryCategory": "Essential Services",
-        "secondaryCategory": "Energy"
+        "secondaryCategory": "Energy",
+        "knownIds": ["6e2841f4-42be-483f-a8c5-b8ccfa8c394e"]
     },
     {
         "description": ["Pumping Station"],
@@ -911,7 +923,8 @@
             "faIcon": "fa-solid fa-truck-droplet"
         },
         "primaryCategory": "Wastewater Management",
-        "secondaryCategory": "Wastewater Infrastructure"
+        "secondaryCategory": "Wastewater Infrastructure",
+        "knownIds": ["5ace9379-7091-4df7-90d0-56d6d0507eb3", "fe2fb6ef-c327-43e8-b3df-8dce9e7c4483"]
     },
     {
         "description": ["Public Car Park"],
@@ -1104,6 +1117,23 @@
         "secondaryCategory": "Learning and Non Residential Institutions"
     },
     {
+        "type": "http://ies.data.gov.uk/ontology/ies4#TertiaryCollege",
+        "description": ["Higher_or_University_Education"],
+        "source": "os_names",
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#TertiaryCollege",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "TC",
+            "alt": "TertiaryCollege",
+            "shape": "cirle",
+            "faUnicode": "\uf549",
+            "faIcon": "fa-regular fa-school"
+        },
+        "primaryCategory": "Public Safety and Shelter",
+        "secondaryCategory": "Learning and Non Residential Institutions"
+    },
+    {
         "type": "http://ies.data.gov.uk/ontology/ies4#Hospital",
         "description": ["Hospital"],
         "source": "os_names",
@@ -1156,7 +1186,8 @@
             "faIcon": "fa-regular fa-bolt-lightning"
         },
         "primaryCategory": "Essential Services",
-        "secondaryCategory": "Energy"
+        "secondaryCategory": "Energy",
+        "knownIds": ["850c6c49-bd1b-4c6f-9795-0d8eda4dd1bb"]
     },
     {
         "description": ["Public Park Or Garden"],
@@ -1252,5 +1283,140 @@
         },
         "primaryCategory": "Miscellaneous",
         "secondaryCategory": "Agricultural and Natural Assets"
+    },
+    {
+        "description": ["Electricity Support Pole"],
+        "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
+        "source": "os_ngd",
+        "collection": "str-fts-structurepoint-1",
+        "expectedCount": 17,
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#Pylon",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "P",
+            "alt": "Pylon",
+            "shape": "cirle",
+            "faUnicode": "\ue2c4",
+            "faIcon": "fa-light fa-utility-pole-double"
+        },
+        "primaryCategory": "Transport and Infrastructure",
+        "secondaryCategory": "Utility Infrastructure"
+    },
+    {
+        "description": ["Electricity Support Poles"],
+        "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
+        "source": "os_ngd",
+        "collection": "str-fts-structurepoint-1",
+        "expectedCount": 96,
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#Pylon",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "P",
+            "alt": "Pylon",
+            "shape": "cirle",
+            "faUnicode": "\ue2c4",
+            "faIcon": "fa-light fa-utility-pole-double"
+        },
+        "primaryCategory": "Transport and Infrastructure",
+        "secondaryCategory": "Utility Infrastructure"
+    },
+    {
+        "description": ["Electricity Pylon"],
+        "type": "http://ies.data.gov.uk/ontology/ies4#Pylon",
+        "source": "os_ngd",
+        "collection": "str-fts-structure-3",
+        "expectedCount": 52,
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#Pylon",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "P",
+            "alt": "Pylon",
+            "shape": "cirle",
+            "faUnicode": "\ue2c4",
+            "faIcon": "fa-light fa-utility-pole-double"
+        },
+        "primaryCategory": "Transport and Infrastructure",
+        "secondaryCategory": "Utility Infrastructure"
+    },
+    {
+        "description": ["Electricity Transmission Lines"],
+        "type": "http://ies.data.gov.uk/ontology/ies4#ElectricityTransmissionLine",
+        "source": "os_ngd",
+        "collection": "str-fts-structureline-1",
+        "expectedCount": 162,
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#ElectricityTransmissionLine",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "TL",
+            "alt": "Transmission Line",
+            "shape": "cirle",
+            "faUnicode": "\ue2c4",
+            "faIcon": "fa-light fa-utility-pole-double"
+        },
+        "primaryCategory": "Transport and Infrastructure",
+        "secondaryCategory": "Utility Infrastructure"
+    },
+    {
+        "description": ["Electricity Sub Station"],
+        "type": "http://ies.data.gov.uk/ontology/ies4#MinorSubstation",
+        "source": "os_ngd",
+        "collection": "lus-fts-site-2",
+        "expectedCount": 875,
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#MinorSubstation",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "LVE",
+            "alt": "MinorSubstation",
+            "shape": "cirle",
+            "faUnicode": "\ue2c4",
+            "faIcon": "fa-solid fa-bolt-lightning"
+        },
+        "primaryCategory": "Transport and Infrastructure",
+        "secondaryCategory": "Utility Infrastructure",
+        "knownIds": ["0e10d9ce-9aa1-4827-9687-e838eda82e2d", "63472646-46cf-4fc0-aba7-315a50005777"]
+    },
+    {
+        "description": ["Electricity Distribution Site"],
+        "type": "http://ies.data.gov.uk/ontology/ies4#LowVoltageElectricitySubstationComplex",
+        "source": "os_ngd",
+        "collection": "lus-fts-site-2",
+        "expectedCount": 5,
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#LowVoltageElectricitySubstationComplex",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "LVE",
+            "alt": "LowVoltageElectricitySubstationComplex",
+            "shape": "cirle",
+            "faUnicode": "\ue2c4",
+            "faIcon": "fa-solid fa-utility-pole-double"
+        },
+        "primaryCategory": "Transport and Infrastructure",
+        "secondaryCategory": "Utility Infrastructure",
+        "knownIds": ["b3cca31a-b868-4c02-bd21-9497d30230b5", "271c588b-4337-44be-b5ab-99d69f0bf525", "17531bff-1128-4d6b-afc4-294d122999af"]
+    },
+    {
+        "description": ["Public Waste Disposal Site"],
+        "type": "http://ies.data.gov.uk/ontology/ies4#WasteDisposalComplex",
+        "source": "os_ngd",
+        "collection": "lus-fts-site-2",
+        "expectedCount": 2,
+        "styles": {
+            "classUri": "http://ies.data.gov.uk/ontology/ies4#WasteDisposalComplex",
+            "backgroundColor": "#242400",
+            "color": "#FFFD04",
+            "iconFallbackText": "WDC",
+            "alt": "WasteDisposalComplex",
+            "shape": "cirle",
+            "faUnicode": "\uf02b",
+            "faIcon": "fa-solid fa-tag"
+        },
+        "primaryCategory": "Transport and Infrastructure",
+        "secondaryCategory": "Miscellaneous"
     }
 ]

@@ -40,7 +40,8 @@ describe("fetchDataForAssetSpecification", () => {
     GEOMETRY_X: 429157,
     GEOMETRY_Y: 623009,
   };
-  const response = {
+
+  const response: { results: any[] | undefined } = {
     results: [
       {
         GAZETTEER_ENTRY: data,
@@ -78,5 +79,17 @@ describe("fetchDataForAssetSpecification", () => {
     )) as Feature<Point>[];
 
     expect(result[0].properties?.name).toBe(primary_name);
+  });
+
+  it("handles an empty response", async () => {
+    response.results = undefined;
+    mockFetch(response);
+
+    const result = (await handler.fetchDataForAssetSpecification(
+      {} as AssetSpecification,
+      "",
+    )) as Feature<Point>[];
+
+    expect(result).toHaveLength(0);
   });
 });

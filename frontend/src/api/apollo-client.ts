@@ -1,6 +1,5 @@
 import { ApolloClient, InMemoryCache, HttpLink } from "@apollo/client";
 import roadRoute from "./graphql-queries/roadRoute.graphql";
-import getLowBridges from "./graphql-queries/lowBridges.graphql";
 
 import config from "@/config/app-config";
 
@@ -14,6 +13,5 @@ const client = new ApolloClient({
 });
 
 export const GET_ROAD_ROUTE = roadRoute;
-export const GET_LOW_BRIDGES = getLowBridges;
 
 export default client;
