@@ -1,0 +1,134 @@
+Asset_ID,Asset_Type,Asset_Name,lat,long,criticality_score,backup_asset_id,status,dependency_score,exposure_score
+BSC01,Business/Commercial,IndustrialSpace,50.7013368,-1.298018608,1,BSC02,working,0,2
+BSC02,Business/Commercial,IndustrialSpace,50.662767,-1.15015395,1,BSC03,working,0,2
+BSC03,Business/Commercial,IndustrialSpace,50.75794403,-1.290131662,1,,working,0,0
+BSC04,Business/Commercial,IndustrialSpace,50.63708906,-1.17914422,1,,working,0,2
+BSC05,Business/Commercial,IndustrialSpace,50.59161769,-1.255649071,1,,working,0,2
+BSC06,Business/Commercial,RetailKiosk,50.71844117,-1.158218989,1,,working,0,0
+BSC07,Business/Commercial,RetailKiosk,50.68993195,-1.08859195,1,,working,0,1
+BSC08,Business/Commercial,RetailKiosk,50.69945367,-1.295762443,1,,working,0,2
+BSC09,Business/Commercial,RetailKiosk,50.75801661,-1.287798307,1,,working,0,0
+BSC10,Business/Commercial,RetailKiosk,50.72653483,-1.132907017,1,,working,0,0
+FS01,FuelStation,MotorVehicleFuellingOrChargingStation,50.6341067,-1.2311143,2,FS02,working,0,2
+FS02,FuelStation,MotorVehicleFuellingOrChargingStation,50.69254229,-1.286216562,2,FS03,working,0,2
+FS03,FuelStation,MotorVehicleFuellingOrChargingStation,50.66224027,-1.151983196,2,FS04,working,0,2
+FS04,FuelStation,MotorVehicleFuellingOrChargingStation,50.75083885,-1.553143361,2,,working,0,0
+FS05,FuelStation,MotorVehicleFuellingOrChargingStation,50.70961945,-1.144603284,2,,working,0,0
+FS06,FuelStation,MotorVehicleFuellingOrChargingStation,50.72944635,-1.153399375,2,,working,0,0
+FS07,FuelStation,MotorVehicleFuellingOrChargingStation,50.64663781,-1.182754882,2,,working,0,2
+GS01,GasSupply,GasDistributionComplex,50.753241,-1.3347356,2,,working,0,0
+HS01,Hospital,Hospital,50.711101,-1.3008871,3,,working,3,1
+NH01,NursingHome,NursingHome,50.710648,-1.2811222,3,NH02,working,0,0
+NH02,NursingHome,NursingHome,50.632156,-1.1825228,3,NH03,working,0,2
+NH03,NursingHome,NursingHome,50.725258,-1.2339334,3,NH04,working,0,2
+NH04,NursingHome,NursingHome,50.626927,-1.1832073,3,NH01,working,0,2
+PH01,Pharmacy,PharmaceuticalDispensary,50.724898,-1.2298024,2,PGS02,working,0,2
+PH02,Pharmacy,PharmaceuticalDispensary,50.761523,-1.2978536,2,PGS03,working,0,0
+PH03,Pharmacy,PharmaceuticalDispensary,50.68347,-1.5270671,2,,working,0,0
+PH04,Pharmacy,PharmaceuticalDispensary,50.750944,-1.301754,2,,working,0,0
+PH05,Pharmacy,PharmaceuticalDispensary,50.706162,-1.4999744,2,,working,0,0
+PH06,Pharmacy,PharmaceuticalDispensary,50.757807,-1.2885096,2,PGS07,working,0,0
+PH07,Pharmacy,PharmaceuticalDispensary,50.682316,-1.524177,2,,working,0,0
+PGS01,PowerGen/Substation,LowVoltageElectricitySubstationComplex,50.719325,-1.2020439,3,,working,2,1
+PGS02,PowerGen/Substation,HighVoltageElectricitySubstationComplex,50.710424,-1.2539468,3,PH02,working,2,0
+PGS03,PowerGen/Substation,LowVoltageElectricitySubstationComplex,50.74572,-1.2854328,3,PH03,working,2,0
+PGS04,PowerGen/Substation,LowVoltageElectricitySubstationComplex,50.662086,-1.1537488,3,PH04,working,2,2
+PGS05,PowerGen/Substation,BiomassPowerGenerationComplex,50.675059,-1.2532336,3,PH05,working,3,2
+PGS06,PowerGen/Substation,OilFiredPowerGenerationComplex,50.746912,-1.2862509,3,PH06,working,2,0
+PGS07,PowerGen/Substation,LowVoltageElectricitySubstationComplex,50.63418,-1.1839159,3,PH01,working,2,2
+PGS08,PowerGen/Substation,LowVoltageElectricitySubstationComplex,50.681092,-1.5152298,3,,working,2,0
+PP01,PublicPark,PublicPark,50.700407,-1.2872684,0,,working,0,1
+PP02,PublicPark,PublicPark,50.723035,-1.1444492,0,,working,0,0
+PP03,PublicPark,PublicPark,50.705239,-1.2847594,0,,working,0,0
+PP04,PublicPark,PublicPark,50.65372,-1.1620472,0,,working,0,2
+SCH01,School,TertiaryCollege,50.697185,-1.2941702,1,SCH07,working,0,1
+SCH02,School,SecondarySchool,50.657192,-1.1672058,1,,working,0,2
+SCH03,School,SecondarySchool,50.696789,-1.3152021,1,,working,0,2
+SCH04,School,SecondarySchool,50.723737,-1.1744565,1,,working,0,0
+SCH05,School,SecondarySchool,50.689867,-1.2931474,1,,working,0,2
+SCH06,School,SecondarySchool,50.677794,-1.5424943,1,,working,0,0
+SCH07,School,TertiaryCollege,50.694542,-1.3108882,1,SCH01,working,0,2
+SCH08,School,SecondarySchool,50.711574,-1.2825527,1,,working,0,0
+SCH09,School,TertiaryCollege,50.695746,-1.3122156,1,SCH07,working,0,2
+SW01,Sewage,WastewaterCollectionNetwork,50.739617,-1.3283103,2,SW02,working,0,0
+SW02,Sewage,WastewaterCollectionNetwork,50.685999,-1.5435612,2,SW03,working,0,0
+SW03,Sewage,WastewaterCollectionNetwork,50.667008,-1.1844791,2,,working,0,2
+SW04,Sewage,WastewaterCollectionNetwork,50.761405,-1.2886961,2,,working,0,0
+TEL01,Telecomms,TelecommunicationsExchange,50.70048705,-1.298122932,3,TEL02,working,0,2
+TEL02,Telecomms,TelecommunicationsExchange,50.75708469,-1.543852456,3,TEL03,working,0,0
+TEL03,Telecomms,TelecommunicationsExchange,50.63113171,-1.1803599,3,TEL04,working,0,2
+TEL04,Telecomms,TelecommunicationsExchange,50.59622212,-1.20184453,3,,working,0,0
+TEL05,Telecomms,TelecommunicationsExchange,50.69090729,-1.090039873,3,,working,0,2
+TEL06,Telecomms,TelecommunicationsExchange,50.62028548,-1.320569967,3,,working,0,2
+TEL07,Telecomms,TelecommunicationsExchange,50.73050932,-1.164575976,3,,working,0,0
+TEL08,Telecomms,TelecommunicationsComplex,50.67652803,-1.368608859,3,,working,2,0
+TEL09,Telecomms,TelecommunicationsComplex,50.60311085,-1.2008778,3,,working,3,1
+TEL10,Telecomms,TelecommunicationsComplex,50.61099093,-1.23989885,3,,working,0,2
+TEL11,Telecomms,TelecommunicationsComplex,50.58645504,-1.25528264,3,,working,1,1
+TRF01,Transport,FerryPort,50.759141,-1.2905877,2,TRA02,working,0,0
+TRF02,Transport,FerryPort,50.763106,-1.2960338,2,TRA01,working,0,0
+TRF03,Transport,FerryPort,50.733355,-1.214176,2,,working,0,0
+TRF04,Transport,FerryPort,50.733093,-1.1585777,2,,working,0,0
+TRR01,Transport,RailwayStation,50.7120355,-1.1556234,2,,working,0,0
+TRR02,Transport,RailwayStation,50.6778101,-1.13924,2,,working,0,2
+TRR03,Transport,RailwayStation,50.6338303,-1.1800243,2,,working,0,2
+TRR04,Transport,RailwayStation,50.7120853,-1.155454,2,,working,0,0
+TRR05,Transport,RailwayStation,50.7049841,-1.2135358,2,,working,0,2
+TRR06,Transport,RailwayJunction,50.7061094,-1.2173894,2,TRF02,working,0,2
+TRR07,Transport,RailwayJunction,50.706016,-1.2177935,2,TRF01,working,0,2
+TRR08,Transport,RailwayJunction,50.7375395,-1.160784,2,TRF04,working,0,0
+TRR09,Transport,RailwayJunction,50.7060909,-1.2162289,2,TRF03,working,0,2
+TRR10,Transport,RailwayJunction,50.7058683,-1.2157168,2,TRR02,working,0,2
+TRA01,Transport,Airport,50.653078,-1.1819053,2,TRR03,working,0,2
+TRA02,Transport,Airport,50.678218,-1.1101069,2,TRR04,working,0,2
+TRB01,Transport,Bridge,50.62050455,-1.274152931,2,,working,0,2
+TRB02,Transport,Bridge,50.70970341,-1.402541965,2,,working,0,0
+TRB03,Transport,Bridge,50.71491505,-1.228800817,2,,working,0,2
+TRB04,Transport,Bridge,50.71979686,-1.369851762,2,,working,0,0
+TRB05,Transport,Bridge,50.63694638,-1.369607608,2,,working,0,2
+TRB06,Transport,Bridge,50.64277116,-1.399771219,2,,working,0,2
+TRB07,Transport,Bridge,50.66717249,-1.184764075,2,,working,0,2
+VH01,VeterinaryHospital,VeterinaryHospital,50.71678818,-1.1923577,1,VH02,working,0,1
+VH02,VeterinaryHospital,VeterinaryHospital,50.68533087,-1.293531159,1,VH03,working,0,2
+VH03,VeterinaryHospital,VeterinaryHospital,50.72839833,-1.324806786,1,VH04,working,0,0
+VH04,VeterinaryHospital,VeterinaryHospital,50.70949225,-1.391519375,1,,working,0,0
+VH05,VeterinaryHospital,VeterinaryHospital,50.62901409,-1.180139143,1,,working,0,2
+WS01,WaterSupply,WaterReservoir,50.678504,-1.1520667,3,WS02,working,0,2
+WS02,WaterSupply,WaterDistributionComplex,50.6189124,-1.1862705,3,WS03,working,0,1
+WS03,WaterSupply,WaterDistributionComplex,50.6182785,-1.189187325,3,WS04,working,0,1
+WS04,WaterSupply,WaterExtractionComplex,50.65748868,-1.307015479,3,,working,0,2
+WS05,WaterSupply,WaterReservoir,50.68019549,-1.198740425,3,,working,0,2
+JN01,Named Junction,Alverstone Cross,50.7270922,-1.2627284,3,JN30,working,3,0
+JN02,Named Junction,Pier Road Roundabout,50.7874801,-1.0984315,3,JN31,working,0,0
+JN03,Named Junction,Winford Cross,50.6548051,-1.2109867,3,JN32,working,2,2
+JN04,Named Junction,Battramsley Cross,50.7834256,-1.5602417,3,JN33,working,0,0
+JN05,Named Junction,Binfield Corner,50.7207092,-1.2705726,3,JN34,working,2,0
+JN06,Named Junction,Whitcombe Cross,50.6845187,-1.3114238,3,,working,3,2
+JN07,Named Junction,Cox's Corner,50.6721576,-1.3024597,3,,working,3,2
+JN08,Named Junction,Vittlefield Cross,50.7025824,-1.3456919,3,JN20,working,2,1
+JN09,Named Junction,Willet's Cross,50.6377103,-1.3574281,3,JN21,working,2,2
+JN10,Named Junction,Beckfield Cross,50.626985,-1.3204778,3,JN22,working,3,2
+JN11,Named Junction,Knight's Cross,50.7051284,-1.2437791,3,JN23,working,3,1
+JN12,Named Junction,Merstone Cross,50.6629327,-1.2550264,3,JN24,working,3,2
+JN13,Named Junction,Shide Cross,50.6920384,-1.2950196,3,JN25,working,2,2
+JN14,Named Junction,Kings Road Roundabout,50.7914463,-1.0961561,3,JN26,working,0,0
+JN15,Named Junction,Lynn Cross,50.703675,-1.2432318,3,JN27,working,3,1
+JN16,Named Junction,Branstone Cross,50.648063,-1.2106864,3,JN28,working,3,2
+JN17,Named Junction,Upton Cross,50.7103622,-1.1787035,3,JN29,working,3,1
+JN18,Named Junction,Two Firs,50.6591149,-1.2119562,3,,working,3,2
+JN19,Named Junction,Thornton Cross,50.7229636,-1.1374546,3,,working,0,0
+JN20,Named Junction,Fighting Cocks Cross,50.6532765,-1.2209576,3,,working,3,2
+JN21,Named Junction,Steyne Cross,50.6828185,-1.0899474,3,,working,0,1
+JN22,Named Junction,Bartons Corner,50.7208195,-1.1935369,3,JN05,working,3,0
+JN23,Named Junction,Westridge Cross,50.7151327,-1.1462259,3,JN06,working,2,0
+JN24,Named Junction,Blackwater Junction,50.6761246,-1.2833944,3,JN07,working,3,2
+JN25,Named Junction,Little Princelett Cross,50.6422365,-1.2084683,3,JN08,working,0,2
+JN26,Named Junction,Barton's Corner,50.6990673,-1.4082671,3,JN09,working,3,1
+JN27,Named Junction,Barton Manor Roundabout,50.7447099,-1.2746822,3,JN10,working,3,0
+JN28,Named Junction,Cambridge Junction,50.7928102,-1.099989,3,JN11,working,0,0
+JN29,Named Junction,Pennington Cross,50.7511497,-1.5530738,3,JN12,working,0,0
+JN30,Named Junction,Calbourne Cross,50.6797159,-1.3997536,3,JN13,working,3,2
+JN31,Named Junction,Smart's Cross,50.6173545,-1.2647394,3,JN14,working,2,2
+JN32,Named Junction,Winchester Corner,50.7008502,-1.4103315,3,,working,3,2
+JN33,Named Junction,Rowlands Cross,50.7144168,-1.1970861,3,,working,3,2
+JN34,Named Junction,Bullen Cross,50.7181398,-1.1292623,3,,working,3,0
