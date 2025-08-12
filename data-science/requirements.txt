@@ -1,0 +1,7 @@
+numpy
+pandas
+networkx
+matplotlib
+geopandas
+shapely
+flask_session

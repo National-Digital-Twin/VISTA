@@ -196,81 +196,81 @@ def add_attribute_from_df(G, df, column_name, attribute_name=None):
     
     return G
 
-def compute_exposure_score(assets_df, flood_files, heat_files=None, landslide_files=None):
-    """
-    Version 2 updated based on client requirement 060825
-    Computes exposure score based on asset intersection with hazard layers and
-    adds it as a new column to the assets_df.
-    """
-    exposure_scores = []
+# def compute_exposure_score(assets_df, flood_files, heat_files=None, landslide_files=None):
+#     """
+#     Version 2 updated based on client requirement 060825
+#     Computes exposure score based on asset intersection with hazard layers and
+#     adds it as a new column to the assets_df.
+#     """
+#     exposure_scores = []
     
-    # Load and combine hazard layers using the recommended union_all() method
-    try:
-        flood_layers = [gpd.read_file(f) for f in flood_files]
-        if flood_layers:
-            all_flood_gdf = pd.concat(flood_layers, ignore_index=True)
-            flood_geom = all_flood_gdf.geometry.union_all()
-        else:
-            flood_geom = None
-    except Exception as e:
-        print(f"Could not process flood files: {e}")
-        flood_geom = None
+#     # Load and combine hazard layers using the recommended union_all() method
+#     try:
+#         flood_layers = [gpd.read_file(f) for f in flood_files]
+#         if flood_layers:
+#             all_flood_gdf = pd.concat(flood_layers, ignore_index=True)
+#             flood_geom = all_flood_gdf.geometry.union_all()
+#         else:
+#             flood_geom = None
+#     except Exception as e:
+#         print(f"Could not process flood files: {e}")
+#         flood_geom = None
 
-    heat_geom = None
-    if heat_files:
-        try:
-            heat_layers = [gpd.read_file(f) for f in heat_files]
-            if heat_layers:
-                all_heat_gdf = pd.concat(heat_layers, ignore_index=True)
-                heat_geom = all_heat_gdf.geometry.union_all()
-        except Exception as e:
-            print(f"Could not process heat files: {e}")
-            heat_geom = None
+#     heat_geom = None
+#     if heat_files:
+#         try:
+#             heat_layers = [gpd.read_file(f) for f in heat_files]
+#             if heat_layers:
+#                 all_heat_gdf = pd.concat(heat_layers, ignore_index=True)
+#                 heat_geom = all_heat_gdf.geometry.union_all()
+#         except Exception as e:
+#             print(f"Could not process heat files: {e}")
+#             heat_geom = None
 
-    landslide_geom = None
-    if landslide_files:
-        try:
-            landslide_layers = [gpd.read_file(f) for f in landslide_files]
-            if landslide_layers:
-                all_landslide_gdf = pd.concat(landslide_layers, ignore_index=True)
-                landslide_geom = all_landslide_gdf.geometry.union_all()
-        except Exception as e:
-            print(f"Could not process landslide files: {e}")
-            landslide_geom = None
+#     landslide_geom = None
+#     if landslide_files:
+#         try:
+#             landslide_layers = [gpd.read_file(f) for f in landslide_files]
+#             if landslide_layers:
+#                 all_landslide_gdf = pd.concat(landslide_layers, ignore_index=True)
+#                 landslide_geom = all_landslide_gdf.geometry.union_all()
+#         except Exception as e:
+#             print(f"Could not process landslide files: {e}")
+#             landslide_geom = None
 
-    # Create GeoDataFrame for assets
-    geometry = [Point(xy) for xy in zip(assets_df['long'], assets_df['lat'])]
-    assets_gdf = gpd.GeoDataFrame(assets_df, geometry=geometry, crs="EPSG:4326")
-    assets_gdf_proj = assets_gdf.to_crs("EPSG:27700")
+#     # Create GeoDataFrame for assets
+#     geometry = [Point(xy) for xy in zip(assets_df['long'], assets_df['lat'])]
+#     assets_gdf = gpd.GeoDataFrame(assets_df, geometry=geometry, crs="EPSG:4326")
+#     assets_gdf_proj = assets_gdf.to_crs("EPSG:27700")
     
-    flood_geom_proj = None
-    if flood_geom and not flood_geom.is_empty:
-        # Reproject the combined flood geometry for distance calculations
-        flood_geom_proj = gpd.GeoSeries([flood_geom], crs="EPSG:4326").to_crs("EPSG:27700").union_all()
+#     flood_geom_proj = None
+#     if flood_geom and not flood_geom.is_empty:
+#         # Reproject the combined flood geometry for distance calculations
+#         flood_geom_proj = gpd.GeoSeries([flood_geom], crs="EPSG:4326").to_crs("EPSG:27700").union_all()
 
-    for index, asset in assets_gdf.iterrows():
-        asset_geom = asset.geometry
+#     for index, asset in assets_gdf.iterrows():
+#         asset_geom = asset.geometry
         
-        intersects_flood = flood_geom and not flood_geom.is_empty and asset_geom.intersects(flood_geom)
-        intersects_heat = heat_geom and not heat_geom.is_empty and asset_geom.intersects(heat_geom)
-        intersects_landslide = landslide_geom and not landslide_geom.is_empty and asset_geom.intersects(landslide_geom)
+#         intersects_flood = flood_geom and not flood_geom.is_empty and asset_geom.intersects(flood_geom)
+#         intersects_heat = heat_geom and not heat_geom.is_empty and asset_geom.intersects(heat_geom)
+#         intersects_landslide = landslide_geom and not landslide_geom.is_empty and asset_geom.intersects(landslide_geom)
 
-        score = 0
-        if intersects_flood:
-            if intersects_heat or intersects_landslide:
-                score = 3
-            else:
-                score = 2
-        elif flood_geom_proj:
-            asset_geom_proj = assets_gdf_proj.loc[index].geometry
-            distance_to_flood = asset_geom_proj.distance(flood_geom_proj)
-            if distance_to_flood <= 500:
-                score = 1
+#         score = 0
+#         if intersects_flood:
+#             if intersects_heat or intersects_landslide:
+#                 score = 3
+#             else:
+#                 score = 2
+#         elif flood_geom_proj:
+#             asset_geom_proj = assets_gdf_proj.loc[index].geometry
+#             distance_to_flood = asset_geom_proj.distance(flood_geom_proj)
+#             if distance_to_flood <= 500:
+#                 score = 1
         
-        exposure_scores.append(score)
+#         exposure_scores.append(score)
     
-    assets_df['exposure_score'] = exposure_scores
-    return assets_df
+#     assets_df['exposure_score'] = exposure_scores
+#     return assets_df
 
 def compute_exposure_score_v2(assets_df, flood_files, heat_files=None, landslide_files=None):
     """
@@ -387,10 +387,10 @@ def compute_redundancy_score(df):
     Computes the dependency score for each asset in the DataFrame.
 
     The score is based on the existence and proximity of a backup asset:
-    - Score 0: No backup asset is listed.
-    - Score 1: A backup asset exists and is more than 5km away.
-    - Score 2: A backup asset exists and is between 2km and 5km away.
-    - Score 3: A backup asset exists and is less than 2km away.
+    - Score 3: No backup asset is listed.
+    - Score 2: A backup asset exists and is more than 5km away.
+    - Score 1: A backup asset exists and is between 2km and 5km away.
+    - Score 0: A backup asset exists and is less than 2km away.
 
     Args:
         df (pd.DataFrame): DataFrame containing asset data, including 'Asset_ID',
@@ -459,13 +459,7 @@ def compute_asset_score(G):
         nx.DiGraph: The graph with 'resilience_score' and its component scores
                     added as attributes to each node.
     """
-    # # 1. Calculate component scores
-    # G = compute_dependency_score(G)
-    # G = compute_redundancy_score(G, assets_list)
-    # G = compute_exposure_score(G)
-
-    # 2. Calculate the final resilience score
-    #total_asset_score = 0
+    
     for node_id in G.nodes():
         node_data = G.nodes[node_id]
         
@@ -476,10 +470,10 @@ def compute_asset_score(G):
         exposure = node_data.get('exposure_score', 0)
         
         # Sum the scores to get the final resilience score
-        resilience_score = criticality + dependency + redundancy + exposure
+        asset_score = criticality + dependency + redundancy + exposure
         
         # Add the final score to the node's attributes
-        node_data['asset_score'] = resilience_score
+        node_data['asset_score'] = asset_score
     print(f"Added asset_score to assets.")
     #network_score = round(total_asset_score / G.number_of_nodes(), 2) if G.number_of_nodes() > 0 else 0
         
