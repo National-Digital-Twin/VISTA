@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { noCase } from "change-case";
 import { getURIFragment, isAsset } from "@/utils";
 import { fetchAssetInfo } from "@/api/combined";
+import { AssetState } from "@/models/Asset";
 
 export interface InfoTooltipProps {
   /** Map element for which this is the tooltip */
@@ -10,11 +11,12 @@ export interface InfoTooltipProps {
 
 export default function InfoTooltip({ element }: InfoTooltipProps) {
   const elemIsAsset = isAsset(element);
+  const elemIsStatic = element.state === AssetState.Static;
 
-  const { data, isLoading, isError } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ["asset-info", element?.uri],
     queryFn: () => fetchAssetInfo(element?.uri),
-    enabled: elemIsAsset,
+    enabled: elemIsAsset && elemIsStatic,
   });
 
   if (!element) {
@@ -23,12 +25,6 @@ export default function InfoTooltip({ element }: InfoTooltipProps) {
 
   if (isLoading) {
     return <p>Fetching element details...</p>;
-  }
-
-  if (isError) {
-    return (
-      <p>An error occurred while fetching information for {element.uri}</p>
-    );
   }
 
   const details = elemIsAsset ? element.getDetails(data) : element.getDetails();
@@ -50,7 +46,7 @@ interface DetailsProps {
 }
 
 function Details({ details }: DetailsProps) {
-  const { id, title, type, desc } = details;
+  const { title, type, desc } = details;
 
   return (
     <div
@@ -65,8 +61,17 @@ function Details({ details }: DetailsProps) {
       {type && (
         <p className="text-sm uppercase">{noCase(getURIFragment(type))}</p>
       )}
-      <p>{id}</p>
-      {desc && <p>{desc}</p>}
+      {desc && (
+        <p
+          style={{
+            wordBreak: "break-word",
+            overflowWrap: "break-word",
+            whiteSpace: "pre-line",
+          }}
+        >
+          {desc}
+        </p>
+      )}
     </div>
   );
 }

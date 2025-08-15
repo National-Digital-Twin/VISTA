@@ -1,10 +1,17 @@
 error_log  /var/log/nginx/error.log  $LOG_LEVEL;
 
-proxy_cache_path /tmp/nginx_cache
+proxy_cache_path /tmp/nginx_cache_short
   levels=1:2
-  keys_zone=tp_cache:100m
+  keys_zone=short_cache:100m
   max_size=200m
   inactive=10000s
+  use_temp_path=off;
+
+proxy_cache_path /tmp/nginx_cache_long
+  levels=1:2
+  keys_zone=long_cache:100m
+  max_size=200m
+  inactive=86400s
   use_temp_path=off;
 
 server {
@@ -30,12 +37,11 @@ server {
   # resolver 8.8.8.8 valid=1m;
 
   # Proxy config
-  proxy_cache_valid 200 302 10m;
+  proxy_cache_valid 200 302 24h;
   proxy_cache_use_stale error timeout invalid_header updating http_500 http_502 http_503 http_504;
   proxy_cache_revalidate on;
   proxy_cache_background_update on;
   proxy_http_version 1.1;
-  proxy_cache tp_cache;
 
   if ($host_allowed = 0) {
     return 403;
@@ -100,20 +106,55 @@ server {
     proxy_hide_header Set-Cookie;
   }
 
-  # Admiralty
-  location /admiralty-tidal-discovery/ {
-    proxy_pass https://admiraltyapi.azure-api.net/uktidalapi/api/;
-    proxy_set_header Ocp-Apim-Subscription-Key $ADMIRALTY_API_KEY;
+  location /os-ngd/ {
+    proxy_cache long_cache;
+    set $api_key_qs &key=$OS_NGD_API_KEY;
+
+    rewrite ^/os-ngd/(.*) /$1 break;
+
+    proxy_pass https://api.os.uk/$uri$is_args$args$api_key_qs;
     proxy_set_header Cookie "";
     proxy_set_header X-Auth-Request-Access-Token "";
     proxy_set_header X-Auth-Request-Email "";
     proxy_set_header X-Auth-Request-User "";
     proxy_set_header Authorization "";
     proxy_hide_header Set-Cookie;
+    add_header X-Cache-Status $upstream_cache_status always;
+  }
+
+  location /os-names/ {
+    proxy_cache long_cache;
+    set $api_key_qs &key=$OS_NAMES_API_KEY;
+
+    rewrite ^/os-names/(.*) /$1 break;
+
+    proxy_pass https://api.os.uk/$uri$is_args$args$api_key_qs;
+    proxy_set_header Cookie "";
+    proxy_set_header X-Auth-Request-Access-Token "";
+    proxy_set_header X-Auth-Request-Email "";
+    proxy_set_header X-Auth-Request-User "";
+    proxy_set_header Authorization "";
+    proxy_hide_header Set-Cookie;
+    add_header X-Cache-Status $upstream_cache_status always;
+  }
+
+  # NAPTAN
+  location /naptan/ {
+    proxy_cache long_cache;
+    proxy_pass https://naptan.api.dft.gov.uk/;
+    proxy_set_header Cookie "";
+    proxy_set_header X-Auth-Request-Access-Token "";
+    proxy_set_header X-Auth-Request-Email "";
+    proxy_set_header X-Auth-Request-User "";
+    proxy_set_header Authorization "";
+    proxy_hide_header Set-Cookie;
+    add_header X-Cache-Status $upstream_cache_status always;
   }
 
   # Realtime Trains
   location /realtime-trains/ {
+    proxy_cache short_cache;
+    proxy_cache_valid 200 302 10m;
     proxy_pass https://${REALTIME_TRAINS_HOST}/api/v1/;
     proxy_set_header Authorization "Basic $REALTIME_TRAINS_API_KEY";
     proxy_set_header Cookie "";
@@ -124,20 +165,21 @@ server {
     proxy_hide_header Set-Cookie;
   }
 
-  # Met Office weather API
-  location /weather/ {
-    proxy_buffer_size 128k;
-    proxy_buffers 4 256k;
-    proxy_busy_buffers_size 256k;
+  # CQC API
+  location /cqc/ {
+    proxy_cache long_cache;
 
-    proxy_pass https://data.hub.api.metoffice.gov.uk/;
-    proxy_set_header apiKey $MET_OFFICE_GLOBAL_SPOT_API_KEY; # pragma: allowlist-secret
+    rewrite ^/cqc/(.*) /$1 break;
+
+    proxy_pass https://api.service.cqc.org.uk/$uri$is_args$args;
+    proxy_set_header Ocp-Apim-Subscription-Key $CQC_API_KEY;
     proxy_set_header Cookie "";
     proxy_set_header X-Auth-Request-Access-Token "";
     proxy_set_header X-Auth-Request-Email "";
     proxy_set_header X-Auth-Request-User "";
     proxy_set_header Authorization "";
     proxy_hide_header Set-Cookie;
+    add_header X-Cache-Status $upstream_cache_status always;
   }
 
   ## END UPSTREAM DEFINITIONS

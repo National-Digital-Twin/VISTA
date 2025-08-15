@@ -83,39 +83,6 @@ export default class LayersPage {
   async zoomOutTheMap() {
     await this.page.mouse.wheel(0, 500);
   }
-  async drawAndClickVulnerableArea() {
-    await this.page.waitForTimeout(3000);
-    const vulnerablePeopleText= this.page.getByText('Vulnerable People', { exact: true });
-    await vulnerablePeopleText.waitFor({ state: "attached" });
-    await vulnerablePeopleText.scrollIntoViewIfNeeded();
-    vulnerablePeopleText.click();
-    const drawPolygonButton = this.page.getByRole('button', { name: 'Draw Area' });
-    await drawPolygonButton.click();
-    await this.page.waitForTimeout(2000);
-    await this.page.mouse.click(850, 300);
-    await this.page.mouse.click(900, 250);
-    await this.page.mouse.click(950, 200);
-    await this.page.mouse.click(850, 300);
-    await this.page.keyboard.press("Enter");
-    await this.page.waitForTimeout(5000);
-    await this.page.mouse.click(900, 245);
-    await this.page.waitForSelector("div._idCardItem_1nzqt_20");
-  }
-  async verifyVulnerabilityDetailIsDisplayed() {
-    const detailsElements = await this.page
-      .locator("div._idCardItem_1nzqt_20")
-      .allTextContents();
-    expect(detailsElements).toEqual([
-      "Name: Kevin Tango",
-      "Year of Birth: 1967",
-      "UPRN: 10023714076.0",
-      "Primary Support Reason: Sensory Support: Vi",
-      "Disability: Activities limited a lot",
-      "Coordinates: 50.72441687384, -1.2554246699389502",
-      "Alert Category: Comorbidities",
-      "Alert Detail: Open-Angle Glaucoma",
-    ]);
-  }
 
   async panWithScreenshotComparison() {
     const beforePan = await this.page.screenshot();

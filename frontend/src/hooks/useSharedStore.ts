@@ -51,14 +51,6 @@ export interface State {
 
   showCpsIconsForAssetTypes: boolean;
   toggleShowCpsIconsForAssetTypes: () => void;
-
-  vulnerablePeopleFeatures: Feature<Polygon>[];
-
-  addVulnerablePeopleFeatures: (features: Feature<Polygon>[]) => void;
-  updateVulnerablePeopleFeatures: (features: Feature<Polygon>[]) => void;
-  deleteVulnerablePeopleFeatures: (
-    features: NonNullable<Feature["id"]>[],
-  ) => void;
 }
 
 type SetFunction = (
@@ -190,20 +182,6 @@ export default createStore<State>("application-state-storage", (set) => ({
   ),
   deleteDynamicProximityFeatures: deleteFeatures(
     "dynamicProximityFeatures",
-    set,
-  ),
-
-  /**
-   * Vulnerable People
-   */
-  vulnerablePeopleFeatures: [],
-  addVulnerablePeopleFeatures: addFeatures("vulnerablePeopleFeatures", set),
-  updateVulnerablePeopleFeatures: updateFeatures(
-    "vulnerablePeopleFeatures",
-    set,
-  ),
-  deleteVulnerablePeopleFeatures: deleteFeatures(
-    "vulnerablePeopleFeatures",
     set,
   ),
 }));

@@ -2,37 +2,55 @@ import { useCallback } from "react";
 import {
   booleanPointInPolygon,
   booleanIntersects,
-  lineString,
+  multiLineString,
 } from "@turf/turf";
+import { Feature, Polygon } from "geojson";
 import useGroupedAssets from "./queries/useGroupedAssets";
+import { Asset } from "@/models";
 
 export default function useAssetsInPolygons() {
-  const { allAssets } = useGroupedAssets({});
+  const { assets, isLoadingAssets } = useGroupedAssets({});
 
   const findAssetsOverlappingPolygon = useCallback(
-    (polygonFeatures, assets) => {
+    (polygonFeatures: Feature<Polygon>[], assets: Asset[]) => {
+      if (isLoadingAssets) {
+        return [];
+      }
       return assets.filter((asset) => {
         return polygonFeatures.some((feature) => {
-          if (asset.isPointAsset) {
-            return booleanPointInPolygon([asset.lng, asset.lat], feature);
-          } else if (asset.isLinearAsset) {
-            const assetGeometry = lineString(asset.createSegmentCoords());
-            return booleanIntersects(feature, assetGeometry);
-          } else {
-            console.warn("Unknown geometry for asset", asset);
+          try {
+            if (asset.lng && asset.lat) {
+              return booleanPointInPolygon([asset.lng, asset.lat], feature);
+            } else if (asset.hasGeometry()) {
+              const assetGeometry = multiLineString(
+                asset.createSegmentCoords(),
+              );
+              return booleanIntersects(feature, assetGeometry);
+            } else {
+              console.warn("Unknown geometry for asset", asset);
+              return false;
+            }
+          } catch (error) {
+            console.error("Error filtering asset", error, {
+              asset,
+              feature,
+            });
             return false;
           }
         });
       });
     },
-    [],
+    [isLoadingAssets],
   );
 
   const findAssetsInPolygons = useCallback(
-    ({ polygons }) => {
-      return findAssetsOverlappingPolygon(polygons, allAssets);
+    ({ polygons }: { polygons: Feature<Polygon>[] }) => {
+      if (!assets) {
+        return [];
+      }
+      return findAssetsOverlappingPolygon(polygons, assets);
     },
-    [allAssets, findAssetsOverlappingPolygon],
+    [assets, findAssetsOverlappingPolygon],
   );
 
   return { findAssetsInPolygons };

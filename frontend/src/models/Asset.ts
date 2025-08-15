@@ -1,5 +1,9 @@
-import type { Feature } from "geojson";
+import type { Feature, Geometry, Position } from "geojson";
 import type ColorScale from "color-scales";
+import {
+  AssetClassification,
+  AssetClassificationsByType,
+} from "./AssetClassification";
 import type { FoundIcon } from "@/hooks/useFindIcon";
 
 import type { ElementLike } from "@/utils";
@@ -21,55 +25,77 @@ export interface AssetGeometryNode {
   lon2: string;
 }
 
+export enum AssetState {
+  Live,
+  Static,
+}
+
 export default class Asset {
   #countColorScale: ColorScale | null = null;
   #criticalitySumColorScale: ColorScale | null = null;
+  #classificationColorScale: ColorScale | null = null;
   #addresses: string[] = [];
 
   uri: string;
   id: string;
   type: string;
-  lat: number;
-  lng: number;
-  geometry: AssetGeometryNode[];
+  name?: string;
+  lat: number | undefined;
+  lng: number | undefined;
+  geometry: Geometry;
   dependent: any;
+  description?: string;
   styles: FoundIcon;
   elementType: "asset";
   primaryCategory?: string;
   secondaryCategory?: string;
+  state?: AssetState = AssetState.Static;
+  classification?: string;
 
   constructor({
     uri,
     type,
+    name,
     lat,
     lng,
     geometry,
     dependent,
+    description,
     styles,
     primaryCategory,
     secondaryCategory,
+    state,
+    classification,
   }: {
     uri: string;
     type: string;
-    lat: number;
-    lng: number;
-    geometry: AssetGeometryNode[];
+    name?: string;
+    lat?: number;
+    lng?: number;
+    geometry: Geometry;
     dependent: any;
+    description?: string;
     styles: FoundIcon;
     primaryCategory?: string;
     secondaryCategory?: string;
+    state?: AssetState;
+    classification?: string;
   }) {
     this.uri = uri;
     this.id = this.uri.split("#")[1];
     this.type = type;
+    this.name = name;
     this.lat = lat;
     this.lng = lng;
     this.geometry = geometry;
     this.dependent = dependent;
+    this.description = description;
     this.styles = styles;
     this.elementType = "asset";
     this.primaryCategory = primaryCategory;
     this.secondaryCategory = secondaryCategory;
+    this.state = state ?? AssetState.Static;
+    this.classification = classification;
     Object.preventExtensions(this);
   }
 
@@ -93,19 +119,40 @@ export default class Asset {
     this.#criticalitySumColorScale = getColorScale(min, max);
   }
 
+  get typeClassificationPriorityMap() {
+    const classifications = AssetClassificationsByType[this.type];
+    return classifications.map((c) => c.priority);
+  }
+
+  setClassificationColorScale() {
+    if (this.type in AssetClassificationsByType) {
+      const max = Math.max(...this.typeClassificationPriorityMap);
+      const min = Math.min(...this.typeClassificationPriorityMap);
+      this.#classificationColorScale = getColorScale(min, max);
+    }
+  }
+
   get criticalityColor() {
-    return getHexColor(
-      this.#criticalitySumColorScale,
-      this.dependent.criticalitySum,
-    );
+    if (this.assetClassificationPriority && this.#classificationColorScale) {
+      return getHexColor(
+        this.#classificationColorScale,
+        this.assetClassificationPriority,
+      );
+    } else {
+      return getHexColor(
+        this.#criticalitySumColorScale,
+        this.dependent.criticalitySum,
+      );
+    }
   }
 
-  get isPointAsset() {
-    return !this.hasGeometry();
+  get assetClassification(): AssetClassification | undefined {
+    const classifications = AssetClassificationsByType[this.type];
+    return classifications?.find((c) => c.id === this.classification);
   }
 
-  get isLinearAsset() {
-    return this.hasGeometry();
+  get assetClassificationPriority(): number | undefined {
+    return this.assetClassification?.priority;
   }
 
   get shortType() {
@@ -153,7 +200,7 @@ export default class Asset {
   }
 
   createPointAsset(): Feature | null {
-    if (!this.lat && !this.lng) {
+    if (!this.lat || !this.lng) {
       return null;
     }
 
@@ -172,42 +219,64 @@ export default class Asset {
     };
   }
 
-  createSegmentCoords() {
-    const lats = this.geometry.map((segment) => parseFloat(segment.lat1));
-    const lngs = this.geometry.map((segment) => parseFloat(segment.lon1));
-    return lngs.map((lng, index) => [lng, lats[index]]);
+  createSegmentCoords(): Position[][] {
+    if (this.geometry.type === "MultiLineString") {
+      return this.geometry.coordinates;
+    } else if (this.geometry.type === "LineString") {
+      return [this.geometry.coordinates];
+    } else {
+      return [];
+    }
+  }
+
+  getLinearGeometry(): Geometry {
+    if (this.geometry.type === "LineString") {
+      return {
+        type: "LineString",
+        coordinates: this.geometry.coordinates as Position[],
+      };
+    } else if (this.geometry.type === "MultiLineString") {
+      return {
+        type: "MultiLineString",
+        coordinates: this.geometry.coordinates as Position[][],
+      };
+    } else {
+      return this.geometry;
+    }
   }
 
   createLinearAsset<T extends ElementLike>(
     selectedElements: T[],
   ): Feature | null {
-    const selected = this.#isSelected(selectedElements);
-    return {
-      type: "Feature",
-      properties: {
-        uri: this.uri,
-        id: this.id,
-        criticality: this.dependent.criticalitySum,
-        lineColor: this.criticalityColor,
-        lineWidth: selected ? 4 : 3,
-        selected,
-      },
-      geometry: {
-        type: "LineString",
-        coordinates: this.createSegmentCoords(),
-      },
-    };
+    const geometry: Geometry = this.getLinearGeometry();
+    if (
+      this.geometry.type === "MultiLineString" ||
+      this.geometry.type === "LineString"
+    ) {
+      const selected = this.#isSelected(selectedElements);
+
+      return {
+        type: "Feature",
+        properties: {
+          uri: this.uri,
+          id: this.id,
+          criticality: this.dependent.criticalitySum,
+          lineColor: this.criticalityColor,
+          lineWidth: selected ? 4 : 3,
+          selected,
+        },
+        geometry: geometry,
+      };
+    }
+    return null;
   }
 
   getDetails(assetInfo) {
-    if (!assetInfo) {
-      return undefined;
-    }
     return {
-      title: assetInfo?.name,
+      title: assetInfo?.name ?? this.name ?? "Name unknown",
       criticality: this.dependent.criticalitySum,
-      type: assetInfo?.assetType,
-      desc: assetInfo?.desc,
+      type: assetInfo?.assetType ?? this.type,
+      desc: assetInfo?.desc ?? this.description,
       criticalityColor: this.criticalityColor,
       id: this.id,
       uri: this.uri,

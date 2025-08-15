@@ -56,7 +56,7 @@ function AssessmentAssetLayerControls({
   assessment,
   searchQuery,
 }: AssessmentAssetLayerControlsProps) {
-  const { isLoading, isError, filteredAssets } = useGroupedAssets({
+  const { isLoadingAssets, filteredAssets } = useGroupedAssets({
     assessment,
     searchFilter: searchQuery,
   });
@@ -91,7 +91,7 @@ function AssessmentAssetLayerControls({
     );
   }, [filteredAssets]);
 
-  if (isError || isLoading) {
+  if (isLoadingAssets) {
     return null;
   }
 

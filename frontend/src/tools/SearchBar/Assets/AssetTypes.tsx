@@ -24,8 +24,8 @@ export default function AssetTypes({
 }: AssetTypesProps) {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const {
-    isLoading,
-    isError,
+    isLoadingDependencies: isLoading,
+    isDependenciesError: isError,
     dependenciesError: error,
     filteredAssets,
   } = useGroupedAssets({

@@ -8,7 +8,6 @@ jest.mock("@/api/apollo-client", () => ({
   __esModule: true,
   default: {},
   GET_ROAD_ROUTE: {},
-  GET_LOW_BRIDGES: {},
 }));
 
 jest.mock("@/hooks/queries/useProviders", () => ({

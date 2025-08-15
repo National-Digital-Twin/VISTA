@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { createDependencies } from "./dataset-utils";
+import { createAssets, createDependencies } from "./dataset-utils";
 import { Asset, Dependency } from "@/models";
 import { fetchAssessmentDependencies } from "@/api/combined";
 
@@ -11,6 +11,9 @@ export interface UseGroupedAssetsOptions {
   searchFilter?: string;
 }
 
+/**
+ * Fetches assets and dependencies.
+ */
 const useGroupedAssets = ({
   assessment,
   searchFilter,
@@ -20,17 +23,32 @@ const useGroupedAssets = ({
     .replace(/\s/g, "");
 
   const {
-    data,
-    isLoading: dependenciesLoading,
-    error: dependenciesError,
-  } = useQuery({
-    queryKey: ["assets-with-dependencies", assessment ?? ""],
+    data: assets,
+    isLoading: assetsLoading,
+    error: assetsError,
+  } = useQuery<Asset[]>({
+    queryKey: ["assets"],
     queryFn: async () => {
-      const rawAssets = (await import("@/data/coeff-assets-with-geometry.json"))
-        .default as any[];
-      const allAssets = Array.from(rawAssets).map((asset) => new Asset(asset));
-      const assetTypes = allAssets
-        .map((asset) => asset.type)
+      const assetSpecifications = (
+        await import("@/data/coeff-assets-with-geometry.json")
+      ).default as any[];
+      const staticAssets = Array.from(assetSpecifications).map(
+        (asset) => new Asset(asset),
+      );
+      const liveAssets = await createAssets();
+      return [...staticAssets, ...liveAssets];
+    },
+  });
+
+  const { data: dependencies, error: dependenciesError } = useQuery({
+    queryKey: ["assets-with-dependencies", assessment ?? ""],
+    enabled: !!assets,
+    queryFn: async () => {
+      if (!assets) {
+        return;
+      }
+      const assetTypes = assets
+        .map((asset: { type: any }) => asset.type)
         .filter((value, index, self) => self.indexOf(value) === index);
       let dependencies: Dependency[];
       if (assetTypes.length > 0) {
@@ -42,7 +60,7 @@ const useGroupedAssets = ({
       } else {
         dependencies = [];
       }
-      return [allAssets, dependencies] as [Asset[], Dependency[]];
+      return dependencies;
     },
   });
 
@@ -50,24 +68,27 @@ const useGroupedAssets = ({
     console.log(dependenciesError);
   }
 
-  const [allAssets, dependencies] = data || [[], []];
+  const filteredAssets = useMemo(() => {
+    if (!assets) {
+      return [];
+    }
 
-  const filteredAssets = useMemo(
-    () =>
-      allAssets.filter(
-        (asset) =>
-          asset.type.toLowerCase().includes(searchFilterWithoutWhitespace) ||
-          asset.primaryCategory
-            ?.toLowerCase()
-            .includes(searchFilterWithoutWhitespace) ||
-          asset.secondaryCategory
-            ?.toLowerCase()
-            .includes(searchFilterWithoutWhitespace),
-      ),
-    [allAssets, searchFilterWithoutWhitespace],
-  );
+    return assets.filter(
+      (asset) =>
+        asset.type.toLowerCase().includes(searchFilterWithoutWhitespace) ||
+        asset.primaryCategory
+          ?.toLowerCase()
+          .includes(searchFilterWithoutWhitespace) ||
+        asset.secondaryCategory
+          ?.toLowerCase()
+          .includes(searchFilterWithoutWhitespace),
+    );
+  }, [assets, searchFilterWithoutWhitespace]);
 
   const getAssetsByTypes = (typeUris: string[]) => {
+    if (!filteredAssets) {
+      return [];
+    }
     return filteredAssets.filter((asset) =>
       typeUris.some((uri) => uri === asset.type),
     );
@@ -84,6 +105,9 @@ const useGroupedAssets = ({
   };
 
   const getDependentAssets = (assets: Asset[]) => {
+    if (!dependencies || !filteredAssets) {
+      return [];
+    }
     const providerUris = new Set(assets.map((asset) => asset.uri));
     const filteredDependencies =
       dependencies?.filter(({ provider }) => providerUris.has(provider.uri)) ||
@@ -99,14 +123,20 @@ const useGroupedAssets = ({
     };
   };
 
+  if (assetsError) {
+    console.error("Error loading assets:", assetsError);
+  }
+
   return {
-    isLoading: dependenciesLoading,
-    isError: !!dependenciesError,
+    isLoadingDependencies: assetsLoading,
+    isDependenciesError: !!dependenciesError,
+    isLoadingAssets: assetsLoading,
+    isAssetsError: !!assetsError,
     dependenciesError,
-    hasTypes: filteredAssets.length > 0,
+    hasTypes: filteredAssets && filteredAssets.length > 0,
     filteredAssets,
     getAssetsByTypes,
-    allAssets,
+    assets,
     getDependentAssets,
     getDependenciesByTypes,
   };

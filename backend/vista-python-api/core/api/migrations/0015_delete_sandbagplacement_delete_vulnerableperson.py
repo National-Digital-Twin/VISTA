@@ -1,0 +1,22 @@
+"""Deletes the defunct sandbag placement and vulnerable people models/tables."""
+
+from typing import ClassVar
+
+from django.db import migrations
+
+
+class Migration(migrations.Migration):
+    """Deletes the defunct sandbag placement and vulnerable people models/tables."""
+
+    dependencies: ClassVar = [
+        ("api", "0014_alter_trafficdata_coordinates"),
+    ]
+
+    operations: ClassVar = [
+        migrations.DeleteModel(
+            name="SandbagPlacement",
+        ),
+        migrations.DeleteModel(
+            name="VulnerablePerson",
+        ),
+    ]
