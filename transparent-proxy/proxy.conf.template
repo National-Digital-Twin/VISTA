@@ -15,8 +15,8 @@ proxy_cache_path /tmp/nginx_cache_long
   use_temp_path=off;
 
 server {
-  listen 80 default_server;
-  listen [::]:80 default_server;
+  listen 8080 default_server;
+  listen [::]:8080 default_server;
   return 444;
   server_name _;
 }
@@ -28,8 +28,8 @@ map $host $host_allowed {
 }
 
 server {
-  listen 80;
-  listen [::]:80;
+  listen 8080;
+  listen [::]:8080;
 
   server_name localhost *.ndtp.co.uk;
 

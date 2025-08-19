@@ -33,6 +33,6 @@ spec:
               ephemeral-storage: "2Gi"
           imagePullPolicy: Always
           ports:
-            - containerPort: 80
+            - containerPort: 8080
               protocol: TCP
       restartPolicy: Always

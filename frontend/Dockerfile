@@ -1,4 +1,4 @@
-FROM node:23-alpine AS builder
+FROM node:24-alpine AS builder
 
 # Set the working directory in the container
 WORKDIR /app
@@ -25,7 +25,7 @@ COPY . .
 RUN yarn build
 
 # Start a new stage from scratch
-FROM nginx:1.29.0 AS runner
+FROM nginxinc/nginx-unprivileged:1.29-alpine3.22 AS runner
 
 # Copy the built files from the builder stage to the runner stage
 COPY --from=builder /app/dist /usr/share/nginx/html

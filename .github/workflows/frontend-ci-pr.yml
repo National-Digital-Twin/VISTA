@@ -210,7 +210,7 @@ jobs:
       - name: Run Docker Image
         run: |
           docker images
-          docker run --rm -d -p 80:80 --name frontend vista/frontend:latest
+          docker run --rm -d -p 80:8080 --name frontend vista/frontend:latest
           docker ps
           sleep 10
           docker logs frontend
