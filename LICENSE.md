@@ -1,6 +1,6 @@
 # NDTP InnerSource License
 
-**Repository:** `[vista]`  
+**Repository:** `vista`  
 **Description:** `Defines the licensing terms for the source code in this repository.`  
 
 ---

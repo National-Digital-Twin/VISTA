@@ -76,7 +76,7 @@ Full instructions can be found [here](./backend/README.md)
 2. Set up AWS credentials in `~/.aws/credentials`:
 
    ```
-   [vista]
+   vista
    aws_access_key_id=SECRET_KEY
    aws_secret_access_key=SECRET_ACCESS_KEY
    ```

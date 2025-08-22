@@ -1,6 +1,6 @@
 # Maintainers  
 
-**Repository:** `[vista]`  
+**Repository:** `vista`  
 **Description:** `Lists maintainers responsible for reviewing issues, security, and documentation updates.`  
 
 ## Introduction  
@@ -33,7 +33,7 @@ NDTP does not accept public code contributions, but we welcome **bug reports and
 |-------------------|------------------------|--------------------|------------------------|
 | Sam Hill          | Informed Solutions     | Lead Maintainer    | sam.hill@informed.com  |
 | NDTP Security Team| NDTP                   | Security Contact   | ndtp@businessandtrade.gov.uk |
-| Alecsandria Missangu | Telicent            | Documentation Lead | alecsandria@telicent.io |
+| Sam Hill   | Informed Solutions            | Documentation Lead | sam.hill@informed.com |
 
 For general issues, please **open a GitHub issue** rather than contacting maintainers directly.  
 
@@ -69,7 +69,7 @@ GUIDANCE: USE THIS IN PLACE OF THE ABOVE IF THE REPOSITORY IS IN TRANSITION. PLE
 
 # Maintainers  
 
-**Repository:** `[vista]`  
+**Repository:** `vista`  
 **Description:** `Lists maintainers responsible for reviewing issues, security, and documentation updates.`  
 
 Current Status: Under NDTP Oversight

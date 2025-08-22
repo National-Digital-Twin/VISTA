@@ -1,6 +1,6 @@
 # Security Policy
 
-**Repository:** `[vista]`  
+**Repository:** `vista`  
 **Description:** `Details the responsible disclosure process for security vulnerabilities.`  
 
 ## Responsible Disclosure 

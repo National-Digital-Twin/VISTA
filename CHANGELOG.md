@@ -1,6 +1,6 @@
 # Changelog 
 
-**Repository:** `[vista]`  
+**Repository:** `vista`  
 **Description:** `Tracks all notable changes, version history, and roadmap toward 1.0.0 following Semantic Versioning.`  
 
 All notable changes to this repository will be documented in this file.
@@ -26,7 +26,20 @@ This project follows **Semantic Versioning (SemVer)** ([semver.org](https://semv
 - Placeholder for bug fixes and security updates. 
 
 ### Changed 
-- Placeholder for changes to existing functionality. 
+- Live weather station readings from the Met Office
+- Tide times and levels from the Admiralty
+- Dynamic proximity tool, showing all buildings in a given radius of a point
+- Live rail arrival and departure boards
+- "Feedback" button for providing live feedback and bug reports from inside the tool
+- Vulnerable people visualisation
+- Low bridge display (complete)
+- New layers UI replacing the dropdowns
+- New asset table (in preview)
+- Visualisation of environmentally sensitive areas
+- Map legend explaining the meanings of symbols and colours
+- Full infrastructure-as-code OpenTofu deployment for staging and production
+- Automatic database migrations in deployment
+- New favicon design
 
 ---
 

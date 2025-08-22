@@ -1,6 +1,6 @@
 # Code of Conduct 
 
-**Repository:** `[vista]`  
+**Repository:** `vista`  
 **Description:** `Defines expected behaviors, rules, and the enforcement process to ensure professional engagement.`   
 
 ## Introduction 
