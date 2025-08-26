@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>NetworkX Graph on Leaflet</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+  <style>
+    #map { height: 100vh; }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script>
+    const map = L.map('map').setView([50.6939, -1.3047], 11); // Isle of Wight
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    async function loadGraph() {
+      const res = await fetch("/graph");
+      const data = await res.json();
+
+      const coords = {};
+      data.nodes.forEach(n => {
+        coords[n.id] = [n.lat, n.lon];
+        const marker = L.circleMarker([n.lat, n.lon], {
+          radius: 6, color: "blue", fillOpacity: 0.8
+        }).addTo(map).bindPopup("Node " + n.id);
+      });
+
+      data.edges.forEach(e => {
+        const a = coords[e.from], b = coords[e.to];
+        L.polyline([a, b], {color: "gray"}).addTo(map);
+      });
+    }
+
+    loadGraph();
+  </script>
+</body>
+</html>

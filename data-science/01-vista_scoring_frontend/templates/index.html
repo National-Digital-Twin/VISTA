@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Network Failure Analysis</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div id="container">
+        <div id="sidebar">
+            <h2>Controls</h2>
+            <div class="control-group">
+                <label for="criticality-filter">Filter by Criticality Score:</label>
+                <input type="range" id="criticality-filter" min="0" max="3" value="0" step="1">
+                <span id="criticality-value">0</span>
+            </div>
+            <div class="control-group">
+                <label for="failure-node-select">Simulate Failure:</label>
+                <select id="failure-node-select"></select>
+                <button id="simulate-btn">Simulate</button>
+            </div>
+            <div class="control-group">
+                <h4>Failed Assets</h4>
+                <ul id="failed-assets-list"></ul>
+            </div>
+             <button id="reset-btn">Reset View</button>
+        </div>
+        <div id="map"></div>
+    </div>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

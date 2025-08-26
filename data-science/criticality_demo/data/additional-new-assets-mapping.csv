@@ -1,0 +1,5 @@
+from_asset,to_asset,connection,dependency_score
+PGS09,LFS02,PGS09-->LFS02,3
+PGS09,LFS01,PGS09-->LFS01,3
+PGS09,LFS03,PGS09-->LFS03,3
+PGS09,TEL12,PGS09-->TEL12,3

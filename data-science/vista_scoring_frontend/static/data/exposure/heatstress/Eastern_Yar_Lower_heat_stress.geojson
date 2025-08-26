@@ -1,0 +1,24 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "hazard": "heat_stress",
+        "source": "Eastern Yar (Lower) Water Body"
+      },
+      "geometry": {
+        "type": "MultiPolygon",
+        "coordinates": [
+          [[
+            [-1.18, 50.70],
+            [-1.09, 50.70],
+            [-1.09, 50.65],
+            [-1.18, 50.65],
+            [-1.18, 50.70]
+          ]]
+        ]
+      }
+    }
+  ]
+}

@@ -258,7 +258,9 @@ def compute_dependency_score(G):
             dep_score = 0
         else:
             sum_of_criticalities = sum(G.nodes[dep].get('criticality_score', 0) for dep in dependencies)
-            dep_score = round(sum_of_criticalities / num_dependencies)
+            dep_score = sum_of_criticalities / num_dependencies
+            dep_score = f"{dep_score:.2f}" #format to two decimal places
+            
         G.nodes[node]['dependency_score'] = dep_score
     return G
 

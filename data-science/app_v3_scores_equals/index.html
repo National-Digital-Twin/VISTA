@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vista Asset Scoring and Failure Simulation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Leaflet CSS and JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+        crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+        crossorigin=""></script>
+    <!-- Leaflet Plugins -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-theme-dark@1.0.1/dist/leaflet-dark.min.css" />
+    <script src="https://unpkg.com/leaflet-polylinedecorator@1.6.0/dist/leaflet.polylineDecorator.js"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        #map { height: 100%; width: 100%; }
+        .loader { border: 8px solid #f3f3f3; border-radius: 50%; border-top: 8px solid #3498db; width: 60px; height: 60px; animation: spin 2s linear infinite; position: absolute; top: 50%; left: 50%; margin-top: -30px; margin-left: -30px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        /* Toggle Switch Style */
+        .switch { position: relative; display: inline-block; width: 40px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: #2196F3; }
+        input:checked + .slider:before { transform: translateX(16px); }
+        /* Ensure Leaflet attribution is visible */
+        .leaflet-control-attribution { font-size: 10px !important; }
+        /* Simple styling for dropdown */
+        summary { cursor: pointer; outline: none; }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <div class="flex flex-col h-screen">
+        <div class="grid grid-cols-1 lg:grid-cols-10 gap-4 p-4 flex-grow">
+            <!-- Left Panel: Controls & Info -->
+            <aside class="lg:col-span-2 bg-white p-6 rounded-lg shadow-md flex flex-col h-full">
+                <!-- Non-scrolling content -->
+                <div class="flex-shrink-0 space-y-6">
+                    <header class="text-center">
+                        <h1 class="text-2xl font-bold text-gray-700">Vista Asset Scoring and Failure Simulation</h1>
+                    </header>
+
+                    <!-- Filters Section -->
+                    <div id="filters-section" class="hidden">
+                         <div class="flex justify-between items-center mb-3">
+                            <h2 class="text-xl font-semibold border-b pb-2">Filter & View</h2>
+                            <button id="reset-view-btn" class="text-sm bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-1 px-3 rounded-lg">Reset View</button>
+                         </div>
+                         <div class="space-y-4">
+                             <div>
+                                <label for="criticality-filter" class="block text-sm font-medium">Criticality Score</label>
+                                <input type="range" id="criticality-filter" min="0" max="3" step="1" value="0" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                                <div class="flex justify-between w-full text-xs text-gray-400 mt-1 px-1">
+                                    <span>|</span><span>|</span><span>|</span><span>|</span>
+                                </div>
+                                <div class="flex justify-between w-full text-xs text-gray-600">
+                                    <span>0</span><span>1</span><span>2</span><span>3</span>
+                                </div>
+                                <span class="text-sm text-gray-500">Show = <span id="criticality-value">0</span></span>
+                             </div>
+                             <div>
+                                <label for="dependency-filter" class="block text-sm font-medium">Dependency Score</label>
+                                <input type="range" id="dependency-filter" min="0" max="3" step="0.01" value="0" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                                <div class="flex justify-between w-full text-xs text-gray-400 mt-1 px-1">
+                                    <span>|</span><span>|</span><span>|</span><span>|</span>
+                                </div>
+                                <div class="flex justify-between w-full text-xs text-gray-600">
+                                    <span>0</span><span>1</span><span>2</span><span>3</span>
+                                </div>
+                                <span class="text-sm text-gray-500">Show = <span id="dependency-value">0.00</span></span>
+                             </div>
+                             <div class="flex items-center justify-between">
+                                 <label for="unconnected-toggle" class="text-sm font-medium">Hide Unconnected Assets</label>
+                                 <label class="switch">
+                                    <input type="checkbox" id="unconnected-toggle">
+                                    <span class="slider"></span>
+                                 </label>
+                             </div>
+                             <div class="flex items-center justify-between">
+                                 <label for="propagation-toggle" class="text-sm font-medium">Deep Failure Propagation</label>
+                                 <label class="switch">
+                                    <input type="checkbox" id="propagation-toggle">
+                                    <span class="slider"></span>
+                                 </label>
+                             </div>
+                             <div id="hazard-layers-container" class="pt-4">
+                                <h3 class="text-lg font-semibold mb-2 border-b pb-1">Hazard Layers</h3>
+                                <!-- Toggles will be dynamically inserted here -->
+                             </div>
+                         </div>
+                    </div>
+                </div>
+                
+                <!-- Info Panel (scrollable) -->
+                <div id="info-panel" class="hidden space-y-4 flex-grow overflow-y-auto pt-6">
+                    <div id="multi-node-controls" class="hidden">
+                        <div class="flex space-x-2">
+                            <button id="show-details-btn" class="w-full bg-blue-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-700 transition duration-300">Show Asset Details</button>
+                            <button id="reset-details-btn" class="w-full bg-gray-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition duration-300">Reset</button>
+                        </div>
+                    </div>
+                    <div id="node-info" class="bg-gray-50 p-4 rounded-lg hidden">
+                        <h3 class="font-semibold text-lg mb-2">Asset Details: <span id="node-id" class="font-mono text-blue-600"></span></h3>
+                        <div id="node-attributes" class="text-sm space-y-1 max-h-48 overflow-y-auto"></div>
+                        <div class="flex space-x-2 mt-4">
+                            <button id="simulate-failure-btn" class="w-full bg-red-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-700 transition duration-300">Simulate Failure</button>
+                            <button id="reset-btn" class="w-full bg-gray-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition duration-300 hidden">Reset</button>
+                        </div>
+                    </div>
+                    <div id="failure-results" class="bg-red-50 p-4 rounded-lg hidden">
+                        <h3 class="font-semibold text-lg mb-2 text-red-800">Failure Simulation Results</h3>
+                        <p><strong>Total Failed:</strong> <span id="total-failed" class="font-mono text-red-600"></span></p>
+                        <div class="mt-2">
+                            <h4 class="font-medium">Failed Assets:</h4>
+                            <ul id="failed-nodes-list" class="text-xs h-32 overflow-y-auto bg-white rounded p-2 mt-1"></ul>
+                        </div>
+                        <button id="show-failed-details-btn" class="w-full mt-4 bg-blue-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-700 transition duration-300 hidden">Show Failed Asset Details</button>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Right Panel: Map Visualization -->
+            <main class="lg:col-span-8 bg-white rounded-lg shadow-md relative" id="map-container">
+                <div id="loader" class="loader hidden"></div>
+                <div id="map"></div>
+                <div id="map-controls" class="absolute top-2 right-2 bg-white p-2 rounded shadow z-[1000] flex items-center space-x-4">
+                    <div class="flex items-center space-x-2">
+                        <input type="radio" id="default-theme" name="theme" value="default">
+                        <label for="default-theme" class="text-sm font-medium">Default</label>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <input type="radio" id="satellite-theme" name="theme" value="satellite" checked>
+                        <label for="satellite-theme" class="text-sm font-medium">Satellite</label>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <input type="radio" id="dark-theme" name="theme" value="dark">
+                        <label for="dark-theme" class="text-sm font-medium">Dark Mode</label>
+                    </div>
+                </div>
+            </main>
+        </div>
+        
+        <div class="px-4 pb-4">
+            <div id="details-table-container" class="p-4 hidden bg-white rounded-lg shadow-md">
+                <!-- Table will be generated here -->
+            </div>
+            <div id="failed-nodes-table-container" class="p-4 hidden bg-white rounded-lg shadow-md mt-4">
+                <!-- Failed assets table will go here -->
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const loader = document.getElementById('loader');
+            const mapContainer = document.getElementById('map');
+            const filtersSection = document.getElementById('filters-section');
+            const infoPanel = document.getElementById('info-panel');
+            const hazardLayersContainer = document.getElementById('hazard-layers-container');
+            const detailsTableContainer = document.getElementById('details-table-container');
+            const failedNodesTableContainer = document.getElementById('failed-nodes-table-container');
+            
+            let graphData = null;
+            let selectedNodeIds = [];
+            let lastFailedNodes = [];
+            let map = null;
+            let lightTileLayer, darkTileLayer, satelliteTileLayer;
+            
+            const nodeMarkers = {};
+            const linkLines = {};
+            const nodeToDataMap = new Map();
+            const hazardMapLayers = {}; // To store L.geoJSON objects
+
+            function initializeMap() {
+                if (map) map.remove();
+                map = L.map('map').setView([50.6, -1.3], 9); // Centered on Isle of Wight
+                
+                lightTileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19,
+                    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                });
+
+                darkTileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                    maxZoom: 19,
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+                });
+
+                satelliteTileLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+	                attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+                });
+
+                satelliteTileLayer.addTo(map);
+                map.on('click', clearAllSelections);
+            }
+            initializeMap();
+
+            const criticalityColors = { 0: '#28a745', 1: '#ffc107', 2: '#fd7e14', 3: '#dc3545' };
+            const FAILED_COLOR = '#8B0000';
+            const hazardLayerStyles = {
+                flood: { color: "#3388ff", weight: 2, opacity: 0.7, fillOpacity: 0.3 },
+                heatstress: { color: "#ff6600", weight: 2, opacity: 0.7, fillOpacity: 0.3 },
+                landslide: { color: "#28a745", weight: 2, opacity: 0.7, fillOpacity: 0.3 }
+            };
+
+            function getNodeStyle(nodeData, isSelected = false, isFailed = false) {
+                if (isFailed) {
+                    return {
+                        radius: isSelected ? 10 : 6,
+                        fillColor: 'blue',
+                        color: 'red', // Red ring
+                        weight: isSelected ? 4 : 2,
+                        opacity: 1,
+                        fillOpacity: 0.8
+                    };
+                }
+                const color = criticalityColors[nodeData.criticality_score] || '#777777';
+                return {
+                    radius: isSelected ? 10 : 6,
+                    fillColor: color,
+                    color: isSelected ? "#000" : "#fff",
+                    weight: isSelected ? 3 : 1,
+                    opacity: 1,
+                    fillOpacity: 0.8
+                };
+            }
+
+            function getArrowColor(score) {
+                if (score >= 3) return 'red';
+                if (score >= 2) return 'orange';
+                if (score >= 1) return 'green';
+                return 'grey';
+            }
+            
+            function renderMap(data) {
+                graphData = data;
+                nodeToDataMap.clear();
+                
+                Object.values(nodeMarkers).forEach(marker => marker.remove());
+                Object.values(linkLines).forEach(layerGroup => {
+                    layerGroup.line.remove();
+                    layerGroup.arrow.remove();
+                });
+                for (const key in nodeMarkers) delete nodeMarkers[key];
+                for (const key in linkLines) delete linkLines[key];
+                
+                if (!graphData.nodes || graphData.nodes.length === 0) return;
+
+                const validNodes = graphData.nodes.filter(n => n.lat != null && n.long != null);
+                if (validNodes.length === 0) {
+                    alert("Error: No assets have valid latitude/longitude coordinates.");
+                    return;
+                }
+
+                validNodes.forEach(node => nodeToDataMap.set(node.id, node));
+
+                validNodes.forEach(node => {
+                    const marker = L.circleMarker([node.lat, node.long], getNodeStyle(node))
+                        .on('click', (e) => {
+                            L.DomEvent.stopPropagation(e); // Prevent map click event
+                            nodeClicked(node.id);
+                        });
+                    
+                    const tooltipContent = `
+                        <b>ID:</b> ${node.Asset_ID || 'N/A'}<br>
+                        <b>Name:</b> ${node.Asset_Name || 'N/A'}<br>
+                        <b>Type:</b> ${node.Asset_Type || node.asset_type || 'N/A'}<br>
+                        <b>Criticality:</b> ${node.criticality_score || 0}<br>
+                        <b>Dependency:</b> ${node.dependency_score || 0}<br>
+                        <b>Exposure:</b> ${node.exposure_score || 0}<br>
+                        <b>Redundancy:</b> ${node.redundancy_score || 0}<br>
+                        <b>Asset Score:</b> ${node.asset_resilience_score || 0}
+                    `;
+                    marker.bindTooltip(tooltipContent);
+                    nodeMarkers[node.id] = marker;
+                    marker.addTo(map);
+                });
+
+                graphData.links.forEach((link, index) => {
+                    const sourceNode = nodeToDataMap.get(link.source);
+                    const targetNode = nodeToDataMap.get(link.target);
+                    if (sourceNode && targetNode) {
+                        const latlngs = [[sourceNode.lat, sourceNode.long], [targetNode.lat, targetNode.long]];
+                        const color = getArrowColor(link.weight);
+                        
+                        const line = L.polyline(latlngs, { color: color, weight: 2, opacity: 0.7 }).addTo(map);
+                        line.bindTooltip(`Dependency Score: ${link.weight}`);
+
+                        const arrow = L.polylineDecorator(line, {
+                            patterns: [{
+                                offset: '100%',
+                                repeat: 0,
+                                symbol: L.Symbol.arrowHead({
+                                    pixelSize: 12,
+                                    polygon: false,
+                                    pathOptions: { stroke: true, color: color, weight: 2 }
+                                })
+                            }]
+                        }).addTo(map);
+
+                        linkLines[index] = { line: line, arrow: arrow };
+                    }
+                });
+                
+                if (Object.keys(nodeMarkers).length > 0) {
+                    const group = new L.featureGroup(Object.values(nodeMarkers));
+                    map.fitBounds(group.getBounds().pad(0.2));
+                }
+            }
+
+            async function analyzeNetwork() {
+                loader.classList.remove('hidden');
+                mapContainer.style.opacity = '0.5';
+
+                const selectedLayers = { flood: [], heatstress: [], landslide: [] };
+                document.querySelectorAll('#hazard-layers-container input[type="checkbox"]:checked').forEach(checkbox => {
+                    const { type, filename } = checkbox.dataset;
+                    if (selectedLayers[type]) {
+                        selectedLayers[type].push(filename);
+                    }
+                });
+                
+                try {
+                    const response = await fetch('/load-network', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(selectedLayers)
+                    });
+                    if (!response.ok) throw new Error((await response.json()).error || 'Failed to load network data.');
+                    const data = await response.json();
+                    
+                    renderMap(data.graph);
+                    filtersSection.classList.remove('hidden');
+                    infoPanel.classList.remove('hidden');
+                    resetSimulation();
+                } catch (error) {
+                    alert('Error: ' + error.message);
+                } finally {
+                    loader.classList.add('hidden');
+                    mapContainer.style.opacity = '1';
+                }
+            }
+
+            async function toggleHazardLayer(event) {
+                const checkbox = event.target;
+                const { type, filename } = checkbox.dataset;
+                const layerId = `${type}-${filename}`;
+
+                if (checkbox.checked) {
+                    try {
+                        const response = await fetch(`/get-geojson-layer/${type}/${filename}`);
+                        const geoJsonData = await response.json();
+                        const layer = L.geoJSON(geoJsonData, { style: hazardLayerStyles[type] });
+                        layer.addTo(map);
+                        hazardMapLayers[layerId] = layer;
+                    } catch (error) {
+                        console.error(`Failed to load layer ${filename}:`, error);
+                        alert(`Could not load hazard layer: ${filename}`);
+                    }
+                } else {
+                    if (hazardMapLayers[layerId]) {
+                        map.removeLayer(hazardMapLayers[layerId]);
+                        delete hazardMapLayers[layerId];
+                    }
+                }
+                await analyzeNetwork();
+            }
+
+            async function populateHazardLayers() {
+                try {
+                    const response = await fetch('/get-hazard-layers');
+                    const layers = await response.json();
+                    
+                    hazardLayersContainer.innerHTML = '<h3 class="text-lg font-semibold mb-2 border-b pb-1">Hazard Layers</h3>';
+
+                    const createToggles = (fileList, type, title) => {
+                        if (fileList.length > 0) {
+                            const details = document.createElement('details');
+                            details.className = 'mb-2';
+                            const summary = document.createElement('summary');
+                            summary.className = 'font-semibold text-sm mb-1 cursor-pointer list-none';
+                            summary.innerHTML = `${title} <span class="float-right">&#9662;</span>`;
+                            details.appendChild(summary);
+
+                            fileList.forEach(filename => {
+                                const div = document.createElement('div');
+                                div.className = 'flex items-center justify-between mt-1 pl-4';
+                                const label = document.createElement('label');
+                                label.htmlFor = `${type}-${filename}`;
+                                label.className = 'text-sm font-medium';
+                                label.textContent = filename.replace('.geojson', '');
+                                
+                                const switchLabel = document.createElement('label');
+                                switchLabel.className = 'switch';
+                                const input = document.createElement('input');
+                                input.type = 'checkbox';
+                                input.id = `${type}-${filename}`;
+                                input.dataset.type = type;
+                                input.dataset.filename = filename;
+                                input.checked = false; // Default to off
+                                input.addEventListener('change', toggleHazardLayer);
+                                
+                                const span = document.createElement('span');
+                                span.className = 'slider';
+                                
+                                switchLabel.appendChild(input);
+                                switchLabel.appendChild(span);
+                                div.appendChild(label);
+                                div.appendChild(switchLabel);
+                                details.appendChild(div);
+                            });
+                            hazardLayersContainer.appendChild(details);
+                        }
+                    };
+
+                    createToggles(layers.flood, 'flood', 'Flood Layers');
+                    createToggles(layers.heatstress, 'heatstress', 'Heat Stress Layers');
+                    createToggles(layers.landslide, 'landslide', 'Landslide Layers');
+
+                } catch (error) {
+                    console.error("Could not fetch hazard layers:", error);
+                }
+            }
+            
+            async function initializeApp() {
+                await populateHazardLayers();
+                await analyzeNetwork();
+            }
+
+            initializeApp();
+            
+            function updateUIBasedOnSelection() {
+                const multiNodeControls = document.getElementById('multi-node-controls');
+                const singleNodeInfo = document.getElementById('node-info');
+
+                if (selectedNodeIds.length === 0) {
+                    singleNodeInfo.classList.add('hidden');
+                    multiNodeControls.classList.add('hidden');
+                    detailsTableContainer.classList.add('hidden');
+                } else if (selectedNodeIds.length === 1) {
+                    multiNodeControls.classList.add('hidden');
+                    detailsTableContainer.classList.add('hidden');
+                    displaySingleNodeInfo(selectedNodeIds[0]);
+                } else { // 2 or more selected
+                    singleNodeInfo.classList.add('hidden');
+                    multiNodeControls.classList.remove('hidden');
+                }
+            }
+
+            function clearAllSelections() {
+                selectedNodeIds.forEach(id => {
+                    const nodeData = nodeToDataMap.get(id);
+                    if (nodeData) {
+                        const isFailed = nodeData.status === 'failed';
+                        nodeMarkers[id].setStyle(getNodeStyle(nodeData, false, isFailed));
+                    }
+                });
+                selectedNodeIds = [];
+                updateUIBasedOnSelection();
+            }
+
+            async function displaySingleNodeInfo(nodeId) {
+                const localNodeData = nodeToDataMap.get(nodeId);
+                const info = await (await fetch(`/node_info/${nodeId}`)).json();
+
+                if (localNodeData && info.attributes) {
+                    info.attributes.status = localNodeData.status;
+                }
+                
+                const nodeInfoDiv = document.getElementById('node-info');
+                document.getElementById('node-id').textContent = nodeId;
+                const attributesDiv = document.getElementById('node-attributes');
+                attributesDiv.innerHTML = '';
+                for (const [key, value] of Object.entries(info.attributes)) {
+                    const p = document.createElement('p');
+                    const displayKey = (key === 'asset_resilience_score') ? 'asset score' : key;
+                    p.innerHTML = `<strong>${displayKey}:</strong> <span class="font-mono">${value !== null ? value : 'N/A'}</span>`;
+                    attributesDiv.appendChild(p);
+                }
+                nodeInfoDiv.classList.remove('hidden');
+            }
+
+            function nodeClicked(nodeId) {
+                const index = selectedNodeIds.indexOf(nodeId);
+                const nodeData = nodeToDataMap.get(nodeId);
+                const isFailed = nodeData.status === 'failed';
+
+                if (index > -1) { // Deselect
+                    selectedNodeIds.splice(index, 1);
+                    nodeMarkers[nodeId].setStyle(getNodeStyle(nodeData, false, isFailed));
+                } else { // Select
+                    selectedNodeIds.push(nodeId);
+                    nodeMarkers[nodeId].setStyle(getNodeStyle(nodeData, true, isFailed));
+                }
+                updateUIBasedOnSelection();
+            }
+
+            function showDetailsTable(nodeIds) {
+                const nodesData = nodeIds.map(id => nodeToDataMap.get(id));
+                const allKeys = new Set();
+                nodesData.forEach(node => {
+                    Object.keys(node).forEach(key => {
+                        if (key !== 'status') allKeys.add(key);
+                    });
+                });
+
+                const headers = Array.from(allKeys);
+                const assetIdIndex = headers.indexOf('Asset_ID');
+                if (assetIdIndex > -1) headers.splice(assetIdIndex, 1);
+                const assetNameIndex = headers.indexOf('Asset_Name');
+                if (assetNameIndex > -1) headers.splice(assetNameIndex, 1);
+                headers.unshift('Asset_Name');
+                headers.unshift('Asset_ID');
+
+
+                let tableHTML = `<div class="overflow-x-auto">
+                                 <table class="w-full text-sm text-left text-gray-500">
+                                     <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                                         <tr>`;
+                headers.forEach(header => {
+                     tableHTML += `<th scope="col" class="px-6 py-3">${header.replace(/_/g, ' ')}</th>`;
+                });
+                tableHTML += `</tr></thead><tbody>`;
+
+                nodesData.forEach(node => {
+                    tableHTML += `<tr class="bg-white border-b">`;
+                    headers.forEach(header => {
+                        const value = node[header] !== null && node[header] !== undefined ? node[header] : 'N/A';
+                         if (header === 'Asset_ID') {
+                             tableHTML += `<th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">${value}</th>`;
+                         } else {
+                            tableHTML += `<td class="px-6 py-4">${value}</td>`;
+                         }
+                    });
+                    tableHTML += `</tr>`;
+                });
+
+                tableHTML += `</tbody></table></div>`;
+                return tableHTML;
+            }
+
+            document.getElementById('show-details-btn').addEventListener('click', () => {
+                detailsTableContainer.innerHTML = `<h2 class="text-xl font-semibold mb-3">Selected Asset Details</h2>` + showDetailsTable(selectedNodeIds);
+                detailsTableContainer.classList.remove('hidden');
+            });
+
+            document.getElementById('simulate-failure-btn').addEventListener('click', async function() {
+                if (selectedNodeIds.length !== 1) {
+                    alert("Please select exactly one asset to simulate failure.");
+                    return;
+                }
+                const selectedNodeId = selectedNodeIds[0];
+                const propagateDeep = document.getElementById('propagation-toggle').checked;
+                try {
+                    const response = await fetch(`/simulate/${selectedNodeId}`, { 
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ propagateDeep: propagateDeep })
+                    });
+                    if (!response.ok) throw new Error((await response.json()).error || 'Simulation failed.');
+                    const results = await response.json();
+                    lastFailedNodes = results.failed_nodes;
+                    
+                    document.getElementById('total-failed').textContent = results.total_failed;
+                    document.getElementById('failed-nodes-list').innerHTML = results.failed_nodes.map(id => `<li>${id}</li>`).join('');
+                    
+                    document.getElementById('failure-results').classList.remove('hidden');
+                    document.getElementById('reset-btn').classList.remove('hidden');
+                    document.getElementById('show-failed-details-btn').classList.remove('hidden');
+
+                    Object.keys(nodeMarkers).forEach(nodeId => {
+                        const isFailed = results.failed_nodes.includes(nodeId);
+                        const nodeData = nodeToDataMap.get(nodeId);
+                        const isSelected = selectedNodeIds.includes(nodeId);
+                        if (nodeData) {
+                           nodeMarkers[nodeId].setStyle(getNodeStyle(nodeData, isSelected, isFailed));
+                        }
+                    });
+
+                    Object.values(linkLines).forEach(layerGroup => {
+                        const sourceFailed = results.failed_nodes.includes(graphData.links[Object.values(linkLines).indexOf(layerGroup)].source);
+                        const targetFailed = results.failed_nodes.includes(graphData.links[Object.values(linkLines).indexOf(layerGroup)].target);
+                        if (sourceFailed && targetFailed) {
+                            layerGroup.line.setStyle({ color: 'blue', dashArray: '5, 5' });
+                            layerGroup.arrow.setStyle([{ pathOptions: { color: 'blue' } }]);
+                        }
+                    });
+
+                    if (selectedNodeIds.length > 0) {
+                        updateUIBasedOnSelection();
+                        if (selectedNodeIds.length === 1) {
+                             displaySingleNodeInfo(selectedNodeIds[0]);
+                        }
+                    }
+                } catch (error) {
+                    alert('Error: ' + error.message);
+                }
+            });
+            
+            function resetSimulation() {
+                if (!graphData) return;
+                nodeToDataMap.forEach(nodeData => nodeData.status = 'running');
+                Object.values(nodeMarkers).forEach(marker => {
+                    const nodeId = marker.getTooltip().getContent();
+                    const nodeData = nodeToDataMap.get(nodeId);
+                    if (nodeData) marker.setStyle(getNodeStyle(nodeData, false, false));
+                });
+                
+                Object.values(linkLines).forEach((layerGroup, index) => {
+                    const color = getArrowColor(graphData.links[index].weight);
+                    layerGroup.line.setStyle({ color: color, dashArray: null });
+                    layerGroup.arrow.setStyle([{ pathOptions: { color: color } }]);
+                });
+
+                document.getElementById('failure-results').classList.add('hidden');
+                document.getElementById('reset-btn').classList.add('hidden');
+                document.getElementById('show-failed-details-btn').classList.add('hidden');
+                failedNodesTableContainer.classList.add('hidden');
+                clearAllSelections();
+            }
+
+            document.getElementById('reset-btn').addEventListener('click', resetSimulation);
+            document.getElementById('reset-details-btn').addEventListener('click', () => {
+                detailsTableContainer.classList.add('hidden');
+                clearAllSelections();
+            });
+            document.getElementById('show-failed-details-btn').addEventListener('click', () => {
+                failedNodesTableContainer.innerHTML = showDetailsTable(lastFailedNodes);
+                failedNodesTableContainer.classList.remove('hidden');
+            });
+            document.getElementById('reset-view-btn').addEventListener('click', () => {
+                criticalityFilter.value = 0;
+                dependencyFilter.value = 0;
+                unconnectedToggle.checked = false;
+                propagationToggle.checked = false;
+                document.querySelectorAll('#hazard-layers-container input[type="checkbox"]').forEach(cb => {
+                    if (cb.checked) {
+                        cb.click(); // This will also trigger analyzeNetwork
+                    }
+                });
+                resetSimulation();
+                applyFilters();
+            });
+
+            const criticalityFilter = document.getElementById('criticality-filter');
+            const dependencyFilter = document.getElementById('dependency-filter');
+            const unconnectedToggle = document.getElementById('unconnected-toggle');
+            
+            function applyFilters() {
+                if (!graphData) return;
+                const critValue = +criticalityFilter.value;
+                const depValue = +dependencyFilter.value;
+                const hideUnconnected = unconnectedToggle.checked;
+                document.getElementById('criticality-value').textContent = critValue;
+                document.getElementById('dependency-value').textContent = depValue.toFixed(2);
+
+                const connectedNodes = new Set();
+                if (hideUnconnected) {
+                    graphData.links.forEach(link => {
+                        connectedNodes.add(link.source);
+                        connectedNodes.add(link.target);
+                    });
+                }
+                graphData.nodes.forEach(node => {
+                    const marker = nodeMarkers[node.id];
+                    if (!marker) return;
+
+                    const criticalityMatch = node.criticality_score == critValue;
+                    const dependencyMatch = Math.abs(node.dependency_score - depValue) < 0.01;
+                    const connectivityMatch = !hideUnconnected || connectedNodes.has(node.id);
+                    
+                    if (criticalityMatch && dependencyMatch && connectivityMatch) {
+                        if (!map.hasLayer(marker)) map.addLayer(marker);
+                    } else {
+                        if (map.hasLayer(marker)) map.removeLayer(marker);
+                    }
+                });
+                Object.values(linkLines).forEach(layerGroup => {
+                    map.removeLayer(layerGroup.line);
+                    map.removeLayer(layerGroup.arrow);
+                });
+                graphData.links.forEach((link, index) => {
+                    const sourceNode = nodeToDataMap.get(link.source);
+                    const targetNode = nodeToDataMap.get(link.target);
+                    if (sourceNode && targetNode) {
+                        const sourceVisible = map.hasLayer(nodeMarkers[sourceNode.id]);
+                        const targetVisible = map.hasLayer(nodeMarkers[targetNode.id]);
+                        if(sourceVisible && targetVisible) {
+                            map.addLayer(linkLines[index].line);
+                            map.addLayer(linkLines[index].arrow);
+                        }
+                    }
+                });
+            }
+
+            criticalityFilter.addEventListener('input', applyFilters);
+            dependencyFilter.addEventListener('input', applyFilters);
+            unconnectedToggle.addEventListener('change', applyFilters);
+            
+            document.getElementById('map-controls').addEventListener('change', (event) => {
+                const selectedTheme = event.target.value;
+                
+                map.removeLayer(lightTileLayer);
+                map.removeLayer(darkTileLayer);
+                map.removeLayer(satelliteTileLayer);
+                mapContainer.classList.remove('leaflet-dark');
+
+                if (selectedTheme === 'default') {
+                    map.addLayer(lightTileLayer);
+                } else if (selectedTheme === 'satellite') {
+                    map.addLayer(satelliteTileLayer);
+                } else if (selectedTheme === 'dark') {
+                    map.addLayer(darkTileLayer);
+                    mapContainer.classList.add('leaflet-dark');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

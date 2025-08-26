@@ -1,0 +1,61 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: Arial, sans-serif;
+}
+#container {
+    display: flex;
+    height: 100vh;
+}
+#sidebar {
+    width: 25%;
+    padding: 15px;
+    background: #f4f4f4;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    overflow-y: auto;
+}
+#map {
+    width: 75%;
+    height: 100%;
+}
+.control-group {
+    margin-bottom: 20px;
+}
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+select, input[type="range"], button {
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+}
+button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    margin-top: 10px;
+}
+button:hover {
+    background-color: #0056b3;
+}
+#reset-btn {
+    background-color: #6c757d;
+}
+#reset-btn:hover {
+    background-color: #5a6268;
+}
+#failed-assets-list {
+    list-style-type: none;
+    padding: 0;
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    background: #fff;
+}
+#failed-assets-list li {
+    padding: 5px;
+    border-bottom: 1px solid #eee;
+}

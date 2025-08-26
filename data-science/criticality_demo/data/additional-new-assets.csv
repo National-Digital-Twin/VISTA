@@ -1,0 +1,6 @@
+Asset_ID,Asset_Type,Asset_Name,lat,long,criticality_score,backup_asset_id
+PGS09,PowerGen/Substation,LowVoltageElectricitySubstationComplex,50.703494,-1.2920646,3,
+LFS01,LiquidFuelStorage,LiquidFuelStorageComplex,50.748784,-1.2880935,2,LFS02
+LFS02,LiquidFuelStorage,LiquidFuelStorageComplex,50.74521,-1.2873115,2,LFS03
+LFS03,LiquidFuelStorage,LiquidFuelStorageComplex,50.755962,-1.2927906,2,LFS01
+TEL12,Telecomms,TelecommunicationsExchange,50.730509324,-1.164575976,3,

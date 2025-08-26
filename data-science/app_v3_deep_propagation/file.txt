@@ -1,0 +1,29 @@
+1) Update the backend so that the files are read in from a folder and not uploaded. Once the app starts, the Analyse Network is run automatically.
+
+Add the dependency score also as a node attribute not just an edge attribute.
+remove Network scores section and Resilience score numbers from the frontend.
+update asset_resilience_score under Asset Details on the frontend to just asset score.
+Remove Impact Score from both frontend and backend
+
+when simulate failure is run, update the asset details of a failed node from 'running' to 'failed'
+
+2) Update the exposure score using this compute_exposure_score function below. Instead of geojson folder, have flood, heatstress and landslide folders where respective geojson files will be inserted and used to compute the exposure score based on the layers the user ticked on the frontend.
+On the frontend, allow the user to toggle off and on the flood, heat stress and landslide layers. update the exposure_score calculation based on the layer or layers selected by the user.
+
+
+Reduce the width of the left panel by 50%
+Keep all the hazard layers turned off by default
+Add a filter for Dependency Score attribute
+Add a toggle at the top right that changes the map view to a dark theme
+
+for two or more selected assets (nodes), tabulate all the node attributes (except status) in a table below the map using a 'Show Details' button.
+
+Change button name from 'Compare Selected Assets' to 'Show Asset Details.
+Invert the table so that asset names are rows and asset features like Asset_ID, Asset_Name etc are the column headers.
+
+change the header name from 'VISTA Asset Network Resilience Analysis' to Vista Asset Scoring and Failure Simulation
+
+
+
+
+

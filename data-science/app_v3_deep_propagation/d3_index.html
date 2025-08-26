@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VISTA Network Resilience Analysis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        /* html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden; 
+
+        } */
+      
+        body { font-family: 'Inter', sans-serif; }
+        .node { cursor: pointer; transition: all 0.2s ease-in-out; }
+        .node:hover { stroke-width: 4px; }
+        .link { stroke: #999; stroke-opacity: 0.6; }
+        .node-label { font-size: 10px; pointer-events: none; fill: #333; }
+        #graph-vis-container { height: 100vh; }
+        .loader { border: 8px solid #f3f3f3; border-radius: 50%; border-top: 8px solid #3498db; width: 60px; height: 60px; animation: spin 2s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        /* Toggle Switch Style */
+        .switch { position: relative; display: inline-block; width: 40px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: #2196F3; }
+        input:checked + .slider:before { transform: translateX(16px); }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <div class="grid grid-cols-1 lg:grid-cols-5 gap-4 p-4 h-screen">
+        <!-- Left Panel: Controls & Info -->
+        <aside class="lg:col-span-2 bg-white p-6 rounded-lg shadow-md flex flex-col h-full">
+            <!-- Non-scrolling content -->
+            <div class="flex-shrink-0 space-y-6">
+                <header class="text-center">
+                    <h1 class="text-2xl font-bold text-gray-700">VISTA Asset Network Resilience Analysis</h1>
+                </header>
+                <!-- File Upload Section -->
+                <div>
+                    <h2 class="text-xl font-semibold mb-3 border-b pb-2">1. Upload Data</h2>
+                    <form id="upload-form" class="space-y-4">
+                        <div>
+                            <label for="assets-file" class="block text-sm font-medium text-gray-700">Asset CSV</label>
+                            <input type="file" id="assets-file" name="assets" required class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                        </div>
+                        <div>
+                            <label for="dependencies-file" class="block text-sm font-medium text-gray-700">Dependency CSV</label>
+                            <input type="file" id="dependencies-file" name="dependencies" required class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                        </div>
+                        <div>
+                            <label for="geojson-file" class="block text-sm font-medium text-gray-700">GeoJSONs (.zip)</label>
+                            <input type="file" id="geojson-file" name="geojson" accept=".zip" required class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                        </div>
+                        <button type="submit" class="w-full bg-blue-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-700 transition duration-300">Analyze Network</button>
+                    </form>
+                </div>
+
+                <!-- Filters Section -->
+                <div id="filters-section" class="hidden">
+                     <h2 class="text-xl font-semibold mb-3 border-b pb-2">2. Filter & View</h2>
+                     <div class="space-y-4">
+                         <div>
+                            <label for="criticality-filter" class="block text-sm font-medium">Criticality Score</label>
+                            <input type="range" id="criticality-filter" min="0" max="3" step="1" value="0" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                            <span class="text-sm text-gray-500">Show >= <span id="criticality-value">0</span></span>
+                         </div>
+                         <div class="flex items-center justify-between">
+                             <label for="unconnected-toggle" class="text-sm font-medium">Hide Unconnected Assets</label>
+                             <label class="switch">
+                                <input type="checkbox" id="unconnected-toggle">
+                                <span class="slider"></span>
+                             </label>
+                         </div>
+                         <div class="flex items-center justify-between">
+                             <label for="propagation-toggle" class="text-sm font-medium">Deep Failure Propagation</label>
+                             <label class="switch">
+                                <input type="checkbox" id="propagation-toggle">
+                                <span class="slider"></span>
+                             </label>
+                         </div>
+                     </div>
+                </div>
+            </div>
+            
+            <!-- Info Panel (scrollable) -->
+            <div id="info-panel" class="hidden space-y-4 flex-grow overflow-y-auto pt-6">
+                <div id="network-scores" class="bg-gray-50 p-4 rounded-lg">
+                    <h3 class="font-semibold text-lg mb-2">Network Scores</h3>
+                    <p><strong>Resilience Score:</strong> <span id="network-resilience-score" class="font-mono text-blue-600">N/A</span></p>
+                </div>
+                <div id="node-info" class="bg-gray-50 p-4 rounded-lg hidden">
+                    <h3 class="font-semibold text-lg mb-2">Asset Details: <span id="node-id" class="font-mono text-blue-600"></span></h3>
+                    <div id="node-attributes" class="text-sm space-y-1 max-h-48 overflow-y-auto"></div>
+                    <div class="flex space-x-2 mt-4">
+                        <button id="simulate-failure-btn" class="w-full bg-red-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-700 transition duration-300">Simulate Failure</button>
+                        <button id="reset-btn" class="w-full bg-gray-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition duration-300 hidden">Reset</button>
+                    </div>
+                </div>
+                <div id="failure-results" class="bg-red-50 p-4 rounded-lg hidden">
+                    <h3 class="font-semibold text-lg mb-2 text-red-800">Failure Simulation Results</h3>
+                    <p><strong>Impact Score:</strong> <span id="impact-score" class="font-mono text-red-600"></span></p>
+                    <p><strong>Total Failed:</strong> <span id="total-failed" class="font-mono text-red-600"></span></p>
+                    <div class="mt-2">
+                        <h4 class="font-medium">Failed Assets:</h4>
+                        <ul id="failed-nodes-list" class="text-xs h-32 overflow-y-auto bg-white rounded p-2 mt-1"></ul>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Right Panel: Graph Visualization -->
+        <main class="lg:col-span-3 bg-white p-2 rounded-lg shadow-md flex items-center justify-center" id="graph-vis-container">
+            <div id="loader" class="loader hidden"></div>
+            <svg id="graph-vis" width="100%" height="100%"></svg>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('upload-form');
+            const loader = document.getElementById('loader');
+            const visContainer = document.getElementById('graph-vis-container');
+            const svgElement = document.getElementById('graph-vis');
+            const filtersSection = document.getElementById('filters-section');
+            const infoPanel = document.getElementById('info-panel');
+            
+            let graphData = null;
+            let simulation = null;
+            let selectedNodeId = null;
+
+            // --- D3 Visualization Logic ---
+            const width = visContainer.clientWidth;
+            const height = visContainer.clientHeight;
+            const svg = d3.select("#graph-vis")
+                .attr("viewBox", [0, 0, width, height]);
+
+            const g = svg.append("g");
+            let link, node, labels;
+
+            const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
+            
+            svg.on("click", function(event) {
+                if (event.target.nodeName === 'svg') {
+                    deselectNode();
+                }
+            });
+
+            function updateGraph(data) {
+                graphData = data;
+                g.selectAll("*").remove(); 
+
+                const linkCounts = new Map();
+                graphData.links.forEach(l => {
+                    const sourceId = typeof l.source === 'object' ? l.source.id : l.source;
+                    const targetId = typeof l.target === 'object' ? l.target.id : l.target;
+                    linkCounts.set(sourceId, (linkCounts.get(sourceId) || 0) + 1);
+                    linkCounts.set(targetId, (linkCounts.get(targetId) || 0) + 1);
+                });
+                graphData.nodes.forEach(n => {
+                    n.degree = linkCounts.get(n.id) || 0;
+                });
+
+                simulation = d3.forceSimulation(graphData.nodes)
+                    .force("link", d3.forceLink(graphData.links).id(d => d.id).distance(100))
+                    .force("charge", d3.forceManyBody().strength(-250))
+                    .force("center", d3.forceCenter(width / 2, height / 2));
+
+                svg.append("defs").append("marker")
+                    .attr("id", "arrowhead")
+                    .attr("viewBox", "-0 -5 10 10").attr("refX", 20).attr("refY", 0)
+                    .attr("orient", "auto").attr("markerWidth", 8).attr("markerHeight", 8)
+                    .attr("xoverflow", "visible")
+                    .append("svg:path").attr("d", "M 0,-5 L 10 ,0 L 0,5").attr("fill", "#999");
+
+                link = g.append("g").attr("class", "links").selectAll("line")
+                    .data(graphData.links).enter().append("line")
+                    .attr("class", "link").attr("marker-end", "url(#arrowhead)");
+
+                node = g.append("g").attr("class", "nodes").selectAll("circle")
+                    .data(graphData.nodes).enter().append("circle")
+                    .attr("class", "node").attr("r", 8)
+                    .attr("fill", d => colorScale(d.criticality_score))
+                    .attr("stroke", "#fff").attr("stroke-width", 2)
+                    .call(drag(simulation))
+                    .on("click", nodeClicked);
+
+                labels = g.append("g").attr("class", "labels").selectAll("text")
+                    .data(graphData.nodes).enter().append("text")
+                    .attr("class", "node-label").text(d => d.id)
+                    .attr("dx", 12).attr("dy", ".35em");
+
+                simulation.on("tick", () => {
+                    link.attr("x1", d => d.source.x).attr("y1", d => d.source.y)
+                        .attr("x2", d => d.target.x).attr("y2", d => d.target.y);
+                    node.attr("cx", d => d.x).attr("cy", d => d.y);
+                    labels.attr("x", d => d.x).attr("y", d => d.y);
+                });
+
+                const zoom = d3.zoom().on("zoom", (event) => g.attr("transform", event.transform));
+                svg.call(zoom);
+            }
+
+            const drag = simulation => {
+                function dragstarted(event, d) { if (!event.active) simulation.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y; }
+                function dragged(event, d) { d.fx = event.x; d.fy = event.y; }
+                function dragended(event, d) { if (!event.active) simulation.alphaTarget(0); d.fx = null; d.fy = null; }
+                return d3.drag().on("start", dragstarted).on("drag", dragged).on("end", dragended);
+            };
+
+            form.addEventListener('submit', async function (e) {
+                e.preventDefault();
+                loader.classList.remove('hidden');
+                svgElement.classList.add('hidden');
+                
+                const formData = new FormData(form);
+                try {
+                    const response = await fetch('/upload', { method: 'POST', body: formData });
+                    if (!response.ok) throw new Error((await response.json()).error || 'Failed to process files.');
+                    const data = await response.json();
+                    updateGraph(data.graph);
+                    const resiliencePercent = (data.network_resilience / 5 * 100).toFixed(1);
+                    document.getElementById('network-resilience-score').innerHTML = `${data.network_resilience} / 5.0 (${resiliencePercent}%)`;
+                    filtersSection.classList.remove('hidden');
+                    infoPanel.classList.remove('hidden');
+                    resetSimulation();
+                } catch (error) {
+                    alert('Error: ' + error.message);
+                } finally {
+                    loader.classList.add('hidden');
+                    svgElement.classList.remove('hidden');
+                }
+            });
+            
+            function deselectNode() {
+                selectedNodeId = null;
+                node.attr("stroke", "#fff").attr("stroke-width", 2);
+                document.getElementById('node-info').classList.add('hidden');
+            }
+
+            async function nodeClicked(event, d) {
+                event.stopPropagation();
+                if (selectedNodeId === d.id) {
+                    deselectNode();
+                    return;
+                }
+                selectedNodeId = d.id;
+                
+                node.attr("stroke", n => n.id === d.id ? "black" : "#fff").attr("stroke-width", n => n.id === d.id ? 4 : 2);
+                const response = await fetch(`/node_info/${d.id}`);
+                const info = await response.json();
+                
+                const nodeInfoDiv = document.getElementById('node-info');
+                document.getElementById('node-id').textContent = d.id;
+                
+                const attributesDiv = document.getElementById('node-attributes');
+                attributesDiv.innerHTML = '';
+                for (const [key, value] of Object.entries(info.attributes)) {
+                    const p = document.createElement('p');
+                    p.innerHTML = `<strong>${key}:</strong> <span class="font-mono">${value !== null ? value : 'N/A'}</span>`;
+                    attributesDiv.appendChild(p);
+                }
+                nodeInfoDiv.classList.remove('hidden');
+            }
+
+            document.getElementById('simulate-failure-btn').addEventListener('click', async function() {
+                if (!selectedNodeId) return;
+                const propagateDeep = document.getElementById('propagation-toggle').checked;
+                try {
+                    const response = await fetch(`/simulate/${selectedNodeId}`, { 
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ propagateDeep: propagateDeep })
+                    });
+                    if (!response.ok) throw new Error((await response.json()).error || 'Simulation failed.');
+                    const results = await response.json();
+
+                    document.getElementById('impact-score').textContent = `${(results.impact_score * 100).toFixed(2)}%`;
+                    document.getElementById('total-failed').textContent = results.total_failed;
+                    
+                    const failedList = document.getElementById('failed-nodes-list');
+                    failedList.innerHTML = '';
+                    results.failed_nodes.forEach(nodeId => {
+                        const li = document.createElement('li');
+                        li.textContent = nodeId;
+                        failedList.appendChild(li);
+                    });
+                    
+                    document.getElementById('failure-results').classList.remove('hidden');
+                    document.getElementById('reset-btn').classList.remove('hidden');
+                    node.attr('fill', n => results.failed_nodes.includes(n.id) ? '#ef4444' : colorScale(n.criticality_score));
+                } catch (error) {
+                    alert('Error: ' + error.message);
+                }
+            });
+            
+            function resetSimulation() {
+                if (!graphData) return;
+                node.attr('fill', d => colorScale(d.criticality_score));
+                document.getElementById('failure-results').classList.add('hidden');
+                document.getElementById('reset-btn').classList.add('hidden');
+                deselectNode();
+            }
+
+            document.getElementById('reset-btn').addEventListener('click', resetSimulation);
+
+            // Filter logic
+            const criticalityFilter = document.getElementById('criticality-filter');
+            const unconnectedToggle = document.getElementById('unconnected-toggle');
+
+            function applyFilters() {
+                if (!graphData) return;
+                const critValue = +criticalityFilter.value;
+                const hideUnconnected = unconnectedToggle.checked;
+
+                document.getElementById('criticality-value').textContent = critValue;
+
+                const isNodeVisible = d => {
+                    const criticalityMatch = d.criticality_score >= critValue;
+                    const connectivityMatch = !hideUnconnected || d.degree > 0;
+                    return criticalityMatch && connectivityMatch;
+                };
+
+                node.style('opacity', d => isNodeVisible(d) ? 1 : 0.1);
+                labels.style('opacity', d => isNodeVisible(d) ? 1 : 0.1);
+                link.style('opacity', d => {
+                    const sourceVisible = isNodeVisible(d.source);
+                    const targetVisible = isNodeVisible(d.target);
+                    return sourceVisible && targetVisible ? 0.6 : 0.05;
+                });
+            }
+
+            criticalityFilter.addEventListener('input', applyFilters);
+            unconnectedToggle.addEventListener('change', applyFilters);
+        });
+    </script>
+</body>
+</html>
