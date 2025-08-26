@@ -1,7 +1,7 @@
 # Acknowledgements
 
-**Repository:** `vista`  
-**Description:** `Recognises suppliers, partner organisations, and other contributors to the repository's development.`  
+**Repository:** `vista`
+**Description:** `Recognises suppliers, partner organisations, and other contributors to the repository's development.`
 
 The National Digital Twin Programme (NDTP) would like to acknowledge the contributions of various organisations and individuals who have supported the development of this repository.
 
@@ -9,16 +9,16 @@ The National Digital Twin Programme (NDTP) would like to acknowledge the contrib
 
 Over time, the following organisations have provided technical expertise, development support, and domain knowledge that have contributed to the evolution of this project:
 
-i.e. 
-- - [Informed Solutions](https://informed.com)
-- - [Telicent](https://Telicent.io)
+i.e.
+- [Informed Solutions](https://informed.com)
+- [Telicent](https://Telicent.io)
 
 (etc.)
 
 <!--
 
 GUIDANCE: IN PLACE OF THE ABOVE LIST, PROVIDE THE ACTUAL SUPPLIER/ORGANISATION DETAILS THAT ARE RELEVANT TO THE REPOSITORY
- 
+
  -->
 
 We are grateful for the collaboration that has helped shape this repository.
