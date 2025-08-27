@@ -11,6 +11,7 @@ repos:
         name: Check for a blank line at the end of scripts (auto-fixes)
         exclude: |
           (?x)^(
+              *.md|
               repository-configuration/.*|
               deploy/.*|
               \.github/.*|
