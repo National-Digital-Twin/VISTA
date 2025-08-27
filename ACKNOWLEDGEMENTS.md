@@ -9,11 +9,9 @@ The National Digital Twin Programme (NDTP) would like to acknowledge the contrib
 
 Over time, the following organisations have provided technical expertise, development support, and domain knowledge that have contributed to the evolution of this project:
 
-i.e. 
-- - [Informed Solutions](https://informed.com)
-- - [Telicent](https://Telicent.io)
+- [Informed Solutions](https://informed.com)
+- [Telicent](https://Telicent.io)
 
-(etc.)
 
 <!--
 

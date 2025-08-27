@@ -24,7 +24,7 @@ If you believe you have found a security vulnerability in this repository, **ple
 
 ### **How to Report a Security Issue** 
 
-1. **Do not open a public issue on GitHub.** Instead, report security concerns via email to **[ndtp@businessandtrade.gov.uk]**. 
+1. **Do not open a public issue on GitHub.** Instead, report security concerns via email to **ndtp@businessandtrade.gov.uk**. 
 2. **Provide detailed information about the vulnerability**, including: 
    - A clear description of the issue. 
    - Steps to reproduce the vulnerability. 
