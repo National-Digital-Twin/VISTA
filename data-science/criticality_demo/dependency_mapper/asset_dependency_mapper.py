@@ -40,7 +40,7 @@ HTML_TEMPLATE = """
             height: 100vh;
         }
         .sidebar {
-            width: 35%;
+            width: 17.5%; /* Changed from 35% */
             padding: 20px;
             background-color: #f4f4f4;
             overflow-y: auto; /* Allow sidebar to scroll if content overflows */
@@ -48,7 +48,7 @@ HTML_TEMPLATE = """
             z-index: 1000;
         }
         .map-container {
-            width: 65%;
+            width: 82.5%; /* Changed from 65% */
             height: 100vh;
         }
         #map { 
@@ -86,7 +86,6 @@ HTML_TEMPLATE = """
             <h1>VISTA Asset Dependency Mapper</h1>
         </div>
 
-        <!-- Forms Section -->
         <div id="forms-section" class="form-section">
             <div id="initial-upload-section">
                 <form method="post" enctype="multipart/form-data" action="{{ url_for('index') }}">

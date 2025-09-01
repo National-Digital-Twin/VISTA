@@ -5,12 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vista Asset Scoring and Failure Simulation</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Leaflet CSS and JS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
         crossorigin=""/>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
         crossorigin=""></script>
+    <!-- Leaflet Plugins -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-theme-dark@1.0.1/dist/leaflet-dark.min.css" />
     <script src="https://unpkg.com/leaflet-polylinedecorator@1.6.0/dist/leaflet.polylineDecorator.js"></script>
     <style>
@@ -29,32 +31,32 @@
         .leaflet-control-attribution { font-size: 10px !important; }
         /* Simple styling for dropdown */
         summary { cursor: pointer; outline: none; }
-        /* Make the zoom control sticky */
-        .leaflet-top.leaflet-left {
-            position: sticky;
-            top: 10px;
-            z-index: 1001;
-        }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800">
+    <!-- Fixed Header with Logo -->
     <header class="fixed top-0 left-0 w-full bg-white shadow z-50 flex items-center justify-center h-24">
         <img src="{{ url_for('static', filename='vista.png') }}" 
              alt="Vista Logo" 
              class="h-full object-contain">
     </header>
-     <div class="flex flex-col pt-24 h-[calc(100vh-96px)] relative z-0">
-     <div class="grid grid-cols-1 lg:grid-cols-10 gap-4 p-4 flex-grow">
+     <!-- Main Content (pushed down by header height) -->
+    <div class="flex flex-col pt-24 h-[calc(100vh-96px)] relative z-0">
+     <!-- <div class="flex flex-col pt-24" style="height: calc(100vh - 96px);"> -->
+        <div class="grid grid-cols-1 lg:grid-cols-10 gap-4 p-4 flex-grow">
+            <!-- Left Panel: Controls & Info -->
             <aside class="lg:col-span-2 bg-white p-6 rounded-lg shadow-md flex flex-col h-full z-10">
+                <!-- Non-scrolling content -->
                 <div class="flex-shrink-0 space-y-6">
                     <header class="text-center">
                         <h1 class="text-2xl font-bold text-gray-700">Vista Asset Scoring and Failure Simulation</h1>
                     </header>
 
+                    <!-- Filters Section -->
                     <div id="filters-section" class="hidden">
                          <div class="flex justify-between items-center mb-3">
                             <h2 class="text-xl font-semibold border-b pb-2">Filter & View</h2>
-                            <button id="reset-view-btn" class="text-sm bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1 px-3 rounded-lg">Reset</button>
+                            <button id="reset-view-btn" class="text-sm bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-1 px-3 rounded-lg">Reset View</button>
                          </div>
                          <div class="space-y-4">
                              <div>
@@ -95,11 +97,13 @@
                              </div>
                              <div id="hazard-layers-container" class="pt-4">
                                 <h3 class="text-lg font-semibold mb-2 border-b pb-1">Hazard Layers</h3>
-                                </div>
+                                <!-- Toggles will be dynamically inserted here -->
+                             </div>
                          </div>
                     </div>
                 </div>
                 
+                <!-- Info Panel (scrollable) -->
                 <div id="info-panel" class="hidden space-y-4 flex-grow overflow-y-auto pt-6">
                     <div id="multi-node-controls" class="hidden">
                         <div class="flex space-x-2">
@@ -127,6 +131,7 @@
                 </div>
             </aside>
 
+            <!-- Right Panel: Map Visualization -->
             <main class="lg:col-span-8 bg-white rounded-lg shadow-md relative flex flex-col h-full z-0" id="map-container">
                 <div id="loader" class="loader hidden"></div>
                 <div id="map" class="flex-grow z-0"></div>
@@ -149,9 +154,11 @@
         
         <div class="px-4 pb-4">
             <div id="details-table-container" class="p-4 hidden bg-white rounded-lg shadow-md">
-                </div>
+                <!-- Table will be generated here -->
+            </div>
             <div id="failed-nodes-table-container" class="p-4 hidden bg-white rounded-lg shadow-md mt-4">
-                </div>
+                <!-- Failed assets table will go here -->
+            </div>
         </div>
     </div>
 
@@ -186,14 +193,41 @@
                     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
                 });
 
+                 // Light theme (Carto)
+                    // lightTileLayer = L.tileLayer(
+                    //     'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+                    //     {
+                    //         subdomains: 'abcd',
+                    //         maxZoom: 20,
+                    //         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>'
+                    //     }
+                    // );
+
                 darkTileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
                     maxZoom: 19,
                     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
                 });
+                    // Dark theme (Carto)
+                    // darkTileLayer = L.tileLayer(
+                    //     'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+                    //     {
+                    //         subdomains: 'abcd',
+                    //         maxZoom: 20,
+                    //         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>'
+                    //     }
+                    // );
 
                 satelliteTileLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
 	                attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
                 });
+                    // Satellite (Esri World Imagery)
+                    // satelliteTileLayer = L.tileLayer(
+                    //     'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+                    //     {
+                    //         maxZoom: 19,
+                    //         attribution: 'Tiles &copy; Esri &mdash; Source: Esri, Earthstar Geographics, Maxar, GeoEye, USDA, USGS, AeroGRID, IGN, and the GIS User Community'
+                    //     }
+                    // );
 
                 satelliteTileLayer.addTo(map);
                 map.on('click', clearAllSelections);
@@ -382,12 +416,6 @@
                         if (fileList.length > 0) {
                             const details = document.createElement('details');
                             details.className = 'mb-2';
-                            
-                            // Add event listener to invalidate map size on dropdown toggle
-                            details.addEventListener('toggle', () => {
-                                setTimeout(() => map && map.invalidateSize(), 200);
-                            });
-
                             const summary = document.createElement('summary');
                             summary.className = 'font-semibold text-sm mb-1 cursor-pointer list-none';
                             summary.innerHTML = `${title} <span class="float-right">&#9662;</span>`;
@@ -554,7 +582,6 @@
             document.getElementById('show-details-btn').addEventListener('click', () => {
                 detailsTableContainer.innerHTML = showDetailsTable(selectedNodeIds, "Selected Asset Details");
                 detailsTableContainer.classList.remove('hidden');
-                setTimeout(() => map && map.invalidateSize(), 200);
             });
 
             document.getElementById('simulate-failure-btn').addEventListener('click', async function() {
@@ -580,8 +607,6 @@
                     document.getElementById('failure-results').classList.remove('hidden');
                     document.getElementById('reset-btn').classList.remove('hidden');
                     document.getElementById('show-failed-details-btn').classList.remove('hidden');
-                    setTimeout(() => map && map.invalidateSize(), 200);
-
 
                     Object.keys(nodeMarkers).forEach(nodeId => {
                         const isFailed = results.failed_nodes.includes(nodeId);
@@ -637,11 +662,9 @@
                 document.getElementById('show-failed-details-btn').classList.add('hidden');
                 failedNodesTableContainer.classList.add('hidden');
                 clearAllSelections();
-                setTimeout(() => map && map.invalidateSize(), 200);
             }
 
             document.getElementById('reset-btn').addEventListener('click', resetSimulation);
-            document.getElementById('reset-view-btn').addEventListener('click', resetSimulation);
             document.getElementById('reset-details-btn').addEventListener('click', () => {
                 detailsTableContainer.classList.add('hidden');
                 clearAllSelections();
@@ -649,8 +672,53 @@
             document.getElementById('show-failed-details-btn').addEventListener('click', () => {
                 failedNodesTableContainer.innerHTML = showDetailsTable(lastFailedNodes, "Failed Asset Details");
                 failedNodesTableContainer.classList.remove('hidden');
-                setTimeout(() => map && map.invalidateSize(), 200);
             });
+            // document.getElementById('reset-view-btn').addEventListener('click', () => {
+            //     criticalityFilter.value = 0;
+            //     dependencyFilter.value = 0;
+            //     unconnectedToggle.checked = false;
+            //     propagationToggle.checked = false;
+            //     document.querySelectorAll('#hazard-layers-container input[type="checkbox"]').forEach(cb => {
+            //         if (cb.checked) {
+            //             cb.click(); // This will also trigger analyzeNetwork
+            //         }
+            //     });
+            //     resetSimulation();
+            //     applyFilters();
+            // });
+                document.getElementById('reset-view-btn').addEventListener('click', () => {
+                    // Reset all filters
+                    criticalityFilter.value = 0;
+                    dependencyFilter.value = 0;
+                    unconnectedToggle.checked = false;
+                    propagationToggle.checked = false;
+                    document.getElementById('criticality-value').textContent = 0;
+                    document.getElementById('dependency-value').textContent = "0.00";
+
+                    // Uncheck and remove all hazard layers
+                    document.querySelectorAll('#hazard-layers-container input[type="checkbox"]').forEach(cb => {
+                        if (cb.checked) {
+                            cb.checked = false;
+                            const event = new Event('change'); // trigger layer removal
+                            cb.dispatchEvent(event);
+                        }
+                    });
+
+                    // Reset simulation results
+                    resetSimulation();
+
+                    // Clear selections
+                    clearAllSelections();
+
+                    // Re-analyze network (fresh load)
+                    analyzeNetwork();
+
+                    // Reset map view to Isle of Wight
+                    if (map) {
+                        map.setView([50.6, -1.3], 9);
+                    }
+                });
+
 
             const criticalityFilter = document.getElementById('criticality-filter');
             const dependencyFilter = document.getElementById('dependency-filter');
