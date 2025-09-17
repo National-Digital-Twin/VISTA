@@ -3,7 +3,7 @@ import { useMemo, useCallback } from "react";
 import ListItem from "@mui/material/ListItem";
 import Box from "@mui/material/Box";
 import ListItemText from "@mui/material/ListItemText";
-import { Grid2 } from "@mui/material";
+import { Grid2, LinearProgress } from "@mui/material";
 import { capitalize } from "@/utils/capitalize";
 
 import type { Asset } from "@/models";
@@ -56,7 +56,7 @@ function AssessmentAssetLayerControls({
   assessment,
   searchQuery,
 }: AssessmentAssetLayerControlsProps) {
-  const { isLoadingAssets, filteredAssets } = useGroupedAssets({
+  const { isLoadingAssets, filteredAssets, progress } = useGroupedAssets({
     assessment,
     searchFilter: searchQuery,
   });
@@ -91,12 +91,11 @@ function AssessmentAssetLayerControls({
     );
   }, [filteredAssets]);
 
-  if (isLoadingAssets) {
-    return null;
-  }
-
   return (
     <Grid2 size={12} container>
+      {isLoadingAssets && (
+        <LinearProgress variant="determinate" value={progress * 100} />
+      )}
       {sortedCategories.map((category) => (
         <Grid2 size={12} key={category.category}>
           <AssessmentCategoryLayerControls

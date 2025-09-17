@@ -268,52 +268,55 @@ async function fetchDataForAssetClass(assetUris: string[]): Promise<any[]> {
   );
 }
 
+export async function fetchAssetsForAssetSpecification(
+  assetSpecification: AssetSpecification,
+) {
+  const mappedAssets: Asset[] = [];
+  const liveAssets = await fetchLiveAssets(assetSpecification);
+  const staticDataForAssetClass = await fetchDataForAssetClass(
+    assetSpecification.knownIds ?? [],
+  );
+
+  liveAssets.features.forEach((feature: Feature) => {
+    let asset: Asset;
+    if (
+      isPointFeature(feature) ||
+      isMultiPointFeature(feature) ||
+      isPolygonFeature(feature) ||
+      isMultiPolygonFeature(feature)
+    ) {
+      asset = mapPointAsset(
+        feature,
+        assetSpecification,
+        staticDataForAssetClass,
+      );
+      mappedAssets.push(asset);
+    }
+    if (isLineStringFeature(feature) || isMultiLineStringFeature(feature)) {
+      asset = mapLinearAsset(feature, assetSpecification);
+      mappedAssets.push(asset);
+    }
+  });
+
+  return mappedAssets;
+}
+
 /**
  * A function to create an array of assets, using an asset specification.
  * @returns an array of Asset
  */
-export async function createAssets(): Promise<Asset[]> {
-  const assetSpecifications: AssetSpecification[] = (
-    await import("@/data/live-assets.json")
-  ).default as AssetSpecification[];
+// export async function createAssets(
+//   assetSpecifications: AssetSpecification[],
+// ): Promise<Asset[]> {
+//   if (!assetSpecifications && !Array.isArray(assetSpecifications)) {
+//     return [];
+//   }
 
-  if (!assetSpecifications && !Array.isArray(assetSpecifications)) {
-    return [];
-  }
+//   const mappedAssets: Asset[][] = await Promise.all(
+//     assetSpecifications.map(
+//       async (assetClass: AssetSpecification): Promise<Asset[]> => {},
+//     ),
+//   );
 
-  const mappedAssets: Asset[][] = await Promise.all(
-    assetSpecifications.map(
-      async (assetClass: AssetSpecification): Promise<Asset[]> => {
-        const mappedAssets: Asset[] = [];
-        const liveAssets = await fetchLiveAssets(assetClass);
-        const staticDataForAssetClass = await fetchDataForAssetClass(
-          assetClass.knownIds ?? [],
-        );
-
-        liveAssets.features.forEach((feature: Feature) => {
-          let asset: Asset;
-          if (
-            isPointFeature(feature) ||
-            isMultiPointFeature(feature) ||
-            isPolygonFeature(feature) ||
-            isMultiPolygonFeature(feature)
-          ) {
-            asset = mapPointAsset(feature, assetClass, staticDataForAssetClass);
-            mappedAssets.push(asset);
-          }
-          if (
-            isLineStringFeature(feature) ||
-            isMultiLineStringFeature(feature)
-          ) {
-            asset = mapLinearAsset(feature, assetClass);
-            mappedAssets.push(asset);
-          }
-        });
-
-        return mappedAssets;
-      },
-    ),
-  );
-
-  return mappedAssets.flat();
-}
+//   return mappedAssets.flat();
+// }

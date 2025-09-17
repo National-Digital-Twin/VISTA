@@ -1,8 +1,12 @@
 import { useMemo } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { createAssets, createDependencies } from "./dataset-utils";
+import { useQueries, useQuery } from "@tanstack/react-query";
+import {
+  createDependencies,
+  fetchAssetsForAssetSpecification,
+} from "./dataset-utils";
 import { Asset, Dependency } from "@/models";
 import { fetchAssessmentDependencies } from "@/api/combined";
+import { fetchAssetSpecifications } from "@/api/fetchAssetSpecifications";
 
 export interface UseGroupedAssetsOptions {
   /** Assessment URI */
@@ -10,6 +14,14 @@ export interface UseGroupedAssetsOptions {
   /** Text search filter */
   searchFilter?: string;
 }
+
+type DatasetState<T = any> = {
+  id: string;
+  category: string;
+  status: "pending" | "success" | "error";
+  data?: T;
+  error?: unknown;
+};
 
 /**
  * Fetches assets and dependencies.
@@ -22,27 +34,102 @@ const useGroupedAssets = ({
     .toLowerCase()
     .replace(/\s/g, "");
 
+  const emptyResponseStillLoading = {
+    filteredAssets: [],
+    isLoadingAssets: true,
+  };
+
+  const emptyResponseFinishedLoading = {
+    filteredAssets: [],
+    isLoadingAssets: false,
+  };
+
   const {
-    data: assets,
-    isLoading: assetsLoading,
-    error: assetsError,
-  } = useQuery<Asset[]>({
-    queryKey: ["assets"],
-    queryFn: async () => {
-      const assetSpecifications = (
-        await import("@/data/coeff-assets-with-geometry.json")
-      ).default as any[];
-      const staticAssets = Array.from(assetSpecifications).map(
-        (asset) => new Asset(asset),
-      );
-      const liveAssets = await createAssets();
-      return [...staticAssets, ...liveAssets];
-    },
+    data: assetSpecifications,
+    isLoading: isLoadingAssetSpecifications,
+    error: assetSpecificationError,
+  } = useQuery({
+    queryKey: ["assetSpecifications"],
+    queryFn: () => fetchAssetSpecifications(),
   });
+
+  if (isLoadingAssetSpecifications) {
+    return emptyResponseStillLoading;
+  }
+
+  if (assetSpecificationError || !assetSpecifications) {
+    return emptyResponseFinishedLoading;
+  }
+
+  const queries = useQueries({
+    queries: assetSpecifications.map((assetSpecification) => ({
+      queryKey: ["dataset", assetSpecification.type],
+      queryFn: () => fetchAssetsForAssetSpecification(assetSpecification),
+      // staleTime: 5 * 60 * 1000,
+    })),
+  });
+
+  // const queries = assetSpecifications.map((assetSpecification) =>
+  //   useQuery({
+  //     queryKey: ["dataset", assetSpecification.type],
+  //     queryFn: () => fetchAssetsForAssetSpecification(assetSpecification),
+  //     // enabled: true, // could be lazy per accordion
+  //     // staleTime: 5 * 60 * 1000, // cache tuning
+  //   }),
+  // );
+
+  const datasets: DatasetState[] = queries.map((q, i) => ({
+    id: assetSpecifications[i].type,
+    type: assetSpecifications[i].type,
+    category: assetSpecifications[i].secondaryCategory,
+    status: q.status,
+    data: q.data,
+    error: q.error,
+  }));
+
+  // const {
+  //   data: assets,
+  //   isLoading: assetsLoading,
+  //   error: assetsError,
+  // } = useQuery<Asset[]>({
+  //   queryKey: ["assets"],
+  //   queryFn: async () => {
+  //     const staticAssets = Array.from(staticAssetSpecifications).map(
+  //       (asset) => new Asset(asset),
+  //     );
+  //     const liveAssets = await createAssets(liveAssetSpecifications);
+  //     return [...staticAssets, ...liveAssets];
+  //   },
+  // });
+
+  const assets = useMemo(() => {
+    const assets: Asset[] = [];
+    datasets.forEach((ds) => {
+      assets.push(ds.data);
+    });
+    return assets;
+  }, [datasets]);
+
+  const assetsLoading = useMemo(() => {
+    const allFinished = datasets.every(
+      (d) => d.status === "success" || d.status === "error",
+    );
+    return !allFinished;
+  }, [datasets]);
+
+  const assetsError = useMemo(() => {
+    return datasets.some((d) => d.status === "error");
+  }, [datasets]);
+
+  const total = datasets.length;
+  const completed = datasets.filter(
+    (d) => d.status === "success" || d.status === "error",
+  ).length;
+  const progress = total > 0 ? completed / total : 0;
 
   const { data: dependencies, error: dependenciesError } = useQuery({
     queryKey: ["assets-with-dependencies", assessment ?? ""],
-    enabled: !!assets,
+    enabled: !!assetsLoading,
     queryFn: async () => {
       if (!assets) {
         return;
@@ -123,10 +210,6 @@ const useGroupedAssets = ({
     };
   };
 
-  if (assetsError) {
-    console.error("Error loading assets:", assetsError);
-  }
-
   return {
     isLoadingDependencies: assetsLoading,
     isDependenciesError: !!dependenciesError,
@@ -139,6 +222,7 @@ const useGroupedAssets = ({
     assets,
     getDependentAssets,
     getDependenciesByTypes,
+    progress,
   };
 };
 

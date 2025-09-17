@@ -26,7 +26,10 @@ services:
     command:
       - --config
       - /fuseki/config/config.ttl
-    image: paralog/secure-agent-graph
+    image: vista/secure-agent-graph
+    build:
+      context: .
+      dockerfile: Dockerfile
     depends_on:
       - kafka
     healthcheck:
@@ -85,8 +88,11 @@ services:
   transparent-proxy:
     container_name: vista-transparent-proxy
     image: vista-transparent-proxy
+    build:
+      context: ../../transparent-proxy
+      dockerfile: Dockerfile
     ports:
-      - 5013:80
+      - 5013:8080
     env_file:
       - "../.env"
     depends_on:
@@ -94,6 +100,9 @@ services:
   vista-python-api:
     container_name: vista-python-api
     image: vista-python-api
+    build:
+      context: ../../backend
+      dockerfile: ../../backend/Dockerfile
     ports:
       - 8000:8000
     env_file:
