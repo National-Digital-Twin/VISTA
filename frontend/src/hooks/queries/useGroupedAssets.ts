@@ -53,16 +53,8 @@ const useGroupedAssets = ({
     queryFn: () => fetchAssetSpecifications(),
   });
 
-  if (isLoadingAssetSpecifications) {
-    return emptyResponseStillLoading;
-  }
-
-  if (assetSpecificationError || !assetSpecifications) {
-    return emptyResponseFinishedLoading;
-  }
-
   const queries = useQueries({
-    queries: assetSpecifications.map((assetSpecification) => ({
+    queries: (assetSpecifications ?? []).map((assetSpecification) => ({
       queryKey: ["dataset", assetSpecification.type],
       queryFn: () => fetchAssetsForAssetSpecification(assetSpecification),
       // staleTime: 5 * 60 * 1000,
@@ -78,14 +70,18 @@ const useGroupedAssets = ({
   //   }),
   // );
 
-  const datasets: DatasetState[] = queries.map((q, i) => ({
-    id: assetSpecifications[i].type,
-    type: assetSpecifications[i].type,
-    category: assetSpecifications[i].secondaryCategory,
-    status: q.status,
-    data: q.data,
-    error: q.error,
-  }));
+  const datasets = queries.map((q, i) => {
+    if (assetSpecifications) {
+      return {
+        id: assetSpecifications[i].type,
+        type: assetSpecifications[i].type,
+        category: assetSpecifications[i].secondaryCategory,
+        status: q.status,
+        data: q.data,
+        error: q.error,
+      } as DatasetState;
+    }
+  });
 
   // const {
   //   data: assets,
@@ -105,25 +101,27 @@ const useGroupedAssets = ({
   const assets = useMemo(() => {
     const assets: Asset[] = [];
     datasets.forEach((ds) => {
-      assets.push(ds.data);
+      if (ds?.data) {
+        assets.push(...ds.data);
+      }
     });
     return assets;
   }, [datasets]);
 
   const assetsLoading = useMemo(() => {
     const allFinished = datasets.every(
-      (d) => d.status === "success" || d.status === "error",
+      (d) => d && (d.status === "success" || d.status === "error"),
     );
     return !allFinished;
   }, [datasets]);
 
   const assetsError = useMemo(() => {
-    return datasets.some((d) => d.status === "error");
+    return datasets.some((d) => d && d.status === "error");
   }, [datasets]);
 
   const total = datasets.length;
   const completed = datasets.filter(
-    (d) => d.status === "success" || d.status === "error",
+    (d) => d && (d.status === "success" || d.status === "error"),
   ).length;
   const progress = total > 0 ? completed / total : 0;
 
@@ -209,6 +207,14 @@ const useGroupedAssets = ({
       ),
     };
   };
+
+  if (isLoadingAssetSpecifications) {
+    return emptyResponseStillLoading;
+  }
+
+  if (assetSpecificationError || !assetSpecifications) {
+    return emptyResponseFinishedLoading;
+  }
 
   return {
     isLoadingDependencies: assetsLoading,
