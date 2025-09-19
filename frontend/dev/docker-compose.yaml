@@ -1,15 +1,15 @@
 version: "3"
 services:
   zookeeper:
-    container_name: paralog-zookeeper
+    container_name: vista-zookeeper
     image: bitnami/zookeeper:latest
     ports:
       - "2181:2181"
     environment:
       - ALLOW_ANONYMOUS_LOGIN=yes
   kafka:
-    container_name: paralog-kafka
-    image: "bitnami/kafka:3.9.0"
+    container_name: vista-kafka
+    image: "bitnamilegacy/kafka:3.9.0"
     depends_on:
       - zookeeper
     ports:
@@ -19,7 +19,7 @@ services:
     environment:
       - BITNAMI_DEBUG=true
   secure-agent-graph:
-    container_name: paralog-sag
+    container_name: vista-sag
     environment:
       JAVA_OPTIONS: "-XX:MaxRAMPercentage=40.0"
       JWKS_URL: "disabled"
