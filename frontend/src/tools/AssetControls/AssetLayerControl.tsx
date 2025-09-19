@@ -114,7 +114,7 @@ function AssessmentAssetLayerControls({
               variant="h6"
               sx={{ color: "#fff", alignSelf: "center" }}
             >
-              Loading datasets
+              Loading datasets {Math.round(progress * 100)}%
             </Typography>
             <LinearProgress variant="determinate" value={progress * 100} />
           </Box>
