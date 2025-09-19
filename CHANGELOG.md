@@ -17,29 +17,11 @@ This project follows **Semantic Versioning (SemVer)** ([semver.org](https://semv
 
 ---
 
-## [Unreleased] 
+## [0.92.1]
 
-### Added 
-- Placeholder for upcoming features and enhancements. 
-
-### Fixed 
-- Placeholder for bug fixes and security updates. 
-
-### Changed 
-- Live weather station readings from the Met Office
-- Tide times and levels from the Admiralty
-- Dynamic proximity tool, showing all buildings in a given radius of a point
-- Live rail arrival and departure boards
-- "Feedback" button for providing live feedback and bug reports from inside the tool
-- Vulnerable people visualisation
-- Low bridge display (complete)
-- New layers UI replacing the dropdowns
-- New asset table (in preview)
-- Visualisation of environmentally sensitive areas
-- Map legend explaining the meanings of symbols and colours
-- Full infrastructure-as-code OpenTofu deployment for staging and production
-- Automatic database migrations in deployment
-- New favicon design
+- Backend API dependency patching
+- Progress indicator added on asset layer panel
+- Refactored the query to fetch the datasets to be more fault tolerant
 
 ---
 
