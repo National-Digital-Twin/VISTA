@@ -300,23 +300,3 @@ export async function fetchAssetsForAssetSpecification(
 
   return mappedAssets;
 }
-
-/**
- * A function to create an array of assets, using an asset specification.
- * @returns an array of Asset
- */
-// export async function createAssets(
-//   assetSpecifications: AssetSpecification[],
-// ): Promise<Asset[]> {
-//   if (!assetSpecifications && !Array.isArray(assetSpecifications)) {
-//     return [];
-//   }
-
-//   const mappedAssets: Asset[][] = await Promise.all(
-//     assetSpecifications.map(
-//       async (assetClass: AssetSpecification): Promise<Asset[]> => {},
-//     ),
-//   );
-
-//   return mappedAssets.flat();
-// }

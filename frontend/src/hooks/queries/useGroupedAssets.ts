@@ -57,18 +57,9 @@ const useGroupedAssets = ({
     queries: (assetSpecifications ?? []).map((assetSpecification, index) => ({
       queryKey: ["dataset", `${assetSpecification.type}-${index}`],
       queryFn: () => fetchAssetsForAssetSpecification(assetSpecification),
-      // staleTime: 5 * 60 * 1000,
+      staleTime: 5 * 60 * 1000,
     })),
   });
-
-  // const queries = assetSpecifications.map((assetSpecification) =>
-  //   useQuery({
-  //     queryKey: ["dataset", assetSpecification.type],
-  //     queryFn: () => fetchAssetsForAssetSpecification(assetSpecification),
-  //     // enabled: true, // could be lazy per accordion
-  //     // staleTime: 5 * 60 * 1000, // cache tuning
-  //   }),
-  // );
 
   const datasets = queries.map((q, i) => {
     if (assetSpecifications) {
@@ -82,21 +73,6 @@ const useGroupedAssets = ({
       } as DatasetState;
     }
   });
-
-  // const {
-  //   data: assets,
-  //   isLoading: assetsLoading,
-  //   error: assetsError,
-  // } = useQuery<Asset[]>({
-  //   queryKey: ["assets"],
-  //   queryFn: async () => {
-  //     const staticAssets = Array.from(staticAssetSpecifications).map(
-  //       (asset) => new Asset(asset),
-  //     );
-  //     const liveAssets = await createAssets(liveAssetSpecifications);
-  //     return [...staticAssets, ...liveAssets];
-  //   },
-  // });
 
   const assets = useMemo(() => {
     const assets: Asset[] = [];
@@ -150,7 +126,7 @@ const useGroupedAssets = ({
   });
 
   if (dependenciesError) {
-    console.log(dependenciesError);
+    console.error(dependenciesError);
   }
 
   const filteredAssets = useMemo(() => {
