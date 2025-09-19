@@ -3,7 +3,7 @@ import { useMemo, useCallback } from "react";
 import ListItem from "@mui/material/ListItem";
 import Box from "@mui/material/Box";
 import ListItemText from "@mui/material/ListItemText";
-import { Grid2, LinearProgress } from "@mui/material";
+import { Backdrop, Grid2, LinearProgress, Typography } from "@mui/material";
 import { capitalize } from "@/utils/capitalize";
 
 import type { Asset } from "@/models";
@@ -94,7 +94,31 @@ function AssessmentAssetLayerControls({
   return (
     <Grid2 size={12} container>
       {isLoadingAssets && (
-        <LinearProgress variant="determinate" value={progress * 100} />
+        <Backdrop
+          open={isLoadingAssets}
+          sx={{
+            position: "absolute",
+            paddingX: 2,
+            backgroundColor: "rgba(0, 0, 0, 0.8)",
+          }}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              width: "100%",
+              paddingX: 1,
+            }}
+          >
+            <Typography
+              variant="h6"
+              sx={{ color: "#fff", alignSelf: "center" }}
+            >
+              Loading datasets
+            </Typography>
+            <LinearProgress variant="determinate" value={progress * 100} />
+          </Box>
+        </Backdrop>
       )}
       {sortedCategories.map((category) => (
         <Grid2 size={12} key={category.category}>
