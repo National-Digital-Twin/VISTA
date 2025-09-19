@@ -46,10 +46,10 @@ export default defineConfig({
         secure: false,
       },
       // Ontology proxy
-      "/ontology-proxy": {
-        target: "http://localhost:3030",
+      "/vista": {
+        target: "http://localhost:4001",
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/ontology-proxy/, ""),
+        rewrite: (path) => path.replace(/^\/vista/, ""),
         secure: false,
       },
     },

@@ -3,3 +3,8 @@
 node_modules/
 cache/
 venv/
+**/lib64
+**/bin/
+**/share/
+**/pyvenv.cfg
+**/.vscode/
