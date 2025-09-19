@@ -10,3 +10,9 @@ run-sonar-scan:
 		-e SONAR_SCANNER_OPTS="-Dsonar.projectKey=${SONAR_PROJECT_KEY} -Dsonar.sources="${SOURCE_CODE_DIR}" -Dsonar.tests=/usr/src/${TEST_DIR}" \
 		-e SONAR_TOKEN="${SONAR_TOKEN}" \
 		sonarsource/sonar-scanner-cli
+
+vista-resources-up:
+	docker compose -f frontend/dev/docker-compose.yaml up -d
+
+vista-resources-down:
+	docker compose -f frontend/dev/docker-compose.yaml down
