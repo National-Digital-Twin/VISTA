@@ -54,8 +54,8 @@ const useGroupedAssets = ({
   });
 
   const queries = useQueries({
-    queries: (assetSpecifications ?? []).map((assetSpecification) => ({
-      queryKey: ["dataset", assetSpecification.type],
+    queries: (assetSpecifications ?? []).map((assetSpecification, index) => ({
+      queryKey: ["dataset", `${assetSpecification.type}-${index}`],
       queryFn: () => fetchAssetsForAssetSpecification(assetSpecification),
       // staleTime: 5 * 60 * 1000,
     })),
