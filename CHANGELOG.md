@@ -17,15 +17,26 @@ This project follows **Semantic Versioning (SemVer)** ([semver.org](https://semv
 
 ---
 
-## [Unreleased] 
+## [0.92.1]
 
-### Added 
-- Placeholder for upcoming features and enhancements. 
+- Backend API dependency patching
+- Progress indicator added on asset layer panel
+- Refactored the query to fetch the datasets to be more fault tolerant
 
-### Fixed 
-- Placeholder for bug fixes and security updates. 
+## [0.92.0]
 
-### Changed 
+- Integrate OS NGD API
+- Integration of non-OS/NAPTAN data sources
+- Integrate NAPTAN API
+- Integrate OS names API
+- Integrate with NHS open data portal
+
+## [0.91.0]
+
+- Add draggable circle polygon
+
+## [0.90.0]
+
 - Live weather station readings from the Met Office
 - Tide times and levels from the Admiralty
 - Dynamic proximity tool, showing all buildings in a given radius of a point
@@ -40,7 +51,6 @@ This project follows **Semantic Versioning (SemVer)** ([semver.org](https://semv
 - Full infrastructure-as-code OpenTofu deployment for staging and production
 - Automatic database migrations in deployment
 - New favicon design
-
 ---
 
 ## Future Roadmap to `1.0.0` 
