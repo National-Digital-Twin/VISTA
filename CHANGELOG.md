@@ -23,6 +23,34 @@ This project follows **Semantic Versioning (SemVer)** ([semver.org](https://semv
 - Progress indicator added on asset layer panel
 - Refactored the query to fetch the datasets to be more fault tolerant
 
+## [0.92.0]
+
+- Integrate OS NGD API
+- Integration of non-OS/NAPTAN data sources
+- Integrate NAPTAN API
+- Integrate OS names API
+- Integrate with NHS open data portal
+
+## [0.91.0]
+
+- Add draggable circle polygon
+
+## [0.90.0]
+
+- Live weather station readings from the Met Office
+- Tide times and levels from the Admiralty
+- Dynamic proximity tool, showing all buildings in a given radius of a point
+- Live rail arrival and departure boards
+- "Feedback" button for providing live feedback and bug reports from inside the tool
+- Vulnerable people visualisation
+- Low bridge display (complete)
+- New layers UI replacing the dropdowns
+- New asset table (in preview)
+- Visualisation of environmentally sensitive areas
+- Map legend explaining the meanings of symbols and colours
+- Full infrastructure-as-code OpenTofu deployment for staging and production
+- Automatic database migrations in deployment
+- New favicon design
 ---
 
 ## Future Roadmap to `1.0.0` 
