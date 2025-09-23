@@ -17,6 +17,11 @@ This project follows **Semantic Versioning (SemVer)** ([semver.org](https://semv
 
 ---
 
+## [0.92.2]
+
+- Fixed styling issues between asset layer panels and toolbar buttons
+- Restored visual dependency lines between assets
+
 ## [0.92.1]
 
 - Backend API dependency patching
