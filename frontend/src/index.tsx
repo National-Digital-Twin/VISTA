@@ -3,6 +3,7 @@ import { StrictMode } from "react";
 import { MapProvider } from "react-map-gl/maplibre";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ApolloProvider } from "@apollo/client";
+import { createTheme, ThemeProvider } from "@mui/material";
 import apolloClient from "./api/apollo-client";
 import App from "@/App";
 import DevTools from "@/components/DevTools";
@@ -27,6 +28,36 @@ const queryClient = new QueryClient({
   },
 });
 
+const baseTheme = createTheme();
+const theme = createTheme({
+  typography: {
+    body1: {
+      [baseTheme.breakpoints.up("md")]: { fontSize: "0.8rem" },
+      [baseTheme.breakpoints.up("xl")]: { fontSize: "1rem" },
+    },
+    body2: {
+      [baseTheme.breakpoints.up("md")]: { fontSize: "0.675rem" },
+      [baseTheme.breakpoints.up("xl")]: { fontSize: "0.875rem" },
+    },
+    h5: {
+      [baseTheme.breakpoints.up("md")]: { fontSize: "1.2rem" },
+      [baseTheme.breakpoints.up("xl")]: { fontSize: "1.5rem" },
+    },
+    h6: {
+      [baseTheme.breakpoints.up("md")]: { fontSize: "1rem" },
+      [baseTheme.breakpoints.up("xl")]: { fontSize: "1.25rem" },
+    },
+    subtitle1: {
+      [baseTheme.breakpoints.up("md")]: { fontSize: "0.8rem" },
+      [baseTheme.breakpoints.up("xl")]: { fontSize: "1rem" },
+    },
+    subtitle2: {
+      [baseTheme.breakpoints.up("md")]: { fontSize: "0.675rem" },
+      [baseTheme.breakpoints.up("xl")]: { fontSize: "0.875rem" },
+    },
+  },
+});
+
 // ✅ Root container reference
 const container = document.getElementById("root");
 if (!container) {
@@ -41,7 +72,9 @@ root.render(
       <QueryClientProvider client={queryClient}>
         <DevTools enabled={featureFlags.devTools}>
           <MapProvider>
-            <App />
+            <ThemeProvider theme={theme}>
+              <App />
+            </ThemeProvider>
           </MapProvider>
         </DevTools>
       </QueryClientProvider>

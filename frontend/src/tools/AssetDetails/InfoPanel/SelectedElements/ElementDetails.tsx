@@ -89,7 +89,7 @@ export default function ElementDetails({
             sx={{ gap: "10px" }}
           >
             {/* Left Column - Asset Title & Type (Left Aligned) */}
-            <Box sx={{ flex: "0 0 50%", maxWidth: 250 }}>
+            <Box sx={{ flex: "0 0 40%", maxWidth: 250 }}>
               <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
                 {details.title || "Asset Details"}
               </Typography>
@@ -103,7 +103,7 @@ export default function ElementDetails({
               display="flex"
               flexDirection="column"
               alignItems="start"
-              sx={{ paddingTop: "5px", flex: "0 0 50%" }}
+              sx={{ paddingTop: "5px", flex: "0 1 50%" }}
             >
               {/* View Connected Assets */}
               <Box
@@ -113,12 +113,16 @@ export default function ElementDetails({
                   cursor: "pointer",
                   mb: 1,
                   whiteSpace: "nowrap",
+                  flexWrap: "nowrap",
                 }}
                 onClick={() => {
                   onClick();
                 }}
               >
-                <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                <Typography
+                  variant="body2"
+                  sx={{ fontWeight: 500, textWrap: "wrap" }}
+                >
                   View connected assets
                 </Typography>
                 <ArrowRightAltIcon fontSize="small" sx={{ ml: 1 }} />
@@ -126,7 +130,10 @@ export default function ElementDetails({
 
               {/* Google Street View */}
               <Box display="flex" alignItems="center">
-                <Typography variant="body2" sx={{ fontWeight: 500, mr: 1 }}>
+                <Typography
+                  variant="body2"
+                  sx={{ fontWeight: 500, mr: 1, textWrap: "wrap" }}
+                >
                   Google Street View
                 </Typography>
                 {element?.lat && element?.lng ? (

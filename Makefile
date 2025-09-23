@@ -16,3 +16,6 @@ vista-resources-up:
 
 vista-resources-down:
 	docker compose -f frontend/dev/docker-compose.yaml down
+
+run-frontend:
+	yarn --cwd "frontend/" start --host

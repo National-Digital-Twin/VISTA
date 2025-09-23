@@ -24,6 +24,7 @@ export function CircleCreationButton() {
       svgSrc="icons/draw_circle.svg"
       active={isDrawing}
       disabled={isDisabled}
+      hasNoMarginBottom
     />
   );
 }
