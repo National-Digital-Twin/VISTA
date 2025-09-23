@@ -74,15 +74,37 @@ const useGroupedAssets = ({
     }
   });
 
+  const {
+    data: staticAssets,
+    isLoading: staticAssetsLoading,
+    error: staticAssetsError,
+  } = useQuery<Asset[]>({
+    queryKey: ["staticAssets"],
+    queryFn: async () => {
+      const assetSpecifications = (
+        await import("@/data/coeff-assets-with-geometry.json")
+      ).default as any[];
+      return Array.from(assetSpecifications).map((asset) => new Asset(asset));
+    },
+  });
+
   const assets = useMemo(() => {
+    if (staticAssetsLoading) {
+      return;
+    }
     const assets: Asset[] = [];
     datasets.forEach((ds) => {
       if (ds?.data) {
         assets.push(...ds.data);
       }
     });
-    return assets;
-  }, [datasets]);
+
+    if (staticAssetsError || !staticAssets) {
+      return assets;
+    } else {
+      return [...assets, ...staticAssets];
+    }
+  }, [datasets, staticAssets, staticAssetsError, staticAssetsLoading]);
 
   const assetsLoading = useMemo(() => {
     const allFinished = datasets.every(
@@ -101,9 +123,13 @@ const useGroupedAssets = ({
   ).length;
   const progress = total > 0 ? completed / total : 0;
 
-  const { data: dependencies, error: dependenciesError } = useQuery({
+  const {
+    data: dependencies,
+    isLoading: dependenciesLoading,
+    error: dependenciesError,
+  } = useQuery({
     queryKey: ["assets-with-dependencies", assessment ?? ""],
-    enabled: !!assetsLoading,
+    enabled: !assetsLoading,
     queryFn: async () => {
       if (!assets) {
         return;
@@ -193,7 +219,7 @@ const useGroupedAssets = ({
   }
 
   return {
-    isLoadingDependencies: assetsLoading,
+    isLoadingDependencies: dependenciesLoading,
     isDependenciesError: !!dependenciesError,
     isLoadingAssets: assetsLoading,
     isAssetsError: !!assetsError,

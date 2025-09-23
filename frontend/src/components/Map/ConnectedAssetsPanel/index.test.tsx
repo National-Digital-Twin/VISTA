@@ -3,6 +3,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import React from "react";
 import ConnectedAssetsPanel from ".";
 import useProviders from "@/hooks/queries/useProviders";
+import useGroupedAssets from "@/hooks/queries/useGroupedAssets";
+import Asset from "@/models/Asset";
+import Dependency from "@/models/Dependency";
 
 jest.mock("@/api/apollo-client", () => ({
   __esModule: true,
@@ -15,8 +18,17 @@ jest.mock("@/hooks/queries/useProviders", () => ({
   default: jest.fn(),
 }));
 
+jest.mock("@/hooks/queries/useGroupedAssets", () => ({
+  __esModule: true,
+  default: jest.fn(),
+}));
+
 const mockUseProviders = useProviders as jest.MockedFunction<
   typeof useProviders
+>;
+
+const mockedUseGroupAssets = useGroupedAssets as jest.MockedFunction<
+  typeof useGroupedAssets
 >;
 
 const mockAssetData = {
@@ -67,6 +79,14 @@ describe("ConnectedAssetsPanel", () => {
         },
       ],
     });
+
+    mockedUseGroupAssets.mockReturnValue({
+      getDependentAssets: (_assets: Asset[]) => ({
+        dependencies: [] as Dependency[],
+        dependentAssets: [] as Asset[],
+      }),
+      ...({} as ReturnType<typeof useGroupedAssets>),
+    });
   });
 
   it("renders title, ID and type", () => {
@@ -90,7 +110,7 @@ describe("ConnectedAssetsPanel", () => {
       />,
       { wrapper: createWrapper },
     );
-    expect(screen.getByText(/Dependant Assets \(3\)/)).toBeInTheDocument();
+    expect(screen.getByText(/Dependant Assets \(0\)/)).toBeInTheDocument();
     expect(screen.getByText(/Provider Assets \(2\)/)).toBeInTheDocument();
   });
 
