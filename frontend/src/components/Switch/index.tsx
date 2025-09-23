@@ -1,9 +1,11 @@
 import { styled } from "@mui/material/styles";
 import Switch from "@mui/material/Switch";
 
-const MaterialUISwitch = styled(Switch)(() => ({
+const MaterialUISwitch = styled(Switch)(({ theme }) => ({
   width: 54,
   height: 26,
+  [theme.breakpoints.up("md")]: { width: 50, height: 24 },
+  [theme.breakpoints.up("xl")]: { width: 54, height: 26 },
   padding: 7,
   "& .MuiSwitch-switchBase": {
     margin: 1,
@@ -31,6 +33,8 @@ const MaterialUISwitch = styled(Switch)(() => ({
 
     width: 24,
     height: 24,
+    [theme.breakpoints.up("md")]: { width: 20, height: 20 },
+    [theme.breakpoints.up("xl")]: { width: 24, height: 24 },
     "&::before": {
       content: "''",
       position: "absolute",

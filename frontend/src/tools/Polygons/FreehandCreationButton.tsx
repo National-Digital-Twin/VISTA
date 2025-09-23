@@ -24,6 +24,7 @@ export function FreehandCreationButton() {
       svgSrc="icons/draw_shape.svg"
       active={isDrawing}
       disabled={isDisabled}
+      hasNoMarginBottom
     />
   );
 }

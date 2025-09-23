@@ -35,6 +35,8 @@ export default function MapToolbar({ className }: MapToolbarProps) {
         alignItems: "center",
         width: "100%",
         gap: 2,
+        marginLeft: 2,
+        flexBasis: "20%",
       }}
     >
       <MToolPolygonButtons />
