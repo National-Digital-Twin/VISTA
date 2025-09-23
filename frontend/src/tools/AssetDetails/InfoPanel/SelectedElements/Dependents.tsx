@@ -1,7 +1,7 @@
 import ConnectedAssets from "./ConnectedAssets";
 import styles from "./elements.module.css";
 import { isEmpty } from "@/utils/isEmpty";
-import { useDependents } from "@/hooks";
+import { useDependents, useGroupedAssets } from "@/hooks";
 
 export interface DependentsProps {
   /** Asset URI */
@@ -12,6 +12,14 @@ export interface DependentsProps {
   readonly isAsset: boolean;
   /** Is it a dependency? */
   readonly isDependency: boolean;
+}
+
+function filterDependentsForKnownAssetsOnly(dependents, dependentsAsAssets) {
+  const uris = new Set(
+    dependentsAsAssets.map((dependentAsAsset) => dependentAsAsset.uri),
+  );
+
+  return dependents.filter((d) => uris.has(d.uri));
 }
 
 export default function Dependents({
@@ -27,15 +35,23 @@ export default function Dependents({
     data: dependents,
   } = useDependents(isAsset, isDependency, assetUri, dependent);
 
+  const { getDependentAssets } = useGroupedAssets({});
+  const dependentsAsAssets = getDependentAssets([{ uri: assetUri }]);
+
   if (isLoading) {
     return <p className={styles.loadingMessage}>Loading dependent assets</p>;
   }
   if (isError) {
     return <p className={styles.errorMessage}>{error?.message}</p>;
   }
-  if (isEmpty(dependents)) {
+  if (isEmpty(dependents) || isEmpty(dependentsAsAssets.dependentAssets)) {
     return null;
   }
 
-  return <ConnectedAssets connectedAssets={dependents} />;
+  const filteredDependents = filterDependentsForKnownAssetsOnly(
+    dependents,
+    dependentsAsAssets.dependentAssets,
+  );
+
+  return <ConnectedAssets connectedAssets={filteredDependents} />;
 }
