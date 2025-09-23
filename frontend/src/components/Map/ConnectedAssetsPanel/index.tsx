@@ -23,13 +23,9 @@ const ConnectedAssetsPanel: React.FC<ConnectAssetPanelProps> = ({
     setValue(newValue);
   };
 
-  if (!connectedAssetData) {
-    return;
-  }
-
   const { getDependentAssets } = useGroupedAssets({});
   const dependencies = getDependentAssets([
-    { uri: connectedAssetData.assetUri },
+    { uri: connectedAssetData?.assetUri },
   ]);
 
   const {
