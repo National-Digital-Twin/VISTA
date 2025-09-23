@@ -104,7 +104,7 @@ const useGroupedAssets = ({
     } else {
       return [...assets, ...staticAssets];
     }
-  }, [datasets, staticAssets]);
+  }, [datasets, staticAssets, staticAssetsError, staticAssetsLoading]);
 
   const assetsLoading = useMemo(() => {
     const allFinished = datasets.every(
