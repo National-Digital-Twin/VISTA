@@ -74,15 +74,37 @@ const useGroupedAssets = ({
     }
   });
 
+  const {
+    data: staticAssets,
+    isLoading: staticAssetsLoading,
+    error: staticAssetsError,
+  } = useQuery<Asset[]>({
+    queryKey: ["staticAssets"],
+    queryFn: async () => {
+      const assetSpecifications = (
+        await import("@/data/coeff-assets-with-geometry.json")
+      ).default as any[];
+      return Array.from(assetSpecifications).map((asset) => new Asset(asset));
+    },
+  });
+
   const assets = useMemo(() => {
+    if (staticAssetsLoading) {
+      return;
+    }
     const assets: Asset[] = [];
     datasets.forEach((ds) => {
       if (ds?.data) {
         assets.push(...ds.data);
       }
     });
-    return assets;
-  }, [datasets]);
+
+    if (staticAssetsError || !staticAssets) {
+      return assets;
+    } else {
+      return [...assets, ...staticAssets];
+    }
+  }, [datasets, staticAssets]);
 
   const assetsLoading = useMemo(() => {
     const allFinished = datasets.every(
