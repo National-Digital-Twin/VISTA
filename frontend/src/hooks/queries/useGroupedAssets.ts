@@ -123,9 +123,13 @@ const useGroupedAssets = ({
   ).length;
   const progress = total > 0 ? completed / total : 0;
 
-  const { data: dependencies, error: dependenciesError } = useQuery({
+  const {
+    data: dependencies,
+    isLoading: dependenciesLoading,
+    error: dependenciesError,
+  } = useQuery({
     queryKey: ["assets-with-dependencies", assessment ?? ""],
-    enabled: !!assetsLoading,
+    enabled: !assetsLoading,
     queryFn: async () => {
       if (!assets) {
         return;
@@ -215,7 +219,7 @@ const useGroupedAssets = ({
   }
 
   return {
-    isLoadingDependencies: assetsLoading,
+    isLoadingDependencies: dependenciesLoading,
     isDependenciesError: !!dependenciesError,
     isLoadingAssets: assetsLoading,
     isAssetsError: !!assetsError,
