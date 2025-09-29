@@ -1,26 +1,23 @@
-import { useContext } from "react";
+import { useContext } from 'react';
 
-import styles from "./infopanel.module.css";
-import SelectedElements from "./SelectedElements/SelectedElements";
-import { ElementsContext } from "@/context/ElementContext";
+import styles from './infopanel.module.css';
+import SelectedElements from './SelectedElements/SelectedElements';
+import { ElementsContext } from '@/context/ElementContext';
 
 interface InfoPanelProps {
-  readonly showConnectedAssets: () => void;
-  readonly setConnectedAssetData: (data: any) => void;
+    readonly showConnectedAssets: () => void;
+    readonly setConnectedAssetData: (data: any) => void;
 }
-export default function InfoPanel({
-  showConnectedAssets,
-  setConnectedAssetData,
-}: InfoPanelProps) {
-  const { selectedElements } = useContext(ElementsContext);
+export default function InfoPanel({ showConnectedAssets, setConnectedAssetData }: InfoPanelProps) {
+    const { selectedElements } = useContext(ElementsContext);
 
-  return (
-    <div className={`${styles.infoPanelContainer} overflow-y-auto`}>
-      <SelectedElements
-        selectedElements={selectedElements}
-        showConnectedAssets={showConnectedAssets}
-        setConnectedAssetData={setConnectedAssetData}
-      />
-    </div>
-  );
+    return (
+        <div className={`${styles.infoPanelContainer} overflow-y-auto`}>
+            <SelectedElements
+                selectedElements={selectedElements}
+                showConnectedAssets={showConnectedAssets}
+                setConnectedAssetData={setConnectedAssetData}
+            />
+        </div>
+    );
 }

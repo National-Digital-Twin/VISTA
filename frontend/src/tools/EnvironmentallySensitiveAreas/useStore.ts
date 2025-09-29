@@ -1,34 +1,25 @@
-import {
-  EnvironmentallySensitiveAreasLayerId,
-  layers,
-} from "./environmentally-sensitive-areas-layers";
-import createStore from "@/hooks/createStore";
+import { EnvironmentallySensitiveAreasLayerId, layers } from './environmentally-sensitive-areas-layers';
+import createStore from '@/hooks/createStore';
 
 interface EnvironmentallySensitiveAreasState {
-  environmentallySensitiveAreasEnabledLayers: Partial<
-    Record<EnvironmentallySensitiveAreasLayerId, boolean>
-  >;
+    environmentallySensitiveAreasEnabledLayers: Partial<Record<EnvironmentallySensitiveAreasLayerId, boolean>>;
 
-  toggleEnvironmentallySensitiveAreasLayer: (
-    layerId: EnvironmentallySensitiveAreasLayerId,
-  ) => void;
+    toggleEnvironmentallySensitiveAreasLayer: (layerId: EnvironmentallySensitiveAreasLayerId) => void;
 }
 
-export const useEnvironmentallySensitiveAreasSharedStore =
-  createStore<EnvironmentallySensitiveAreasState>(
-    "environmentally-sensitive-areas",
+export const useEnvironmentallySensitiveAreasSharedStore = createStore<EnvironmentallySensitiveAreasState>(
+    'environmentally-sensitive-areas',
     (set) => ({
-      environmentallySensitiveAreasEnabledLayers: Object.fromEntries(
-        Object.keys(layers).map((layer) => [layer, false] as const),
-      ) as Record<EnvironmentallySensitiveAreasLayerId, boolean>,
+        environmentallySensitiveAreasEnabledLayers: Object.fromEntries(
+            Object.keys(layers).map((layer) => [layer, false] as const),
+        ) as Record<EnvironmentallySensitiveAreasLayerId, boolean>,
 
-      toggleEnvironmentallySensitiveAreasLayer: (layerName) =>
-        set((state) => ({
-          environmentallySensitiveAreasEnabledLayers: {
-            ...state.environmentallySensitiveAreasEnabledLayers,
-            [layerName]:
-              !state.environmentallySensitiveAreasEnabledLayers[layerName],
-          },
-        })),
+        toggleEnvironmentallySensitiveAreasLayer: (layerName) =>
+            set((state) => ({
+                environmentallySensitiveAreasEnabledLayers: {
+                    ...state.environmentallySensitiveAreasEnabledLayers,
+                    [layerName]: !state.environmentallySensitiveAreasEnabledLayers[layerName],
+                },
+            })),
     }),
-  );
+);

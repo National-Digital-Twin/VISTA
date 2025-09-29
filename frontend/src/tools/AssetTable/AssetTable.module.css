@@ -1,13 +1,13 @@
 .assetTableHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px;
 }
 
 .exportButtons {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 7px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 7px;
 }
