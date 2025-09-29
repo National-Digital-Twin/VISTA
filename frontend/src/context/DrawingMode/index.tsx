@@ -1,486 +1,457 @@
-import MapboxDraw, {
-  DrawCreateEvent,
-  DrawCustomMode,
-  DrawDeleteEvent,
-  DrawModeChangeEvent,
-  DrawUpdateEvent,
-} from "@mapbox/mapbox-gl-draw";
-import React, {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import { useControl, useMap } from "react-map-gl/maplibre";
-import type { Feature } from "geojson";
-import { useShallow } from "zustand/react/shallow";
-import RectangleMode from "mapbox-gl-draw-rectangle-mode";
-import { circle as turf_circle, distance as turf_distance } from "@turf/turf";
-import { MapMouseEvent, Marker } from "maplibre-gl";
-import { drawStyles, radiusLabelStyles } from "./theme";
-import RadiusDialog from "./RadiusDialog";
-import {
-  CircleMode,
-  DirectMode,
-  DragCircleMode,
-  SimpleSelectMode,
-} from "@/vendor/mapbox-gl-draw-circle";
-import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
-import "./maplibre-gl-draw.css";
-import "./maplibre-gl-map.css";
-import useSharedStore, { State } from "@/hooks/useSharedStore";
-import DrawnPolygonProvider from "@/tools/DrawnPolygons/DrawnPolygonProvider";
-import DynamicProximityProvider from "@/tools/DynamicProximity/DynamicProximityProvider";
-
-/** Context for Drawing Mode */
+import useSharedStore, { State } from '@/hooks/useSharedStore';
+import DrawnPolygonProvider from '@/tools/DrawnPolygons/DrawnPolygonProvider';
+import MapboxDraw, { DrawCreateEvent, DrawCustomMode, DrawDeleteEvent, DrawModeChangeEvent, DrawUpdateEvent } from '@mapbox/mapbox-gl-draw';
+import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css';
+import { circle as turf_circle, distance as turf_distance } from '@turf/turf';
+import type { Feature } from 'geojson';
+import RectangleMode from 'mapbox-gl-draw-rectangle-mode';
+import { MapMouseEvent, Marker } from 'maplibre-gl';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { useControl, useMap } from 'react-map-gl/maplibre';
+import { useShallow } from 'zustand/react/shallow';
+import './maplibre-gl-draw.css';
+import './maplibre-gl-map.css';
+import RadiusDialog from './RadiusDialog';
+import { drawStyles, radiusLabelStyles } from './theme';
+import { CircleMode, DirectMode, DragCircleMode, SimpleSelectMode } from '@/vendor/mapbox-gl-draw-circle';
+import DynamicProximityProvider from '@/tools/DynamicProximity/DynamicProximityProvider';
 interface DrawingModeContextValue {
-  readonly draw: MapboxDraw;
-  readonly isMapLoaded: boolean;
-  readonly showRadiusDialog: (onConfirm: (radius: number) => void) => void;
+    readonly draw: MapboxDraw;
+    readonly isMapLoaded: boolean;
+    readonly showRadiusDialog: (onConfirm: (radius: number) => void) => void;
 }
 const DrawingModeContext = createContext<DrawingModeContextValue | null>(null);
 
-/** Mapbox Draw Modes */
 const modes = {
-  ...MapboxDraw.modes,
-  draw_rectangle: RectangleMode,
-  draw_circle: CircleMode,
-  drag_circle: DragCircleMode,
-  direct_select: DirectMode,
-  simple_select: SimpleSelectMode,
+    ...MapboxDraw.modes,
+    draw_rectangle: RectangleMode,
+    draw_circle: CircleMode,
+    drag_circle: DragCircleMode,
+    direct_select: DirectMode,
+    simple_select: SimpleSelectMode,
 } as Record<string, DrawCustomMode>;
 
-/** Drawing Mode Context Provider */
-export function DrawingModeContextProvider({
-  children,
-}: {
-  readonly children: React.ReactNode;
-}) {
-  const { paralogMap: map } = useMap();
-  if (!map) {
-    throw new Error(
-      "DrawingModeContextProvider must be used within a ParalogMap component",
+export function DrawingModeContextProvider({ children }: { readonly children: React.ReactNode }) {
+    const { paralogMap: map } = useMap();
+    if (!map) {
+        throw new Error('DrawingModeContextProvider must be used within a ParalogMap component');
+    }
+
+    const [isMapLoaded, setIsMapLoaded] = useState(map.loaded());
+    const [isRadiusDialogOpen, setIsRadiusDialogOpen] = useState(false);
+    const [radiusDialogData, setRadiusDialogData] = useState<{
+        onConfirm: (radius: number) => void;
+    } | null>(null);
+
+    const draw = useControl(
+        () =>
+            new (MapboxDraw as any)({
+                userProperties: true,
+                displayControlsDefault: false,
+                modes,
+                styles: drawStyles,
+            }),
     );
-  }
 
-  const [isMapLoaded, setIsMapLoaded] = useState(map.loaded());
-  const [isRadiusDialogOpen, setIsRadiusDialogOpen] = useState(false);
-  const [radiusDialogData, setRadiusDialogData] = useState<{
-    onConfirm: (radius: number) => void;
-  } | null>(null);
+    useEffect(() => {
+        const handleLoadChange = () => setIsMapLoaded(true);
+        map.on('load', handleLoadChange);
+        return () => {
+            map.off('load', handleLoadChange);
+            setIsMapLoaded(false);
+        };
+    }, [map]);
 
-  const draw = useControl(
-    () =>
-      new (MapboxDraw as any)({
-        userProperties: true,
-        displayControlsDefault: false,
-        modes,
-        styles: drawStyles,
-      }),
-  );
+    const showRadiusDialog = useCallback((onConfirm: (radius: number) => void) => {
+        setRadiusDialogData({ onConfirm });
+        setIsRadiusDialogOpen(true);
+    }, []);
 
-  useEffect(() => {
-    const handleLoadChange = () => setIsMapLoaded(true);
-    map.on("load", handleLoadChange);
-    return () => {
-      map.off("load", handleLoadChange);
-      setIsMapLoaded(false);
-    };
-  }, [map]);
+    const handleRadiusConfirm = useCallback(
+        (radius: number) => {
+            if (radiusDialogData) {
+                radiusDialogData.onConfirm(radius);
+            }
+            setIsRadiusDialogOpen(false);
+            setRadiusDialogData(null);
+        },
+        [radiusDialogData],
+    );
 
-  const showRadiusDialog = useCallback(
-    (onConfirm: (radius: number) => void) => {
-      setRadiusDialogData({ onConfirm });
-      setIsRadiusDialogOpen(true);
-    },
-    [],
-  );
+    const handleRadiusDialogClose = useCallback(() => {
+        setIsRadiusDialogOpen(false);
+        setRadiusDialogData(null);
+    }, []);
 
-  const handleRadiusConfirm = useCallback(
-    (radius: number) => {
-      if (radiusDialogData) {
-        radiusDialogData.onConfirm(radius);
-      }
-      setIsRadiusDialogOpen(false);
-      setRadiusDialogData(null);
-    },
-    [radiusDialogData],
-  );
+    const contextValue = useMemo(() => ({ draw, isMapLoaded, showRadiusDialog }), [draw, isMapLoaded, showRadiusDialog]);
 
-  const handleRadiusDialogClose = useCallback(() => {
-    setIsRadiusDialogOpen(false);
-    setRadiusDialogData(null);
-  }, []);
-
-  const contextValue = useMemo(
-    () => ({ draw, isMapLoaded, showRadiusDialog }),
-    [draw, isMapLoaded, showRadiusDialog],
-  );
-
-  return (
-    <DrawingModeContext.Provider value={contextValue}>
-      <DrawnPolygonProvider>
-        <DynamicProximityProvider>{children}</DynamicProximityProvider>
-      </DrawnPolygonProvider>
-      <RadiusDialog
-        open={isRadiusDialogOpen}
-        onClose={handleRadiusDialogClose}
-        onConfirm={handleRadiusConfirm}
-      />
-    </DrawingModeContext.Provider>
-  );
+    return (
+        <DrawingModeContext.Provider value={contextValue}>
+            <DrawnPolygonProvider>
+                <DynamicProximityProvider>{children}</DynamicProximityProvider>
+            </DrawnPolygonProvider>
+            <RadiusDialog open={isRadiusDialogOpen} onClose={handleRadiusDialogClose} onConfirm={handleRadiusConfirm} />
+        </DrawingModeContext.Provider>
+    );
 }
-
-/** Callback Types */
 interface DrawShapeCallbacks {
-  onDrawingStart?: () => void;
-  onDrawingEnd?: () => void;
+    onDrawingStart?: () => void;
+    onDrawingEnd?: () => void;
 
-  onAddFeatures: (features: Feature[]) => void;
-  onUpdateFeatures: (features: Feature[]) => void;
-  onDeleteFeatures: (features: NonNullable<Feature["id"]>[]) => void;
+    onAddFeatures: (features: Feature[]) => void;
+    onUpdateFeatures: (features: Feature[]) => void;
+    onDeleteFeatures: (features: NonNullable<Feature['id']>[]) => void;
 }
 
 type UseDrawShapeOptions =
-  | {
-      drawingMode: "draw_polygon" | "draw_rectangle" | "drag_circle";
-      options?: never;
-    }
-  | { drawingMode: "draw_circle"; options?: { initialRadiusInKm?: number } };
+    | {
+          drawingMode: 'draw_polygon' | 'draw_rectangle' | 'drag_circle';
+          options?: never;
+      }
+    | { drawingMode: 'draw_circle'; options?: { initialRadiusInKm?: number } };
 
-/** Hook for Drawing Mode */
 export const useDrawingMode = <T extends Feature>(
-  selector: (
-    state: Omit<
-      State,
-      keyof { [K in keyof State as State[K] extends Function ? K : never]: any }
-    >,
-  ) => T[],
-  {
-    onDrawingStart,
-    onDrawingEnd,
-    onAddFeatures,
-    onUpdateFeatures,
-    onDeleteFeatures,
-  }: DrawShapeCallbacks,
+    selector: (state: Omit<State, keyof { [K in keyof State as State[K] extends Function ? K : never]: any }>) => T[],
+    { onDrawingStart, onDrawingEnd, onAddFeatures, onUpdateFeatures, onDeleteFeatures }: DrawShapeCallbacks,
 ) => {
-  const context = useContext(DrawingModeContext);
-  const { paralogMap: map } = useMap();
-  if (!context || !map) {
-    throw new Error(
-      "useDrawingMode must be used within DrawingModeContextProvider",
+    const context = useContext(DrawingModeContext);
+
+    let map = null;
+    try {
+        const mapContext = useMap();
+        map = mapContext?.paralogMap || null;
+    } catch {
+        map = null;
+    }
+
+    const { draw, isMapLoaded, showRadiusDialog } = context || { draw: null, isMapLoaded: false, showRadiusDialog: () => {} };
+
+    const features = useSharedStore(useShallow(selector));
+
+    const radiusMarkerRef = useRef<{
+        line: any;
+        label: Marker | null;
+    }>({ line: null, label: null });
+
+    const processDrawEvent = useCallback(
+        (event: DrawUpdateEvent | DrawDeleteEvent, relevantFeatures: Feature[]) => {
+            if (event.type === 'draw.update') {
+                onUpdateFeatures(relevantFeatures);
+            } else if (event.type === 'draw.delete') {
+                const featureIds = relevantFeatures.map(({ id }) => id as string);
+                onDeleteFeatures(featureIds);
+            }
+        },
+        [onUpdateFeatures, onDeleteFeatures],
     );
-  }
 
-  const { draw, isMapLoaded, showRadiusDialog } = context;
-
-  const features = useSharedStore(useShallow(selector));
-
-  const radiusMarkerRef = useRef<{
-    line: any;
-    label: Marker | null;
-  }>({ line: null, label: null });
-
-  /** Process Draw Events */
-  const processDrawEvent = useCallback(
-    (event: DrawUpdateEvent | DrawDeleteEvent, relevantFeatures: Feature[]) => {
-      if (event.type === "draw.update") {
-        onUpdateFeatures(relevantFeatures);
-      } else if (event.type === "draw.delete") {
-        const featureIds = relevantFeatures.map(({ id }) => id as string);
-        onDeleteFeatures(featureIds);
-      }
-    },
-    [onUpdateFeatures, onDeleteFeatures],
-  );
-
-  /** Handle Draw Event */
-  const handleDrawEvent = useCallback(
-    (event: DrawUpdateEvent | DrawDeleteEvent) => {
-      const relevantFeatures = event.features.filter((feature) =>
-        features.some((existing) => existing.id === feature.id),
-      );
-      if (relevantFeatures.length) {
-        processDrawEvent(event, relevantFeatures);
-      }
-    },
-    [features, processDrawEvent],
-  );
-
-  const setCursor = useCallback(
-    (cursor: string) => {
-      map.getCanvasContainer().style.cursor = cursor;
-    },
-    [map],
-  );
-
-  const updateRadiusLabel = useCallback(
-    (centerCoords: [number, number], edgeCoords: [number, number]) => {
-      const radiusKm = turf_distance(centerCoords, edgeCoords, {
-        units: "kilometers",
-      });
-
-      // Calculate the right edge of the circle
-      const latRadians = (centerCoords[1] * Math.PI) / 180;
-      const kmPerDegreeLng = 111.32 * Math.cos(latRadians);
-      const rightEdge: [number, number] = [
-        centerCoords[0] + radiusKm / kmPerDegreeLng,
-        centerCoords[1],
-      ];
-
-      // Create main radius line (horizontal from center to right edge)
-      const radiusLine = {
-        type: "Feature" as const,
-        geometry: {
-          type: "LineString" as const,
-          coordinates: [centerCoords, rightEdge],
+    const handleDrawEvent = useCallback(
+        (event: DrawUpdateEvent | DrawDeleteEvent) => {
+            const relevantFeatures = event.features.filter((feature) => features.some((existing) => existing.id === feature.id));
+            if (relevantFeatures.length) {
+                processDrawEvent(event, relevantFeatures);
+            }
         },
-        properties: {},
-      };
+        [features, processDrawEvent],
+    );
 
-      // Create perpendicular line at center
-      const perpOffset = 0.001;
-      const perpLine = {
-        type: "Feature" as const,
-        geometry: {
-          type: "LineString" as const,
-          coordinates: [
-            [centerCoords[0], centerCoords[1] - perpOffset],
-            [centerCoords[0], centerCoords[1] + perpOffset],
-          ],
+    const setCursor = useCallback(
+        (cursor: string) => {
+            if (map) {
+                map.getCanvasContainer().style.cursor = cursor;
+            }
         },
-        properties: {},
-      };
+        [map],
+    );
 
-      // Get the underlying maplibre instance
-      const mapLibre = (map as any).getMap();
+    const updateRadiusLabel = useCallback(
+        (centerCoords: [number, number], edgeCoords: [number, number]) => {
+            if (!map) {
+                return;
+            }
 
-      // Add/update radius lines
-      if (!mapLibre.getSource("radius-line-source")) {
-        mapLibre.addSource("radius-line-source", {
-          type: "geojson",
-          data: { type: "FeatureCollection", features: [radiusLine, perpLine] },
-        });
+            const radiusKm = turf_distance(centerCoords, edgeCoords, {
+                units: 'kilometers',
+            });
 
-        mapLibre.addLayer({
-          id: "radius-line-layer",
-          source: "radius-line-source",
-          type: "line",
-          paint: {
-            "line-color": "#000000",
-            "line-width": 1,
-          },
-        });
-      } else {
-        mapLibre.getSource("radius-line-source").setData({
-          type: "FeatureCollection",
-          features: [radiusLine, perpLine],
-        });
-      }
+            const latRadians = (centerCoords[1] * Math.PI) / 180;
+            const kmPerDegreeLng = 111.32 * Math.cos(latRadians);
+            const rightEdge: [number, number] = [centerCoords[0] + radiusKm / kmPerDegreeLng, centerCoords[1]];
 
-      const radiusText = `${radiusKm.toFixed(1)}km`;
-      const midpoint: [number, number] = [
-        (centerCoords[0] + rightEdge[0]) / 2,
-        (centerCoords[1] + rightEdge[1]) / 2,
-      ];
+            const radiusLine = {
+                type: 'Feature' as const,
+                geometry: {
+                    type: 'LineString' as const,
+                    coordinates: [centerCoords, rightEdge],
+                },
+                properties: {},
+            };
 
-      if (radiusMarkerRef.current.label) {
-        radiusMarkerRef.current.label.setLngLat(midpoint);
-        const element = radiusMarkerRef.current.label.getElement();
-        element.textContent = radiusText;
-      } else {
-        const labelElement = document.createElement("div");
-        Object.assign(labelElement.style, radiusLabelStyles);
-        labelElement.textContent = radiusText;
+            const perpOffset = 0.001;
+            const perpLine = {
+                type: 'Feature' as const,
+                geometry: {
+                    type: 'LineString' as const,
+                    coordinates: [
+                        [centerCoords[0], centerCoords[1] - perpOffset],
+                        [centerCoords[0], centerCoords[1] + perpOffset],
+                    ],
+                },
+                properties: {},
+            };
 
-        const newLabel = new Marker({
-          element: labelElement,
-          anchor: "center",
-          offset: [0, -10], // above the line
-        })
-          .setLngLat(midpoint)
-          .addTo(mapLibre);
+            const mapLibre = (map as any).getMap();
 
-        radiusMarkerRef.current.label = newLabel;
-      }
-    },
-    [map],
-  );
+            if (!mapLibre.getSource('radius-line-source')) {
+                mapLibre.addSource('radius-line-source', {
+                    type: 'geojson',
+                    data: { type: 'FeatureCollection', features: [radiusLine, perpLine] },
+                });
 
-  const removeRadiusLabel = useCallback(() => {
-    const mapLibre = (map as any).getMap();
+                mapLibre.addLayer({
+                    id: 'radius-line-layer',
+                    source: 'radius-line-source',
+                    type: 'line',
+                    paint: {
+                        'line-color': '#000000',
+                        'line-width': 1,
+                    },
+                });
+            } else {
+                mapLibre.getSource('radius-line-source').setData({
+                    type: 'FeatureCollection',
+                    features: [radiusLine, perpLine],
+                });
+            }
 
-    // Remove line layer and source
-    if (mapLibre.getLayer("radius-line-layer")) {
-      mapLibre.removeLayer("radius-line-layer");
-    }
-    if (mapLibre.getSource("radius-line-source")) {
-      mapLibre.removeSource("radius-line-source");
-    }
+            const radiusText = `${radiusKm.toFixed(1)}km`;
+            const midpoint: [number, number] = [(centerCoords[0] + rightEdge[0]) / 2, (centerCoords[1] + rightEdge[1]) / 2];
 
-    // Remove HTML marker
-    if (radiusMarkerRef.current.label) {
-      radiusMarkerRef.current.label.remove();
-    }
+            if (radiusMarkerRef.current.label) {
+                radiusMarkerRef.current.label.setLngLat(midpoint);
+                const element = radiusMarkerRef.current.label.getElement();
+                element.textContent = radiusText;
+            } else {
+                const labelElement = document.createElement('div');
+                Object.assign(labelElement.style, radiusLabelStyles);
+                labelElement.textContent = radiusText;
 
-    radiusMarkerRef.current = { line: null, label: null };
-  }, [map]);
+                const newLabel = new Marker({
+                    element: labelElement,
+                    anchor: 'center',
+                    offset: [0, -10],
+                })
+                    .setLngLat(midpoint)
+                    .addTo(mapLibre);
 
-  /** Start Drawing */
-  const startDrawing = useCallback(
-    ({ drawingMode, options }: UseDrawShapeOptions) => {
-      let isDragging = false;
-      let dragCenter: [number, number] | null = null;
+                radiusMarkerRef.current.label = newLabel;
+            }
+        },
+        [map],
+    );
 
-      const handleMouseMove = (e: MapMouseEvent) => {
-        if (!isDragging || drawingMode !== "drag_circle" || !dragCenter) {
-          return;
+    const removeRadiusLabel = useCallback(() => {
+        if (!map) {
+            return;
         }
 
-        const edge: [number, number] = [e.lngLat.lng, e.lngLat.lat];
-        updateRadiusLabel(dragCenter, edge);
-      };
+        const mapLibre = (map as any).getMap();
 
-      const handleMouseDown = (e: MapMouseEvent) => {
-        if (drawingMode === "drag_circle") {
-          isDragging = true;
-          dragCenter = [e.lngLat.lng, e.lngLat.lat];
-          map.on("mousemove", handleMouseMove);
+        if (mapLibre.getLayer('radius-line-layer')) {
+            mapLibre.removeLayer('radius-line-layer');
         }
-      };
-
-      const handleMouseUp = () => {
-        isDragging = false;
-        dragCenter = null;
-        map.off("mousemove", handleMouseMove);
-        removeRadiusLabel();
-      };
-
-      const removeMouseListeners = () => {
-        map.off("mousemove", handleMouseMove);
-        map.off("mousedown", handleMouseDown);
-        map.off("mouseup", handleMouseUp);
-      };
-
-      const handleDrawCreate = (event: DrawCreateEvent) => {
-        onAddFeatures(event.features);
-        removeMouseListeners();
-        setCursor("grab");
-        onDrawingEnd?.();
-        map.off("draw.create", handleDrawCreate);
-        map.off("draw.modechange", handleModeChange);
-        map.off("click", handleDragCircleClick);
-      };
-
-      const handleModeChange = (event: DrawModeChangeEvent) => {
-        if (event.mode === "simple_select") {
-          // drawing cancelled
-          if (drawingMode === "drag_circle") {
-            map.getMap().dragPan.enable();
-            setCursor("grab");
-          }
-          onDrawingEnd?.();
+        if (mapLibre.getSource('radius-line-source')) {
+            mapLibre.removeSource('radius-line-source');
         }
 
-        removeRadiusLabel();
-        removeMouseListeners();
-        map.off("draw.create", handleDrawCreate);
-        map.off("draw.modechange", handleModeChange);
-        map.off("click", handleDragCircleClick);
-      };
+        if (radiusMarkerRef.current.label) {
+            radiusMarkerRef.current.label.remove();
+        }
 
-      onDrawingStart?.();
+        radiusMarkerRef.current = { line: null, label: null };
+    }, [map]);
 
-      draw.changeMode<string>(
-        drawingMode,
-        drawingMode === "draw_circle" ? options : undefined,
-      );
+    const startDrawing = useCallback(
+        ({ drawingMode, options }: UseDrawShapeOptions) => {
+            if (!map || !draw) {
+                return;
+            }
 
-      // Set up mouse event listeners for drag_circle mode
-      if (drawingMode === "drag_circle") {
-        map.on("mousedown", handleMouseDown);
-        map.on("mouseup", handleMouseUp);
-      }
+            let isDragging = false;
+            let dragCenter: [number, number] | null = null;
 
-      const handleDragCircleClick = (e: MapMouseEvent) => {
-        showRadiusDialog((radius: number) => {
-          const center = [e.lngLat.lng, e.lngLat.lat];
-          const circleFeature = turf_circle(center, radius, {
-            units: "kilometers",
-          });
+            const handleMouseMove = (e: MapMouseEvent) => {
+                if (!isDragging || drawingMode !== 'drag_circle' || !dragCenter) {
+                    return;
+                }
 
-          const feature = {
-            id: crypto.randomUUID(),
-            type: "Feature" as const,
-            geometry: circleFeature.geometry,
-            properties: {
-              isCircle: true,
-              center: center,
-              radiusInKm: radius,
-              type: "circle",
+                const edge: [number, number] = [e.lngLat.lng, e.lngLat.lat];
+                updateRadiusLabel(dragCenter, edge);
+            };
+
+            const handleMouseDown = (e: MapMouseEvent) => {
+                if (drawingMode === 'drag_circle') {
+                    isDragging = true;
+                    dragCenter = [e.lngLat.lng, e.lngLat.lat];
+                    map.on('mousemove', handleMouseMove);
+                }
+            };
+
+            const handleMouseUp = () => {
+                isDragging = false;
+                dragCenter = null;
+                map.off('mousemove', handleMouseMove);
+                removeRadiusLabel();
+            };
+
+            const removeMouseListeners = () => {
+                map.off('mousemove', handleMouseMove);
+                map.off('mousedown', handleMouseDown);
+                map.off('mouseup', handleMouseUp);
+            };
+
+            const handleDrawCreate = (event: DrawCreateEvent) => {
+                onAddFeatures(event.features);
+                removeMouseListeners();
+                setCursor('grab');
+                onDrawingEnd?.();
+                map.off('draw.create', handleDrawCreate);
+                map.off('draw.modechange', handleModeChange);
+                map.off('click', handleDragCircleClick);
+            };
+
+            const handleModeChange = (event: DrawModeChangeEvent) => {
+                if (event.mode === 'simple_select') {
+                    if (drawingMode === 'drag_circle') {
+                        map.getMap().dragPan.enable();
+                        setCursor('grab');
+                    }
+                    onDrawingEnd?.();
+                }
+
+                removeRadiusLabel();
+                removeMouseListeners();
+                map.off('draw.create', handleDrawCreate);
+                map.off('draw.modechange', handleModeChange);
+                map.off('click', handleDragCircleClick);
+            };
+
+            onDrawingStart?.();
+
+            if (draw && typeof draw.changeMode === 'function') {
+                draw.changeMode<string>(drawingMode, drawingMode === 'draw_circle' ? options : undefined);
+            }
+
+            if (drawingMode === 'drag_circle') {
+                map.on('mousedown', handleMouseDown);
+                map.on('mouseup', handleMouseUp);
+            }
+
+            const handleDragCircleClick = (e: MapMouseEvent) => {
+                showRadiusDialog((radius: number) => {
+                    const center = [e.lngLat.lng, e.lngLat.lat];
+                    const circleFeature = turf_circle(center, radius, {
+                        units: 'kilometers',
+                    });
+
+                    const feature = {
+                        id: crypto.randomUUID(),
+                        type: 'Feature' as const,
+                        geometry: circleFeature.geometry,
+                        properties: {
+                            isCircle: true,
+                            center: center,
+                            radiusInKm: radius,
+                            type: 'circle',
+                        },
+                    };
+
+                    handleDrawCreate({
+                        type: 'draw.create',
+                        features: [feature],
+                        target: e.target as any,
+                    });
+
+                    map.getMap().dragPan.enable();
+                    setCursor('grab');
+
+                    if (draw && typeof draw.changeMode === 'function') {
+                        draw.changeMode('simple_select', { featureIds: [feature.id] });
+                    }
+                });
+            };
+
+            if (drawingMode === 'drag_circle') {
+                map.on('click', handleDragCircleClick);
+                setCursor('crosshair');
+            }
+
+            map.on('draw.delete', handleDrawEvent);
+            map.on('draw.create', handleDrawCreate);
+            map.on('draw.modechange', handleModeChange);
+        },
+        [
+            draw,
+            map,
+            onDrawingStart,
+            onDrawingEnd,
+            onAddFeatures,
+            handleDrawEvent,
+            updateRadiusLabel,
+            removeRadiusLabel,
+            showRadiusDialog,
+            setCursor,
+        ],
+    );
+
+    useEffect(() => {
+        if (!map) {
+            return;
+        }
+        map.on('draw.update', handleDrawEvent);
+        map.on('draw.delete', handleDrawEvent);
+        return () => {
+            if (map && typeof map.off === 'function') {
+                try {
+                    map.off('draw.update', handleDrawEvent);
+                    map.off('draw.delete', handleDrawEvent);
+                } catch (error) {
+                    console.warn('Failed to cleanup map event listeners:', error);
+                }
+            }
+        };
+    }, [map, handleDrawEvent]);
+
+    useEffect(() => {
+        if (!isMapLoaded || !draw) {
+            return;
+        }
+        if (draw && typeof draw.add === 'function') {
+            try {
+                features.forEach(draw.add);
+            } catch (error) {
+                console.warn('Failed to add draw features:', error);
+            }
+        }
+        return () => {
+            if (draw && typeof draw.delete === 'function') {
+                try {
+                    draw.delete(features.map(({ id }) => id as string));
+                } catch (error) {
+                    console.warn('Failed to cleanup draw features:', error);
+                }
+            }
+        };
+    }, [draw, features, isMapLoaded]);
+
+    if (!context || !map) {
+        return {
+            features: [] as T[],
+            startDrawing: () => {
+                console.warn('Drawing mode not available - map context not found');
             },
-          };
-
-          handleDrawCreate({
-            type: "draw.create",
-            features: [feature],
-            target: e.target as any,
-          });
-
-          // re-enable drag pan (disabled by DragCircleMode)
-          map.getMap().dragPan.enable();
-          setCursor("grab");
-
-          draw.changeMode("simple_select", { featureIds: [feature.id] });
-        });
-      };
-
-      if (drawingMode === "drag_circle") {
-        map.on("click", handleDragCircleClick);
-        setCursor("crosshair");
-      }
-
-      map.on("draw.delete", handleDrawEvent);
-      map.on("draw.create", handleDrawCreate);
-      map.on("draw.modechange", handleModeChange);
-    },
-    [
-      draw,
-      map,
-      onDrawingStart,
-      onDrawingEnd,
-      onAddFeatures,
-      handleDrawEvent,
-      updateRadiusLabel,
-      removeRadiusLabel,
-      showRadiusDialog,
-      setCursor,
-    ],
-  );
-
-  /** Attach Event Listeners */
-  useEffect(() => {
-    map.on("draw.update", handleDrawEvent);
-    map.on("draw.delete", handleDrawEvent);
-    return () => {
-      map.off("draw.update", handleDrawEvent);
-      map.off("draw.delete", handleDrawEvent);
-    };
-  }, [map, handleDrawEvent]);
-
-  /** Redraw Features */
-  useEffect(() => {
-    if (!isMapLoaded) {
-      return;
+        };
     }
-    features.forEach(draw.add);
-    return () => {
-      draw.delete(features.map(({ id }) => id as string));
-    };
-  }, [draw, features, isMapLoaded]);
 
-  return { startDrawing, features };
+    return { startDrawing, features };
 };

@@ -1,115 +1,101 @@
-import {
-  AppBar,
-  Box,
-  Divider,
-  IconButton,
-  Menu,
-  MenuItem,
-  Toolbar,
-  Typography,
-} from "@mui/material";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
-import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
-import React, { useEffect, useState } from "react";
-import config from "@/config/app-config";
-import { signout } from "@/utils/signout";
+import { AppBar, Box, Toolbar, useMediaQuery } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Logo from './Logo';
+import MobileMenu from './MobileMenu';
+import Navigation from './Navigation';
+import Notifications from './Notifications';
+import UserMenu from './UserMenu';
 
-/** Overall header of the application */
+interface PageHeaderProps {
+    appName: string;
+}
 
-const PageHeader = ({ appName }: { appName: string }) => {
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
+const PageHeader = ({ appName }: PageHeaderProps) => {
+    const theme = useTheme();
+    const navigate = useNavigate();
+    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+    const [unseenNotifications] = useState(0);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const [user, setUser] = useState<any>(null);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await fetch(config.services.user);
-
-        if (!res.ok) {
-          throw new Error(`Error: ${res.statusText}`);
-        }
-        const json = await res.json();
-        setUser(json?.content);
-      } catch (err: any) {
-        setError(err.message);
-      }
+    const handleMobileMenuClick = () => {
+        setIsMobileMenuOpen(true);
     };
 
-    fetchData();
-  }, []);
+    const handleMobileMenuClose = () => {
+        setIsMobileMenuOpen(false);
+    };
 
-  const handleSignOut = () => {
-    signout();
-    handleClose();
-  };
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+    const handleNavigationClick = (item: string) => {
+        switch (item) {
+            case 'Data room':
+                navigate('/data-room');
+                break;
+            case 'Map':
+                navigate('/');
+                break;
+            default:
+                console.log(`Unknown navigation item: ${item}`);
+        }
+    };
 
-  return (
-    <AppBar position="static" sx={{ backgroundColor: "#002244" }}>
-      <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
-        <Box>
-          <img
-            src="/logo.svg"
-            alt={`${appName} Logo`}
-            style={{ width: 200, height: 75 }}
-          />
-        </Box>
-        <Box>
-          <IconButton
-            aria-controls={open ? "profile-menu" : undefined}
-            aria-haspopup="true"
-            aria-expanded={open ? "true" : undefined}
-            onClick={handleClick}
-          >
-            {open ? (
-              <AccountCircleIcon htmlColor="rgb(255, 207, 6)" />
-            ) : (
-              <AccountCircleOutlinedIcon htmlColor="#fff" />
-            )}
-          </IconButton>
-          <Menu
-            id="profile-menu"
-            anchorEl={anchorEl}
-            open={open}
-            onClose={handleClose}
-            MenuListProps={{
-              "aria-labelledby": "basic-button",
+    const handleNotificationClick = () => {
+        navigate('/notifications');
+    };
+
+    const handleMyProfileClick = () => {
+        navigate('/profile');
+    };
+
+    const handleAdminSettingsClick = () => {
+        navigate('/admin-settings');
+    };
+
+    return (
+        <AppBar
+            position="static"
+            sx={{
+                height: 60,
+                backgroundColor: 'secondary.main',
+                borderColor: 'primary.main',
             }}
-          >
-            <MenuItem disabled>
-              {user?.email ?? (error ? "Error loading user" : "Loading...")}
-            </MenuItem>
-            <Divider component="li" />
-            <MenuItem onClick={handleSignOut} sx={{ paddingLeft: "10px" }}>
-              <Box
+        >
+            <Toolbar
+                variant="dense"
                 sx={{
-                  display: "flex",
-                  justifyContent: "start",
-                  width: "100%",
-                  paddingTop: "2px",
-                  paddingBottom: "2px",
-                  gap: "8px",
-                  color: "#002244",
+                    height: '100%',
+                    display: 'flex',
+                    paddingX: '1rem',
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
                 }}
-              >
-                <LogoutOutlinedIcon sx={{ marginLeft: "-4px" }} />
-                <Typography component="span">Sign out</Typography>
-              </Box>
-            </MenuItem>
-          </Menu>
-        </Box>
-      </Toolbar>
-    </AppBar>
-  );
+                disableGutters
+            >
+                <Box display="flex" alignItems="center" gap={3}>
+                    <Box display="flex" alignItems="center" gap={1}>
+                        <Logo appName={appName} onMobileMenuClick={handleMobileMenuClick} />
+                    </Box>
+                    <Navigation onNavigationClick={handleNavigationClick} />
+                </Box>
+
+                <Box display="flex" gap={1} alignItems="center">
+                    <Notifications unseenCount={unseenNotifications} onClick={handleNotificationClick} />
+                    <UserMenu onMyProfileClick={handleMyProfileClick} onAdminSettingsClick={handleAdminSettingsClick} />
+                </Box>
+            </Toolbar>
+
+            {isMobile && (
+                <MobileMenu
+                    isOpen={isMobileMenuOpen}
+                    onClose={handleMobileMenuClose}
+                    onNavigationClick={handleNavigationClick}
+                    appName={appName}
+                />
+            )}
+        </AppBar>
+    );
 };
 
 export default PageHeader;
