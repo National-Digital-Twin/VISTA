@@ -1,12 +1,10 @@
 import '@testing-library/jest-dom';
 
-// Mock mapbox-gl-draw-geodesic to avoid MapboxDraw initialization issues
 jest.mock('mapbox-gl-draw-geodesic', () => ({
     isCircle: jest.fn(),
     getCircleCenter: jest.fn(),
 }));
 
-// mockout featureFlags to avoid import.meta issues without babel transforms
 jest.mock('./config/feature-flags', () => ({
     devTools: true,
     routing: true,
@@ -17,7 +15,6 @@ jest.mock('./config/feature-flags', () => ({
     assetTable: true,
 }));
 
-// mockout appConfig to avoid import.meta issues without babel transforms
 jest.mock('./config/app-config', () => ({
     map: {
         maptilerToken: '',
@@ -34,7 +31,27 @@ jest.mock('./config/app-config', () => ({
     configErrors: [],
 }));
 
-// mockout URL.createObjectURL for maplibre-gl to avoid type errors
-if (typeof globalThis.URL.createObjectURL === 'undefined') {
-    globalThis.URL.createObjectURL = jest.fn();
-}
+globalThis.URL.createObjectURL ??= jest.fn();
+
+// Polyfill structuredClone for Jest test environment
+globalThis.structuredClone ??= (obj: any) => {
+    if (obj === null || typeof obj !== 'object') {
+        return obj;
+    }
+    if (Object.prototype.toString.call(obj) === '[object Date]') {
+        return new Date(obj);
+    }
+    if (Array.isArray(obj)) {
+        return obj.map((item) => globalThis.structuredClone(item));
+    }
+    if (typeof obj === 'object') {
+        const cloned: any = {};
+        for (const key in obj) {
+            if (Object.hasOwn(obj, key)) {
+                cloned[key] = globalThis.structuredClone(obj[key]);
+            }
+        }
+        return cloned;
+    }
+    return obj;
+};

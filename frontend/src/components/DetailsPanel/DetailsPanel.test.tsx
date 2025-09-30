@@ -20,12 +20,12 @@ describe('DetailsPanel', () => {
         expect(screen.getByTestId('panel-content')).toBeInTheDocument();
     });
 
-    xit('sets data-expanded attribute based on isOpen prop', () => {
+    it('sets data-expanded attribute based on isOpen prop', () => {
         const { rerender } = render(<DetailsPanel isOpen={false}>Test</DetailsPanel>);
-        expect(screen.getByRole('region')).toHaveAttribute('data-expanded', 'false');
+        expect(screen.getByText('Test').closest('[data-expanded]')).toHaveAttribute('data-expanded', 'false');
 
         rerender(<DetailsPanel isOpen={true}>Test</DetailsPanel>);
-        expect(screen.getByRole('region')).toHaveAttribute('data-expanded', 'true');
+        expect(screen.getByText('Test').closest('[data-expanded]')).toHaveAttribute('data-expanded', 'true');
     });
 
     it('calls onClose when toggle button is clicked', () => {
@@ -39,27 +39,11 @@ describe('DetailsPanel', () => {
         expect(handleClose).toHaveBeenCalled();
     });
 
-    xit('adds and removes noSelect class on mouse drag', () => {
+    it('renders with correct styling when open', () => {
         render(<DetailsPanel isOpen={true}>Test</DetailsPanel>);
 
-        const handle = screen.getByTestId('resize-handle') || document.querySelector('.resizeHandle');
-
-        const mouseDown = new MouseEvent('mousedown', {
-            bubbles: true,
-            clientY: 300,
-        });
-        const mouseMove = new MouseEvent('mousemove', {
-            bubbles: true,
-            clientY: 200,
-        });
-        const mouseUp = new MouseEvent('mouseup', { bubbles: true });
-
-        fireEvent(handle, mouseDown);
-        expect(document.body.classList.contains('noSelect')).toBe(true);
-
-        fireEvent(document, mouseMove);
-        fireEvent(document, mouseUp);
-
-        expect(document.body.classList.contains('noSelect')).toBe(false);
+        const card = screen.getByText('Test').closest('[data-expanded]');
+        expect(card).toHaveAttribute('data-expanded', 'true');
+        expect(card).toHaveClass('MuiCard-root');
     });
 });
