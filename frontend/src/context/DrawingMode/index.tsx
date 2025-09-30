@@ -202,7 +202,7 @@ export const useDrawingMode = <T extends Feature>(
 
             const mapLibre = (map as any).getMap();
 
-            if (!mapLibre.getSource('radius-line-source')) {
+            if (mapLibre.getSource('radius-line-source') === undefined) {
                 mapLibre.addSource('radius-line-source', {
                     type: 'geojson',
                     data: { type: 'FeatureCollection', features: [radiusLine, perpLine] },
@@ -390,18 +390,7 @@ export const useDrawingMode = <T extends Feature>(
             map.on('draw.create', handleDrawCreate);
             map.on('draw.modechange', handleModeChange);
         },
-        [
-            draw,
-            map,
-            onDrawingStart,
-            onDrawingEnd,
-            onAddFeatures,
-            handleDrawEvent,
-            updateRadiusLabel,
-            removeRadiusLabel,
-            showRadiusDialog,
-            setCursor,
-        ],
+        [draw, map, onDrawingStart, onDrawingEnd, onAddFeatures, handleDrawEvent, updateRadiusLabel, removeRadiusLabel, showRadiusDialog, setCursor],
     );
 
     useEffect(() => {

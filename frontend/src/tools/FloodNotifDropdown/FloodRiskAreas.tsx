@@ -16,17 +16,7 @@ export default function FloodRiskAreas({ atRiskAreas }: FloodRiskAreasProps) {
                 Active flood warnings
             </Typography>
             {atRiskAreas.map((area, index) => {
-                const {
-                    name,
-                    value: currentLevel,
-                    trend,
-                    percentile_5,
-                    percentile_95,
-                    river,
-                    value_date,
-                    direction,
-                    river_name,
-                } = area.properties;
+                const { name, value: currentLevel, trend, percentile_5, percentile_95, river, value_date, direction, river_name } = area.properties;
 
                 return (
                     <Box key={`${name}-${index}`} className={styles.floodRiskArea}>
@@ -37,7 +27,7 @@ export default function FloodRiskAreas({ atRiskAreas }: FloodRiskAreasProps) {
                             River: {river || river_name || 'Unknown'}
                         </Typography>
                         <Typography variant="body2" color="textSecondary" sx={{ margin: 0 }}>
-                            Current Level: {currentLevel !== null ? currentLevel.toFixed(2) : 'Unknown'}
+                            Current Level: {currentLevel === null ? 'Unknown' : currentLevel.toFixed(2)}
                         </Typography>
                         <Typography variant="body2" color="textSecondary" sx={{ margin: 0 }}>
                             Trend: {trend || 'Unknown'} ({direction === 'u' ? 'Upstream' : 'Downstream'})
@@ -46,8 +36,8 @@ export default function FloodRiskAreas({ atRiskAreas }: FloodRiskAreasProps) {
                             Last updated: {value_date ? new Date(value_date).toLocaleString('en-GB', { hour12: true }) : 'Unknown'}
                         </Typography>
                         <Typography variant="body2" color="textSecondary" sx={{ margin: 0 }}>
-                            Normal range: {percentile_95 !== null ? percentile_95.toFixed(2) : 'Unknown'} -{' '}
-                            {percentile_5 !== null ? percentile_5.toFixed(2) : 'Unknown'}m
+                            Normal range: {percentile_95 === null ? 'Unknown' : percentile_95.toFixed(2)} -{' '}
+                            {percentile_5 === null ? 'Unknown' : percentile_5.toFixed(2)}m
                         </Typography>
                     </Box>
                 );

@@ -139,9 +139,7 @@ export default function ControlPanel({ connectedAssetsPanelOpen, hideConnectedAs
                     ))}
                 </Box>
             </Box>
-            {connectedAssetsPanelOpen && (
-                <ConnectedAssetsPanel connectedAssetData={connectedAssetData} hideConnectedAssets={hideConnectedAssets} />
-            )}
+            {connectedAssetsPanelOpen && <ConnectedAssetsPanel connectedAssetData={connectedAssetData} hideConnectedAssets={hideConnectedAssets} />}
         </Box>
     );
 }

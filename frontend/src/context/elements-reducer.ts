@@ -110,9 +110,7 @@ const elementsReducer = (state: State, action: Action) => {
         case REMOVE_ELEMENTS_BY_TYPE: {
             const { typeUri } = action;
             const assets = state.assets.filter((asset) => asset.type !== typeUri);
-            const dependencies = state.dependencies.filter(
-                (dependency) => dependency.dependent.type !== typeUri || dependency.provider.type !== typeUri,
-            );
+            const dependencies = state.dependencies.filter((dependency) => dependency.dependent.type !== typeUri || dependency.provider.type !== typeUri);
             return { ...state, assets, dependencies };
         }
         case FILTER_SELECTED_ELEMENTS: {

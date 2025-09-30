@@ -38,5 +38,5 @@ function searchMatches(searchQuery: string, term: string): boolean {
 }
 
 function normaliseTerm(term: string) {
-    return term.toLowerCase().replace(/\s/g, '');
+    return term.toLowerCase().replaceAll(/\s/g, '');
 }

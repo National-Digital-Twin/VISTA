@@ -53,7 +53,7 @@ export default function SearchBar() {
         };
     }, [handleClickOutside]);
 
-    const hasSelectedAssetTypes = Object.values(selectedAssetTypes).some((value) => value === true);
+    const hasSelectedAssetTypes = Object.values(selectedAssetTypes).includes(true);
     const showSidebar = selectedFloodAreas.length > 0 || hasSelectedAssetTypes;
 
     const showSideDropdown = isFocused;

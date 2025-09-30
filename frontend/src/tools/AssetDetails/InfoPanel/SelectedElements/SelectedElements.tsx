@@ -19,13 +19,7 @@ export default function SelectedElements({ selectedElements, showConnectedAssets
     }
 
     if (totalSelected > 0) {
-        return (
-            <ElementsList
-                selectedElements={selectedElements}
-                showConnectedAssets={showConnectedAssets}
-                setConnectedAssetData={setConnectedAssetData}
-            />
-        );
+        return <ElementsList selectedElements={selectedElements} showConnectedAssets={showConnectedAssets} setConnectedAssetData={setConnectedAssetData} />;
     }
 
     return (

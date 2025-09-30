@@ -1,4 +1,4 @@
-import React, { createContext, useContext } from 'react';
+import React, { createContext, useContext, useMemo } from 'react';
 import useDynamicProximity from './useDynamicProximity';
 
 interface DynamicProximityDrawingContextValue {
@@ -15,10 +15,10 @@ export function useDynamicProximityDrawingContext() {
     return context;
 }
 
-export default function DynamicProximityProvider({ children }: { children: React.ReactNode }) {
+export default function DynamicProximityProvider({ children }: { readonly children: React.ReactNode }) {
     const { startDrawingWithRange } = useDynamicProximity();
 
-    const contextValue = { startDrawingWithRange };
+    const contextValue = useMemo(() => ({ startDrawingWithRange }), [startDrawingWithRange]);
 
     return <DynamicProximityDrawingContext.Provider value={contextValue}>{children}</DynamicProximityDrawingContext.Provider>;
 }

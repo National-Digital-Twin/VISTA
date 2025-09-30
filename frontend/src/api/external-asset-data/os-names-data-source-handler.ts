@@ -20,9 +20,7 @@ export class OsNamesDataSourceHandler extends DataSourceHandler {
      * @returns
      */
     public buildUrlsForDataSource(assetSpecification: AssetSpecification): string[] {
-        return [
-            `/transparent-proxy/os-names/search/names/v1/find?query=Wight&fq=BBOX:${this.locator}&fq=LOCAL_TYPE:${assetSpecification.description}`,
-        ];
+        return [`/transparent-proxy/os-names/search/names/v1/find?query=Wight&fq=BBOX:${this.locator}&fq=LOCAL_TYPE:${assetSpecification.description}`];
     }
 
     public async fetchDataForAssetSpecification(assetSpecification: AssetSpecification, url: string): Promise<Feature[]> {

@@ -1,14 +1,13 @@
 import { expect, Page } from '@playwright/test';
 import PlaywrightWrapper from '../helper/wrapper/PlaywrightWrappers';
-import { Console } from 'winston/lib/winston/transports';
 
 export default class LayersPage {
-    private base: PlaywrightWrapper;
-    constructor(private page: Page) {
+    private readonly base: PlaywrightWrapper;
+    constructor(private readonly page: Page) {
         this.base = new PlaywrightWrapper(page);
     }
 
-    private Elements = {
+    private readonly Elements = {
         menuParalog: 'Paralog',
         polygon: 'svg path, .polygon-layer, canvas',
     };
@@ -25,7 +24,6 @@ export default class LayersPage {
         await polygonHeading.scrollIntoViewIfNeeded();
         await polygonHeading.waitFor({ state: 'visible' });
         await polygonHeading.click();
-        const polygonExists = await this.page.locator(this.Elements.polygon).count();
         const drawPolygonButton = this.page.getByRole('button', {
             name: 'Draw Polygon',
         });

@@ -46,15 +46,7 @@ async function getDependentDetails(assetUri: string, connectionStrength: number)
     };
 }
 
-const getDependentDetailQueriesConfig = ({
-    assetDependents,
-    isDependency,
-    dependent,
-}: {
-    assetDependents: any[];
-    isDependency: boolean;
-    dependent: any;
-}) => {
+const getDependentDetailQueriesConfig = ({ assetDependents, isDependency, dependent }: { assetDependents: any[]; isDependency: boolean; dependent: any }) => {
     if (isDependency) {
         return [
             {

@@ -3,7 +3,7 @@ import Papa from 'papaparse';
 import { NaptanDataSourceHandler } from './naptan-data-source-handler';
 import { AssetSpecification } from '@/hooks/queries/dataset-utils';
 
-global.fetch = jest.fn();
+globalThis.fetch = jest.fn();
 jest.mock('papaparse', () => ({
     parse: jest.fn(),
 }));

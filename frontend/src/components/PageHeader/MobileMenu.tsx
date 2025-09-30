@@ -4,10 +4,10 @@ import { useTheme } from '@mui/material/styles';
 import { useNavigation } from '@/hooks/useNavigation';
 
 interface MobileMenuProps {
-    isOpen: boolean;
-    onClose: () => void;
-    onNavigationClick?: (item: string) => void;
-    appName: string;
+    readonly isOpen: boolean;
+    readonly onClose: () => void;
+    readonly onNavigationClick?: (item: string) => void;
+    readonly appName: string;
 }
 
 const DRAWER_WIDTH = 320;

@@ -54,8 +54,5 @@ export const useAddMarker = ({ onSelectMarkerPosition }: UseAddMarkerOptions) =>
         [abortMousePositioning],
     );
 
-    return useMemo(
-        () => ({ startAddMarker, abortMousePositioning, isSelectingPosition }),
-        [startAddMarker, abortMousePositioning, isSelectingPosition],
-    );
+    return useMemo(() => ({ startAddMarker, abortMousePositioning, isSelectingPosition }), [startAddMarker, abortMousePositioning, isSelectingPosition]);
 };

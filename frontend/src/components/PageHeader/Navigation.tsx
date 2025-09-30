@@ -2,7 +2,7 @@ import { Box, Button, useTheme } from '@mui/material';
 import { useNavigation } from '@/hooks/useNavigation';
 
 interface NavigationProps {
-    onNavigationClick?: (item: string) => void;
+    readonly onNavigationClick?: (item: string) => void;
 }
 
 export default function Navigation({ onNavigationClick }: NavigationProps) {

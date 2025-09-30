@@ -13,11 +13,7 @@ export default function InfoPanel({ showConnectedAssets, setConnectedAssetData }
 
     return (
         <div className={`${styles.infoPanelContainer} overflow-y-auto`}>
-            <SelectedElements
-                selectedElements={selectedElements}
-                showConnectedAssets={showConnectedAssets}
-                setConnectedAssetData={setConnectedAssetData}
-            />
+            <SelectedElements selectedElements={selectedElements} showConnectedAssets={showConnectedAssets} setConnectedAssetData={setConnectedAssetData} />
         </div>
     );
 }

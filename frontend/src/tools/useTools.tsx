@@ -44,7 +44,7 @@ export function useTools(): (order: ToolOrder) => Tool[] {
     } = useQuery({
         queryKey: ['tools'],
         queryFn: async () => {
-            const selectedTools = TOOLS.filter((value) => value) as (() => Promise<Tool>)[];
+            const selectedTools = TOOLS.filter(Boolean) as (() => Promise<Tool>)[];
             return Promise.all(selectedTools.map((fn) => fn()));
         },
     });

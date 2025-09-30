@@ -2,8 +2,8 @@ import MenuIcon from '@mui/icons-material/Menu';
 import { Box, IconButton, useMediaQuery, useTheme } from '@mui/material';
 
 interface LogoProps {
-    appName: string;
-    onMobileMenuClick?: () => void;
+    readonly appName: string;
+    readonly onMobileMenuClick?: () => void;
 }
 
 export default function Logo({ appName, onMobileMenuClick }: LogoProps) {

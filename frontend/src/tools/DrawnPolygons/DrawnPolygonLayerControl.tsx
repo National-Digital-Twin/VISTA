@@ -8,9 +8,7 @@ export default function DrawnPolygonLayerControl({ searchQuery }: Readonly<Layer
 
     const matchesParentCategory =
         searchQuery &&
-        parentCategoryTerms.some(
-            (term) => term.toLowerCase().includes(searchQuery.toLowerCase()) || searchQuery.toLowerCase().includes(term.toLowerCase()),
-        );
+        parentCategoryTerms.some((term) => term.toLowerCase().includes(searchQuery.toLowerCase()) || searchQuery.toLowerCase().includes(term.toLowerCase()));
 
     const matchesAnyTerm = !searchQuery || matchesParentCategory;
 
@@ -22,9 +20,7 @@ export default function DrawnPolygonLayerControl({ searchQuery }: Readonly<Layer
 
     return (
         <ComplexLayerControl title="Drawn Polygons" autoShowHide>
-            {(updateSelectedCount) => (
-                <DrawnPolygonMenuBody searchQuery={matchesParentCategory ? '' : searchQuery} updateSelectedCount={updateSelectedCount} />
-            )}
+            {(updateSelectedCount) => <DrawnPolygonMenuBody searchQuery={matchesParentCategory ? '' : searchQuery} updateSelectedCount={updateSelectedCount} />}
         </ComplexLayerControl>
     );
 }

@@ -9,10 +9,7 @@ export interface EnvironmentallySensitiveAreasMenuBodyProps {
     readonly updateSelectedCount?: (isSelected: boolean) => void;
 }
 
-export function EnvironmentallySensitiveAreasMenuBody({
-    searchQuery = '',
-    updateSelectedCount,
-}: Readonly<EnvironmentallySensitiveAreasMenuBodyProps>) {
+export function EnvironmentallySensitiveAreasMenuBody({ searchQuery = '', updateSelectedCount }: Readonly<EnvironmentallySensitiveAreasMenuBodyProps>) {
     const { enabled, toggle } = useLayer('environmentally-sensitive-areas');
 
     const enabledLayers = useEnvironmentallySensitiveAreasSharedStore((state) => state.environmentallySensitiveAreasEnabledLayers);
@@ -24,7 +21,7 @@ export function EnvironmentallySensitiveAreasMenuBody({
     // Notify parent about the initial state when the component mounts
     useEffect(() => {
         if (updateSelectedCount && !hasMounted.current) {
-            const anyLayerEnabled = Object.values(enabledLayers).some((isEnabled) => isEnabled);
+            const anyLayerEnabled = Object.values(enabledLayers).some(Boolean);
             if (anyLayerEnabled) {
                 updateSelectedCount(true); // Notify parent only if any layer is enabled
             }

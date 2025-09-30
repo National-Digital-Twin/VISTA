@@ -13,11 +13,11 @@ export enum STATION_TYPES {
 export type StationType = STATION_TYPES;
 
 const STATION_TYPES_MAP = {
-    'http://environment.data.gov.uk/flood-monitoring/def/core/GroundwaterDippedOnly': STATION_TYPES.GroundwaterDippedOnly,
-    'http://environment.data.gov.uk/flood-monitoring/def/core/Groundwater': STATION_TYPES.Groundwater,
-    'http://environment.data.gov.uk/flood-monitoring/def/core/RainfallStation': STATION_TYPES.RainfallStation,
-    'http://environment.data.gov.uk/flood-monitoring/def/core/RiverFlow': STATION_TYPES.RiverFlow,
-    'http://environment.data.gov.uk/flood-monitoring/def/core/RiverLevel': STATION_TYPES.RiverLevel,
+    'https://environment.data.gov.uk/flood-monitoring/def/core/GroundwaterDippedOnly': STATION_TYPES.GroundwaterDippedOnly,
+    'https://environment.data.gov.uk/flood-monitoring/def/core/Groundwater': STATION_TYPES.Groundwater,
+    'https://environment.data.gov.uk/flood-monitoring/def/core/RainfallStation': STATION_TYPES.RainfallStation,
+    'https://environment.data.gov.uk/flood-monitoring/def/core/RiverFlow': STATION_TYPES.RiverFlow,
+    'https://environment.data.gov.uk/flood-monitoring/def/core/RiverLevel': STATION_TYPES.RiverLevel,
 };
 
 export interface HydrologyMeasure {
@@ -53,12 +53,12 @@ export async function fetchStations() {
         `${BASE_URL}/stations?status=statusActive&lat=${latitude}&long=${longitude}&dist=${dist}&_limit=20000&&_projection=RLOIid&_withView`,
     );
     const payload = await response.json();
-    const hydrologyItems: HydrologyStation[] = payload.items.map((item) => ({
+    const hydrologyItems: HydrologyStation[] = payload.items.map((item: any) => ({
         id: item.stationGuid,
         name: item.label,
         latitude: item.lat,
         longitude: item.long,
-        types: item.type.map((itemType) => STATION_TYPES_MAP[itemType['@id']]),
+        types: item.type.map((itemType: any) => STATION_TYPES_MAP[itemType['@id'] as keyof typeof STATION_TYPES_MAP]),
         measures: item.measures,
         RLOIid: item.RLOIid,
     }));

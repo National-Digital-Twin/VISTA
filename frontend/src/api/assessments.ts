@@ -45,10 +45,7 @@ interface AssessmentDependency {
     criticalityRating: number;
 }
 
-export const fetchAssessmentDependencies = async (
-    types: string[],
-    assessment: string = 'DEFAULT_ASSESSMENT',
-): Promise<AssessmentDependency[]> => {
+export const fetchAssessmentDependencies = async (types: string[], assessment: string = 'DEFAULT_ASSESSMENT'): Promise<AssessmentDependency[]> => {
     try {
         const body = JSON.stringify({ assessment, types });
 

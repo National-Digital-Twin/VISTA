@@ -177,14 +177,14 @@ function DetailPanels() {
             key: string;
         }[] = [];
 
-        tools('definition-order').forEach((tool) => {
+        for (const tool of tools('definition-order')) {
             if (tool.DetailPanel) {
                 panels.push({
                     component: tool.DetailPanel,
                     key: tool.TOOL_NAME,
                 });
             }
-        });
+        }
 
         return panels;
     }, [tools]);

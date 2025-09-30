@@ -44,20 +44,9 @@ export default function MapStyleButton() {
                 >
                     <FormControl component="fieldset">
                         <FormLabel component="legend">Map Styles</FormLabel>
-                        <RadioGroup
-                            aria-label="map styles"
-                            name="map-styles"
-                            value={mapStyleKey}
-                            onChange={(event) => setMapStyleKey(event.target.value)}
-                        >
+                        <RadioGroup aria-label="map styles" name="map-styles" value={mapStyleKey} onChange={(event) => setMapStyleKey(event.target.value)}>
                             {mapMenuItems.map((item) => (
-                                <FormControlLabel
-                                    key={item.name}
-                                    value={item.key}
-                                    control={<Radio />}
-                                    label={item.name}
-                                    onClick={item.onItemClick}
-                                />
+                                <FormControlLabel key={item.name} value={item.key} control={<Radio />} label={item.name} onClick={item.onItemClick} />
                             ))}
                         </RadioGroup>
                     </FormControl>

@@ -40,11 +40,7 @@ export interface ShowPointerCoordsContextProviderProps {
     readonly children: React.ReactNode;
 }
 
-export function ShowPointerCoordsContextProvider({
-    showPointerCoords,
-    setShowPointerCoords,
-    children,
-}: ShowPointerCoordsContextProviderProps) {
+export function ShowPointerCoordsContextProvider({ showPointerCoords, setShowPointerCoords, children }: ShowPointerCoordsContextProviderProps) {
     const contextValue: ShowPointerCoords = useMemo(
         () => ({
             showPointerCoords,

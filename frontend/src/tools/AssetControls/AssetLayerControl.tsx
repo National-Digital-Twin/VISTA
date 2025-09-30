@@ -171,12 +171,7 @@ function AssessmentCategoryLayerControls({ category, assets }: Readonly<Assessme
         <ComplexLayerControl title={category}>
             {(updateSelectedCount) =>
                 Object.entries(assetsBySecondaryCategory).map(([category, types]) => (
-                    <SecondaryCategoryControls
-                        key={category}
-                        types={types}
-                        onClickType={handleTypeClick}
-                        updateSelectedCount={updateSelectedCount}
-                    />
+                    <SecondaryCategoryControls key={category} types={types} onClickType={handleTypeClick} updateSelectedCount={updateSelectedCount} />
                 ))
             }
         </ComplexLayerControl>

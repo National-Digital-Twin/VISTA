@@ -16,10 +16,10 @@ export default function RadiusDialog({ open, onClose, onConfirm }: RadiusDialogP
         const value = event.target.value;
         setRadius(value);
 
-        const numValue = parseFloat(value);
+        const numValue = Number.parseFloat(value);
         if (value === '') {
             setError('');
-        } else if (isNaN(numValue) || numValue <= 0) {
+        } else if (Number.isNaN(numValue) || numValue <= 0) {
             setError('Please enter a valid positive number');
         } else {
             setError('');
@@ -27,8 +27,8 @@ export default function RadiusDialog({ open, onClose, onConfirm }: RadiusDialogP
     };
 
     const handleConfirm = () => {
-        const numRadius = parseFloat(radius);
-        if (!isNaN(numRadius) && numRadius > 0) {
+        const numRadius = Number.parseFloat(radius);
+        if (!Number.isNaN(numRadius) && numRadius > 0) {
             onConfirm(numRadius);
             setRadius('');
             setError('');

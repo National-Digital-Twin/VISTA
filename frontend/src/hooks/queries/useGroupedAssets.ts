@@ -24,7 +24,7 @@ type DatasetState<T = any> = {
  * Fetches assets and dependencies.
  */
 const useGroupedAssets = ({ assessment, searchFilter }: UseGroupedAssetsOptions) => {
-    const searchFilterWithoutWhitespace = (searchFilter ?? '').toLowerCase().replace(/\s/g, '');
+    const searchFilterWithoutWhitespace = (searchFilter ?? '').toLowerCase().replaceAll(/\s/g, '');
 
     const emptyResponseStillLoading = {
         filteredAssets: [],
@@ -68,11 +68,11 @@ const useGroupedAssets = ({ assessment, searchFilter }: UseGroupedAssetsOptions)
 
     const assets = useMemo(() => {
         const assets: Asset[] = [];
-        datasets.forEach((ds) => {
+        for (const ds of datasets) {
             if (ds?.data) {
                 assets.push(...ds.data);
             }
-        });
+        }
         return assets;
     }, [datasets]);
 
@@ -96,9 +96,7 @@ const useGroupedAssets = ({ assessment, searchFilter }: UseGroupedAssetsOptions)
             if (!assets) {
                 return;
             }
-            const assetTypes = assets
-                .map((asset: { type: any }) => asset.type)
-                .filter((value, index, self) => self.indexOf(value) === index);
+            const assetTypes = assets.map((asset: { type: any }) => asset.type).filter((value, index, self) => self.indexOf(value) === index);
             let dependencies: Dependency[];
             if (assetTypes.length > 0) {
                 const dependencyData = await fetchAssessmentDependencies(assetTypes, assessment);
@@ -145,16 +143,13 @@ const useGroupedAssets = ({ assessment, searchFilter }: UseGroupedAssetsOptions)
         if (!filteredAssets) {
             return [];
         }
-        return filteredAssets.filter((asset) => typeUris.some((uri) => uri === asset.type));
+        return filteredAssets.filter((asset) => typeUris.includes(asset.type));
     };
     const getDependenciesByTypes = (typeUris: string[]) => {
         if (!dependencies) {
             return [];
         }
-        return dependencies.filter(
-            (dependency) =>
-                typeUris.some((uri) => uri === dependency.provider.type) && typeUris.some((uri) => uri === dependency.dependent.type),
-        );
+        return dependencies.filter((dependency) => typeUris.includes(dependency.provider.type) && typeUris.includes(dependency.dependent.type));
     };
 
     const getDependentAssets = (assets: Asset[]) => {

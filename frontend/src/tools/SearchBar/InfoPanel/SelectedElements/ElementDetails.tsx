@@ -83,18 +83,8 @@ export default function ElementDetails({ element, expand }: Readonly<ElementDefa
                         </div>
                         <ResidentialInformation isAsset={elemIsAsset} primaryType={element.primaryType} uri={element.uri} />
                         <Residents isAsset={elemIsAsset} assetUri={element.uri} primaryType={element.primaryType} />
-                        <Dependents
-                            isAsset={elemIsAsset}
-                            isDependency={elemIsDependency}
-                            assetUri={element.uri}
-                            dependent={element?.dependent}
-                        />
-                        <Providers
-                            isAsset={elemIsAsset}
-                            isDependency={elemIsDependency}
-                            assetUri={element.uri}
-                            provider={element?.provider}
-                        />
+                        <Dependents isAsset={elemIsAsset} isDependency={elemIsDependency} assetUri={element.uri} dependent={element?.dependent} />
+                        <Providers isAsset={elemIsAsset} isDependency={elemIsDependency} assetUri={element.uri} provider={element?.provider} />
                     </div>
                 )}
             </li>
@@ -134,11 +124,7 @@ function Details({ expand, details }: Readonly<DetailsProps>) {
     return (
         <div className={styles.assetDetails}>
             <div className={styles.assetDetailsHeader}>
-                {elementType === 'asset' ? (
-                    <TypeIcon size="sm" type={type} />
-                ) : (
-                    <span className={styles.assetIcon} style={{ ...icon.style }} />
-                )}
+                {elementType === 'asset' ? <TypeIcon size="sm" type={type} /> : <span className={styles.assetIcon} style={{ ...icon.style }} />}
                 <div>
                     <h2 className={styles.assetDetailsTitle}>{title}</h2>
                     {type && <p className={styles.assetDetailsType}>{noCase(getURIFragment(type))}</p>}

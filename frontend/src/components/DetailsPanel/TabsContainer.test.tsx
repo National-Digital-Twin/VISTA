@@ -20,9 +20,9 @@ describe('TabsContainer', () => {
 
     it('renders all tab labels', () => {
         render(<TabsContainer tabs={tabs} />);
-        tabs.forEach((tab) => {
+        for (const tab of tabs) {
             expect(screen.getByText(tab.label)).toBeInTheDocument();
-        });
+        }
     });
 
     it('shows content for the first tab by default', () => {

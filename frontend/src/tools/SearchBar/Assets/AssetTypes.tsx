@@ -101,7 +101,21 @@ function AssetTypeCategory({ category, selectedCategory, assets, onCategoryClick
 
     return (
         <>
-            <div className="menu-item flex items-center gap-2" data-selected={isCategorySelected} onClick={onClick}>
+            <div
+                className="menu-item flex items-center gap-2"
+                data-selected={isCategorySelected}
+                onClick={onClick}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        onClick();
+                    }
+                }}
+                aria-pressed={isCategorySelected}
+                aria-label={`${capitalize(category)} category with ${assets.length} assets`}
+            >
                 <div className="flex items-center">
                     {capitalize(category)} ({assets.length})
                 </div>

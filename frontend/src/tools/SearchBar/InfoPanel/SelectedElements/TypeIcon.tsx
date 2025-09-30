@@ -30,13 +30,7 @@ function NewTypeIcon({ size = 'base', type, disabled = false }: TypeIconProps) {
     );
 
     return (
-        <div
-            className={styles.typeIcon}
-            style={style}
-            aria-label={iconProps.alt}
-            data-type-icon-size={dataSize}
-            data-type-icon-disabled={dataDisabled}
-        >
+        <div className={styles.typeIcon} style={style} aria-label={iconProps.alt} data-type-icon-size={dataSize} data-type-icon-disabled={dataDisabled}>
             {hasIcon ? <i className={iconProps.faIcon} title={iconProps.alt} /> : iconProps.iconFallbackText}
         </div>
     );

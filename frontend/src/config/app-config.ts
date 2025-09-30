@@ -18,8 +18,7 @@ const config = {
 
 if (!config.api.url) {
     config.configErrors.push(
-        "No VITE_ONTOLOGY_SERVICE_URL is specified in .env - please check it's present. " +
-            'For local dev this is probably http://localhost:3030',
+        "No VITE_ONTOLOGY_SERVICE_URL is specified in .env - please check it's present. " + 'For local dev this is probably http://localhost:3030',
     );
 }
 

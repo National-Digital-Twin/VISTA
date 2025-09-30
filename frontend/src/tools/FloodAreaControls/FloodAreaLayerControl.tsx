@@ -8,9 +8,7 @@ export default function FloodAreaLayerControl({ searchQuery }: Readonly<LayerCon
 
     const matchesParentCategory =
         searchQuery &&
-        parentCategoryTerms.some(
-            (term) => term.toLowerCase().includes(searchQuery.toLowerCase()) || searchQuery.toLowerCase().includes(term.toLowerCase()),
-        );
+        parentCategoryTerms.some((term) => term.toLowerCase().includes(searchQuery.toLowerCase()) || searchQuery.toLowerCase().includes(term.toLowerCase()));
 
     const matchesAnyTerm = !searchQuery || matchesParentCategory;
 
@@ -20,9 +18,7 @@ export default function FloodAreaLayerControl({ searchQuery }: Readonly<LayerCon
 
     return (
         <ComplexLayerControl title="Flood Polygons" autoShowHide>
-            {(updateSelectedCount) => (
-                <FloodAreasMenuBody searchQuery={matchesParentCategory ? '' : searchQuery} updateSelectedCount={updateSelectedCount} />
-            )}
+            {(updateSelectedCount) => <FloodAreasMenuBody searchQuery={matchesParentCategory ? '' : searchQuery} updateSelectedCount={updateSelectedCount} />}
         </ComplexLayerControl>
     );
 }

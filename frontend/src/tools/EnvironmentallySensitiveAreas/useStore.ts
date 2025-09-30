@@ -7,19 +7,17 @@ interface EnvironmentallySensitiveAreasState {
     toggleEnvironmentallySensitiveAreasLayer: (layerId: EnvironmentallySensitiveAreasLayerId) => void;
 }
 
-export const useEnvironmentallySensitiveAreasSharedStore = createStore<EnvironmentallySensitiveAreasState>(
-    'environmentally-sensitive-areas',
-    (set) => ({
-        environmentallySensitiveAreasEnabledLayers: Object.fromEntries(
-            Object.keys(layers).map((layer) => [layer, false] as const),
-        ) as Record<EnvironmentallySensitiveAreasLayerId, boolean>,
+export const useEnvironmentallySensitiveAreasSharedStore = createStore<EnvironmentallySensitiveAreasState>('environmentally-sensitive-areas', (set) => ({
+    environmentallySensitiveAreasEnabledLayers: Object.fromEntries(Object.keys(layers).map((layer) => [layer, false] as const)) as Record<
+        EnvironmentallySensitiveAreasLayerId,
+        boolean
+    >,
 
-        toggleEnvironmentallySensitiveAreasLayer: (layerName) =>
-            set((state) => ({
-                environmentallySensitiveAreasEnabledLayers: {
-                    ...state.environmentallySensitiveAreasEnabledLayers,
-                    [layerName]: !state.environmentallySensitiveAreasEnabledLayers[layerName],
-                },
-            })),
-    }),
-);
+    toggleEnvironmentallySensitiveAreasLayer: (layerName) =>
+        set((state) => ({
+            environmentallySensitiveAreasEnabledLayers: {
+                ...state.environmentallySensitiveAreasEnabledLayers,
+                [layerName]: !state.environmentallySensitiveAreasEnabledLayers[layerName],
+            },
+        })),
+}));

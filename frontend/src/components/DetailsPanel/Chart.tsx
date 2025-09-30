@@ -14,17 +14,7 @@ export interface ChartProps<T> {
 
 const ChartBody = lazy(() => import('./ChartBody'));
 
-export default function Chart<T>({
-    name,
-    rawData,
-    isLoading,
-    isError,
-    parameter,
-    getUnit,
-    dataTransform,
-    className,
-    additionalChartElements,
-}: ChartProps<T>) {
+export default function Chart<T>({ name, rawData, isLoading, isError, parameter, getUnit, dataTransform, className, additionalChartElements }: ChartProps<T>) {
     const unit = useMemo(() => getUnit(parameter), [getUnit, parameter]);
     const data = useMemo(() => rawData?.map(dataTransform) || [], [rawData, dataTransform]);
 

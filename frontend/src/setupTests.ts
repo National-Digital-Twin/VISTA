@@ -35,6 +35,6 @@ jest.mock('./config/app-config', () => ({
 }));
 
 // mockout URL.createObjectURL for maplibre-gl to avoid type errors
-if (typeof window.URL.createObjectURL === 'undefined') {
-    window.URL.createObjectURL = jest.fn();
+if (typeof globalThis.URL.createObjectURL === 'undefined') {
+    globalThis.URL.createObjectURL = jest.fn();
 }

@@ -42,11 +42,7 @@ export default function Dependents({ assetUri, dependent, isAsset, isDependency 
     const handleClick = () => {};
 
     return (
-        <DetailsSection
-            expand={expand}
-            onToggle={handleToggleSection}
-            title={`${totalDependents} dependent asset${totalDependents > 1 ? 's' : ''}`}
-        >
+        <DetailsSection expand={expand} onToggle={handleToggleSection} title={`${totalDependents} dependent asset${totalDependents > 1 ? 's' : ''}`}>
             <div className={styles.sectionInfo}>
                 <FontAwesomeIcon icon={faInfoCircle} className={styles.infoIcon} />
                 <span>Dependent assets: Assets that rely on/ consume services from this asset.</span>

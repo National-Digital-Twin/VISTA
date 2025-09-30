@@ -2,7 +2,7 @@ import { Feature, Point } from 'geojson';
 import { Link, OsNgdDataSourceHandler } from './os-ngd-data-source-handler';
 import { AssetSpecification } from '@/hooks/queries/dataset-utils';
 
-global.fetch = jest.fn();
+globalThis.fetch = jest.fn();
 
 function mockFetch(obj: any) {
     (fetch as jest.Mock).mockImplementationOnce(() =>
@@ -104,9 +104,9 @@ describe('fetchDataForAssetSpecification', () => {
         ];
         // we stringify and then parse these so they are effectively cloned
         // otherwise the mocks will both return an empty array for links
-        mockFetch(JSON.parse(JSON.stringify(response)));
+        mockFetch(structuredClone(response));
         response.links = [];
-        mockFetch(JSON.parse(JSON.stringify(response)));
+        mockFetch(structuredClone(response));
 
         const result = (await handler.fetchDataForAssetSpecification({} as AssetSpecification, 'first')) as Feature<Point>[];
 
@@ -124,7 +124,7 @@ describe('fetchDataForAssetSpecification', () => {
                 rel: 'next',
             },
         ];
-        mockFetch(JSON.parse(JSON.stringify(response)));
+        mockFetch(structuredClone(response));
 
         await handler.fetchDataForAssetSpecification({ expectedCount: 330 } as AssetSpecification, url);
 
@@ -142,9 +142,9 @@ describe('fetchDataForAssetSpecification', () => {
         ];
         // we stringify and then parse these so they are effectively cloned
         // otherwise the mocks will both return an empty array for links
-        mockFetch(JSON.parse(JSON.stringify(response)));
+        mockFetch(structuredClone(response));
         response.links = [];
-        mockFetch(JSON.parse(JSON.stringify(response)));
+        mockFetch(structuredClone(response));
 
         await handler.fetchDataForAssetSpecification({ expectedCount: 125 } as AssetSpecification, url);
 
@@ -164,10 +164,10 @@ describe('fetchDataForAssetSpecification', () => {
 
         // we stringify and then parse these so they are effectively cloned
         // otherwise the mocks will both return an empty array for links
-        mockFetch(JSON.parse(JSON.stringify(response)));
+        mockFetch(structuredClone(response));
         response.links = [];
         response.numberReturned = 25;
-        mockFetch(JSON.parse(JSON.stringify(response)));
+        mockFetch(structuredClone(response));
 
         await handler.fetchDataForAssetSpecification({ expectedCount: 190 } as AssetSpecification, url);
 

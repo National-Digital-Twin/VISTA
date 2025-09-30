@@ -2,7 +2,7 @@ import config from '@/config/app-config';
 
 async function clearServiceWorkerCaches() {
     // Clear service worker cache
-    if ('caches' in window) {
+    if ('caches' in globalThis) {
         await caches.keys().then((cacheNames) => {
             Promise.all(cacheNames.map((cacheName) => caches.delete(cacheName)));
         });

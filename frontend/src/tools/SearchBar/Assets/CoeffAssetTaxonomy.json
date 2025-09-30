@@ -82,16 +82,7 @@
         "HistoricSite",
         "BrownfieldSite"
     ],
-    "Industrial and Commercial": [
-        "IndustrialPark",
-        "IndustrialSpace",
-        "Garage",
-        "DiningBuilding",
-        "RetailKiosk",
-        "Office",
-        "PostOfficeBuilding",
-        "Hotel"
-    ],
+    "Industrial and Commercial": ["IndustrialPark", "IndustrialSpace", "Garage", "DiningBuilding", "RetailKiosk", "Office", "PostOfficeBuilding", "Hotel"],
     "Wastewater": ["WastewaterCollectionNetwork", "WastewaterDisposalComplex", "WastewaterTreatmentComplex"],
     "Miscellaneous": [
         "Facility",

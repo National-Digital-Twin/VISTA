@@ -45,7 +45,7 @@ export default function useElementsInPolygons() {
 function getPolygon(feature: Feature<Geometry, GeoJsonProperties>) {
     if (isCircle(feature)) {
         const center = getCircleCenter(feature);
-        const radius = parseFloat(Math.fround(feature.properties.circleRadius).toFixed(3));
+        const radius = Number.parseFloat(Math.fround(feature.properties.circleRadius).toFixed(3));
 
         const circle = turfCircle(center, radius, {
             steps: 50,
@@ -65,10 +65,7 @@ function findPointsInPolygon(polygonFeatures: Feature<Geometry, GeoJsonPropertie
     return points.filter((point) => polygonFeatures.some((polygon) => booleanPointInPolygon(point, getPolygon(polygon))));
 }
 
-function findLinesIntersectingPolygon(
-    polygonFeatures: Feature<Geometry, GeoJsonProperties>[],
-    lineStringFeatures: Feature<Geometry, GeoJsonProperties>[],
-) {
+function findLinesIntersectingPolygon(polygonFeatures: Feature<Geometry, GeoJsonProperties>[], lineStringFeatures: Feature<Geometry, GeoJsonProperties>[]) {
     if (isEmpty(polygonFeatures)) {
         return [];
     }

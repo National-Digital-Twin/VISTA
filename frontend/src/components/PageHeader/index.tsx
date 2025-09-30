@@ -86,14 +86,7 @@ const PageHeader = ({ appName }: PageHeaderProps) => {
                 </Box>
             </Toolbar>
 
-            {isMobile && (
-                <MobileMenu
-                    isOpen={isMobileMenuOpen}
-                    onClose={handleMobileMenuClose}
-                    onNavigationClick={handleNavigationClick}
-                    appName={appName}
-                />
-            )}
+            {isMobile && <MobileMenu isOpen={isMobileMenuOpen} onClose={handleMobileMenuClose} onNavigationClick={handleNavigationClick} appName={appName} />}
         </AppBar>
     );
 };

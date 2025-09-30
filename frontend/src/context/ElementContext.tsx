@@ -112,16 +112,8 @@ export function ElementsProvider({ children }: ElementsProviderProps) {
         setSelectedTimeline(null);
     }, []);
 
-    const {
-        assets,
-        dependencies,
-        errors,
-        selectedElements,
-        maxAssetTotalCxns,
-        assetCriticalityColorScale,
-        cxnCriticalityColorScale,
-        totalCxnsColorScale,
-    } = state;
+    const { assets, dependencies, errors, selectedElements, maxAssetTotalCxns, assetCriticalityColorScale, cxnCriticalityColorScale, totalCxnsColorScale } =
+        state;
 
     const { findAssetsInPolygons } = useAssetsInPolygons();
     const { getDependentAssets } = useGroupedAssets({});
@@ -161,10 +153,7 @@ export function ElementsProvider({ children }: ElementsProviderProps) {
     }, [isLoadingAssets, findAssetsInPolygons, liveFloodAreas]);
 
     const primaryAssetsAtRisk = useMemo(
-        () =>
-            primaryAssetsAtRiskFromDrawn?.length
-                ? primaryAssetsAtRiskFromDrawn
-                : [...primaryAssetsAtRiskFromReal, ...primaryAssetsAtRiskFromLive],
+        () => (primaryAssetsAtRiskFromDrawn?.length ? primaryAssetsAtRiskFromDrawn : [...primaryAssetsAtRiskFromReal, ...primaryAssetsAtRiskFromLive]),
         [primaryAssetsAtRiskFromDrawn, primaryAssetsAtRiskFromReal, primaryAssetsAtRiskFromLive],
     );
 
@@ -208,11 +197,7 @@ export function ElementsProvider({ children }: ElementsProviderProps) {
         );
 
         const assets = useMemo(
-            () =>
-                getUniqueElements([
-                    ...assetsMatchingSelectedTypes,
-                    ...assetsByFloodArea.filter((asset) => asset.dependent.criticalitySum >= minCriticality),
-                ]),
+            () => getUniqueElements([...assetsMatchingSelectedTypes, ...assetsByFloodArea.filter((asset) => asset.dependent.criticalitySum >= minCriticality)]),
             [assetsMatchingSelectedTypes, assetsByFloodArea, minCriticality],
         );
 

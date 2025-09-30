@@ -1,22 +1,9 @@
 import { ArrowBack, Edit } from '@mui/icons-material';
-import {
-    Box,
-    Button,
-    Divider,
-    IconButton,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    Typography,
-} from '@mui/material';
+import { Box, Button, Divider, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
 import { useUserData } from '@/hooks/useUserData';
 
 export default function Profile() {
-    const { getUserDisplayName, getUserOrganisation, getUserMemberSince, getUserAddedBy, getUserType, getUserGroups, user, loading } =
-        useUserData();
+    const { getUserDisplayName, getUserOrganisation, getUserMemberSince, getUserAddedBy, getUserType, getUserGroups, user, loading } = useUserData();
 
     const groups = getUserGroups();
 
@@ -51,9 +38,7 @@ export default function Profile() {
                 color: 'text.primary',
             }}
         >
-            <Box
-                sx={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gridTemplateRows: 'auto 1fr auto', columnGap: 2, rowGap: 4, mb: 4 }}
-            >
+            <Box sx={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gridTemplateRows: 'auto 1fr auto', columnGap: 2, rowGap: 4, mb: 4 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     <IconButton sx={{ p: 1 }}>
                         <ArrowBack />
@@ -114,8 +99,8 @@ export default function Profile() {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {groups.map((group, index) => (
-                                        <TableRow key={index} sx={{ '&:last-child td': { border: 0 } }}>
+                                    {groups.map((group) => (
+                                        <TableRow key={group.name} sx={{ '&:last-child td': { border: 0 } }}>
                                             <TableCell sx={{ py: 1, px: 0 }}>
                                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>{group.name}</Box>
                                             </TableCell>

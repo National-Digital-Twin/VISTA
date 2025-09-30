@@ -11,10 +11,7 @@ const rootElementStyle: CSSProperties = {
     position: 'relative',
 };
 
-type Domain = [
-    'dataMin' | `dataMin + ${number}` | `dataMin - ${number}` | number,
-    'dataMax' | `dataMax + ${number}` | `dataMax - ${number}` | number,
-];
+type Domain = ['dataMin' | `dataMin + ${number}` | `dataMin - ${number}` | number, 'dataMax' | `dataMax + ${number}` | `dataMax - ${number}` | number];
 
 const defaultDomain: Domain = ['dataMin', 'dataMax'];
 
@@ -26,11 +23,7 @@ interface UseZoomChartOptions<Data extends { time: string; value: number }> {
     enabled?: boolean;
 }
 
-export const useZoomChart = <Data extends { time: string; value: number }>({
-    data,
-    referenceAreaProps,
-    enabled = true,
-}: UseZoomChartOptions<Data>) => {
+export const useZoomChart = <Data extends { time: string; value: number }>({ data, referenceAreaProps, enabled = true }: UseZoomChartOptions<Data>) => {
     const [zoomAreaStart, setZoomAreaStart] = useState<number | null>(null);
     const [zoomAreaEnd, setZoomAreaEnd] = useState<number | null>(null);
     const [domain, setDomain] = useState(defaultDomain);

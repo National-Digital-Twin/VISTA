@@ -75,15 +75,7 @@ function StationPopup({ selectedStation, onClose }: StationPopupProps) {
     const offset: [number, number] = [0, -8];
 
     return (
-        <Popup
-            longitude={longitude}
-            latitude={latitude}
-            anchor="bottom"
-            onClose={onClose}
-            closeOnClick={false}
-            className="font-body text-sm"
-            offset={offset}
-        >
+        <Popup longitude={longitude} latitude={latitude} anchor="bottom" onClose={onClose} closeOnClick={false} className="font-body text-sm" offset={offset}>
             <h4 className="mr-6 font-medium">Monitoring Station</h4>
             <p>{selectedStation.properties?.label}</p>
             <a

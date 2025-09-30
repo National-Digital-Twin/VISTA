@@ -170,7 +170,7 @@ function mapPointAsset(feature: Feature, assetSpecification: AssetSpecification,
 
     if (assetSpecification.knownIds?.includes(String(feature.id))) {
         asset.state = AssetState.Static;
-        const staticDataForAsset = staticDataForAssetClass.filter((d) => d.uri.includes(feature.id))[0];
+        const staticDataForAsset = staticDataForAssetClass.find((d) => d.uri.includes(feature.id));
         if (staticDataForAsset) {
             asset.dependent.count = staticDataForAsset.dependentCount;
             asset.dependent.criticalitySum = staticDataForAsset.dependentCriticalitySum;
@@ -204,10 +204,7 @@ function mapLinearAsset(feature: Feature, assetSpecification: AssetSpecification
         primaryCategory: assetSpecification.primaryCategory,
         secondaryCategory: assetSpecification.secondaryCategory,
         state: AssetState.Live,
-        classification:
-            feature.properties && assetSpecification.classificationField
-                ? feature.properties[assetSpecification.classificationField]
-                : undefined,
+        classification: feature.properties && assetSpecification.classificationField ? feature.properties[assetSpecification.classificationField] : undefined,
     });
 
     if (assetSpecification.showAsPoint) {
@@ -232,7 +229,7 @@ export async function fetchAssetsForAssetSpecification(assetSpecification: Asset
     const liveAssets = await fetchLiveAssets(assetSpecification);
     const staticDataForAssetClass = await fetchDataForAssetClass(assetSpecification.knownIds ?? []);
 
-    liveAssets.features.forEach((feature: Feature) => {
+    for (const feature of liveAssets.features) {
         let asset: Asset;
         if (isPointFeature(feature) || isMultiPointFeature(feature) || isPolygonFeature(feature) || isMultiPolygonFeature(feature)) {
             asset = mapPointAsset(feature, assetSpecification, staticDataForAssetClass);
@@ -242,7 +239,7 @@ export async function fetchAssetsForAssetSpecification(assetSpecification: Asset
             asset = mapLinearAsset(feature, assetSpecification);
             mappedAssets.push(asset);
         }
-    });
+    }
 
     return mappedAssets;
 }

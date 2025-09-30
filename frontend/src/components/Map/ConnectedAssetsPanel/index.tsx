@@ -118,12 +118,7 @@ const ConnectedAssetsPanel: React.FC<ConnectAssetPanelProps> = ({ connectedAsset
                         />
                     </TabPanel>
                     <TabPanel value={value} index={1} containerPadding={0}>
-                        <Providers
-                            isLoading={isProvidersLoading}
-                            isError={isProvidersFetchError}
-                            error={providersFetchError}
-                            providers={providers}
-                        />
+                        <Providers isLoading={isProvidersLoading} isError={isProvidersFetchError} error={providersFetchError} providers={providers} />
                     </TabPanel>
                 </Box>
             </Box>

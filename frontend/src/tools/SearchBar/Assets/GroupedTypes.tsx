@@ -89,11 +89,7 @@ export default function GroupedTypes({ expand, assets, className }: GroupedTypes
 
                 return (
                     <div key={category}>
-                        <div
-                            className="menu-item flex items-center"
-                            data-selected={allSelected}
-                            onClick={() => handleCategoryClick(category)}
-                        >
+                        <div className="menu-item flex items-center" data-selected={allSelected} onClick={() => handleCategoryClick(category)}>
                             <span className="text-lg font-bold">Select All</span>
                             {allSelected && <FontAwesomeIcon icon={faEye} className="ml-auto" />}
                         </div>

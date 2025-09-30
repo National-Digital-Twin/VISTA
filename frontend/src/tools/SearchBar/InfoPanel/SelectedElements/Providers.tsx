@@ -32,11 +32,7 @@ export default function Providers({ isAsset, isDependency, assetUri, provider }:
     }
 
     return (
-        <DetailsSection
-            expand={expand}
-            onToggle={handleToggleSection}
-            title={`${totalProviders} provider asset${totalProviders > 1 ? 's' : ''}`}
-        >
+        <DetailsSection expand={expand} onToggle={handleToggleSection} title={`${totalProviders} provider asset${totalProviders > 1 ? 's' : ''}`}>
             <div className={styles.sectionDescription}>Assets that provide access or resources to this asset.</div>
             <ConnectedAssets connectedAssets={providers} />
         </DetailsSection>

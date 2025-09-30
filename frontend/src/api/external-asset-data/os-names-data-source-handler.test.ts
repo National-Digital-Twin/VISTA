@@ -2,7 +2,7 @@ import { Feature, Point } from 'geojson';
 import { OsNamesDataSourceHandler } from './os-names-data-source-handler';
 import { AssetSpecification } from '@/hooks/queries/dataset-utils';
 
-global.fetch = jest.fn();
+globalThis.fetch = jest.fn();
 
 function mockFetch(obj: any) {
     (fetch as jest.Mock).mockImplementationOnce(() =>
@@ -22,9 +22,7 @@ describe('buildUrlsForDataSource', () => {
         } as AssetSpecification;
         const urls = handler.buildUrlsForDataSource(assetSpecification);
         expect(urls).toHaveLength(1);
-        expect(urls).toEqual([
-            '/transparent-proxy/os-names/search/names/v1/find?query=Wight&fq=BBOX:test-locator&fq=LOCAL_TYPE:First_Type',
-        ]);
+        expect(urls).toEqual(['/transparent-proxy/os-names/search/names/v1/find?query=Wight&fq=BBOX:test-locator&fq=LOCAL_TYPE:First_Type']);
     });
 });
 

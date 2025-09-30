@@ -39,12 +39,7 @@ export default function SideButtons() {
                     </Link>
                 </Box>
             )}
-            <ToolbarButton
-                title="Flood Notifications"
-                onClick={toggleWidget}
-                svgSrc="/icons/Warning.svg"
-                badgeContent={atRiskAreas.length}
-            />
+            <ToolbarButton title="Flood Notifications" onClick={toggleWidget} svgSrc="/icons/Warning.svg" badgeContent={atRiskAreas.length} />
         </Box>
     );
 }

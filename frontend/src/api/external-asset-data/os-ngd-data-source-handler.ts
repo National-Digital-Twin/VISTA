@@ -8,7 +8,7 @@ type Filters = {
     cqlFilter?: string;
 };
 
-type Link = {
+export type Link = {
     href: string;
     rel?: string;
     type?: string;
@@ -25,7 +25,7 @@ interface NGDFeatureCollection {
     numberReturned: number;
 }
 
-const filterableFields = ['buildinguse', 'roadstructure'];
+const filterableFields = new Set(['buildinguse', 'roadstructure']);
 
 export class OsNgdDataSourceHandler extends DataSourceHandler {
     /**
@@ -37,7 +37,7 @@ export class OsNgdDataSourceHandler extends DataSourceHandler {
      */
     protected buildQueryString(allFilters: Filters, filters: [string, string][] = []): string {
         for (const [key, value] of Object.entries(allFilters)) {
-            if (typeof value === 'string' && filterableFields.includes(key)) {
+            if (typeof value === 'string' && filterableFields.has(key)) {
                 filters.push([key, value]);
             }
         }

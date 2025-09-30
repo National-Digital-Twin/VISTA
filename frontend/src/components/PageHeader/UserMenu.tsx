@@ -10,8 +10,8 @@ import { signout } from '@/utils/signout';
 import { useUserData } from '@/hooks/useUserData';
 
 interface UserMenuProps {
-    onMyProfileClick?: () => void;
-    onAdminSettingsClick?: () => void;
+    readonly onMyProfileClick?: () => void;
+    readonly onAdminSettingsClick?: () => void;
 }
 
 export default function UserMenu({ onMyProfileClick, onAdminSettingsClick }: UserMenuProps) {

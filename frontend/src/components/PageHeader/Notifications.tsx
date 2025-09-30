@@ -5,8 +5,8 @@ import { useTheme } from '@mui/material/styles';
 import { useLocation } from 'react-router-dom';
 
 interface NotificationsProps {
-    unseenCount?: number;
-    onClick?: () => void;
+    readonly unseenCount?: number;
+    readonly onClick?: () => void;
 }
 
 export default function Notifications({ unseenCount = 0, onClick }: NotificationsProps) {

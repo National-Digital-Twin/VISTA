@@ -1,4 +1,4 @@
-import React, { createContext, useContext } from 'react';
+import React, { createContext, useContext, useMemo } from 'react';
 import { useDrawnPolygonDrawing } from './useDrawnPolygonDrawing';
 
 interface DrawnPolygonDrawingContextValue {
@@ -16,10 +16,10 @@ export function useDrawnPolygonDrawingContext() {
     return context;
 }
 
-export default function DrawnPolygonProvider({ children }: { children: React.ReactNode }) {
+export default function DrawnPolygonProvider({ children }: { readonly children: React.ReactNode }) {
     const { startCircleDrawing, startPolygonDrawing } = useDrawnPolygonDrawing();
 
-    const contextValue = { startCircleDrawing, startPolygonDrawing };
+    const contextValue = useMemo(() => ({ startCircleDrawing, startPolygonDrawing }), [startCircleDrawing, startPolygonDrawing]);
 
     return <DrawnPolygonDrawingContext.Provider value={contextValue}>{children}</DrawnPolygonDrawingContext.Provider>;
 }

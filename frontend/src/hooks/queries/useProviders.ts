@@ -46,15 +46,7 @@ async function getProviderDetails(assetUri: string, connectionStrength: number) 
     };
 }
 
-function getProviderDetailQueriesConfig({
-    assetProviders,
-    isDependency,
-    provider,
-}: {
-    assetProviders: any[];
-    isDependency: boolean;
-    provider: any;
-}) {
+function getProviderDetailQueriesConfig({ assetProviders, isDependency, provider }: { assetProviders: any[]; isDependency: boolean; provider: any }) {
     if (isDependency) {
         return [
             {

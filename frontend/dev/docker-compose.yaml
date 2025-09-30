@@ -41,17 +41,7 @@ services:
             - 3030:3030
     curl-knowledge:
         image: curlimages/curl
-        command:
-            [
-                'curl',
-                '-X',
-                'POST',
-                '-H',
-                'Content-Type: text/turtle',
-                '--data-binary',
-                '@/work/iow.ttl',
-                'http://secure-agent-graph:3030/knowledge/upload',
-            ]
+        command: ['curl', '-X', 'POST', '-H', 'Content-Type: text/turtle', '--data-binary', '@/work/iow.ttl', 'http://secure-agent-graph:3030/knowledge/upload']
         depends_on:
             secure-agent-graph:
                 condition: service_healthy
@@ -60,16 +50,7 @@ services:
     curl-ontology:
         image: curlimages/curl
         command:
-            [
-                'curl',
-                '-X',
-                'POST',
-                '-H',
-                'Content-Type: text/turtle',
-                '--data-binary',
-                '@/work/ontology.ttl',
-                'http://secure-agent-graph:3030/ontology/upload',
-            ]
+            ['curl', '-X', 'POST', '-H', 'Content-Type: text/turtle', '--data-binary', '@/work/ontology.ttl', 'http://secure-agent-graph:3030/ontology/upload']
         depends_on:
             secure-agent-graph:
                 condition: service_healthy

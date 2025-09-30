@@ -1,18 +1,5 @@
 import { useContext, useCallback, useState } from 'react';
-import {
-    Box,
-    Paper,
-    Table,
-    TableContainer,
-    TableHead,
-    TableBody,
-    TableRow,
-    TableCell,
-    TablePagination,
-    Typography,
-    Button,
-    SvgIcon,
-} from '@mui/material';
+import { Box, Paper, Table, TableContainer, TableHead, TableBody, TableRow, TableCell, TablePagination, Typography, Button, SvgIcon } from '@mui/material';
 import { useMediaQuery } from 'usehooks-ts';
 import { download } from './utils';
 import { ASSET_TABLE } from './format-assets';
@@ -70,13 +57,7 @@ export default function AssetTable() {
                 <Typography variant="h6">Asset Table</Typography>
                 {assets.length > 0 && (
                     <div className={styles.exportButtons}>
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            disableElevation
-                            sx={{ paddingLeft: '2.5em', paddingRight: '2.5em' }}
-                            onClick={downloadCSV}
-                        >
+                        <Button variant="contained" color="primary" disableElevation sx={{ paddingLeft: '2.5em', paddingRight: '2.5em' }} onClick={downloadCSV}>
                             <SvgIcon>
                                 <svg width="21" height="20" viewBox="0 0 21 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path

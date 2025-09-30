@@ -27,15 +27,10 @@ SimpleSelectModeOverride.dragMove = function (state, e) {
 };
 
 SimpleSelectModeOverride.toDisplayFeatures = function (state, geojson, display) {
-    geojson.properties.active = this.isSelected(geojson.properties.id)
-        ? MapboxDraw.constants.activeStates.ACTIVE
-        : MapboxDraw.constants.activeStates.INACTIVE;
+    geojson.properties.active = this.isSelected(geojson.properties.id) ? MapboxDraw.constants.activeStates.ACTIVE : MapboxDraw.constants.activeStates.INACTIVE;
     display(geojson);
     this.fireActionable();
-    if (
-        geojson.properties.active !== MapboxDraw.constants.activeStates.ACTIVE ||
-        geojson.geometry.type === MapboxDraw.constants.geojsonTypes.POINT
-    ) {
+    if (geojson.properties.active !== MapboxDraw.constants.activeStates.ACTIVE || geojson.geometry.type === MapboxDraw.constants.geojsonTypes.POINT) {
         return;
     }
     const supplementaryPoints = geojson.properties.user_isCircle

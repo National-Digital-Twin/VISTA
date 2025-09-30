@@ -100,38 +100,22 @@ export function RoadRouteMenuBody({ searchQuery, updateSelectedCount }: RoadRout
                         </select>
                     </div>
                     <MenuButton
-                        onClick={!isSelectingStartPosition ? addStartMarker : abortAddStartMarker}
+                        onClick={isSelectingStartPosition ? abortAddStartMarker : addStartMarker}
                         selected={isSelectingStartPosition}
-                        label={
-                            isSelectingStartPosition
-                                ? 'Choose the start location on the map (click here to cancel)'
-                                : 'Select Start Location'
-                        }
+                        label={isSelectingStartPosition ? 'Choose the start location on the map (click here to cancel)' : 'Select Start Location'}
                     />
                     {startPosition && (
-                        <MenuButton
-                            onClick={() => handleSelectPosition(null, setStartPosition)}
-                            selected={false}
-                            label="Delete Start Position"
-                        />
+                        <MenuButton onClick={() => handleSelectPosition(null, setStartPosition)} selected={false} label="Delete Start Position" />
                     )}
                     {startPosition && (
                         <>
                             <MenuButton
-                                onClick={!isSelectingEndPosition ? addEndMarker : abortAddEndMarker}
+                                onClick={isSelectingEndPosition ? abortAddEndMarker : addEndMarker}
                                 selected={isSelectingEndPosition}
-                                label={
-                                    isSelectingEndPosition
-                                        ? 'Choose the end location on the map (click here to cancel)'
-                                        : 'Select End Location'
-                                }
+                                label={isSelectingEndPosition ? 'Choose the end location on the map (click here to cancel)' : 'Select End Location'}
                             />
                             {endPosition && (
-                                <MenuButton
-                                    onClick={() => handleSelectPosition(null, setEndPosition)}
-                                    selected={false}
-                                    label="Delete End Position"
-                                />
+                                <MenuButton onClick={() => handleSelectPosition(null, setEndPosition)} selected={false} label="Delete End Position" />
                             )}
                         </>
                     )}

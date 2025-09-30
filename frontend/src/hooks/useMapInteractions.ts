@@ -42,9 +42,7 @@ export default function useMapInteractions({
             console.warn("An unexpected case of >1 clicked zone; performance won't be optimal if many are clicked");
         }
 
-        setSelectedFloodZones((prevSelection) =>
-            isMultiSelect ? getAllSelectedPolygons([...prevSelection, ...clickedFloodZones]) : clickedFloodZones,
-        );
+        setSelectedFloodZones((prevSelection) => (isMultiSelect ? getAllSelectedPolygons([...prevSelection, ...clickedFloodZones]) : clickedFloodZones));
     };
 
     const onOtherElementClick = ({ clickedFeature, isMultiSelect }: { clickedFeature?: Feature; isMultiSelect: boolean }) => {
@@ -90,15 +88,7 @@ function isClickedLayer(feature: Feature, layerId: string) {
     return feature?.properties?.layer?.id === layerId;
 }
 
-function updateSelectedFeatureState({
-    map,
-    renderedFeatures,
-    clickedFeatures,
-}: {
-    map: any;
-    renderedFeatures: Feature[];
-    clickedFeatures: Feature[];
-}) {
+function updateSelectedFeatureState({ map, renderedFeatures, clickedFeatures }: { map: any; renderedFeatures: Feature[]; clickedFeatures: Feature[] }) {
     renderedFeatures.forEach((renderedFeature) => {
         const isSelected = clickedFeatures.some((clickedFeature) => clickedFeature?.id === renderedFeature?.id);
         map.setFeatureState(

@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import graphqlLoader from 'vite-plugin-graphql-loader';
-import { resolve } from 'path';
+import { resolve } from 'node:path';
 import tailwindcss from 'tailwindcss';
 
 export default defineConfig({

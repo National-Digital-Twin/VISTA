@@ -17,7 +17,5 @@ export function CircleCreationButton() {
         startCircleDrawing();
     }, [startCircleDrawing, isDrawing]);
 
-    return (
-        <ToolbarButton title="Draw circle" onClick={drawCircle} svgSrc="icons/draw_circle.svg" active={isDrawing} disabled={isDisabled} />
-    );
+    return <ToolbarButton title="Draw circle" onClick={drawCircle} svgSrc="icons/draw_circle.svg" active={isDrawing} disabled={isDisabled} />;
 }

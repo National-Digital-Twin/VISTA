@@ -24,10 +24,7 @@ export default function RoadRouteMapElements() {
         })),
     );
 
-    const handleStartPositionDragEnd = useCallback(
-        (event: MarkerDragEvent) => setStartPosition(event.lngLat as LngLat),
-        [setStartPosition],
-    );
+    const handleStartPositionDragEnd = useCallback((event: MarkerDragEvent) => setStartPosition(event.lngLat as LngLat), [setStartPosition]);
 
     const handleEndPositionDragEnd = useCallback(({ lngLat }: MarkerDragEvent) => setEndPosition(lngLat as LngLat), [setEndPosition]);
 
@@ -62,12 +59,8 @@ export default function RoadRouteMapElements() {
 
     return (
         <>
-            {startPosition && (
-                <Marker latitude={startPosition.lat} longitude={startPosition.lng} draggable onDragEnd={handleStartPositionDragEnd} />
-            )}
-            {endPosition && (
-                <Marker latitude={endPosition.lat} longitude={endPosition.lng} draggable onDragEnd={handleEndPositionDragEnd} />
-            )}
+            {startPosition && <Marker latitude={startPosition.lat} longitude={startPosition.lng} draggable onDragEnd={handleStartPositionDragEnd} />}
+            {endPosition && <Marker latitude={endPosition.lat} longitude={endPosition.lng} draggable onDragEnd={handleEndPositionDragEnd} />}
             {data && startPosition && endPosition && (
                 <Source id="road-route" type="geojson" data={data.roadRoute.routeGeojson}>
                     <Layer

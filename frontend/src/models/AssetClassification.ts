@@ -29,8 +29,8 @@ export const RailwayClassifications: AssetClassification[] = [
 ];
 
 export const AssetClassificationsByType: Record<string, AssetClassification[]> = {
-    'http://ies.data.gov.uk/ontology/ies4#Road': RoadClassifications,
-    'http://ies.data.gov.uk/ontology/ies4#HeavyRailComplex': RailwayClassifications,
+    'https://ies.data.gov.uk/ontology/ies4#Road': RoadClassifications,
+    'https://ies.data.gov.uk/ontology/ies4#HeavyRailComplex': RailwayClassifications,
 };
 
 export function GetColorScaleForAssetClassification(classifications: AssetClassification[]) {

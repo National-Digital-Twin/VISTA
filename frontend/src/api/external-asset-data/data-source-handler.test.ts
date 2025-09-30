@@ -1,7 +1,7 @@
 import { Feature } from 'geojson';
 import { DataSourceHandler } from './data-source-handler';
 
-global.fetch = jest.fn();
+globalThis.fetch = jest.fn();
 
 class TestDataSourceHandler extends DataSourceHandler {
     buildUrlsForDataSource() {

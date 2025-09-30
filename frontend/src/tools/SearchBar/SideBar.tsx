@@ -27,10 +27,7 @@ export default function SideBar() {
     }
 
     return (
-        <div
-            className={classNames(styles.sidebar, sidebarIsVisible ? styles.sidebarVisible : styles.sidebarHidden)}
-            data-paralog-sidebar={sidebarIsVisible}
-        >
+        <div className={classNames(styles.sidebar, sidebarIsVisible ? styles.sidebarVisible : styles.sidebarHidden)} data-paralog-sidebar={sidebarIsVisible}>
             <Button
                 className={styles.sidebarToggleButton}
                 onClick={toggleSidebar}

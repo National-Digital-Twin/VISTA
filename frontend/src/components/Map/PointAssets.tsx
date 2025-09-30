@@ -32,10 +32,7 @@ export interface PointAssetsProps {
 }
 
 export default function PointAssets({ assets = [], dependencies = [], selectedElements = [], onElementClick }: PointAssetsProps) {
-    const features: Feature[] = useMemo(
-        () => generatePointAssetFeatures(assets, dependencies, selectedElements),
-        [assets, dependencies, selectedElements],
-    );
+    const features: Feature[] = useMemo(() => generatePointAssetFeatures(assets, dependencies, selectedElements), [assets, dependencies, selectedElements]);
     const points = features.filter((feature) => feature.geometry.type === 'Point');
 
     const { paralogMap: map } = useMap();
@@ -46,7 +43,9 @@ export default function PointAssets({ assets = [], dependencies = [], selectedEl
         }
 
         const onLoad = () => {
-            map.getMap().moveLayer(heatmap.id, FLOOD_AREA_LAYERS[0].id);
+            if (FLOOD_AREA_LAYERS[0]?.id) {
+                map.getMap().moveLayer(heatmap.id as string, FLOOD_AREA_LAYERS[0].id);
+            }
         };
 
         map.on('load', onLoad);
@@ -56,7 +55,7 @@ export default function PointAssets({ assets = [], dependencies = [], selectedEl
         };
     }, [map]);
 
-    const handleOnAssetClick = (event, clickedFeature) => {
+    const handleOnAssetClick = (event: any, clickedFeature: Feature) => {
         const { originalEvent } = event;
         const isMultiSelect = originalEvent.shiftKey;
         originalEvent.stopPropagation();
@@ -64,46 +63,41 @@ export default function PointAssets({ assets = [], dependencies = [], selectedEl
         const connectedDependencies = features
             .filter((feature) => feature.geometry.type === 'LineString')
             .filter((feature) => {
-                const isDependent = feature.properties.dependent === clickedFeature.properties.uri;
-                const isProvider = feature.properties.provider === clickedFeature.properties.uri;
+                const isDependent = feature.properties?.dependent === clickedFeature.properties?.uri;
+                const isProvider = feature.properties?.provider === clickedFeature.properties?.uri;
                 return isDependent || isProvider;
             });
 
         const connectedAssets = connectedDependencies.map((feature) => {
-            const isDependent = feature.properties.dependent === clickedFeature.properties.uri;
+            const isDependent = feature.properties?.dependent === clickedFeature.properties?.uri;
 
             if (isDependent) {
-                const providerAsset = points.find((point) => point.properties.uri === feature.properties.provider);
+                const providerAsset = points.find((point) => point.properties?.uri === feature.properties?.provider);
                 return providerAsset;
             }
 
-            const dependentAsset = points.find((point) => point.properties.uri === feature.properties.dependent);
+            const dependentAsset = points.find((point) => point.properties?.uri === feature.properties?.dependent);
             return dependentAsset;
         });
 
-        const elements = [clickedFeature, ...connectedAssets, ...connectedDependencies].map((feature) =>
-            findElement([...assets, ...dependencies], feature.properties.uri),
-        );
+        const elements = [clickedFeature, ...connectedAssets, ...connectedDependencies]
+            .filter((feature): feature is Feature => feature !== undefined)
+            .map((feature) => findElement([...assets, ...dependencies], feature.properties?.uri))
+            .filter((element): element is Element => element !== undefined);
 
-        onElementClick(isMultiSelect, elements);
+        onElementClick?.(isMultiSelect, elements);
     };
 
     const isSelected = (feature: Feature) => {
-        const isSelected = selectedElements.some((selectedElement) => selectedElement.uri === feature.properties.uri);
+        const isSelected = selectedElements.some((selectedElement) => selectedElement.uri === feature.properties?.uri);
         return isSelected;
     };
 
     return (
         <Source id="point-assets" type={GEOJSON} data={{ type: FEATURE_COLLECTION, features }} generateId>
-            <Layer {...heatmap} />
-            <Layer {...pointAssetCxnLayer} />
-            <AssetIcons
-                features={points}
-                onAssetClick={handleOnAssetClick}
-                isSelected={isSelected}
-                assets={assets}
-                dependencies={dependencies}
-            />
+            <Layer {...(heatmap as any)} />
+            <Layer {...(pointAssetCxnLayer as any)} />
+            <AssetIcons features={points} onAssetClick={handleOnAssetClick} isSelected={isSelected} assets={assets} dependencies={dependencies} />
         </Source>
     );
 }
@@ -123,27 +117,27 @@ function MarkerWithTooltip({ feature, isSelected, onAssetClick, assets, dependen
     const { showCpsIconsForAssetTypes } = useSharedStore();
     const selectTrainStation = useTrainStore((state) => state.selectTrainStation);
     const deselectStation = useTrainStore((state) => state.deselectTrainStation);
-    const featureType = feature.properties.type;
-    const iconStyles = useFindIcon(featureType);
+    const featureType = feature.properties?.type;
+    const iconStyles = useFindIcon(featureType || '');
 
-    const featureURI = feature.properties.uri;
+    const featureURI = feature.properties?.uri;
 
-    const element = useMemo(() => findElement([...assets, ...dependencies], featureURI), [assets, dependencies, featureURI]);
+    const element = useMemo(() => findElement([...assets, ...dependencies], featureURI || ''), [assets, dependencies, featureURI]);
 
     const [longitude, latitude] = (feature.geometry as any).coordinates;
 
     const onClick = useCallback(
-        (event: Event) => {
+        (event: any) => {
             onAssetClick(event, feature);
 
             // Check if the clicked asset is a train station
-            const isTrainStation = featureType === 'http://ies.data.gov.uk/ontology/ies4#RailwayStation';
+            const isTrainStation = featureType === 'https://ies.data.gov.uk/ontology/ies4#RailwayStation';
             if (isTrainStation) {
                 // Find the corresponding train station name
                 const stationName = Object.entries(TRAIN_STATIONS).find(
                     ([_, station]) =>
-                        Number(parseFloat(station.latitude).toFixed(2)) === Number(latitude.toFixed(2)) &&
-                        Number(parseFloat(station.longitude).toFixed(2)) === Number(longitude.toFixed(2)),
+                        Number(Number.parseFloat(station.latitude).toFixed(2)) === Number(latitude.toFixed(2)) &&
+                        Number(Number.parseFloat(station.longitude).toFixed(2)) === Number(longitude.toFixed(2)),
                 )?.[0];
 
                 if (stationName) {
@@ -160,7 +154,7 @@ function MarkerWithTooltip({ feature, isSelected, onAssetClick, assets, dependen
 
     const hasAvailableFontAwesomeIcon = !!icon({
         prefix: 'fas',
-        iconName: fontAwesomeIconName,
+        iconName: (fontAwesomeIconName || '') as any,
     });
 
     return (
@@ -182,7 +176,7 @@ function MarkerWithTooltip({ feature, isSelected, onAssetClick, assets, dependen
                         }}
                     >
                         {hasAvailableFontAwesomeIcon ? (
-                            <FontAwesomeIcon icon={['fas', fontAwesomeIconName]} />
+                            <FontAwesomeIcon icon={['fas', fontAwesomeIconName || ''] as any} />
                         ) : (
                             <p className="p-1 font-body">{iconStyles.iconFallbackText}</p>
                         )}
@@ -213,7 +207,7 @@ function AssetIcons({ features, isSelected, onAssetClick, assets, dependencies }
                         feature={feature}
                         isSelected={isSelected(feature)}
                         onAssetClick={onAssetClick}
-                        key={properties.uri}
+                        key={properties?.uri}
                     />
                 );
             })}

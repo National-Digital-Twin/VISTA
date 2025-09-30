@@ -9,18 +9,14 @@ export default function EnvironmentallySensitiveAreasLayerControl({ searchQuery 
 
     const matchesParentCategory =
         !searchQuery ||
-        parentCategoryTerms.some(
-            (term) => term.toLowerCase().includes(searchQuery.toLowerCase()) || searchQuery.toLowerCase().includes(term.toLowerCase()),
-        );
+        parentCategoryTerms.some((term) => term.toLowerCase().includes(searchQuery.toLowerCase()) || searchQuery.toLowerCase().includes(term.toLowerCase()));
 
     const layerNames = Object.values(layers).map((layer) => layer.name);
     const allSearchTerms = [...parentCategoryTerms, ...layerNames];
 
     const matchesAnyTerm =
         !searchQuery ||
-        allSearchTerms.some(
-            (term) => term.toLowerCase().includes(searchQuery.toLowerCase()) || searchQuery.toLowerCase().includes(term.toLowerCase()),
-        );
+        allSearchTerms.some((term) => term.toLowerCase().includes(searchQuery.toLowerCase()) || searchQuery.toLowerCase().includes(term.toLowerCase()));
 
     if (!matchesAnyTerm) {
         return null;
@@ -29,10 +25,7 @@ export default function EnvironmentallySensitiveAreasLayerControl({ searchQuery 
     return (
         <ComplexLayerControl title="Environmentally Sensitive Areas">
             {(updateSelectedCount) => (
-                <EnvironmentallySensitiveAreasMenuBody
-                    searchQuery={matchesParentCategory ? '' : searchQuery}
-                    updateSelectedCount={updateSelectedCount}
-                />
+                <EnvironmentallySensitiveAreasMenuBody searchQuery={matchesParentCategory ? '' : searchQuery} updateSelectedCount={updateSelectedCount} />
             )}
         </ComplexLayerControl>
     );
