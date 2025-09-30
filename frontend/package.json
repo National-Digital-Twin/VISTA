@@ -84,7 +84,7 @@
         "@babel/preset-react": "7.26.3",
         "@eslint/compat": "^1.2.7",
         "@eslint/eslintrc": "^3.3.1",
-        "@testing-library/dom": "^8.20.1",
+        "@testing-library/dom": "^10.0.0",
         "@testing-library/jest-dom": "^6.6.3",
         "@testing-library/react": "^16.2.0",
         "@testing-library/user-event": "^14.6.1",
