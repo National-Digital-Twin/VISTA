@@ -12,13 +12,7 @@ function useLiveFloodExtents() {
 function useHistoricFloodExtents() {
     // Historic flood extents come from the elements context, though need processing
     const { clickedFloodAreas } = useContext(ElementsContext);
-    const floodAreas = useMemo(
-        () =>
-            Object.values(clickedFloodAreas)
-                .map((x) => x)
-                .flat(),
-        [clickedFloodAreas],
-    );
+    const floodAreas = useMemo(() => Object.values(clickedFloodAreas).flat(), [clickedFloodAreas]);
     return floodAreas;
 }
 

@@ -115,7 +115,7 @@ function BuiltinSources() {
         // Built-in sources
         allSources.push({
             id: 'flood-areas',
-            features: [...floodAreas.map((subAreas) => subAreas).flat(), ...liveFloodAreas],
+            features: [...floodAreas.flat(), ...liveFloodAreas],
             layers: FLOOD_AREA_LAYERS,
         });
         allSources.push({

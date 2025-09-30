@@ -38,10 +38,16 @@ export default function GroupedTypes({ expand, assets, className }: GroupedTypes
         };
         assets.forEach((asset) => {
             const category = asset.secondaryCategory;
+            const type = asset.type;
+
+            if (!category || !type) {
+                return; // Skip assets with missing category or type
+            }
+
             if (!categoryMap[category]) {
                 categoryMap[category] = {};
             }
-            const type = asset.type;
+
             if (!categoryMap[category][type]) {
                 categoryMap[category][type] = {
                     ...asset,
@@ -89,10 +95,16 @@ export default function GroupedTypes({ expand, assets, className }: GroupedTypes
 
                 return (
                     <div key={category}>
-                        <div className="menu-item flex items-center" data-selected={allSelected} onClick={() => handleCategoryClick(category)}>
+                        <button
+                            className="menu-item flex items-center"
+                            data-selected={allSelected}
+                            onClick={() => handleCategoryClick(category)}
+                            aria-pressed={allSelected}
+                            aria-label={`${allSelected ? 'Deselect' : 'Select'} all ${category} assets`}
+                        >
                             <span className="text-lg font-bold">Select All</span>
                             {allSelected && <FontAwesomeIcon icon={faEye} className="ml-auto" />}
-                        </div>
+                        </button>
                         <ul className="flex flex-col">
                             {Object.values(types)
                                 .sort((a, b) => {
@@ -105,18 +117,21 @@ export default function GroupedTypes({ expand, assets, className }: GroupedTypes
                                     return nameA.localeCompare(nameB);
                                 })
                                 .map((asset) => (
-                                    <li
-                                        key={asset.type}
-                                        className="menu-item"
-                                        data-selected={selectedAssetTypes[asset.type]}
-                                        onClick={() => handleTypeClick(asset.type)}
-                                    >
-                                        <div className="flex items-center justify-between">
-                                            <span>
-                                                {capitalize(formatAltText(asset.styles.alt))} ({asset.count})
-                                            </span>
-                                            <span className="text-sm">Criticality: {asset.maxCriticality}</span>
-                                        </div>
+                                    <li key={asset.type}>
+                                        <button
+                                            className="menu-item w-full text-left"
+                                            data-selected={selectedAssetTypes[asset.type]}
+                                            onClick={() => handleTypeClick(asset.type)}
+                                            aria-pressed={selectedAssetTypes[asset.type]}
+                                            aria-label={`${selectedAssetTypes[asset.type] ? 'Deselect' : 'Select'} ${capitalize(formatAltText(asset.styles.alt))} (${asset.count} assets, criticality: ${asset.maxCriticality})`}
+                                        >
+                                            <div className="flex items-center justify-between">
+                                                <span>
+                                                    {capitalize(formatAltText(asset.styles.alt))} ({asset.count})
+                                                </span>
+                                                <span className="text-sm">Criticality: {asset.maxCriticality}</span>
+                                            </div>
+                                        </button>
                                     </li>
                                 ))}
                         </ul>

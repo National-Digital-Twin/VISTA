@@ -101,18 +101,10 @@ function AssetTypeCategory({ category, selectedCategory, assets, onCategoryClick
 
     return (
         <>
-            <div
+            <button
                 className="menu-item flex items-center gap-2"
                 data-selected={isCategorySelected}
                 onClick={onClick}
-                role="button"
-                tabIndex={0}
-                onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        onClick();
-                    }
-                }}
                 aria-pressed={isCategorySelected}
                 aria-label={`${capitalize(category)} category with ${assets.length} assets`}
             >
@@ -121,7 +113,7 @@ function AssetTypeCategory({ category, selectedCategory, assets, onCategoryClick
                 </div>
                 <FontAwesomeIcon icon={isCategorySelected ? faChevronDown : faChevronUp} />
                 {isCategoryActive && <FontAwesomeIcon icon={faEye} className="ml-auto" />}
-            </div>
+            </button>
             {isCategorySelected && <GroupedTypes expand={true} assets={assets} className="mt-2" />}
         </>
     );
