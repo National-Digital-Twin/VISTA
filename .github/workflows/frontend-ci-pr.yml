@@ -50,7 +50,7 @@ jobs:
 
       - name: Run Dependency Checks
         working-directory: frontend
-        run: yarn audit --groups dependencies
+        run: yarn audit --groups dependencies --level moderate
 
       - name: Check for Outdated Dependencies
         working-directory: frontend

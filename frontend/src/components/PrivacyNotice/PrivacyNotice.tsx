@@ -3,7 +3,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 type Props = { onClose: () => void };
 
-export default function PrivacyNotice({ onClose }: Props) {
+export default function PrivacyNotice({ onClose }: Readonly<Props>) {
   return (
     <>
       <GlobalStyles
