@@ -110,6 +110,8 @@ export default function PrivacyNotice({ onClose }: Readonly<Props>) {
             pl: "var(--pn-left-gutter)",
             boxSizing: "border-box",
           }}
+          // dangerouslySetInnerHTML used here to avoid using raw HTML that steps outside of React's control. However this is completely safe because
+          // this HTML is completely static, composed of benign text tags and does not depend on external input or embedded scripts so no concern from XSS attack
           dangerouslySetInnerHTML={{
             __html: `
             <h1>Privacy Notice - VISTA</h1>
