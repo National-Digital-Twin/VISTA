@@ -1,9 +1,7 @@
-import { AssetSpecification } from "@/hooks/queries/dataset-utils";
+import { AssetSpecification } from '@/hooks/queries/dataset-utils';
 
 export async function fetchAssetSpecifications() {
-  const liveAssetSpecifications: AssetSpecification[] = (
-    await import("@/data/live-assets.json")
-  ).default as AssetSpecification[];
+    const liveAssetSpecifications: AssetSpecification[] = (await import('@/data/live-assets.json')).default as AssetSpecification[];
 
-  return liveAssetSpecifications;
+    return liveAssetSpecifications;
 }

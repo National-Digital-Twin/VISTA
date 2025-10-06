@@ -1,26 +1,26 @@
-import { expect, Page } from "@playwright/test";
-import PlaywrightWrapper from "../helper/wrapper/PlaywrightWrappers";
+import { expect, Page } from '@playwright/test';
+import PlaywrightWrapper from '../helper/wrapper/PlaywrightWrappers';
 
 export default class LandingPage {
-  private readonly base: PlaywrightWrapper;
-  constructor(private readonly page: Page) {
-    this.base = new PlaywrightWrapper(page);
-  }
+    private readonly base: PlaywrightWrapper;
+    constructor(private readonly page: Page) {
+        this.base = new PlaywrightWrapper(page);
+    }
 
-  //Object Locators
-  private readonly Elements = {
-    menuParalog: "Vista",
-  };
+    //Object Locators
+    private readonly Elements = {
+        menuParalog: 'Vista',
+    };
 
-  async verifyDemoLandingPage() {
-    await expect(this.page).toHaveTitle(".:Demo Landing Page:.");
-  }
+    async verifyDemoLandingPage() {
+        await expect(this.page).toHaveTitle('.:Demo Landing Page:.');
+    }
 
-  async clickMenuByName() {
-    const paralogBtn = await this.page.getByRole("link", {
-      name: this.Elements.menuParalog,
-    });
-    await this.base.waitAndClick(paralogBtn);
-    await this.page.waitForTimeout(3000);
-  }
+    async clickMenuByName() {
+        const paralogBtn = await this.page.getByRole('link', {
+            name: this.Elements.menuParalog,
+        });
+        await this.base.waitAndClick(paralogBtn);
+        await this.page.waitForTimeout(3000);
+    }
 }

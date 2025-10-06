@@ -1,3 +1,3 @@
-export const TOOL_NAME = "New marker";
+export const TOOL_NAME = 'New marker';
 
-export { default as MapElements } from "./NewMarkerMapElements";
+export { default as MapElements } from './NewMarkerMapElements';

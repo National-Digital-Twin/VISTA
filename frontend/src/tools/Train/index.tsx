@@ -1,3 +1,3 @@
-export const TOOL_NAME = "Trains";
+export const TOOL_NAME = 'Trains';
 
-export { default as DetailPanel } from "./TrainDetailPanel";
+export { default as DetailPanel } from './TrainDetailPanel';

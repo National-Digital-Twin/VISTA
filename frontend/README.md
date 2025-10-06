@@ -22,16 +22,16 @@ See [SETUP.md](SETUP.md) for instructions.
 
 ## Build
 
-Run `yarn build` to build the application.
+Run `npm run build` to build the application.
 
 ## Usage
 
 ```sh
 # Terminal 1 (Frontend)
 # 1. Install dependencies
-yarn install
+npm install
 # 2. Start the application
-yarn start
+npm start
 ```
 
 ## Setup services required by paralog

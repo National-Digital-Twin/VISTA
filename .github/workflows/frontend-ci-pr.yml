@@ -36,27 +36,24 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "24.x"
-          cache: yarn
-          cache-dependency-path: frontend/yarn.lock
-
-      - name: Install Yarn
-        run: npm install -g yarn
+          node-version: "22.x"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
 
       - name: Install dependencies
         working-directory: frontend
         run: |
-          yarn install --frozen-lockfile
+          npm ci
 
       - name: Run Dependency Checks
         working-directory: frontend
-        run: yarn audit --groups dependencies
+        run: npm audit --audit-level=moderate
 
       - name: Check for Outdated Dependencies
         working-directory: frontend
         run: |
-          if [ ! -f yarn.lock ]; then
-            echo "Error: yarn.lock file is missing!"
+          if [ ! -f package-lock.json ]; then
+            echo "Error: package-lock.json file is missing!"
             exit 1
           fi
           echo "Checking for outdated dependencies"
@@ -65,7 +62,7 @@ jobs:
 
       - name: Verify Lockfile Integrity
         working-directory: frontend
-        run: yarn check --integrity
+        run: npm ci --dry-run
 
   linting:
     name: Code Linting
@@ -81,28 +78,25 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "24.x"
-          cache: yarn
-          cache-dependency-path: frontend/yarn.lock
-
-      - name: Install Yarn
-        run: npm install -g yarn
+          node-version: "22.x"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
 
       - name: Install dependencies
         working-directory: frontend
-        run: yarn install --frozen-lockfile
+        run: npm ci
 
       - name: Run Linting
         working-directory: frontend
-        run: yarn lint
+        run: npm run lint
 
       - name: Run Prettier
         working-directory: frontend
-        run: yarn prettier --check "src/**/*.{js,ts,tsx}"
+        run: npx prettier --check "src/**/*.{js,ts,tsx}"
 
       - name: TypeScript Check
         working-directory: frontend
-        run: yarn tsc --noEmit
+        run: npx tsc --noEmit
         continue-on-error: true
 
       - name: Run Sort-Package-Json (Import Sorting)
@@ -131,20 +125,17 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "24.x"
-          cache: yarn
-          cache-dependency-path: frontend/yarn.lock
-
-      - name: Install Yarn
-        run: npm install -g yarn
+          node-version: "22.x"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
 
       - name: Install dependencies
         working-directory: frontend
-        run: yarn install --frozen-lockfile
+        run: npm ci
 
       - name: Run Unit Tests
         working-directory: frontend
-        run: yarn test:coverage
+        run: npm run test:coverage
 
   security-scanning:
     name: Security Scanning
@@ -166,7 +157,7 @@ jobs:
           severity: "CRITICAL,HIGH"
 
   docker-build-test-scan:
-    name: Yarn Build, Docker Build, Test & Scan
+    name: NPM Build, Docker Build, Test & Scan
     runs-on: ubuntu-latest
     needs: security-scanning
     timeout-minutes: 20
@@ -181,16 +172,13 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "24.x"
-          cache: yarn
-          cache-dependency-path: frontend/yarn.lock
-
-      - name: Install Yarn
-        run: npm install -g yarn
+          node-version: "22.x"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
 
       - name: Install dependencies
         working-directory: frontend
-        run: yarn install --frozen-lockfile
+        run: npm ci
 
       - name: Build Frontend
         working-directory: frontend

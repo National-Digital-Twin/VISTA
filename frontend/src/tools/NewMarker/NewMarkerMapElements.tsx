@@ -1,8 +1,8 @@
-import { Marker } from "react-map-gl/maplibre";
-import { useMousePositionStore } from "./useStore";
+import { Marker } from 'react-map-gl/maplibre';
+import { useMousePositionStore } from './useStore';
 
 export default function NewMarkerMapElements() {
-  const mousePosition = useMousePositionStore((state) => state.mousePosition);
+    const mousePosition = useMousePositionStore((state) => state.mousePosition);
 
-  return mousePosition ? <Marker {...mousePosition} /> : null;
+    return mousePosition ? <Marker {...mousePosition} /> : null;
 }

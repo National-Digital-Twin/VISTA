@@ -1,15 +1,15 @@
-import { CircleCreationButton } from "./CircleCreationButton";
-import { FreehandCreationButton } from "./FreehandCreationButton";
+import { CircleCreationButton } from './CircleCreationButton';
+import { FreehandCreationButton } from './FreehandCreationButton';
 
-export const TOOL_NAME = "Polygon creation menu";
+export const TOOL_NAME = 'Polygon creation menu';
 
 export function PolygonButtons() {
-  return (
-    <>
-      <CircleCreationButton />
-      <FreehandCreationButton />
-    </>
-  );
+    return (
+        <>
+            <CircleCreationButton />
+            <FreehandCreationButton />
+        </>
+    );
 }
 
 export const POLYGON_BUTTON_ORDER = 0;

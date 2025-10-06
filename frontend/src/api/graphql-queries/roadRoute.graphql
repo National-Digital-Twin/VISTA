@@ -1,21 +1,5 @@
-query getRoadRoute(
-  $startLat: Float!
-  $startLon: Float!
-  $endLat: Float!
-  $endLon: Float!
-  $floodExtent: GeoJSON
-  $vehicle: Vehicle
-) {
-  roadRoute(
-    routeInput: {
-      startLat: $startLat
-      startLon: $startLon
-      endLat: $endLat
-      endLon: $endLon
-      floodExtent: $floodExtent
-      vehicle: $vehicle
+query getRoadRoute($startLat: Float!, $startLon: Float!, $endLat: Float!, $endLon: Float!, $floodExtent: GeoJSON, $vehicle: Vehicle) {
+    roadRoute(routeInput: { startLat: $startLat, startLon: $startLon, endLat: $endLat, endLon: $endLon, floodExtent: $floodExtent, vehicle: $vehicle }) {
+        routeGeojson
     }
-  ) {
-    routeGeojson
-  }
 }
