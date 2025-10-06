@@ -1,7 +1,9 @@
+import { useState } from "react";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 
 import { Box } from "@mui/material";
+import PrivacyNotice from "./components/PrivacyNotice/PrivacyNotice";
 
 import PageHeader from "@/components/PageHeader";
 import AppBody from "@/components/AppBody";
@@ -10,6 +12,7 @@ import config from "@/config/app-config";
 library.add(fas);
 
 export default function App() {
+  const [showPrivacy, setShowPrivacy] = useState(false);
   // Propagate dark mode to the dark/light class and data attributes on the root
   // element. This is done through an effect because the `html` element itself
   // is outside of React's management.
@@ -44,10 +47,30 @@ export default function App() {
       }}
     >
       <Box sx={{ flexShrink: 0 }}>
-        <PageHeader appName="VISTA" />
+        <PageHeader
+          appName="VISTA"
+          onShowPrivacy={() => setShowPrivacy(true)}
+        />
       </Box>
-      <Box sx={{ flexGrow: 1, overflow: "hidden" }}>
-        <AppBody />
+
+      <Box
+        sx={{
+          flexGrow: 1,
+          overflow: "hidden",
+          display: "flex",
+          flexDirection: "column",
+          minHeight: 0,
+        }}
+      >
+        {showPrivacy ? (
+          <Box
+            sx={{ flex: 1, minHeight: 0, overflowY: "auto", bgcolor: "#fff" }}
+          >
+            <PrivacyNotice onClose={() => setShowPrivacy(false)} />
+          </Box>
+        ) : (
+          <AppBody />
+        )}
       </Box>
     </Box>
   );

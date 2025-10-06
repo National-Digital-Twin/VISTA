@@ -11,13 +11,20 @@ import {
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import React, { useEffect, useState } from "react";
 import config from "@/config/app-config";
 import { signout } from "@/utils/signout";
 
 /** Overall header of the application */
 
-const PageHeader = ({ appName }: { appName: string }) => {
+const PageHeader = ({
+  appName,
+  onShowPrivacy,
+}: {
+  appName: string;
+  onShowPrivacy?: () => void;
+}) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
@@ -46,6 +53,12 @@ const PageHeader = ({ appName }: { appName: string }) => {
     signout();
     handleClose();
   };
+
+  const handlePrivacyNotice = () => {
+    onShowPrivacy?.();
+    setAnchorEl(null);
+  };
+
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -89,6 +102,25 @@ const PageHeader = ({ appName }: { appName: string }) => {
               {user?.email ?? (error ? "Error loading user" : "Loading...")}
             </MenuItem>
             <Divider component="li" />
+            <MenuItem
+              onClick={handlePrivacyNotice}
+              sx={{ paddingLeft: "10px" }}
+            >
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "start",
+                  width: "100%",
+                  paddingTop: "2px",
+                  paddingBottom: "2px",
+                  gap: "8px",
+                  color: "#002244",
+                }}
+              >
+                <LockOutlinedIcon sx={{ marginLeft: "-4px" }} />
+                <Typography component="span">Privacy notice</Typography>
+              </Box>
+            </MenuItem>
             <MenuItem onClick={handleSignOut} sx={{ paddingLeft: "10px" }}>
               <Box
                 sx={{
