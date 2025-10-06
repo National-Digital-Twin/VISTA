@@ -50,7 +50,7 @@ jobs:
 
       - name: Run Dependency Checks
         working-directory: frontend
-        run: yarn audit --groups dependencies --level moderate
+        run: npx --yes audit-ci@latest --config .auditciconfig.json
 
       - name: Check for Outdated Dependencies
         working-directory: frontend
