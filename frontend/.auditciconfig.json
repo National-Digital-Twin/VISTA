@@ -1,8 +1,0 @@
-{
-  "low": false,
-  "moderate": true,
-  "high": true,
-  "critical": true,
-  "skip-dev": true,
-  "allowlist": []
-}

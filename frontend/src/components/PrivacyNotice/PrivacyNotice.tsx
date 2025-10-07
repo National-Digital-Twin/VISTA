@@ -1,119 +1,116 @@
-import { Box, IconButton, GlobalStyles } from "@mui/material";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { useNavigate } from 'react-router-dom';
+import { Box, IconButton, GlobalStyles } from '@mui/material';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
-type Props = { onClose: () => void };
+export default function PrivacyNotice() {
+    const navigate = useNavigate();
+    return (
+        <>
+            <GlobalStyles
+                styles={{
+                    '#vista-privacy, #vista-privacy *': {
+                        fontFamily: 'var(--mat-sys-body-medium-font, Roboto,"Helvetica Neue",Arial,sans-serif)',
+                    },
 
-export default function PrivacyNotice({ onClose }: Readonly<Props>) {
-  return (
-    <>
-      <GlobalStyles
-        styles={{
-          "#vista-privacy, #vista-privacy *": {
-            fontFamily:
-              'var(--mat-sys-body-medium-font, Roboto,"Helvetica Neue",Arial,sans-serif)',
-          },
+                    '#vista-privacy h1': {
+                        margin: '0 0 10px',
+                        fontFamily: 'var(--mat-sys-headline-small-font, Roboto,"Helvetica Neue",Arial,sans-serif)',
+                        fontSize: 'var(--mat-sys-headline-small-size, 1.5rem)',
+                        fontWeight: 'var(--mat-sys-headline-small-weight, 400)',
+                        lineHeight: 'var(--mat-sys-headline-small-line-height, 1.35)',
+                        letterSpacing: 'var(--mat-sys-headline-small-tracking, 0)',
+                    },
 
-          "#vista-privacy h1": {
-            margin: "0 0 10px",
-            fontFamily:
-              'var(--mat-sys-headline-small-font, Roboto,"Helvetica Neue",Arial,sans-serif)',
-            fontSize: "var(--mat-sys-headline-small-size, 1.5rem)",
-            fontWeight: "var(--mat-sys-headline-small-weight, 400)",
-            lineHeight: "var(--mat-sys-headline-small-line-height, 1.35)",
-            letterSpacing: "var(--mat-sys-headline-small-tracking, 0)",
-          },
+                    '#vista-privacy h2': {
+                        margin: '20px 0 8px',
+                        fontFamily: 'var(--mat-sys-headline-small-font, Roboto,"Helvetica Neue",Arial,sans-serif)',
+                        fontSize: 'var(--mat-sys-headline-medium-size, 1.4rem)',
+                        fontWeight: 'var(--mat-sys-headline-medium-weight, 400)',
+                        lineHeight: 'var(--mat-sys-headline-medium-line-height, 1.35)',
+                        letterSpacing: 'var(--mat-sys-headline-medium-tracking, 0)',
+                    },
 
-          "#vista-privacy h2": {
-            margin: "20px 0 8px",
-            fontFamily:
-              'var(--mat-sys-headline-small-font, Roboto,"Helvetica Neue",Arial,sans-serif)',
-            fontSize: "var(--mat-sys-headline-medium-size, 1.4rem)",
-            fontWeight: "var(--mat-sys-headline-medium-weight, 400)",
-            lineHeight: "var(--mat-sys-headline-medium-line-height, 1.35)",
-            letterSpacing: "var(--mat-sys-headline-medium-tracking, 0)",
-          },
+                    '#vista-privacy p, #vista-privacy address': {
+                        margin: '0 0 8px',
+                        color: 'var(--pn-text, #374151)',
+                        fontStyle: 'normal',
+                        fontSize: 'var(--mat-sys-body-medium-size, 0.9rem)',
+                        fontWeight: 'var(--mat-sys-body-medium-weight, 400)',
+                        lineHeight: 'var(--mat-sys-body-medium-line-height, 1.6)',
+                        letterSpacing: 'var(--mat-sys-body-medium-tracking, 0)',
+                    },
 
-          "#vista-privacy p, #vista-privacy address": {
-            margin: "0 0 8px",
-            color: "var(--pn-text, #374151)",
-            fontStyle: "normal",
-            fontSize: "var(--mat-sys-body-medium-size, 0.9rem)",
-            fontWeight: "var(--mat-sys-body-medium-weight, 400)",
-            lineHeight: "var(--mat-sys-body-medium-line-height, 1.6)",
-            letterSpacing: "var(--mat-sys-body-medium-tracking, 0)",
-          },
+                    '#vista-privacy ul, #vista-privacy ol': {
+                        listStyle: 'revert',
+                        listStylePosition: 'outside',
+                        margin: '0 0 16px 24px',
+                        padding: 0,
+                        fontSize: 'var(--mat-sys-body-medium-size, 0.9rem)',
+                    },
+                    '#vista-privacy ul ul': { listStyleType: 'circle', marginTop: 8 },
+                    '#vista-privacy li': { marginBottom: 2 },
 
-          "#vista-privacy ul, #vista-privacy ol": {
-            listStyle: "revert",
-            listStylePosition: "outside",
-            margin: "0 0 16px 24px",
-            padding: 0,
-            fontSize: "var(--mat-sys-body-medium-size, 0.9rem)",
-          },
-          "#vista-privacy ul ul": { listStyleType: "circle", marginTop: 8 },
-          "#vista-privacy li": { marginBottom: 2 },
+                    '#vista-privacy a': {
+                        color: 'var(--pn-link, #0b5fff)',
+                        textDecoration: 'underline',
+                    },
+                }}
+            />
 
-          "#vista-privacy a": {
-            color: "var(--pn-link, #0b5fff)",
-            textDecoration: "underline",
-          },
-        }}
-      />
+            <Box
+                id="vista-privacy"
+                sx={{
+                    'background': '#fff',
+                    '--pn-left-gutter': '24px',
+                    '--pn-pad-top': '12px',
+                    '--pn-pad-right': '16px',
+                    '--pn-logo-width': '300px',
+                    '--pn-logo-shift': '-32px',
+                    '--pn-text': '#374151',
+                    '--pn-link': '#0b5fff',
+                    'py': 'var(--pn-pad-top)',
+                    'pr': 'var(--pn-pad-right)',
+                }}
+            >
+                <Box
+                    sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'flex-start',
+                        mb: 1,
+                        overflow: 'hidden',
+                        pl: 'var(--pn-left-gutter)',
+                        boxSizing: 'border-box',
+                    }}
+                >
+                    <IconButton aria-label="Back" onClick={() => navigate(-1)} sx={{ mb: 0.5 }}>
+                        <ArrowBackIcon />
+                    </IconButton>
 
-      <Box
-        id="vista-privacy"
-        sx={{
-          background: "#fff",
-          "--pn-left-gutter": "24px",
-          "--pn-pad-top": "12px",
-          "--pn-pad-right": "16px",
-          "--pn-logo-width": "300px",
-          "--pn-logo-shift": "-32px",
-          "--pn-text": "#374151",
-          "--pn-link": "#0b5fff",
-          py: "var(--pn-pad-top)",
-          pr: "var(--pn-pad-right)",
-        }}
-      >
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "flex-start",
-            mb: 1,
-            overflow: "hidden",
-            pl: "var(--pn-left-gutter)",
-            boxSizing: "border-box",
-          }}
-        >
-          <IconButton aria-label="Back" onClick={onClose} sx={{ mb: 0.5 }}>
-            <ArrowBackIcon />
-          </IconButton>
+                    <Box
+                        component="img"
+                        src="/DBT_logo_black.svg"
+                        alt="Department for Business & Trade"
+                        sx={{
+                            display: 'block',
+                            width: 'var(--pn-logo-width) !important',
+                            maxWidth: 'none !important',
+                            height: 'auto !important',
+                            transform: 'translateX(var(--pn-logo-shift))',
+                            mb: 1,
+                        }}
+                    />
+                </Box>
 
-          <Box
-            component="img"
-            src="/DBT_logo_black.svg"
-            alt="Department for Business & Trade"
-            sx={{
-              display: "block",
-              width: "var(--pn-logo-width) !important",
-              maxWidth: "none !important",
-              height: "auto !important",
-              transform: "translateX(var(--pn-logo-shift))",
-              mb: 1,
-            }}
-          />
-        </Box>
-
-        <Box
-          sx={{
-            pl: "var(--pn-left-gutter)",
-            boxSizing: "border-box",
-          }}
-          // dangerouslySetInnerHTML used here to avoid using raw HTML that steps outside of React's control. However this is completely safe because
-          // this HTML is completely static, composed of benign text tags and does not depend on external input or embedded scripts so no concern from XSS attack
-          dangerouslySetInnerHTML={{
-            __html: `
+                <Box
+                    sx={{
+                        pl: 'var(--pn-left-gutter)',
+                        boxSizing: 'border-box',
+                    }}
+                    // dangerouslySetInnerHTML used here to avoid using raw HTML that steps outside of React's control. However this is completely safe because
+                    // this HTML is completely static, composed of benign text tags and does not depend on external input or embedded scripts so no concern from XSS attack
+                    dangerouslySetInnerHTML={{
+                        __html: `
             <h1>Privacy Notice - VISTA</h1>
 
             <p>This privacy notice explains how the Department for Business and Trade (DBT) and the National Digital
@@ -231,9 +228,9 @@ export default function PrivacyNotice({ onClose }: Readonly<Props>) {
                 Tel: 0303 123 1113
             </address>
             `,
-          }}
-        />
-      </Box>
-    </>
-  );
+                    }}
+                />
+            </Box>
+        </>
+    );
 }

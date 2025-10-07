@@ -1,26 +1,26 @@
 .typeIcon {
-  border-radius: 50%;
-  width: 48px;
-  height: 48px;
-  border-width: 2px;
-  display: block flow-root;
-  text-align: center;
-  align-content: center;
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    border-width: 2px;
+    display: block flow-root;
+    text-align: center;
+    align-content: center;
 }
 
-.typeIcon[data-type-icon-disabled="true"] {
-  opacity: 0.8;
-  filter: grayscale(0.7);
+.typeIcon[data-type-icon-disabled='true'] {
+    opacity: 0.8;
+    filter: grayscale(0.7);
 }
 
-.typeIcon[data-type-icon-size="sm"] {
-  width: 36px;
-  height: 36px;
-  font-size: 10px;
+.typeIcon[data-type-icon-size='sm'] {
+    width: 36px;
+    height: 36px;
+    font-size: 10px;
 }
 
-.typeIcon[data-type-icon-size="lg"] {
-  width: 62px;
-  height: 62px;
-  font-size: 22px;
+.typeIcon[data-type-icon-size='lg'] {
+    width: 62px;
+    height: 62px;
+    font-size: 22px;
 }

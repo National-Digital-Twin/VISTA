@@ -1,18 +1,16 @@
-import React from "react";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import React from 'react';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 export interface DevToolsContainerProps {
-  /** Children */
-  readonly children: React.ReactNode;
+    /** Children */
+    readonly children: React.ReactNode;
 }
 
-export default function DevToolsContainer({
-  children,
-}: DevToolsContainerProps) {
-  return (
-    <>
-      <React.StrictMode>{children}</React.StrictMode>
-      <ReactQueryDevtools />
-    </>
-  );
+export default function DevToolsContainer({ children }: DevToolsContainerProps) {
+    return (
+        <>
+            <React.StrictMode>{children}</React.StrictMode>
+            <ReactQueryDevtools />
+        </>
+    );
 }

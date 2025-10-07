@@ -1,49 +1,39 @@
-import { useMemo } from "react";
-import styles from "./TypeIcon.module.css";
-import useFindIcon from "@/hooks/useFindIcon";
+import { useMemo } from 'react';
+import styles from './TypeIcon.module.css';
+import useFindIcon from '@/hooks/useFindIcon';
 
 export interface TypeIconProps {
-  /** Icon size */
-  readonly size?: "sm" | "md" | "lg" | "base";
-  /** Ontology type (class) URI or short URI */
-  readonly type: string;
-  /** Disabled - if true, icon is rendered in a disabled state */
-  readonly disabled?: boolean;
+    /** Icon size */
+    readonly size?: 'sm' | 'md' | 'lg' | 'base';
+    /** Ontology type (class) URI or short URI */
+    readonly type: string;
+    /** Disabled - if true, icon is rendered in a disabled state */
+    readonly disabled?: boolean;
 }
 
-function NewTypeIcon({ size = "base", type, disabled = false }: TypeIconProps) {
-  const iconProps = useFindIcon(type);
-  // Most of these icons are missing in fontawesome
-  //const hasIcon = Boolean(iconProps?.faIcon);
-  const hasIcon = false;
+function NewTypeIcon({ size = 'base', type, disabled = false }: TypeIconProps) {
+    const iconProps = useFindIcon(type);
+    // Most of these icons are missing in fontawesome
+    //const hasIcon = Boolean(iconProps?.faIcon);
+    const hasIcon = false;
 
-  const dataSize = size === "base" ? "md" : size;
-  const dataDisabled = disabled ? "true" : "false";
+    const dataSize = size === 'base' ? 'md' : size;
+    const dataDisabled = disabled ? 'true' : 'false';
 
-  const style = useMemo(
-    () => ({
-      color: iconProps.color,
-      backgroundColor: iconProps.backgroundColor,
-      borderColor: iconProps.color,
-    }),
-    [iconProps.color, iconProps.backgroundColor],
-  );
+    const style = useMemo(
+        () => ({
+            color: iconProps.color,
+            backgroundColor: iconProps.backgroundColor,
+            borderColor: iconProps.color,
+        }),
+        [iconProps.color, iconProps.backgroundColor],
+    );
 
-  return (
-    <div
-      className={styles.typeIcon}
-      style={style}
-      aria-label={iconProps.alt}
-      data-type-icon-size={dataSize}
-      data-type-icon-disabled={dataDisabled}
-    >
-      {hasIcon ? (
-        <i className={iconProps.faIcon} title={iconProps.alt} />
-      ) : (
-        iconProps.iconFallbackText
-      )}
-    </div>
-  );
+    return (
+        <div className={styles.typeIcon} style={style} aria-label={iconProps.alt} data-type-icon-size={dataSize} data-type-icon-disabled={dataDisabled}>
+            {hasIcon ? <i className={iconProps.faIcon} title={iconProps.alt} /> : iconProps.iconFallbackText}
+        </div>
+    );
 }
 
 /**
@@ -53,10 +43,6 @@ function NewTypeIcon({ size = "base", type, disabled = false }: TypeIconProps) {
  *
  * It emulates a subset of the behaviour of TeliTypeIcon.
  */
-export default function TypeIcon({
-  size = "base",
-  type,
-  disabled = false,
-}: TypeIconProps) {
-  return <NewTypeIcon size={size} type={type} disabled={disabled} />;
+export default function TypeIcon({ size = 'base', type, disabled = false }: TypeIconProps) {
+    return <NewTypeIcon size={size} type={type} disabled={disabled} />;
 }

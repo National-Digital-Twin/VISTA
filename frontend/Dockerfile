@@ -1,4 +1,4 @@
-FROM node:24-alpine AS builder
+FROM node:22-alpine AS builder
 
 # Set the working directory in the container
 WORKDIR /app
@@ -6,14 +6,14 @@ WORKDIR /app
 ARG MAP_TILER_TOKEN
 ARG NPM_TOKEN
 
-RUN echo "registry=https://registry.yarnpkg.com/" > .npmrc && \
+RUN echo "registry=https://registry.npmjs.org/" > .npmrc && \
     echo "@national-digital-twin:registry=https://npm.pkg.github.com/" >> .npmrc && \
     echo "//npm.pkg.github.com/:_authToken=${NPM_TOKEN}" >> .npmrc
 
-RUN yarn cache clean
+RUN npm cache clean --force
 
-COPY package.json yarn.lock ./
-RUN yarn install --frozen-lockfile --ignore-scripts
+COPY package.json package-lock.json ./
+RUN npm ci --ignore-scripts
 RUN rm -f .npmrc
 
 ENV VITE_ONTOLOGY_SERVICE_URL="/transparent-proxy"
@@ -22,7 +22,7 @@ ENV VITE_VISTA_API_URL="/vista"
 ENV VITE_MAP_TILER_TOKEN=$MAP_TILER_TOKEN
 
 COPY . .
-RUN yarn build
+RUN npm run build
 
 # Start a new stage from scratch
 FROM nginxinc/nginx-unprivileged:1.29-alpine3.22 AS runner

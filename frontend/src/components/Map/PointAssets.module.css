@@ -1,41 +1,41 @@
 .markerWithTooltipContent {
-  position: relative;
+    position: relative;
 }
 
 .icon {
-  border-radius: 50%;
-  cursor: pointer;
-  border-width: 2px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 1px;
-  aspect-ratio: 1;
-  padding: 5px;
+    border-radius: 50%;
+    cursor: pointer;
+    border-width: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 1px;
+    aspect-ratio: 1;
+    padding: 5px;
 
-  &.isSelected {
-    border-width: 3px;
-  }
+    &.isSelected {
+        border-width: 3px;
+    }
 }
 
 .cpsAssetIcon {
-  margin-top: -100%; /* Ensures that the bottom of the icon lines up with the position of the asset on the map */
+    margin-top: -100%; /* Ensures that the bottom of the icon lines up with the position of the asset on the map */
 }
 
 .tooltip {
-  position: absolute;
-  inset-block-start: 10px;
-  inset-inline: 0;
-  z-index: 100;
-  display: none;
-  color: var(--col-fg);
-  white-space: nowrap;
+    position: absolute;
+    inset-block-start: 10px;
+    inset-inline: 0;
+    z-index: 100;
+    display: none;
+    color: var(--col-fg);
+    white-space: nowrap;
 }
 
 .markerWithTooltipContent:hover .tooltip {
-  display: block flow;
+    display: block flow;
 }
 
 .tooltip > * {
-  inline-size: fit-content;
+    inline-size: fit-content;
 }

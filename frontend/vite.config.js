@@ -1,57 +1,57 @@
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
-import graphqlLoader from "vite-plugin-graphql-loader";
-import { resolve } from "path";
-import tailwindcss from "tailwindcss";
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import graphqlLoader from 'vite-plugin-graphql-loader';
+import { resolve } from 'node:path';
+import tailwindcss from 'tailwindcss';
 
 export default defineConfig({
-  plugins: [react(), graphqlLoader()],
-  resolve: {
-    alias: {
-      "@": resolve(__dirname, "src"),
+    plugins: [react(), graphqlLoader()],
+    resolve: {
+        alias: {
+            '@': resolve(__dirname, 'src'),
+        },
     },
-  },
-  css: {
-    postcss: {
-      plugins: [tailwindcss],
+    css: {
+        postcss: {
+            plugins: [tailwindcss],
+        },
+        modules: {
+            localsConvention: 'camelCaseOnly',
+        },
     },
-    modules: {
-      localsConvention: "camelCaseOnly",
+    build: {
+        sourcemap: true,
     },
-  },
-  build: {
-    sourcemap: true,
-  },
-  optimizeDeps: {
-    esbuildOptions: {
-      define: {
-        global: "globalThis",
-      },
+    optimizeDeps: {
+        esbuildOptions: {
+            define: {
+                global: 'globalThis',
+            },
+        },
     },
-  },
-  server: {
-    proxy: {
-      // Transparent proxy
-      "/transparent-proxy": {
-        target: "http://localhost:5013",
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/transparent-proxy/, ""),
-        secure: false,
-      },
-      // Coefficent python
-      "/ndtp-python": {
-        target: "http://localhost:8000",
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/ndtp-python/, ""),
-        secure: false,
-      },
-      // Ontology proxy
-      "/vista": {
-        target: "http://localhost:4001",
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/vista/, ""),
-        secure: false,
-      },
+    server: {
+        proxy: {
+            // Transparent proxy
+            '/transparent-proxy': {
+                target: 'http://localhost:5013',
+                changeOrigin: true,
+                rewrite: (path) => path.replace(/^\/transparent-proxy/, ''),
+                secure: false,
+            },
+            // Coefficent python
+            '/ndtp-python': {
+                target: 'http://localhost:8000',
+                changeOrigin: true,
+                rewrite: (path) => path.replace(/^\/ndtp-python/, ''),
+                secure: false,
+            },
+            // Ontology proxy
+            '/vista': {
+                target: 'http://localhost:4001',
+                changeOrigin: true,
+                rewrite: (path) => path.replace(/^\/vista/, ''),
+                secure: false,
+            },
+        },
     },
-  },
 });

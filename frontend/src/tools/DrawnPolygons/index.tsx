@@ -1,3 +1,3 @@
-export const TOOL_NAME = "Drawn polygons";
+export const TOOL_NAME = 'Drawn polygons';
 
-export { default as LayerControl } from "./DrawnPolygonLayerControl";
+export { default as LayerControl } from './DrawnPolygonLayerControl';

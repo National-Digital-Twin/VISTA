@@ -55,22 +55,18 @@ We fetch data from external APIs using Apollo Client for GraphQL.
 Example:
 
 ```typescript
-export const fetchRouteGeoJson = async (
-  roadRouteInputParams: RoadRouteInputParams,
-): Promise<RoadRoute> => {
-  const { data, errors } = await client.query({
-    query: GET_ROAD_ROUTE,
+export const fetchRouteGeoJson = async (roadRouteInputParams: RoadRouteInputParams): Promise<RoadRoute> => {
+    const { data, errors } = await client.query({
+        query: GET_ROAD_ROUTE,
 
-    variables: {
-      start: roadRouteInputParams.start,
+        variables: {
+            start: roadRouteInputParams.start,
 
-      end: roadRouteInputParams.end,
+            end: roadRouteInputParams.end,
 
-      floodExtent: roadRouteInputParams.floodExtent
-        ? JSON.stringify(roadRouteInputParams.floodExtent)
-        : undefined,
-    },
-  });
+            floodExtent: roadRouteInputParams.floodExtent ? JSON.stringify(roadRouteInputParams.floodExtent) : undefined,
+        },
+    });
 };
 ```
 
@@ -82,11 +78,11 @@ Example:
 
 ```typescript
 export default function Sandbag() {
-  const { data } = useQuery({
-    queryKey: ["sandbag"],
+    const { data } = useQuery({
+        queryKey: ['sandbag'],
 
-    queryFn: () => fetchSandbagPlacements(),
-  });
+        queryFn: () => fetchSandbagPlacements(),
+    });
 }
 ```
 
@@ -108,9 +104,9 @@ We use Vite for building the project. Vite supports hot-reloading, so you can se
 
 - [Vite Environment Variables](https://vitejs.dev/guide/env-and-mode)
 
-### Yarn
+### NPM
 
-We use Yarn for package management because it is faster than npm and more feature-complete than Bun.
+We use NPM for package management as it's the standard package manager for Node.js and provides reliable dependency management.
 
 - [Bun](https://bun.sh/)
 
@@ -146,17 +142,16 @@ The Tool Interface simplifies frontend development by enabling the composition o
 
 1. **Exporting Components**
 
-   Your code snippet indicates the export of several modules:
+    Your code snippet indicates the export of several modules:
+    - `TOOL_NAME`: A constant string representing the name of the tool.
 
-   - `TOOL_NAME`: A constant string representing the name of the tool.
+    - `MapElements`: These render everything that can be rendered in Maplibre GL on the map. [List of things in Maplibre GL](https://maplibre.org/maplibre-gl-js/docs/API/#markers-and-controls).
 
-   - `MapElements`: These render everything that can be rendered in Maplibre GL on the map. [List of things in Maplibre GL](https://maplibre.org/maplibre-gl-js/docs/API/#markers-and-controls).
+    - `DetailPanel`: Detail Panels display extra tables and charts of information on click. We're using [Recharts](https://refine.dev/blog/recharts/) to make our charts.
 
-   - `DetailPanel`: Detail Panels display extra tables and charts of information on click. We're using [Recharts](https://refine.dev/blog/recharts/) to make our charts.
+    - `ToolbarTools`: A default export from `./Monitoring`.
 
-   - `ToolbarTools`: A default export from `./Monitoring`.
-
-   - `layers`: This duplicates `MapElements`.
+    - `layers`: This duplicates `MapElements`.
 
 You can create a structured, interactive React map application using MapLibre GL with these components. Each interface part contributes to the overall mapping functionality, from rendering data to providing user controls and detailed information.
 
@@ -191,7 +186,6 @@ Here are various strategies to debug and troubleshoot issues in your development
 - Install the Chrome React Developer Tools extension, viewable in the developer tools under >> ⚛️ Components.
 
 - Use the Tanstack Query DevTools to see and fetch query objects.
-
-  - Use the Apollo Client Developer Tools Chrome extension to see and fetch GraphQL query objects.
+    - Use the Apollo Client Developer Tools Chrome extension to see and fetch GraphQL query objects.
 
 Happy coding and contributing!
