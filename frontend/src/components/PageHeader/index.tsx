@@ -10,10 +10,9 @@ import UserMenu from './UserMenu';
 
 interface PageHeaderProps {
     appName: string;
-    onShowPrivacy: () => void;
 }
 
-const PageHeader = ({ appName, onShowPrivacy }: Readonly<PageHeaderProps>) => {
+const PageHeader = ({ appName }: Readonly<PageHeaderProps>) => {
     const theme = useTheme();
     const navigate = useNavigate();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
