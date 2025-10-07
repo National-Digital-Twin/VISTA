@@ -2,6 +2,7 @@ import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
+import PrivacyNotice from './components/PrivacyNotice/PrivacyNotice';
 import AppBody from '@/components/AppBody';
 import Layout from '@/components/Layout';
 import config from '@/config/app-config';
@@ -22,6 +23,7 @@ const AppWrapper = () => {
                 { path: 'profile', element: <Profile /> },
                 { path: 'admin-settings', element: <AdminSettings /> },
                 { path: 'notifications', element: <Notifications /> },
+                { path: 'privacy', element: <PrivacyNotice /> },
             ],
         },
     ]);
