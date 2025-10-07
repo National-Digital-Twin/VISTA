@@ -6,7 +6,7 @@ const fetchLiveFloodAreas = async () => {
     const data = await response.json();
     return (
         await Promise.all(
-            data.items.map(async (v) => {
+            data.items.map(async (v: any) => {
                 const response = await fetch(v.floodArea.polygon);
                 if (!response.ok) {
                     throw new Error('An error occurred while retrieving live flood polygon');

@@ -48,23 +48,42 @@ const useGroupedAssets = ({ assessment, searchFilter }: UseGroupedAssetsOptions)
     const queries = useQueries({
         queries: (assetSpecifications ?? []).map((assetSpecification, index) => ({
             queryKey: ['dataset', `${assetSpecification.type}-${index}`],
-            queryFn: () => fetchAssetsForAssetSpecification(assetSpecification),
+            queryFn: () => {
+                return Promise.race([
+                    fetchAssetsForAssetSpecification(assetSpecification)
+                        .then((result) => result)
+                        .catch((_error) => []),
+                    new Promise((_, reject) => {
+                        setTimeout(() => reject(new Error('Query timeout')), 30000);
+                    }),
+                ]).catch((_error) => []);
+            },
             staleTime: 5 * 60 * 1000,
+            retry: 2,
+            retryDelay: 1000,
         })),
     });
 
-    const datasets = queries.map((q, i) => {
-        if (assetSpecifications) {
-            return {
-                id: assetSpecifications[i].type,
-                type: assetSpecifications[i].type,
-                category: assetSpecifications[i].secondaryCategory,
-                status: q.status,
-                data: q.data,
-                error: q.error,
-            } as DatasetState;
-        }
-    });
+    const datasets = useMemo(
+        () =>
+            queries.map((q, i) => {
+                if (assetSpecifications) {
+                    const status = q.isLoading ? 'pending' : q.isError ? 'error' : 'success';
+                    const dataset = {
+                        id: assetSpecifications[i].type,
+                        type: assetSpecifications[i].type,
+                        category: assetSpecifications[i].secondaryCategory,
+                        status,
+                        data: q.data,
+                        error: q.error,
+                    } as DatasetState;
+
+                    return dataset;
+                }
+                return null;
+            }),
+        [queries, assetSpecifications],
+    );
 
     const assets = useMemo(() => {
         const assets: Asset[] = [];
@@ -85,9 +104,17 @@ const useGroupedAssets = ({ assessment, searchFilter }: UseGroupedAssetsOptions)
         return datasets.some((d) => d && d.status === 'error');
     }, [datasets]);
 
-    const total = datasets.length;
-    const completed = datasets.filter((d) => d && (d.status === 'success' || d.status === 'error')).length;
-    const progress = total > 0 ? completed / total : 0;
+    const progress = useMemo(() => {
+        const total = datasets.length;
+        const completed = datasets.filter((d) => d && (d.status === 'success' || d.status === 'error')).length;
+        const progressValue = total > 0 ? completed / total : 0;
+
+        if (total > 0 && completed > 0 && progressValue >= 0.99) {
+            return 1;
+        }
+
+        return progressValue;
+    }, [datasets]);
 
     const { data: dependencies, error: dependenciesError } = useQuery({
         queryKey: ['assets-with-dependencies', assessment ?? ''],

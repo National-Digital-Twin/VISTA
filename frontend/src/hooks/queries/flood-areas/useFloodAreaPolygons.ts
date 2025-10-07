@@ -1,36 +1,61 @@
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useMemo } from 'react';
 import { useQueries } from '@tanstack/react-query';
 
 import { ElementsContext } from '@/context/ElementContext';
 import { fetchFloodAreaPolygon } from '@/api/combined';
 
 export default function useFloodAreaPolygons(selectedFloodAreas: string[]) {
-    const { updateErrorNotifications } = useContext(ElementsContext);
+    const context = useContext(ElementsContext);
+    const updateErrorNotifications = context?.updateErrorNotifications;
 
-    const query = useQueries({
+    const queries = useQueries({
         queries: selectedFloodAreas.map((polygonUri) => ({
             enabled: Boolean(polygonUri),
             queryKey: ['flood-area-polygon', polygonUri],
             queryFn: () => fetchFloodAreaPolygon(polygonUri).then((data) => [polygonUri, data.features]),
         })),
-        combine: (results) => ({
-            data: Object.fromEntries(results.filter((result) => result.data).map((result) => result.data)),
-            isLoading: results.some((result) => result.isLoading),
-            isSuccess: results.some((result) => result.isSuccess),
-            isError: results.some((result) => result.isError),
-            errors: results.map((result) => result.error),
-        }),
     });
 
-    useEffect(() => {
-        if (query.isError) {
-            query.errors.forEach((error) => updateErrorNotifications(error.message));
+    const data = useMemo(() => {
+        const result: Record<string, any> = {};
+        for (let i = 0; i < queries.length; i++) {
+            const query = queries[i];
+            if (query.data && query.data[0] && query.data[1]) {
+                result[query.data[0]] = query.data[1];
+            }
         }
-    }, [query.isError, query.errors, updateErrorNotifications]);
+        return result;
+    }, [queries]);
+
+    const isLoading = useMemo(() => {
+        return queries.some((result) => result.isLoading);
+    }, [queries]);
+
+    const isSuccess = useMemo(() => {
+        return queries.some((result) => result.isSuccess);
+    }, [queries]);
+
+    const isError = useMemo(() => {
+        return queries.some((result) => result.isError);
+    }, [queries]);
+
+    const errors = useMemo(() => {
+        return queries.map((result) => result.error);
+    }, [queries]);
+
+    useEffect(() => {
+        if (isError && updateErrorNotifications) {
+            errors.forEach((error) => {
+                if (error) {
+                    updateErrorNotifications(error.message);
+                }
+            });
+        }
+    }, [isError, errors, updateErrorNotifications]);
 
     return {
-        polygonFeatures: query.data,
-        isLoading: query.isLoading,
-        isSuccess: query.isSuccess,
+        polygonFeatures: data,
+        isLoading,
+        isSuccess,
     };
 }

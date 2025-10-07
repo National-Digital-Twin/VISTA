@@ -1,4 +1,4 @@
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useMemo, useRef } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import useSharedStore from '@/hooks/useSharedStore';
 import { ElementsContext } from '@/context/ElementContext';
@@ -35,15 +35,40 @@ export default function FloodAreasMenuBody({ searchQuery = '', updateSelectedCou
 
     const { selected, showLiveFloods, toggleShowLiveFloods, setSelected } = useFloodAreaSharedStore();
 
-    const floodPolygonUris = floodAreaNodes ? floodAreaNodes.map((node) => node.value) : [];
+    const floodPolygonUris = useMemo(() => (floodAreaNodes ? floodAreaNodes.map((node) => node.value) : []), [floodAreaNodes]);
     const { polygonFeatures, isLoading } = useFloodAreaPolygons(floodPolygonUris);
     const { setClickedFloodAreas } = useContext(ElementsContext);
+
+    const prevPolygonFeaturesRef = useRef<any>(null);
+    const prevSelectedRef = useRef<string[]>([]);
+    const prevIsLoadingRef = useRef<boolean>(true);
 
     useEffect(() => {
         if (isLoading || !polygonFeatures) {
             return;
         }
-        setClickedFloodAreas(Object.fromEntries(selected.map((polygonUri) => [polygonUri, polygonFeatures[polygonUri][0]])));
+
+        const polygonFeaturesChanged = JSON.stringify(polygonFeatures) !== JSON.stringify(prevPolygonFeaturesRef.current);
+        const selectedChanged = JSON.stringify(selected) !== JSON.stringify(prevSelectedRef.current);
+        const isLoadingChanged = isLoading !== prevIsLoadingRef.current;
+
+        if (!polygonFeaturesChanged && !selectedChanged && !isLoadingChanged) {
+            return;
+        }
+
+        const newClickedFloodAreas = Object.fromEntries(
+            selected
+                .filter((polygonUri) => polygonFeatures[polygonUri] && polygonFeatures[polygonUri][0])
+                .map((polygonUri) => [polygonUri, polygonFeatures[polygonUri][0]]),
+        );
+
+        const resultChanged = JSON.stringify(newClickedFloodAreas) !== JSON.stringify(prevPolygonFeaturesRef.current);
+        if (resultChanged) {
+            setClickedFloodAreas(newClickedFloodAreas);
+            prevPolygonFeaturesRef.current = newClickedFloodAreas;
+            prevSelectedRef.current = [...selected];
+            prevIsLoadingRef.current = isLoading;
+        }
     }, [selected, isLoading, polygonFeatures, setClickedFloodAreas]);
 
     const onCheck = (value: string) => {

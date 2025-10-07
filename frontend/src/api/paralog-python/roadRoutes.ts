@@ -1,5 +1,5 @@
 import type { Feature, FeatureCollection, Polygon } from 'geojson';
-import { QueryOptions, useLazyQuery } from '@apollo/client';
+import { useLazyQuery, type QueryHookOptions } from '@apollo/client/react';
 import { GET_ROAD_ROUTE } from '../apollo-client';
 
 export interface RoadRoute {
@@ -20,5 +20,5 @@ export interface RoadRouteInputParams {
     vehicle: 'HGV' | 'EmergencyVehicle' | 'Car';
 }
 
-export const useRoadRouteLazyQuery = (options?: Omit<QueryOptions<RoadRouteInputParams, RoadRoute>, 'query'>) =>
+export const useRoadRouteLazyQuery = (options?: Omit<QueryHookOptions<RoadRouteResponse, RoadRouteInputParams>, 'query'>) =>
     useLazyQuery<RoadRouteResponse, RoadRouteInputParams>(GET_ROAD_ROUTE, options);

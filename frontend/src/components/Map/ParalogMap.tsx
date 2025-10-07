@@ -106,11 +106,21 @@ const generateSources = (source: ToolSourceType) => (
 );
 
 function BuiltinSources() {
-    const { assets, clickedFloodAreas, selectedElements, liveFloodAreas } = useContext(ElementsContext);
-    const floodAreas = useMemo(() => Object.values(clickedFloodAreas), [clickedFloodAreas]);
-    const linearAssets = useMemo(() => generateLinearAssetFeatures(assets, selectedElements), [assets, selectedElements]);
+    const context = useContext(ElementsContext);
+
+    const floodAreas = useMemo(() => {
+        const clickedFloodAreas = context?.clickedFloodAreas ?? {};
+        return Object.values(clickedFloodAreas);
+    }, [context?.clickedFloodAreas]);
+
+    const linearAssets = useMemo(() => {
+        const assets = context?.assets ?? [];
+        const selectedElements = context?.selectedElements ?? [];
+        return generateLinearAssetFeatures(assets, selectedElements);
+    }, [context?.assets, context?.selectedElements]);
 
     const sources = useMemo(() => {
+        const liveFloodAreas = context?.liveFloodAreas ?? [];
         const allSources: ToolSourceType[] = [];
         // Built-in sources
         allSources.push({
@@ -124,7 +134,7 @@ function BuiltinSources() {
             layers: [LINEAR_ASSET_LAYER],
         });
         return allSources;
-    }, [linearAssets, floodAreas, liveFloodAreas]);
+    }, [linearAssets, floodAreas, context?.liveFloodAreas]);
 
     return <>{sources.map(generateSources)}</>;
 }
@@ -168,12 +178,16 @@ const MBuiltinSources = memo(BuiltinSources);
 
 export default function ParalogMap() {
     const { paralogMap: map } = useMap();
-    const { assets, dependencies, selectedElements, onElementClick } = useContext(ElementsContext);
+    const context = useContext(ElementsContext);
+    const assets = context?.assets ?? [];
+    const dependencies = context?.dependencies ?? [];
+    const selectedElements = context?.selectedElements ?? [];
+    const onElementClick = context?.onElementClick;
     const { interactiveLayers, selectedFloodZones, handleOnClick } = useMapInteractions({
         map,
         assets,
         dependencies,
-        onElementClick,
+        onElementClick: onElementClick || (() => {}),
     });
     const mapStyles = useMapStyles();
 
@@ -183,7 +197,7 @@ export default function ParalogMap() {
     const [showPointerCoords, setShowPointerCoords] = useState(false);
     const [showBuildingLayer, setShowBuildingLayer] = useState(false);
 
-    const [mousePosition, setMousePosition] = useState(undefined);
+    const [mousePosition, setMousePosition] = useState<{ lat: number; lng: number } | undefined>(undefined);
 
     const effectiveMapStyle = useMemo(() => {
         for (const mapStyle of mapStyles) {
@@ -205,7 +219,7 @@ export default function ParalogMap() {
         });
     }, [map]);
 
-    const handleOnMouseMove = (event) => {
+    const handleOnMouseMove = (event: any) => {
         const { lngLat } = event;
         setMousePosition(lngLat);
     };
@@ -224,7 +238,7 @@ export default function ParalogMap() {
                     <ErrorBoundary FallbackComponent={ErrorFallback}>
                         <Map
                             id="paralogMap"
-                            interactiveLayerIds={interactiveLayers}
+                            interactiveLayerIds={interactiveLayers.filter((layer): layer is string => Boolean(layer))}
                             initialViewState={{ ...VIEWSTATE }}
                             mapStyle={effectiveMapStyle.id}
                             attributionControl={false}
@@ -281,7 +295,7 @@ export default function ParalogMap() {
 
                         <MAllOverlays />
 
-                        <PointerCoordinates show={showPointerCoords} lat={mousePosition?.lat} lng={mousePosition?.lng} />
+                        <PointerCoordinates show={showPointerCoords} lat={mousePosition?.lat ?? 0} lng={mousePosition?.lng ?? 0} />
                         <FloodZones selectedFloodZones={selectedFloodZones} />
                     </ErrorBoundary>
                 </ShowPointerCoordsContextProvider>

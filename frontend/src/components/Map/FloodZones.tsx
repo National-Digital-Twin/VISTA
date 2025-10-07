@@ -13,7 +13,9 @@ export interface FloodZonesProps {
 }
 
 export default function FloodZones({ selectedFloodZones = [], className }: FloodZonesProps) {
-    const { onFloodTimelineSelect, selectedTimeline } = useContext(ElementsContext);
+    const context = useContext(ElementsContext);
+    const onFloodTimelineSelect = context?.onFloodTimelineSelect;
+    const selectedTimeline = context?.selectedTimeline;
 
     const noZones = selectedFloodZones.length === 0;
 
@@ -30,7 +32,7 @@ export default function FloodZones({ selectedFloodZones = [], className }: Flood
                         key={selectedFloodZone.properties?.TA_NAME} // ✅ Added optional chaining
                         selectedFloodZone={selectedFloodZone}
                         selectedTimeline={selectedTimeline}
-                        onTimelineClick={onFloodTimelineSelect}
+                        onTimelineClick={onFloodTimelineSelect || (() => {})}
                     />
                 ))}
             </ul>

@@ -19,6 +19,7 @@ export const useLayerStore = createStore<State>('layers', (set) => ({
                     layers: [...state.layers, layerName],
                 };
             }
+            return state;
         });
     },
 
@@ -29,6 +30,7 @@ export const useLayerStore = createStore<State>('layers', (set) => ({
                     layers: state.layers.filter((activeLayer) => activeLayer !== layerName),
                 };
             }
+            return state;
         });
     },
 
