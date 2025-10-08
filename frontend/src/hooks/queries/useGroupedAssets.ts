@@ -45,19 +45,26 @@ const useGroupedAssets = ({ assessment, searchFilter }: UseGroupedAssetsOptions)
         queryFn: () => fetchAssetSpecifications(),
     });
 
+    const fetchAssetsWithTimeout = async (assetSpecification: any) => {
+        const timeoutPromise = new Promise((_, reject) => {
+            setTimeout(() => reject(new Error('Query timeout')), 30000);
+        });
+
+        const fetchPromise = fetchAssetsForAssetSpecification(assetSpecification)
+            .then((result) => result)
+            .catch((_error) => []);
+
+        try {
+            return await Promise.race([fetchPromise, timeoutPromise]);
+        } catch {
+            return [];
+        }
+    };
+
     const queries = useQueries({
         queries: (assetSpecifications ?? []).map((assetSpecification, index) => ({
             queryKey: ['dataset', `${assetSpecification.type}-${index}`],
-            queryFn: () => {
-                return Promise.race([
-                    fetchAssetsForAssetSpecification(assetSpecification)
-                        .then((result) => result)
-                        .catch((_error) => []),
-                    new Promise((_, reject) => {
-                        setTimeout(() => reject(new Error('Query timeout')), 30000);
-                    }),
-                ]).catch((_error) => []);
-            },
+            queryFn: () => fetchAssetsWithTimeout(assetSpecification),
             staleTime: 5 * 60 * 1000,
             retry: 2,
             retryDelay: 1000,
