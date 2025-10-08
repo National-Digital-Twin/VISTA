@@ -68,7 +68,14 @@ const useGroupedAssets = ({ assessment, searchFilter }: UseGroupedAssetsOptions)
         () =>
             queries.map((q, i) => {
                 if (assetSpecifications) {
-                    const status = q.isLoading ? 'pending' : q.isError ? 'error' : 'success';
+                    let status: 'pending' | 'error' | 'success';
+                    if (q.isLoading) {
+                        status = 'pending';
+                    } else if (q.isError) {
+                        status = 'error';
+                    } else {
+                        status = 'success';
+                    }
                     const dataset = {
                         id: assetSpecifications[i].type,
                         type: assetSpecifications[i].type,
@@ -116,37 +123,39 @@ const useGroupedAssets = ({ assessment, searchFilter }: UseGroupedAssetsOptions)
         return progressValue;
     }, [datasets]);
 
+    const fetchDependencies = async (assets: Asset[], assessment?: string): Promise<Dependency[]> => {
+        if (!assets) {
+            return [];
+        }
+
+        const assetTypes = assets.map((asset: { type: any }) => asset.type).filter((value, index, self) => self.indexOf(value) === index);
+
+        if (assetTypes.length === 0) {
+            return [];
+        }
+
+        const dependencyData = await fetchAssessmentDependencies(assetTypes, assessment);
+        const validDependencies = (dependencyData || [])
+            .filter((dep: any) => dep.dependentName && dep.providerName)
+            .map((dep: any) => ({
+                dependencyUri: dep.dependencyUri,
+                criticalityRating: dep.criticalityRating,
+                dependentNode: dep.dependentNode,
+                dependentName: dep.dependentName,
+                dependentNodeType: dep.dependentNodeType,
+                providerNode: dep.providerNode,
+                providerName: dep.providerName,
+                providerNodeType: dep.providerNodeType,
+                osmID: dep.osmID || '',
+            }));
+
+        return createDependencies(validDependencies);
+    };
+
     const { data: dependencies, error: dependenciesError } = useQuery({
         queryKey: ['assets-with-dependencies', assessment ?? ''],
         enabled: !!assetsLoading,
-        queryFn: async () => {
-            if (!assets) {
-                return;
-            }
-            const assetTypes = assets.map((asset: { type: any }) => asset.type).filter((value, index, self) => self.indexOf(value) === index);
-            let dependencies: Dependency[];
-            if (assetTypes.length > 0) {
-                const dependencyData = await fetchAssessmentDependencies(assetTypes, assessment);
-                // Filter out dependencies with null names and map to DependencyData format
-                const validDependencies = (dependencyData || [])
-                    .filter((dep: any) => dep.dependentName && dep.providerName)
-                    .map((dep: any) => ({
-                        dependencyUri: dep.dependencyUri,
-                        criticalityRating: dep.criticalityRating,
-                        dependentNode: dep.dependentNode,
-                        dependentName: dep.dependentName,
-                        dependentNodeType: dep.dependentNodeType,
-                        providerNode: dep.providerNode,
-                        providerName: dep.providerName,
-                        providerNodeType: dep.providerNodeType,
-                        osmID: dep.osmID || '',
-                    }));
-                dependencies = createDependencies(validDependencies);
-            } else {
-                dependencies = [];
-            }
-            return dependencies;
-        },
+        queryFn: () => fetchDependencies(assets, assessment),
     });
 
     if (dependenciesError) {
@@ -181,14 +190,17 @@ const useGroupedAssets = ({ assessment, searchFilter }: UseGroupedAssetsOptions)
 
     const getDependentAssets = (assets: Asset[]) => {
         if (!dependencies || !filteredAssets) {
-            return [];
+            return { dependencies: [], dependentAssets: [] };
         }
+
         const providerUris = new Set(assets.map((asset) => asset.uri));
-        const filteredDependencies = dependencies?.filter(({ provider }) => providerUris.has(provider.uri)) || [];
+        const filteredDependencies = dependencies.filter(({ provider }) => providerUris.has(provider.uri));
         const dependentUris = new Set(filteredDependencies.map(({ dependent }) => dependent.uri));
+        const dependentAssets = filteredAssets.filter(({ uri }) => dependentUris.has(uri));
+
         return {
             dependencies: filteredDependencies,
-            dependentAssets: filteredAssets.filter(({ uri }) => dependentUris.has(uri)),
+            dependentAssets,
         };
     };
 

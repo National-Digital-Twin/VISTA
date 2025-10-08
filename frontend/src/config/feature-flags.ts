@@ -23,7 +23,7 @@ const featureFlags = {
 export function updateFeatureFlagsFromURL() {
     const urlParams = new URLSearchParams(window.location.search);
     for (const key in featureFlags) {
-        if (Object.prototype.hasOwnProperty.call(featureFlags, key)) {
+        if (Object.hasOwn(featureFlags, key)) {
             const urlParamKey = `feat-${key}`;
             if (urlParams.has(urlParamKey)) {
                 (featureFlags as any)[key] = urlParams.get(urlParamKey) === 'true';

@@ -18,9 +18,8 @@ export default function useFloodAreaPolygons(selectedFloodAreas: string[]) {
 
     const data = useMemo(() => {
         const result: Record<string, any> = {};
-        for (let i = 0; i < queries.length; i++) {
-            const query = queries[i];
-            if (query.data && query.data[0] && query.data[1]) {
+        for (const query of queries) {
+            if (query.data?.[0] && query.data?.[1]) {
                 result[query.data[0]] = query.data[1];
             }
         }
@@ -45,11 +44,11 @@ export default function useFloodAreaPolygons(selectedFloodAreas: string[]) {
 
     useEffect(() => {
         if (isError && updateErrorNotifications) {
-            errors.forEach((error) => {
+            for (const error of errors) {
                 if (error) {
                     updateErrorNotifications(error.message);
                 }
-            });
+            }
         }
     }, [isError, errors, updateErrorNotifications]);
 

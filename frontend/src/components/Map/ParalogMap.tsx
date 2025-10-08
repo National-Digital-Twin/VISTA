@@ -238,7 +238,7 @@ export default function ParalogMap() {
                     <ErrorBoundary FallbackComponent={ErrorFallback}>
                         <Map
                             id="paralogMap"
-                            interactiveLayerIds={interactiveLayers.filter((layer): layer is string => Boolean(layer))}
+                            interactiveLayerIds={interactiveLayers.filter(Boolean)}
                             initialViewState={{ ...VIEWSTATE }}
                             mapStyle={effectiveMapStyle.id}
                             attributionControl={false}

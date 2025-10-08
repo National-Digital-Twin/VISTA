@@ -57,9 +57,7 @@ export default function FloodAreasMenuBody({ searchQuery = '', updateSelectedCou
         }
 
         const newClickedFloodAreas = Object.fromEntries(
-            selected
-                .filter((polygonUri) => polygonFeatures[polygonUri] && polygonFeatures[polygonUri][0])
-                .map((polygonUri) => [polygonUri, polygonFeatures[polygonUri][0]]),
+            selected.filter((polygonUri) => polygonFeatures[polygonUri]?.[0]).map((polygonUri) => [polygonUri, polygonFeatures[polygonUri][0]]),
         );
 
         const resultChanged = JSON.stringify(newClickedFloodAreas) !== JSON.stringify(prevPolygonFeaturesRef.current);

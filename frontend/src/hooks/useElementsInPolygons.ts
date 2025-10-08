@@ -34,7 +34,7 @@ export default function useElementsInPolygons() {
 
         const elements = [...pointsInPolygon, ...connectedAssets, ...LAIntersectingPolygon, ...connectedDependencies]
             .map((element) => {
-                return element && element.properties?.uri ? findElement([...assets, ...dependencies], element.properties.uri) : null;
+                return element?.properties?.uri ? findElement([...assets, ...dependencies], element.properties.uri) : null;
             })
             .filter(Boolean);
 
