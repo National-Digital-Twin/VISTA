@@ -1,5 +1,5 @@
 import { Source, Layer, Marker, MarkerDragEvent } from 'react-map-gl/maplibre';
-import type { LngLat } from 'react-map-gl';
+import type { LngLat } from 'react-map-gl/maplibre';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import { useRoadRouteSharedStore } from './useStore';

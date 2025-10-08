@@ -1,4 +1,4 @@
-import { Box, IconButton, Grid2, Tab, Tabs, Typography } from '@mui/material';
+import { Box, IconButton, Tab, Tabs, Typography } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import React from 'react';
 import { capitalCase } from 'change-case';
@@ -56,13 +56,13 @@ const ConnectedAssetsPanel: React.FC<ConnectAssetPanelProps> = ({ connectedAsset
                     marginBottom: 0,
                 }}
             >
-                <Grid2 container>
-                    <Grid2 size={11}>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    <Box sx={{ flex: 1 }}>
                         <Typography variant="h5" fontWeight={800}>
                             {connectedAssetData?.title || 'Unknown Asset'}
                         </Typography>
-                    </Grid2>
-                    <Grid2 size={1} sx={{ textAlign: 'right' }}>
+                    </Box>
+                    <Box sx={{ textAlign: 'right' }}>
                         <IconButton
                             onClick={() => {
                                 hideConnectedAssets();
@@ -70,8 +70,8 @@ const ConnectedAssetsPanel: React.FC<ConnectAssetPanelProps> = ({ connectedAsset
                         >
                             <CloseIcon />
                         </IconButton>
-                    </Grid2>
-                </Grid2>
+                    </Box>
+                </Box>
             </Box>
             <Box
                 sx={{

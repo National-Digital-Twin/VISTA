@@ -93,14 +93,16 @@ export function ElementsProvider({ children }: ElementsProviderProps) {
     const drawnFloodAreaFeatures = useSharedStore((state) => state.floodAreaFeatures);
     const selectedDrawnFloodAreaFeatureIds = useSharedStore((state) => state.selectedFloodAreaFeatureIds);
 
-    const { getAssetsByTypes, getDependenciesByTypes, isLoadingDependencies, isLoadingAssets } = useGroupedAssets({});
+    const groupedAssetsResult = useGroupedAssets({});
+    const isLoadingDependencies = 'isLoadingDependencies' in groupedAssetsResult ? groupedAssetsResult.isLoadingDependencies : false;
+    const isLoadingAssets = groupedAssetsResult.isLoadingAssets;
 
     const { data: liveFloodAreasRaw } = useLiveFloodAreas();
 
     const liveFloodAreas = useMemo(() => (showLiveFloods ? liveFloodAreasRaw : []), [liveFloodAreasRaw, showLiveFloods]);
 
     const onFloodTimelineSelect = useCallback(
-        (selected) => {
+        (selected: any) => {
             if (selected !== selectedTimeline) {
                 setSelectedTimeline(selected);
             }
@@ -116,19 +118,19 @@ export function ElementsProvider({ children }: ElementsProviderProps) {
         state;
 
     const { findAssetsInPolygons } = useAssetsInPolygons();
-    const { getDependentAssets } = useGroupedAssets({});
+    const groupedAssetsResult2 = useGroupedAssets({});
 
     const primaryAssetsAtRiskFromDrawn = useMemo(() => {
         if (isLoadingAssets) {
             return [];
         }
-        const selectedDrawnFeatures = drawnFloodAreaFeatures.filter((feature) => selectedDrawnFloodAreaFeatureIds[feature.id]);
+        const selectedDrawnFeatures = drawnFloodAreaFeatures.filter((feature) => feature.id && selectedDrawnFloodAreaFeatureIds[feature.id]);
         return findAssetsInPolygons({
-            polygons: selectedDrawnFeatures,
+            polygons: selectedDrawnFeatures as Feature<Polygon>[],
         });
     }, [drawnFloodAreaFeatures, findAssetsInPolygons, isLoadingAssets, selectedDrawnFloodAreaFeatureIds]);
 
-    const cachedAssetsAtRisk = useMemo(() => ({}), []);
+    const cachedAssetsAtRisk = useMemo(() => ({}) as Record<string, any>, []);
 
     const primaryAssetsAtRiskFromReal = useMemo(() => {
         if (isLoadingAssets) {
@@ -149,7 +151,7 @@ export function ElementsProvider({ children }: ElementsProviderProps) {
         if (isLoadingAssets) {
             return [];
         }
-        return findAssetsInPolygons({ polygons: liveFloodAreas });
+        return findAssetsInPolygons({ polygons: liveFloodAreas || [] });
     }, [isLoadingAssets, findAssetsInPolygons, liveFloodAreas]);
 
     const primaryAssetsAtRisk = useMemo(
@@ -159,16 +161,22 @@ export function ElementsProvider({ children }: ElementsProviderProps) {
 
     const [dependenciesByFloodArea, assetsByFloodArea] = useMemo(() => {
         let assetsAtRisk = showPrimary ? primaryAssetsAtRisk : [];
-        let dependenciesByFloodArea;
+        let dependenciesByFloodArea: any[] = [];
         if (showSecondary && !isLoadingDependencies) {
-            const { dependencies: dependenciesAtRisk, dependentAssets: secondaryAssetsAtRisk } = getDependentAssets(primaryAssetsAtRisk);
-            assetsAtRisk = [...assetsAtRisk, ...secondaryAssetsAtRisk];
-            dependenciesByFloodArea = dependenciesAtRisk;
+            const getDependentAssets = 'getDependentAssets' in groupedAssetsResult2 ? groupedAssetsResult2.getDependentAssets : () => [];
+            const result = getDependentAssets(primaryAssetsAtRisk);
+            if (result && typeof result === 'object' && 'dependencies' in result && 'dependentAssets' in result) {
+                const { dependencies: dependenciesAtRisk, dependentAssets: secondaryAssetsAtRisk } = result;
+                assetsAtRisk = [...assetsAtRisk, ...secondaryAssetsAtRisk];
+                dependenciesByFloodArea = dependenciesAtRisk;
+            } else {
+                dependenciesByFloodArea = [];
+            }
         } else {
             dependenciesByFloodArea = [];
         }
         return [dependenciesByFloodArea, assetsAtRisk];
-    }, [showPrimary, primaryAssetsAtRisk, showSecondary, isLoadingDependencies, getDependentAssets]);
+    }, [showPrimary, primaryAssetsAtRisk, showSecondary, isLoadingDependencies, groupedAssetsResult2]);
 
     const assetCriticalities = useMemo(
         () => Array.from(new Set(assetsByFloodArea.map((asset) => asset.dependent.criticalitySum))).sort((a: number, b: number) => a - b),
@@ -183,11 +191,13 @@ export function ElementsProvider({ children }: ElementsProviderProps) {
         if (isLoadingDependencies || isLoadingAssets) {
             return [[], []];
         }
+        const getAssetsByTypes = 'getAssetsByTypes' in groupedAssetsResult ? groupedAssetsResult.getAssetsByTypes : () => [];
+        const getDependenciesByTypes = 'getDependenciesByTypes' in groupedAssetsResult ? groupedAssetsResult.getDependenciesByTypes : () => [];
         const selectedTypes = Object.keys(selectedAssetTypes).filter((assetType) => selectedAssetTypes[assetType]);
         const assetsMatchingTypes = getAssetsByTypes(selectedTypes);
         const dependenciesToShow = getDependenciesByTypes(selectedTypes);
         return [assetsMatchingTypes, dependenciesToShow];
-    }, [isLoadingDependencies, isLoadingAssets, selectedAssetTypes, getAssetsByTypes, getDependenciesByTypes]);
+    }, [isLoadingDependencies, isLoadingAssets, selectedAssetTypes, groupedAssetsResult]);
 
     {
         // Keep assets and dependencies in-state
@@ -274,7 +284,7 @@ export function ElementsProvider({ children }: ElementsProviderProps) {
         dispatch({ type: UPDATE_ERRORS, error: msg });
     }, []);
 
-    const dismissErrorNotification = useCallback((error) => {
+    const dismissErrorNotification = useCallback((error: any) => {
         dispatch({ type: DISMISS_ERROR, error });
     }, []);
 
@@ -306,7 +316,7 @@ export function ElementsProvider({ children }: ElementsProviderProps) {
             selectedTimeline,
             closeTimelinePanel,
             onFloodTimelineSelect,
-            liveFloodAreas,
+            liveFloodAreas: liveFloodAreas || [],
         }),
         [
             assets,

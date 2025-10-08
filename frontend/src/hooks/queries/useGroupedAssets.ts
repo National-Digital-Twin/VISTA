@@ -45,26 +45,59 @@ const useGroupedAssets = ({ assessment, searchFilter }: UseGroupedAssetsOptions)
         queryFn: () => fetchAssetSpecifications(),
     });
 
+    const fetchAssetsWithTimeout = async (assetSpecification: any) => {
+        const timeoutPromise = new Promise((_, reject) => {
+            setTimeout(() => reject(new Error('Query timeout')), 30000);
+        });
+
+        const fetchPromise = fetchAssetsForAssetSpecification(assetSpecification)
+            .then((result) => result)
+            .catch((_error) => []);
+
+        try {
+            return await Promise.race([fetchPromise, timeoutPromise]);
+        } catch {
+            return [];
+        }
+    };
+
     const queries = useQueries({
         queries: (assetSpecifications ?? []).map((assetSpecification, index) => ({
             queryKey: ['dataset', `${assetSpecification.type}-${index}`],
-            queryFn: () => fetchAssetsForAssetSpecification(assetSpecification),
+            queryFn: () => fetchAssetsWithTimeout(assetSpecification),
             staleTime: 5 * 60 * 1000,
+            retry: 2,
+            retryDelay: 1000,
         })),
     });
 
-    const datasets = queries.map((q, i) => {
-        if (assetSpecifications) {
-            return {
-                id: assetSpecifications[i].type,
-                type: assetSpecifications[i].type,
-                category: assetSpecifications[i].secondaryCategory,
-                status: q.status,
-                data: q.data,
-                error: q.error,
-            } as DatasetState;
-        }
-    });
+    const datasets = useMemo(
+        () =>
+            queries.map((q, i) => {
+                if (assetSpecifications) {
+                    let status: 'pending' | 'error' | 'success';
+                    if (q.isLoading) {
+                        status = 'pending';
+                    } else if (q.isError) {
+                        status = 'error';
+                    } else {
+                        status = 'success';
+                    }
+                    const dataset = {
+                        id: assetSpecifications[i].type,
+                        type: assetSpecifications[i].type,
+                        category: assetSpecifications[i].secondaryCategory,
+                        status,
+                        data: q.data,
+                        error: q.error,
+                    } as DatasetState;
+
+                    return dataset;
+                }
+                return null;
+            }),
+        [queries, assetSpecifications],
+    );
 
     const assets = useMemo(() => {
         const assets: Asset[] = [];
@@ -85,41 +118,51 @@ const useGroupedAssets = ({ assessment, searchFilter }: UseGroupedAssetsOptions)
         return datasets.some((d) => d && d.status === 'error');
     }, [datasets]);
 
-    const total = datasets.length;
-    const completed = datasets.filter((d) => d && (d.status === 'success' || d.status === 'error')).length;
-    const progress = total > 0 ? completed / total : 0;
+    const progress = useMemo(() => {
+        const total = datasets.length;
+        const completed = datasets.filter((d) => d && (d.status === 'success' || d.status === 'error')).length;
+        const progressValue = total > 0 ? completed / total : 0;
+
+        if (total > 0 && completed > 0 && progressValue >= 0.99) {
+            return 1;
+        }
+
+        return progressValue;
+    }, [datasets]);
+
+    const fetchDependencies = async (assets: Asset[], assessment?: string): Promise<Dependency[]> => {
+        if (!assets) {
+            return [];
+        }
+
+        const assetTypes = assets.map((asset: { type: any }) => asset.type).filter((value, index, self) => self.indexOf(value) === index);
+
+        if (assetTypes.length === 0) {
+            return [];
+        }
+
+        const dependencyData = await fetchAssessmentDependencies(assetTypes, assessment);
+        const validDependencies = (dependencyData || [])
+            .filter((dep: any) => dep.dependentName && dep.providerName)
+            .map((dep: any) => ({
+                dependencyUri: dep.dependencyUri,
+                criticalityRating: dep.criticalityRating,
+                dependentNode: dep.dependentNode,
+                dependentName: dep.dependentName,
+                dependentNodeType: dep.dependentNodeType,
+                providerNode: dep.providerNode,
+                providerName: dep.providerName,
+                providerNodeType: dep.providerNodeType,
+                osmID: dep.osmID || '',
+            }));
+
+        return createDependencies(validDependencies);
+    };
 
     const { data: dependencies, error: dependenciesError } = useQuery({
         queryKey: ['assets-with-dependencies', assessment ?? ''],
         enabled: !!assetsLoading,
-        queryFn: async () => {
-            if (!assets) {
-                return;
-            }
-            const assetTypes = assets.map((asset: { type: any }) => asset.type).filter((value, index, self) => self.indexOf(value) === index);
-            let dependencies: Dependency[];
-            if (assetTypes.length > 0) {
-                const dependencyData = await fetchAssessmentDependencies(assetTypes, assessment);
-                // Filter out dependencies with null names and map to DependencyData format
-                const validDependencies = (dependencyData || [])
-                    .filter((dep: any) => dep.dependentName && dep.providerName)
-                    .map((dep: any) => ({
-                        dependencyUri: dep.dependencyUri,
-                        criticalityRating: dep.criticalityRating,
-                        dependentNode: dep.dependentNode,
-                        dependentName: dep.dependentName,
-                        dependentNodeType: dep.dependentNodeType,
-                        providerNode: dep.providerNode,
-                        providerName: dep.providerName,
-                        providerNodeType: dep.providerNodeType,
-                        osmID: dep.osmID || '',
-                    }));
-                dependencies = createDependencies(validDependencies);
-            } else {
-                dependencies = [];
-            }
-            return dependencies;
-        },
+        queryFn: () => fetchDependencies(assets, assessment),
     });
 
     if (dependenciesError) {
@@ -154,14 +197,17 @@ const useGroupedAssets = ({ assessment, searchFilter }: UseGroupedAssetsOptions)
 
     const getDependentAssets = (assets: Asset[]) => {
         if (!dependencies || !filteredAssets) {
-            return [];
+            return { dependencies: [], dependentAssets: [] };
         }
+
         const providerUris = new Set(assets.map((asset) => asset.uri));
-        const filteredDependencies = dependencies?.filter(({ provider }) => providerUris.has(provider.uri)) || [];
+        const filteredDependencies = dependencies.filter(({ provider }) => providerUris.has(provider.uri));
         const dependentUris = new Set(filteredDependencies.map(({ dependent }) => dependent.uri));
+        const dependentAssets = filteredAssets.filter(({ uri }) => dependentUris.has(uri));
+
         return {
             dependencies: filteredDependencies,
-            dependentAssets: filteredAssets.filter(({ uri }) => dependentUris.has(uri)),
+            dependentAssets,
         };
     };
 

@@ -23,9 +23,11 @@ const featureFlags = {
 export function updateFeatureFlagsFromURL() {
     const urlParams = new URLSearchParams(window.location.search);
     for (const key in featureFlags) {
-        const urlParamKey = `feat-${key}`;
-        if (urlParams.has(urlParamKey)) {
-            featureFlags[key] = urlParams.get(urlParamKey) === 'true';
+        if (Object.hasOwn(featureFlags, key)) {
+            const urlParamKey = `feat-${key}`;
+            if (urlParams.has(urlParamKey)) {
+                (featureFlags as any)[key] = urlParams.get(urlParamKey) === 'true';
+            }
         }
     }
 }

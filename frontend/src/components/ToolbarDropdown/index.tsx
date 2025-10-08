@@ -11,7 +11,7 @@ export interface ToolbarDropdownProps {
     /** Title */
     readonly title: string;
     /** Children */
-    readonly children: React.ReactNode | ((props: { toggle: () => void }) => React.ReactNode);
+    readonly children: React.ReactNode | ((props: { toggle: (event: React.MouseEvent<HTMLElement>) => void }) => React.ReactNode);
 }
 
 export default function ToolbarDropdown({ icon, title, children }: ToolbarDropdownProps) {
@@ -30,7 +30,7 @@ export default function ToolbarDropdown({ icon, title, children }: ToolbarDropdo
     }, []);
 
     const handleClickOutside = useCallback(
-        (event) => {
+        (event: any) => {
             if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
                 handleClose();
             }

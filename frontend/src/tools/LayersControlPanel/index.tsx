@@ -3,8 +3,7 @@ import { faLayerGroup } from '@fortawesome/free-solid-svg-icons';
 import SearchIcon from '@mui/icons-material/Search';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 
-import { useState, startTransition, useCallback } from 'react';
-import type React from 'react';
+import React, { useState, startTransition, useCallback, type ReactElement } from 'react';
 import classNames from 'classnames';
 import { Box, TextField } from '@mui/material';
 import styles from './style.module.css';
@@ -22,7 +21,7 @@ export function LayersControlPanel() {
 
     const [searchQuery, setSearchQuery] = useState('');
 
-    type ToolWithControl = [string, (props: LayerControlProps) => JSX.Element];
+    type ToolWithControl = [string, (props: LayerControlProps) => ReactElement];
 
     const layerControls = tools('layer-control-order').flatMap((tool) => {
         if (!tool.LayerControl) {

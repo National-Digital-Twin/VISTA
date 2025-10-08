@@ -4,7 +4,7 @@ import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { MapProvider } from 'react-map-gl/maplibre';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ApolloProvider } from '@apollo/client';
+import { ApolloProvider } from '@apollo/client/react';
 import apolloClient from './api/apollo-client';
 import App from '@/App';
 import DevTools from '@/components/DevTools';
