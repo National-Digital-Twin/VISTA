@@ -17,7 +17,15 @@ export default function Layout() {
                 <Box sx={{ flexShrink: 0 }}>
                     <PageHeader appName="VISTA" />
                 </Box>
-                <Box sx={{ flexGrow: 1, overflow: 'hidden', position: 'relative' }}>
+                <Box
+                    sx={{
+                        flex: '1 1 auto',
+                        minHeight: 0,
+                        overflowY: 'auto',
+                        overflowX: 'hidden',
+                        position: 'relative',
+                    }}
+                >
                     <Outlet />
                 </Box>
             </Box>
