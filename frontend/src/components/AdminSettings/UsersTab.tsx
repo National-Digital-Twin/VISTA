@@ -99,9 +99,6 @@ const UsersTab: React.FC = () => {
                     aValue = a.userType;
                     bValue = b.userType;
                     break;
-                default:
-                    aValue = a.name;
-                    bValue = b.name;
             }
 
             if (sortDirection === 'asc') {
@@ -264,9 +261,9 @@ const UsersTab: React.FC = () => {
                                 <TableCell>{user.organisation}</TableCell>
                                 <TableCell>
                                     <Stack direction="column" spacing={0.5} sx={{ alignItems: 'flex-start' }}>
-                                        {user.groupMembership.map((group, index) => (
+                                        {user.groupMembership.map((group) => (
                                             <Link
-                                                key={index}
+                                                key={group}
                                                 component="button"
                                                 color="primary"
                                                 onClick={() => handleGroupClick(group)}
