@@ -1,6 +1,7 @@
 import { ArrowBack, Edit } from '@mui/icons-material';
 import { Box, Button, Divider, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
 import { useUserData } from '@/hooks/useUserData';
+import PageContainer from '@/components/PageContainer';
 
 export default function Profile() {
     const { getUserDisplayName, getUserOrganisation, getUserMemberSince, getUserAddedBy, getUserType, getUserGroups, user, loading } = useUserData();
@@ -9,35 +10,21 @@ export default function Profile() {
 
     if (loading) {
         return (
-            <Box
+            <PageContainer
                 sx={{
-                    p: 3,
                     minHeight: '100%',
-                    width: '100%',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    backgroundColor: 'background.default',
-                    color: 'text.primary',
                 }}
             >
                 <Typography variant="h6">Loading user data...</Typography>
-            </Box>
+            </PageContainer>
         );
     }
 
     return (
-        <Box
-            sx={{
-                p: 3,
-                minHeight: '100%',
-                width: '100%',
-                display: 'block',
-                position: 'relative',
-                backgroundColor: 'background.default',
-                color: 'text.primary',
-            }}
-        >
+        <PageContainer sx={{ minHeight: '100%' }}>
             <Box sx={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gridTemplateRows: 'auto 1fr auto', columnGap: 2, rowGap: 4, mb: 4 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     <IconButton sx={{ p: 1 }}>
@@ -114,14 +101,14 @@ export default function Profile() {
                 </Box>
 
                 <Box sx={{ display: 'flex', justifyContent: 'flex-end', gridColumn: '2', gap: 2 }}>
-                    <Button variant="outlined" disabled={true}>
+                    <Button variant="outlined" disabled>
                         CANCEL
                     </Button>
-                    <Button variant="contained" disabled={true}>
+                    <Button variant="contained" disabled>
                         SAVE CHANGES
                     </Button>
                 </Box>
             </Box>
-        </Box>
+        </PageContainer>
     );
 }

@@ -1,39 +1,112 @@
-import { Settings as SettingsIcon } from '@mui/icons-material';
-import { Box, Typography } from '@mui/material';
+import { Box, Tab, Tabs, Typography } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import PageContainer from '@/components/PageContainer';
+import AccessRequestsTab from '@/components/AdminSettings/AccessRequestsTab';
+import GroupsTab from '@/components/AdminSettings/GroupsTab';
+import InvitesTab from '@/components/AdminSettings/InvitesTab';
+import UsersTab from '@/components/AdminSettings/UsersTab';
 
-export default function AdminSettings() {
+interface TabPanelProps {
+    children?: React.ReactNode;
+    index: number;
+    value: number;
+}
+
+function TabPanel({ children, value, index, ...other }: TabPanelProps) {
     return (
-        <Box
-            sx={{
-                p: 3,
-                minHeight: '100%',
-                width: '100%',
-                display: 'block',
-                position: 'relative',
-                backgroundColor: 'background.default',
-                color: 'text.primary',
-            }}
-        >
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
-                <SettingsIcon sx={{ fontSize: 32, color: 'primary.main' }} />
-                <Typography variant="h4" component="h1">
-                    Admin Settings
-                </Typography>
-            </Box>
-
-            <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-                This is a placeholder for the admin settings page. The design and functionality will be implemented in a future update.
-            </Typography>
-
-            <Box sx={{ textAlign: 'center', py: 8 }}>
-                <SettingsIcon sx={{ fontSize: 64, color: 'text.disabled', mb: 2 }} />
-                <Typography variant="h6" color="text.secondary">
-                    Admin Settings Coming Soon
-                </Typography>
-                <Typography variant="body2" color="text.disabled">
-                    This feature is under development.
-                </Typography>
-            </Box>
-        </Box>
+        <div role="tabpanel" hidden={value !== index} id={`admin-tabpanel-${index}`} aria-labelledby={`admin-tab-${index}`} {...other}>
+            {value === index && <Box sx={{ pt: 3 }}>{children}</Box>}
+        </div>
     );
 }
+
+const AdminSettings: React.FC = () => {
+    const [searchParams, setSearchParams] = useSearchParams();
+    const [activeTab, setActiveTab] = useState(0);
+
+    const tabNames = ['users', 'invites', 'groups', 'access-requests'];
+
+    useEffect(() => {
+        const tabParam = searchParams.get('tab');
+        if (tabParam) {
+            const tabIndex = tabNames.indexOf(tabParam);
+            if (tabIndex !== -1) {
+                setActiveTab(tabIndex);
+            }
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [searchParams]);
+
+    const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
+        setActiveTab(newValue);
+        setSearchParams({ tab: tabNames[newValue] });
+    };
+
+    return (
+        <PageContainer>
+            <Typography variant="h3" component="h1" gutterBottom>
+                Admin settings
+            </Typography>
+
+            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                <Tabs
+                    value={activeTab}
+                    onChange={handleTabChange}
+                    aria-label="admin settings tabs"
+                    sx={{
+                        '& .MuiTab-root': {
+                            'textTransform': 'capitalize',
+                            'fontWeight': 'bold',
+                            'minHeight': 48,
+                            '&.Mui-selected': {
+                                backgroundColor: 'neutral.main',
+                                borderRadius: '8px 8px 0 0',
+                                color: 'primary.main',
+                            },
+                        },
+                    }}
+                >
+                    <Tab label="Users" id="admin-tab-0" aria-controls="admin-tabpanel-0" />
+                    <Tab label="Invites" id="admin-tab-1" aria-controls="admin-tabpanel-1" />
+                    <Tab label="Groups" id="admin-tab-2" aria-controls="admin-tabpanel-2" />
+                    <Tab
+                        label={
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                Access requests
+                                <Box
+                                    sx={{
+                                        width: 8,
+                                        height: 8,
+                                        borderRadius: '50%',
+                                        backgroundColor: 'error.main',
+                                    }}
+                                />
+                            </Box>
+                        }
+                        id="admin-tab-3"
+                        aria-controls="admin-tabpanel-3"
+                    />
+                </Tabs>
+            </Box>
+
+            <TabPanel value={activeTab} index={0}>
+                <UsersTab />
+            </TabPanel>
+
+            <TabPanel value={activeTab} index={1}>
+                <InvitesTab />
+            </TabPanel>
+
+            <TabPanel value={activeTab} index={2}>
+                <GroupsTab />
+            </TabPanel>
+
+            <TabPanel value={activeTab} index={3}>
+                <AccessRequestsTab />
+            </TabPanel>
+        </PageContainer>
+    );
+};
+
+export default AdminSettings;
