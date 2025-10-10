@@ -60,7 +60,7 @@ export default function Profile() {
                             <Typography>{getUserType()}</Typography>
 
                             <Typography fontWeight={'bold'}>Email address</Typography>
-                            <Typography>{user?.email || 'joe.bloggs@twynwell.gov.uk'}</Typography>
+                            <Typography>{user?.email || 'joe.bloggs@twinwell.gov.uk'}</Typography>
 
                             <Typography fontWeight={'bold'}>Organisation</Typography>
                             <Typography>@{getUserOrganisation()}</Typography>

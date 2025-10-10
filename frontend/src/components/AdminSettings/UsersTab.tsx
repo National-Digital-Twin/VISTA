@@ -24,7 +24,7 @@ interface User {
     name: string;
     email: string;
     organisation: string;
-    groupMembership: string[];
+    groups: string[];
     userSince: string;
     userType: 'General' | 'Admin';
 }
@@ -74,7 +74,7 @@ const UsersTab: React.FC = () => {
                 user.email.toLowerCase().includes(searchLower) ||
                 user.organisation.toLowerCase().includes(searchLower) ||
                 user.userType.toLowerCase().includes(searchLower) ||
-                user.groupMembership.some((group) => group.toLowerCase().includes(searchLower))
+                user.groups.some((group) => group.toLowerCase().includes(searchLower))
             );
         });
 
@@ -261,7 +261,7 @@ const UsersTab: React.FC = () => {
                                 <TableCell>{user.organisation}</TableCell>
                                 <TableCell>
                                     <Stack direction="column" spacing={0.5} sx={{ alignItems: 'flex-start' }}>
-                                        {user.groupMembership.map((group) => (
+                                        {user.groups.map((group) => (
                                             <Link
                                                 key={group}
                                                 component="button"

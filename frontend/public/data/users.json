@@ -3,9 +3,9 @@
         {
             "id": "1",
             "name": "Aisha Sale",
-            "email": "aisha.sale@twynwell.gov.uk",
-            "organisation": "@twynwell.gov.uk",
-            "groupMembership": ["Resilience planning", "Twynwell team"],
+            "email": "aisha.sale@twinwell.gov.uk",
+            "organisation": "@twinwell.gov.uk",
+            "groups": ["Resilience planning", "twinwell team"],
             "userSince": "2025-06-11",
             "userType": "General"
         },
@@ -14,25 +14,25 @@
             "name": "Benjamin Frank",
             "email": "benjamin.frank@community.uk",
             "organisation": "@community.uk",
-            "groupMembership": ["Volunteers"],
+            "groups": ["Volunteers"],
             "userSince": "2025-07-04",
             "userType": "General"
         },
         {
             "id": "3",
             "name": "Joe Bloggs",
-            "email": "joe.bloggs@twynwell.gov.uk",
-            "organisation": "@twynwell.gov.uk",
-            "groupMembership": ["Resilience leads"],
+            "email": "joe.bloggs@twinwell.gov.uk",
+            "organisation": "@twinwell.gov.uk",
+            "groups": ["Resilience leads"],
             "userSince": "2025-05-13",
             "userType": "Admin"
         },
         {
             "id": "4",
             "name": "Samantha Thompson",
-            "email": "samantha.thompson@twynwell.gov.uk",
-            "organisation": "@twynwell.gov.uk",
-            "groupMembership": ["Resilience planning", "Resilience leads"],
+            "email": "samantha.thompson@twinwell.gov.uk",
+            "organisation": "@twinwell.gov.uk",
+            "groups": ["Resilience planning", "Resilience leads"],
             "userSince": "2025-04-20",
             "userType": "Admin"
         },
@@ -41,7 +41,7 @@
             "name": "David Wilson",
             "email": "david.wilson@community.uk",
             "organisation": "@community.uk",
-            "groupMembership": ["Volunteers", "Community outreach"],
+            "groups": ["Volunteers", "Community outreach"],
             "userSince": "2025-03-15",
             "userType": "General"
         },
@@ -50,16 +50,16 @@
             "name": "Emma Davis",
             "email": "emma.davis@resilience.org",
             "organisation": "@resilience.org",
-            "groupMembership": ["Resilience planning"],
+            "groups": ["Resilience planning"],
             "userSince": "2025-02-28",
             "userType": "General"
         },
         {
             "id": "7",
             "name": "Michael Brown",
-            "email": "michael.brown@twynwell.gov.uk",
-            "organisation": "@twynwell.gov.uk",
-            "groupMembership": ["Twynwell team"],
+            "email": "michael.brown@twinwell.gov.uk",
+            "organisation": "@twinwell.gov.uk",
+            "groups": ["twinwell team"],
             "userSince": "2025-01-10",
             "userType": "General"
         },
@@ -68,7 +68,7 @@
             "name": "Sarah Johnson",
             "email": "sarah.johnson@community.uk",
             "organisation": "@community.uk",
-            "groupMembership": ["Volunteers", "Emergency response"],
+            "groups": ["Volunteers", "Emergency response"],
             "userSince": "2024-12-05",
             "userType": "General"
         },
@@ -77,16 +77,16 @@
             "name": "Robert Smith",
             "email": "robert.smith@resilience.org",
             "organisation": "@resilience.org",
-            "groupMembership": ["Resilience leads"],
+            "groups": ["Resilience leads"],
             "userSince": "2024-11-18",
             "userType": "General"
         },
         {
             "id": "10",
             "name": "Lisa Anderson",
-            "email": "lisa.anderson@twynwell.gov.uk",
-            "organisation": "@twynwell.gov.uk",
-            "groupMembership": ["Resilience planning", "Twynwell team"],
+            "email": "lisa.anderson@twinwell.gov.uk",
+            "organisation": "@twinwell.gov.uk",
+            "groups": ["Resilience planning", "twinwell team"],
             "userSince": "2024-10-22",
             "userType": "General"
         },
@@ -95,7 +95,7 @@
             "name": "James Taylor",
             "email": "james.taylor@community.uk",
             "organisation": "@community.uk",
-            "groupMembership": ["Volunteers"],
+            "groups": ["Volunteers"],
             "userSince": "2024-09-14",
             "userType": "General"
         },
@@ -104,16 +104,16 @@
             "name": "Jennifer White",
             "email": "jennifer.white@resilience.org",
             "organisation": "@resilience.org",
-            "groupMembership": ["Resilience planning", "Community outreach"],
+            "groups": ["Resilience planning", "Community outreach"],
             "userSince": "2024-08-30",
             "userType": "General"
         },
         {
             "id": "13",
             "name": "Christopher Lee",
-            "email": "christopher.lee@twynwell.gov.uk",
-            "organisation": "@twynwell.gov.uk",
-            "groupMembership": ["Twynwell team", "Emergency response"],
+            "email": "christopher.lee@twinwell.gov.uk",
+            "organisation": "@twinwell.gov.uk",
+            "groups": ["twinwell team", "Emergency response"],
             "userSince": "2024-07-12",
             "userType": "General"
         },
@@ -122,7 +122,7 @@
             "name": "Amanda Garcia",
             "email": "amanda.garcia@community.uk",
             "organisation": "@community.uk",
-            "groupMembership": ["Volunteers"],
+            "groups": ["Volunteers"],
             "userSince": "2024-06-25",
             "userType": "General"
         },
@@ -131,7 +131,7 @@
             "name": "Kevin Martinez",
             "email": "kevin.martinez@resilience.org",
             "organisation": "@resilience.org",
-            "groupMembership": ["Resilience leads", "Emergency response"],
+            "groups": ["Resilience leads", "Emergency response"],
             "userSince": "2024-05-08",
             "userType": "General"
         }
