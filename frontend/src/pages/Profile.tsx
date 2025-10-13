@@ -1,12 +1,25 @@
 import { ArrowBack, Edit } from '@mui/icons-material';
 import { Box, Button, Divider, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
-import { useUserData } from '@/hooks/useUserData';
+import { useParams, useNavigate } from 'react-router-dom';
+import { useProfileData } from '@/hooks/useProfileData';
 import PageContainer from '@/components/PageContainer';
 
 export default function Profile() {
-    const { getUserDisplayName, getUserOrganisation, getUserMemberSince, getUserAddedBy, getUserType, getUserGroups, user, loading } = useUserData();
+    const { userId } = useParams<{ userId?: string }>();
+    const navigate = useNavigate();
+    const { getUserDisplayName, getUserOrganisation, getUserMemberSince, getUserAddedBy, getUserType, getUserGroups, getUserEmail, loading, error } =
+        useProfileData(userId);
 
     const groups = getUserGroups();
+
+    const handleBackClick = () => {
+        // TODO: Add proper permission check to determine if user is administrator
+        if (!userId) {
+            navigate('/');
+        } else {
+            navigate('/admin-settings?tab=users');
+        }
+    };
 
     if (loading) {
         return (
@@ -23,18 +36,41 @@ export default function Profile() {
         );
     }
 
+    if (error) {
+        return (
+            <PageContainer
+                sx={{
+                    minHeight: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexDirection: 'column',
+                    gap: 2,
+                }}
+            >
+                <Typography variant="h6" color="error">
+                    Error loading profile
+                </Typography>
+                <Typography variant="body2">{error}</Typography>
+                <Button variant="outlined" onClick={handleBackClick}>
+                    Go Back
+                </Button>
+            </PageContainer>
+        );
+    }
+
     return (
         <PageContainer sx={{ minHeight: '100%' }}>
             <Box sx={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gridTemplateRows: 'auto 1fr auto', columnGap: 2, rowGap: 4, mb: 4 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <IconButton sx={{ p: 1 }}>
+                    <IconButton sx={{ p: 1 }} onClick={handleBackClick}>
                         <ArrowBack />
                     </IconButton>
                 </Box>
 
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                     <Typography variant="h4" component="h1" sx={{ fontWeight: 'bold' }}>
-                        {loading ? 'Loading...' : getUserDisplayName()}
+                        {getUserDisplayName()}
                     </Typography>
                     <IconButton sx={{ p: 1 }}>
                         <Edit />
@@ -60,7 +96,7 @@ export default function Profile() {
                             <Typography>{getUserType()}</Typography>
 
                             <Typography fontWeight={'bold'}>Email address</Typography>
-                            <Typography>{user?.email || 'joe.bloggs@twinwell.gov.uk'}</Typography>
+                            <Typography>{getUserEmail()}</Typography>
 
                             <Typography fontWeight={'bold'}>Organisation</Typography>
                             <Typography>@{getUserOrganisation()}</Typography>
@@ -86,14 +122,22 @@ export default function Profile() {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {groups.map((group) => (
-                                        <TableRow key={group.name} sx={{ '&:last-child td': { border: 0 } }}>
-                                            <TableCell sx={{ py: 1, px: 0 }}>
-                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>{group.name}</Box>
+                                    {groups.length > 0 ? (
+                                        groups.map((group) => (
+                                            <TableRow key={group.name} sx={{ '&:last-child td': { border: 0 } }}>
+                                                <TableCell sx={{ py: 1, px: 0 }}>
+                                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>{group.name}</Box>
+                                                </TableCell>
+                                                <TableCell sx={{ py: 1, px: 0 }}>{group.memberSince}</TableCell>
+                                            </TableRow>
+                                        ))
+                                    ) : (
+                                        <TableRow>
+                                            <TableCell colSpan={2} sx={{ py: 2, px: 0, textAlign: 'center', color: 'text.secondary' }}>
+                                                No group memberships
                                             </TableCell>
-                                            <TableCell sx={{ py: 1, px: 0 }}>{group.memberSince}</TableCell>
                                         </TableRow>
-                                    ))}
+                                    )}
                                 </TableBody>
                             </Table>
                         </TableContainer>

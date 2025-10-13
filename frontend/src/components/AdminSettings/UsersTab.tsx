@@ -18,6 +18,7 @@ import {
     InputAdornment,
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
+import { fetchAllUsers, UserData } from '@/api/users';
 
 interface User {
     id: string;
@@ -27,10 +28,6 @@ interface User {
     groups: string[];
     userSince: string;
     userType: 'General' | 'Admin';
-}
-
-interface UsersData {
-    users: User[];
 }
 
 type SortField = 'name' | 'organisation' | 'userSince' | 'userType';
@@ -45,11 +42,19 @@ const UsersTab: React.FC = () => {
     const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
 
     useEffect(() => {
-        const fetchUsers = async () => {
+        const fetchUsersData = async () => {
             try {
-                const response = await fetch('/data/users.json');
-                const data: UsersData = await response.json();
-                setUsers(data.users);
+                const data: UserData[] = await fetchAllUsers();
+                const transformedUsers: User[] = data.map((userData) => ({
+                    id: userData.id || '',
+                    name: userData.name || userData.displayName || '',
+                    email: userData.email || '',
+                    organisation: userData.organisation || '',
+                    groups: Array.isArray(userData.groups) ? userData.groups.map((g) => (typeof g === 'string' ? g : g.name)) : [],
+                    userSince: userData.userSince || userData.memberSince || '',
+                    userType: (userData.userType as 'General' | 'Admin') || 'General',
+                }));
+                setUsers(transformedUsers);
             } catch (error) {
                 console.error('Failed to fetch users:', error);
             } finally {
@@ -57,7 +62,7 @@ const UsersTab: React.FC = () => {
             }
         };
 
-        fetchUsers();
+        fetchUsersData();
     }, []);
 
     const stats = useMemo(() => {
