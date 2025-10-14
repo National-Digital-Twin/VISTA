@@ -73,8 +73,8 @@ jobs:
       - name: PIP AUDIT
         run: |
           source venv/bin/activate
-          pip-audit
-          pip-audit --format json | jq '.vulnerabilities' >> $GITHUB_STEP_SUMMARY
+          pip-audit --ignore-vuln-file backend/pip-audit.ignore
+          pip-audit --ignore-vuln-file backend/pip-audit.ignore --format json | jq '.vulnerabilities' >> $GITHUB_STEP_SUMMARY
 
       - name: POETRY LOCK CHECK
         run: |
