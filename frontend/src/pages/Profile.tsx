@@ -36,10 +36,10 @@ export default function Profile() {
 
     const handleBackClick = () => {
         // TODO: Add proper permission check to determine if user is administrator
-        if (!userId) {
-            navigate('/');
-        } else {
+        if (userId) {
             navigate('/admin-settings?tab=users');
+        } else {
+            navigate('/');
         }
     };
 

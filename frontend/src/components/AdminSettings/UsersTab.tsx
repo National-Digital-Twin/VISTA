@@ -33,6 +33,46 @@ interface User {
 type SortField = 'name' | 'organisation' | 'userSince' | 'userType';
 type SortDirection = 'asc' | 'desc';
 
+const mapUserDataToUser = (userData: UserData): User => ({
+    id: userData.id || '',
+    name: userData.name || userData.displayName || '',
+    email: userData.email || '',
+    organisation: userData.organisation || '',
+    groups: Array.isArray(userData.groups) ? userData.groups.map((g) => (typeof g === 'string' ? g : g.name)) : [],
+    userSince: userData.userSince || userData.memberSince || '',
+    userType: (userData.userType as 'General' | 'Admin') || 'General',
+});
+
+const userMatchesSearch = (user: User, searchLower: string): boolean =>
+    user.name.toLowerCase().includes(searchLower) ||
+    user.email.toLowerCase().includes(searchLower) ||
+    user.organisation.toLowerCase().includes(searchLower) ||
+    user.userType.toLowerCase().includes(searchLower) ||
+    user.groups.some((group) => group.toLowerCase().includes(searchLower));
+
+const compareUsers =
+    (field: SortField, direction: SortDirection) =>
+    (a: User, b: User): number => {
+        const getField = (u: User): string => {
+            switch (field) {
+                case 'name':
+                    return u.name;
+                case 'organisation':
+                    return u.organisation;
+                case 'userSince':
+                    return u.userSince;
+                case 'userType':
+                    return u.userType;
+                default:
+                    return '';
+            }
+        };
+
+        const aValue = getField(a);
+        const bValue = getField(b);
+        return direction === 'asc' ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
+    };
+
 const UsersTab: React.FC = () => {
     const navigate = useNavigate();
     const [users, setUsers] = useState<User[]>([]);
@@ -45,16 +85,7 @@ const UsersTab: React.FC = () => {
         const fetchUsersData = async () => {
             try {
                 const data: UserData[] = await fetchAllUsers();
-                const transformedUsers: User[] = data.map((userData) => ({
-                    id: userData.id || '',
-                    name: userData.name || userData.displayName || '',
-                    email: userData.email || '',
-                    organisation: userData.organisation || '',
-                    groups: Array.isArray(userData.groups) ? userData.groups.map((g) => (typeof g === 'string' ? g : g.name)) : [],
-                    userSince: userData.userSince || userData.memberSince || '',
-                    userType: (userData.userType as 'General' | 'Admin') || 'General',
-                }));
-                setUsers(transformedUsers);
+                setUsers(data.map(mapUserDataToUser));
             } catch (error) {
                 console.error('Failed to fetch users:', error);
             } finally {
@@ -72,48 +103,8 @@ const UsersTab: React.FC = () => {
     }, [users]);
 
     const filteredAndSortedUsers = useMemo(() => {
-        const filtered = users.filter((user) => {
-            const searchLower = searchTerm.toLowerCase();
-            return (
-                user.name.toLowerCase().includes(searchLower) ||
-                user.email.toLowerCase().includes(searchLower) ||
-                user.organisation.toLowerCase().includes(searchLower) ||
-                user.userType.toLowerCase().includes(searchLower) ||
-                user.groups.some((group) => group.toLowerCase().includes(searchLower))
-            );
-        });
-
-        filtered.sort((a, b) => {
-            let aValue: string;
-            let bValue: string;
-
-            switch (sortField) {
-                case 'name':
-                    aValue = a.name;
-                    bValue = b.name;
-                    break;
-                case 'organisation':
-                    aValue = a.organisation;
-                    bValue = b.organisation;
-                    break;
-                case 'userSince':
-                    aValue = a.userSince;
-                    bValue = b.userSince;
-                    break;
-                case 'userType':
-                    aValue = a.userType;
-                    bValue = b.userType;
-                    break;
-            }
-
-            if (sortDirection === 'asc') {
-                return aValue.localeCompare(bValue);
-            } else {
-                return bValue.localeCompare(aValue);
-            }
-        });
-
-        return filtered;
+        const searchLower = searchTerm.toLowerCase();
+        return users.filter((u) => userMatchesSearch(u, searchLower)).sort(compareUsers(sortField, sortDirection));
     }, [users, searchTerm, sortField, sortDirection]);
 
     const handleSort = (field: SortField) => {

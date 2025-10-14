@@ -28,13 +28,13 @@ export function useProfileData(userId?: string): ProfileData {
             setError(null);
 
             try {
-                if (!userId) {
+                if (userId === undefined || userId === null) {
                     // Only fetch current user when viewing own profile
                     try {
                         const currentUser = await fetchCurrentUser();
                         setCurrentUserId(currentUser?.id || currentUser?.email || null);
-                    } catch (currentUserErr) {
-                        console.warn('Could not fetch current user, continuing anyway:', currentUserErr);
+                    } catch (error) {
+                        console.warn('Could not fetch current user, continuing anyway:', error);
                         setCurrentUserId(null);
                     }
                     const apiUser = await fetchCurrentUser();
@@ -66,8 +66,8 @@ export function useProfileData(userId?: string): ProfileData {
 
                     setUser(transformedUser);
                 }
-            } catch (err) {
-                console.error('Error fetching profile data:', err);
+            } catch (error) {
+                console.error('Error fetching profile data:', error);
 
                 // Fallback to test user for development when API fails
                 setUser({
