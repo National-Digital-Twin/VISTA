@@ -103,16 +103,7 @@ class OsNgdDataSourceHandler(DataSourceHandler):
             matches_all_filters = True
             for data_filter in data_filters:
                 if isinstance(data_filter["filterValue"], list):
-                    matches_any_value = False
-                    for filter_value in data_filters["filterValue"]:
-                        if (
-                            "properties" in feature
-                            and feature["properties"].get(data_filters["filterName"])
-                            == filter_value
-                        ):
-                            matches_any_value = True
-                            break
-                    matches_all_filters = matches_any_value
+                    matches_all_filters = self._is_match_for_any_filter_value(feature, data_filters)
                 else:
                     matches_all_filters = (
                         "properties" in feature
@@ -121,3 +112,14 @@ class OsNgdDataSourceHandler(DataSourceHandler):
                     )
             return matches_all_filters
         return True
+
+    def _is_match_for_any_filter_value(self, feature, data_filters):
+        matches_any_value = False
+        for filter_value in data_filters["filterValue"]:
+            if (
+                "properties" in feature
+                and feature["properties"].get(data_filters["filterName"]) == filter_value
+            ):
+                matches_any_value = True
+                break
+        return matches_any_value

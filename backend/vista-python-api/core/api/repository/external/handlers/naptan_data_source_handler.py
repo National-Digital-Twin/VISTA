@@ -47,11 +47,12 @@ class NaptanDataSourceHandler(DataSourceHandler):
             conditions = []
             for data_filter in data_filters:
                 if isinstance(data_filter["filterValue"], list):
-                    value_matches = [
-                        stop[f"{data_filter['filterName']}"] == filter_value
-                        for filter_value in data_filter["filterValue"]
-                    ]
-                    conditions.append(any(value_matches))
+                    conditions.append(
+                        any(
+                            stop[f"{data_filter['filterName']}"] == filter_value
+                            for filter_value in data_filter["filterValue"]
+                        )
+                    )
                 else:
                     conditions.append(
                         stop[f"{data_filter['filterName']}"] == data_filter["filterValue"]
