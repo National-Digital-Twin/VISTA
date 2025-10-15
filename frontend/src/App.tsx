@@ -11,7 +11,6 @@ import GroupDetail from '@/pages/GroupDetail';
 import Notifications from '@/pages/Notifications';
 import PrivacyNotice from '@/pages/PrivacyNotice';
 import Profile from '@/pages/Profile';
-import UserDetail from '@/pages/UserDetail';
 
 library.add(fas);
 
@@ -26,7 +25,7 @@ const AppWrapper = () => {
                 { path: 'admin-settings', element: <AdminSettings /> },
                 { path: 'notifications', element: <Notifications /> },
                 { path: 'privacy', element: <PrivacyNotice /> },
-                { path: 'user/:userId', element: <UserDetail /> },
+                { path: 'user/:userId', element: <Profile /> },
                 { path: 'group/:groupName', element: <GroupDetail /> },
             ],
         },
