@@ -2,7 +2,7 @@
 
 from django.contrib import admin
 
-from api.models import TrafficData
+from api.models.asset import Asset
 
 # Register your models here.
-admin.site.register(TrafficData)
+admin.site.register(Asset)

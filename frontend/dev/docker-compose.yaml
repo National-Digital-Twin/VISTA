@@ -84,7 +84,12 @@ services:
         build:
             context: ../../backend
             dockerfile: ../../backend/Dockerfile
+    postgres:
+        image: postgis/postgis:latest
+        container_name: postgis
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres #pragma: allowlist secret
+            POSTGRES_DB: vista
         ports:
-            - 8000:8000
-        env_file:
-            - '../.env'
+            - '5432:5432'

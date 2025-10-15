@@ -19,11 +19,11 @@ from typing import Any, TypeVar
 from django.core.management.color import no_style
 from django.db import connection, migrations, models
 
-Model = TypeVar("Model", bound=models.Model)
+M = TypeVar("M", bound=models.Model)
 T = TypeVar("T")
 
 
-def _reset_sequences(model: Model) -> None:
+def _reset_sequences[M](model: M) -> None:
     # Based on code from the loaddata command
     sequence_sql = connection.ops.sequence_reset_sql(no_style(), [model])
 
@@ -32,8 +32,8 @@ def _reset_sequences(model: Model) -> None:
             cursor.execute(line)
 
 
-def _process_fixture(
-    model: Model,
+def _process_fixture[M](
+    model: M,
     fixture: Path,
     load_entity: Callable[[Any, dict[str, Any]], T],
     process_entities: Callable[[Iterable[T]], None],
@@ -61,18 +61,18 @@ def _process_fixture(
     _reset_sequences(model)
 
 
-def _load_fixture(model: Model, fixture: Path) -> None:
-    def load_entity(pk: Any, fields: dict[str, Any]) -> Model:
+def _load_fixture[M](model: M, fixture: Path) -> None:
+    def load_entity(pk: Any, fields: dict[str, Any]) -> M:
         return model(pk=pk, **fields)
 
-    def process_entities(entities: Iterable[Model]) -> None:
+    def process_entities(entities: Iterable[M]) -> None:
         model.objects.bulk_create(entities)
 
     _process_fixture(model, fixture, load_entity, process_entities)
 
 
-def _unload_fixture(model: Model, fixture: Path) -> None:
-    def load_entity(pk: Any, _fields: dict[str, Any]) -> Model:
+def _unload_fixture[M](model: M, fixture: Path) -> None:
+    def load_entity(pk: Any, _fields: dict[str, Any]) -> M:
         return pk
 
     def process_entities(pks: Iterable[Any]) -> None:

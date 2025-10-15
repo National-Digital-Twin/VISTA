@@ -40,6 +40,8 @@ virtualenv = "20.34.0"
 djangorestframework = "^3.16.1"
 requests = "^2.32.5"
 h11 = "0.16.0"
+sqlalchemy = "^2.0.43"
+httpx = "^0.28.1"
 
 [tool.poetry.dev-dependencies]
 # Everything below here is alphabetically sorted
@@ -70,7 +72,8 @@ indent-width = 4
 target-version = "py312"
 extend-include = ["*.ipynb"]
 exclude = [
-  "bin"
+  "bin",
+  "manage.py"
 ]
 
 [tool.ruff.lint]
@@ -133,6 +136,10 @@ fixable = ["ALL"]
 
 [tool.ruff.lint.pydocstyle]
 convention = "pep257"
+
+[tool.ruff.lint.isort]
+known-first-party = ["core"]
+combine-as-imports = true
 
 [tool.ruff.format]
 quote-style = "double"

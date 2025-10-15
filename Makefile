@@ -19,3 +19,18 @@ vista-resources-down:
 
 run-frontend:
 	yarn --cwd "frontend/" start --host
+
+run-backend-migrations:
+	cd backend && direnv exec . poetry run python vista-python-api/core/manage.py makemigrations
+	cd backend && direnv exec . poetry run python vista-python-api/core/manage.py migrate
+
+populate-data:
+	cd backend && direnv exec . poetry run python vista-python-api/core/manage.py loaddata asset_categories.json
+	cd backend && direnv exec . poetry run python vista-python-api/core/manage.py loaddata asset_subcategories.json
+	cd backend && direnv exec . poetry run python vista-python-api/core/manage.py loaddata asset_types.json
+	cd backend && direnv exec . poetry run python vista-python-api/core/manage.py refresh_data
+
+lint-backend:
+	cd backend && direnv exec . poetry run ruff format .
+	cd backend && direnv exec . poetry run ruff check .
+	cd backend && direnv exec . poetry run bandit -r -q . -lll

@@ -1,0 +1,58 @@
+[
+    {
+        "type": "7f8a9b0c-2345-4051-2d3d-2f3a4b5c6d7e",
+        "source": "naptan",
+        "filters": [
+            {
+                "filterName": "StopType",
+                "filterValue": ["RSE", "TMU"]
+            },
+            {
+                "filterName": "Status",
+                "filterValue": "active"
+            }
+        ]
+    },
+    {
+        "type": "7b8c9d0e-2345-4c67-8765-2b3c4d5e6f7a",
+        "source": "naptan",
+        "filters": [
+            {
+                "filterName": "StopType",
+                "filterValue": "BCT"
+            },
+            {
+                "filterName": "Status",
+                "filterValue": "active"
+            }
+        ]
+    },
+    {
+        "type": "5a6c7d8e-1234-4b56-9876-1a2b3c4d5e6f",
+        "source": "naptan",
+        "filters": [
+            {
+                "filterName": "StopType",
+                "filterValue": "BCS"
+            },
+            {
+                "filterName": "Status",
+                "filterValue": "active"
+            }
+        ]
+    },
+    {
+        "type": "1f2a3b4c-6789-4a0b-4321-6f7a8b9c0d1e",
+        "source": "naptan",
+        "filters": [
+            {
+                "filterName": "StopType",
+                "filterValue": "FTD"
+            },
+            {
+                "filterName": "Status",
+                "filterValue": "active"
+            }
+        ]
+    }
+]

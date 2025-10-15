@@ -1,0 +1,90 @@
+[
+  {"model": "api.assettype", "pk": "c0e8f4fa-9083-4963-943a-9386309e43a5", "fields": {"sub_category_id": "bfc5b5a8-5a8b-4a6e-9e7b-0a9df10a89e1", "name": "Arable farm land"}},
+  {"model": "api.assettype", "pk": "fbefc59e-d5de-4d35-92e5-3ed091b4b3cd", "fields": {"sub_category_id": "bfc5b5a8-5a8b-4a6e-9e7b-0a9df10a89e1", "name": "Country park"}},
+  {"model": "api.assettype", "pk": "4d3a6316-9393-489b-a90a-f7e7b8735944", "fields": {"sub_category_id": "bfc5b5a8-5a8b-4a6e-9e7b-0a9df10a89e1", "name": "Farmyard"}},
+  {"model": "api.assettype", "pk": "e61b9f64-17df-4e13-9dbf-2c5a7e24a0ac", "fields": {"sub_category_id": "bfc5b5a8-5a8b-4a6e-9e7b-0a9df10a89e1", "name": "Fishery"}},
+  {"model": "api.assettype", "pk": "b1b70277-cccb-45c4-a0de-94692b871894", "fields": {"sub_category_id": "bfc5b5a8-5a8b-4a6e-9e7b-0a9df10a89e1", "name": "Hill"}},
+  {"model": "api.assettype", "pk": "9fef067f-2251-474b-9933-53089d20f7a0", "fields": {"sub_category_id": "bfc5b5a8-5a8b-4a6e-9e7b-0a9df10a89e1", "name": "Lake"}},
+  {"model": "api.assettype", "pk": "3197ed91-480d-4c53-931f-6d3f6b367513", "fields": {"sub_category_id": "bfc5b5a8-5a8b-4a6e-9e7b-0a9df10a89e1", "name": "Livestock farm land"}},
+  {"model": "api.assettype", "pk": "ff232445-6a44-43dc-b58d-4d5e50ed2dd8", "fields": {"sub_category_id": "bfc5b5a8-5a8b-4a6e-9e7b-0a9df10a89e1", "name": "Nature reserve"}},
+  {"model": "api.assettype", "pk": "2ef53e53-d6c5-4809-b76d-b08fc2a5f82e", "fields": {"sub_category_id": "bfc5b5a8-5a8b-4a6e-9e7b-0a9df10a89e1", "name": "Open grassland"}},
+  {"model": "api.assettype", "pk": "b82184b3-864f-4991-8e6e-b2b8c62b2c67", "fields": {"sub_category_id": "bfc5b5a8-5a8b-4a6e-9e7b-0a9df10a89e1", "name": "Woodland"}},
+
+  {"model": "api.assettype", "pk": "5eb80725-0c4d-4c54-8a7f-5b7cdd39d08f", "fields": {"sub_category_id": "4f3fdc14-3b7a-4ef4-a864-d55b4296d1ad", "name": "Crematorium"}},
+  {"model": "api.assettype", "pk": "2c0b6f61-1a45-4694-a09a-35ab65e2df60", "fields": {"sub_category_id": "4f3fdc14-3b7a-4ef4-a864-d55b4296d1ad", "name": "Mortuary"}},
+
+  {"model": "api.assettype", "pk": "93ce28ec-1c6f-4b3b-b9c1-1fdd14b14c71", "fields": {"sub_category_id": "c0560b0a-cc7b-4d09-95b5-b31f2513142c", "name": "Fire brigade complex"}},
+
+  {"model": "api.assettype", "pk": "2bfa71aa-f1e5-4f09-a4a1-d201a1cf5bda", "fields": {"sub_category_id": "314b2572-7755-4cb4-ae9c-60d12b27df60", "name": "Biomass power station"}},
+  {"model": "api.assettype", "pk": "4f5b26b5-bb30-49ad-bdc8-20d12a3edfc2", "fields": {"sub_category_id": "314b2572-7755-4cb4-ae9c-60d12b27df60", "name": "Oil fired power generation complex"}},
+  {"model": "api.assettype", "pk": "0cfdbbd6-7ff9-46d3-9cf5-c1c960a4a4ce", "fields": {"sub_category_id": "314b2572-7755-4cb4-ae9c-60d12b27df60", "name": "Photovoltaic power generation complex"}},
+
+  {"model": "api.assettype", "pk": "4ec4189d-9990-489f-95e7-6c7ac3b4b92d", "fields": {"sub_category_id": "1e2eb05c-8d71-4452-8cf5-f5b81d4bb99e", "name": "Environmental Stewardship Schema Areas"}},
+
+  {"model": "api.assettype", "pk": "cd79cc50-bbf1-4c01-a8ce-41d0d07d2421", "fields": {"sub_category_id": "a74449f8-4d2b-4b30-a55c-4ffde889894a", "name": "Historic floods"}},
+  {"model": "api.assettype", "pk": "34dcb3c7-26a4-40b2-8bbd-8701d1bb3777", "fields": {"sub_category_id": "a74449f8-4d2b-4b30-a55c-4ffde889894a", "name": "Live floods"}},
+
+  {"model": "api.assettype", "pk": "98ac0ed2-c86f-4eea-b236-02cf93ff5d10", "fields": {"sub_category_id": "aa6b8a3b-2394-4e02-bc8a-b36c4b20e875", "name": "Hospital"}},
+  {"model": "api.assettype", "pk": "6fd26d69-5f0b-4d8e-a949-57364b42e6b2", "fields": {"sub_category_id": "aa6b8a3b-2394-4e02-bc8a-b36c4b20e875", "name": "Nursing home"}},
+  {"model": "api.assettype", "pk": "91f8cf4d-8f88-4cb8-bb04-efddccce95de", "fields": {"sub_category_id": "aa6b8a3b-2394-4e02-bc8a-b36c4b20e875", "name": "Pharmaceutical dispensary"}},
+
+  {"model": "api.assettype", "pk": "a98e6e10-64dc-42f3-8450-09d2e2d0bc4d", "fields": {"sub_category_id": "9f2c52b7-7d0a-4b10-8d83-5e2e8da3f621", "name": "Industrial park"}},
+  {"model": "api.assettype", "pk": "3db4c594-76d8-480a-b52b-4f40d4d6b3da", "fields": {"sub_category_id": "9f2c52b7-7d0a-4b10-8d83-5e2e8da3f621", "name": "Industrial space"}},
+  {"model": "api.assettype", "pk": "49afc7ff-6126-4860-b893-6329a0cd6e49", "fields": {"sub_category_id": "9f2c52b7-7d0a-4b10-8d83-5e2e8da3f621", "name": "Retail kiosk"}},
+
+  {"model": "api.assettype", "pk": "fe2d123a-bb46-45c5-b3f4-73955e2b3fd9", "fields": {"sub_category_id": "cd7cf4a8-22dc-4f9b-9b8b-f2e6eb9a4ef1", "name": "Further educational college"}},
+  {"model": "api.assettype", "pk": "c0a30e0f-9f2a-4dc5-bb30-fbbafbfdbf4c", "fields": {"sub_category_id": "cd7cf4a8-22dc-4f9b-9b8b-f2e6eb9a4ef1", "name": "Pre school"}},
+  {"model": "api.assettype", "pk": "be893214-b517-45b0-92e8-362de90865cc", "fields": {"sub_category_id": "cd7cf4a8-22dc-4f9b-9b8b-f2e6eb9a4ef1", "name": "Primary school"}},
+  {"model": "api.assettype", "pk": "3df1452a-b1b3-4a39-9ac2-6b2a8303b6f0", "fields": {"sub_category_id": "cd7cf4a8-22dc-4f9b-9b8b-f2e6eb9a4ef1", "name": "Secondary school"}},
+
+  {"model": "api.assettype", "pk": "22ec421d-d85a-48b8-9f17-ffda0ea4082d", "fields": {"sub_category_id": "a7a17c9a-8e65-4c78-8b5c-4227de9de8e5", "name": "Pier"}},
+  {"model": "api.assettype", "pk": "27d0af04-2e76-4d26-8c5f-33899cf373ad", "fields": {"sub_category_id": "a7a17c9a-8e65-4c78-8b5c-4227de9de8e5", "name": "Quay"}},
+  {"model": "api.assettype", "pk": "fd7ad4e5-0c77-4043-bcf7-03e244c688a5", "fields": {"sub_category_id": "a7a17c9a-8e65-4c78-8b5c-4227de9de8e5", "name": "Slipway"}},
+
+  {"model": "api.assettype", "pk": "1f6d2c1e-0f6d-4b09-9a2e-3bfcf1e64b4a", "fields": {"sub_category_id": "6f35e5de-f91c-4663-a7d8-cb4f5a1a4c67", "name": "Motor vehicle fuelling or charging station"}},
+  {"model": "api.assettype", "pk": "c83e79b2-1b36-4e9a-8971-4a521b45e29f", "fields": {"sub_category_id": "6f35e5de-f91c-4663-a7d8-cb4f5a1a4c67", "name": "Veterinary hospital"}},
+  {"model": "api.assettype", "pk": "0ad824c1-d3d4-4f4b-8c72-7a5b04a7b623", "fields": {"sub_category_id": "6f35e5de-f91c-4663-a7d8-cb4f5a1a4c67", "name": "Waste disposal complex"}},
+
+  {"model": "api.assettype", "pk": "db10c6b5-bfb4-4d10-8c82-9296b7f123d8", "fields": {"sub_category_id": "a4a13cc2-1b60-4b38-b7d7-d81c69c60d26", "name": "Community centre"}},
+  {"model": "api.assettype", "pk": "2ac8b7d2-5cde-4f93-8d45-65b7e8c92e09", "fields": {"sub_category_id": "a4a13cc2-1b60-4b38-b7d7-d81c69c60d26", "name": "Outdoor sport complex"}},
+  {"model": "api.assettype", "pk": "a1efbfa2-84f1-41a5-9f06-b4a9d3c3b2a1", "fields": {"sub_category_id": "a4a13cc2-1b60-4b38-b7d7-d81c69c60d26", "name": "Outdoor stadium"}},
+  {"model": "api.assettype", "pk": "3c1d1f99-22c6-4b5e-80c2-8c4c5b72f1bb", "fields": {"sub_category_id": "a4a13cc2-1b60-4b38-b7d7-d81c69c60d26", "name": "Public park"}},
+  {"model": "api.assettype", "pk": "7f2b5a44-9f5d-44b2-8190-c1b1c8e59e7d", "fields": {"sub_category_id": "a4a13cc2-1b60-4b38-b7d7-d81c69c60d26", "name": "Sports ground"}},
+
+  {"model": "api.assettype", "pk": "ea8c3b9e-7d5c-43a1-9860-9e3f9aefb4f7", "fields": {"sub_category_id": "e0a82c52-7f31-414c-b86b-83c18a2fdb29", "name": "Hotel"}},
+
+  {"model": "api.assettype", "pk": "f7c3d1b1-76a3-4b41-9e0c-2d4c2c3d5b6e", "fields": {"sub_category_id": "7b42fa0a-44e3-4d79-ae5e-f85a1a6ee5aa", "name": "Lifeboat station"}},
+
+  {"model": "api.assettype", "pk": "19b7f8c2-4a4d-4b4e-9f3c-3d3b2a4e5f6a", "fields": {"sub_category_id": "e3a5cebb-6bc1-44ef-ae33-029f3731d7ad", "name": "Bridge"}},
+  {"model": "api.assettype", "pk": "5a6c7d8e-1234-4b56-9876-1a2b3c4d5e6f", "fields": {"sub_category_id": "e3a5cebb-6bc1-44ef-ae33-029f3731d7ad", "name": "Bus station"}},
+  {"model": "api.assettype", "pk": "7b8c9d0e-2345-4c67-8765-2b3c4d5e6f7a", "fields": {"sub_category_id": "e3a5cebb-6bc1-44ef-ae33-029f3731d7ad", "name": "Bus stop"}},
+  {"model": "api.assettype", "pk": "8c9d0e1f-3456-4d78-7654-3c4d5e6f7a8b", "fields": {"sub_category_id": "e3a5cebb-6bc1-44ef-ae33-029f3731d7ad", "name": "Car park"}},
+  {"model": "api.assettype", "pk": "9d0e1f2a-4567-4e89-6543-4d5e6f7a8b9c", "fields": {"sub_category_id": "e3a5cebb-6bc1-44ef-ae33-029f3731d7ad", "name": "Culvert"}},
+  {"model": "api.assettype", "pk": "0e1f2a3b-5678-4f9a-5432-5e6f7a8b9c0d", "fields": {"sub_category_id": "e3a5cebb-6bc1-44ef-ae33-029f3731d7ad", "name": "Cycle track"}},
+  {"model": "api.assettype", "pk": "1f2a3b4c-6789-4a0b-4321-6f7a8b9c0d1e", "fields": {"sub_category_id": "e3a5cebb-6bc1-44ef-ae33-029f3731d7ad", "name": "Ferry port"}},
+  {"model": "api.assettype", "pk": "2a3b4c5d-7890-4b1c-3210-7a8b9c0d1e2f", "fields": {"sub_category_id": "e3a5cebb-6bc1-44ef-ae33-029f3731d7ad", "name": "Heavy rail complex"}},
+  {"model": "api.assettype", "pk": "3b4c5d6e-8901-4c2d-210f-8b9c0d1e2f3a", "fields": {"sub_category_id": "e3a5cebb-6bc1-44ef-ae33-029f3731d7ad", "name": "Highway roundabout"}},
+  {"model": "api.assettype", "pk": "4c5d6e7f-9012-4d3e-10e0-9c0d1e2f3a4b", "fields": {"sub_category_id": "e3a5cebb-6bc1-44ef-ae33-029f3731d7ad", "name": "Level crossing"}},
+  {"model": "api.assettype", "pk": "5d6e7f8a-0123-4e4f-0f1f-0d1e2f3a4b5c", "fields": {"sub_category_id": "e3a5cebb-6bc1-44ef-ae33-029f3731d7ad", "name": "Low bridge"}},
+  {"model": "api.assettype", "pk": "6e7f8a9b-1234-4f50-1e2e-1e2f3a4b5c6d", "fields": {"sub_category_id": "e3a5cebb-6bc1-44ef-ae33-029f3731d7ad", "name": "Railway junction"}},
+  {"model": "api.assettype", "pk": "7f8a9b0c-2345-4051-2d3d-2f3a4b5c6d7e", "fields": {"sub_category_id": "e3a5cebb-6bc1-44ef-ae33-029f3731d7ad", "name": "Railway station"}},
+  {"model": "api.assettype", "pk": "8a9b0c1d-3456-4152-3c4c-3a4b5c6d7e8f", "fields": {"sub_category_id": "e3a5cebb-6bc1-44ef-ae33-029f3731d7ad", "name": "Road"}},
+  {"model": "api.assettype", "pk": "9b0c1d2e-4567-4253-4b5b-4b5c6d7e8f9a", "fields": {"sub_category_id": "e3a5cebb-6bc1-44ef-ae33-029f3731d7ad", "name": "Tunnel"}},
+
+  {"model": "api.assettype", "pk": "d1f3c5a7-8b9e-4c2a-91b2-6a3e5d4f1c2b", "fields": {"sub_category_id": "faed503a-bc59-4e63-bcc2-0f7e020d2063", "name": "Gas distribution complex"}},
+  {"model": "api.assettype", "pk": "a2b3c4d5-6e7f-4890-1234-56789abcdef0", "fields": {"sub_category_id": "faed503a-bc59-4e63-bcc2-0f7e020d2063", "name": "High voltage electricity substation complex"}},
+  {"model": "api.assettype", "pk": "b3c4d5e6-7f80-4901-2345-6789abcdef01", "fields": {"sub_category_id": "faed503a-bc59-4e63-bcc2-0f7e020d2063", "name": "Liquid fuel storage complex"}},
+  {"model": "api.assettype", "pk": "c4d5e6f7-8091-4a12-3456-789abcdef012", "fields": {"sub_category_id": "faed503a-bc59-4e63-bcc2-0f7e020d2063", "name": "Low voltage electricity substation complex"}},
+  {"model": "api.assettype", "pk": "d5e6f708-9102-4b23-4567-89abcdef0123", "fields": {"sub_category_id": "faed503a-bc59-4e63-bcc2-0f7e020d2063", "name": "Minor substation"}},
+  {"model": "api.assettype", "pk": "e6f70819-1023-4c34-5678-9abcdef01234", "fields": {"sub_category_id": "faed503a-bc59-4e63-bcc2-0f7e020d2063", "name": "Pylon"}},
+  {"model": "api.assettype", "pk": "f708192a-2345-4d45-6789-abcdef012345", "fields": {"sub_category_id": "faed503a-bc59-4e63-bcc2-0f7e020d2063", "name": "Telecommunications complex"}},
+  {"model": "api.assettype", "pk": "08192a3b-3456-4e56-789a-bcdef0123456", "fields": {"sub_category_id": "faed503a-bc59-4e63-bcc2-0f7e020d2063", "name": "Telecommunications exchange"}},
+  {"model": "api.assettype", "pk": "192a3b4c-4567-4f67-89ab-cdef01234567", "fields": {"sub_category_id": "faed503a-bc59-4e63-bcc2-0f7e020d2063", "name": "Transmission line"}},
+  {"model": "api.assettype", "pk": "aa7ce68f-74c8-4500-a1f3-c2558366a64e", "fields": {"sub_category_id": "faed503a-bc59-4e63-bcc2-0f7e020d2063", "name": "Water distribution complex"}},
+  {"model": "api.assettype", "pk": "600d93c1-4be0-4a28-b5d0-501b53b2953d", "fields": {"sub_category_id": "faed503a-bc59-4e63-bcc2-0f7e020d2063", "name": "Water extraction complex"}},
+  {"model": "api.assettype", "pk": "55a2567c-a127-4488-90f1-039fffe51d74", "fields": {"sub_category_id": "faed503a-bc59-4e63-bcc2-0f7e020d2063", "name": "Water reservoir"}},
+
+  {"model": "api.assettype", "pk": "8834842c-7034-44b6-9a16-67b7c4f5ecdd", "fields": {"sub_category_id": "a22c10fd-c0cd-4722-a391-9df2a09db6ef", "name": "Wastewater collection network"}},
+  {"model": "api.assettype", "pk": "a13f7876-c2ea-4f6c-8ea4-1e8be6082a36", "fields": {"sub_category_id": "a22c10fd-c0cd-4722-a391-9df2a09db6ef", "name": "Wastewater disposal complex"}},
+  {"model": "api.assettype", "pk": "23baf52b-ef94-4932-a441-1aa5f0a33fa2", "fields": {"sub_category_id": "a22c10fd-c0cd-4722-a391-9df2a09db6ef", "name": "Wastewater treatment complex"}}
+]

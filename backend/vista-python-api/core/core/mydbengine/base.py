@@ -1,10 +1,10 @@
 """Mydbengine Module."""
 
 import boto3
-from django.db.backends.postgresql import base
+from django.contrib.gis.db.backends.postgis.base import DatabaseWrapper as BasePostGISWrapper
 
 
-class DatabaseWrapper(base.DatabaseWrapper):
+class DatabaseWrapper(BasePostGISWrapper):
     """Represent a database connection."""
 
     def __init__(self, settings_dict, *args, **kwargs):

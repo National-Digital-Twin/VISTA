@@ -8,8 +8,8 @@ from ariadne import QueryType
 from django.utils.dateparse import parse_time
 
 import api.routing as rt
+from api.arch_models import NarrowRoad, TrafficData
 from api.circle_to_polygon import Center
-from api.models import NarrowRoad, TrafficData
 
 if TYPE_CHECKING:
     from .types import GeoJSON

@@ -117,20 +117,13 @@ jobs:
       - name: Install linting tools
         run: |
           source venv/bin/activate
-          pip install -q ruff isort bandit
+          pip install -q ruff bandit
 
       - name: Run RUFF
         run: |
           source venv/bin/activate
           echo "running ruff"  >> $GITHUB_STEP_SUMMARY
-          ruff format backend  >> $GITHUB_STEP_SUMMARY
-
-      - name: Run ISORT (import sorting)
-        run: |
-          source venv/bin/activate
-          echo "running isort"  >> $GITHUB_STEP_SUMMARY
-          isort --check-only backend  >> $GITHUB_STEP_SUMMARY
-        continue-on-error: true
+          ruff check backend  >> $GITHUB_STEP_SUMMARY
 
       - name: Run BANDIT (security linter)
         run: |
