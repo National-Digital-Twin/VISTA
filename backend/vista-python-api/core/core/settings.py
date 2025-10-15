@@ -27,9 +27,9 @@ IS_PROD = ENVIRONMENT == "production"
 
 SECRET_KEY = env("DJANGO_SECRET_KEY", default=env.NOTSET if IS_PROD else get_secret_key(BASE_DIR))
 
-CQC_API_KEY = env("CQC_API_KEY", default=env.NOTSET)
-OS_NGD_API_KEY = env("OS_NGD_API_KEY", default=env.NOTSET)
-OS_NAMES_API_KEY = env("OS_NAMES_API_KEY", default=env.NOTSET)
+CQC_API_KEY = env("CQC_API_KEY", default="replace")
+OS_NGD_API_KEY = env("OS_NGD_API_KEY", default="replace")
+OS_NAMES_API_KEY = env("OS_NAMES_API_KEY", default="replace")
 
 LANDING_PAGE_URL = env("LANDING_PAGE_URL", default="http://localhost:3000")
 IDENTITY_API_URL = env("IDENTITY_API_URL", default="http://localhost:3001")
@@ -109,7 +109,9 @@ DATABASES = (
             "ENGINE": "django.contrib.gis.db.backends.postgis",
             "OPTIONS": {
                 "service": "vista_service",
-                "passfile": env("PGPASSFILE"),
+                "passfile": env(
+                    "PGPASSFILE", default="/vista-python-api/core/core/.docker_vista_pgpass"
+                ),
             },
         }
     }
