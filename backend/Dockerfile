@@ -28,7 +28,7 @@ WORKDIR /vista-python-api/core
 
 
 # Install GDAL system libraries in final image
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get --no-install-recommends install -y \
     gdal-bin \
     libgdal-dev \
     && rm -rf /var/lib/apt/lists/*
