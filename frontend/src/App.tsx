@@ -2,14 +2,16 @@ import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
-import PrivacyNotice from './components/PrivacyNotice/PrivacyNotice';
 import AppBody from '@/components/AppBody';
 import Layout from '@/components/Layout';
 import config from '@/config/app-config';
 import AdminSettings from '@/pages/AdminSettings';
 import DataRoom from '@/pages/DataRoom';
+import GroupDetail from '@/pages/GroupDetail';
 import Notifications from '@/pages/Notifications';
+import PrivacyNotice from '@/pages/PrivacyNotice';
 import Profile from '@/pages/Profile';
+import UserDetail from '@/pages/UserDetail';
 
 library.add(fas);
 
@@ -24,6 +26,8 @@ const AppWrapper = () => {
                 { path: 'admin-settings', element: <AdminSettings /> },
                 { path: 'notifications', element: <Notifications /> },
                 { path: 'privacy', element: <PrivacyNotice /> },
+                { path: 'user/:userId', element: <UserDetail /> },
+                { path: 'group/:groupName', element: <GroupDetail /> },
             ],
         },
     ]);

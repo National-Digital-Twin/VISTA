@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { Box, IconButton, GlobalStyles } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import PageContainer from '@/components/PageContainer';
 
 export default function PrivacyNotice() {
     const navigate = useNavigate();
@@ -57,19 +58,14 @@ export default function PrivacyNotice() {
                 }}
             />
 
-            <Box
+            <PageContainer
                 id="vista-privacy"
                 sx={{
                     'background': '#fff',
-                    '--pn-left-gutter': '24px',
-                    '--pn-pad-top': '12px',
-                    '--pn-pad-right': '16px',
-                    '--pn-logo-width': '300px',
-                    '--pn-logo-shift': '-32px',
                     '--pn-text': '#374151',
                     '--pn-link': '#0b5fff',
-                    'py': 'var(--pn-pad-top)',
-                    'pr': 'var(--pn-pad-right)',
+                    '--pn-logo-width': '300px',
+                    '--pn-logo-shift': '-32px',
                 }}
             >
                 <Box
@@ -78,9 +74,6 @@ export default function PrivacyNotice() {
                         flexDirection: 'column',
                         alignItems: 'flex-start',
                         mb: 1,
-                        overflow: 'hidden',
-                        pl: 'var(--pn-left-gutter)',
-                        boxSizing: 'border-box',
                     }}
                 >
                     <IconButton aria-label="Back" onClick={() => navigate(-1)} sx={{ mb: 0.5 }}>
@@ -103,10 +96,6 @@ export default function PrivacyNotice() {
                 </Box>
 
                 <Box
-                    sx={{
-                        pl: 'var(--pn-left-gutter)',
-                        boxSizing: 'border-box',
-                    }}
                     // dangerouslySetInnerHTML used here to avoid using raw HTML that steps outside of React's control. However this is completely safe because
                     // this HTML is completely static, composed of benign text tags and does not depend on external input or embedded scripts so no concern from XSS attack
                     dangerouslySetInnerHTML={{
@@ -230,7 +219,7 @@ export default function PrivacyNotice() {
             `,
                     }}
                 />
-            </Box>
+            </PageContainer>
         </>
     );
 }
