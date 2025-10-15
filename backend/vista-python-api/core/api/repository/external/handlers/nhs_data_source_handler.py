@@ -14,7 +14,7 @@ class NhsDataSourceHandler(DataSourceHandler):
 
     logger = logging.getLogger(__name__)
 
-    def build_urls_for_data_source(self):
+    def build_urls_for_data_source(self, _asset_specification):
         """Build the URLs for fetching the data per the specification given."""
         return ["https://opendata.nhsbsa.net/api/3/action/datastore_search_sql"]
 

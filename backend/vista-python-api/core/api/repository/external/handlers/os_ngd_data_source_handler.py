@@ -22,8 +22,8 @@ class OsNgdDataSourceHandler(DataSourceHandler):
         """Build the URLs for fetching the data per the specification given."""
         query_strings = self._build_query_strings(asset_specification)
         return [
-            f"https://api.os.uk/features/ngd/ofa/v1/collections/ \
-            {asset_specification['collection']}/items{query_string}"
+            f"https://api.os.uk/features/ngd/ofa/v1/collections/"
+            f"{asset_specification['collection']}/items{query_string}"
             for query_string in query_strings
         ]
 

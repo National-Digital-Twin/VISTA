@@ -8,3 +8,4 @@ venv/
 **/share/
 **/pyvenv.cfg
 **/.vscode/
+.env.docker

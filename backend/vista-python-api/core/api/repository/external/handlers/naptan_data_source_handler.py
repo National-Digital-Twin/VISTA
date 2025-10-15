@@ -10,7 +10,7 @@ from .base import DataSourceHandler
 class NaptanDataSourceHandler(DataSourceHandler):
     """Handler for the NAPTAN data source."""
 
-    def build_urls_for_data_source(self):
+    def build_urls_for_data_source(self, _asset_specification):
         """Build the URLs for fetching the data per the specification given."""
         return [
             f"https://naptan.api.dft.gov.uk/v1/access-nodes?dataFormat=csv&atcoAreaCodes={self.locator}"
@@ -19,11 +19,11 @@ class NaptanDataSourceHandler(DataSourceHandler):
     async def fetch_data_for_asset_specification(self, asset_specification, url):
         """Fetch the OS NGD data per the specification given."""
         stops = self.fetch_csv_from_url(url)
-        unique_stops = reduce(self.merge_stops_with_same_name_at_same_location(set()), stops, [])
+        unique_stops = reduce(self._merge_stops_with_same_name_at_same_location(set()), stops, [])
         return [
             ExternalAssetMapper.map_from_naptan(stop, asset_specification)
             for stop in unique_stops
-            if self.is_stop_match_for_asset_specification_filters(
+            if self._is_stop_match_for_asset_specification_filters(
                 stop, asset_specification["filters"]
             )
         ]

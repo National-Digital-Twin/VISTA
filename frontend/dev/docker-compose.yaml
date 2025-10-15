@@ -81,9 +81,13 @@ services:
     vista-python-api:
         container_name: vista-python-api
         image: vista-python-api
+        env_file:
+            - '../../backend/.env.docker'
         build:
             context: ../../backend
-            dockerfile: ../../backend/Dockerfile
+            dockerfile: ../backend/Dockerfile
+        ports:
+            - 8000:8000
     postgres:
         image: postgis/postgis:latest
         container_name: postgis

@@ -40,16 +40,17 @@ class Command(BaseCommand):
 
         total_time = time.perf_counter() - start_time
         self.logger.info(
-            "Completed %s fetches in %ss total and fetched {len(new_assets)} assets.",
+            "Completed %s fetches in %ss total and fetched %s assets.",
             len(asset_specifications),
             total_time,
+            len(new_assets),
         )
 
         return new_assets
 
     def get_asset_specifications_for_source(self, source):
         """Fetch the asset specifications for the given source."""
-        base_dir = Path.parent(__file__)
+        base_dir = Path(__file__).parent
         data_path = Path(base_dir, "..", "..", "data", f"{source}-asset-specifications.json")
         data_path = Path.resolve(data_path)
 
@@ -76,7 +77,7 @@ class Command(BaseCommand):
 
         return assets
 
-    def handle(self):
+    def handle(self, **_kwargs):
         """Command to load external data into the application's database."""
         assets = async_to_sync(self.get_assets)()
 

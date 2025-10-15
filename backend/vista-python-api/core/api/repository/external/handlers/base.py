@@ -19,7 +19,7 @@ class DataSourceHandler:
         """Construct instance."""
         self.locator = locator
 
-    def build_urls_for_data_source(self):
+    def build_urls_for_data_source(self, asset_specification):
         """Return a list of URLs for the data source."""
         raise NotImplementedError
 

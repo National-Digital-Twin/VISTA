@@ -16,7 +16,7 @@ class CqcDataSourceHandler(DataSourceHandler):
     root_url: ClassVar[str] = "https://api.service.cqc.org.uk/public/v1"
     headers: ClassVar[dict] = {"Ocp-Apim-Subscription-Key": settings.CQC_API_KEY}
 
-    def build_urls_for_data_source(self):
+    def build_urls_for_data_source(self, _asset_specification):
         """Build the URLs for fetching the data per the specification given."""
         return [f"{self.root_url}/locations?localAuthority={self.locator}&careHome=Y&perPage=1000"]
 
@@ -32,7 +32,7 @@ class CqcDataSourceHandler(DataSourceHandler):
             )
 
         tasks = {
-            create_task(self.fetch_location_details(location["locationId"])): location
+            create_task(self._fetch_location_details(location["locationId"])): location
             for location in all_locations
         }
 
