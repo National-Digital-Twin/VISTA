@@ -3,6 +3,7 @@ import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { Box, Divider, IconButton, Menu, MenuItem, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import React, { useState } from 'react';
@@ -12,9 +13,10 @@ import { useUserData } from '@/hooks/useUserData';
 interface UserMenuProps {
     readonly onMyProfileClick?: () => void;
     readonly onAdminSettingsClick?: () => void;
+    readonly onPrivacyClick?: () => void;
 }
 
-export default function UserMenu({ onMyProfileClick, onAdminSettingsClick }: UserMenuProps) {
+export default function UserMenu({ onMyProfileClick, onAdminSettingsClick, onPrivacyClick }: UserMenuProps) {
     const theme = useTheme();
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const { getUserDisplayName, getUserEmailDomain, loading } = useUserData();
@@ -31,6 +33,11 @@ export default function UserMenu({ onMyProfileClick, onAdminSettingsClick }: Use
 
     const handleSignOut = () => {
         signout();
+        handleClose();
+    };
+
+    const handlePrivacyNotice = () => {
+        onPrivacyClick?.();
         handleClose();
     };
 
@@ -115,6 +122,20 @@ export default function UserMenu({ onMyProfileClick, onAdminSettingsClick }: Use
                     >
                         <SettingsOutlinedIcon fontSize="small" />
                         <Typography variant="body2">Admin Settings</Typography>
+                    </Box>
+                </MenuItem>
+
+                <MenuItem onClick={handlePrivacyNotice}>
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 1,
+                            color: 'text.primary',
+                        }}
+                    >
+                        <LockOutlinedIcon fontSize="small" />
+                        <Typography variant="body2">Privacy notice</Typography>
                     </Box>
                 </MenuItem>
 

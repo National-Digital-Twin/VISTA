@@ -7,7 +7,9 @@ import Layout from '@/components/Layout';
 import config from '@/config/app-config';
 import AdminSettings from '@/pages/AdminSettings';
 import DataRoom from '@/pages/DataRoom';
+import GroupDetail from '@/pages/GroupDetail';
 import Notifications from '@/pages/Notifications';
+import PrivacyNotice from '@/pages/PrivacyNotice';
 import Profile from '@/pages/Profile';
 
 library.add(fas);
@@ -22,6 +24,9 @@ const AppWrapper = () => {
                 { path: 'profile', element: <Profile /> },
                 { path: 'admin-settings', element: <AdminSettings /> },
                 { path: 'notifications', element: <Notifications /> },
+                { path: 'privacy', element: <PrivacyNotice /> },
+                { path: 'user/:userId', element: <Profile /> },
+                { path: 'group/:groupName', element: <GroupDetail /> },
             ],
         },
     ]);

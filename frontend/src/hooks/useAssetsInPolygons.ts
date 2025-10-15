@@ -5,7 +5,8 @@ import useGroupedAssets from './queries/useGroupedAssets';
 import { Asset } from '@/models';
 
 export default function useAssetsInPolygons() {
-    const { assets, isLoadingAssets } = useGroupedAssets({});
+    const groupedAssetsResult = useGroupedAssets({});
+    const isLoadingAssets = groupedAssetsResult.isLoadingAssets;
 
     const findAssetsOverlappingPolygon = useCallback(
         (polygonFeatures: Feature<Polygon>[], assets: Asset[]) => {
@@ -39,12 +40,13 @@ export default function useAssetsInPolygons() {
 
     const findAssetsInPolygons = useCallback(
         ({ polygons }: { polygons: Feature<Polygon>[] }) => {
+            const assets = 'assets' in groupedAssetsResult ? groupedAssetsResult.assets : [];
             if (!assets) {
                 return [];
             }
             return findAssetsOverlappingPolygon(polygons, assets);
         },
-        [assets, findAssetsOverlappingPolygon],
+        [groupedAssetsResult, findAssetsOverlappingPolygon],
     );
 
     return { findAssetsInPolygons };

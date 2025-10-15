@@ -12,7 +12,7 @@ interface PageHeaderProps {
     appName: string;
 }
 
-const PageHeader = ({ appName }: PageHeaderProps) => {
+const PageHeader = ({ appName }: Readonly<PageHeaderProps>) => {
     const theme = useTheme();
     const navigate = useNavigate();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
@@ -52,6 +52,10 @@ const PageHeader = ({ appName }: PageHeaderProps) => {
         navigate('/admin-settings');
     };
 
+    const handlePrivacyNotice = () => {
+        navigate('/privacy');
+    };
+
     return (
         <AppBar
             position="static"
@@ -82,7 +86,7 @@ const PageHeader = ({ appName }: PageHeaderProps) => {
 
                 <Box display="flex" gap={1} alignItems="center">
                     <Notifications unseenCount={unseenNotifications} onClick={handleNotificationClick} />
-                    <UserMenu onMyProfileClick={handleMyProfileClick} onAdminSettingsClick={handleAdminSettingsClick} />
+                    <UserMenu onMyProfileClick={handleMyProfileClick} onAdminSettingsClick={handleAdminSettingsClick} onPrivacyClick={handlePrivacyNotice} />
                 </Box>
             </Toolbar>
 

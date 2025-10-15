@@ -23,13 +23,13 @@ export class OsNamesDataSourceHandler extends DataSourceHandler {
         return [`/transparent-proxy/os-names/search/names/v1/find?query=Wight&fq=BBOX:${this.locator}&fq=LOCAL_TYPE:${assetSpecification.description}`];
     }
 
-    public async fetchDataForAssetSpecification(assetSpecification: AssetSpecification, url: string): Promise<Feature[]> {
+    public async fetchDataForAssetSpecification(_assetSpecification: AssetSpecification, url: string): Promise<Feature[]> {
         const response = await this.fetchFromUrl(url);
         return response.results ? this.mapResponseToFeatures(response) : [];
     }
 
-    private mapResponseToFeatures(response): Feature[] {
-        return response.results.map((r) => {
+    private mapResponseToFeatures(response: any): Feature[] {
+        return response.results.map((r: any) => {
             const data = r.GAZETTEER_ENTRY;
             return {
                 id: data.ID,

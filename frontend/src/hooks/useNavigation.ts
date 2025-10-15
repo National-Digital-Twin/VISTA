@@ -24,7 +24,6 @@ export const useNavigation = () => {
     };
 
     const handleNavigationClick = (item: NavigationItem) => {
-        console.log(`${item.label} navigation clicked - navigating to ${item.to}`);
         navigate(item.to);
         handleLink();
     };

@@ -1,4 +1,5 @@
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
+import type { ReactElement } from 'react';
 
 export interface LayerControlProps {
     /** Current search query */
@@ -11,25 +12,25 @@ export default interface Tool {
     TOOL_NAME: string;
 
     /** Overlay element, drawn on top of the map, if any */
-    Overlay?: () => JSX.Element;
+    Overlay?: () => ReactElement;
 
     /** Side buttons (the small buttons on the right) */
-    SideButtons?: (onClickFunc?: any) => JSX.Element;
+    SideButtons?: (onClickFunc?: any) => ReactElement;
 
     /** Polygon buttons (the small buttons on the top) */
-    PolygonButtons?: () => JSX.Element;
+    PolygonButtons?: () => ReactElement;
 
     /** Toolbar tools (large elements along the top, such as filters or the search bar) */
-    ToolbarTools?: () => JSX.Element;
+    ToolbarTools?: () => ReactElement;
 
     /** Map elements (actual elements rendered into the geographical map itself */
-    MapElements?: () => JSX.Element;
+    MapElements?: () => ReactElement;
 
     /** Detail panel (panel raised from the bottom with details e.g. hydrology) */
-    DetailPanel?: () => JSX.Element;
+    DetailPanel?: () => ReactElement;
 
     /** [UINext] Control panel tab contents */
-    ControlPanelContent?: () => JSX.Element;
+    ControlPanelContent?: () => ReactElement;
 
     /** [UINext] Control panel tab title and icon */
     controlPanelTab?: {
@@ -38,7 +39,7 @@ export default interface Tool {
     };
 
     /** [UINext] Layer control */
-    LayerControl?: (props: LayerControlProps) => JSX.Element;
+    LayerControl?: (props: LayerControlProps) => ReactElement;
 
     /** Side button order index */
     SIDE_BUTTON_ORDER?: number;

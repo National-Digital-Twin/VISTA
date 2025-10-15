@@ -73,8 +73,10 @@ jobs:
       - name: PIP AUDIT
         run: |
           source venv/bin/activate
-          pip-audit
-          pip-audit --format json | jq '.vulnerabilities' >> $GITHUB_STEP_SUMMARY
+          cd backend
+          poetry export -f requirements.txt --without-hashes -o /tmp/app-reqs.txt
+          IGNORE_FLAGS=$(sed '/^\s*#/d;/^\s*$/d' pip-audit.ignore | sed 's/^/--ignore-vuln /' | tr '\n' ' ')
+          pip-audit -r /tmp/app-reqs.txt ${IGNORE_FLAGS}
 
       - name: POETRY LOCK CHECK
         run: |

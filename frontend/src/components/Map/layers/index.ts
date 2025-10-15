@@ -1,4 +1,4 @@
-import type { LayerProps } from 'react-map-gl';
+import type { LayerProps } from 'react-map-gl/maplibre';
 
 export { default as FLOOD_AREA_LAYERS } from './flood-areas';
 export * from './flood-areas';

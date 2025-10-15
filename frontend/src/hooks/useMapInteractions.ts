@@ -65,9 +65,11 @@ export default function useMapInteractions({
         const isMultiSelect = originalEvent.shiftKey;
         const clickedFeatures: Feature[] = features;
 
-        const clickedFloodZones = clickedFeatures.filter((feature) => isClickedLayer(feature, FLOOD_AREA_POLYGON_ID));
+        const clickedFloodZones = clickedFeatures.filter((feature) => FLOOD_AREA_POLYGON_ID && isClickedLayer(feature, FLOOD_AREA_POLYGON_ID));
         const otherClickedElements = clickedFeatures.filter(
-            (feature) => isClickedLayer(feature, pointAssetCxnLayer.id) || isClickedLayer(feature, LINEAR_ASSET_LAYER.id),
+            (feature) =>
+                (pointAssetCxnLayer.id && isClickedLayer(feature, pointAssetCxnLayer.id)) ||
+                (LINEAR_ASSET_LAYER.id && isClickedLayer(feature, LINEAR_ASSET_LAYER.id)),
         );
 
         if (isEmpty(clickedFeatures)) {
