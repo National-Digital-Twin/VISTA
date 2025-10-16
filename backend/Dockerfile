@@ -29,7 +29,7 @@ RUN /venv/bin/pip install -r /requirements.txt
 
 # build a clean environment
 FROM base
-WORKDIR /vista-python-api/core
+WORKDIR /vista-python-api/src
 
 # virtual environment is copied
 COPY --from=builder /venv /venv
@@ -41,12 +41,12 @@ RUN apt-get update && \
     && rm -rf /var/lib/apt/lists/*
 
 # copy payload code only
-COPY /vista-python-api/core .
+COPY /vista-python-api/src .
 
 COPY ./entrypoint.sh .
 
 # Change ownership of necessary files and directories to the non-root user
-RUN chown -R appuser:appuser /vista-python-api/core /venv ./entrypoint.sh
+RUN chown -R appuser:appuser /vista-python-api/src /venv ./entrypoint.sh
 
 # Switch to the non-root user
 USER appuser
