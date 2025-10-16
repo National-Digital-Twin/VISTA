@@ -17,6 +17,11 @@ from model_bakery import baker
 
 from api import models
 
+pytestmark = pytest.mark.skip(
+    reason="These need to be refactored as they are making live calls"
+    "to Open Street Map which will vary in response."
+)
+
 converter = make_converter()
 
 
