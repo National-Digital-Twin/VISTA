@@ -219,7 +219,7 @@ name = "Maintenance Changes"
 showcontent = true
 
 [tool.pytest.ini_options]
-pythonpath = "vista-python-api/core"
+pythonpath = "vista-python-api/src"
 addopts = [
   "--strict-config",
   "--strict-markers",
