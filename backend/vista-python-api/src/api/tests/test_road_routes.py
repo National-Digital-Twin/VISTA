@@ -327,7 +327,4 @@ def test_road_route_query_vehicle(client):
         "Perowne Way",
         "Avenue Road",
         "B3329",
-        # "Saint John's Crescent",
-        # "Saint John's Road",
-        # "B3329",
     ]
