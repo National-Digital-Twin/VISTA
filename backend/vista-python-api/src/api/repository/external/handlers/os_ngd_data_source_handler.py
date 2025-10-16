@@ -38,7 +38,7 @@ class OsNgdDataSourceHandler(DataSourceHandler):
             offset_url = url + f"&offset={offset}"
             response = await self.fetch_from_url_with_retry(offset_url)
             fetch_next_page = response["numberReturned"] == self.os_ngd_response_page_size
-            offset += 100
+            offset += self.os_ngd_response_page_size
             filtered_assets = []
             for feature in response["features"]:
                 mapped_asset = ExternalAssetMapper.map_from_os_ngd(feature, asset_specification)
@@ -114,12 +114,8 @@ class OsNgdDataSourceHandler(DataSourceHandler):
         return True
 
     def _is_match_for_any_filter_value(self, feature, data_filters):
-        matches_any_value = False
-        for filter_value in data_filters["filterValue"]:
-            if (
-                "properties" in feature
-                and feature["properties"].get(data_filters["filterName"]) == filter_value
-            ):
-                matches_any_value = True
-                break
-        return matches_any_value
+        return any(
+            "properties" in feature
+            and feature["properties"].get(data_filters["filterName"]) == filter_value
+            for filter_value in data_filters["filterValue"]
+        )

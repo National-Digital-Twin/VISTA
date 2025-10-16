@@ -19,7 +19,7 @@ class NhsDataSourceHandler(DataSourceHandler):
         return ["https://opendata.nhsbsa.net/api/3/action/datastore_search_sql"]
 
     async def fetch_data_for_asset_specification(self, asset_specification, url):
-        """Fetch the OS NGD data per the specification given."""
+        """Fetch the NHS data per the specification given."""
         table_name = await self.get_package_latest_resource()
         sql_query = (
             f"SELECT * from `{table_name}` WHERE HEALTH_AND_WELLBEING_BOARD = 'ISLE OF WIGHT'"

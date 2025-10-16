@@ -18,7 +18,7 @@ class OsNamesDataSourceHandler(DataSourceHandler):
         ]
 
     async def fetch_data_for_asset_specification(self, asset_specification, url):
-        """Fetch the OS NGD data per the specification given."""
+        """Fetch the OS Names data per the specification given."""
         data = await self.fetch_from_url_with_retry(url)
         return [
             ExternalAssetMapper.map_from_os_names(result["GAZETTEER_ENTRY"], asset_specification)
