@@ -8,3 +8,5 @@ venv/
 **/share/
 **/pyvenv.cfg
 **/.vscode/
+.env.docker
+.django-secret-key
