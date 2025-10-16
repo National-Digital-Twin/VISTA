@@ -49,7 +49,7 @@ const PageHeader = ({ appName }: Readonly<PageHeaderProps>) => {
     };
 
     const handleAdminSettingsClick = () => {
-        navigate('/admin-settings');
+        navigate('/admin');
     };
 
     const handlePrivacyNotice = () => {

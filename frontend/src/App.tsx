@@ -8,6 +8,7 @@ import config from '@/config/app-config';
 import AdminSettings from '@/pages/AdminSettings';
 import DataRoom from '@/pages/DataRoom';
 import GroupDetail from '@/pages/GroupDetail';
+import InviteNewUser from '@/pages/InviteNewUser';
 import Notifications from '@/pages/Notifications';
 import PrivacyNotice from '@/pages/PrivacyNotice';
 import Profile from '@/pages/Profile';
@@ -22,7 +23,8 @@ const AppWrapper = () => {
                 { path: '', element: <AppBody /> },
                 { path: 'data-room', element: <DataRoom /> },
                 { path: 'profile', element: <Profile /> },
-                { path: 'admin-settings', element: <AdminSettings /> },
+                { path: 'admin', element: <AdminSettings /> },
+                { path: 'admin/invite', element: <InviteNewUser /> },
                 { path: 'notifications', element: <Notifications /> },
                 { path: 'privacy', element: <PrivacyNotice /> },
                 { path: 'user/:userId', element: <Profile /> },

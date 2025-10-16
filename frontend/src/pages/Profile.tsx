@@ -37,7 +37,7 @@ export default function Profile() {
     const handleBackClick = () => {
         // TODO: Add proper permission check to determine if user is administrator
         if (userId) {
-            navigate('/admin-settings?tab=users');
+            navigate('/admin?tab=users');
         } else {
             navigate('/');
         }
@@ -70,7 +70,7 @@ export default function Profile() {
                 throw new Error('Failed to remove user');
             }
 
-            navigate('/admin-settings?tab=users');
+            navigate('/admin?tab=users');
         } catch (error) {
             console.error('Error removing user:', error);
         } finally {
