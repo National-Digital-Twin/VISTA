@@ -9,6 +9,9 @@ describe('ComplexLayerControl', () => {
         children: <div data-testid="layer-content">Layer Content</div>,
     };
 
+    const getHeader = () => screen.getByText('Test Layer').closest('[tabIndex]');
+    const clickHeader = () => fireEvent.click(getHeader()!);
+
     describe('Rendering', () => {
         it('renders with title and icon', () => {
             render(<ComplexLayerControl {...defaultProps} icon={faLayerGroup} />);
@@ -90,23 +93,21 @@ describe('ComplexLayerControl', () => {
     });
 
     describe('Selected Count', () => {
-        it('updates count when using function children', () => {
-            const FunctionChildren = ({ updateCount }: { updateCount: (selected: boolean) => void }) => (
-                <>
-                    <button onClick={() => updateCount(true)}>Select</button>
-                    <button onClick={() => updateCount(false)}>Deselect</button>
-                </>
-            );
+        const FunctionChildren = ({ updateCount, showDeselect = true }: { updateCount: (selected: boolean) => void; showDeselect?: boolean }) => (
+            <>
+                <button onClick={() => updateCount(true)}>Select</button>
+                {showDeselect && <button onClick={() => updateCount(false)}>Deselect</button>}
+            </>
+        );
 
+        it('updates count when using function children', () => {
             render(
                 <ComplexLayerControl title="Test Layer">
                     {(updateCount: (selected: boolean) => void) => <FunctionChildren updateCount={updateCount} />}
                 </ComplexLayerControl>,
             );
 
-            const header = screen.getByText('Test Layer').closest('[tabIndex]');
-            fireEvent.click(header!);
-
+            clickHeader();
             expect(screen.getByText('Test Layer')).toHaveTextContent('Test Layer');
 
             fireEvent.click(screen.getByText('Select'));
@@ -120,39 +121,26 @@ describe('ComplexLayerControl', () => {
         });
 
         it('does not decrement count below zero', () => {
-            const FunctionChildren = ({ updateCount }: { updateCount: (selected: boolean) => void }) => (
-                <button onClick={() => updateCount(false)}>Deselect</button>
-            );
-
             render(
                 <ComplexLayerControl title="Test Layer">
-                    {(updateCount: (selected: boolean) => void) => <FunctionChildren updateCount={updateCount} />}
+                    {(updateCount: (selected: boolean) => void) => <FunctionChildren updateCount={updateCount} showDeselect={true} />}
                 </ComplexLayerControl>,
             );
 
-            const header = screen.getByText('Test Layer').closest('[tabIndex]');
-            fireEvent.click(header!);
-
+            clickHeader();
             fireEvent.click(screen.getByText('Deselect'));
             expect(screen.getByText('Test Layer')).not.toHaveTextContent('(-');
         });
 
         it('hides count when hideCount prop is true', () => {
-            const FunctionChildren = ({ updateCount }: { updateCount: (selected: boolean) => void }) => (
-                <button onClick={() => updateCount(true)}>Select</button>
-            );
-
             render(
                 <ComplexLayerControl title="Test Layer" hideCount>
-                    {(updateCount: (selected: boolean) => void) => <FunctionChildren updateCount={updateCount} />}
+                    {(updateCount: (selected: boolean) => void) => <FunctionChildren updateCount={updateCount} showDeselect={false} />}
                 </ComplexLayerControl>,
             );
 
-            const header = screen.getByText('Test Layer').closest('[tabIndex]');
-            fireEvent.click(header!);
-
+            clickHeader();
             fireEvent.click(screen.getByText('Select'));
-
             expect(screen.queryByText(/\(1\)/)).not.toBeInTheDocument();
         });
     });

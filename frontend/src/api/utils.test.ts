@@ -12,88 +12,34 @@ vi.mock('@/config/app-config', () => ({
     },
 }));
 
+const testEndpointFunction = (functionName: string, createEndpoint: (path: string) => string, baseUrl: string) => {
+    describe(functionName, () => {
+        const testCases = [
+            { input: 'asset/parts', expected: `${baseUrl}/asset/parts`, description: 'creates endpoint with base URL and path' },
+            { input: 'users', expected: `${baseUrl}/users`, description: 'handles path without leading slash' },
+            { input: '/assessments', expected: `${baseUrl}//assessments`, description: 'handles path with leading slash' },
+            { input: '', expected: `${baseUrl}/`, description: 'handles empty path' },
+            { input: 'asset?id=123&type=building', expected: `${baseUrl}/asset?id=123&type=building`, description: 'handles path with query parameters' },
+            { input: 'asset/dependents/critical', expected: `${baseUrl}/asset/dependents/critical`, description: 'handles complex nested paths' },
+        ];
+
+        testCases.forEach(({ input, expected, description }) => {
+            it(description, () => {
+                expect(createEndpoint(input)).toBe(expected);
+            });
+        });
+
+        if (functionName === 'createParalogEndpoint') {
+            it('preserves special characters', () => {
+                expect(createEndpoint('search?query=test%20value&filter=all')).toBe(`${baseUrl}/search?query=test%20value&filter=all`);
+            });
+        }
+    });
+};
+
 describe('API utils', () => {
-    describe('createParalogEndpoint', () => {
-        it('creates endpoint with base URL and path', () => {
-            const result = createParalogEndpoint('asset/parts');
-
-            expect(result).toBe('/vista-api/asset/parts');
-        });
-
-        it('handles path without leading slash', () => {
-            const result = createParalogEndpoint('users');
-
-            expect(result).toBe('/vista-api/users');
-        });
-
-        it('handles path with leading slash', () => {
-            const result = createParalogEndpoint('/assessments');
-
-            expect(result).toBe('/vista-api//assessments');
-        });
-
-        it('handles empty path', () => {
-            const result = createParalogEndpoint('');
-
-            expect(result).toBe('/vista-api/');
-        });
-
-        it('handles path with query parameters', () => {
-            const result = createParalogEndpoint('asset?id=123&type=building');
-
-            expect(result).toBe('/vista-api/asset?id=123&type=building');
-        });
-
-        it('handles complex nested paths', () => {
-            const result = createParalogEndpoint('asset/dependents/critical');
-
-            expect(result).toBe('/vista-api/asset/dependents/critical');
-        });
-
-        it('preserves special characters', () => {
-            const result = createParalogEndpoint('search?query=test%20value&filter=all');
-
-            expect(result).toBe('/vista-api/search?query=test%20value&filter=all');
-        });
-    });
-
-    describe('createOntologyServiceEndpoint', () => {
-        it('creates endpoint with ontology service URL and path', () => {
-            const result = createOntologyServiceEndpoint('class');
-
-            expect(result).toBe('/ontology-service/class');
-        });
-
-        it('handles path without leading slash', () => {
-            const result = createOntologyServiceEndpoint('types');
-
-            expect(result).toBe('/ontology-service/types');
-        });
-
-        it('handles path with leading slash', () => {
-            const result = createOntologyServiceEndpoint('/properties');
-
-            expect(result).toBe('/ontology-service//properties');
-        });
-
-        it('handles empty path', () => {
-            const result = createOntologyServiceEndpoint('');
-
-            expect(result).toBe('/ontology-service/');
-        });
-
-        it('handles path with query parameters', () => {
-            const result = createOntologyServiceEndpoint('class?uri=http://example.com/type');
-
-            expect(result).toBe('/ontology-service/class?uri=http://example.com/type');
-        });
-
-        it('handles complex nested paths', () => {
-            const result = createOntologyServiceEndpoint('schema/entities/properties');
-
-            expect(result).toBe('/ontology-service/schema/entities/properties');
-        });
-    });
+    testEndpointFunction('createParalogEndpoint', createParalogEndpoint, '/vista-api');
+    testEndpointFunction('createOntologyServiceEndpoint', createOntologyServiceEndpoint, '/ontology-service');
 
     describe('fetchOptions', () => {
         it('exports fetch options object', () => {

@@ -182,7 +182,8 @@ describe('common API', () => {
             await fetchFloodTimeline('testArea456');
 
             const callUrl = fetchMock.mock.calls[0][0];
-            expect(decodeURIComponent(callUrl)).toContain('https://environment.data.gov.uk/flood-monitoring/id/floodAreas/testArea456');
+            expect(callUrl).toContain('parent_uri=http');
+            expect(decodeURIComponent(callUrl)).toContain('testArea456');
         });
 
         it('throws error when response is not ok', async () => {

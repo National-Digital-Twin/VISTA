@@ -3,24 +3,16 @@ import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React, { ReactNode } from 'react';
 import useDependents from './useDependents';
-import * as combinedApi from '@/api/combined';
+import { fetchDependents, fetchAssetInfo } from '@/api/combined';
 
 vi.mock('@/api/combined');
 
-function createQueryWrapper() {
-    const queryClient = new QueryClient({
-        defaultOptions: {
-            queries: {
-                retry: false,
-            },
-        },
-    });
+const createQueryWrapper = () => {
+    const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    return ({ children }: { children: ReactNode }) => React.createElement(QueryClientProvider, { client: queryClient }, children);
+};
 
-    function Wrapper({ children }: { children: ReactNode }) {
-        return React.createElement(QueryClientProvider, { client: queryClient }, children);
-    }
-    return Wrapper;
-}
+const renderHookWithWrapper = (hook: () => any) => renderHook(hook, { wrapper: createQueryWrapper() });
 
 describe('useDependents', () => {
     beforeEach(() => {
@@ -29,44 +21,26 @@ describe('useDependents', () => {
 
     describe('For assets', () => {
         it('fetches dependents when isAsset is true', async () => {
-            const mockDependents = [
+            vi.mocked(fetchDependents).mockResolvedValue([
                 { dependentNode: 'http://example.com/dependent#1', criticalityRating: 8 },
                 { dependentNode: 'http://example.com/dependent#2', criticalityRating: 6 },
-            ];
+            ]);
+            vi.mocked(fetchAssetInfo).mockResolvedValue({ uri: 'http://example.com/dependent#1', name: 'Dependent 1', type: 'Building' });
 
-            const mockDependentInfo = {
-                uri: 'http://example.com/dependent#1',
-                name: 'Dependent 1',
-                type: 'Building',
-            };
+            const { result } = renderHookWithWrapper(() => useDependents(true, false, 'http://example.com/asset#123', null));
 
-            vi.mocked(combinedApi.fetchDependents).mockResolvedValue(mockDependents);
-            vi.mocked(combinedApi.fetchAssetInfo).mockResolvedValue(mockDependentInfo);
+            await waitFor(() => expect(result.current.isLoading).toBe(false));
 
-            const { result } = renderHook(() => useDependents(true, false, 'http://example.com/asset#123', null), {
-                wrapper: createQueryWrapper(),
-            });
-
-            expect(result.current.isLoading).toBe(true);
-
-            await waitFor(() => {
-                expect(result.current.isLoading).toBe(false);
-            });
-
-            expect(combinedApi.fetchDependents).toHaveBeenCalledWith('http://example.com/asset#123');
+            expect(fetchDependents).toHaveBeenCalledWith('http://example.com/asset#123');
             expect(result.current.data).toBeDefined();
         });
 
         it('does not fetch when isAsset is false', async () => {
-            const { result } = renderHook(() => useDependents(false, false, 'http://example.com/asset#123', null), {
-                wrapper: createQueryWrapper(),
-            });
+            const { result } = renderHookWithWrapper(() => useDependents(false, false, 'http://example.com/asset#123', null));
 
-            await waitFor(() => {
-                expect(result.current.isLoading).toBe(false);
-            });
+            await waitFor(() => expect(result.current.isLoading).toBe(false));
 
-            expect(combinedApi.fetchDependents).not.toHaveBeenCalled();
+            expect(fetchDependents).not.toHaveBeenCalled();
         });
 
         it('fetches details for each dependent', async () => {
@@ -75,8 +49,8 @@ describe('useDependents', () => {
                 { dependentNode: 'http://example.com/dep#2', criticalityRating: 7 },
             ];
 
-            vi.mocked(combinedApi.fetchDependents).mockResolvedValue(mockDependents);
-            vi.mocked(combinedApi.fetchAssetInfo).mockImplementation(async (uri) => ({
+            vi.mocked(fetchDependents).mockResolvedValue(mockDependents);
+            vi.mocked(fetchAssetInfo).mockImplementation(async (uri) => ({
                 uri,
                 name: `Dependent ${uri.slice(-1)}`,
                 type: 'Building',
@@ -90,15 +64,15 @@ describe('useDependents', () => {
                 expect(result.current.isLoading).toBe(false);
             });
 
-            expect(combinedApi.fetchAssetInfo).toHaveBeenCalledTimes(2);
+            expect(fetchAssetInfo).toHaveBeenCalledTimes(2);
             expect(result.current.data).toHaveLength(2);
         });
 
         it('includes connectionStrength in dependent details', async () => {
             const mockDependents = [{ dependentNode: 'http://example.com/dep#1', criticalityRating: 10 }];
 
-            vi.mocked(combinedApi.fetchDependents).mockResolvedValue(mockDependents);
-            vi.mocked(combinedApi.fetchAssetInfo).mockResolvedValue({
+            vi.mocked(fetchDependents).mockResolvedValue(mockDependents);
+            vi.mocked(fetchAssetInfo).mockResolvedValue({
                 uri: 'http://example.com/dep#1',
                 name: 'Critical Dependent',
             });
@@ -122,7 +96,7 @@ describe('useDependents', () => {
                 criticality: 8,
             };
 
-            vi.mocked(combinedApi.fetchAssetInfo).mockResolvedValue({
+            vi.mocked(fetchAssetInfo).mockResolvedValue({
                 uri: mockDependent.uri,
                 name: 'Single Dependent',
                 type: 'Service',
@@ -136,15 +110,15 @@ describe('useDependents', () => {
                 expect(result.current.isLoading).toBe(false);
             });
 
-            expect(combinedApi.fetchAssetInfo).toHaveBeenCalledWith(mockDependent.uri);
+            expect(fetchAssetInfo).toHaveBeenCalledWith(mockDependent.uri);
             expect(result.current.data[0]).toHaveProperty('connectionStrength', 8);
         });
 
         it('still fetches asset dependents even when isDependency is true', async () => {
             const mockDependent = { uri: 'http://example.com/dep#1', criticality: 5 };
 
-            vi.mocked(combinedApi.fetchDependents).mockResolvedValue([]);
-            vi.mocked(combinedApi.fetchAssetInfo).mockResolvedValue({ uri: mockDependent.uri });
+            vi.mocked(fetchDependents).mockResolvedValue([]);
+            vi.mocked(fetchAssetInfo).mockResolvedValue({ uri: mockDependent.uri });
 
             const { result } = renderHook(() => useDependents(true, true, 'http://example.com/asset#123', mockDependent), {
                 wrapper: createQueryWrapper(),
@@ -154,13 +128,13 @@ describe('useDependents', () => {
                 expect(result.current.isLoading).toBe(false);
             });
 
-            expect(combinedApi.fetchDependents).toHaveBeenCalled();
+            expect(fetchDependents).toHaveBeenCalled();
         });
     });
 
     describe('Error handling', () => {
         it('handles dependents fetch error', async () => {
-            vi.mocked(combinedApi.fetchDependents).mockRejectedValue(new Error('Failed to fetch dependents'));
+            vi.mocked(fetchDependents).mockRejectedValue(new Error('Failed to fetch dependents'));
 
             const { result } = renderHook(() => useDependents(true, false, 'http://example.com/asset#123', null), {
                 wrapper: createQueryWrapper(),
@@ -177,8 +151,8 @@ describe('useDependents', () => {
         it('handles dependent detail fetch error', async () => {
             const mockDependents = [{ dependentNode: 'http://example.com/dep#1', criticalityRating: 5 }];
 
-            vi.mocked(combinedApi.fetchDependents).mockResolvedValue(mockDependents);
-            vi.mocked(combinedApi.fetchAssetInfo).mockRejectedValue(new Error('Details error'));
+            vi.mocked(fetchDependents).mockResolvedValue(mockDependents);
+            vi.mocked(fetchAssetInfo).mockRejectedValue(new Error('Details error'));
 
             const { result } = renderHook(() => useDependents(true, false, 'http://example.com/asset#123', null), {
                 wrapper: createQueryWrapper(),
@@ -194,7 +168,7 @@ describe('useDependents', () => {
 
     describe('Empty states', () => {
         it('handles empty dependents list', async () => {
-            vi.mocked(combinedApi.fetchDependents).mockResolvedValue([]);
+            vi.mocked(fetchDependents).mockResolvedValue([]);
 
             const { result } = renderHook(() => useDependents(true, false, 'http://example.com/asset#123', null), {
                 wrapper: createQueryWrapper(),
@@ -208,7 +182,7 @@ describe('useDependents', () => {
         });
 
         it('attempts to fetch with null dependent in dependency mode', async () => {
-            vi.mocked(combinedApi.fetchAssetInfo).mockResolvedValue({});
+            vi.mocked(fetchAssetInfo).mockResolvedValue({});
 
             const { result } = renderHook(() => useDependents(false, true, '', null), {
                 wrapper: createQueryWrapper(),
@@ -218,13 +192,13 @@ describe('useDependents', () => {
                 expect(result.current.isLoading).toBe(false);
             });
 
-            expect(combinedApi.fetchAssetInfo).toHaveBeenCalled();
+            expect(fetchAssetInfo).toHaveBeenCalled();
         });
     });
 
     describe('Loading states', () => {
         it('shows loading while fetching dependents', async () => {
-            vi.mocked(combinedApi.fetchDependents).mockImplementation(() => new Promise((resolve) => setTimeout(() => resolve([]), 100)));
+            vi.mocked(fetchDependents).mockImplementation(() => new Promise((resolve) => setTimeout(() => resolve([]), 100)));
 
             const { result } = renderHook(() => useDependents(true, false, 'http://example.com/asset#123', null), {
                 wrapper: createQueryWrapper(),
@@ -240,8 +214,8 @@ describe('useDependents', () => {
         it('shows loading while fetching dependent details', async () => {
             const mockDependents = [{ dependentNode: 'http://example.com/dep#1', criticalityRating: 5 }];
 
-            vi.mocked(combinedApi.fetchDependents).mockResolvedValue(mockDependents);
-            vi.mocked(combinedApi.fetchAssetInfo).mockImplementation(() => new Promise((resolve) => setTimeout(() => resolve({}), 100)));
+            vi.mocked(fetchDependents).mockResolvedValue(mockDependents);
+            vi.mocked(fetchAssetInfo).mockImplementation(() => new Promise((resolve) => setTimeout(() => resolve({}), 100)));
 
             const { result } = renderHook(() => useDependents(true, false, 'http://example.com/asset#123', null), {
                 wrapper: createQueryWrapper(),

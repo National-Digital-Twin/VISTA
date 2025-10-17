@@ -10,6 +10,21 @@ vi.mock('@/config/app-config', () => ({
     },
 }));
 
+const mockFetchWithUser = (fetchMock: ReturnType<typeof vi.fn>, user: Record<string, any>) => {
+    fetchMock.mockResolvedValue({
+        ok: true,
+        json: vi.fn().mockResolvedValue({ content: user }),
+    });
+};
+
+const renderAndWaitForLoad = async (fn: () => any) => {
+    const result = renderHook(fn);
+    await waitFor(() => {
+        expect(result.result.current.loading).toBe(false);
+    });
+    return result.result;
+};
+
 describe('useUserData', () => {
     let fetchMock: ReturnType<typeof vi.fn>;
 
@@ -99,207 +114,57 @@ describe('useUserData', () => {
     });
 
     describe('Helper functions', () => {
+        const testHelperFunction = async (mockUser: Record<string, any>, helperName: keyof ReturnType<typeof useUserData>, expectedValue: any) => {
+            mockFetchWithUser(fetchMock, mockUser);
+            const result = await renderAndWaitForLoad(() => useUserData());
+            const helperFn = result.current[helperName];
+            expect(typeof helperFn === 'function' ? helperFn() : helperFn).toBe(expectedValue);
+        };
+
         it('getUserDisplayName returns displayName when available', async () => {
-            const mockUser = {
-                displayName: 'Jane Doe',
-                email: 'jane@example.com',
-            };
-
-            fetchMock.mockResolvedValue({
-                ok: true,
-                json: vi.fn().mockResolvedValue({ content: mockUser }),
-            });
-
-            const { result } = renderHook(() => useUserData());
-
-            await waitFor(() => {
-                expect(result.current.loading).toBe(false);
-            });
-
-            expect(result.current.getUserDisplayName()).toBe('Jane Doe');
+            await testHelperFunction({ displayName: 'Jane Doe', email: 'jane@example.com' }, 'getUserDisplayName', 'Jane Doe');
         });
 
         it('getUserDisplayName falls back to email username', async () => {
-            const mockUser = {
-                email: 'testuser@example.com',
-            };
-
-            fetchMock.mockResolvedValue({
-                ok: true,
-                json: vi.fn().mockResolvedValue({ content: mockUser }),
-            });
-
-            const { result } = renderHook(() => useUserData());
-
-            await waitFor(() => {
-                expect(result.current.loading).toBe(false);
-            });
-
-            expect(result.current.getUserDisplayName()).toBe('testuser');
+            await testHelperFunction({ email: 'testuser@example.com' }, 'getUserDisplayName', 'testuser');
         });
 
         it('getUserDisplayName returns User when no data', async () => {
             fetchMock.mockRejectedValue(new Error('Error'));
-
-            const { result } = renderHook(() => useUserData());
-
-            await waitFor(() => {
-                expect(result.current.loading).toBe(false);
-            });
-
+            const result = await renderAndWaitForLoad(() => useUserData());
             expect(result.current.getUserDisplayName()).toBe('Test user');
         });
 
         it('getUserEmailDomain extracts domain correctly', async () => {
-            const mockUser = {
-                email: 'user@company.co.uk',
-            };
-
-            fetchMock.mockResolvedValue({
-                ok: true,
-                json: vi.fn().mockResolvedValue({ content: mockUser }),
-            });
-
-            const { result } = renderHook(() => useUserData());
-
-            await waitFor(() => {
-                expect(result.current.loading).toBe(false);
-            });
-
-            expect(result.current.getUserEmailDomain()).toBe('company.co.uk');
+            await testHelperFunction({ email: 'user@company.co.uk' }, 'getUserEmailDomain', 'company.co.uk');
         });
 
         it('getUserEmailDomain returns example.com when no email', async () => {
-            const mockUser = {};
-
-            fetchMock.mockResolvedValue({
-                ok: true,
-                json: vi.fn().mockResolvedValue({ content: mockUser }),
-            });
-
-            const { result } = renderHook(() => useUserData());
-
-            await waitFor(() => {
-                expect(result.current.loading).toBe(false);
-            });
-
-            expect(result.current.getUserEmailDomain()).toBe('example.com');
+            await testHelperFunction({}, 'getUserEmailDomain', 'example.com');
         });
 
         it('getUserOrganisation extracts from email', async () => {
-            const mockUser = {
-                email: 'user@testorg.gov',
-            };
-
-            fetchMock.mockResolvedValue({
-                ok: true,
-                json: vi.fn().mockResolvedValue({ content: mockUser }),
-            });
-
-            const { result } = renderHook(() => useUserData());
-
-            await waitFor(() => {
-                expect(result.current.loading).toBe(false);
-            });
-
-            expect(result.current.getUserOrganisation()).toBe('testorg.gov');
+            await testHelperFunction({ email: 'user@testorg.gov' }, 'getUserOrganisation', 'testorg.gov');
         });
 
         it('getUserOrganisation returns default when no email', async () => {
-            const mockUser = {};
-
-            fetchMock.mockResolvedValue({
-                ok: true,
-                json: vi.fn().mockResolvedValue({ content: mockUser }),
-            });
-
-            const { result } = renderHook(() => useUserData());
-
-            await waitFor(() => {
-                expect(result.current.loading).toBe(false);
-            });
-
-            expect(result.current.getUserOrganisation()).toBe('twinwell.gov.uk');
+            await testHelperFunction({}, 'getUserOrganisation', 'twinwell.gov.uk');
         });
 
         it('getUserMemberSince uses hardcoded date (mock data)', async () => {
-            const mockUser = {
-                memberSince: '2024-06-15T14:30:00Z',
-                email: 'test@example.com',
-            };
-
-            fetchMock.mockResolvedValue({
-                ok: true,
-                json: vi.fn().mockResolvedValue({ content: mockUser }),
-            });
-
-            const { result } = renderHook(() => useUserData());
-
-            await waitFor(() => {
-                expect(result.current.loading).toBe(false);
-            });
-
-            expect(result.current.getUserMemberSince()).toBe('2 Jun 2025');
+            await testHelperFunction({ memberSince: '2024-06-15T14:30:00Z', email: 'test@example.com' }, 'getUserMemberSince', '2 Jun 2025');
         });
 
         it('getUserMemberSince handles invalid dates', async () => {
-            const mockUser = {
-                memberSince: 'not-a-date',
-                email: 'test@example.com',
-            };
-
-            fetchMock.mockResolvedValue({
-                ok: true,
-                json: vi.fn().mockResolvedValue({ content: mockUser }),
-            });
-
-            const { result } = renderHook(() => useUserData());
-
-            await waitFor(() => {
-                expect(result.current.loading).toBe(false);
-            });
-
-            expect(result.current.getUserMemberSince()).toBe('2 Jun 2025');
+            await testHelperFunction({ memberSince: 'not-a-date', email: 'test@example.com' }, 'getUserMemberSince', '2 Jun 2025');
         });
 
         it('getUserAddedBy returns hardcoded default', async () => {
-            const mockUser = {
-                addedBy: 'admin@example.com',
-                email: 'test@example.com',
-            };
-
-            fetchMock.mockResolvedValue({
-                ok: true,
-                json: vi.fn().mockResolvedValue({ content: mockUser }),
-            });
-
-            const { result } = renderHook(() => useUserData());
-
-            await waitFor(() => {
-                expect(result.current.loading).toBe(false);
-            });
-
-            expect(result.current.getUserAddedBy()).toBe('Application owner');
+            await testHelperFunction({ addedBy: 'admin@example.com', email: 'test@example.com' }, 'getUserAddedBy', 'Application owner');
         });
 
         it('getUserType returns hardcoded Administrator', async () => {
-            const mockUser = {
-                userType: 'General',
-                email: 'test@example.com',
-            };
-
-            fetchMock.mockResolvedValue({
-                ok: true,
-                json: vi.fn().mockResolvedValue({ content: mockUser }),
-            });
-
-            const { result } = renderHook(() => useUserData());
-
-            await waitFor(() => {
-                expect(result.current.loading).toBe(false);
-            });
-
-            expect(result.current.getUserType()).toBe('Administrator');
+            await testHelperFunction({ userType: 'General', email: 'test@example.com' }, 'getUserType', 'Administrator');
         });
 
         it('getUserGroups returns hardcoded groups', async () => {
