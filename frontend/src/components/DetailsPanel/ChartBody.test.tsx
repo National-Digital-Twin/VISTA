@@ -1,18 +1,19 @@
 import { render, screen } from '@testing-library/react';
+import { describe, it, expect, vi, beforeAll } from 'vitest';
 import ChartBody from './ChartBody';
 
-// Mock styles
-jest.mock('./chart.module.css', () => ({
-    chartContainer: 'chartContainer',
-    tooltip: 'tooltip',
-    tooltipLabel: 'tooltipLabel',
-    tooltipContent: 'tooltipContent',
-    zoomOutButton: 'zoomOutButton',
+vi.mock('./chart.module.css', () => ({
+    default: {
+        chartContainer: 'chartContainer',
+        tooltip: 'tooltip',
+        tooltipLabel: 'tooltipLabel',
+        tooltipContent: 'tooltipContent',
+        zoomOutButton: 'zoomOutButton',
+    },
 }));
 
-// Mock useZoomChart
-jest.mock('./useZoomChart', () => ({
-    useZoomChart: jest.fn(() => ({
+vi.mock('./useZoomChart', () => ({
+    useZoomChart: vi.fn(() => ({
         zoomableData: [{ time: '2023-01-01T00:00:00Z', value: 42, milliseconds: 1672531200000 }],
         rootElementProps: { 'data-testid': 'chart-root' },
         lineChartProps: {},
@@ -47,9 +48,9 @@ describe('ChartBody', () => {
     ];
 
     const mixedData = [
-        { time: '', value: 42, milliseconds: 1672531200000 }, // invalid
-        { time: '2023-01-01T01:00:00Z', value: 43, milliseconds: 1672534800000 }, // valid
-        { value: 44, milliseconds: 1672538400000 }, // invalid
+        { time: '', value: 42, milliseconds: 1672531200000 },
+        { time: '2023-01-01T01:00:00Z', value: 43, milliseconds: 1672534800000 },
+        { value: 44, milliseconds: 1672538400000 },
     ];
 
     it('renders the chart with valid data', () => {
@@ -60,7 +61,7 @@ describe('ChartBody', () => {
     it('filters out invalid data', () => {
         render(<ChartBody {...baseProps} data={mixedData as any} />);
         expect(screen.getByTestId('chart-root')).toBeInTheDocument();
-        // We can't directly test the filtered array without exposing it,
-        // but we can verify that the chart still renders with no crash.
+        
+        
     });
 });

@@ -28,8 +28,6 @@ export default function AuthPrompt({ className, error, onLogIn }: AuthPromptProp
         [onLogIn],
     );
 
-    console.log(onLogIn);
-
     return (
         <div className={classNames(styles.authPromptContainer, className)}>
             <div className={styles.authPrompt}>

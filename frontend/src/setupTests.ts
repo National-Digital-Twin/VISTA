@@ -1,39 +1,44 @@
-import '@testing-library/jest-dom';
+import '@testing-library/jest-dom/vitest';
+import { vi } from 'vitest';
 
-jest.mock('mapbox-gl-draw-geodesic', () => ({
-    isCircle: jest.fn(),
-    getCircleCenter: jest.fn(),
+vi.mock('mapbox-gl-draw-geodesic', () => ({
+    isCircle: vi.fn(),
+    getCircleCenter: vi.fn(),
 }));
 
-jest.mock('./config/feature-flags', () => ({
-    devTools: true,
-    routing: true,
-    uiNext: true,
-    pageHeader: false,
-    feedbackWidget: false,
-    environmentallySensitiveAreas: true,
-    assetTable: true,
+vi.mock('./config/feature-flags', () => ({
+    default: {
+        devTools: true,
+        routing: true,
+        uiNext: true,
+        pageHeader: false,
+        feedbackWidget: false,
+        environmentallySensitiveAreas: true,
+        assetTable: true,
+    },
 }));
 
-jest.mock('./config/app-config', () => ({
-    map: {
-        maptilerToken: '',
+vi.mock('./config/app-config', () => ({
+    default: {
+        map: {
+            maptilerToken: '',
+        },
+        api: {
+            url: '/vista',
+        },
+        services: {
+            ontology: '/transparent-proxy',
+            ndtpPython: '/ndtp-python/api/graphql/',
+            user: '/ndtp-python/api/user/',
+            signout: '/ndtp-python/api/auth/signout/',
+        },
+        configErrors: [],
     },
-    api: {
-        url: '/vista',
-    },
-    services: {
-        ontology: '/transparent-proxy',
-        ndtpPython: '/ndtp-python/api/graphql/',
-        user: '/ndtp-python/api/user/',
-        signout: '/ndtp-python/api/auth/signout/',
-    },
-    configErrors: [],
 }));
 
-globalThis.URL.createObjectURL ??= jest.fn();
+globalThis.URL.createObjectURL ??= vi.fn();
 
-// Polyfill structuredClone for Jest test environment
+
 globalThis.structuredClone ??= (obj: any) => {
     if (obj === null || typeof obj !== 'object') {
         return obj;

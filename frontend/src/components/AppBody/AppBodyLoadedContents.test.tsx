@@ -1,15 +1,13 @@
 import { render, screen } from '@testing-library/react';
-import '@testing-library/jest-dom';
+import { describe, it, expect, vi } from 'vitest';
 import AppBodyLoadedContents from './AppBodyLoadedContents';
 
-// Mocking ParalogMap component
-jest.mock('../Map/ParalogMap', () => () => <div data-testid="paralog-map">Paralog Map</div>);
+vi.mock('../Map/ParalogMap', () => ({ default: () => <div data-testid="paralog-map">Paralog Map</div> }));
 
 describe('AppBodyLoadedContents Component', () => {
     it('should render ParalogMap', () => {
         render(<AppBodyLoadedContents />);
 
-        // Verify ParalogMap renders
         expect(screen.getByTestId('paralog-map')).toBeInTheDocument();
     });
 });

@@ -1,62 +1,201 @@
 import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, it, expect } from 'vitest';
 import { faLayerGroup } from '@fortawesome/free-solid-svg-icons';
 import ComplexLayerControl from '.';
 
 describe('ComplexLayerControl', () => {
-    const title = 'Test Layer';
-    const content = <div data-testid="layer-children">Child Content</div>;
+    const defaultProps = {
+        title: 'Test Layer',
+        children: <div data-testid="layer-content">Layer Content</div>,
+    };
 
-    it('renders title and icon', () => {
-        render(
-            <ComplexLayerControl title={title} icon={faLayerGroup}>
-                {content}
-            </ComplexLayerControl>,
-        );
+    describe('Rendering', () => {
+        it('renders with title and icon', () => {
+            render(<ComplexLayerControl {...defaultProps} icon={faLayerGroup} />);
 
-        expect(screen.getByText(title)).toBeInTheDocument();
-        expect(screen.getByTestId('layer-children')).not.toBeVisible(); // Initially hidden
-        expect(screen.getByRole('button')).toBeInTheDocument(); // IconButton
+            expect(screen.getByText('Test Layer')).toBeInTheDocument();
+        });
+
+        it('renders without icon', () => {
+            render(<ComplexLayerControl {...defaultProps} />);
+
+            expect(screen.getByText('Test Layer')).toBeInTheDocument();
+        });
+
+        it('starts collapsed by default', () => {
+            render(<ComplexLayerControl {...defaultProps} />);
+
+            const content = screen.getByTestId('layer-content');
+            expect(content).not.toBeVisible();
+        });
+
+        it('hides count by default when hideCount is true', () => {
+            render(<ComplexLayerControl {...defaultProps} hideCount />);
+
+            expect(screen.queryByText(/\(\d+\)/)).not.toBeInTheDocument();
+        });
     });
 
-    it('toggles expansion when clicked', () => {
-        render(<ComplexLayerControl title={title}>{content}</ComplexLayerControl>);
+    describe('Expand/Collapse', () => {
+        it('expands content when header is clicked', () => {
+            render(<ComplexLayerControl {...defaultProps} />);
 
-        const toggleBox = screen.getByText(title).closest('div')!;
+            const header = screen.getByText('Test Layer').closest('[tabIndex]');
+            fireEvent.click(header!);
 
-        // Initially collapsed
-        expect(screen.getByTestId('layer-children')).not.toBeVisible();
+            const content = screen.getByTestId('layer-content');
+            expect(content).toBeVisible();
+        });
 
-        // Click to expand
-        fireEvent.click(toggleBox);
-        expect(screen.getByTestId('layer-children')).toBeVisible();
+        it('collapses content when header is clicked twice', () => {
+            render(<ComplexLayerControl {...defaultProps} />);
 
-        // Click to collapse again
-        fireEvent.click(toggleBox);
-        expect(screen.getByTestId('layer-children')).not.toBeVisible();
+            const header = screen.getByText('Test Layer').closest('[tabIndex]');
+            fireEvent.click(header!);
+            fireEvent.click(header!);
+
+            const content = screen.getByTestId('layer-content');
+            expect(content).not.toBeVisible();
+        });
+
+        it('expands when Enter key is pressed', () => {
+            render(<ComplexLayerControl {...defaultProps} />);
+
+            const header = screen.getByText('Test Layer').closest('[tabIndex]');
+            fireEvent.keyDown(header!, { key: 'Enter' });
+
+            const content = screen.getByTestId('layer-content');
+            expect(content).toBeVisible();
+        });
+
+        it('expands when Space key is pressed', () => {
+            render(<ComplexLayerControl {...defaultProps} />);
+
+            const header = screen.getByText('Test Layer').closest('[tabIndex]');
+            fireEvent.keyDown(header!, { key: ' ' });
+
+            const content = screen.getByTestId('layer-content');
+            expect(content).toBeVisible();
+        });
+
+        it('does not expand on other key presses', () => {
+            render(<ComplexLayerControl {...defaultProps} />);
+
+            const header = screen.getByText('Test Layer').closest('[tabIndex]');
+            fireEvent.keyDown(header!, { key: 'Tab' });
+
+            const content = screen.getByTestId('layer-content');
+            expect(content).not.toBeVisible();
+        });
     });
 
-    it('toggles expansion with keyboard', () => {
-        render(<ComplexLayerControl title={title}>{content}</ComplexLayerControl>);
+    describe('Selected Count', () => {
+        it('updates count when using function children', () => {
+            const FunctionChildren = ({ updateCount }: { updateCount: (selected: boolean) => void }) => (
+                <>
+                    <button onClick={() => updateCount(true)}>Select</button>
+                    <button onClick={() => updateCount(false)}>Deselect</button>
+                </>
+            );
 
-        const toggleBox = screen.getByText(title).closest('div')!;
+            render(
+                <ComplexLayerControl title="Test Layer">
+                    {(updateCount: (selected: boolean) => void) => <FunctionChildren updateCount={updateCount} />}
+                </ComplexLayerControl>,
+            );
 
-        // Press Enter
-        fireEvent.keyDown(toggleBox, { key: 'Enter' });
-        expect(screen.getByTestId('layer-children')).toBeVisible();
+            const header = screen.getByText('Test Layer').closest('[tabIndex]');
+            fireEvent.click(header!);
 
-        // Press Space
-        fireEvent.keyDown(toggleBox, { key: ' ' });
-        expect(screen.getByTestId('layer-children')).not.toBeVisible();
+            expect(screen.getByText('Test Layer')).toHaveTextContent('Test Layer');
+
+            fireEvent.click(screen.getByText('Select'));
+            expect(screen.getByText(/Test Layer \(1\)/)).toBeInTheDocument();
+
+            fireEvent.click(screen.getByText('Select'));
+            expect(screen.getByText(/Test Layer \(2\)/)).toBeInTheDocument();
+
+            fireEvent.click(screen.getByText('Deselect'));
+            expect(screen.getByText(/Test Layer \(1\)/)).toBeInTheDocument();
+        });
+
+        it('does not decrement count below zero', () => {
+            const FunctionChildren = ({ updateCount }: { updateCount: (selected: boolean) => void }) => (
+                <button onClick={() => updateCount(false)}>Deselect</button>
+            );
+
+            render(
+                <ComplexLayerControl title="Test Layer">
+                    {(updateCount: (selected: boolean) => void) => <FunctionChildren updateCount={updateCount} />}
+                </ComplexLayerControl>,
+            );
+
+            const header = screen.getByText('Test Layer').closest('[tabIndex]');
+            fireEvent.click(header!);
+
+            fireEvent.click(screen.getByText('Deselect'));
+            expect(screen.getByText('Test Layer')).not.toHaveTextContent('(-');
+        });
+
+        it('hides count when hideCount prop is true', () => {
+            const FunctionChildren = ({ updateCount }: { updateCount: (selected: boolean) => void }) => (
+                <button onClick={() => updateCount(true)}>Select</button>
+            );
+
+            render(
+                <ComplexLayerControl title="Test Layer" hideCount>
+                    {(updateCount: (selected: boolean) => void) => <FunctionChildren updateCount={updateCount} />}
+                </ComplexLayerControl>,
+            );
+
+            const header = screen.getByText('Test Layer').closest('[tabIndex]');
+            fireEvent.click(header!);
+
+            fireEvent.click(screen.getByText('Select'));
+
+            expect(screen.queryByText(/\(1\)/)).not.toBeInTheDocument();
+        });
     });
 
-    it('respects autoShowHide prop', () => {
-        render(
-            <ComplexLayerControl title={title} autoShowHide>
-                {content}
-            </ComplexLayerControl>,
-        );
+    describe('Accessibility', () => {
+        it('header is keyboard focusable', () => {
+            render(<ComplexLayerControl {...defaultProps} />);
 
-        const root = screen.getByText(title).closest('[data-auto-show-hide]')!;
-        expect(root).toHaveAttribute('data-auto-show-hide', 'true');
+            const header = screen.getByText('Test Layer').closest('[tabIndex]');
+            expect(header).toHaveAttribute('tabIndex', '0');
+        });
+
+        it('content area has aria-expanded attribute', () => {
+            render(<ComplexLayerControl {...defaultProps} />);
+
+            const contentWrapper = screen.getByTestId('layer-content').parentElement?.parentElement;
+            expect(contentWrapper).toHaveAttribute('aria-expanded', 'false');
+
+            const header = screen.getByText('Test Layer').closest('[tabIndex]');
+            fireEvent.click(header!);
+
+            expect(contentWrapper).toHaveAttribute('aria-expanded', 'true');
+        });
+    });
+
+    describe('Auto Show/Hide', () => {
+        it('sets data-auto-show-hide attribute when prop is true', () => {
+            const { container } = render(<ComplexLayerControl {...defaultProps} autoShowHide />);
+
+            const wrapper = container.querySelector('[data-auto-show-hide]');
+            expect(wrapper).toHaveAttribute('data-auto-show-hide', 'true');
+        });
+
+        it('sets data-expanded attribute based on expanded state', () => {
+            const { container } = render(<ComplexLayerControl {...defaultProps} />);
+
+            const wrapper = container.querySelector('[data-expanded]');
+            expect(wrapper).toHaveAttribute('data-expanded', 'false');
+
+            const header = screen.getByText('Test Layer').closest('[tabIndex]');
+            fireEvent.click(header!);
+
+            expect(wrapper).toHaveAttribute('data-expanded', 'true');
+        });
     });
 });
