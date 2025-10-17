@@ -27,6 +27,10 @@ IS_PROD = ENVIRONMENT == "production"
 
 SECRET_KEY = env("DJANGO_SECRET_KEY", default=env.NOTSET if IS_PROD else get_secret_key(BASE_DIR))
 
+CQC_API_KEY = env("CQC_API_KEY", default="replace")
+OS_NGD_API_KEY = env("OS_NGD_API_KEY", default="replace")
+OS_NAMES_API_KEY = env("OS_NAMES_API_KEY", default="replace")
+
 LANDING_PAGE_URL = env("LANDING_PAGE_URL", default="http://localhost:3000")
 IDENTITY_API_URL = env("IDENTITY_API_URL", default="http://localhost:3001")
 
@@ -46,6 +50,7 @@ INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
+    "django.contrib.gis",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
@@ -86,8 +91,6 @@ WSGI_APPLICATION = "core.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-# GRANT rds_iam TO postgres by first logging in with password;
-
 DATABASES = (
     {
         "default": {
@@ -103,11 +106,55 @@ DATABASES = (
     if IS_PROD
     else {
         "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": BASE_DIR / "db.sqlite3",
+            "ENGINE": "django.contrib.gis.db.backends.postgis",
+            "OPTIONS": {
+                "service": "vista_service",
+                "passfile": env(
+                    "PGPASSFILE", default="/vista-python-api/core/core/.docker_vista_pgpass"
+                ),
+            },
         }
     }
 )
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "[{asctime}] {levelname} {name}: {message}",
+            "style": "{",
+        },
+        "simple": {
+            "format": "{levelname} {message}",
+            "style": "{",
+        },
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "verbose",
+        },
+    },
+    "root": {
+        "handlers": ["console"],
+        "level": "INFO",
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["console"],
+            "level": "INFO",
+            "propagate": True,
+        },
+        "api": {
+            "handlers": ["console"],
+            "level": "INFO",
+            "propagate": False,
+        },
+    },
+}
+
+
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 

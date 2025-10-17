@@ -81,10 +81,19 @@ services:
     vista-python-api:
         container_name: vista-python-api
         image: vista-python-api
+        env_file:
+            - '../../backend/.env.docker'
         build:
             context: ../../backend
-            dockerfile: ../../backend/Dockerfile
+            dockerfile: ../backend/Dockerfile
         ports:
             - 8000:8000
-        env_file:
-            - '../.env'
+    postgres:
+        image: postgis/postgis:latest
+        container_name: postgis
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres #pragma: allowlist secret
+            POSTGRES_DB: vista
+        ports:
+            - '5432:5432'

@@ -1,4 +1,4 @@
-FROM python:3.12 AS base
+FROM python:3.12-slim AS base
 
 # Create a non-root user and group
 RUN groupadd -r appuser && useradd -r -g appuser appuser
@@ -10,13 +10,8 @@ WORKDIR /vista-python-api/core
 # upgrade pip to the latest version
 RUN apt-get update && apt-get upgrade -y \
     && apt-get install -y build-essential \
-    gdal-bin \
-    libgdal-dev \
     libstdc++6 \
     && rm -rf /var/lib/apt/lists/*
-
-# Set environment variables for GDAL
-ENV GDAL_CONFIG=/usr/bin/gdal-config
 
 # Install poetry globally
 RUN pip3 install poetry poetry-plugin-export
@@ -30,6 +25,13 @@ RUN /venv/bin/pip install -r /requirements.txt
 # build a clean environment
 FROM base
 WORKDIR /vista-python-api/src
+
+
+# Install GDAL system libraries in final image
+RUN apt-get update && apt-get --no-install-recommends install -y \
+    gdal-bin \
+    libgdal-dev \
+    && rm -rf /var/lib/apt/lists/*
 
 # virtual environment is copied
 COPY --from=builder /venv /venv
