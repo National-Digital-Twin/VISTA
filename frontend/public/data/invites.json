@@ -1,0 +1,31 @@
+{
+    "invites": [
+        {
+            "id": "1",
+            "email": "jonathan.barker@twnywell.gov.uk",
+            "userType": "General",
+            "groups": ["Twynwell team"],
+            "status": "Pending",
+            "sentDate": "2025-01-10",
+            "daysAgo": 5
+        },
+        {
+            "id": "2",
+            "email": "thomas.macintosh@twnywell.gov.uk",
+            "userType": "General",
+            "groups": ["Twynwell team"],
+            "status": "Expired",
+            "sentDate": "2025-01-04",
+            "daysAgo": 11
+        },
+        {
+            "id": "3",
+            "email": "zahmed.s@community.uk",
+            "userType": "General",
+            "groups": ["Volunteers"],
+            "status": "Expired",
+            "sentDate": "2024-12-30",
+            "daysAgo": 15
+        }
+    ]
+}

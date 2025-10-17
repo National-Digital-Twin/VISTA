@@ -9,7 +9,7 @@ const GroupDetail: React.FC = () => {
     const navigate = useNavigate();
 
     const handleBackClick = () => {
-        navigate('/admin-settings?tab=users');
+        navigate('/admin?tab=users');
     };
 
     return (
