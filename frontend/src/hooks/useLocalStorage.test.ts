@@ -113,27 +113,26 @@ describe('useLocalStorage', () => {
     describe('Functional updates', () => {
         it('supports functional updates', () => {
             const { result } = renderHook(() => useLocalStorage('counter', 0));
+            const increment = (prev: number) => prev + 1;
 
             act(() => {
-                result.current[1]((prev) => prev + 1);
+                result.current[1](increment);
             });
-
             expect(result.current[0]).toBe(1);
 
             act(() => {
-                result.current[1]((prev) => prev + 1);
+                result.current[1](increment);
             });
-
             expect(result.current[0]).toBe(2);
         });
 
         it('functional update with objects', () => {
             const { result } = renderHook(() => useLocalStorage('user', { name: 'John', age: 30 }));
+            const updateAge = (prev: { name: string; age: number }) => ({ ...prev, age: 31 });
 
             act(() => {
-                result.current[1]((prev) => ({ ...prev, age: 31 }));
+                result.current[1](updateAge);
             });
-
             expect(result.current[0]).toEqual({ name: 'John', age: 31 });
         });
     });

@@ -103,8 +103,7 @@ describe('fetchDataForAssetSpecification', () => {
                 rel: 'next',
             },
         ];
-        
-        
+
         mockFetch(structuredClone(response));
         response.links = [];
         mockFetch(structuredClone(response));
@@ -141,8 +140,7 @@ describe('fetchDataForAssetSpecification', () => {
                 rel: 'next',
             },
         ];
-        
-        
+
         mockFetch(structuredClone(response));
         response.links = [];
         mockFetch(structuredClone(response));
@@ -163,8 +161,6 @@ describe('fetchDataForAssetSpecification', () => {
         ];
         response.numberReturned = 100;
 
-        
-        
         mockFetch(structuredClone(response));
         response.links = [];
         response.numberReturned = 25;

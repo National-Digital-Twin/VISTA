@@ -1,4 +1,4 @@
-import { faCompass, faCircle } from '@fortawesome/free-solid-svg-icons';
+import { faCompass } from '@fortawesome/free-solid-svg-icons';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import ToolbarButton from './ToolbarButton';

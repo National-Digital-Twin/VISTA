@@ -7,6 +7,11 @@ import { fetchProviders, fetchAssetInfo } from '@/api/combined';
 
 vi.mock('@/api/combined');
 
+const delay = (ms: number) =>
+    new Promise<void>((resolve) => {
+        setTimeout(resolve, ms);
+    });
+
 const createQueryWrapper = () => {
     const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
     return ({ children }: { children: ReactNode }) => React.createElement(QueryClientProvider, { client: queryClient }, children);
@@ -198,11 +203,13 @@ describe('useProviders', () => {
 
     describe('Loading states', () => {
         it('shows loading while fetching providers', async () => {
-            vi.mocked(fetchProviders).mockImplementation(() => new Promise((resolve) => setTimeout(() => resolve([]), 100)));
+            const delayedResolve = async () => {
+                await delay(100);
+                return [];
+            };
+            vi.mocked(fetchProviders).mockImplementation(delayedResolve);
 
-            const { result } = renderHook(() => useProviders(true, false, 'http://example.com/asset#123', null), {
-                wrapper: createQueryWrapper(),
-            });
+            const { result } = renderHookWithWrapper(() => useProviders(true, false, 'http://example.com/asset#123', null));
 
             expect(result.current.isLoading).toBe(true);
 
@@ -213,13 +220,15 @@ describe('useProviders', () => {
 
         it('shows loading while fetching provider details', async () => {
             const mockProviders = [{ providerNode: 'http://example.com/provider#1', criticalityRating: 5 }];
+            const delayedResolve = async () => {
+                await delay(100);
+                return {};
+            };
 
             vi.mocked(fetchProviders).mockResolvedValue(mockProviders);
-            vi.mocked(fetchAssetInfo).mockImplementation(() => new Promise((resolve) => setTimeout(() => resolve({}), 100)));
+            vi.mocked(fetchAssetInfo).mockImplementation(delayedResolve);
 
-            const { result } = renderHook(() => useProviders(true, false, 'http://example.com/asset#123', null), {
-                wrapper: createQueryWrapper(),
-            });
+            const { result } = renderHookWithWrapper(() => useProviders(true, false, 'http://example.com/asset#123', null));
 
             expect(result.current.isLoading).toBe(true);
 

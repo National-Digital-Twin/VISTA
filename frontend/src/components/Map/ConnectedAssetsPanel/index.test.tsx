@@ -79,7 +79,7 @@ describe('ConnectedAssetsPanel', () => {
 
     it('renders Dependents by default', () => {
         render(<ConnectedAssetsPanel connectedAssetData={mockAssetData} hideConnectedAssets={vi.fn()} />, { wrapper: createWrapper });
-        
+
         expect(screen.getByRole('tabpanel', { name: /dependant assets/i })).toBeInTheDocument();
         expect(screen.getByText('Loading dependent assets')).toBeInTheDocument();
     });
@@ -88,9 +88,9 @@ describe('ConnectedAssetsPanel', () => {
         render(<ConnectedAssetsPanel connectedAssetData={mockAssetData} hideConnectedAssets={vi.fn()} />, { wrapper: createWrapper });
         const providerTab = screen.getByText(/Provider Assets/);
         fireEvent.click(providerTab);
-        
+
         expect(screen.getByRole('tabpanel', { name: /provider assets/i })).toBeInTheDocument();
-        
+
         expect(screen.getByText('Provider 1')).toBeInTheDocument();
     });
 });

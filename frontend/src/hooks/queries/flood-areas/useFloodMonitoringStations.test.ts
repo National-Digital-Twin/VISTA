@@ -3,10 +3,15 @@ import { renderHook, waitFor, act } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React, { ReactNode } from 'react';
 import useFloodMonitoringStations from './useFloodMonitoringStations';
-import * as combinedApi from '@/api/combined';
+import { fetchFloodMonitoringStations } from '@/api/combined';
 import { ElementsContext } from '@/context/ElementContext';
 
 vi.mock('@/api/combined');
+
+const delay = (ms: number) =>
+    new Promise<void>((resolve) => {
+        setTimeout(resolve, ms);
+    });
 
 function createWrapper() {
     const queryClient = new QueryClient({
@@ -97,7 +102,7 @@ describe('useFloodMonitoringStations', () => {
                 expect(result.current.showStations).toBe(false);
             });
 
-            expect(combinedApi.fetchFloodMonitoringStations).not.toHaveBeenCalled();
+            expect(fetchFloodMonitoringStations).not.toHaveBeenCalled();
         });
 
         it('fetches stations when showStations is true', async () => {
@@ -112,7 +117,7 @@ describe('useFloodMonitoringStations', () => {
                 ],
             };
 
-            vi.mocked(combinedApi.fetchFloodMonitoringStations).mockResolvedValue(mockData);
+            vi.mocked(fetchFloodMonitoringStations).mockResolvedValue(mockData);
 
             const { result } = renderHook(() => useFloodMonitoringStations(), {
                 wrapper: createWrapper(),
@@ -123,7 +128,7 @@ describe('useFloodMonitoringStations', () => {
             });
 
             await waitFor(() => {
-                expect(combinedApi.fetchFloodMonitoringStations).toHaveBeenCalled();
+                expect(fetchFloodMonitoringStations).toHaveBeenCalled();
             });
         });
 
@@ -139,7 +144,7 @@ describe('useFloodMonitoringStations', () => {
                 ],
             };
 
-            vi.mocked(combinedApi.fetchFloodMonitoringStations).mockResolvedValue(mockData);
+            vi.mocked(fetchFloodMonitoringStations).mockResolvedValue(mockData);
 
             const { result } = renderHook(() => useFloodMonitoringStations(), {
                 wrapper: createWrapper(),
@@ -177,7 +182,7 @@ describe('useFloodMonitoringStations', () => {
                 ],
             };
 
-            vi.mocked(combinedApi.fetchFloodMonitoringStations).mockResolvedValue(mockData);
+            vi.mocked(fetchFloodMonitoringStations).mockResolvedValue(mockData);
 
             const { result } = renderHook(() => useFloodMonitoringStations(), {
                 wrapper: createWrapper(),
@@ -197,7 +202,7 @@ describe('useFloodMonitoringStations', () => {
         });
 
         it('handles empty stations list', async () => {
-            vi.mocked(combinedApi.fetchFloodMonitoringStations).mockResolvedValue({ items: [] });
+            vi.mocked(fetchFloodMonitoringStations).mockResolvedValue({ items: [] });
 
             const { result } = renderHook(() => useFloodMonitoringStations(), {
                 wrapper: createWrapper(),
@@ -215,7 +220,7 @@ describe('useFloodMonitoringStations', () => {
 
     describe('Error handling', () => {
         it('handles fetch error', async () => {
-            vi.mocked(combinedApi.fetchFloodMonitoringStations).mockRejectedValue(new Error('API error'));
+            vi.mocked(fetchFloodMonitoringStations).mockRejectedValue(new Error('API error'));
 
             const { result } = renderHook(() => useFloodMonitoringStations(), {
                 wrapper: createWrapper(),
@@ -233,13 +238,13 @@ describe('useFloodMonitoringStations', () => {
 
     describe('Loading states', () => {
         it('shows loading while fetching', async () => {
-            vi.mocked(combinedApi.fetchFloodMonitoringStations).mockImplementation(
-                () => new Promise((resolve) => setTimeout(() => resolve({ items: [] }), 100)),
-            );
+            const delayedResolve = async () => {
+                await delay(100);
+                return { items: [] };
+            };
+            vi.mocked(fetchFloodMonitoringStations).mockImplementation(delayedResolve);
 
-            const { result } = renderHook(() => useFloodMonitoringStations(), {
-                wrapper: createWrapper(),
-            });
+            const { result } = renderHook(() => useFloodMonitoringStations(), { wrapper: createWrapper() });
 
             act(() => {
                 result.current.menuItem.onItemClick();

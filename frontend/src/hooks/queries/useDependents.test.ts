@@ -7,6 +7,11 @@ import { fetchDependents, fetchAssetInfo } from '@/api/combined';
 
 vi.mock('@/api/combined');
 
+const delay = (ms: number) =>
+    new Promise<void>((resolve) => {
+        setTimeout(resolve, ms);
+    });
+
 const createQueryWrapper = () => {
     const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
     return ({ children }: { children: ReactNode }) => React.createElement(QueryClientProvider, { client: queryClient }, children);
@@ -198,11 +203,13 @@ describe('useDependents', () => {
 
     describe('Loading states', () => {
         it('shows loading while fetching dependents', async () => {
-            vi.mocked(fetchDependents).mockImplementation(() => new Promise((resolve) => setTimeout(() => resolve([]), 100)));
+            const delayedResolve = async () => {
+                await delay(100);
+                return [];
+            };
+            vi.mocked(fetchDependents).mockImplementation(delayedResolve);
 
-            const { result } = renderHook(() => useDependents(true, false, 'http://example.com/asset#123', null), {
-                wrapper: createQueryWrapper(),
-            });
+            const { result } = renderHookWithWrapper(() => useDependents(true, false, 'http://example.com/asset#123', null));
 
             expect(result.current.isLoading).toBe(true);
 
@@ -213,13 +220,15 @@ describe('useDependents', () => {
 
         it('shows loading while fetching dependent details', async () => {
             const mockDependents = [{ dependentNode: 'http://example.com/dep#1', criticalityRating: 5 }];
+            const delayedResolve = async () => {
+                await delay(100);
+                return {};
+            };
 
             vi.mocked(fetchDependents).mockResolvedValue(mockDependents);
-            vi.mocked(fetchAssetInfo).mockImplementation(() => new Promise((resolve) => setTimeout(() => resolve({}), 100)));
+            vi.mocked(fetchAssetInfo).mockImplementation(delayedResolve);
 
-            const { result } = renderHook(() => useDependents(true, false, 'http://example.com/asset#123', null), {
-                wrapper: createQueryWrapper(),
-            });
+            const { result } = renderHookWithWrapper(() => useDependents(true, false, 'http://example.com/asset#123', null));
 
             expect(result.current.isLoading).toBe(true);
 

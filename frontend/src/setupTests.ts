@@ -38,7 +38,6 @@ vi.mock('./config/app-config', () => ({
 
 globalThis.URL.createObjectURL ??= vi.fn();
 
-
 globalThis.structuredClone ??= (obj: any) => {
     if (obj === null || typeof obj !== 'object') {
         return obj;

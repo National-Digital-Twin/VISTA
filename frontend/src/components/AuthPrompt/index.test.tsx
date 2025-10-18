@@ -123,7 +123,8 @@ describe('AuthPrompt', () => {
             render(<AuthPrompt />);
 
             const input = screen.getByPlaceholderText('XXXX-XXXX-XXXX-XXXX') as HTMLInputElement;
-            expect(input).toHaveAttribute('pattern', '\\w{4}-\\w{4}-\\w{4}-\\w{4}');
+            const expectedPattern = String.raw`\w{4}-\w{4}-\w{4}-\w{4}`;
+            expect(input).toHaveAttribute('pattern', expectedPattern);
         });
 
         it('has autocapitalize set to characters', () => {

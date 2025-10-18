@@ -1,10 +1,15 @@
-import type { Feature, Geometry, Point } from 'geojson';
+import type { Feature, Point } from 'geojson';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { fetchLiveAssets } from './live-assets';
 import { handlerRegistry } from './handler-registry';
 import type { AssetSpecification } from '@/hooks/queries/dataset-utils';
 
 vi.mock('./handler-registry');
+
+const delay = (ms: number) =>
+    new Promise<void>((resolve) => {
+        setTimeout(resolve, ms);
+    });
 
 describe('fetchLiveAssets', () => {
     const mockBuildUrls = vi.fn();
@@ -61,9 +66,15 @@ describe('fetchLiveAssets', () => {
             const features3 = [createFeature(4)];
 
             mockFetchData.mockImplementation(async (_spec, url) => {
-                if (url === urls[0]) return features1;
-                if (url === urls[1]) return features2;
-                if (url === urls[2]) return features3;
+                if (url === urls[0]) {
+                    return features1;
+                }
+                if (url === urls[1]) {
+                    return features2;
+                }
+                if (url === urls[2]) {
+                    return features3;
+                }
                 return [];
             });
 
@@ -82,12 +93,13 @@ describe('fetchLiveAssets', () => {
             const urls = ['https://example.com/1', 'https://example.com/2'];
             mockBuildUrls.mockReturnValue(urls);
 
-            let callOrder: string[] = [];
-            mockFetchData.mockImplementation(async (_spec, url) => {
+            const callOrder: string[] = [];
+            const delayedFetch = async (_spec: any, url: string) => {
                 callOrder.push(url);
-                await new Promise((resolve) => setTimeout(resolve, 10));
+                await delay(10);
                 return [createFeature(1)];
-            });
+            };
+            mockFetchData.mockImplementation(delayedFetch);
 
             await fetchLiveAssets(assetSpec);
 
@@ -137,7 +149,9 @@ describe('fetchLiveAssets', () => {
 
             const features = [createFeature(1), createFeature(2)];
             mockFetchData.mockImplementation(async (_spec, url) => {
-                if (url === urls[1]) return features;
+                if (url === urls[1]) {
+                    return features;
+                }
                 return [];
             });
 
@@ -176,7 +190,9 @@ describe('fetchLiveAssets', () => {
             mockBuildUrls.mockReturnValue(urls);
 
             mockFetchData.mockImplementation(async (_spec, url) => {
-                if (url === urls[0]) return [createFeature(1)];
+                if (url === urls[0]) {
+                    return [createFeature(1)];
+                }
                 throw new Error('Failed to fetch second URL');
             });
 
@@ -216,7 +232,9 @@ describe('fetchLiveAssets', () => {
             const features2 = [createFeature(5), createFeature(15)];
 
             mockFetchData.mockImplementation(async (_spec, url) => {
-                if (url === urls[0]) return features1;
+                if (url === urls[0]) {
+                    return features1;
+                }
                 return features2;
             });
 

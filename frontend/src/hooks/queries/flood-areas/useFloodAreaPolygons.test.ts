@@ -3,7 +3,7 @@ import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React, { ReactNode } from 'react';
 import useFloodAreaPolygons from './useFloodAreaPolygons';
-import * as combinedApi from '@/api/combined';
+import { fetchFloodAreaPolygon } from '@/api/combined';
 import { ElementsContext } from '@/context/ElementContext';
 
 vi.mock('@/api/combined');
@@ -44,7 +44,7 @@ describe('useFloodAreaPolygons', () => {
             features: [{ type: 'Feature', geometry: { type: 'Polygon' }, properties: { id: 2 } }],
         };
 
-        vi.mocked(combinedApi.fetchFloodAreaPolygon).mockResolvedValueOnce(mockPolygon1).mockResolvedValueOnce(mockPolygon2);
+        vi.mocked(fetchFloodAreaPolygon).mockResolvedValueOnce(mockPolygon1).mockResolvedValueOnce(mockPolygon2);
 
         const { result } = renderHook(() => useFloodAreaPolygons(['poly1', 'poly2']), {
             wrapper: createWrapper(),
@@ -54,7 +54,7 @@ describe('useFloodAreaPolygons', () => {
             expect(result.current.isLoading).toBe(false);
         });
 
-        expect(combinedApi.fetchFloodAreaPolygon).toHaveBeenCalledTimes(2);
+        expect(fetchFloodAreaPolygon).toHaveBeenCalledTimes(2);
         expect(result.current.polygonFeatures).toBeDefined();
     });
 
@@ -75,7 +75,7 @@ describe('useFloodAreaPolygons', () => {
             features: [{ type: 'Feature', geometry: {}, properties: {} }],
         };
 
-        vi.mocked(combinedApi.fetchFloodAreaPolygon).mockResolvedValue(mockPolygon);
+        vi.mocked(fetchFloodAreaPolygon).mockResolvedValue(mockPolygon);
 
         const { result } = renderHook(() => useFloodAreaPolygons(['single-area']), {
             wrapper: createWrapper(),
@@ -85,15 +85,21 @@ describe('useFloodAreaPolygons', () => {
             expect(result.current.isLoading).toBe(false);
         });
 
-        expect(combinedApi.fetchFloodAreaPolygon).toHaveBeenCalledWith('single-area');
+        expect(fetchFloodAreaPolygon).toHaveBeenCalledWith('single-area');
     });
 
     it('sets isLoading true while fetching', async () => {
-        vi.mocked(combinedApi.fetchFloodAreaPolygon).mockImplementation(() => new Promise((resolve) => setTimeout(() => resolve({ features: [] }), 100)));
+        const delay = (ms: number) =>
+            new Promise<void>((resolve) => {
+                setTimeout(resolve, ms);
+            });
+        const delayedResolve = async () => {
+            await delay(100);
+            return { features: [] };
+        };
+        vi.mocked(fetchFloodAreaPolygon).mockImplementation(delayedResolve);
 
-        const { result } = renderHook(() => useFloodAreaPolygons(['area1']), {
-            wrapper: createWrapper(),
-        });
+        const { result } = renderHook(() => useFloodAreaPolygons(['area1']), { wrapper: createWrapper() });
 
         expect(result.current.isLoading).toBe(true);
 
@@ -103,7 +109,7 @@ describe('useFloodAreaPolygons', () => {
     });
 
     it('sets isSuccess when queries complete successfully', async () => {
-        vi.mocked(combinedApi.fetchFloodAreaPolygon).mockResolvedValue({ features: [] });
+        vi.mocked(fetchFloodAreaPolygon).mockResolvedValue({ features: [] });
 
         const { result } = renderHook(() => useFloodAreaPolygons(['area1']), {
             wrapper: createWrapper(),
@@ -115,7 +121,7 @@ describe('useFloodAreaPolygons', () => {
     });
 
     it('sets isError when any query fails', async () => {
-        vi.mocked(combinedApi.fetchFloodAreaPolygon).mockRejectedValue(new Error('Fetch failed'));
+        vi.mocked(fetchFloodAreaPolygon).mockRejectedValue(new Error('Fetch failed'));
 
         const { result } = renderHook(() => useFloodAreaPolygons(['area1']), {
             wrapper: createWrapper(),
@@ -136,7 +142,7 @@ describe('useFloodAreaPolygons', () => {
             ],
         };
 
-        vi.mocked(combinedApi.fetchFloodAreaPolygon).mockResolvedValue(mockPolygon);
+        vi.mocked(fetchFloodAreaPolygon).mockResolvedValue(mockPolygon);
 
         const { result } = renderHook(() => useFloodAreaPolygons(['test-uri']), {
             wrapper: createWrapper(),
@@ -150,7 +156,7 @@ describe('useFloodAreaPolygons', () => {
     });
 
     it('handles multiple polygons in result object', async () => {
-        vi.mocked(combinedApi.fetchFloodAreaPolygon).mockImplementation(async (uri) => ({
+        vi.mocked(fetchFloodAreaPolygon).mockImplementation(async (uri) => ({
             features: [{ type: 'Feature', properties: { uri } }],
         }));
 
@@ -169,7 +175,7 @@ describe('useFloodAreaPolygons', () => {
     });
 
     it('skips queries for empty/falsy URIs', async () => {
-        vi.mocked(combinedApi.fetchFloodAreaPolygon).mockResolvedValue({ features: [] });
+        vi.mocked(fetchFloodAreaPolygon).mockResolvedValue({ features: [] });
 
         const { result } = renderHook(() => useFloodAreaPolygons(['valid-uri', '', 'another-valid']), {
             wrapper: createWrapper(),
@@ -179,7 +185,7 @@ describe('useFloodAreaPolygons', () => {
             expect(result.current.isLoading).toBe(false);
         });
 
-        expect(combinedApi.fetchFloodAreaPolygon).toHaveBeenCalledWith('valid-uri');
-        expect(combinedApi.fetchFloodAreaPolygon).toHaveBeenCalledWith('another-valid');
+        expect(fetchFloodAreaPolygon).toHaveBeenCalledWith('valid-uri');
+        expect(fetchFloodAreaPolygon).toHaveBeenCalledWith('another-valid');
     });
 });

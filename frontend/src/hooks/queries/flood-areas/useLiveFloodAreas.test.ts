@@ -3,7 +3,7 @@ import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React, { ReactNode } from 'react';
 import useLiveFloodAreas from './useLiveFloodAreas';
-import * as combinedApi from '@/api/combined';
+import { fetchLiveFloodAreas } from '@/api/combined';
 
 vi.mock('@/api/combined');
 
@@ -33,7 +33,7 @@ describe('useLiveFloodAreas', () => {
             { type: 'Feature', properties: { severity: 'Medium' }, geometry: {} },
         ];
 
-        vi.mocked(combinedApi.fetchLiveFloodAreas).mockResolvedValue(mockFloodAreas);
+        vi.mocked(fetchLiveFloodAreas).mockResolvedValue(mockFloodAreas);
 
         const { result } = renderHook(() => useLiveFloodAreas(), {
             wrapper: createQueryWrapper(),
@@ -46,16 +46,22 @@ describe('useLiveFloodAreas', () => {
             { timeout: 3000 },
         );
 
-        expect(combinedApi.fetchLiveFloodAreas).toHaveBeenCalled();
+        expect(fetchLiveFloodAreas).toHaveBeenCalled();
         expect(result.current.isSuccess).toBe(true);
     });
 
     it('uses empty array as placeholder data while loading', async () => {
-        vi.mocked(combinedApi.fetchLiveFloodAreas).mockImplementation(() => new Promise((resolve) => setTimeout(() => resolve([]), 200)));
+        const delay = (ms: number) =>
+            new Promise<void>((resolve) => {
+                setTimeout(resolve, ms);
+            });
+        const delayedResolve = async () => {
+            await delay(200);
+            return [];
+        };
+        vi.mocked(fetchLiveFloodAreas).mockImplementation(delayedResolve);
 
-        const { result } = renderHook(() => useLiveFloodAreas(), {
-            wrapper: createQueryWrapper(),
-        });
+        const { result } = renderHook(() => useLiveFloodAreas(), { wrapper: createQueryWrapper() });
 
         expect(result.current.data).toEqual([]);
 
@@ -67,7 +73,7 @@ describe('useLiveFloodAreas', () => {
     it('returns data when fetch succeeds', async () => {
         const mockData = [{ type: 'Feature', id: 'flood-1' }];
 
-        vi.mocked(combinedApi.fetchLiveFloodAreas).mockResolvedValue(mockData);
+        vi.mocked(fetchLiveFloodAreas).mockResolvedValue(mockData);
 
         const { result } = renderHook(() => useLiveFloodAreas(), {
             wrapper: createQueryWrapper(),
@@ -79,7 +85,7 @@ describe('useLiveFloodAreas', () => {
     });
 
     it('handles fetch error', async () => {
-        vi.mocked(combinedApi.fetchLiveFloodAreas).mockRejectedValue(new Error('Network error'));
+        vi.mocked(fetchLiveFloodAreas).mockRejectedValue(new Error('Network error'));
 
         const { result } = renderHook(() => useLiveFloodAreas(), {
             wrapper: createQueryWrapper(),
@@ -93,7 +99,7 @@ describe('useLiveFloodAreas', () => {
     });
 
     it('completes loading after data fetched', async () => {
-        vi.mocked(combinedApi.fetchLiveFloodAreas).mockResolvedValue([]);
+        vi.mocked(fetchLiveFloodAreas).mockResolvedValue([]);
 
         const { result } = renderHook(() => useLiveFloodAreas(), {
             wrapper: createQueryWrapper(),
@@ -107,7 +113,7 @@ describe('useLiveFloodAreas', () => {
     });
 
     it('handles empty flood areas list', async () => {
-        vi.mocked(combinedApi.fetchLiveFloodAreas).mockResolvedValue([]);
+        vi.mocked(fetchLiveFloodAreas).mockResolvedValue([]);
 
         const { result } = renderHook(() => useLiveFloodAreas(), {
             wrapper: createQueryWrapper(),
@@ -133,7 +139,7 @@ describe('useLiveFloodAreas', () => {
             },
         ];
 
-        vi.mocked(combinedApi.fetchLiveFloodAreas).mockResolvedValue(mockFloodAreas);
+        vi.mocked(fetchLiveFloodAreas).mockResolvedValue(mockFloodAreas);
 
         const { result } = renderHook(() => useLiveFloodAreas(), {
             wrapper: createQueryWrapper(),

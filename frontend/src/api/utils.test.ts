@@ -23,11 +23,11 @@ const testEndpointFunction = (functionName: string, createEndpoint: (path: strin
             { input: 'asset/dependents/critical', expected: `${baseUrl}/asset/dependents/critical`, description: 'handles complex nested paths' },
         ];
 
-        testCases.forEach(({ input, expected, description }) => {
+        for (const { input, expected, description } of testCases) {
             it(description, () => {
                 expect(createEndpoint(input)).toBe(expected);
             });
-        });
+        }
 
         if (functionName === 'createParalogEndpoint') {
             it('preserves special characters', () => {

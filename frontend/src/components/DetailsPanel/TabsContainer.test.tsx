@@ -36,11 +36,9 @@ describe('TabsContainer', () => {
         render(<TabsContainer tabs={tabs} />);
         const user = userEvent.setup();
 
-        
         await user.click(screen.getByText('Tab 2'));
         expect(screen.getByText('Content for Tab 2')).toBeVisible();
 
-        
         await user.click(screen.getByText('Tab 3'));
         expect(screen.getByText('Content for Tab 3')).toBeVisible();
     });

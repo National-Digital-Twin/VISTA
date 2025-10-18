@@ -7,7 +7,7 @@ vi.mock('@turf/turf', () => ({
         const [lon2, lat2] = to;
         const dLat = lat2 - lat1;
         const dLon = lon2 - lon1;
-        return Math.sqrt(dLat * dLat + dLon * dLon) * 100;
+        return Math.hypot(dLat, dLon) * 100;
     }),
 }));
 
@@ -372,7 +372,7 @@ describe('hydrology API', () => {
                 },
                 {
                     type: 'Feature',
-                    geometry: { type: 'Point', coordinates: [-5.0, 55.0] },
+                    geometry: { type: 'Point', coordinates: [-5, 55] },
                     properties: { stationReference: 'FAR1', name: 'Far Station' },
                 },
             ],
@@ -381,7 +381,7 @@ describe('hydrology API', () => {
         it('successfully fetches and filters stations by distance', async () => {
             fetchMock.mockResolvedValue({
                 ok: true,
-                json: vi.fn().mockResolvedValue(JSON.parse(JSON.stringify(mockGeoJson))),
+                json: vi.fn().mockResolvedValue(structuredClone(mockGeoJson)),
             });
 
             const result = await fetchAllLiveStations();
@@ -402,7 +402,7 @@ describe('hydrology API', () => {
                     },
                     {
                         type: 'Feature',
-                        geometry: { type: 'Point', coordinates: [-10.0, 60.0] },
+                        geometry: { type: 'Point', coordinates: [-10, 60] },
                         properties: { name: 'Far' },
                     },
                 ],
@@ -410,7 +410,7 @@ describe('hydrology API', () => {
 
             fetchMock.mockResolvedValue({
                 ok: true,
-                json: vi.fn().mockResolvedValue(JSON.parse(JSON.stringify(testData))),
+                json: vi.fn().mockResolvedValue(structuredClone(testData)),
             });
 
             const result = await fetchAllLiveStations();
@@ -447,7 +447,7 @@ describe('hydrology API', () => {
         it('preserves GeoJSON structure', async () => {
             fetchMock.mockResolvedValue({
                 ok: true,
-                json: vi.fn().mockResolvedValue(JSON.parse(JSON.stringify(mockGeoJson))),
+                json: vi.fn().mockResolvedValue(structuredClone(mockGeoJson)),
             });
 
             const result = await fetchAllLiveStations();
@@ -460,16 +460,16 @@ describe('hydrology API', () => {
         it('preserves feature properties after filtering', async () => {
             fetchMock.mockResolvedValue({
                 ok: true,
-                json: vi.fn().mockResolvedValue(JSON.parse(JSON.stringify(mockGeoJson))),
+                json: vi.fn().mockResolvedValue(structuredClone(mockGeoJson)),
             });
 
             const result = await fetchAllLiveStations();
 
-            result.features.forEach((feature: any) => {
+            for (const feature of result.features as any[]) {
                 expect(feature).toHaveProperty('geometry');
                 expect(feature).toHaveProperty('properties');
                 expect(feature.geometry).toHaveProperty('coordinates');
-            });
+            }
         });
     });
 

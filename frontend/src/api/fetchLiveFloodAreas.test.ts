@@ -179,7 +179,7 @@ describe('fetchLiveFloodAreas', () => {
                 json: vi.fn().mockResolvedValue(mockPolygon),
             });
 
-            await fetchLiveFloodAreas();
+        await fetchLiveFloodAreas();
 
         expect(fetchMock).toHaveBeenCalledTimes(4);
     });

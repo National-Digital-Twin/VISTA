@@ -61,7 +61,5 @@ describe('ChartBody', () => {
     it('filters out invalid data', () => {
         render(<ChartBody {...baseProps} data={mixedData as any} />);
         expect(screen.getByTestId('chart-root')).toBeInTheDocument();
-        
-        
     });
 });

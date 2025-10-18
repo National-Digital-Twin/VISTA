@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { sendInvite, fetchAllInvites, cancelInvite, resendInvite, type InviteData, type Invite, type InvitesListResponse } from './invites';
+import { sendInvite, fetchAllInvites, cancelInvite, resendInvite, type InviteData, type InvitesListResponse } from './invites';
 
 describe('invites API', () => {
     let fetchMock: ReturnType<typeof vi.fn>;

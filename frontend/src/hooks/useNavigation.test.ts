@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook } from '@testing-library/react';
-import { BrowserRouter, MemoryRouter } from 'react-router-dom';
+import { MemoryRouter } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material';
 import React, { ReactNode } from 'react';
 import { useNavigation, NAVIGATION_ITEMS } from './useNavigation';
@@ -195,7 +195,6 @@ describe('useNavigation', () => {
             });
 
             expect(result.current.isActive('/')).toBe(true);
-
         });
     });
 
@@ -207,12 +206,12 @@ describe('useNavigation', () => {
         });
 
         it('navigation items have required properties', () => {
-            NAVIGATION_ITEMS.forEach((item) => {
+            for (const item of NAVIGATION_ITEMS) {
                 expect(item).toHaveProperty('to');
                 expect(item).toHaveProperty('label');
                 expect(typeof item.to).toBe('string');
                 expect(typeof item.label).toBe('string');
-            });
+            }
         });
     });
 });

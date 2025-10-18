@@ -28,12 +28,10 @@ describe('DevTools', () => {
 
         expect(screen.getByText('Loading dev tools...')).toBeInTheDocument();
 
-        
         await waitFor(() => {
             expect(screen.getByTestId('devtools-container')).toBeInTheDocument();
         });
 
-        
         expect(screen.getByTestId('app-content')).toBeInTheDocument();
     });
 });

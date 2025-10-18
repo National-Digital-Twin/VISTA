@@ -3,7 +3,7 @@ import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React, { ReactNode } from 'react';
 import useFloodWatchAreas from './useFloodWatchAreas';
-import * as combinedApi from '@/api/combined';
+import { fetchAllFloodAreas } from '@/api/combined';
 
 vi.mock('@/api/combined');
 
@@ -43,7 +43,7 @@ describe('useFloodWatchAreas', () => {
             },
         ];
 
-        vi.mocked(combinedApi.fetchAllFloodAreas).mockResolvedValue(mockData);
+        vi.mocked(fetchAllFloodAreas).mockResolvedValue(mockData);
 
         const { result } = renderHook(() => useFloodWatchAreas(), {
             wrapper: createQueryWrapper(),
@@ -70,7 +70,7 @@ describe('useFloodWatchAreas', () => {
             },
         ];
 
-        vi.mocked(combinedApi.fetchAllFloodAreas).mockResolvedValue(mockData);
+        vi.mocked(fetchAllFloodAreas).mockResolvedValue(mockData);
 
         const { result } = renderHook(() => useFloodWatchAreas(), {
             wrapper: createQueryWrapper(),
@@ -103,7 +103,7 @@ describe('useFloodWatchAreas', () => {
             },
         ];
 
-        vi.mocked(combinedApi.fetchAllFloodAreas).mockResolvedValue(mockData);
+        vi.mocked(fetchAllFloodAreas).mockResolvedValue(mockData);
 
         const { result } = renderHook(() => useFloodWatchAreas(), {
             wrapper: createQueryWrapper(),
@@ -129,7 +129,7 @@ describe('useFloodWatchAreas', () => {
             },
         ];
 
-        vi.mocked(combinedApi.fetchAllFloodAreas).mockResolvedValue(mockData);
+        vi.mocked(fetchAllFloodAreas).mockResolvedValue(mockData);
 
         const { result } = renderHook(() => useFloodWatchAreas(), {
             wrapper: createQueryWrapper(),
@@ -157,7 +157,7 @@ describe('useFloodWatchAreas', () => {
             },
         ];
 
-        vi.mocked(combinedApi.fetchAllFloodAreas).mockResolvedValue(mockData);
+        vi.mocked(fetchAllFloodAreas).mockResolvedValue(mockData);
 
         const { result } = renderHook(() => useFloodWatchAreas(), {
             wrapper: createQueryWrapper(),
@@ -180,7 +180,7 @@ describe('useFloodWatchAreas', () => {
             },
         ];
 
-        vi.mocked(combinedApi.fetchAllFloodAreas).mockResolvedValue(mockData);
+        vi.mocked(fetchAllFloodAreas).mockResolvedValue(mockData);
 
         const { result } = renderHook(() => useFloodWatchAreas(), {
             wrapper: createQueryWrapper(),
@@ -209,7 +209,7 @@ describe('useFloodWatchAreas', () => {
             },
         ];
 
-        vi.mocked(combinedApi.fetchAllFloodAreas).mockResolvedValue(mockData);
+        vi.mocked(fetchAllFloodAreas).mockResolvedValue(mockData);
 
         const { result } = renderHook(() => useFloodWatchAreas(), {
             wrapper: createQueryWrapper(),
@@ -236,7 +236,7 @@ describe('useFloodWatchAreas', () => {
             },
         ];
 
-        vi.mocked(combinedApi.fetchAllFloodAreas).mockResolvedValue(mockData);
+        vi.mocked(fetchAllFloodAreas).mockResolvedValue(mockData);
 
         const { result } = renderHook(() => useFloodWatchAreas(), {
             wrapper: createQueryWrapper(),
@@ -250,7 +250,7 @@ describe('useFloodWatchAreas', () => {
     });
 
     it('handles API fetch error', async () => {
-        vi.mocked(combinedApi.fetchAllFloodAreas).mockRejectedValue(new Error('API error'));
+        vi.mocked(fetchAllFloodAreas).mockRejectedValue(new Error('API error'));
 
         const { result } = renderHook(() => useFloodWatchAreas(), {
             wrapper: createQueryWrapper(),

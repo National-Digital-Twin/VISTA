@@ -1,12 +1,16 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import { useProfileData } from './useProfileData';
-import { method as usersApi_method, fetchCurrentUser, fetchUserById } from '@/api/users';
+import { fetchCurrentUser, fetchUserById } from '@/api/users';
 
 vi.mock('@/api/users');
 
 const mockUserApi = (method: 'fetchCurrentUser' | 'fetchUserById', user: Record<string, any>) => {
-    vi.mocked(usersApi_method).mockResolvedValue(user);
+    if (method === 'fetchCurrentUser') {
+        vi.mocked(fetchCurrentUser).mockResolvedValue(user);
+    } else {
+        vi.mocked(fetchUserById).mockResolvedValue(user);
+    }
 };
 
 const renderAndWaitForLoad = async (userId?: string) => {
@@ -162,7 +166,7 @@ describe('useProfileData', () => {
                 expect(result.current.loading).toBe(false);
             });
 
-            expect(fetchUserById).toHaveBeenCalledWith('other-user-123');
+            expect(vi.mocked(fetchUserById)).toHaveBeenCalledWith('other-user-123');
             expect(result.current.user?.id).toBe('other-user-123');
             expect(result.current.user?.displayName).toBe('Other User');
             expect(result.current.user?.memberSince).toBe('2023-05-15T00:00:00Z');
@@ -223,7 +227,8 @@ describe('useProfileData', () => {
         const testHelperFunction = async (mockUser: Record<string, any>, helperName: string, expectedValue: any) => {
             mockUserApi('fetchCurrentUser', mockUser);
             const result = await renderAndWaitForLoad();
-            expect(result.current[helperName as keyof typeof result.current]()).toBe(expectedValue);
+            const fn = result.current[helperName as keyof typeof result.current];
+            expect(typeof fn === 'function' ? fn() : fn).toBe(expectedValue);
         };
 
         it('getUserDisplayName returns displayName when available', async () => {
@@ -372,7 +377,7 @@ describe('useProfileData', () => {
                 expect(result.current.user?.id).toBe('other');
             });
 
-            expect(fetchUserById).toHaveBeenCalledWith('other');
+            expect(vi.mocked(fetchUserById)).toHaveBeenCalledWith('other');
         });
     });
 
@@ -429,7 +434,7 @@ describe('useProfileData', () => {
                 expect(result.current.loading).toBe(false);
             });
 
-            expect(fetchUserById).toHaveBeenCalledWith('');
+            expect(vi.mocked(fetchUserById)).toHaveBeenCalledWith('');
         });
 
         it('handles null userId', async () => {

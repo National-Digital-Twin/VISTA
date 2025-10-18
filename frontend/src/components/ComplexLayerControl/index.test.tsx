@@ -9,8 +9,8 @@ describe('ComplexLayerControl', () => {
         children: <div data-testid="layer-content">Layer Content</div>,
     };
 
-    const getHeader = () => screen.getByText('Test Layer').closest('[tabIndex]');
-    const clickHeader = () => fireEvent.click(getHeader()!);
+    const getHeader = () => screen.getByText('Test Layer').closest('[tabIndex]') as HTMLElement;
+    const clickHeader = () => fireEvent.click(getHeader());
 
     describe('Rendering', () => {
         it('renders with title and icon', () => {
@@ -43,8 +43,8 @@ describe('ComplexLayerControl', () => {
         it('expands content when header is clicked', () => {
             render(<ComplexLayerControl {...defaultProps} />);
 
-            const header = screen.getByText('Test Layer').closest('[tabIndex]');
-            fireEvent.click(header!);
+            const header = screen.getByText('Test Layer').closest('[tabIndex]') as HTMLElement;
+            fireEvent.click(header);
 
             const content = screen.getByTestId('layer-content');
             expect(content).toBeVisible();
@@ -53,9 +53,9 @@ describe('ComplexLayerControl', () => {
         it('collapses content when header is clicked twice', () => {
             render(<ComplexLayerControl {...defaultProps} />);
 
-            const header = screen.getByText('Test Layer').closest('[tabIndex]');
-            fireEvent.click(header!);
-            fireEvent.click(header!);
+            const header = screen.getByText('Test Layer').closest('[tabIndex]') as HTMLElement;
+            fireEvent.click(header);
+            fireEvent.click(header);
 
             const content = screen.getByTestId('layer-content');
             expect(content).not.toBeVisible();
@@ -64,8 +64,8 @@ describe('ComplexLayerControl', () => {
         it('expands when Enter key is pressed', () => {
             render(<ComplexLayerControl {...defaultProps} />);
 
-            const header = screen.getByText('Test Layer').closest('[tabIndex]');
-            fireEvent.keyDown(header!, { key: 'Enter' });
+            const header = screen.getByText('Test Layer').closest('[tabIndex]') as HTMLElement;
+            fireEvent.keyDown(header, { key: 'Enter' });
 
             const content = screen.getByTestId('layer-content');
             expect(content).toBeVisible();
@@ -75,7 +75,7 @@ describe('ComplexLayerControl', () => {
             render(<ComplexLayerControl {...defaultProps} />);
 
             const header = screen.getByText('Test Layer').closest('[tabIndex]');
-            fireEvent.keyDown(header!, { key: ' ' });
+            fireEvent.keyDown(header, { key: ' ' });
 
             const content = screen.getByTestId('layer-content');
             expect(content).toBeVisible();
@@ -85,7 +85,7 @@ describe('ComplexLayerControl', () => {
             render(<ComplexLayerControl {...defaultProps} />);
 
             const header = screen.getByText('Test Layer').closest('[tabIndex]');
-            fireEvent.keyDown(header!, { key: 'Tab' });
+            fireEvent.keyDown(header, { key: 'Tab' });
 
             const content = screen.getByTestId('layer-content');
             expect(content).not.toBeVisible();
@@ -159,8 +159,8 @@ describe('ComplexLayerControl', () => {
             const contentWrapper = screen.getByTestId('layer-content').parentElement?.parentElement;
             expect(contentWrapper).toHaveAttribute('aria-expanded', 'false');
 
-            const header = screen.getByText('Test Layer').closest('[tabIndex]');
-            fireEvent.click(header!);
+            const header = screen.getByText('Test Layer').closest('[tabIndex]') as HTMLElement;
+            fireEvent.click(header);
 
             expect(contentWrapper).toHaveAttribute('aria-expanded', 'true');
         });
@@ -180,8 +180,8 @@ describe('ComplexLayerControl', () => {
             const wrapper = container.querySelector('[data-expanded]');
             expect(wrapper).toHaveAttribute('data-expanded', 'false');
 
-            const header = screen.getByText('Test Layer').closest('[tabIndex]');
-            fireEvent.click(header!);
+            const header = screen.getByText('Test Layer').closest('[tabIndex]') as HTMLElement;
+            fireEvent.click(header);
 
             expect(wrapper).toHaveAttribute('data-expanded', 'true');
         });
