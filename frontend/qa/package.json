@@ -23,7 +23,7 @@
         "cross-env": "^7.0.3",
         "dotenv": "^16.4.7",
         "fs-extra": "^11.3.2",
-        "lighthouse": "^12.3.0",
+        "lighthouse": "^13.0.0",
         "multiple-cucumber-html-reporter": "^3.9.3",
         "playwright-lighthouse": "^4.0.0",
         "ts-node": "^10.9.2",
