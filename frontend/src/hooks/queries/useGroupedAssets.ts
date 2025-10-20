@@ -66,15 +66,35 @@ const useGroupedAssets = ({ assessment, searchFilter }: UseGroupedAssetsOptions)
         }
     });
 
+    const {
+        data: staticAssets,
+        isLoading: staticAssetsLoading,
+        error: staticAssetsError,
+    } = useQuery<Asset[]>({
+        queryKey: ['staticAssets'],
+        queryFn: async () => {
+            const assetSpecifications = (await import('@/data/coeff-assets-with-geometry.json')).default as any[];
+            return Array.from(assetSpecifications).map((asset) => new Asset(asset));
+        },
+    });
+
     const assets = useMemo(() => {
+        if (staticAssetsLoading) {
+            return;
+        }
         const assets: Asset[] = [];
         for (const ds of datasets) {
             if (ds?.data) {
                 assets.push(...ds.data);
             }
         }
-        return assets;
-    }, [datasets]);
+
+        if (staticAssetsError || !staticAssets) {
+            return assets;
+        } else {
+            return [...assets, ...staticAssets];
+        }
+    }, [datasets, staticAssets, staticAssetsError, staticAssetsLoading]);
 
     const assetsLoading = useMemo(() => {
         const allFinished = datasets.every((d) => d && (d.status === 'success' || d.status === 'error'));
@@ -89,9 +109,13 @@ const useGroupedAssets = ({ assessment, searchFilter }: UseGroupedAssetsOptions)
     const completed = datasets.filter((d) => d && (d.status === 'success' || d.status === 'error')).length;
     const progress = total > 0 ? completed / total : 0;
 
-    const { data: dependencies, error: dependenciesError } = useQuery({
+    const {
+        data: dependencies,
+        isLoading: dependenciesLoading,
+        error: dependenciesError,
+    } = useQuery({
         queryKey: ['assets-with-dependencies', assessment ?? ''],
-        enabled: !!assetsLoading,
+        enabled: !assetsLoading,
         queryFn: async () => {
             if (!assets) {
                 return;
@@ -100,21 +124,7 @@ const useGroupedAssets = ({ assessment, searchFilter }: UseGroupedAssetsOptions)
             let dependencies: Dependency[];
             if (assetTypes.length > 0) {
                 const dependencyData = await fetchAssessmentDependencies(assetTypes, assessment);
-                // Filter out dependencies with null names and map to DependencyData format
-                const validDependencies = (dependencyData || [])
-                    .filter((dep: any) => dep.dependentName && dep.providerName)
-                    .map((dep: any) => ({
-                        dependencyUri: dep.dependencyUri,
-                        criticalityRating: dep.criticalityRating,
-                        dependentNode: dep.dependentNode,
-                        dependentName: dep.dependentName,
-                        dependentNodeType: dep.dependentNodeType,
-                        providerNode: dep.providerNode,
-                        providerName: dep.providerName,
-                        providerNodeType: dep.providerNodeType,
-                        osmID: dep.osmID || '',
-                    }));
-                dependencies = createDependencies(validDependencies);
+                dependencies = createDependencies(dependencyData);
             } else {
                 dependencies = [];
             }
@@ -174,7 +184,7 @@ const useGroupedAssets = ({ assessment, searchFilter }: UseGroupedAssetsOptions)
     }
 
     return {
-        isLoadingDependencies: assetsLoading,
+        isLoadingDependencies: dependenciesLoading,
         isDependenciesError: !!dependenciesError,
         isLoadingAssets: assetsLoading,
         isAssetsError: !!assetsError,

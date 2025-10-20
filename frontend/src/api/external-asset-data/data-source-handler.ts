@@ -21,7 +21,7 @@ export abstract class DataSourceHandler {
      * @param backoff the base amount of backoff in ms
      * @returns a JSON representation of the response
      */
-    async fetchFromUrlWithRetry(url: string, retries = 5, backoff = 500) {
+    async fetchFromUrlWithRetry(url: string, retries = 3, backoff = 500) {
         for (let attempt = 0; attempt <= retries; attempt++) {
             try {
                 const response = await fetch(url);

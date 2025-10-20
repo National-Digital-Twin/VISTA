@@ -23,6 +23,7 @@ function Toolbar({ onOpenControlPanel }: ToolbarProps) {
                 display: 'flex',
                 width: '100%',
                 position: 'relative',
+                height: '6vh',
             }}
         >
             {onOpenControlPanel && (
@@ -40,6 +41,7 @@ function Toolbar({ onOpenControlPanel }: ToolbarProps) {
                             backgroundColor: 'background.paper',
                             color: 'initial',
                             margin: '0',
+                            flexBasis: '4%',
                         }}
                     >
                         <ChevronLeft />
@@ -138,7 +140,7 @@ export default function ControlsOverlay() {
                         flexDirection: 'column',
                         alignItems: 'flex-end',
                         padding: '10px',
-                        paddingTop: '6px',
+                        paddingTop: '0',
                     }}
                 >
                     <Box

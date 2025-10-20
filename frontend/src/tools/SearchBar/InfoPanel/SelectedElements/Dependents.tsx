@@ -6,7 +6,7 @@ import ConnectedAssets from './ConnectedAssets';
 import DetailsSection from './DetailsSection';
 import styles from './elements.module.css';
 import { isEmpty } from '@/utils/isEmpty';
-import { useDependents, useLocalStorage } from '@/hooks';
+import { useDependents, useGroupedAssets, useLocalStorage } from '@/hooks';
 
 export interface DependentsProps {
     /** Asset URI */
@@ -19,25 +19,35 @@ export interface DependentsProps {
     readonly isDependency: boolean;
 }
 
+function filterDependentsForKnownAssetsOnly(dependents, dependentsAsAssets) {
+    const uris = new Set(dependentsAsAssets.map((dependentAsAsset) => dependentAsAsset.uri));
+
+    return dependents.filter((d) => uris.has(d.uri));
+}
+
 export default function Dependents({ assetUri, dependent, isAsset, isDependency }: DependentsProps) {
     const [expand, setExpand] = useLocalStorage('showDependents', false);
     const { isLoading, isError, error, data: dependents } = useDependents(isAsset, isDependency, assetUri, dependent);
-
-    const totalDependents = dependents?.length || 0;
 
     const handleToggleSection = () => {
         setExpand((prev) => !prev);
     };
 
-    if (isLoading) {
+    const { isLoadingDependencies, isDependenciesError, getDependentAssets } = useGroupedAssets({});
+    const dependentsAsAssets = getDependentAssets([{ uri: assetUri }]);
+
+    if (isLoading || isLoadingDependencies) {
         return <p className={styles.loadingMessage}>Loading dependent assets</p>;
     }
-    if (isError) {
+    if (isError || isDependenciesError) {
         return <p className={styles.errorMessage}>{error.message}</p>;
     }
-    if (isEmpty(dependents)) {
+    if (isEmpty(dependents) || isEmpty(dependentsAsAssets.dependentAssets)) {
         return null;
     }
+
+    const filteredDependents = filterDependentsForKnownAssetsOnly(dependents, dependentsAsAssets.dependentAssets);
+    const totalDependents = filteredDependents?.length || 0;
 
     const handleClick = () => {};
 
@@ -50,7 +60,7 @@ export default function Dependents({ assetUri, dependent, isAsset, isDependency 
                     Open Popover
                 </Button>
             </div>
-            <ConnectedAssets connectedAssets={dependents} />
+            <ConnectedAssets connectedAssets={filteredDependents} />
         </DetailsSection>
     );
 }
