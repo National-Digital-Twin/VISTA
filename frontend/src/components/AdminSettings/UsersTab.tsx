@@ -37,11 +37,24 @@ const mapUserDataToUser = (userData: UserData): User => ({
     id: userData.id || '',
     name: userData.name || userData.displayName || '',
     email: userData.email || '',
-    organisation: userData.organisation || '',
+    organisation: getUserOrganisation(userData) || '',
     groups: Array.isArray(userData.groups) ? userData.groups.map((g) => (typeof g === 'string' ? g : g.name)) : [],
     userSince: userData.userSince || userData.memberSince || '',
     userType: (userData.userType as 'General' | 'Admin') || 'General',
 });
+
+const getUserOrganisation = (userData: UserData) => {
+    if (userData?.organisation) {
+        return userData.organisation.replace('@', '');
+    }
+
+    if (userData?.email) {
+        const domain = userData.email.split('@')[1];
+        return domain || 'twinwell.gov.uk';
+    }
+
+    return 'twinwell.gov.uk';
+};
 
 const userMatchesSearch = (user: User, searchLower: string): boolean =>
     user.name.toLowerCase().includes(searchLower) ||

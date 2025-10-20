@@ -34,6 +34,12 @@ OS_NAMES_API_KEY = env("OS_NAMES_API_KEY", default="replace")
 LANDING_PAGE_URL = env("LANDING_PAGE_URL", default="http://localhost:3000")
 IDENTITY_API_URL = env("IDENTITY_API_URL", default="http://localhost:3001")
 
+# Cognito settings
+COGNITO_USER_POOL_ID = env("COGNITO_USER_POOL_ID", default="replace")
+
+# AWS settings
+REGION = "eu-west-2"
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
@@ -68,6 +74,10 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
+REST_FRAMEWORK = {
+    "DEFAULT_RENDERER_CLASSES": ("api.utils.camel_case_renderer.CamelCaseJSONRenderer",),
+}
+
 ROOT_URLCONF = "core.urls"
 
 TEMPLATES = [
@@ -99,7 +109,7 @@ DATABASES = (
             "USER": "vista",
             "HOST": env("DB_HOSTNAME"),
             "PORT": 5432,
-            "REGION": "eu-west-2",
+            "REGION": REGION,
             "OPTIONS": {"sslmode": "require"},
         }
     }

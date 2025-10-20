@@ -17,6 +17,8 @@ export interface UsersListResponse {
     users: UserData[];
 }
 
+const USERS_API_BASE_URL = config.services.users;
+
 export const fetchCurrentUser = async (): Promise<UserData> => {
     const response = await fetch(config.services.user);
 
@@ -29,16 +31,14 @@ export const fetchCurrentUser = async (): Promise<UserData> => {
 };
 
 export const fetchUserById = async (userId: string): Promise<UserData> => {
-    // TODO: Replace with actual API endpoint
-    // const response = await fetch(`${config.services.user}/${userId}`);
-    const response = await fetch('/data/users.json');
+    const response = await fetch(USERS_API_BASE_URL);
 
     if (!response.ok) {
         throw new Error(`Failed to fetch user: ${response.statusText}`);
     }
 
-    const data: UsersListResponse = await response.json();
-    const user = data.users.find((u) => u.id === userId);
+    const data: UserData[] = await response.json();
+    const user = data.find((u) => u.id === userId);
 
     if (!user) {
         throw new Error('User not found');
@@ -61,14 +61,11 @@ export const fetchUserById = async (userId: string): Promise<UserData> => {
 };
 
 export const fetchAllUsers = async (): Promise<UserData[]> => {
-    // TODO: Replace with actual API endpoint
-    // const response = await fetch(`${config.services.user}/all`);
-    const response = await fetch('/data/users.json');
+    const response = await fetch(USERS_API_BASE_URL);
 
     if (!response.ok) {
         throw new Error(`Failed to fetch users: ${response.statusText}`);
     }
 
-    const data: UsersListResponse = await response.json();
-    return data.users;
+    return await response.json();
 };

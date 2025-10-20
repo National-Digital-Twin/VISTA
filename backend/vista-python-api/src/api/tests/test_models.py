@@ -3,7 +3,7 @@
 import pytest
 from model_bakery import baker
 
-from api import models
+from api.arch_models import NarrowRoad, TrafficData
 
 
 @pytest.mark.django_db
@@ -12,7 +12,7 @@ def test_traffic_data():
     assert (
         f"{
             baker.make(
-                models.TrafficData,
+                TrafficData,
                 site_name='site name',
                 day_of_week='Friday',
                 hour='01:00:00.0000',
@@ -29,7 +29,7 @@ def test_narrow_road():
     assert (
         f"{
             baker.make(
-                models.NarrowRoad,
+                NarrowRoad,
                 name='example name',
                 dimension_in=984,
                 width_meters=2.5,
