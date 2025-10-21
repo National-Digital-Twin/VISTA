@@ -21,7 +21,7 @@ class MockIdpRepository:
     def __init__(self):
         """Construct an instance of `MockIdpRepository`."""
 
-    def list_users(self):
+    def list_users_in_group(self):
         """List a set of users."""
         return [user_a]
 

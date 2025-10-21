@@ -17,6 +17,6 @@ class ApplicationUserViewSet(ViewSet):
 
     def list(self, _request):
         """Return a list of all users."""
-        users = self.idp_repository.list_users()
+        users = self.idp_repository.list_users_in_group()
         serializer = IdpUserSerializer(users, many=True)
         return Response(serializer.data)

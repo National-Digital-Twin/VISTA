@@ -33,6 +33,8 @@ interface User {
 type SortField = 'name' | 'organisation' | 'userSince' | 'userType';
 type SortDirection = 'asc' | 'desc';
 
+const DEFAULT_ORGANISATION: string = 'UNKNOWN'
+
 const mapUserDataToUser = (userData: UserData): User => ({
     id: userData.id || '',
     name: userData.name || userData.displayName || '',
@@ -50,10 +52,10 @@ const getUserOrganisation = (userData: UserData) => {
 
     if (userData?.email) {
         const domain = userData.email.split('@')[1];
-        return domain || 'twinwell.gov.uk';
+        return domain || DEFAULT_ORGANISATION;
     }
 
-    return 'twinwell.gov.uk';
+    return DEFAULT_ORGANISATION;
 };
 
 const userMatchesSearch = (user: User, searchLower: string): boolean =>

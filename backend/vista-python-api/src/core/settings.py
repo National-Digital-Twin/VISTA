@@ -36,6 +36,7 @@ IDENTITY_API_URL = env("IDENTITY_API_URL", default="http://localhost:3001")
 
 # Cognito settings
 COGNITO_USER_POOL_ID = env("COGNITO_USER_POOL_ID", default="replace")
+COGNITO_MAIN_USER_GROUP_NAME = env("COGNITO_MAIN_USER_GROUP_NAME", default="vista_access")
 
 # AWS settings
 REGION = "eu-west-2"
