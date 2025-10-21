@@ -1,1 +1,1 @@
-"""Fetches data from all sources."""
+"""Module for the application repositories."""

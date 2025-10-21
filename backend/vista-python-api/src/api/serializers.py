@@ -51,6 +51,17 @@ class AssetSerializer(serializers.ModelSerializer):
         fields: ClassVar[list[str]] = ["id", "name", "geom", "type"]
 
 
+class IdpUserSerializer(serializers.Serializer):
+    """Serializer for the IdpUser domain object."""
+
+    id = serializers.CharField()
+    email = serializers.EmailField()
+    name = serializers.CharField(allow_null=True, required=False)
+    enabled = serializers.BooleanField()
+    status = serializers.CharField(allow_null=True, required=False)
+    user_since = serializers.CharField()
+
+
 class DependencySerializer(serializers.ModelSerializer):
     """Serializer for the Dependency model."""
 

@@ -20,6 +20,9 @@ vista-resources-down:
 run-frontend:
 	yarn --cwd "frontend/" start --host
 
+run-backend:
+	cd backend && direnv exec . poetry run python vista-python-api/src/manage.py runserver
+
 run-backend-migrations:
 	cd backend && direnv exec . poetry run python vista-python-api/src/manage.py makemigrations
 	cd backend && direnv exec . poetry run python vista-python-api/src/manage.py migrate
@@ -32,5 +35,9 @@ populate-data:
 
 lint-backend:
 	cd backend && direnv exec . poetry run ruff format .
-	cd backend && direnv exec . poetry run ruff check .
+	cd backend && direnv exec . poetry run ruff check . --fix
 	cd backend && direnv exec . poetry run bandit -r -q . -lll
+
+lint-frontend:
+	cd frontend && npx prettier --check "src/**/*.{js,ts,tsx}" --write
+	cd frontend && npx sort-package-json --check

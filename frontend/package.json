@@ -124,7 +124,7 @@
         "tailwindcss": "4.1.14",
         "ts-jest": "29.4.5",
         "ts-node": "10.9.2",
-        "vite": "7.1.9",
+        "vite": "7.1.11",
         "vite-plugin-graphql-loader": "4.0.4"
     },
     "publishConfig": {
