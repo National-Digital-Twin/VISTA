@@ -17,6 +17,11 @@ This project follows **Semantic Versioning (SemVer)** ([semver.org](https://semv
 
 ---
 
+## [0.92.4]
+
+- Removed transmission line datasets
+- Re-restored visual dependency lines between assets
+
 ## [0.92.3]
 
 - Added Privacy notice

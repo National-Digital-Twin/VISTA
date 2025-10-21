@@ -36,8 +36,7 @@ const ConnectedAssetsPanel: React.FC<ConnectAssetPanelProps> = ({ connectedAsset
     );
 
     const totalProviders = providers?.length || 0;
-    const totalDependents = new Set(dependencies?.dependentAssets?.map((dependent) => dependent.uri))
-      .size || 0;
+    const totalDependents = new Set(dependencies?.dependentAssets?.map((dependent) => dependent.uri)).size || 0;
 
     return (
         <Box
