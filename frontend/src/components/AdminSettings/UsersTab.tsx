@@ -33,7 +33,7 @@ interface User {
 type SortField = 'name' | 'organisation' | 'userSince' | 'userType';
 type SortDirection = 'asc' | 'desc';
 
-const DEFAULT_ORGANISATION: string = 'UNKNOWN'
+const DEFAULT_ORGANISATION: string = 'UNKNOWN';
 
 const mapUserDataToUser = (userData: UserData): User => ({
     id: userData.id || '',

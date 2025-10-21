@@ -37,3 +37,7 @@ lint-backend:
 	cd backend && direnv exec . poetry run ruff format .
 	cd backend && direnv exec . poetry run ruff check . --fix
 	cd backend && direnv exec . poetry run bandit -r -q . -lll
+
+lint-frontend:
+	cd frontend && npx prettier --check "src/**/*.{js,ts,tsx}" --write
+	cd frontend && npx sort-package-json --check
