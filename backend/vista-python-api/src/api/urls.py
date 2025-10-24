@@ -5,8 +5,8 @@ from rest_framework.routers import DefaultRouter
 
 from api import rest_views
 from api.schema import schema
-from api.views.assets import AssetViewSet
 from api.views.asset_types import AssetTypeViewSet
+from api.views.assets import AssetViewSet
 from api.views.dependency import DependencyViewSet
 from api.views.graph import NoMultipartGraphQLView
 from api.views.users import ApplicationUserViewSet

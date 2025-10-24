@@ -1,15 +1,12 @@
 """A set of tests for the `ApplictionUserViewSet`."""
 
-import json
-
-from api.views.users import ApplicationUserViewSet
-
 user_a = {
     "id": "abc",
     "email": "test@example.com",
     "name": "John Doe",
     "enabled": True,
     "status": "CONFIRMED",
+    "user_since": "2022-02-20",
 }
 
 http_success_code = 200
@@ -26,10 +23,10 @@ class MockIdpRepository:
         return [user_a]
 
 
-def test_list_users():
+def test_list_users(client, monkeypatch):
     """Test that the list function works as expected."""
-    view = ApplicationUserViewSet(idp_repository=MockIdpRepository())
-    response = view.list(None)
+    monkeypatch.setattr("api.views.users.IdpRepository", MockIdpRepository)
+    response = client.get("/api/users/")
 
     assert response.status_code == http_success_code
-    assert response.text == json.dumps([user_a])
+    assert response.data == [user_a]
