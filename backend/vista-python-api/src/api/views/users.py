@@ -10,10 +10,10 @@ from api.serializers import IdpUserSerializer
 class ApplicationUserViewSet(ViewSet):
     """Views for interfacing with application users."""
 
-    def __init__(self, idp_repository=None, **kwargs):
+    def __init__(self, **kwargs):
         """Construct an instance of `ApplicationUserViewSet`."""
         super().__init__(**kwargs)
-        self.idp_repository = idp_repository if idp_repository else IdpRepository()
+        self.idp_repository = IdpRepository()
 
     def list(self, _request):
         """Return a list of all users."""
