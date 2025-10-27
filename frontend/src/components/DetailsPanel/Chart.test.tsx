@@ -1,4 +1,5 @@
 import { render, screen, waitFor } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import Chart from './Chart';
 
 type SampleData = { timestamp: string; reading: number };
@@ -13,8 +14,8 @@ describe('Chart component', () => {
         { timestamp: '2023-01-01T01:00:00Z', reading: 23 },
     ];
 
-    const getUnit = jest.fn((param: string) => (param === 'temp' ? unit : ''));
-    const dataTransform = jest.fn((item: SampleData) => ({
+    const getUnit = vi.fn((param: string) => (param === 'temp' ? unit : ''));
+    const dataTransform = vi.fn((item: SampleData) => ({
         time: item.timestamp,
         value: item.reading,
     }));
@@ -27,7 +28,7 @@ describe('Chart component', () => {
     };
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     it('shows loading message when isLoading is true', () => {

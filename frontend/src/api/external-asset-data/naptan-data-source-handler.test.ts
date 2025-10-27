@@ -1,11 +1,14 @@
 import { Feature, Point } from 'geojson';
+import { describe, it, expect, vi } from 'vitest';
 import Papa from 'papaparse';
 import { NaptanDataSourceHandler } from './naptan-data-source-handler';
 import { AssetSpecification } from '@/hooks/queries/dataset-utils';
 
-globalThis.fetch = jest.fn();
-jest.mock('papaparse', () => ({
-    parse: jest.fn(),
+globalThis.fetch = vi.fn() as any;
+vi.mock('papaparse', () => ({
+    default: {
+        parse: vi.fn(),
+    },
 }));
 
 describe('buildUrlsForDataSource', () => {
@@ -21,8 +24,8 @@ describe('buildUrlsForDataSource', () => {
 describe('fetchDataForAssetSpecification', () => {
     const handler = new NaptanDataSourceHandler('test-locator');
 
-    (fetch as jest.Mock).mockResolvedValue({
-        text: jest.fn().mockResolvedValue(''),
+    (fetch as any).mockResolvedValue({
+        text: vi.fn().mockResolvedValue(''),
     });
 
     it('returns correct feature from data point', async () => {
@@ -30,7 +33,7 @@ describe('fetchDataForAssetSpecification', () => {
             { Longitude: 1, Latitude: 2, ATCOCode: 'test1', CommonName: 'abc' },
             { Longitude: 3, Latitude: 4, ATCOCode: 'test2', CommonName: 'def' },
         ];
-        (Papa.parse as jest.Mock).mockReturnValue({
+        (Papa.parse as any).mockReturnValue({
             data: mockStops,
         });
 
@@ -52,7 +55,7 @@ describe('fetchDataForAssetSpecification', () => {
             { Longitude: 1, Latitude: 2, ATCOCode: 'test1', CommonName: 'abc' },
             { Longitude: 1, Latitude: 2, ATCOCode: 'test2', CommonName: 'abc' },
         ];
-        (Papa.parse as jest.Mock).mockReturnValue({
+        (Papa.parse as any).mockReturnValue({
             data: mockStops,
         });
 

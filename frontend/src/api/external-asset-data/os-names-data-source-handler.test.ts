@@ -1,14 +1,15 @@
 import { Feature, Point } from 'geojson';
+import { describe, it, expect, vi } from 'vitest';
 import { OsNamesDataSourceHandler } from './os-names-data-source-handler';
 import { AssetSpecification } from '@/hooks/queries/dataset-utils';
 
-globalThis.fetch = jest.fn();
+globalThis.fetch = vi.fn() as any;
 
 function mockFetch(obj: any) {
-    (fetch as jest.Mock).mockImplementationOnce(() =>
+    (fetch as any).mockImplementationOnce(() =>
         Promise.resolve({
             ok: true,
-            json: jest.fn().mockResolvedValue(obj),
+            json: vi.fn().mockResolvedValue(obj),
         }),
     );
 }
