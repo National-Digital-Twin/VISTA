@@ -40,17 +40,30 @@ export function useProfileData(userId?: string): ProfileData {
                     const apiUser = await fetchCurrentUser();
 
                     // TODO: Mock data for fields not yet returned by the API
+                    // Transform groups from string array to object array
+                    const groups = Array.isArray(apiUser?.groups)
+                        ? apiUser.groups.map((group: string | { name: string; memberSince: string }) => {
+                              if (typeof group === 'string') {
+                                  return { name: group, memberSince: new Date().toISOString() };
+                              }
+                              return group;
+                          })
+                        : [];
+
                     const userWithMockData: UserData = {
                         ...apiUser,
-                        memberSince: apiUser?.memberSince || '2025-06-02T12:00:00Z',
+                        memberSince: apiUser?.memberSince || new Date().toISOString(),
                         addedBy: apiUser?.addedBy || 'Application owner',
                         userType: apiUser?.userType || 'Administrator',
-                        groups: apiUser?.groups || [
-                            { name: 'Resilience team', memberSince: '2025-06-02T12:00:00Z' },
-                            { name: 'Tywnwell team', memberSince: '2025-06-02T12:00:00Z' },
-                            { name: 'Resilience leads', memberSince: '2025-06-02T12:00:00Z' },
-                            { name: 'Volunteers', memberSince: '2025-06-02T12:00:00Z' },
-                        ],
+                        groups:
+                            groups.length > 0
+                                ? groups
+                                : [
+                                      { name: 'Resilience team', memberSince: new Date().toISOString() },
+                                      { name: 'Tywnwell team', memberSince: new Date().toISOString() },
+                                      { name: 'Resilience leads', memberSince: new Date().toISOString() },
+                                      { name: 'Volunteers', memberSince: new Date().toISOString() },
+                                  ],
                     };
 
                     setUser(userWithMockData);
@@ -111,11 +124,20 @@ export function useProfileData(userId?: string): ProfileData {
     };
 
     const getUserMemberSince = () => {
-        const memberSince = user?.memberSince || user?.userSince || '2025-06-02T12:00:00Z';
+        const memberSince = user?.memberSince || user?.userSince;
+
+        if (!memberSince) {
+            return 'N/A';
+        }
+
         try {
-            return format(new Date(memberSince), 'd MMM yyyy');
+            const date = new Date(memberSince);
+            if (Number.isNaN(date.getTime())) {
+                return 'N/A';
+            }
+            return format(date, 'd MMM yyyy');
         } catch {
-            return '2 Jun 2025';
+            return 'N/A';
         }
     };
 
@@ -130,10 +152,22 @@ export function useProfileData(userId?: string): ProfileData {
     const getUserGroups = () => {
         const groups = user?.groups || [];
 
-        return groups.map((group) => ({
-            name: group.name,
-            memberSince: format(new Date(group.memberSince), 'd MMM yyyy'),
-        }));
+        return groups.map((group) => {
+            let memberSinceString = 'N/A';
+
+            if (group.memberSince) {
+                try {
+                    memberSinceString = format(new Date(group.memberSince), 'd MMM yyyy');
+                } catch {
+                    memberSinceString = 'N/A';
+                }
+            }
+
+            return {
+                name: group.name,
+                memberSince: memberSinceString,
+            };
+        });
     };
 
     const isOwnProfile = !userId || (!!currentUserId && userId === currentUserId);

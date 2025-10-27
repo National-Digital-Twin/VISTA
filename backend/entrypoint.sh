@@ -24,4 +24,4 @@ fi
 
 echo "Run migrate"
 # Run db migration
-/venv/bin/python3 /vista-python-api/core/manage.py migrate
+/venv/bin/python3 /vista-python-api/src/manage.py migrate

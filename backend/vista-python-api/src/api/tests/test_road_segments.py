@@ -8,7 +8,7 @@ import pytest
 from django.urls import reverse
 from model_bakery import baker
 
-from api import models
+from api.arch_models import TrafficData
 
 
 @pytest.mark.django_db
@@ -41,7 +41,7 @@ def test_traffic_data_query_blank(client):
 def test_traffic_data_query(client):
     """Test traffic data query."""
     baker.make(
-        models.TrafficData,
+        TrafficData,
         coordinates="xyz",
         direction="up",
         day_of_week="Friday",

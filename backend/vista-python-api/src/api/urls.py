@@ -5,13 +5,17 @@ from rest_framework.routers import DefaultRouter
 
 from api import rest_views
 from api.schema import schema
+from api.views.asset_types import AssetTypeViewSet
 from api.views.assets import AssetViewSet
 from api.views.dependency import DependencyViewSet
 from api.views.graph import NoMultipartGraphQLView
+from api.views.users import ApplicationUserViewSet
 
 router = DefaultRouter()
 router.register(r"assets", AssetViewSet)
+router.register(r"assettypes", AssetTypeViewSet)
 router.register(r"dependency", DependencyViewSet)
+router.register(r"users", ApplicationUserViewSet, basename="user")
 
 urlpatterns = [
     path("graphql/", NoMultipartGraphQLView.as_view(schema=schema), name="graphql"),

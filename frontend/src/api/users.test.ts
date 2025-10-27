@@ -5,9 +5,12 @@ vi.mock('@/config/app-config', () => ({
     default: {
         services: {
             user: '/api/user',
+            users: '/ndtp-python/api/users/',
         },
     },
 }));
+
+const USERS_API_BASE_URL = '/ndtp-python/api/users/';
 
 describe('users API', () => {
     let fetchMock: ReturnType<typeof vi.fn>;
@@ -122,12 +125,12 @@ describe('users API', () => {
         it('successfully fetches user by ID', async () => {
             fetchMock.mockResolvedValue({
                 ok: true,
-                json: vi.fn().mockResolvedValue(mockUsersResponse),
+                json: vi.fn().mockResolvedValue(mockUsersResponse.users),
             });
 
             const result = await fetchUserById('user-1');
 
-            expect(fetchMock).toHaveBeenCalledWith('/data/users.json');
+            expect(fetchMock).toHaveBeenCalledWith(USERS_API_BASE_URL);
             expect(result.id).toBe('user-1');
             expect(result.email).toBe('user1@example.com');
         });
@@ -135,7 +138,7 @@ describe('users API', () => {
         it('throws error when user not found', async () => {
             fetchMock.mockResolvedValue({
                 ok: true,
-                json: vi.fn().mockResolvedValue(mockUsersResponse),
+                json: vi.fn().mockResolvedValue(mockUsersResponse.users),
             });
 
             await expect(fetchUserById('non-existent')).rejects.toThrow('User not found');
@@ -151,16 +154,14 @@ describe('users API', () => {
         });
 
         it('normalizes string groups to objects', async () => {
-            const usersWithStringGroups: UsersListResponse = {
-                users: [
-                    {
-                        id: 'user-3',
-                        email: 'user3@example.com',
-                        userSince: '2024-01-01',
-                        groups: ['Admin', 'Users'] as any,
-                    },
-                ],
-            };
+            const usersWithStringGroups = [
+                {
+                    id: 'user-3',
+                    email: 'user3@example.com',
+                    userSince: '2024-01-01',
+                    groups: ['Admin', 'Users'] as any,
+                },
+            ];
 
             fetchMock.mockResolvedValue({
                 ok: true,
@@ -177,16 +178,14 @@ describe('users API', () => {
         });
 
         it('uses memberSince fallback when normalizing groups', async () => {
-            const usersWithMemberSince: UsersListResponse = {
-                users: [
-                    {
-                        id: 'user-4',
-                        email: 'user4@example.com',
-                        memberSince: '2023-12-01',
-                        groups: ['Group1'] as any,
-                    },
-                ],
-            };
+            const usersWithMemberSince = [
+                {
+                    id: 'user-4',
+                    email: 'user4@example.com',
+                    memberSince: '2023-12-01',
+                    groups: ['Group1'] as any,
+                },
+            ];
 
             fetchMock.mockResolvedValue({
                 ok: true,
@@ -199,15 +198,13 @@ describe('users API', () => {
         });
 
         it('uses current date when no date available for groups', async () => {
-            const usersWithNoDate: UsersListResponse = {
-                users: [
-                    {
-                        id: 'user-5',
-                        email: 'user5@example.com',
-                        groups: ['Group1'] as any,
-                    },
-                ],
-            };
+            const usersWithNoDate = [
+                {
+                    id: 'user-5',
+                    email: 'user5@example.com',
+                    groups: ['Group1'] as any,
+                },
+            ];
 
             fetchMock.mockResolvedValue({
                 ok: true,
@@ -222,7 +219,7 @@ describe('users API', () => {
         it('preserves existing object groups', async () => {
             fetchMock.mockResolvedValue({
                 ok: true,
-                json: vi.fn().mockResolvedValue(mockUsersResponse),
+                json: vi.fn().mockResolvedValue(mockUsersResponse.users),
             });
 
             const result = await fetchUserById('user-1');
@@ -234,14 +231,12 @@ describe('users API', () => {
         });
 
         it('handles user with no groups', async () => {
-            const userNoGroups: UsersListResponse = {
-                users: [
-                    {
-                        id: 'user-6',
-                        email: 'user6@example.com',
-                    },
-                ],
-            };
+            const userNoGroups = [
+                {
+                    id: 'user-6',
+                    email: 'user6@example.com',
+                },
+            ];
 
             fetchMock.mockResolvedValue({
                 ok: true,
@@ -281,12 +276,12 @@ describe('users API', () => {
         it('successfully fetches all users', async () => {
             fetchMock.mockResolvedValue({
                 ok: true,
-                json: vi.fn().mockResolvedValue(mockUsersResponse),
+                json: vi.fn().mockResolvedValue(mockUsersResponse.users),
             });
 
             const result = await fetchAllUsers();
 
-            expect(fetchMock).toHaveBeenCalledWith('/data/users.json');
+            expect(fetchMock).toHaveBeenCalledWith(USERS_API_BASE_URL);
             expect(result).toHaveLength(3);
             expect(result[0].id).toBe('user-1');
             expect(result[1].id).toBe('user-2');
@@ -296,7 +291,7 @@ describe('users API', () => {
         it('returns empty array when no users', async () => {
             fetchMock.mockResolvedValue({
                 ok: true,
-                json: vi.fn().mockResolvedValue({ users: [] }),
+                json: vi.fn().mockResolvedValue([]),
             });
 
             const result = await fetchAllUsers();
@@ -320,22 +315,20 @@ describe('users API', () => {
         });
 
         it('preserves all user properties', async () => {
-            const detailedUser: UsersListResponse = {
-                users: [
-                    {
-                        id: 'user-detailed',
-                        email: 'detailed@example.com',
-                        name: 'Detailed User',
-                        displayName: 'Detailed Display',
-                        organisation: 'Test Org',
-                        memberSince: '2024-01-01',
-                        addedBy: 'admin@example.com',
-                        userType: 'Admin',
-                        userSince: '2024-01-01',
-                        groups: [{ name: 'Admin', memberSince: '2024-01-01' }],
-                    },
-                ],
-            };
+            const detailedUser = [
+                {
+                    id: 'user-detailed',
+                    email: 'detailed@example.com',
+                    name: 'Detailed User',
+                    displayName: 'Detailed Display',
+                    organisation: 'Test Org',
+                    memberSince: '2024-01-01',
+                    addedBy: 'admin@example.com',
+                    userType: 'Admin',
+                    userSince: '2024-01-01',
+                    groups: [{ name: 'Admin', memberSince: '2024-01-01' }],
+                },
+            ];
 
             fetchMock.mockResolvedValue({
                 ok: true,
@@ -344,7 +337,7 @@ describe('users API', () => {
 
             const result = await fetchAllUsers();
 
-            expect(result[0]).toEqual(detailedUser.users[0]);
+            expect(result[0]).toEqual(detailedUser[0]);
         });
     });
 });

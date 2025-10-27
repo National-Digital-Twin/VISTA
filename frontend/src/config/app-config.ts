@@ -11,6 +11,7 @@ const config = {
         ontology: import.meta.env.VITE_ONTOLOGY_SERVICE_URL || '/transparent-proxy',
         ndtpPython: '/ndtp-python/api/graphql/',
         user: '/ndtp-python/api/user/',
+        users: '/ndtp-python/api/users/',
         signout: '/ndtp-python/api/auth/signout/',
     },
     configErrors: [] as string[],

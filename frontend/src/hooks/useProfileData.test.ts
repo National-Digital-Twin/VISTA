@@ -76,7 +76,7 @@ describe('useProfileData', () => {
                 expect(result.current.loading).toBe(false);
             });
 
-            expect(result.current.user?.memberSince).toBe('2025-06-02T12:00:00Z');
+            expect(result.current.user?.memberSince).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/);
             expect(result.current.user?.addedBy).toBe('Application owner');
             expect(result.current.user?.userType).toBe('Administrator');
             expect(result.current.user?.groups).toHaveLength(4);
@@ -264,7 +264,7 @@ describe('useProfileData', () => {
         });
 
         it('getUserMemberSince handles invalid dates', async () => {
-            await testHelperFunction({ memberSince: 'invalid-date', email: 'test@example.com' }, 'getUserMemberSince', '2 Jun 2025');
+            await testHelperFunction({ memberSince: 'invalid-date', email: 'test@example.com' }, 'getUserMemberSince', 'N/A');
         });
 
         it('getUserGroups formats dates correctly', async () => {
