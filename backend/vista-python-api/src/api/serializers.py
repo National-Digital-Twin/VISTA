@@ -5,7 +5,7 @@ from typing import ClassVar
 from rest_framework import serializers
 
 from api.models.asset import Asset
-from api.models.asset_type import AssetCategory, AssetSubCategory, AssetType
+from api.models.asset_type import AssetCategory, AssetSubCategory, AssetType, DataSource
 from api.models.dependency import Dependency
 
 
@@ -49,6 +49,19 @@ class AssetSerializer(serializers.ModelSerializer):
 
         model = Asset
         fields: ClassVar[list[str]] = ["id", "name", "geom", "type"]
+
+
+class DataSourceSerializer(serializers.ModelSerializer):
+    """Serializer for the DataSource model."""
+
+    asset_count = serializers.IntegerField(read_only=True)
+    last_updated = serializers.DateTimeField(read_only=True)
+
+    class Meta:
+        """Configuration for the `DataSourceSerializer`."""
+
+        model = DataSource
+        fields: ClassVar[list[str]] = ["id", "name", "asset_count", "last_updated"]
 
 
 class IdpUserSerializer(serializers.Serializer):

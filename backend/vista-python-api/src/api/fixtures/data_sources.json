@@ -1,0 +1,50 @@
+[
+  {
+    "model": "api.datasource",
+    "pk": "3b9b39b7-ff9a-4945-afb1-71672c89f43e",
+    "fields": {
+      "name": "CQC API",
+      "owner": "Care Quality Commission"
+    }
+  },
+  {
+    "model": "api.datasource",
+    "pk": "32468a38-6ec5-403f-931e-a777ac84b115",
+    "fields": {
+      "name": "National Grid",
+      "owner": "National Grid"
+    }
+  },
+  {
+    "model": "api.datasource",
+    "pk": "741ad91d-d889-45f0-9d13-feaf7b134e56",
+    "fields": {
+      "name": "National Public Transport Access Node (NaPTAN)",
+      "owner": "Department for Transport"
+    }
+  },
+  {
+    "model": "api.datasource",
+    "pk": "d71f0a80-fc1b-4206-a9f3-4d495dcd09e6",
+    "fields": {
+      "name": "NHS Open Data Portal",
+      "owner": "NHS"
+    }
+  },
+  {
+    "model": "api.datasource",
+    "pk": "d09b1db6-821b-400f-9297-e72529d5e9e3",
+    "fields": {
+      "name": "OS Names",
+      "owner": "Ordnance Survey"
+    }
+  },
+  {
+    "model": "api.datasource",
+    "pk": "84e986cd-73dc-4324-8639-1b97d491ce25",
+    "fields": {
+      "name": "OS National Geographic Database (NGD)",
+      "owner": "Ordnance Survey"
+    }
+  }
+]

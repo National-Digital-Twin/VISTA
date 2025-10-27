@@ -149,6 +149,7 @@ indent-style = "space"
 "osmnx.py" = ["N803"]             # Let me call my graph big G.
 "resolvers.py" = ["N803", "N806"]
 "routing.py" = ["N803", "N806"]
+"tests/**/*.py" = ["F401"] # Keep unused imports to allow router to resolve correctly
 
 ##############
 # 📣 Towncrier

@@ -30,6 +30,7 @@ run-backend-migrations:
 populate-data:
 	cd backend && direnv exec . poetry run python vista-python-api/src/manage.py loaddata asset_categories.json
 	cd backend && direnv exec . poetry run python vista-python-api/src/manage.py loaddata asset_subcategories.json
+	cd backend && direnv exec . poetry run python vista-python-api/src/manage.py loaddata data_sources.json
 	cd backend && direnv exec . poetry run python vista-python-api/src/manage.py loaddata asset_types.json
 	cd backend && direnv exec . poetry run python vista-python-api/src/manage.py refresh_data
 

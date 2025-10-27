@@ -26,11 +26,22 @@ class AssetSubCategory(models.Model):
         return self.name
 
 
+class DataSource(models.Model):
+    """Data source model."""
+
+    id = models.UUIDField(unique=True, primary_key=True)
+    name = models.CharField(max_length=256)
+    owner = models.CharField(max_length=256)
+
+
 class AssetType(models.Model):
     """Asset Type model."""
 
     id = models.UUIDField(unique=True, primary_key=True)
     sub_category_id = models.ForeignKey(AssetSubCategory, on_delete=models.CASCADE)
+    data_source_id = models.ForeignKey(
+        DataSource, related_name="types", on_delete=models.CASCADE, null=True
+    )
     name = models.CharField(max_length=256)
 
     def __str__(self):

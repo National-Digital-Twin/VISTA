@@ -3,6 +3,7 @@
 import uuid
 
 from django.contrib.gis.db import models
+from django.utils import timezone
 
 from .asset_type import AssetType
 
@@ -12,13 +13,16 @@ class Asset(models.Model):
 
     id = models.UUIDField(unique=True, primary_key=True)
     name = models.CharField(max_length=255, blank=True)
-    type = models.ForeignKey(AssetType, on_delete=models.CASCADE)
+    type = models.ForeignKey(AssetType, related_name="assets", on_delete=models.CASCADE)
     geom = models.GeometryField()
+    last_updated = models.DateTimeField(null=True)
 
     @classmethod
     def create(cls, name, asset_type, geom):
         """Create an instance."""
-        return cls(id=uuid.uuid4(), name=name, type=asset_type, geom=geom)
+        return cls(
+            id=uuid.uuid4(), name=name, type=asset_type, geom=geom, last_updated=timezone.now()
+        )
 
     def __str__(self):
         """Asset string representation."""
