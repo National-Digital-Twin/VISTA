@@ -168,7 +168,7 @@ export function ElementsProvider({ children }: ElementsProviderProps) {
             dependenciesByFloodArea = [];
         }
         return [dependenciesByFloodArea, assetsAtRisk];
-    }, [showPrimary, primaryAssetsAtRisk, showSecondary, isLoadingDependencies, getDependentAssets]);
+    }, [showPrimary, primaryAssetsAtRisk, showSecondary, isLoadingDependencies, getDependentAssets, isLoadingAssets]);
 
     const assetCriticalities = useMemo(
         () => Array.from(new Set(assetsByFloodArea.map((asset) => asset.dependent.criticalitySum))).sort((a: number, b: number) => a - b),
