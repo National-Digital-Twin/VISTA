@@ -1,5 +1,7 @@
 import { createParalogEndpoint } from './utils';
 
+const FLOOD_AREAS_TO_EXCLUDE = ['Eastern Yar', 'Gurnard Luck', 'St Johns, Ryde'];
+
 export const fetchAllFloodAreas = async () => {
     const response = await fetch(createParalogEndpoint('flood-watch-areas'));
 
@@ -7,6 +9,11 @@ export const fetchAllFloodAreas = async () => {
     if (!response.ok) {
         throw new Error(data?.detail || 'An error occurred while retrieving flood areas');
     }
+
+    if (Array.isArray(data)) {
+        return data.filter((o) => 'name' in o && !FLOOD_AREAS_TO_EXCLUDE.includes(o.name));
+    }
+
     return data;
 };
 
