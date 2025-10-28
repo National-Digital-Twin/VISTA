@@ -65,6 +65,7 @@ function SearchControl({ searchQuery, onSearch }: SearchControlProps) {
     return (
         <Box
             component="form"
+            onSubmit={(e) => e.preventDefault()}
             sx={{
                 mb: 2,
                 display: 'flex',
