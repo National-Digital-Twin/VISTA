@@ -160,7 +160,7 @@ export function ElementsProvider({ children }: ElementsProviderProps) {
     const [dependenciesByFloodArea, assetsByFloodArea] = useMemo(() => {
         let assetsAtRisk = showPrimary ? primaryAssetsAtRisk : [];
         let dependenciesByFloodArea;
-        if (showSecondary && !isLoadingDependencies) {
+        if (showSecondary && !isLoadingDependencies && !isLoadingAssets) {
             const { dependencies: dependenciesAtRisk, dependentAssets: secondaryAssetsAtRisk } = getDependentAssets(primaryAssetsAtRisk);
             assetsAtRisk = [...assetsAtRisk, ...secondaryAssetsAtRisk];
             dependenciesByFloodArea = dependenciesAtRisk;
@@ -168,7 +168,7 @@ export function ElementsProvider({ children }: ElementsProviderProps) {
             dependenciesByFloodArea = [];
         }
         return [dependenciesByFloodArea, assetsAtRisk];
-    }, [showPrimary, primaryAssetsAtRisk, showSecondary, isLoadingDependencies, getDependentAssets]);
+    }, [showPrimary, primaryAssetsAtRisk, showSecondary, isLoadingDependencies, getDependentAssets, isLoadingAssets]);
 
     const assetCriticalities = useMemo(
         () => Array.from(new Set(assetsByFloodArea.map((asset) => asset.dependent.criticalitySum))).sort((a: number, b: number) => a - b),

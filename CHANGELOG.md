@@ -21,6 +21,7 @@ This project follows **Semantic Versioning (SemVer)** ([semver.org](https://semv
 
 - Prevent default form submission behaviour when pressing Enter in search bar
 - Hide problematic layers from the layer panel.
+- Add an extra guard to dependency rendering.
 
 ## [0.92.4]
 
