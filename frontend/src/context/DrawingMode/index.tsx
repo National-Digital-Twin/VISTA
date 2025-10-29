@@ -164,6 +164,10 @@ export const useDrawingMode = <T extends Feature>(
         [map],
     );
 
+    const resetCursor = useCallback(() => {
+        setCursor('');
+    }, [setCursor]);
+
     const updateRadiusLabel = useCallback(
         (centerCoords: [number, number], edgeCoords: [number, number]) => {
             if (!map) {
@@ -313,7 +317,7 @@ export const useDrawingMode = <T extends Feature>(
             const handleDrawCreate = (event: DrawCreateEvent) => {
                 onAddFeatures(event.features);
                 removeMouseListeners();
-                setCursor('grab');
+                resetCursor();
                 onDrawingEnd?.();
                 map.off('draw.create', handleDrawCreate);
                 map.off('draw.modechange', handleModeChange);
@@ -324,7 +328,7 @@ export const useDrawingMode = <T extends Feature>(
                 if (event.mode === 'simple_select') {
                     if (drawingMode === 'drag_circle') {
                         map.getMap().dragPan.enable();
-                        setCursor('grab');
+                        resetCursor();
                     }
                     onDrawingEnd?.();
                 }
@@ -390,7 +394,19 @@ export const useDrawingMode = <T extends Feature>(
             map.on('draw.create', handleDrawCreate);
             map.on('draw.modechange', handleModeChange);
         },
-        [draw, map, onDrawingStart, onDrawingEnd, onAddFeatures, handleDrawEvent, updateRadiusLabel, removeRadiusLabel, showRadiusDialog, setCursor],
+        [
+            draw,
+            map,
+            onDrawingStart,
+            onDrawingEnd,
+            onAddFeatures,
+            handleDrawEvent,
+            updateRadiusLabel,
+            removeRadiusLabel,
+            showRadiusDialog,
+            setCursor,
+            resetCursor,
+        ],
     );
 
     useEffect(() => {
