@@ -1,15 +1,15 @@
 [
     {
-        "buildinguse": "Commercial Activity: Industrial Or Manufacturing",
         "type": "3db4c594-76d8-480a-b52b-4f40d4d6b3da",
         "source": "os_ngd",
-        "collection": "bld-fts-building-4"
+        "collection": "bld-fts-building-4",
+        "cqlFilter": "description='Commercial Building' AND buildinguse='Commercial Activity: Industrial Or Manufacturing'"
     },
     {
-        "buildinguse": "Commercial Activity: Retail",
         "type": "49afc7ff-6126-4860-b893-6329a0cd6e49",
         "source": "os_ngd",
-        "collection": "bld-fts-building-4"
+        "collection": "bld-fts-building-4",
+        "cqlFilter": "description='Commercial Building' AND buildinguse='Commercial Activity: Retail'"
     },
     {
         "description": ["Telephone Exchange"],
@@ -261,7 +261,7 @@
                 "filterValue": "Bare Earth Or Grass"
             }
         ],
-        "cqlFilter": "geometry_area_m2 > 10000"
+        "cqlFilter": "description='Bare Earth Or Grass' AND geometry_area_m2 > 10000"
     },
     {
         "description": ["Biogas Power Station"],
