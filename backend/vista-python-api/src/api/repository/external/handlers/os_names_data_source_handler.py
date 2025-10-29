@@ -1,5 +1,7 @@
 """Handler for the OS Names data source."""
 
+from functools import reduce
+
 from django.conf import settings
 
 from api.repository.external.external_asset_mapper import ExternalAssetMapper
@@ -20,7 +22,25 @@ class OsNamesDataSourceHandler(DataSourceHandler):
     async def fetch_data_for_asset_specification(self, asset_specification, url):
         """Fetch the OS Names data per the specification given."""
         data = await self.fetch_from_url_with_retry(url)
+        simplified_data = reduce(
+            self._merge_entries_with_same_name_at_same_location(set()), data["results"], []
+        )
         return [
-            ExternalAssetMapper.map_from_os_names(result["GAZETTEER_ENTRY"], asset_specification)
-            for result in data["results"]
+            ExternalAssetMapper.map_from_os_names(result, asset_specification)
+            for result in simplified_data
         ]
+
+    def _merge_entries_with_same_name_at_same_location(self, seen):
+        def reduce(entries, next_entry):
+            entry = next_entry["GAZETTEER_ENTRY"]
+            if not entry["NAME1"]:
+                entries.append(entry)
+            else:
+                location = f"{entry['NAME1']}_{entry['GEOMETRY_X']}_{entry['GEOMETRY_Y']}"
+                if location in seen:
+                    return entries
+                seen.add(location)
+                entries.append(entry)
+            return entries
+
+        return reduce

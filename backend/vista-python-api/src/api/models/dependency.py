@@ -11,8 +11,12 @@ class Dependency(models.Model):
     """Dependency model."""
 
     id = models.UUIDField(unique=True, default=uuid.uuid4, primary_key=True)
-    provider_asset = models.ForeignKey(Asset, on_delete=models.CASCADE, related_name="provider")
-    dependent_asset = models.ForeignKey(Asset, on_delete=models.CASCADE, related_name="dependent")
+    provider_asset = models.ForeignKey(
+        Asset, on_delete=models.CASCADE, related_name="provider", to_field="external_id"
+    )
+    dependent_asset = models.ForeignKey(
+        Asset, on_delete=models.CASCADE, related_name="dependent", to_field="external_id"
+    )
 
     @classmethod
     def create(cls, provider_asset, dependent_asset):

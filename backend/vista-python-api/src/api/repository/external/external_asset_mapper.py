@@ -25,58 +25,64 @@ class ExternalAssetMapper:
         asset_type = AssetType(id=asset_specification["type"])
         geom = GEOSGeometry(dumps(feature["geometry"]))
 
-        return Asset.create(name, asset_type, geom)
+        return Asset.create(feature["id"], name, asset_type, geom)
 
     @staticmethod
     def map_from_naptan(naptan_stop, asset_specification):
         """Create an instance of :class:api.models.assets.Asset from a NAPTAN stop."""
         ExternalAssetMapper.validate_fields(
-            naptan_stop, ["CommonName", "Longitude", "Latitude"], "naptan"
+            naptan_stop, ["CommonName", "Longitude", "Latitude", "ATCOCode"], "naptan"
         )
+        external_id = naptan_stop["ATCOCode"]
         name = naptan_stop["CommonName"]
         asset_type = AssetType(id=asset_specification["type"])
         geom = Point(float(naptan_stop["Longitude"]), float(naptan_stop["Latitude"]))
 
-        return Asset.create(name, asset_type, geom)
+        return Asset.create(external_id, name, asset_type, geom)
 
     @staticmethod
     def map_from_os_names(entry, asset_specification):
         """Create an instance of :class:api.models.assets.Asset from an OS names data record."""
         ExternalAssetMapper.validate_fields(
-            entry, ["NAME1", "GEOMETRY_X", "GEOMETRY_Y"], "os_names"
+            entry, ["NAME1", "GEOMETRY_X", "GEOMETRY_Y", "ID"], "os_names"
         )
+        external_id = entry["ID"]
         name = entry["NAME1"] if "NAME2" not in entry else entry["NAME2"]
         asset_type = AssetType(id=asset_specification["type"])
 
         geom = Point(entry["GEOMETRY_X"], entry["GEOMETRY_Y"], srid=27700)
         geom.transform(4326)
 
-        return Asset.create(name, asset_type, geom)
+        return Asset.create(external_id, name, asset_type, geom)
 
     @staticmethod
     def map_from_cqc(location_details, asset_specification):
         """Create an instance of :class:api.models.assets.Asset from location details from CQC."""
         ExternalAssetMapper.validate_fields(
-            location_details, ["name", "onspdLongitude", "onspdLatitude"], "cqc"
+            location_details, ["name", "onspdLongitude", "onspdLatitude", "locationId"], "cqc"
         )
+        external_id = location_details["locationId"]
         name = location_details["name"]
         asset_type = AssetType(id=asset_specification["type"])
         geom = Point(
             float(location_details["onspdLongitude"]), float(location_details["onspdLatitude"])
         )
 
-        return Asset.create(name, asset_type, geom)
+        return Asset.create(external_id, name, asset_type, geom)
 
     @staticmethod
     def map_from_nhs(record, coords, asset_specification):
         """Create an instance of :class:api.models.assets.Asset from an NHS data record."""
-        ExternalAssetMapper.validate_fields(record, ["PHARMACY_TRADING_NAME"], "nhs")
+        ExternalAssetMapper.validate_fields(
+            record, ["PHARMACY_ODS_CODE_F_CODE", "PHARMACY_TRADING_NAME"], "nhs"
+        )
+        external_id = record["PHARMACY_ODS_CODE_F_CODE"]
         name = record["PHARMACY_TRADING_NAME"]
         asset_type = AssetType(id=asset_specification["type"])
         lat, lon = coords
         geom = Point(lon, lat)
 
-        return Asset.create(name, asset_type, geom)
+        return Asset.create(external_id, name, asset_type, geom)
 
     @staticmethod
     def validate_fields(input_data: dict, required_fields: list[str], source: str):
