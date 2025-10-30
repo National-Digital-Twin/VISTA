@@ -1,19 +1,10 @@
 import { Storage as StorageIcon } from '@mui/icons-material';
 import { Box, Typography } from '@mui/material';
+import PageContainer from '@/components/PageContainer';
 
 export default function DataRoom() {
     return (
-        <Box
-            sx={{
-                p: 3,
-                minHeight: '100%',
-                width: '100%',
-                display: 'block',
-                position: 'relative',
-                backgroundColor: 'background.default',
-                color: 'text.primary',
-            }}
-        >
+        <PageContainer sx={{ minHeight: '100%' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
                 <StorageIcon sx={{ fontSize: 32, color: 'primary.main' }} />
                 <Typography variant="h4" component="h1">
@@ -34,6 +25,6 @@ export default function DataRoom() {
                     This feature is under development.
                 </Typography>
             </Box>
-        </Box>
+        </PageContainer>
     );
 }

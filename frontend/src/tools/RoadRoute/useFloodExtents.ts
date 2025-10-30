@@ -4,15 +4,16 @@ import useSharedStore from '@/hooks/useSharedStore';
 import { ElementsContext } from '@/context';
 
 function useLiveFloodExtents() {
-    // Live flood extents come from the elements context directly
-    const { liveFloodAreas } = useContext(ElementsContext);
-    return liveFloodAreas;
+    const context = useContext(ElementsContext);
+    return context?.liveFloodAreas ?? [];
 }
 
 function useHistoricFloodExtents() {
-    // Historic flood extents come from the elements context, though need processing
-    const { clickedFloodAreas } = useContext(ElementsContext);
-    const floodAreas = useMemo(() => Object.values(clickedFloodAreas).flat(), [clickedFloodAreas]);
+    const context = useContext(ElementsContext);
+    const floodAreas = useMemo(() => {
+        const clickedFloodAreas = context?.clickedFloodAreas ?? {};
+        return Object.values(clickedFloodAreas).flat();
+    }, [context?.clickedFloodAreas]);
     return floodAreas;
 }
 

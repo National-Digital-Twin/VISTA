@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import { CSSProperties, useEffect, useMemo, useState } from 'react';
 import { RectangleProps, ReferenceArea } from 'recharts';
-import { CategoricalChartState } from 'recharts/types/chart/types';
+// CategoricalChartState is no longer exported in Recharts v3
 
 const lineChartStyle: CSSProperties = {
     userSelect: 'none',
@@ -38,7 +38,7 @@ export const useZoomChart = <Data extends { time: string; value: number }>({ dat
     }));
 
     const legacyTicks = useMemo(() => {
-        const ticks = [];
+        const ticks: typeof zoomableData = [];
         zoomableData.forEach((item) => {
             if (item.time && typeof item.time === 'string') {
                 const date = item.time.split('T')[0];
@@ -55,11 +55,11 @@ export const useZoomChart = <Data extends { time: string; value: number }>({ dat
         setDomain(defaultDomain);
     };
 
-    const handleMouseDown = ({ activeLabel }: CategoricalChartState) => {
+    const handleMouseDown = ({ activeLabel }: { activeLabel?: string }) => {
         setZoomAreaStart(Number(activeLabel));
     };
 
-    const handleMouseMove = ({ activeLabel }: CategoricalChartState) => {
+    const handleMouseMove = ({ activeLabel }: { activeLabel?: string }) => {
         if (!zoomAreaStart) {
             return;
         }
@@ -139,7 +139,7 @@ export const useZoomChart = <Data extends { time: string; value: number }>({ dat
             : undefined,
         ZoomAreaElement:
             zoomAreaStart && zoomAreaEnd && enabled ? (
-                <ReferenceArea strokeOpacity={0.5} strokeDasharray="3 3" {...referenceAreaProps} x1={zoomAreaStart} x2={zoomAreaEnd} />
+                <ReferenceArea strokeOpacity={0.5} strokeDasharray="3 3" {...referenceAreaProps} x1={zoomAreaStart} x2={zoomAreaEnd} ref={undefined} />
             ) : null,
         ZoomOutButtonElement:
             domain !== defaultDomain && enabled ? (

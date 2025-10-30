@@ -250,7 +250,7 @@ export default class Asset {
         return null;
     }
 
-    getDetails(assetInfo) {
+    getDetails(assetInfo: any) {
         return {
             title: assetInfo?.name ?? this.name ?? 'Name unknown',
             criticality: this.dependent.criticalitySum,

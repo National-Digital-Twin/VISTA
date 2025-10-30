@@ -10,7 +10,7 @@ const theme = createTheme({
             main: '#002244',
         },
         background: {
-            default: '#f0f2f2',
+            default: '#ffffff',
         },
         text: {
             primary: '#0e142b',
@@ -26,6 +26,9 @@ const theme = createTheme({
         },
         chip: {
             main: '#D4E3FF',
+        },
+        neutral: {
+            main: '#f0f2f2',
         },
     },
     typography: {
@@ -74,11 +77,11 @@ const theme = createTheme({
         },
         MuiTab: {
             styleOverrides: {
-                root: {
+                root: ({ theme }) => ({
                     '&.Mui-selected': {
-                        backgroundColor: '#f0f2f2',
+                        backgroundColor: theme.palette.neutral.main,
                     },
-                },
+                }),
             },
         },
     },
@@ -88,12 +91,14 @@ declare module '@mui/material/styles' {
         accent: Palette['primary'];
         border: Palette['primary'];
         chip: Palette['primary'];
+        neutral: Palette['primary'];
     }
 
     interface PaletteOptions {
         accent?: PaletteOptions['primary'];
         border?: PaletteOptions['primary'];
         chip?: PaletteOptions['primary'];
+        neutral?: PaletteOptions['primary'];
     }
 }
 

@@ -117,7 +117,7 @@ function useStyles(): Record<string, FoundIcon> | undefined {
 export default function useFindIcon(classUri: string): FoundIcon {
     const styles = useStyles();
 
-    if (classUri in styles) {
+    if (styles && classUri in styles) {
         return styles[classUri];
     }
 

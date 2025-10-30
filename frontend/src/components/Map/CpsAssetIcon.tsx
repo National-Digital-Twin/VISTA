@@ -14,7 +14,7 @@ export const CpsAssetIcon = ({ children, width = 50, height = 50, ...rest }: Cps
 	v128.266H20.688V11z M131.517,241.249L26.485,150.266H230.1L131.517,241.249z"
         />
         <g>
-            <text x="50%" y="35%" dominantBaseline="top" textAnchor="middle" fontSize="48" fontWeight="bold" fontFamily="Arial" fill="black">
+            <text x="50%" y="35%" dominantBaseline="hanging" textAnchor="middle" fontSize="48" fontWeight="bold" fontFamily="Arial" fill="black">
                 {children}
             </text>
         </g>

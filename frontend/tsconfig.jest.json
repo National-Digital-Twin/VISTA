@@ -1,9 +1,0 @@
-{
-    "extends": "./tsconfig.json",
-    "compilerOptions": {
-        "jsx": "react-jsx",
-        "esModuleInterop": true,
-        "types": ["jest", "node"],
-        "allowJs": true
-    }
-}

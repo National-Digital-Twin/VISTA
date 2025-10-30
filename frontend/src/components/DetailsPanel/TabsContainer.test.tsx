@@ -1,14 +1,16 @@
 import { render, screen } from '@testing-library/react';
+import { describe, it, expect, vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import TabsContainer from './TabsContainer';
 
-// Mock CSS module to prevent style-related errors
-jest.mock('./style.module.css', () => ({
-    tabsContainer: 'tabsContainer',
-    tabList: 'tabList',
-    tabButton: 'tabButton',
-    active: 'active',
-    tabContent: 'tabContent',
+vi.mock('./style.module.css', () => ({
+    default: {
+        tabsContainer: 'tabsContainer',
+        tabList: 'tabList',
+        tabButton: 'tabButton',
+        active: 'active',
+        tabContent: 'tabContent',
+    },
 }));
 
 describe('TabsContainer', () => {
@@ -34,11 +36,9 @@ describe('TabsContainer', () => {
         render(<TabsContainer tabs={tabs} />);
         const user = userEvent.setup();
 
-        // Click Tab 2
         await user.click(screen.getByText('Tab 2'));
         expect(screen.getByText('Content for Tab 2')).toBeVisible();
 
-        // Click Tab 3
         await user.click(screen.getByText('Tab 3'));
         expect(screen.getByText('Content for Tab 3')).toBeVisible();
     });

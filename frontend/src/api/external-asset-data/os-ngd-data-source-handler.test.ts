@@ -1,20 +1,21 @@
 import { Feature, Point } from 'geojson';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Link, OsNgdDataSourceHandler } from './os-ngd-data-source-handler';
 import { AssetSpecification } from '@/hooks/queries/dataset-utils';
 
-globalThis.fetch = jest.fn();
+globalThis.fetch = vi.fn() as any;
 
 function mockFetch(obj: any) {
-    (fetch as jest.Mock).mockImplementationOnce(() =>
+    (fetch as any).mockImplementationOnce(() =>
         Promise.resolve({
             ok: true,
-            json: jest.fn().mockResolvedValue(obj),
+            json: vi.fn().mockResolvedValue(obj),
         }),
     );
 }
 
 beforeEach(() => {
-    jest.resetAllMocks();
+    vi.resetAllMocks();
 });
 
 describe('buildUrlsForDataSource', () => {
@@ -102,8 +103,7 @@ describe('fetchDataForAssetSpecification', () => {
                 rel: 'next',
             },
         ];
-        // we stringify and then parse these so they are effectively cloned
-        // otherwise the mocks will both return an empty array for links
+
         mockFetch(structuredClone(response));
         response.links = [];
         mockFetch(structuredClone(response));
@@ -140,8 +140,7 @@ describe('fetchDataForAssetSpecification', () => {
                 rel: 'next',
             },
         ];
-        // we stringify and then parse these so they are effectively cloned
-        // otherwise the mocks will both return an empty array for links
+
         mockFetch(structuredClone(response));
         response.links = [];
         mockFetch(structuredClone(response));
@@ -162,8 +161,6 @@ describe('fetchDataForAssetSpecification', () => {
         ];
         response.numberReturned = 100;
 
-        // we stringify and then parse these so they are effectively cloned
-        // otherwise the mocks will both return an empty array for links
         mockFetch(structuredClone(response));
         response.links = [];
         response.numberReturned = 25;

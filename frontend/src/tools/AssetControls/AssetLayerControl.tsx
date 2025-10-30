@@ -3,7 +3,7 @@ import { useMemo, useCallback } from 'react';
 import ListItem from '@mui/material/ListItem';
 import Box from '@mui/material/Box';
 import ListItemText from '@mui/material/ListItemText';
-import { Backdrop, Grid2, LinearProgress, Typography } from '@mui/material';
+import { Backdrop, LinearProgress, Typography } from '@mui/material';
 import { capitalize } from '@/utils/capitalize';
 
 import type { Asset } from '@/models';
@@ -79,7 +79,7 @@ function AssessmentAssetLayerControls({ assessment, searchQuery }: AssessmentAss
     }, [filteredAssets]);
 
     return (
-        <Grid2 size={12} container>
+        <Box>
             {isLoadingAssets && (
                 <Backdrop
                     open={isLoadingAssets}
@@ -105,11 +105,11 @@ function AssessmentAssetLayerControls({ assessment, searchQuery }: AssessmentAss
                 </Backdrop>
             )}
             {sortedCategories.map((category) => (
-                <Grid2 size={12} key={category.category}>
+                <Box key={category.category} sx={{ marginBottom: 2 }}>
                     <AssessmentCategoryLayerControls key={category.category} category={category.category} assets={category.assets} />
-                </Grid2>
+                </Box>
             ))}
-        </Grid2>
+        </Box>
     );
 }
 

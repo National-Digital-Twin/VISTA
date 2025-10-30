@@ -1,11 +1,12 @@
 import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import ControlPanel from '.';
 
-jest.mock('@fortawesome/react-fontawesome', () => ({
+vi.mock('@fortawesome/react-fontawesome', () => ({
     FontAwesomeIcon: () => <span data-testid="fa-icon" />,
 }));
 
-jest.mock('@/utils/tabHelpers', () => ({
+vi.mock('@/utils/tabHelpers', () => ({
     a11yProps: (index: number) => ({
         'id': `tab-${index}`,
         'aria-controls': `tabpanel-${index}`,
@@ -13,10 +14,10 @@ jest.mock('@/utils/tabHelpers', () => ({
     TabPanel: ({ children, value, index }: any) => (value === index ? <div>{children}</div> : null),
 }));
 
-jest.mock('@/tools/LayersControlPanel', () => ({
+vi.mock('@/tools/LayersControlPanel', () => ({
     LayersControlPanel: () => <div data-testid="layers-panel">Layers Panel</div>,
 }));
-jest.mock('@/tools/AssetDetails', () => ({
+vi.mock('@/tools/AssetDetails', () => ({
     AssetDetailControlPanel: ({ showConnectedAssets, setConnectedAssetData }: any) => (
         <div data-testid="asset-details-panel">
             Asset Detail Panel
@@ -34,18 +35,16 @@ jest.mock('@/tools/AssetDetails', () => ({
     ),
 }));
 
-// ✅ Mock ConnectedAssetsPanel
-jest.mock('../ConnectedAssetsPanel', () => ({
-    __esModule: true,
+vi.mock('../ConnectedAssetsPanel', () => ({
     default: ({ connectedAssetData }: any) => <div data-testid="connected-assets-panel">{connectedAssetData?.id}</div>,
 }));
 
 describe('ControlPanel', () => {
-    const hideMock = jest.fn();
-    const showMock = jest.fn();
+    const hideMock = vi.fn();
+    const showMock = vi.fn();
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     it('renders both tabs and shows Layers panel by default', () => {

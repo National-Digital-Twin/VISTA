@@ -1,0 +1,17 @@
+[
+    {
+        "type": "be893214-b517-45b0-92e8-362de90865cc",
+        "description": ["Primary_Education"],
+        "source": "os_names"
+    },
+    {
+        "type": "3df1452a-b1b3-4a39-9ac2-6b2a8303b6f0",
+        "description": ["Secondary_Education"],
+        "source": "os_names"
+    },
+    {
+        "type": "98ac0ed2-c86f-4eea-b236-02cf93ff5d10",
+        "description": ["Hospital"],
+        "source": "os_names"
+    }
+]

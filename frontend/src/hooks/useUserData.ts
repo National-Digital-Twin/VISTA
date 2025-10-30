@@ -92,10 +92,10 @@ export function useUserData(): UseUserDataReturn {
 
     const getUserOrganisation = () => {
         if (!user?.email) {
-            return 'twynwell.gov.uk';
+            return 'twinwell.gov.uk';
         }
         const domain = user.email.split('@')[1];
-        return domain || 'twynwell.gov.uk';
+        return domain || 'twinwell.gov.uk';
     };
 
     const getUserMemberSince = () => {

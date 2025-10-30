@@ -1,4 +1,4 @@
-import type { MapRef } from 'react-map-gl';
+import type { MapRef } from 'react-map-gl/maplibre';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 
 import { useCallback } from 'react';

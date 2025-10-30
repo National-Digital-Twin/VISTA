@@ -5,7 +5,9 @@ import { ElementsContext } from '@/context/ElementContext';
 import { fetchFloodMonitoringStations } from '@/api/combined';
 
 export default function useFloodMonitoringStations() {
-    const { updateErrorNotifications, dismissErrorNotification } = useContext(ElementsContext);
+    const context = useContext(ElementsContext);
+    const updateErrorNotifications = context?.updateErrorNotifications;
+    const dismissErrorNotification = context?.dismissErrorNotification;
     const [showStations, setShowStations] = useState(false);
 
     const menuItem: {
@@ -25,7 +27,7 @@ export default function useFloodMonitoringStations() {
         queryKey: ['flood-monitoring-stations'],
         queryFn: () => fetchFloodMonitoringStations(),
         select: (data) => {
-            return data.items.map((monitoringStation) => {
+            return data.items.map((monitoringStation: any) => {
                 return {
                     type: 'Feature',
                     properties: {
@@ -45,10 +47,12 @@ export default function useFloodMonitoringStations() {
     const errorMessage = query.error?.message;
 
     useEffect(() => {
-        if (isError) {
+        if (isError && updateErrorNotifications && errorMessage) {
             updateErrorNotifications(errorMessage);
             return () => {
-                dismissErrorNotification(errorMessage);
+                if (dismissErrorNotification) {
+                    dismissErrorNotification(errorMessage);
+                }
             };
         }
     }, [isError, errorMessage, updateErrorNotifications, dismissErrorNotification]);

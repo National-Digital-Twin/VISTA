@@ -1,0 +1,37 @@
+[
+  {
+    "model": "api.assetcategory",
+    "pk": "4b1c52b6-8d6f-4b7a-b63e-2a10f94e4b41",
+    "fields": {
+      "name": "Built infrastructure"
+    }
+  },
+  {
+    "model": "api.assetcategory",
+    "pk": "1de4b219-ded8-4c7c-97f0-cd22b247c2a2",
+    "fields": {
+      "name": "Environmental features"
+    }
+  },
+  {
+    "model": "api.assetcategory",
+    "pk": "29a2d948-8c1f-470a-b274-7a22b5cc8d45",
+    "fields": {
+      "name": "Hazard and risk overlays"
+    }
+  },
+  {
+    "model": "api.assetcategory",
+    "pk": "7f4a99e2-8156-4e1a-b6cb-cb621372dbf7",
+    "fields": {
+      "name": "Public services"
+    }
+  },
+  {
+    "model": "api.assetcategory",
+    "pk": "c967a16f-d080-42b1-83e0-60f37f5f83d7",
+    "fields": {
+      "name": "Social infrastructure"
+    }
+  }
+]

@@ -1,4 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
 import ConnectedAssetsPanel from '.';
@@ -7,25 +8,23 @@ import useGroupedAssets from '@/hooks/queries/useGroupedAssets';
 import Asset from '@/models/Asset';
 import Dependency from '@/models/Dependency';
 
-jest.mock('@/api/apollo-client', () => ({
-    __esModule: true,
+vi.mock('@/api/apollo-client', () => ({
     default: {},
     GET_ROAD_ROUTE: {},
 }));
 
-jest.mock('@/hooks/queries/useProviders', () => ({
-    __esModule: true,
-    default: jest.fn(),
+vi.mock('@/hooks/queries/useProviders', () => ({
+    default: vi.fn(),
 }));
 
-jest.mock('@/hooks/queries/useGroupedAssets', () => ({
+vi.mock('@/hooks/queries/useGroupedAssets', () => ({
     __esModule: true,
-    default: jest.fn(),
+    default: vi.fn(),
 }));
 
-const mockUseProviders = useProviders as jest.MockedFunction<typeof useProviders>;
+const mockUseProviders = useProviders as any;
 
-const mockedUseGroupAssets = useGroupedAssets as jest.MockedFunction<typeof useGroupedAssets>;
+const mockedUseGroupAssets = useGroupedAssets as any;
 
 const mockAssetData = {
     title: 'Test Asset',
@@ -84,32 +83,32 @@ describe('ConnectedAssetsPanel', () => {
     });
 
     it('renders title, ID and type', () => {
-        render(<ConnectedAssetsPanel connectedAssetData={mockAssetData} hideConnectedAssets={jest.fn()} />, { wrapper: createWrapper });
+        render(<ConnectedAssetsPanel connectedAssetData={mockAssetData} hideConnectedAssets={vi.fn()} />, { wrapper: createWrapper });
         expect(screen.getByText('Test Asset')).toBeInTheDocument();
         expect(screen.getByText('ASSET-123')).toBeInTheDocument();
         expect(screen.getByText('Database')).toBeInTheDocument();
     });
 
     it('renders tabs with counts', () => {
-        render(<ConnectedAssetsPanel connectedAssetData={mockAssetData} hideConnectedAssets={jest.fn()} />, { wrapper: createWrapper });
+        render(<ConnectedAssetsPanel connectedAssetData={mockAssetData} hideConnectedAssets={vi.fn()} />, { wrapper: createWrapper });
         expect(screen.getByText(/Dependant Assets \(0\)/)).toBeInTheDocument();
         expect(screen.getByText(/Provider Assets \(2\)/)).toBeInTheDocument();
     });
 
     it('renders Dependents by default', () => {
-        render(<ConnectedAssetsPanel connectedAssetData={mockAssetData} hideConnectedAssets={jest.fn()} />, { wrapper: createWrapper });
-        // Check that the Dependents tab panel is visible and contains loading message
+        render(<ConnectedAssetsPanel connectedAssetData={mockAssetData} hideConnectedAssets={vi.fn()} />, { wrapper: createWrapper });
+
         expect(screen.getByRole('tabpanel', { name: /dependant assets/i })).toBeInTheDocument();
         expect(screen.getByText('Loading dependent assets')).toBeInTheDocument();
     });
 
     it('renders Providers on tab switch', () => {
-        render(<ConnectedAssetsPanel connectedAssetData={mockAssetData} hideConnectedAssets={jest.fn()} />, { wrapper: createWrapper });
+        render(<ConnectedAssetsPanel connectedAssetData={mockAssetData} hideConnectedAssets={vi.fn()} />, { wrapper: createWrapper });
         const providerTab = screen.getByText(/Provider Assets/);
         fireEvent.click(providerTab);
-        // Check that the Providers tab panel is now visible
+
         expect(screen.getByRole('tabpanel', { name: /provider assets/i })).toBeInTheDocument();
-        // Check that provider data is rendered (looking for one of the provider titles)
+
         expect(screen.getByText('Provider 1')).toBeInTheDocument();
     });
 });
