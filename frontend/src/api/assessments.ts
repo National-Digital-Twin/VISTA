@@ -24,7 +24,7 @@ export const fetchAssessments = async (): Promise<Assessment[]> => {
     }
 };
 
-interface AssessmentDependency {
+export interface AssessmentDependency {
     /** URI of the dependency itself */
     dependencyUri: string;
     /** Name of the dependent node */

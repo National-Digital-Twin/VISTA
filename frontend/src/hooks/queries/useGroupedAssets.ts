@@ -150,35 +150,6 @@ const useGroupedAssets = ({ assessment, searchFilter }: UseGroupedAssetsOptions)
         return progressValue;
     }, [datasets]);
 
-    const fetchDependencies = async (assets: Asset[], assessment?: string): Promise<Dependency[]> => {
-        if (!assets) {
-            return [];
-        }
-
-        const assetTypes = assets.map((asset: { type: any }) => asset.type).filter((value, index, self) => self.indexOf(value) === index);
-
-        if (assetTypes.length === 0) {
-            return [];
-        }
-
-        const dependencyData = await fetchAssessmentDependencies(assetTypes, assessment);
-        const validDependencies = (dependencyData || [])
-            .filter((dep: any) => dep.dependentName && dep.providerName)
-            .map((dep: any) => ({
-                dependencyUri: dep.dependencyUri,
-                criticalityRating: dep.criticalityRating,
-                dependentNode: dep.dependentNode,
-                dependentName: dep.dependentName,
-                dependentNodeType: dep.dependentNodeType,
-                providerNode: dep.providerNode,
-                providerName: dep.providerName,
-                providerNodeType: dep.providerNodeType,
-                osmID: dep.osmID || '',
-            }));
-
-        return createDependencies(validDependencies);
-    };
-
     const {
         data: dependencies,
         isLoading: dependenciesLoading,
@@ -186,7 +157,20 @@ const useGroupedAssets = ({ assessment, searchFilter }: UseGroupedAssetsOptions)
     } = useQuery({
         queryKey: ['assets-with-dependencies', assessment ?? ''],
         enabled: !assetsLoading,
-        queryFn: () => fetchDependencies(assets, assessment),
+        queryFn: async () => {
+            if (!assets) {
+                return;
+            }
+            const assetTypes = assets.map((asset: { type: any }) => asset.type).filter((value, index, self) => self.indexOf(value) === index);
+            let dependencies: Dependency[];
+            if (assetTypes.length > 0) {
+                const dependencyData = await fetchAssessmentDependencies(assetTypes, assessment);
+                dependencies = createDependencies(dependencyData);
+            } else {
+                dependencies = [];
+            }
+            return dependencies;
+        },
     });
 
     if (dependenciesError) {
