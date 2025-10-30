@@ -17,5 +17,7 @@ export function FreehandCreationButton() {
         startPolygonDrawing();
     }, [startPolygonDrawing, isDrawing]);
 
-    return <ToolbarButton title="Draw freehand" onClick={drawPolygon} svgSrc="icons/draw_shape.svg" active={isDrawing} disabled={isDisabled} />;
+    return (
+        <ToolbarButton title="Draw freehand" onClick={drawPolygon} svgSrc="icons/draw_shape.svg" active={isDrawing} disabled={isDisabled} hasNoMarginBottom />
+    );
 }

@@ -4,18 +4,7 @@ import { Asset, Dependency } from '@/models';
 import type { FoundIcon } from '@/hooks/useFindIcon';
 import { AssetState } from '@/models/Asset';
 import { fetchAssetInfo, fetchLiveAssets } from '@/api/combined';
-
-interface DependencyData {
-    dependencyUri: string;
-    criticalityRating?: number;
-    dependentNode: string;
-    dependentName: string;
-    dependentNodeType: string;
-    providerNode: string;
-    providerName: string;
-    providerNodeType: string;
-    osmID: string;
-}
+import { AssessmentDependency } from '@/api/assessments';
 
 export interface AssetClassFilter {
     filterName: string;
@@ -40,7 +29,7 @@ export interface AssetSpecification {
     knownIds?: string[];
 }
 
-export function createDependencies(dependencies: DependencyData[]) {
+export function createDependencies(dependencies: AssessmentDependency[]) {
     if (!dependencies && !Array.isArray(dependencies)) {
         return [];
     }

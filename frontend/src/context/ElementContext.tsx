@@ -118,7 +118,6 @@ export function ElementsProvider({ children }: ElementsProviderProps) {
         state;
 
     const { findAssetsInPolygons } = useAssetsInPolygons();
-    const groupedAssetsResult2 = useGroupedAssets({});
 
     const primaryAssetsAtRiskFromDrawn = useMemo(() => {
         if (isLoadingAssets) {
@@ -162,8 +161,8 @@ export function ElementsProvider({ children }: ElementsProviderProps) {
     const [dependenciesByFloodArea, assetsByFloodArea] = useMemo(() => {
         let assetsAtRisk = showPrimary ? primaryAssetsAtRisk : [];
         let dependenciesByFloodArea: any[] = [];
-        if (showSecondary && !isLoadingDependencies) {
-            const getDependentAssets = 'getDependentAssets' in groupedAssetsResult2 ? groupedAssetsResult2.getDependentAssets : () => [];
+        if (showSecondary && !isLoadingDependencies && !isLoadingAssets) {
+            const getDependentAssets = 'getDependentAssets' in groupedAssetsResult ? groupedAssetsResult.getDependentAssets : () => [];
             const result = getDependentAssets(primaryAssetsAtRisk);
             if (result && typeof result === 'object' && 'dependencies' in result && 'dependentAssets' in result) {
                 const { dependencies: dependenciesAtRisk, dependentAssets: secondaryAssetsAtRisk } = result;
@@ -176,7 +175,7 @@ export function ElementsProvider({ children }: ElementsProviderProps) {
             dependenciesByFloodArea = [];
         }
         return [dependenciesByFloodArea, assetsAtRisk];
-    }, [showPrimary, primaryAssetsAtRisk, showSecondary, isLoadingDependencies, groupedAssetsResult2]);
+    }, [showPrimary, primaryAssetsAtRisk, showSecondary, isLoadingDependencies, groupedAssetsResult, isLoadingAssets]);
 
     const assetCriticalities = useMemo(
         () => Array.from(new Set(assetsByFloodArea.map((asset) => asset.dependent.criticalitySum))).sort((a: number, b: number) => a - b),

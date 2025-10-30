@@ -6,6 +6,7 @@ import Dependents from '@/tools/AssetDetails/InfoPanel/SelectedElements/Dependen
 import Providers from '@/tools/AssetDetails/InfoPanel/SelectedElements/Providers';
 import { a11yProps, TabPanel } from '@/utils/tabHelpers';
 import useProviders from '@/hooks/queries/useProviders';
+import useGroupedAssets from '@/hooks/queries/useGroupedAssets';
 
 interface ConnectAssetPanelProps {
     connectedAssetData: any;
@@ -18,6 +19,9 @@ const ConnectedAssetsPanel: React.FC<ConnectAssetPanelProps> = ({ connectedAsset
     const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
     };
+
+    const { getDependentAssets } = useGroupedAssets({});
+    const dependencies = getDependentAssets([{ uri: connectedAssetData?.assetUri }]);
 
     const {
         isLoading: isProvidersLoading,
@@ -32,7 +36,7 @@ const ConnectedAssetsPanel: React.FC<ConnectAssetPanelProps> = ({ connectedAsset
     );
 
     const totalProviders = providers?.length || 0;
-    const totalDependents = connectedAssetData?.dependent?.count || 0;
+    const totalDependents = new Set(dependencies?.dependentAssets?.map((dependent) => dependent.uri)).size || 0;
 
     return (
         <Box

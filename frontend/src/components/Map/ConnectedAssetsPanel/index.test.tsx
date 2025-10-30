@@ -4,6 +4,9 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
 import ConnectedAssetsPanel from '.';
 import useProviders from '@/hooks/queries/useProviders';
+import useGroupedAssets from '@/hooks/queries/useGroupedAssets';
+import Asset from '@/models/Asset';
+import Dependency from '@/models/Dependency';
 
 vi.mock('@/api/apollo-client', () => ({
     default: {},
@@ -14,7 +17,14 @@ vi.mock('@/hooks/queries/useProviders', () => ({
     default: vi.fn(),
 }));
 
+vi.mock('@/hooks/queries/useGroupedAssets', () => ({
+    __esModule: true,
+    default: vi.fn(),
+}));
+
 const mockUseProviders = useProviders as any;
+
+const mockedUseGroupAssets = useGroupedAssets as any;
 
 const mockAssetData = {
     title: 'Test Asset',
@@ -62,6 +72,14 @@ describe('ConnectedAssetsPanel', () => {
                 },
             ],
         });
+
+        mockedUseGroupAssets.mockReturnValue({
+            getDependentAssets: (_assets: Asset[]) => ({
+                dependencies: [] as Dependency[],
+                dependentAssets: [] as Asset[],
+            }),
+            ...({} as ReturnType<typeof useGroupedAssets>),
+        });
     });
 
     it('renders title, ID and type', () => {
@@ -73,7 +91,7 @@ describe('ConnectedAssetsPanel', () => {
 
     it('renders tabs with counts', () => {
         render(<ConnectedAssetsPanel connectedAssetData={mockAssetData} hideConnectedAssets={vi.fn()} />, { wrapper: createWrapper });
-        expect(screen.getByText(/Dependant Assets \(3\)/)).toBeInTheDocument();
+        expect(screen.getByText(/Dependant Assets \(0\)/)).toBeInTheDocument();
         expect(screen.getByText(/Provider Assets \(2\)/)).toBeInTheDocument();
     });
 

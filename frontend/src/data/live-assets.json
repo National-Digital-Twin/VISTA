@@ -1342,25 +1342,6 @@
         "secondaryCategory": "Utility Infrastructure"
     },
     {
-        "description": ["Electricity Transmission Lines"],
-        "type": "http://ies.data.gov.uk/ontology/ies4#ElectricityTransmissionLine",
-        "source": "os_ngd",
-        "collection": "str-fts-structureline-1",
-        "expectedCount": 162,
-        "styles": {
-            "classUri": "http://ies.data.gov.uk/ontology/ies4#ElectricityTransmissionLine",
-            "backgroundColor": "#242400",
-            "color": "#FFFD04",
-            "iconFallbackText": "TL",
-            "alt": "Transmission Line",
-            "shape": "cirle",
-            "faUnicode": "\ue2c4",
-            "faIcon": "fa-light fa-utility-pole-double"
-        },
-        "primaryCategory": "Transport and Infrastructure",
-        "secondaryCategory": "Utility Infrastructure"
-    },
-    {
         "description": ["Electricity Sub Station"],
         "type": "http://ies.data.gov.uk/ontology/ies4#MinorSubstation",
         "source": "os_ngd",

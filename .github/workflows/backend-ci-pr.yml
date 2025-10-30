@@ -45,7 +45,7 @@ jobs:
         run: |
           python -m venv venv
           source venv/bin/activate
-          python -m pip install --constraint=.github/workflows/constraints.txt --upgrade pip
+          python -m pip install --upgrade pip
 
       - name: Install Poetry
         if: steps.venv-cache.outcome!= 'restored'
@@ -114,7 +114,7 @@ jobs:
         run: |
           python -m venv venv
           source venv/bin/activate
-          python -m pip install --constraint=.github/workflows/constraints.txt --upgrade pip
+          python -m pip install --upgrade pip
 
       - name: Install linting tools
         run: |
@@ -163,7 +163,7 @@ jobs:
         run: |
           python -m venv venv
           source venv/bin/activate
-          python -m pip install --constraint=.github/workflows/constraints.txt --upgrade pip
+          python -m pip install --upgrade pip
 
       - name: Install Poetry
         if: steps.venv-cache.outcome!= 'restored'
