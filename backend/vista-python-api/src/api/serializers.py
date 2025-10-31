@@ -61,7 +61,7 @@ class DataSourceSerializer(serializers.ModelSerializer):
         """Configuration for the `DataSourceSerializer`."""
 
         model = DataSource
-        fields: ClassVar[list[str]] = ["id", "name", "asset_count", "last_updated"]
+        fields: ClassVar[list[str]] = ["id", "name", "owner", "asset_count", "last_updated"]
 
 
 class IdpUserSerializer(serializers.Serializer):
