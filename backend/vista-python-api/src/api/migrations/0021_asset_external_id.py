@@ -2,7 +2,6 @@
 
 from typing import ClassVar
 
-import django.db.models.deletion
 from django.db import migrations, models
 
 
@@ -17,26 +16,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="asset",
             name="external_id",
-            field=models.CharField(blank=True, max_length=255, unique=True),
-        ),
-        migrations.AlterField(
-            model_name="dependency",
-            name="dependent_asset",
-            field=models.ForeignKey(
-                on_delete=django.db.models.deletion.CASCADE,
-                related_name="dependent",
-                to="api.asset",
-                to_field="external_id",
-            ),
-        ),
-        migrations.AlterField(
-            model_name="dependency",
-            name="provider_asset",
-            field=models.ForeignKey(
-                on_delete=django.db.models.deletion.CASCADE,
-                related_name="provider",
-                to="api.asset",
-                to_field="external_id",
-            ),
-        ),
+            field=models.CharField(blank=True, max_length=255, null=True, default=None),
+        )
     ]
