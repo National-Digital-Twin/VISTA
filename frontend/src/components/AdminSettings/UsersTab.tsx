@@ -1,24 +1,10 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
-import {
-    Box,
-    Typography,
-    TextField,
-    Button,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    TableSortLabel,
-    Link,
-    Stack,
-    InputAdornment,
-} from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
+import { Box, Typography, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Link, Stack } from '@mui/material';
 import { fetchAllUsers, UserData } from '@/api/users';
+import { SortableTableHeader } from '@/components/SortableTableHeader';
+import { SearchTextField } from '@/components/SearchTextField';
 
 interface User {
     id: string;
@@ -181,38 +167,7 @@ const UsersTab: React.FC = () => {
                     width: '100%',
                 }}
             >
-                <TextField
-                    placeholder="Search for user"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    sx={{
-                        'minWidth': 300,
-                        '& .MuiOutlinedInput-root': {
-                            'backgroundColor': 'neutral.main',
-                            'borderRadius': '24px',
-                            'paddingLeft': '8px',
-                            'paddingRight': '8px',
-                            '& fieldset': {
-                                border: 'none',
-                            },
-                            '&:hover fieldset': {
-                                border: 'none',
-                            },
-                            '&.Mui-focused fieldset': {
-                                border: 'none',
-                            },
-                        },
-                    }}
-                    slotProps={{
-                        input: {
-                            endAdornment: (
-                                <InputAdornment position="end" sx={{ paddingRight: '8px' }}>
-                                    <SearchIcon />
-                                </InputAdornment>
-                            ),
-                        },
-                    }}
-                />
+                <SearchTextField placeholder="Search for user" value={searchTerm} onChange={setSearchTerm} />
                 <Button variant="outlined" onClick={handleClearFilters} disabled={!searchTerm}>
                     CLEAR FILTERS
                 </Button>
@@ -222,43 +177,17 @@ const UsersTab: React.FC = () => {
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell>
-                                <TableSortLabel
-                                    active={sortField === 'name'}
-                                    direction={sortField === 'name' ? sortDirection : 'asc'}
-                                    onClick={() => handleSort('name')}
-                                >
-                                    User
-                                </TableSortLabel>
-                            </TableCell>
-                            <TableCell>
-                                <TableSortLabel
-                                    active={sortField === 'organisation'}
-                                    direction={sortField === 'organisation' ? sortDirection : 'asc'}
-                                    onClick={() => handleSort('organisation')}
-                                >
-                                    Organisation
-                                </TableSortLabel>
-                            </TableCell>
+                            <SortableTableHeader field="name" label="User" sortField={sortField} sortDirection={sortDirection} onSort={handleSort} />
+                            <SortableTableHeader
+                                field="organisation"
+                                label="Organisation"
+                                sortField={sortField}
+                                sortDirection={sortDirection}
+                                onSort={handleSort}
+                            />
                             <TableCell>Group membership</TableCell>
-                            <TableCell>
-                                <TableSortLabel
-                                    active={sortField === 'userSince'}
-                                    direction={sortField === 'userSince' ? sortDirection : 'asc'}
-                                    onClick={() => handleSort('userSince')}
-                                >
-                                    User since
-                                </TableSortLabel>
-                            </TableCell>
-                            <TableCell>
-                                <TableSortLabel
-                                    active={sortField === 'userType'}
-                                    direction={sortField === 'userType' ? sortDirection : 'asc'}
-                                    onClick={() => handleSort('userType')}
-                                >
-                                    User type
-                                </TableSortLabel>
-                            </TableCell>
+                            <SortableTableHeader field="userSince" label="User since" sortField={sortField} sortDirection={sortDirection} onSort={handleSort} />
+                            <SortableTableHeader field="userType" label="User type" sortField={sortField} sortDirection={sortDirection} onSort={handleSort} />
                         </TableRow>
                     </TableHead>
                     <TableBody>

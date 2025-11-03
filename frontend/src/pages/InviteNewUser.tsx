@@ -17,13 +17,13 @@ import {
     TableContainer,
     TableHead,
     TableRow,
-    TableSortLabel,
     Checkbox,
     Divider,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import PageContainer from '@/components/PageContainer';
+import { SortableTableHeader } from '@/components/SortableTableHeader';
 import { sendInvite, InviteData } from '@/api/invites';
 
 // TODO: Replace with actual group data from API
@@ -184,15 +184,13 @@ export default function InviteNewUser() {
                                                 }}
                                             />
                                         </TableCell>
-                                        <TableCell>
-                                            <TableSortLabel
-                                                active={groupSortField === 'name'}
-                                                direction={groupSortField === 'name' ? groupSortDirection : 'asc'}
-                                                onClick={() => handleGroupSort('name')}
-                                            >
-                                                Groups
-                                            </TableSortLabel>
-                                        </TableCell>
+                                        <SortableTableHeader
+                                            field="name"
+                                            label="Groups"
+                                            sortField={groupSortField}
+                                            sortDirection={groupSortDirection}
+                                            onSort={handleGroupSort}
+                                        />
                                         <TableCell align="right"></TableCell>
                                     </TableRow>
                                 </TableHead>

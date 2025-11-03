@@ -12,11 +12,11 @@ import {
     TableRow,
     Stack,
     CircularProgress,
-    TableSortLabel,
     Snackbar,
     Alert,
 } from '@mui/material';
 import { fetchAllInvites, Invite, cancelInvite, resendInvite } from '@/api/invites';
+import { SortableTableHeader } from '@/components/SortableTableHeader';
 
 type SortField = 'email' | 'userType' | 'groups' | 'status' | 'daysAgo';
 type SortDirection = 'asc' | 'desc';
@@ -143,51 +143,11 @@ const InvitesTab: React.FC = () => {
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell>
-                                <TableSortLabel
-                                    active={sortField === 'email'}
-                                    direction={sortField === 'email' ? sortDirection : 'asc'}
-                                    onClick={() => handleSort('email')}
-                                >
-                                    Email address
-                                </TableSortLabel>
-                            </TableCell>
-                            <TableCell>
-                                <TableSortLabel
-                                    active={sortField === 'userType'}
-                                    direction={sortField === 'userType' ? sortDirection : 'asc'}
-                                    onClick={() => handleSort('userType')}
-                                >
-                                    User type
-                                </TableSortLabel>
-                            </TableCell>
-                            <TableCell>
-                                <TableSortLabel
-                                    active={sortField === 'groups'}
-                                    direction={sortField === 'groups' ? sortDirection : 'asc'}
-                                    onClick={() => handleSort('groups')}
-                                >
-                                    Group access
-                                </TableSortLabel>
-                            </TableCell>
-                            <TableCell>
-                                <TableSortLabel
-                                    active={sortField === 'status'}
-                                    direction={sortField === 'status' ? sortDirection : 'asc'}
-                                    onClick={() => handleSort('status')}
-                                >
-                                    Invite status
-                                </TableSortLabel>
-                            </TableCell>
-                            <TableCell>
-                                <TableSortLabel
-                                    active={sortField === 'daysAgo'}
-                                    direction={sortField === 'daysAgo' ? sortDirection : 'asc'}
-                                    onClick={() => handleSort('daysAgo')}
-                                >
-                                    Invite sent
-                                </TableSortLabel>
-                            </TableCell>
+                            <SortableTableHeader field="email" label="Email address" sortField={sortField} sortDirection={sortDirection} onSort={handleSort} />
+                            <SortableTableHeader field="userType" label="User type" sortField={sortField} sortDirection={sortDirection} onSort={handleSort} />
+                            <SortableTableHeader field="groups" label="Group access" sortField={sortField} sortDirection={sortDirection} onSort={handleSort} />
+                            <SortableTableHeader field="status" label="Invite status" sortField={sortField} sortDirection={sortDirection} onSort={handleSort} />
+                            <SortableTableHeader field="daysAgo" label="Invite sent" sortField={sortField} sortDirection={sortDirection} onSort={handleSort} />
                             <TableCell align="right"></TableCell>
                         </TableRow>
                     </TableHead>
