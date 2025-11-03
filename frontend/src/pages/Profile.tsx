@@ -183,21 +183,21 @@ export default function Profile() {
                         <Typography variant="h6" sx={{ mb: 2, fontWeight: 300 }}>
                             Group membership
                         </Typography>
-                        <TableContainer sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, auto)' }}>
-                            <Table>
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell sx={{ fontWeight: 'bold', border: 'none', py: 1, px: 0 }}>
-                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>Groups</Box>
-                                        </TableCell>
-                                        <TableCell sx={{ fontWeight: 'bold', border: 'none', py: 1, px: 0 }}>
-                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>Member since</Box>
-                                        </TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {groups.length > 0 ? (
-                                        groups.map((group) => (
+                        {groups.length > 0 ? (
+                            <TableContainer sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, auto)' }}>
+                                <Table>
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableCell sx={{ fontWeight: 'bold', border: 'none', py: 1, px: 0 }}>
+                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>Groups</Box>
+                                            </TableCell>
+                                            <TableCell sx={{ fontWeight: 'bold', border: 'none', py: 1, px: 0 }}>
+                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>Member since</Box>
+                                            </TableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        {groups.map((group) => (
                                             <TableRow key={group.name} sx={{ '&:last-child td': { border: 0 } }}>
                                                 <TableCell sx={{ py: 1, px: 0 }}>
                                                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -213,17 +213,15 @@ export default function Profile() {
                                                 </TableCell>
                                                 <TableCell sx={{ py: 1, px: 0 }}>{group.memberSince}</TableCell>
                                             </TableRow>
-                                        ))
-                                    ) : (
-                                        <TableRow>
-                                            <TableCell colSpan={2} sx={{ py: 2, px: 0, textAlign: 'center', color: 'text.secondary' }}>
-                                                No group memberships
-                                            </TableCell>
-                                        </TableRow>
-                                    )}
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
+                        ) : (
+                            <Typography variant="body1" sx={{ mb: 2 }}>
+                                No group memberships
+                            </Typography>
+                        )}
                     </Box>
                 </Box>
 
