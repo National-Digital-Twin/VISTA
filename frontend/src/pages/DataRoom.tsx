@@ -16,6 +16,13 @@ import {
     Divider,
     Alert,
     Snackbar,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    RadioGroup,
+    FormControlLabel,
+    Radio,
 } from '@mui/material';
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
 import InputIcon from '@mui/icons-material/Input';
@@ -94,6 +101,8 @@ export default function DataRoom() {
     const [sortField, setSortField] = useState<SortField>('name');
     const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
     const [errorSnackbarOpen, setErrorSnackbarOpen] = useState(false);
+    const [scenarioModalOpen, setScenarioModalOpen] = useState(false);
+    const [selectedScenario, setSelectedScenario] = useState<string>('Flood in Newport');
     const errorMessage = isError ? (error?.message ?? 'Failed to fetch data sources') : null;
 
     useEffect(() => {
@@ -133,6 +142,19 @@ export default function DataRoom() {
         setSearchTerm('');
     };
 
+    const handleLoadScenarioClick = () => {
+        setScenarioModalOpen(true);
+    };
+
+    const handleScenarioModalClose = () => {
+        setScenarioModalOpen(false);
+    };
+
+    const handleScenarioConfirm = () => {
+        sessionStorage.setItem('selectedScenario', selectedScenario);
+        setScenarioModalOpen(false);
+    };
+
     return (
         <PageContainer>
             <Box
@@ -165,6 +187,7 @@ export default function DataRoom() {
                                 disableRipple
                                 variant="text"
                                 startIcon={<DriveFolderUploadIcon fontSize="small" />}
+                                onClick={handleLoadScenarioClick}
                                 sx={{
                                     'justifyContent': 'flex-start',
                                     'padding': 0,
@@ -325,6 +348,42 @@ export default function DataRoom() {
                     )}
                 </Box>
             </Box>
+
+            <Dialog open={scenarioModalOpen} onClose={handleScenarioModalClose} maxWidth="xs" fullWidth>
+                <DialogTitle>Choose scenario</DialogTitle>
+                <DialogContent>
+                    <RadioGroup value={selectedScenario} onChange={(e) => setSelectedScenario(e.target.value)}>
+                        <FormControlLabel value="Flood in Newport" control={<Radio />} label="Flood in Newport" />
+                        <FormControlLabel value="Landslide in Ventnor" control={<Radio />} label="Landslide in Ventnor" />
+                        <FormControlLabel value="Wildfire in Shanklin" control={<Radio />} label="Wildfire in Shanklin" />
+                    </RadioGroup>
+                </DialogContent>
+                <DialogActions sx={{ p: 3, pt: 0, mt: 2 }}>
+                    <Button
+                        onClick={handleScenarioModalClose}
+                        variant="outlined"
+                        sx={{
+                            flex: 1,
+                            mr: 1,
+                            height: 48,
+                            borderRadius: 1,
+                        }}
+                    >
+                        CANCEL
+                    </Button>
+                    <Button
+                        onClick={handleScenarioConfirm}
+                        variant="contained"
+                        sx={{
+                            flex: 2,
+                            height: 48,
+                            borderRadius: 1,
+                        }}
+                    >
+                        CONFIRM
+                    </Button>
+                </DialogActions>
+            </Dialog>
 
             <Snackbar
                 open={errorSnackbarOpen}
