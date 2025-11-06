@@ -101,7 +101,7 @@ describe('UsersTab', () => {
         expect(screen.getByRole('heading', { level: 2, name: /manage users/i })).toBeInTheDocument();
     });
 
-    it('navigates when clicking user or group links', async () => {
+    it('navigates when clicking user links', async () => {
         const { fetchAllUsers } = await import('@/api/users');
         vi.mocked(fetchAllUsers).mockResolvedValueOnce(mockUsers as any);
 
@@ -117,12 +117,6 @@ describe('UsersTab', () => {
         if (aliceLinks.length > 0) {
             fireEvent.click(aliceLinks[0]);
             expect(mockNavigate).toHaveBeenCalledWith('/user/1');
-        }
-
-        const groupALinks = screen.getAllByRole('button', { name: 'Group A' });
-        if (groupALinks.length > 0) {
-            fireEvent.click(groupALinks[0]);
-            expect(mockNavigate).toHaveBeenCalledWith('/group/Group%20A');
         }
     });
 });

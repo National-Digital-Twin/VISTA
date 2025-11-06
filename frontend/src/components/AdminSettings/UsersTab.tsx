@@ -11,7 +11,6 @@ interface User {
     name: string;
     email: string;
     organisation: string;
-    groups: string[];
     userSince: string;
     userType: 'General' | 'Admin';
 }
@@ -26,7 +25,6 @@ const mapUserDataToUser = (userData: UserData): User => ({
     name: userData.name || userData.displayName || '',
     email: userData.email || '',
     organisation: getUserOrganisation(userData) || '',
-    groups: Array.isArray(userData.groups) ? userData.groups.map((g) => (typeof g === 'string' ? g : g.name)) : [],
     userSince: userData.userSince || userData.memberSince || '',
     userType: (userData.userType as 'General' | 'Admin') || 'General',
 });
@@ -48,8 +46,7 @@ const userMatchesSearch = (user: User, searchLower: string): boolean =>
     user.name.toLowerCase().includes(searchLower) ||
     user.email.toLowerCase().includes(searchLower) ||
     user.organisation.toLowerCase().includes(searchLower) ||
-    user.userType.toLowerCase().includes(searchLower) ||
-    user.groups.some((group) => group.toLowerCase().includes(searchLower));
+    user.userType.toLowerCase().includes(searchLower);
 
 const compareUsers =
     (field: SortField, direction: SortDirection) =>
@@ -125,10 +122,6 @@ const UsersTab: React.FC = () => {
         navigate(`/user/${userId}`);
     };
 
-    const handleGroupClick = (groupName: string) => {
-        navigate(`/group/${encodeURIComponent(groupName)}`);
-    };
-
     const formatDate = (dateString: string) => {
         return format(new Date(dateString), 'd MMM yyyy');
     };
@@ -185,7 +178,6 @@ const UsersTab: React.FC = () => {
                                 sortDirection={sortDirection}
                                 onSort={handleSort}
                             />
-                            <TableCell>Group membership</TableCell>
                             <SortableTableHeader field="userSince" label="User since" sortField={sortField} sortDirection={sortDirection} onSort={handleSort} />
                             <SortableTableHeader field="userType" label="User type" sortField={sortField} sortDirection={sortDirection} onSort={handleSort} />
                         </TableRow>
@@ -199,21 +191,6 @@ const UsersTab: React.FC = () => {
                                     </Link>
                                 </TableCell>
                                 <TableCell>{user.organisation}</TableCell>
-                                <TableCell>
-                                    <Stack direction="column" spacing={0.5} sx={{ alignItems: 'flex-start' }}>
-                                        {user.groups.map((group) => (
-                                            <Link
-                                                key={group}
-                                                component="button"
-                                                color="primary"
-                                                onClick={() => handleGroupClick(group)}
-                                                sx={{ cursor: 'pointer' }}
-                                            >
-                                                {group}
-                                            </Link>
-                                        ))}
-                                    </Stack>
-                                </TableCell>
                                 <TableCell>{formatDate(user.userSince)}</TableCell>
                                 <TableCell>{user.userType}</TableCell>
                             </TableRow>
