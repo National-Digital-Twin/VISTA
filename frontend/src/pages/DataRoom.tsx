@@ -26,7 +26,7 @@ import {
 } from '@mui/material';
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
 import InputIcon from '@mui/icons-material/Input';
-import DriveFolderUploadIcon from '@mui/icons-material/DriveFolderUpload';
+import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import { format } from 'date-fns';
 import { alpha } from '@mui/material/styles';
 import PageContainer from '@/components/PageContainer';
@@ -175,6 +175,24 @@ export default function DataRoom() {
         setScenarioModalOpen(false);
     };
 
+    const renderScenarioContent = () => {
+        if (scenariosLoading) {
+            return <Typography>Loading scenarios...</Typography>;
+        }
+
+        if (scenarios.length === 0) {
+            return <Typography color="text.secondary">No scenarios available.</Typography>;
+        }
+
+        return (
+            <RadioGroup value={selectedScenario} onChange={(e) => setSelectedScenario(e.target.value)}>
+                {scenarios.map((scenario) => (
+                    <FormControlLabel key={scenario.id} value={scenario.id} control={<Radio />} label={scenario.name} />
+                ))}
+            </RadioGroup>
+        );
+    };
+
     return (
         <PageContainer>
             <Box
@@ -206,7 +224,7 @@ export default function DataRoom() {
                             <Button
                                 disableRipple
                                 variant="text"
-                                startIcon={<DriveFolderUploadIcon fontSize="small" />}
+                                startIcon={<AccountTreeIcon fontSize="small" />}
                                 onClick={handleLoadScenarioClick}
                                 sx={{
                                     'justifyContent': 'flex-start',
@@ -371,19 +389,7 @@ export default function DataRoom() {
 
             <Dialog open={scenarioModalOpen} onClose={handleScenarioModalClose} maxWidth="xs" fullWidth>
                 <DialogTitle>Choose scenario</DialogTitle>
-                <DialogContent>
-                    {scenariosLoading ? (
-                        <Typography>Loading scenarios...</Typography>
-                    ) : scenarios.length === 0 ? (
-                        <Typography color="text.secondary">No scenarios available.</Typography>
-                    ) : (
-                        <RadioGroup value={selectedScenario} onChange={(e) => setSelectedScenario(e.target.value)}>
-                            {scenarios.map((scenario) => (
-                                <FormControlLabel key={scenario.id} value={scenario.id} control={<Radio />} label={scenario.name} />
-                            ))}
-                        </RadioGroup>
-                    )}
-                </DialogContent>
+                <DialogContent>{renderScenarioContent()}</DialogContent>
                 <DialogActions sx={{ p: 3, pt: 0, mt: 2 }}>
                     <Button
                         onClick={handleScenarioModalClose}
