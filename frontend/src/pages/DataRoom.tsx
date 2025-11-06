@@ -33,6 +33,7 @@ import PageContainer from '@/components/PageContainer';
 import { SortableTableHeader } from '@/components/SortableTableHeader';
 import { SearchTextField } from '@/components/SearchTextField';
 import { fetchDataSources, DataSource } from '@/api/datasources';
+import { fetchScenarios, Scenario } from '@/api/scenarios';
 
 type SortField = 'name' | 'owner' | 'assetCount' | 'lastUpdated';
 type SortDirection = 'asc' | 'desc';
@@ -97,13 +98,32 @@ export default function DataRoom() {
         retry: 2,
         retryDelay: 1000,
     });
+    const { data: scenariosData, isLoading: scenariosLoading } = useQuery<Scenario[]>({
+        queryKey: ['scenarios'],
+        queryFn: fetchScenarios,
+        staleTime: 5 * 60 * 1000,
+        gcTime: 30 * 60 * 1000,
+        retry: 2,
+        retryDelay: 1000,
+    });
     const [searchTerm, setSearchTerm] = useState('');
     const [sortField, setSortField] = useState<SortField>('name');
     const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
     const [errorSnackbarOpen, setErrorSnackbarOpen] = useState(false);
     const [scenarioModalOpen, setScenarioModalOpen] = useState(false);
-    const [selectedScenario, setSelectedScenario] = useState<string>('Flood in Newport');
+    const scenarios = scenariosData ?? [];
+    const defaultScenario = scenarios.length > 0 ? scenarios[0].id : '';
+    const [selectedScenario, setSelectedScenario] = useState<string>(() => {
+        const stored = sessionStorage.getItem('selectedScenario');
+        return stored ?? defaultScenario;
+    });
     const errorMessage = isError ? (error?.message ?? 'Failed to fetch data sources') : null;
+
+    useEffect(() => {
+        if (scenariosData && scenariosData.length > 0 && !selectedScenario) {
+            setSelectedScenario(scenariosData[0].id);
+        }
+    }, [scenariosData, selectedScenario]);
 
     useEffect(() => {
         if (errorMessage) {
@@ -352,11 +372,17 @@ export default function DataRoom() {
             <Dialog open={scenarioModalOpen} onClose={handleScenarioModalClose} maxWidth="xs" fullWidth>
                 <DialogTitle>Choose scenario</DialogTitle>
                 <DialogContent>
-                    <RadioGroup value={selectedScenario} onChange={(e) => setSelectedScenario(e.target.value)}>
-                        <FormControlLabel value="Flood in Newport" control={<Radio />} label="Flood in Newport" />
-                        <FormControlLabel value="Landslide in Ventnor" control={<Radio />} label="Landslide in Ventnor" />
-                        <FormControlLabel value="Wildfire in Shanklin" control={<Radio />} label="Wildfire in Shanklin" />
-                    </RadioGroup>
+                    {scenariosLoading ? (
+                        <Typography>Loading scenarios...</Typography>
+                    ) : scenarios.length === 0 ? (
+                        <Typography color="text.secondary">No scenarios available.</Typography>
+                    ) : (
+                        <RadioGroup value={selectedScenario} onChange={(e) => setSelectedScenario(e.target.value)}>
+                            {scenarios.map((scenario) => (
+                                <FormControlLabel key={scenario.id} value={scenario.id} control={<Radio />} label={scenario.name} />
+                            ))}
+                        </RadioGroup>
+                    )}
                 </DialogContent>
                 <DialogActions sx={{ p: 3, pt: 0, mt: 2 }}>
                     <Button
