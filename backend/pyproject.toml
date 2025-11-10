@@ -42,6 +42,7 @@ requests = "^2.32.5"
 h11 = "0.16.0"
 sqlalchemy = "^2.0.43"
 httpx = "^0.28.1"
+djangorestframework-gis = "^1.2.0"
 
 [tool.poetry.dev-dependencies]
 # Everything below here is alphabetically sorted

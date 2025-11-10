@@ -1,10 +1,11 @@
 """Models concerning taxonomy of assets."""
 
 from django.contrib.gis.db import models
-from .data_source import DataSource  # <-- ADD THIS IMPORT
+
 
 class AssetCategory(models.Model):
     """Asset Category model."""
+
     id = models.UUIDField(unique=True, primary_key=True)
     name = models.CharField(max_length=256)
 
@@ -12,8 +13,10 @@ class AssetCategory(models.Model):
         """AssetType string representation."""
         return self.name
 
+
 class AssetSubCategory(models.Model):
     """Asset Sub-category model."""
+
     id = models.UUIDField(unique=True, primary_key=True)
     category_id = models.ForeignKey(AssetCategory, on_delete=models.CASCADE)
     name = models.CharField(max_length=256)
@@ -22,8 +25,18 @@ class AssetSubCategory(models.Model):
         """AssetType string representation."""
         return self.name
 
+
+class DataSource(models.Model):
+    """Data source model."""
+
+    id = models.UUIDField(unique=True, primary_key=True)
+    name = models.CharField(max_length=256)
+    owner = models.CharField(max_length=256)
+
+
 class AssetType(models.Model):
     """Asset Type model."""
+
     id = models.UUIDField(unique=True, primary_key=True)
     sub_category_id = models.ForeignKey(AssetSubCategory, on_delete=models.CASCADE)
     data_source_id = models.ForeignKey(
