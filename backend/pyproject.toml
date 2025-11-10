@@ -16,7 +16,7 @@ python = ">=3.12.5,<3.13"
 # Everything below here is alphabetically sorted
 ariadne = "^0.26.2"
 ariadne-django = "^0.3.0"
-django = "5.2.7"
+django = "5.2.8"
 osmnx = "^1.9.4"
 uvicorn = "^0.37.0"
 matplotlib = "^3.10.7"
