@@ -1,0 +1,12 @@
+# These are loaded by direnv
+export DB_HOST="localhost"
+export DB_NAME="vista"
+export DB_USER="postgres"
+export DB_PORT="5432"
+export DB_PASSWORD="postgres"
+
+# Tell Postgres where to find the service config. Get the full path to the .pg_service.conf file
+export PGSERVICEFILE=".../vista/backend/vista-python-api/src/core/.pg_service.conf"
+
+# Tell Postgres where to find the password file. Get the full path to the .vista_pgpass file
+export PGPASSFILE=".../vista/backend/vista-python-api/src/core/.vista_pgpass"
