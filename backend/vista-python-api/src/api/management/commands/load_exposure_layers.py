@@ -41,7 +41,7 @@ class Command(BaseCommand):
         loaded_count = 0
         skipped_count = 0
         for item in data:
-            item_id = uuid.UUID(item["id"]) # Convert string ID to UUID object
+            item_id = uuid.UUID(item["id"])  # Convert string ID to UUID object
 
             # Check if this object already exists
             if ExposureLayer.objects.filter(id=item_id).exists():
@@ -53,9 +53,7 @@ class Command(BaseCommand):
                 geos_geometry = GEOSGeometry(json.dumps(item["geometry"]))
             except Exception as e:
                 self.stdout.write(
-                    self.style.ERROR(
-                        f"Error parsing geometry for {item['name']}: {e}"
-                    )
+                    self.style.ERROR(f"Error parsing geometry for {item['name']}: {e}")
                 )
                 continue
 
@@ -72,10 +70,8 @@ class Command(BaseCommand):
                 )
 
         self.stdout.write(
-            self.style.SUCCESS(
-                    f"Successfully loaded {loaded_count} new exposure layers."
-                )
-            )
+            self.style.SUCCESS(f"Successfully loaded {loaded_count} new exposure layers.")
+        )
         if skipped_count > 0:
             self.stdout.write(
                 self.style.WARNING(

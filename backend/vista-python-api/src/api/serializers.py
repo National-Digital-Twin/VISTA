@@ -88,6 +88,7 @@ class DependencySerializer(serializers.ModelSerializer):
         fields: ClassVar[list[str]] = ["id", "provider_asset", "dependent_asset"]
         read_only_fields: ClassVar[list[str]] = ["id"]
 
+
 class ExposureLayerSerializer(GeoFeatureModelSerializer):
     """Serializer to output ExposureLayer data as a GeoJSON Feature."""
 
@@ -96,4 +97,4 @@ class ExposureLayerSerializer(GeoFeatureModelSerializer):
 
         model = ExposureLayer
         geo_field = "geometry"  # This field will be the GeoJSON geometry
-        fields = ("id", "name") # Other fields to include in 'properties'
+        fields = ("id", "name")  # Other fields to include in 'properties'

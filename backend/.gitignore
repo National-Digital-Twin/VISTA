@@ -5,7 +5,8 @@ core/db.sqlite3
 data/raw/*
 **/db.sqlite3
 */core/cache/*
-.pg_service.conf
+*.pg_service.conf
+vista-python-api/src/core/.pg_service.conf
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -131,6 +132,7 @@ celerybeat.pid
 *.sage.py
 
 # Environments
+.envrc
 .env
 .venv
 env/

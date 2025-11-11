@@ -15,6 +15,7 @@ class AssetCategory(models.Model):
         """AssetType string representation."""
         return self.name
 
+
 class AssetSubCategory(models.Model):
     """Asset Sub-category model."""
 
@@ -25,6 +26,7 @@ class AssetSubCategory(models.Model):
     def __str__(self):
         """AssetType string representation."""
         return self.name
+
 
 class AssetType(models.Model):
     """Asset Type model."""

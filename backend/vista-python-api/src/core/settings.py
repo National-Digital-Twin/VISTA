@@ -102,28 +102,42 @@ WSGI_APPLICATION = "core.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+# DATABASES = (
+#     {
+#         "default": {
+#             "ENGINE": "core.mydbengine",
+#             "NAME": "vista",
+#             "USER": "vista",
+#             "HOST": env("DB_HOSTNAME"),
+#             "PASSWORD": env("DB_PASSWORD"),
+#             "PORT": 5432,
+#             "REGION": REGION,
+#             "OPTIONS": {"sslmode": "require"},
+#         }
+#     }
 DATABASES = (
     {
         "default": {
-            "ENGINE": "core.mydbengine",
+            "ENGINE": "django.contrib.gis.db.backends.postgis",
             "NAME": "vista",
-            "USER": "vista",
-            "HOST": env("DB_HOSTNAME"),
+            "USER": "postgres",
+            "HOST": env("DB_HOST"),
+            "PASSWORD": env("DB_PASSWORD"),
             "PORT": 5432,
             "REGION": REGION,
             "OPTIONS": {"sslmode": "require"},
         }
     }
-    if IS_PROD
+if IS_PROD
     else {
+
         "default": {
             "ENGINE": "django.contrib.gis.db.backends.postgis",
-            "OPTIONS": {
-                "service": "vista_service",
-                "passfile": env(
-                    "PGPASSFILE", default="/vista-python-api/core/core/.docker_vista_pgpass"
-                ),
-            },
+            "NAME": env("DB_NAME"),
+            "USER": env("DB_USER"),
+            "PASSWORD": env("DB_PASSWORD"),
+            "HOST": env("DB_HOST"),
+            "PORT": env("DB_PORT"),
         }
     }
 )
