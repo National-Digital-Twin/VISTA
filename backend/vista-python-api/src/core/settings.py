@@ -102,19 +102,6 @@ WSGI_APPLICATION = "core.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-# DATABASES = (
-#     {
-#         "default": {
-#             "ENGINE": "core.mydbengine",
-#             "NAME": "vista",
-#             "USER": "vista",
-#             "HOST": env("DB_HOSTNAME"),
-#             "PASSWORD": env("DB_PASSWORD"),
-#             "PORT": 5432,
-#             "REGION": REGION,
-#             "OPTIONS": {"sslmode": "require"},
-#         }
-#     }
 DATABASES = (
     {
         "default": {
@@ -128,9 +115,8 @@ DATABASES = (
             "OPTIONS": {"sslmode": "require"},
         }
     }
-if IS_PROD
+    if IS_PROD
     else {
-
         "default": {
             "ENGINE": "django.contrib.gis.db.backends.postgis",
             "NAME": env("DB_NAME"),
