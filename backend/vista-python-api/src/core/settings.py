@@ -120,7 +120,9 @@ DATABASES = (
             "ENGINE": "django.contrib.gis.db.backends.postgis",
             "OPTIONS": {
                 "service": "vista_service",
-                "passfile": env("PGPASSFILE", default="/vista-python-api/src/core/.vista_pgpass"),
+                "passfile": env(
+                    "PGPASSFILE", default="/vista-python-api/core/core/.docker_vista_pgpass"
+                ),
             },
         }
     }
