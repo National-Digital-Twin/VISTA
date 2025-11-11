@@ -1,4 +1,5 @@
-"""Model representations
+"""Model representations.
+
 Import all models into the 'models' package.
 This makes them available to Django as if they were in a single models.py file.
 """

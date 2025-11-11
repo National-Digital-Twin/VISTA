@@ -1,6 +1,8 @@
+"""Management command to load exposure layers from a JSON file."""
+
 import json
-import os
 import uuid
+from pathlib import Path
 
 from django.conf import settings
 from django.contrib.gis.geos import GEOSGeometry
@@ -10,27 +12,30 @@ from api.models import ExposureLayer
 
 
 class Command(BaseCommand):
+    """Loads exposure layer data from a JSON file in api/data/."""
+
     help = "Loads exposure layer data from a JSON file in api/data/"
 
     def add_arguments(self, parser):
-        # We only need the filename now, not the full path
-        parser.add_argument("file_name", type=str, help="The name of the JSON file in the api/data/ directory.")
+        """Add command line arguments to the parser."""
+        parser.add_argument(
+            "file_name",
+            type=str,
+            help="The name of the JSON file in the api/data/ directory.",
+        )
 
-    def handle(self, *args, **options):
+    def handle(self, *_args, **options):
+        """Handle the command execution."""
         file_name = options["file_name"]
+        file_path = Path(settings.BASE_DIR) / "api" / "data" / file_name
 
-        # Build the full path to the file
-        # This assumes your BASE_DIR is 'vista-python-api/src/'
-        # and your 'api' app is at 'vista-python-api/src/api/'
-        file_path = os.path.join(settings.BASE_DIR, "api", "data", file_name)
-
-        if not os.path.exists(file_path):
+        if not file_path.exists():  # <--- FIX for PTH110
             self.stdout.write(self.style.ERROR(f"File not found at {file_path}"))
             return
 
         self.stdout.write(self.style.SUCCESS(f"Loading data from {file_path}..."))
 
-        with open(file_path) as f:
+        with file_path.open() as f:
             data = json.load(f)
 
         loaded_count = 0
@@ -47,7 +52,11 @@ class Command(BaseCommand):
             try:
                 geos_geometry = GEOSGeometry(json.dumps(item["geometry"]))
             except Exception as e:
-                self.stdout.write(self.style.ERROR(f"Error parsing geometry for {item['name']}: {e}"))
+                self.stdout.write(
+                    self.style.ERROR(
+                        f"Error parsing geometry for {item['name']}: {e}"
+                    )
+                )
                 continue
 
             # Use create() since we now skip existing objects
@@ -59,11 +68,18 @@ class Command(BaseCommand):
                 )
                 loaded_count += 1
             except Exception as e:
-                self.stdout.write
-                (self.style.ERROR(f"Error saving {item['name']} (ID: {item_id}): {e}"))
+                self.stdout.write(
+                    self.style.ERROR(f"Error saving {item['name']} (ID: {item_id}): {e}")
+                )
 
-        self.stdout.write
-        (self.style.SUCCESS(f"Successfully loaded {loaded_count} new exposure layers."))
+        self.stdout.write(
+            self.style.SUCCESS(
+                    f"Successfully loaded {loaded_count} new exposure layers."
+                )
+            )
         if skipped_count > 0:
-            self.stdout.write
-            (self.style.WARNING(f"Skipped {skipped_count} layers that already exist in the database."))
+            self.stdout.write(
+                self.style.WARNING(
+                    f"Skipped {skipped_count} layers that already exist in the database."
+                )
+            )
