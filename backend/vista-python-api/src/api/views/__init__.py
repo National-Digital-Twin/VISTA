@@ -1,17 +1,16 @@
-"""Module for the Django views."""
+"""API views for the exposure layer.
 
-"""
-Import all ViewSets into the 'views' package.
+This package contains all the Django/Flask view definitions
+that handle incoming API requests for exposure data.
 """
 from .asset_types import AssetTypeViewSet
+from .assets import AssetViewSet
 from .data_sources import DataSourceViewSet
 from .exposure_layer import ExposureLayerViewSet
-from .assets import AssetViewSet
 
 __all__ = [
-    "AssetCategoryViewSet",
-    "AssetViewSet",
     "AssetTypeViewSet",
+    "AssetViewSet",
     "DataSourceViewSet",
     "ExposureLayerViewSet",
 ]

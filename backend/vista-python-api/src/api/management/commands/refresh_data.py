@@ -6,10 +6,11 @@ import time
 from asyncio import as_completed, create_task
 from pathlib import Path
 
-from api.models.asset import Asset
-from api.repository.external.asset_repository import fetch
 from asgiref.sync import async_to_sync
 from django.core.management.base import BaseCommand
+
+from api.models.asset import Asset
+from api.repository.external.asset_repository import fetch
 
 
 class Command(BaseCommand):

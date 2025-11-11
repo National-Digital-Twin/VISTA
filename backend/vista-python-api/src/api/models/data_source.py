@@ -1,7 +1,7 @@
 """Models concerning data provenance."""
 
-import uuid
 from django.db import models
+
 
 class DataSource(models.Model):
     """Data source model."""
