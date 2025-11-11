@@ -5,6 +5,7 @@ core/db.sqlite3
 data/raw/*
 **/db.sqlite3
 */core/cache/*
+.pg_service.conf
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

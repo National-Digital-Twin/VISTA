@@ -59,7 +59,6 @@ class Command(BaseCommand):
                 )
                 continue
 
-            # Use create() since we now skip existing objects
             try:
                 ExposureLayer.objects.create(
                     id=item_id,
