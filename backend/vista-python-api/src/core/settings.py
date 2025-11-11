@@ -105,11 +105,10 @@ WSGI_APPLICATION = "core.wsgi.application"
 DATABASES = (
     {
         "default": {
-            "ENGINE": "django.contrib.gis.db.backends.postgis",
+            "ENGINE": "core.mydbengine",
             "NAME": "vista",
-            "USER": "postgres",
-            "HOST": env("DB_HOST"),
-            "PASSWORD": env("DB_PASSWORD"),
+            "USER": "vista",
+            "HOST": env("DB_HOSTNAME"),
             "PORT": 5432,
             "REGION": REGION,
             "OPTIONS": {"sslmode": "require"},
@@ -119,11 +118,12 @@ DATABASES = (
     else {
         "default": {
             "ENGINE": "django.contrib.gis.db.backends.postgis",
-            "NAME": env("DB_NAME"),
-            "USER": env("DB_USER"),
-            "PASSWORD": env("DB_PASSWORD"),
-            "HOST": env("DB_HOST"),
-            "PORT": env("DB_PORT"),
+            "OPTIONS": {
+                "service": "vista_service",
+                "passfile": env(
+                    "PGPASSFILE", default="/vista-python-api/src/core/.vista_pgpass"
+                ),
+            },
         }
     }
 )
