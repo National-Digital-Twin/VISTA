@@ -82,14 +82,6 @@ repos:
         additional_dependencies:
           - "prettier@3.5.3"
         exclude: ^\.github/
-  # - repo: local
-  #   hooks:
-  #     - id: trufflehog
-  #       name: TruffleHog
-  #       description: Detect secrets in your data.
-  #       entry: bash -c 'trufflehog git file://. --since-commit HEAD --results=verified,unknown --fail --no-update'
-  #       language: system
-  #       stages: ["commit", "push"]
 
   # This would install and run trufflehog automatically without relying on user's local installation which
   # could run into the "error occurred with trufflehog updater" issue. It still accomplishes the same result.

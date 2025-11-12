@@ -9,7 +9,7 @@ from api.models.asset import Asset
 from api.models.asset_type import AssetCategory, AssetSubCategory, AssetType
 from api.models.dependency import Dependency
 
-from .models import DataSource, ExposureLayer  # Import new model
+from .models import DataSource, ExposureLayer
 
 
 class AssetCategorySerializer(serializers.ModelSerializer):
@@ -97,4 +97,4 @@ class ExposureLayerSerializer(GeoFeatureModelSerializer):
 
         model = ExposureLayer
         geo_field = "geometry"  # This field will be the GeoJSON geometry
-        fields = ("id", "name")  # Other fields to include in 'properties'
+        fields = ("id", "name")

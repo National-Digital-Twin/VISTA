@@ -15,9 +15,9 @@ from api.views.users import ApplicationUserViewSet
 router = DefaultRouter()
 router.register(r"assets", AssetViewSet)
 router.register(r"assettypes", AssetTypeViewSet)
-router.register(r"dependency", DependencyViewSet)
 router.register(r"users", ApplicationUserViewSet, basename="user")
 router.register(r"datasources", DataSourceViewSet, basename="datasource")
+router.register(r"dependency", DependencyViewSet)
 router.register(r"exposurelayers", views.ExposureLayerViewSet, basename="exposurelayer")
 
 urlpatterns = [

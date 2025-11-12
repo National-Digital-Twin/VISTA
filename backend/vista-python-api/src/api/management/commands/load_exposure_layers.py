@@ -29,7 +29,7 @@ class Command(BaseCommand):
         file_name = options["file_name"]
         file_path = Path(settings.BASE_DIR) / "api" / "data" / file_name
 
-        if not file_path.exists():  # <--- FIX for PTH110
+        if not file_path.exists():
             self.stdout.write(self.style.ERROR(f"File not found at {file_path}"))
             return
 

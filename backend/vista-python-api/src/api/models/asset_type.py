@@ -2,7 +2,7 @@
 
 from django.contrib.gis.db import models
 
-from .data_source import DataSource  # <-- ADD THIS IMPORT
+from .data_source import DataSource
 
 
 class AssetCategory(models.Model):

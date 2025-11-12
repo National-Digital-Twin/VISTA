@@ -1,6 +1,6 @@
 """API views for the exposure layer.
 
-This package contains all the Django/Flask view definitions
+This package contains all the Django view definitions
 that handle incoming API requests for exposure data.
 """
 
