@@ -2,7 +2,6 @@ import { forwardRef } from 'react';
 import ControlButton from '../ControlButton';
 
 interface MapStyleButtonProps {
-    readonly isOpen: boolean;
     readonly onToggle: () => void;
 }
 

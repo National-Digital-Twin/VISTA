@@ -22,15 +22,18 @@ const ControlsContainer = styled(Box)({
     position: 'absolute',
     right: '1rem',
     top: '1rem',
-    zIndex: 1,
+    zIndex: 2,
 });
 
-const ControlGroup = styled(Box)(({ theme }) => ({
+const ControlGroup = styled('fieldset')(({ theme }) => ({
     backgroundColor: theme.palette.background.paper,
     borderRadius: theme.shape.borderRadius,
     boxShadow: theme.shadows[2],
     display: 'flex',
     flexDirection: 'column',
+    border: 'none',
+    margin: 0,
+    padding: 0,
 }));
 
 const ControlDivider = styled(Box)(({ theme }) => ({
@@ -125,28 +128,33 @@ const MapControls = ({
 
     return (
         <ControlsContainer>
-            <ControlGroup role="group" aria-label="Flood warnings controls" sx={{ position: 'relative' }}>
+            <ControlGroup aria-label="Flood warnings controls" sx={{ position: 'relative' }}>
+                <legend style={{ display: 'none' }}>Flood warnings controls</legend>
                 <FloodWarningsButton ref={floodWarningsButtonRef} isOpen={floodWarningsOpen} onToggle={onToggleFloodWarnings} />
                 <Box sx={{ position: 'absolute', top: 0, right: 'calc(100% + 1rem)' }}>
                     <FloodWarningsPanel ref={floodWarningsPanelRef} open={floodWarningsOpen} />
                 </Box>
             </ControlGroup>
 
-            <ControlGroup role="group" aria-label="View controls">
+            <ControlGroup aria-label="View controls">
+                <legend style={{ display: 'none' }}>View controls</legend>
                 <CompassButton mapRef={mapRef} bearing={viewState?.bearing ?? 0} />
             </ControlGroup>
 
-            <ControlGroup role="group" aria-label="Zoom controls">
+            <ControlGroup aria-label="Zoom controls">
+                <legend style={{ display: 'none' }}>Zoom controls</legend>
                 <ZoomInButton mapRef={mapRef} />
                 <ControlDivider />
                 <ZoomOutButton mapRef={mapRef} />
             </ControlGroup>
 
-            <ControlGroup role="group" aria-label="Drawing controls">
+            <ControlGroup aria-label="Drawing controls">
+                <legend style={{ display: 'none' }}>Drawing controls</legend>
                 <DrawPolygonButton isActive={isDrawing} onToggle={onToggleDrawing} />
             </ControlGroup>
 
-            <ControlGroup role="group" aria-label="Map style controls" sx={{ position: 'relative' }}>
+            <ControlGroup aria-label="Map style controls" sx={{ position: 'relative' }}>
+                <legend style={{ display: 'none' }}>Map style controls</legend>
                 <MapStyleButton ref={mapStyleButtonRef} isOpen={mapStylePanelOpen} onToggle={onToggleMapStylePanel} />
                 <Box sx={{ position: 'absolute', top: 0, right: 'calc(100% + 1rem)' }}>
                     <MapStylePanel
@@ -159,7 +167,8 @@ const MapControls = ({
                 </Box>
             </ControlGroup>
 
-            <ControlGroup role="group" aria-label="Map legend controls" sx={{ position: 'relative' }}>
+            <ControlGroup aria-label="Map legend controls" sx={{ position: 'relative' }}>
+                <legend style={{ display: 'none' }}>Map legend controls</legend>
                 <LegendButton ref={legendButtonRef} isOpen={legendOpen} onToggle={onToggleLegend} />
                 <Box sx={{ position: 'absolute', top: 0, right: 'calc(100% + 1rem)' }}>
                     <LegendPanel ref={legendPanelRef} open={legendOpen} />

@@ -5,7 +5,6 @@ import ControlButton from '../ControlButton';
 import { fetchAllLiveStations } from '@/api/hydrology';
 
 interface FloodWarningsButtonProps {
-    readonly isOpen: boolean;
     readonly onToggle: () => void;
 }
 

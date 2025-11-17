@@ -175,7 +175,7 @@ describe('MapPanels', () => {
             renderWithTheme(<MapPanels {...defaultProps} activeView="scenario" />);
 
             const assetsButton = screen.getByText('Assets').closest('div');
-            const bgColor = assetsButton?.style.backgroundColor || window.getComputedStyle(assetsButton!).backgroundColor;
+            const bgColor = assetsButton?.style.backgroundColor || (assetsButton ? globalThis.getComputedStyle(assetsButton).backgroundColor : '');
             expect(bgColor === 'transparent' || bgColor === 'rgba(0, 0, 0, 0)' || bgColor === '').toBe(true);
         });
     });

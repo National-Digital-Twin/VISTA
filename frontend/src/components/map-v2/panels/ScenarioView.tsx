@@ -7,7 +7,7 @@ interface ScenarioViewProps {
 }
 
 const ScenarioView = ({ onItemClick, onClose }: ScenarioViewProps) => {
-    const scenarioName = 'Flood in Newport'; // TODO: Replace with state management when scenario loading is implemented
+    const scenarioName = 'Flood in Newport';
 
     const linkStyle = {
         mb: 1,

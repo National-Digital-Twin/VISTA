@@ -1,35 +1,13 @@
-import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
-import { ThemeProvider } from '@mui/material/styles';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import FloodWarningsPanel from './FloodWarningsPanel';
-import theme from '@/theme';
+import { renderWithProviders, waitForQuery } from '@/test-utils/test-helpers';
 
 vi.mock('@/api/hydrology', () => ({
     fetchAllLiveStations: vi.fn(),
 }));
 
 describe('FloodWarningsPanel', () => {
-    const createQueryClient = () => {
-        return new QueryClient({
-            defaultOptions: {
-                queries: {
-                    retry: false,
-                },
-            },
-        });
-    };
-
-    const renderWithProviders = (component: React.ReactElement) => {
-        const queryClient = createQueryClient();
-        return render(
-            <QueryClientProvider client={queryClient}>
-                <ThemeProvider theme={theme}>{component}</ThemeProvider>
-            </QueryClientProvider>,
-        );
-    };
-
     describe('Rendering', () => {
         it('does not render when open is false', () => {
             const { container } = renderWithProviders(<FloodWarningsPanel open={false} />);
@@ -51,9 +29,7 @@ describe('FloodWarningsPanel', () => {
 
             renderWithProviders(<FloodWarningsPanel open={true} />);
 
-            await new Promise((resolve) => {
-                setTimeout(resolve, 100);
-            });
+            await waitForQuery();
 
             expect(screen.getByText('No current flood warnings')).toBeInTheDocument();
         });
@@ -70,9 +46,7 @@ describe('FloodWarningsPanel', () => {
 
             renderWithProviders(<FloodWarningsPanel open={true} />);
 
-            await new Promise((resolve) => {
-                setTimeout(resolve, 100);
-            });
+            await waitForQuery();
 
             expect(screen.getByText(/Active flood warnings: 2/)).toBeInTheDocument();
         });
@@ -94,7 +68,7 @@ describe('FloodWarningsPanel', () => {
                             direction: 'u',
                             value_date: mockDate,
                             percentile_5: 0.5,
-                            percentile_95: 2.0,
+                            percentile_95: 2,
                         },
                     },
                 ],
@@ -102,9 +76,7 @@ describe('FloodWarningsPanel', () => {
 
             renderWithProviders(<FloodWarningsPanel open={true} />);
 
-            await new Promise((resolve) => {
-                setTimeout(resolve, 100);
-            });
+            await waitForQuery();
 
             expect(screen.getByText('Test Station')).toBeInTheDocument();
             expect(screen.getByText(/River: Test River/)).toBeInTheDocument();

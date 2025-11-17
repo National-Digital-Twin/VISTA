@@ -71,7 +71,7 @@ describe('MapPanelButton', () => {
             renderWithTheme(<MapPanelButton {...defaultProps} isActive={false} />);
 
             const button = screen.getByText('Test Panel').closest('div');
-            const bgColor = button?.style.backgroundColor || window.getComputedStyle(button!).backgroundColor;
+            const bgColor = button?.style.backgroundColor || (button ? globalThis.getComputedStyle(button).backgroundColor : '');
             expect(bgColor === 'transparent' || bgColor === 'rgba(0, 0, 0, 0)' || bgColor === '').toBe(true);
         });
 

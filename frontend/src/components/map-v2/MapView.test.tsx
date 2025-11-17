@@ -1,10 +1,8 @@
 import React from 'react';
-import { render, screen, waitFor, act } from '@testing-library/react';
+import { screen, waitFor, act } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { ThemeProvider } from '@mui/material/styles';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import MapView from './MapView';
-import theme from '@/theme';
+import { renderWithProviders } from '@/test-utils/test-helpers';
 
 vi.mock('react-map-gl/maplibre', () => ({
     default: React.forwardRef(({ onLoad, children, ...props }: any, ref: any) => {
@@ -101,25 +99,6 @@ vi.mock('@/api/hydrology', () => ({
 }));
 
 describe('MapView', () => {
-    const createQueryClient = () => {
-        return new QueryClient({
-            defaultOptions: {
-                queries: {
-                    retry: false,
-                },
-            },
-        });
-    };
-
-    const renderWithProviders = (component: React.ReactElement) => {
-        const queryClient = createQueryClient();
-        return render(
-            <QueryClientProvider client={queryClient}>
-                <ThemeProvider theme={theme}>{component}</ThemeProvider>
-            </QueryClientProvider>,
-        );
-    };
-
     beforeEach(() => {
         vi.clearAllMocks();
     });

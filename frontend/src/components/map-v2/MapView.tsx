@@ -83,12 +83,12 @@ const MapView = () => {
 
         if (transformedUrl.includes('api.os.uk')) {
             const urlParts = transformedUrl.split('api.os.uk');
-            const routeParams = urlParts[urlParts.length - 1];
+            const routeParams = urlParts.at(-1) ?? '';
 
             if (routeParams.startsWith('/')) {
-                transformedUrl = `${window.location.origin}/transparent-proxy/os/${routeParams.substring(1)}`;
+                transformedUrl = `${globalThis.location.origin}/transparent-proxy/os/${routeParams.substring(1)}`;
             } else {
-                transformedUrl = `${window.location.origin}/transparent-proxy/os/${routeParams}`;
+                transformedUrl = `${globalThis.location.origin}/transparent-proxy/os/${routeParams}`;
             }
 
             const fontMatch = /fonts\/(.*?)\//.exec(routeParams);

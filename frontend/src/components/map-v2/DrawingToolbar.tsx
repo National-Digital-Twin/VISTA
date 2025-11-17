@@ -12,10 +12,10 @@ const ToolbarContainer = styled(Box)({
     position: 'absolute',
     right: '5rem',
     top: '1rem',
-    zIndex: 1,
+    zIndex: 2,
 });
 
-const ToolbarGroup = styled(Box)(({ theme }) => ({
+const ToolbarGroup = styled('fieldset')(({ theme }) => ({
     alignItems: 'center',
     backgroundColor: theme.palette.background.paper,
     borderRadius: theme.shape.borderRadius,
@@ -23,6 +23,9 @@ const ToolbarGroup = styled(Box)(({ theme }) => ({
     display: 'flex',
     flexDirection: 'row',
     position: 'relative',
+    border: 'none',
+    margin: 0,
+    padding: 0,
 }));
 
 const VerticalDivider = styled(Divider)(({ theme }) => ({
@@ -77,7 +80,8 @@ const DrawingToolbar = ({
 
     return (
         <ToolbarContainer>
-            <ToolbarGroup role="group" aria-label="Drawing tools">
+            <ToolbarGroup aria-label="Drawing tools">
+                <legend style={{ display: 'none' }}>Drawing tools</legend>
                 <ControlButton
                     onClick={handleDrawCircle}
                     aria-label={drawingMode === 'circle' ? 'Stop drawing circle' : 'Draw circle'}
@@ -97,7 +101,8 @@ const DrawingToolbar = ({
                 </ControlButton>
             </ToolbarGroup>
 
-            <ToolbarGroup role="group" aria-label="Asset filters" sx={{ gap: '0.5rem', padding: '0.5rem' }}>
+            <ToolbarGroup aria-label="Asset filters" sx={{ gap: '0.5rem', padding: '0.5rem' }}>
+                <legend style={{ display: 'none' }}>Asset filters</legend>
                 <FormControlLabel
                     control={<ToggleSwitch checked={primaryAssets} onChange={(e) => onPrimaryAssetsChange(e.target.checked)} />}
                     label="Primary assets"

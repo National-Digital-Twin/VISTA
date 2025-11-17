@@ -1,7 +1,10 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, RenderOptions } from '@testing-library/react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
-import { ReactElement, ReactNode } from 'react';
+import React, { ReactElement, ReactNode } from 'react';
 import { vi } from 'vitest';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ThemeProvider } from '@mui/material/styles';
+import theme from '@/theme';
 
 export const mockUsers = [
     {
@@ -175,3 +178,30 @@ export const createInviteData = (overrides = {}) => ({
     daysAgo: 1,
     ...overrides,
 });
+
+export const createTestQueryClient = () => {
+    return new QueryClient({
+        defaultOptions: {
+            queries: {
+                retry: false,
+            },
+        },
+    });
+};
+
+export const renderWithProviders = (component: React.ReactElement, options?: Omit<RenderOptions, 'wrapper'>) => {
+    const queryClient = createTestQueryClient();
+    const Wrapper = ({ children }: { children: ReactNode }) => (
+        <QueryClientProvider client={queryClient}>
+            <ThemeProvider theme={theme}>{children}</ThemeProvider>
+        </QueryClientProvider>
+    );
+
+    return render(component, { wrapper: Wrapper, ...options });
+};
+
+export const waitForQuery = () => {
+    return new Promise<void>((resolve) => {
+        setTimeout(resolve, 100);
+    });
+};

@@ -44,6 +44,6 @@ export const DEFAULT_VIEW_STATE: ViewState = {
 };
 
 export const MAP_VIEW_BOUNDS: [[number, number], [number, number]] = [
-    [-25.0, 42.0],
-    [15.0, 67.0],
+    [-25, 42],
+    [15, 67],
 ];

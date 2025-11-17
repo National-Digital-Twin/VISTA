@@ -80,7 +80,7 @@ const MapPanels = ({ activeView, onViewChange }: MapPanelsProps) => {
                 top: 0,
                 height: '100%',
                 display: 'flex',
-                zIndex: 1,
+                zIndex: 0,
             }}
         >
             <Paper
@@ -92,6 +92,8 @@ const MapPanels = ({ activeView, onViewChange }: MapPanelsProps) => {
                     flexDirection: 'column',
                     bgcolor: 'background.paper',
                     borderRadius: 0,
+                    position: 'relative',
+                    zIndex: 2,
                 }}
             >
                 <Box sx={{ flex: 1, overflowY: 'auto', py: 1 }}>
@@ -120,6 +122,8 @@ const MapPanels = ({ activeView, onViewChange }: MapPanelsProps) => {
                         'borderLeft': '1px solid',
                         'borderColor': 'divider',
                         'overflow': 'hidden',
+                        'position': 'relative',
+                        'zIndex': 1,
                         'animation': 'slideIn 0.2s ease-in-out',
                         '@keyframes slideIn': {
                             from: {

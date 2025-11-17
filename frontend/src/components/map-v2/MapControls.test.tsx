@@ -1,12 +1,10 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { ThemeProvider } from '@mui/material/styles';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { MapRef } from 'react-map-gl/maplibre';
 import type { MapStyleKey } from './constants';
 import MapControls from './MapControls';
-import theme from '@/theme';
+import { renderWithProviders } from '@/test-utils/test-helpers';
 
 vi.mock('./controls/CompassButton', () => ({
     default: ({ bearing }: { mapRef: any; bearing: number }) => <button data-testid="compass-button">Compass {bearing}</button>,
@@ -64,10 +62,7 @@ vi.mock('./controls/panels/LegendPanel', () => ({
 
 vi.mock('./controls/panels/MapStylePanel', () => ({
     default: React.forwardRef(
-        (
-            { onStyleChange, isOpen, onToggle }: { currentStyle: MapStyleKey; onStyleChange: (s: MapStyleKey) => void; isOpen: boolean; onToggle: () => void },
-            ref: any,
-        ) =>
+        ({ onStyleChange, isOpen, onToggle }: { onStyleChange: (s: MapStyleKey) => void; isOpen: boolean; onToggle: () => void }, ref: any) =>
             isOpen ? (
                 <div ref={ref} data-testid="map-style-panel">
                     <button onClick={() => onStyleChange('streets')}>Change Style</button>
@@ -111,25 +106,6 @@ describe('MapControls', () => {
         onMapStyleChange: vi.fn(),
         mapStylePanelOpen: false,
         onToggleMapStylePanel: vi.fn(),
-    };
-
-    const createQueryClient = () => {
-        return new QueryClient({
-            defaultOptions: {
-                queries: {
-                    retry: false,
-                },
-            },
-        });
-    };
-
-    const renderWithProviders = (component: React.ReactElement) => {
-        const queryClient = createQueryClient();
-        return render(
-            <QueryClientProvider client={queryClient}>
-                <ThemeProvider theme={theme}>{component}</ThemeProvider>
-            </QueryClientProvider>,
-        );
     };
 
     beforeEach(() => {

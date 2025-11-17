@@ -83,7 +83,17 @@ const FloodWarningsPanel = forwardRef<HTMLDivElement, FloodWarningsPanelProps>((
                                     Current Level: {currentLevel === null || currentLevel === undefined ? 'Unknown' : currentLevel.toFixed(2)}m
                                 </Typography>
                                 <Typography variant="body2" color="text.secondary" fontSize="0.875rem">
-                                    Trend: {trend || 'Unknown'} ({direction === 'u' ? 'Upstream' : direction === 'd' ? 'Downstream' : 'Unknown'})
+                                    Trend: {trend || 'Unknown'} (
+                                    {(() => {
+                                        if (direction === 'u') {
+                                            return 'Upstream';
+                                        }
+                                        if (direction === 'd') {
+                                            return 'Downstream';
+                                        }
+                                        return 'Unknown';
+                                    })()}
+                                    )
                                 </Typography>
                                 {value_date && (
                                     <Typography variant="body2" color="text.secondary" fontSize="0.875rem">

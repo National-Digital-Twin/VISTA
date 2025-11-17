@@ -15,11 +15,16 @@ const mockMapRef = {
 };
 
 vi.mock('@mapbox/mapbox-gl-draw', () => {
+    class MockMapboxDraw {
+        changeMode = vi.fn();
+        getMode = vi.fn();
+        static modes = {};
+        constructor() {
+            // Constructor implementation
+        }
+    }
     return {
-        default: vi.fn().mockImplementation(() => ({
-            changeMode: vi.fn(),
-            getMode: vi.fn(),
-        })),
+        default: MockMapboxDraw,
         modes: {},
     };
 });
