@@ -2,13 +2,14 @@ import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
-import AppBody from '@/components/AppBody';
 import Layout from '@/components/Layout';
 import config from '@/config/app-config';
 import AdminSettings from '@/pages/AdminSettings';
 import DataRoom from '@/pages/DataRoom';
 import GroupDetail from '@/pages/GroupDetail';
 import InviteNewUser from '@/pages/InviteNewUser';
+import LegacyMap from '@/pages/LegacyMap';
+import ScenarioMap from '@/pages/ScenarioMap';
 import Notifications from '@/pages/Notifications';
 import PrivacyNotice from '@/pages/PrivacyNotice';
 import Profile from '@/pages/Profile';
@@ -20,7 +21,8 @@ const AppWrapper = () => {
         {
             element: <Layout />,
             children: [
-                { path: '', element: <AppBody /> },
+                { path: '', element: <ScenarioMap /> },
+                { path: 'legacy-map', element: <LegacyMap /> },
                 { path: 'data-room', element: <DataRoom /> },
                 { path: 'profile', element: <Profile /> },
                 { path: 'admin', element: <AdminSettings /> },
