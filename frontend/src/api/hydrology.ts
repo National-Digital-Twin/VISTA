@@ -104,7 +104,7 @@ function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: numbe
 
 export const fetchAllLiveStations = async () => {
     const [latitude, longitude] = [50.7, -1.35];
-    const maxDistance = 19; // 19km, max radius of IoW
+    const maxDistance = 40;
 
     const response = await fetch('https://check-for-flooding.service.gov.uk/api/stations.geojson');
 
@@ -114,7 +114,6 @@ export const fetchAllLiveStations = async () => {
 
     const data = await response.json();
 
-    // Filter features based on distance
     data.features = data.features.filter((feature: any) => {
         const [featureLon, featureLat] = feature.geometry.coordinates;
         const distance = calculateDistance(latitude, longitude, featureLat, featureLon);

@@ -1,0 +1,49 @@
+import type { ViewState } from 'react-map-gl';
+import config from '@/config/app-config';
+
+export type MapStyleKey = 'os' | 'streets' | 'satellite' | 'basic' | 'bright';
+
+function createMapTilerStyle(styleId: string): string {
+    const token = config.map.maptilerToken;
+    if (!token || token === 'undefined' || token === '' || token === 'null') {
+        return `${styleId}?key=`;
+    }
+    return `${styleId}?key=${token}`;
+}
+
+export interface MapStyle {
+    readonly id: string;
+    readonly name: string;
+    readonly key: MapStyleKey;
+}
+
+export const MAP_STYLES: Record<MapStyleKey, string> = {
+    os: 'https://api.os.uk/maps/vector/v1/vts/resources/styles?srs=3857',
+    streets: createMapTilerStyle('https://api.maptiler.com/maps/streets-v2/style.json'),
+    satellite: createMapTilerStyle('https://api.maptiler.com/maps/hybrid/style.json'),
+    basic: createMapTilerStyle('https://api.maptiler.com/maps/basic-v2/style.json'),
+    bright: createMapTilerStyle('https://api.maptiler.com/maps/bright-v2/style.json'),
+};
+
+export const MAP_STYLE_OPTIONS: readonly MapStyle[] = [
+    { id: MAP_STYLES.os, name: 'Ordnance Survey', key: 'os' },
+    { id: MAP_STYLES.streets, name: 'Streets', key: 'streets' },
+    { id: MAP_STYLES.satellite, name: 'Satellite', key: 'satellite' },
+    { id: MAP_STYLES.basic, name: 'Basic', key: 'basic' },
+    { id: MAP_STYLES.bright, name: 'Bright', key: 'bright' },
+];
+
+export const DEFAULT_MAP_STYLE: MapStyleKey = 'os';
+
+export const DEFAULT_VIEW_STATE: ViewState = {
+    longitude: -1.3,
+    latitude: 50.7,
+    zoom: 10.5,
+    pitch: 0,
+    bearing: 0,
+};
+
+export const MAP_VIEW_BOUNDS: [[number, number], [number, number]] = [
+    [-25.0, 42.0],
+    [15.0, 67.0],
+];

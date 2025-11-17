@@ -1,0 +1,141 @@
+import type { ReactElement } from 'react';
+import { Box, Paper } from '@mui/material';
+import MapPanelButton from './MapPanelButton';
+import ScenarioView from './panels/ScenarioView';
+import AssetsView from './panels/AssetsView';
+import ExposureView from './panels/ExposureView';
+import PolygonsView from './panels/PolygonsView';
+
+const RAIL_WIDTH = 80;
+const PANEL_WIDTH = 320;
+
+interface MapPanelItem {
+    readonly id: string;
+    readonly label: string;
+    readonly icon: ReactElement;
+}
+
+const FIXED_ITEMS: readonly MapPanelItem[] = [
+    {
+        id: 'scenario',
+        label: 'Scenario',
+        icon: <img src="/icons/map-v2/scenario.svg" alt="Scenario" width={24} height={24} />,
+    },
+    {
+        id: 'assets',
+        label: 'Assets',
+        icon: <img src="/icons/map-v2/assets.svg" alt="Assets" width={24} height={24} />,
+    },
+    {
+        id: 'exposure',
+        label: 'Exposure',
+        icon: <img src="/icons/map-v2/exposure.svg" alt="Exposure" width={24} height={24} />,
+    },
+    {
+        id: 'polygons',
+        label: 'Polygons',
+        icon: <img src="/icons/map-v2/polygon.svg" alt="Polygons" width={24} height={24} />,
+    },
+];
+
+interface MapPanelsProps {
+    readonly activeView?: string | null;
+    readonly onViewChange?: (viewId: string | null) => void;
+}
+
+const MapPanels = ({ activeView, onViewChange }: MapPanelsProps) => {
+    const handleItemClick = (itemId: string) => {
+        const newActiveView = activeView === itemId ? null : itemId;
+        onViewChange?.(newActiveView);
+    };
+
+    const handleClosePanel = () => {
+        onViewChange?.(null);
+    };
+
+    const renderPanelContent = () => {
+        if (!activeView) {
+            return null;
+        }
+
+        switch (activeView) {
+            case 'scenario':
+                return <ScenarioView onItemClick={handleItemClick} onClose={handleClosePanel} />;
+            case 'assets':
+                return <AssetsView onClose={handleClosePanel} />;
+            case 'exposure':
+                return <ExposureView onClose={handleClosePanel} />;
+            case 'polygons':
+                return <PolygonsView onClose={handleClosePanel} />;
+            default:
+                return null;
+        }
+    };
+
+    return (
+        <Box
+            sx={{
+                position: 'absolute',
+                left: 0,
+                top: 0,
+                height: '100%',
+                display: 'flex',
+                zIndex: 1,
+            }}
+        >
+            <Paper
+                elevation={0}
+                sx={{
+                    width: RAIL_WIDTH,
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    bgcolor: 'background.paper',
+                    borderRadius: 0,
+                }}
+            >
+                <Box sx={{ flex: 1, overflowY: 'auto', py: 1 }}>
+                    {FIXED_ITEMS.map((item) => (
+                        <MapPanelButton
+                            key={item.id}
+                            label={item.label}
+                            icon={item.icon}
+                            isActive={activeView === item.id}
+                            onClick={() => handleItemClick(item.id)}
+                        />
+                    ))}
+                </Box>
+            </Paper>
+
+            {activeView && (
+                <Paper
+                    elevation={0}
+                    sx={{
+                        'width': PANEL_WIDTH,
+                        'height': '100%',
+                        'display': 'flex',
+                        'flexDirection': 'column',
+                        'bgcolor': 'background.paper',
+                        'borderRadius': 0,
+                        'borderLeft': '1px solid',
+                        'borderColor': 'divider',
+                        'overflow': 'hidden',
+                        'animation': 'slideIn 0.2s ease-in-out',
+                        '@keyframes slideIn': {
+                            from: {
+                                transform: 'translateX(-100%)',
+                            },
+                            to: {
+                                transform: 'translateX(0)',
+                            },
+                        },
+                    }}
+                >
+                    <Box sx={{ flex: 1, overflowY: 'auto' }}>{renderPanelContent()}</Box>
+                </Paper>
+            )}
+        </Box>
+    );
+};
+
+export default MapPanels;
