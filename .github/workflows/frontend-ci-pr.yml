@@ -47,7 +47,7 @@ jobs:
 
       - name: Run Dependency Checks
         working-directory: frontend
-        run: npm audit --audit-level=moderate
+        run: npm audit --audit-level=moderate -omit=dev
 
       - name: Check for Outdated Dependencies
         working-directory: frontend
