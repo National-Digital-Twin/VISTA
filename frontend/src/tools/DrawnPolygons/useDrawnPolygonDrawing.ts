@@ -9,14 +9,14 @@ export function useDrawnPolygonDrawing() {
 
     const drawingModeCallbacks = useSharedStore(
         useShallow((state) => ({
-            onAddFeatures: state.addFloodAreaFeatures,
-            onUpdateFeatures: state.updateFloodAreaFeatures,
-            onDeleteFeatures: state.deleteFloodAreaFeatures,
+            onAddFeatures: state.addDrawnAreaFeatures,
+            onUpdateFeatures: state.updateDrawnAreaFeatures,
+            onDeleteFeatures: state.deleteDrawnAreaFeatures,
         })),
     );
 
     const { startDrawing, features } = useDrawingMode(
-        (state) => state.floodAreaFeatures.filter((feature) => feature.id && state.selectedFloodAreaFeatureIds[feature.id]),
+        (state) => state.drawnAreaFeatures.filter((feature) => feature.id && state.selectedDrawnAreaFeatureIds[feature.id]),
         {
             onDrawingEnd: () => {
                 setActiveDrawingMode(null);
