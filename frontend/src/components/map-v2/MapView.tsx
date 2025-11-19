@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Box } from '@mui/material';
 import type { MapRef, ViewStateChangeEvent } from 'react-map-gl/maplibre';
 import Map from 'react-map-gl/maplibre';
+import { useSuspenseQuery } from '@tanstack/react-query';
 
 import 'maplibre-gl/dist/maplibre-gl.css';
 
@@ -9,7 +10,11 @@ import { DEFAULT_VIEW_STATE, DEFAULT_MAP_STYLE, MAP_STYLES, MAP_VIEW_BOUNDS, typ
 import MapControls from './MapControls';
 import DrawingToolbar from './DrawingToolbar';
 import MapPanels from './MapPanels';
+import AssetLayers from './AssetLayers';
 import useMapboxDraw from './hooks/useMapboxDraw';
+import { usePreloadAssetIcons } from './hooks/usePreloadAssetIcons';
+import { fetchAssessments } from '@/api/assessments';
+import { useGroupedAssets } from '@/hooks';
 
 const MapView = () => {
     const mapRef = useRef<MapRef>(null);
@@ -24,10 +29,28 @@ const MapView = () => {
     const [mapStyleKey, setMapStyleKey] = useState<MapStyleKey>(DEFAULT_MAP_STYLE);
     const [mapStylePanelOpen, setMapStylePanelOpen] = useState(false);
     const [activePanelView, setActivePanelView] = useState<string | null>('scenario');
+    const [selectedAssetTypes, setSelectedAssetTypes] = useState<Record<string, boolean>>({});
 
     const drawRef = useMapboxDraw(mapRef, mapReady);
 
     const mapStyle = useMemo(() => MAP_STYLES[mapStyleKey], [mapStyleKey]);
+
+    const { isError: isErrorAssessments, data: assessmentsData } = useSuspenseQuery({
+        queryKey: ['assessments'],
+        queryFn: fetchAssessments,
+    });
+
+    const assessment = assessmentsData?.at(0)?.uri;
+
+    const groupedAssetsResult = useGroupedAssets({
+        assessment: assessment || undefined,
+    });
+
+    const assets = groupedAssetsResult.filteredAssets || [];
+    const dependencies = 'dependencies' in groupedAssetsResult && Array.isArray(groupedAssetsResult.dependencies) ? groupedAssetsResult.dependencies : [];
+    const isLoadingAssets = groupedAssetsResult.isLoadingAssets ?? false;
+
+    usePreloadAssetIcons(isLoadingAssets ? [] : assets);
 
     const handleMove = useCallback((event: ViewStateChangeEvent) => {
         setViewState(event.viewState);
@@ -167,17 +190,28 @@ const MapView = () => {
                 display: 'flex',
             }}
         >
-            <MapPanels activeView={activePanelView} onViewChange={setActivePanelView} />
+            <MapPanels
+                activeView={activePanelView}
+                onViewChange={setActivePanelView}
+                selectedAssetTypes={selectedAssetTypes}
+                onAssetTypeToggle={(assetType, enabled) => {
+                    setSelectedAssetTypes((prev) => ({
+                        ...prev,
+                        [assetType]: enabled,
+                    }));
+                }}
+            />
 
             <Box
                 sx={{
                     flex: 1,
                     position: 'relative',
-                    ml: activePanelView ? '400px' : '80px',
-                    transition: 'margin-left 0.2s ease-in-out',
+                    ml: activePanelView ? '500px' : '80px',
+                    transition: 'marginLeft 0.2s ease-in-out',
                 }}
             >
                 <Map
+                    id="map-v2"
                     ref={mapRef}
                     {...viewState}
                     onMove={handleMove}
@@ -187,7 +221,11 @@ const MapView = () => {
                     onLoad={handleMapLoad}
                     transformRequest={transformRequest}
                     styleDiffing
-                />
+                >
+                    {!isErrorAssessments && assessment && mapReady && (
+                        <AssetLayers assets={assets} dependencies={dependencies} selectedAssetTypes={selectedAssetTypes} mapReady={mapReady} />
+                    )}
+                </Map>
 
                 {drawingToolbarOpen && (
                     <DrawingToolbar

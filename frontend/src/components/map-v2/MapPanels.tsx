@@ -7,7 +7,7 @@ import ExposureView from './panels/ExposureView';
 import PolygonsView from './panels/PolygonsView';
 
 const RAIL_WIDTH = 80;
-const PANEL_WIDTH = 320;
+const PANEL_WIDTH = 420;
 
 interface MapPanelItem {
     readonly id: string;
@@ -41,9 +41,11 @@ const FIXED_ITEMS: readonly MapPanelItem[] = [
 interface MapPanelsProps {
     readonly activeView?: string | null;
     readonly onViewChange?: (viewId: string | null) => void;
+    readonly selectedAssetTypes?: Record<string, boolean>;
+    readonly onAssetTypeToggle?: (assetType: string, enabled: boolean) => void;
 }
 
-const MapPanels = ({ activeView, onViewChange }: MapPanelsProps) => {
+const MapPanels = ({ activeView, onViewChange, selectedAssetTypes, onAssetTypeToggle }: MapPanelsProps) => {
     const handleItemClick = (itemId: string) => {
         const newActiveView = activeView === itemId ? null : itemId;
         onViewChange?.(newActiveView);
@@ -62,7 +64,7 @@ const MapPanels = ({ activeView, onViewChange }: MapPanelsProps) => {
             case 'scenario':
                 return <ScenarioView onItemClick={handleItemClick} onClose={handleClosePanel} />;
             case 'assets':
-                return <AssetsView onClose={handleClosePanel} />;
+                return <AssetsView onClose={handleClosePanel} selectedAssetTypes={selectedAssetTypes} onAssetTypeToggle={onAssetTypeToggle} />;
             case 'exposure':
                 return <ExposureView onClose={handleClosePanel} />;
             case 'polygons':

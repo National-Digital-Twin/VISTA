@@ -19,9 +19,7 @@ vi.mock('@mapbox/mapbox-gl-draw', () => {
         changeMode = vi.fn();
         getMode = vi.fn();
         static modes = {};
-        constructor() {
-            // Constructor implementation
-        }
+        constructor() {}
     }
     return {
         default: MockMapboxDraw,
