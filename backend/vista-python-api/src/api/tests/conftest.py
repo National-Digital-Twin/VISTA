@@ -10,6 +10,19 @@ from api.models.asset_type import AssetCategory, AssetSubCategory, AssetType, Da
 
 
 @pytest.fixture
+def full_data():
+    """Create full test dataset."""
+    return _create_fixture()
+
+
+@pytest.fixture
+def asset_categories():
+    """Create synthetic asset categories."""
+    fixture = _create_fixture()
+    return fixture["asset_categories"]
+
+
+@pytest.fixture
 def asset_types():
     """Create synthetic asset types."""
     fixture = _create_fixture()
@@ -28,11 +41,23 @@ def assets():
     """Create synthetic assets."""
     types = _create_fixture()["asset_types"]
     ryde_assets = [
-        Asset.objects.create(id=uuid.uuid4(), name=f"Ryde {_type}", type=_type, geom=Point(1, 1))
+        Asset.objects.create(
+            id=uuid.uuid4(),
+            external_id=uuid.uuid4(),
+            name=f"Ryde {_type}",
+            type=_type,
+            geom=Point(1, 1),
+        )
         for _type in types
     ]
     cowes_assets = [
-        Asset.objects.create(id=uuid.uuid4(), name=f"Cowes {_type}", type=_type, geom=Point(1, 1))
+        Asset.objects.create(
+            id=uuid.uuid4(),
+            external_id=uuid.uuid4(),
+            name=f"Cowes {_type}",
+            type=_type,
+            geom=Point(1, 1),
+        )
         for _type in types
     ]
     ryde_assets.extend(cowes_assets)
@@ -65,6 +90,8 @@ def _create_fixture():
     )
 
     return {
+        "asset_categories": [category],
+        "asset_subcategories": [transport_sub_category, energy_sub_category],
         "asset_types": [station_asset_type, pylon_asset_type],
         "data_sources": [data_source_one, data_source_two],
     }
