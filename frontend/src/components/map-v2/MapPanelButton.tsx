@@ -9,6 +9,13 @@ interface MapPanelButtonProps {
 }
 
 const MapPanelButton = ({ label, icon, isActive, onClick }: MapPanelButtonProps) => {
+    const getHoverBackgroundColor = () => {
+        if (!onClick) {
+            return isActive ? 'chip.main' : 'transparent';
+        }
+        return isActive ? 'chip.main' : 'action.hover';
+    };
+
     return (
         <Box
             onClick={onClick}
@@ -20,7 +27,7 @@ const MapPanelButton = ({ label, icon, isActive, onClick }: MapPanelButtonProps)
                 'cursor': onClick ? 'pointer' : 'default',
                 'bgcolor': isActive ? 'chip.main' : 'transparent',
                 '&:hover': {
-                    bgcolor: onClick ? (isActive ? 'chip.main' : 'action.hover') : isActive ? 'chip.main' : 'transparent',
+                    bgcolor: getHoverBackgroundColor(),
                 },
                 'transition': 'background-color 0.2s',
             }}

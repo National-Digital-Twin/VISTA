@@ -236,11 +236,22 @@ const AssetMarker = memo(({ feature, isSelected, iconStyles: providedIconStyles,
     return (
         <Marker longitude={longitude} latitude={latitude} style={{ cursor: 'pointer', zIndex: showTooltip ? 100 : 1 }}>
             <div
+                role="button"
+                tabIndex={0}
+                aria-label="Asset marker"
                 style={{
                     position: 'relative',
                 }}
                 onMouseEnter={() => setShowTooltip(true)}
                 onMouseLeave={() => setShowTooltip(false)}
+                onFocus={() => setShowTooltip(true)}
+                onBlur={() => setShowTooltip(false)}
+                onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        setShowTooltip(!showTooltip);
+                    }
+                }}
             >
                 {showTooltip && (
                     <div

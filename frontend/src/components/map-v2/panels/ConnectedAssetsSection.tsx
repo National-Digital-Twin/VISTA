@@ -47,6 +47,60 @@ const ConnectedAssetsSection = ({
         setTabValue(newValue);
     };
 
+    const renderDependentsContent = () => {
+        if (isDependentsLoading) {
+            return (
+                <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
+                    <CircularProgress size={24} />
+                </Box>
+            );
+        }
+        if (isDependentsError) {
+            return (
+                <Box sx={{ p: 2 }}>
+                    <Alert severity="error">{dependentsError?.message || 'Error loading dependent assets'}</Alert>
+                </Box>
+            );
+        }
+        if (totalDependents === 0) {
+            return (
+                <Box sx={{ p: 2 }}>
+                    <Typography variant="body2" color="text.secondary">
+                        No dependent assets found.
+                    </Typography>
+                </Box>
+            );
+        }
+        return <ConnectedAssetsList connectedAssets={filteredDependents} />;
+    };
+
+    const renderProvidersContent = () => {
+        if (isProvidersLoading) {
+            return (
+                <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
+                    <CircularProgress size={24} />
+                </Box>
+            );
+        }
+        if (isProvidersError) {
+            return (
+                <Box sx={{ p: 2 }}>
+                    <Alert severity="error">{providersError?.message || 'Error loading provider assets'}</Alert>
+                </Box>
+            );
+        }
+        if (totalProviders === 0) {
+            return (
+                <Box sx={{ p: 2 }}>
+                    <Typography variant="body2" color="text.secondary">
+                        No provider assets found.
+                    </Typography>
+                </Box>
+            );
+        }
+        return <ConnectedAssetsList connectedAssets={filteredProviders} />;
+    };
+
     return (
         <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
             <Box sx={{ px: 2, py: 2 }}>
@@ -62,43 +116,11 @@ const ConnectedAssetsSection = ({
 
                 <Box sx={{ flex: 1, overflowY: 'auto' }}>
                     <TabPanel value={tabValue} index={0} containerPadding={0}>
-                        {isDependentsLoading ? (
-                            <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
-                                <CircularProgress size={24} />
-                            </Box>
-                        ) : isDependentsError ? (
-                            <Box sx={{ p: 2 }}>
-                                <Alert severity="error">{dependentsError?.message || 'Error loading dependent assets'}</Alert>
-                            </Box>
-                        ) : totalDependents === 0 ? (
-                            <Box sx={{ p: 2 }}>
-                                <Typography variant="body2" color="text.secondary">
-                                    No dependent assets found.
-                                </Typography>
-                            </Box>
-                        ) : (
-                            <ConnectedAssetsList connectedAssets={filteredDependents} />
-                        )}
+                        {renderDependentsContent()}
                     </TabPanel>
 
                     <TabPanel value={tabValue} index={1} containerPadding={0}>
-                        {isProvidersLoading ? (
-                            <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
-                                <CircularProgress size={24} />
-                            </Box>
-                        ) : isProvidersError ? (
-                            <Box sx={{ p: 2 }}>
-                                <Alert severity="error">{providersError?.message || 'Error loading provider assets'}</Alert>
-                            </Box>
-                        ) : totalProviders === 0 ? (
-                            <Box sx={{ p: 2 }}>
-                                <Typography variant="body2" color="text.secondary">
-                                    No provider assets found.
-                                </Typography>
-                            </Box>
-                        ) : (
-                            <ConnectedAssetsList connectedAssets={filteredProviders} />
-                        )}
+                        {renderProvidersContent()}
                     </TabPanel>
                 </Box>
             </Box>

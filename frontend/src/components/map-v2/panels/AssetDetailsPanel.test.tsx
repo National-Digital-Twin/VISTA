@@ -112,7 +112,8 @@ describe('AssetDetailsPanel', () => {
 
         it('displays loading state', async () => {
             const asset = createMockAsset();
-            mockedFetchAssetInfo.mockImplementation(() => new Promise(() => {})); // Never resolves
+            const neverResolvingPromise = new Promise(() => {});
+            mockedFetchAssetInfo.mockImplementation(() => neverResolvingPromise);
 
             renderWithProviders(<AssetDetailsPanel selectedElement={asset} onBack={vi.fn()} />);
 

@@ -114,13 +114,7 @@ const MapPanels = ({ activeView, onViewChange, selectedAssetTypes, onAssetTypeTo
                     {FIXED_ITEMS.map((item) => {
                         const isActive = item.id === 'assets' ? isAssetsHighlighted : activeView === item.id;
                         return (
-                            <MapPanelButton
-                                key={item.id}
-                                label={item.label}
-                                icon={item.icon}
-                                isActive={isActive}
-                                onClick={() => handleItemClick(item.id)}
-                            />
+                            <MapPanelButton key={item.id} label={item.label} icon={item.icon} isActive={isActive} onClick={() => handleItemClick(item.id)} />
                         );
                     })}
                 </Box>
