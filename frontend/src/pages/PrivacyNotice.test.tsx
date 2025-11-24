@@ -1,7 +1,32 @@
+import React from 'react';
 import { describe, it, expect, vi } from 'vitest';
-import { screen, fireEvent } from '@testing-library/react';
-import { renderWithRouter, renderAndExpectText, renderAndExpectTexts } from '../test-utils/test-helpers';
+import { render, screen, fireEvent } from '@testing-library/react';
+import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import PrivacyNotice from './PrivacyNotice';
+
+const renderWithRouter = (ui: React.ReactElement, { initialEntries = ['/'], route = '/*' }: { initialEntries?: string[]; route?: string } = {}) => {
+    const Wrapper = ({ children }: { children: React.ReactNode }) => (
+        <MemoryRouter initialEntries={initialEntries}>
+            <Routes>
+                <Route path={route} element={children} />
+            </Routes>
+        </MemoryRouter>
+    );
+
+    return render(ui, { wrapper: Wrapper });
+};
+
+const renderAndExpectText = (component: React.ReactElement, text: string | RegExp) => {
+    renderWithRouter(component);
+    expect(screen.getByText(text)).toBeInTheDocument();
+};
+
+const renderAndExpectTexts = (component: React.ReactElement, texts: (string | RegExp)[]) => {
+    renderWithRouter(component);
+    for (const text of texts) {
+        expect(screen.getByText(text)).toBeInTheDocument();
+    }
+};
 
 const mockNavigate = vi.fn();
 vi.mock('react-router-dom', async () => {

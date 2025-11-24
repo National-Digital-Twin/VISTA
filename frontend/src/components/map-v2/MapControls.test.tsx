@@ -1,10 +1,31 @@
 import React from 'react';
-import { screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ThemeProvider } from '@mui/material/styles';
 import type { MapRef } from 'react-map-gl/maplibre';
 import type { MapStyleKey } from './constants';
 import MapControls from './MapControls';
-import { renderWithProviders } from '@/test-utils/test-helpers';
+import theme from '@/theme';
+
+const createTestQueryClient = () => {
+    return new QueryClient({
+        defaultOptions: {
+            queries: {
+                retry: false,
+            },
+        },
+    });
+};
+
+const renderWithProviders = (component: React.ReactElement) => {
+    const queryClient = createTestQueryClient();
+    return render(
+        <QueryClientProvider client={queryClient}>
+            <ThemeProvider theme={theme}>{component}</ThemeProvider>
+        </QueryClientProvider>,
+    );
+};
 
 vi.mock('./controls/CompassButton', () => ({
     default: ({ bearing }: { mapRef: any; bearing: number }) => <button data-testid="compass-button">Compass {bearing}</button>,
@@ -86,13 +107,13 @@ vi.mock('@/api/hydrology', () => ({
     fetchAllLiveStations: vi.fn().mockResolvedValue({ features: [] }),
 }));
 
-describe('MapControls', () => {
-    const createMockMapRef = (): React.RefObject<MapRef | null> => ({
-        current: {
-            getMap: () => ({}),
-        } as MapRef,
-    });
+const createMockMapRef = (): React.RefObject<MapRef | null> => ({
+    current: {
+        getMap: () => ({}),
+    } as MapRef,
+});
 
+describe('MapControls', () => {
     const defaultProps = {
         mapRef: createMockMapRef(),
         legendOpen: false,

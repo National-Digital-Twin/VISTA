@@ -1,8 +1,30 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { mockUsers } from '../../test-utils/test-helpers';
 import UsersTab from './UsersTab';
+
+const mockUsers = [
+    {
+        id: '1',
+        name: 'Alice Doe',
+        displayName: 'Alice Doe',
+        email: 'alice@example.com',
+        organisation: 'example.com',
+        groups: ['Group A', 'Group B'],
+        memberSince: '2023-01-15',
+        userType: 'Admin',
+    },
+    {
+        id: '2',
+        name: 'Bob Smith',
+        displayName: 'Bob Smith',
+        email: 'bob@other.org',
+        organisation: 'other.org',
+        groups: ['Group C'],
+        memberSince: '2022-06-01',
+        userType: 'General',
+    },
+];
 
 vi.mock('@/api/users', () => ({
     fetchAllUsers: vi.fn(),
@@ -25,7 +47,7 @@ describe('UsersTab', () => {
 
     it('renders loading state', async () => {
         const { fetchAllUsers } = await import('@/api/users');
-        vi.mocked(fetchAllUsers).mockResolvedValueOnce(new Promise(() => {}));
+        vi.mocked(fetchAllUsers).mockImplementationOnce(() => new Promise(() => {}));
 
         render(
             <MemoryRouter>
