@@ -38,6 +38,15 @@ vi.mock('./panels/PolygonsView', () => ({
     ),
 }));
 
+vi.mock('./panels/AssetDetailsPanel', () => ({
+    default: ({ selectedElement, onBack }: { selectedElement: any; onBack: () => void }) => (
+        <div data-testid="asset-details-panel">
+            <div>Asset: {selectedElement?.uri || 'none'}</div>
+            <button onClick={onBack}>Back</button>
+        </div>
+    ),
+}));
+
 describe('MapPanels', () => {
     const defaultProps = {
         activeView: null,
@@ -100,6 +109,14 @@ describe('MapPanels', () => {
             renderWithTheme(<MapPanels {...defaultProps} activeView="polygons" />);
 
             expect(screen.getByTestId('polygons-view')).toBeInTheDocument();
+        });
+
+        it('renders AssetDetailsPanel when asset-details is active', () => {
+            const mockAsset = { uri: 'https://example.com#asset1' } as any;
+            renderWithTheme(<MapPanels {...defaultProps} activeView="asset-details" selectedElement={mockAsset} onBackFromAssetDetails={vi.fn()} />);
+
+            expect(screen.getByTestId('asset-details-panel')).toBeInTheDocument();
+            expect(screen.getByText('Asset: https://example.com#asset1')).toBeInTheDocument();
         });
     });
 
@@ -189,6 +206,50 @@ describe('MapPanels', () => {
             fireEvent.click(goToAssetsButton);
 
             expect(onViewChange).toHaveBeenCalledWith('assets');
+        });
+    });
+
+    describe('Asset Details Panel', () => {
+        it('disables assets button when asset-details is active', () => {
+            const mockAsset = { uri: 'https://example.com#asset1' } as any;
+            renderWithTheme(<MapPanels {...defaultProps} activeView="asset-details" selectedElement={mockAsset} onBackFromAssetDetails={vi.fn()} />);
+
+            const assetsButton = screen.getByText('Assets').closest('div');
+            expect(assetsButton).toBeInTheDocument();
+        });
+
+        it('calls onBackFromAssetDetails when back button is clicked', () => {
+            const mockAsset = { uri: 'https://example.com#asset1' } as any;
+            const onBackFromAssetDetails = vi.fn();
+            renderWithTheme(
+                <MapPanels {...defaultProps} activeView="asset-details" selectedElement={mockAsset} onBackFromAssetDetails={onBackFromAssetDetails} />,
+            );
+
+            const backButton = screen.getByText('Back');
+            fireEvent.click(backButton);
+
+            expect(onBackFromAssetDetails).toHaveBeenCalledTimes(1);
+        });
+
+        it('allows navigation when asset-details is active', () => {
+            const mockAsset = { uri: 'https://example.com#asset1' } as any;
+            const onViewChange = vi.fn();
+            renderWithTheme(
+                <MapPanels
+                    {...defaultProps}
+                    activeView="asset-details"
+                    selectedElement={mockAsset}
+                    onViewChange={onViewChange}
+                    onBackFromAssetDetails={vi.fn()}
+                />,
+            );
+
+            const scenarioButton = screen.getByText('Scenario').closest('div');
+            if (scenarioButton) {
+                fireEvent.click(scenarioButton);
+            }
+
+            expect(onViewChange).toHaveBeenCalledWith('scenario');
         });
     });
 });

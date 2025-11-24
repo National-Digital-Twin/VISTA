@@ -1,8 +1,29 @@
 import React from 'react';
-import { screen, waitFor, act } from '@testing-library/react';
+import { render, screen, waitFor, act } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ThemeProvider } from '@mui/material/styles';
 import MapView from './MapView';
-import { renderWithProviders } from '@/test-utils/test-helpers';
+import theme from '@/theme';
+
+const createTestQueryClient = () => {
+    return new QueryClient({
+        defaultOptions: {
+            queries: {
+                retry: false,
+            },
+        },
+    });
+};
+
+const renderWithProviders = (component: React.ReactElement) => {
+    const queryClient = createTestQueryClient();
+    return render(
+        <QueryClientProvider client={queryClient}>
+            <ThemeProvider theme={theme}>{component}</ThemeProvider>
+        </QueryClientProvider>,
+    );
+};
 
 vi.mock('react-map-gl/maplibre', () => ({
     default: React.forwardRef(({ onLoad, children, ...props }: any, ref: any) => {
@@ -42,10 +63,22 @@ vi.mock('react-map-gl/maplibre', () => ({
 }));
 
 vi.mock('./MapPanels', () => ({
-    default: ({ activeView, onViewChange }: { activeView: string | null; onViewChange: (view: string | null) => void }) => (
+    default: ({
+        activeView,
+        onViewChange,
+        selectedElement,
+        onBackFromAssetDetails,
+    }: {
+        activeView: string | null;
+        onViewChange: (view: string | null) => void;
+        selectedElement?: any;
+        onBackFromAssetDetails?: () => void;
+    }) => (
         <div data-testid="map-panels">
             <button onClick={() => onViewChange(activeView === 'scenario' ? null : 'scenario')}>Toggle Scenario</button>
             <div data-testid="active-view">{activeView || 'none'}</div>
+            <div data-testid="selected-element">{selectedElement?.uri || 'none'}</div>
+            {onBackFromAssetDetails && <button onClick={onBackFromAssetDetails}>Back from Asset Details</button>}
         </div>
     ),
 }));
@@ -124,24 +157,29 @@ vi.mock('@/hooks', () => ({
     }),
 }));
 
+const waitForElement = async (testId: string) => {
+    await waitFor(() => {
+        expect(screen.getByTestId(testId)).toBeInTheDocument();
+    });
+};
+
+const clickElement = async (testId: string) => {
+    await waitForElement(testId);
+    const element = screen.getByTestId(testId);
+    await act(async () => {
+        element.click();
+    });
+};
+
+const openDrawingToolbar = async () => {
+    await clickElement('drawing-toggle');
+    await waitForElement('drawing-toolbar');
+};
+
 describe('MapView', () => {
     beforeEach(() => {
         vi.clearAllMocks();
     });
-
-    const waitForElement = async (testId: string) => {
-        await waitFor(() => {
-            expect(screen.getByTestId(testId)).toBeInTheDocument();
-        });
-    };
-
-    const clickElement = async (testId: string) => {
-        await waitForElement(testId);
-        const element = screen.getByTestId(testId);
-        await act(async () => {
-            element.click();
-        });
-    };
 
     describe('Rendering', () => {
         it('renders map component', async () => {
@@ -309,11 +347,6 @@ describe('MapView', () => {
     });
 
     describe('Drawing Toolbar', () => {
-        const openDrawingToolbar = async () => {
-            await clickElement('drawing-toggle');
-            await waitForElement('drawing-toolbar');
-        };
-
         it('shows drawing toolbar when toggled on', async () => {
             renderWithProviders(<MapView />);
             await openDrawingToolbar();
@@ -367,11 +400,6 @@ describe('MapView', () => {
     });
 
     describe('Asset Filters', () => {
-        const openDrawingToolbar = async () => {
-            await clickElement('drawing-toggle');
-            await waitForElement('drawing-toolbar');
-        };
-
         it('updates primary assets state', async () => {
             renderWithProviders(<MapView />);
             await openDrawingToolbar();

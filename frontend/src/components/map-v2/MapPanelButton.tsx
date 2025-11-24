@@ -5,10 +5,17 @@ interface MapPanelButtonProps {
     readonly label: string;
     readonly icon: ReactElement;
     readonly isActive: boolean;
-    readonly onClick: () => void;
+    readonly onClick?: () => void;
 }
 
 const MapPanelButton = ({ label, icon, isActive, onClick }: MapPanelButtonProps) => {
+    const getHoverBackgroundColor = () => {
+        if (!onClick) {
+            return isActive ? 'chip.main' : 'transparent';
+        }
+        return isActive ? 'chip.main' : 'action.hover';
+    };
+
     return (
         <Box
             onClick={onClick}
@@ -17,10 +24,10 @@ const MapPanelButton = ({ label, icon, isActive, onClick }: MapPanelButtonProps)
                 'flexDirection': 'column',
                 'alignItems': 'center',
                 'p': 1.5,
-                'cursor': 'pointer',
+                'cursor': onClick ? 'pointer' : 'default',
                 'bgcolor': isActive ? 'chip.main' : 'transparent',
                 '&:hover': {
-                    bgcolor: isActive ? 'chip.main' : 'action.hover',
+                    bgcolor: getHoverBackgroundColor(),
                 },
                 'transition': 'background-color 0.2s',
             }}

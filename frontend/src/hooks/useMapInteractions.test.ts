@@ -1,9 +1,24 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook } from '@testing-library/react';
-import { createMockMap, mockAssets, mockDependencies } from '../test-utils/test-helpers';
 import useMapInteractions from './useMapInteractions';
 import { findElement } from '@/utils';
 import { isEmpty } from '@/utils/isEmpty';
+
+const mockAssets = [
+    { lng: 0.5, lat: 0.5, uri: 'asset1' },
+    { lng: 1.5, lat: 1.5, uri: 'asset2' },
+];
+
+const mockDependencies = [{ uri: 'dep1' }, { uri: 'dep2' }];
+
+const createMockMap = () => ({
+    style: {},
+    getMap: vi.fn().mockReturnValue({
+        queryRenderedFeatures: vi.fn().mockReturnValue([]),
+        setFeatureState: vi.fn(),
+    }),
+    getLayer: vi.fn().mockReturnValue(true),
+});
 
 vi.mock('@/utils', () => ({
     findElement: vi.fn(),

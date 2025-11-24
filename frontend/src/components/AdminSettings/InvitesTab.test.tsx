@@ -1,8 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import { mockInvites } from '../../test-utils/test-helpers';
 import InvitesTab from './InvitesTab';
+
+const mockInvites = [
+    { id: 'i1', email: 'a@example.com', userType: 'Admin', groups: ['G1'], status: 'Pending', daysAgo: 2 },
+    { id: 'i2', email: 'b@example.com', userType: 'General', groups: ['G2'], status: 'Expired', daysAgo: 10 },
+];
 
 vi.mock('@/api/invites', () => ({
     fetchAllInvites: vi.fn(),
@@ -26,7 +30,7 @@ describe('InvitesTab', () => {
 
     it('shows loading indicator', async () => {
         const { fetchAllInvites } = await import('@/api/invites');
-        vi.mocked(fetchAllInvites).mockResolvedValueOnce(new Promise(() => {}));
+        vi.mocked(fetchAllInvites).mockImplementationOnce(() => new Promise(() => {}));
 
         render(
             <MemoryRouter>
