@@ -233,14 +233,19 @@ const AssetMarker = memo(({ feature, isSelected, iconStyles: providedIconStyles,
             <span style={{ fontSize: '10px', fontWeight: 'bold' }}>{iconFallbackText}</span>
         );
 
+    const ariaLabel = asset?.name || 'Asset marker';
+
     return (
         <Marker longitude={longitude} latitude={latitude} style={{ cursor: 'pointer', zIndex: showTooltip ? 100 : 1 }}>
-            <div
-                role="button"
-                tabIndex={0}
-                aria-label="Asset marker"
+            <button
+                type="button"
+                aria-label={ariaLabel}
                 style={{
                     position: 'relative',
+                    border: 'none',
+                    background: 'transparent',
+                    padding: 0,
+                    cursor: 'pointer',
                 }}
                 onMouseEnter={() => setShowTooltip(true)}
                 onMouseLeave={() => setShowTooltip(false)}
@@ -290,7 +295,7 @@ const AssetMarker = memo(({ feature, isSelected, iconStyles: providedIconStyles,
                 >
                     {iconElement}
                 </div>
-            </div>
+            </button>
         </Marker>
     );
 });
