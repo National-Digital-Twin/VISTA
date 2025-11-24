@@ -5,6 +5,8 @@ import ScenarioView from './panels/ScenarioView';
 import AssetsView from './panels/AssetsView';
 import ExposureView from './panels/ExposureView';
 import PolygonsView from './panels/PolygonsView';
+import AssetDetailsPanel from './panels/AssetDetailsPanel';
+import type { Element } from '@/models';
 
 const RAIL_WIDTH = 80;
 const PANEL_WIDTH = 420;
@@ -43,9 +45,11 @@ interface MapPanelsProps {
     readonly onViewChange?: (viewId: string | null) => void;
     readonly selectedAssetTypes?: Record<string, boolean>;
     readonly onAssetTypeToggle?: (assetType: string, enabled: boolean) => void;
+    readonly selectedElement?: Element | null;
+    readonly onBackFromAssetDetails?: () => void;
 }
 
-const MapPanels = ({ activeView, onViewChange, selectedAssetTypes, onAssetTypeToggle }: MapPanelsProps) => {
+const MapPanels = ({ activeView, onViewChange, selectedAssetTypes, onAssetTypeToggle, selectedElement, onBackFromAssetDetails }: MapPanelsProps) => {
     const handleItemClick = (itemId: string) => {
         const newActiveView = activeView === itemId ? null : itemId;
         onViewChange?.(newActiveView);
@@ -69,10 +73,18 @@ const MapPanels = ({ activeView, onViewChange, selectedAssetTypes, onAssetTypeTo
                 return <ExposureView onClose={handleClosePanel} />;
             case 'polygons':
                 return <PolygonsView onClose={handleClosePanel} />;
+            case 'asset-details':
+                if (!onBackFromAssetDetails) {
+                    return null;
+                }
+                return <AssetDetailsPanel selectedElement={selectedElement || null} onBack={onBackFromAssetDetails} />;
             default:
                 return null;
         }
     };
+
+    const isAssetDetailsActive = activeView === 'asset-details';
+    const isAssetsHighlighted = activeView === 'assets' || isAssetDetailsActive;
 
     return (
         <Box
@@ -99,15 +111,18 @@ const MapPanels = ({ activeView, onViewChange, selectedAssetTypes, onAssetTypeTo
                 }}
             >
                 <Box sx={{ flex: 1, overflowY: 'auto', py: 1 }}>
-                    {FIXED_ITEMS.map((item) => (
-                        <MapPanelButton
-                            key={item.id}
-                            label={item.label}
-                            icon={item.icon}
-                            isActive={activeView === item.id}
-                            onClick={() => handleItemClick(item.id)}
-                        />
-                    ))}
+                    {FIXED_ITEMS.map((item) => {
+                        const isActive = item.id === 'assets' ? isAssetsHighlighted : activeView === item.id;
+                        return (
+                            <MapPanelButton
+                                key={item.id}
+                                label={item.label}
+                                icon={item.icon}
+                                isActive={isActive}
+                                onClick={() => handleItemClick(item.id)}
+                            />
+                        );
+                    })}
                 </Box>
             </Paper>
 

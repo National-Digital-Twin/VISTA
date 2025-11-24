@@ -42,10 +42,22 @@ vi.mock('react-map-gl/maplibre', () => ({
 }));
 
 vi.mock('./MapPanels', () => ({
-    default: ({ activeView, onViewChange }: { activeView: string | null; onViewChange: (view: string | null) => void }) => (
+    default: ({
+        activeView,
+        onViewChange,
+        selectedElement,
+        onBackFromAssetDetails,
+    }: {
+        activeView: string | null;
+        onViewChange: (view: string | null) => void;
+        selectedElement?: any;
+        onBackFromAssetDetails?: () => void;
+    }) => (
         <div data-testid="map-panels">
             <button onClick={() => onViewChange(activeView === 'scenario' ? null : 'scenario')}>Toggle Scenario</button>
             <div data-testid="active-view">{activeView || 'none'}</div>
+            <div data-testid="selected-element">{selectedElement?.uri || 'none'}</div>
+            {onBackFromAssetDetails && <button onClick={onBackFromAssetDetails}>Back from Asset Details</button>}
         </div>
     ),
 }));

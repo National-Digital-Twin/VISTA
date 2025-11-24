@@ -1,9 +1,10 @@
-import { useCallback, useMemo, useEffect, memo } from 'react';
+import { useCallback, useMemo, useEffect, memo, useState } from 'react';
 import { Layer, Source, Marker, useMap } from 'react-map-gl/maplibre';
 import type { Feature } from 'geojson';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { isIconPreloaded } from './hooks/usePreloadAssetIcons';
+import AssetTooltip from './panels/AssetTooltip';
 import { generatePointAssetFeatures } from '@/components/Map/map-utils';
 import useFindIcon from '@/hooks/useFindIcon';
 import { findElement } from '@/utils';
@@ -12,7 +13,7 @@ import type { Asset, Dependency, Element } from '@/models';
 const SOURCE_ID = 'map-v2-asset-source';
 const LAYER_ID = 'map-v2-asset-layer';
 const CIRCLE_RADIUS = 12;
-const SELECTED_STROKE_COLOR = '#3670b3';
+const SELECTED_STROKE_COLOR = '#FFFD04';
 const SELECTED_STROKE_WIDTH = 2;
 const DEFAULT_BACKGROUND_COLOR = '#000000';
 const MARKER_BORDER_COLOR = '#FFFD04';
@@ -22,7 +23,7 @@ export interface AssetLayersProps {
     readonly dependencies: Dependency[];
     readonly selectedAssetTypes: Record<string, boolean>;
     readonly selectedElements?: Element[];
-    readonly onElementClick?: (isMultiSelect: boolean, elements: Element[]) => void;
+    readonly onElementClick?: (elements: Element[]) => void;
     readonly mapReady?: boolean;
 }
 
@@ -147,7 +148,7 @@ const AssetLayers = ({ assets, dependencies, selectedAssetTypes, selectedElement
                 .filter((element): element is Element => element !== undefined);
 
             if (elements.length > 0) {
-                onElementClick(false, elements);
+                onElementClick(elements);
             }
         },
         [mapInstance, onElementClick, features, filteredAssets, dependencies],
@@ -191,7 +192,7 @@ const AssetLayers = ({ assets, dependencies, selectedAssetTypes, selectedElement
                 const asset = assetMap.get(uri);
                 const iconStyles = asset?.styles;
 
-                return <AssetMarker key={uri} feature={feature} isSelected={selectedElementUris.has(uri)} iconStyles={iconStyles} />;
+                return <AssetMarker key={uri} feature={feature} isSelected={selectedElementUris.has(uri)} iconStyles={iconStyles} asset={asset} />;
             })}
         </Source>
     );
@@ -201,9 +202,11 @@ interface AssetMarkerProps {
     readonly feature: Feature;
     readonly isSelected: boolean;
     readonly iconStyles?: Asset['styles'];
+    readonly asset: Asset | undefined;
 }
 
-const AssetMarker = memo(({ feature, isSelected, iconStyles: providedIconStyles }: AssetMarkerProps) => {
+const AssetMarker = memo(({ feature, isSelected, iconStyles: providedIconStyles, asset }: AssetMarkerProps) => {
+    const [showTooltip, setShowTooltip] = useState(false);
     const featureType = feature.properties?.type;
     const fallbackIconStyles = useFindIcon(featureType || '');
     const iconStyles = providedIconStyles || fallbackIconStyles;
@@ -231,26 +234,51 @@ const AssetMarker = memo(({ feature, isSelected, iconStyles: providedIconStyles 
         );
 
     return (
-        <Marker longitude={longitude} latitude={latitude} style={{ cursor: 'pointer' }}>
+        <Marker longitude={longitude} latitude={latitude} style={{ cursor: 'pointer', zIndex: showTooltip ? 100 : 1 }}>
             <div
                 style={{
-                    backgroundColor,
-                    color,
-                    borderRadius: '50%',
-                    cursor: 'pointer',
-                    borderWidth: isSelected ? '3px' : '2px',
-                    borderStyle: 'solid',
-                    borderColor: isSelected ? SELECTED_STROKE_COLOR : MARKER_BORDER_COLOR,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    minHeight: '1px',
-                    aspectRatio: '1',
-                    padding: '5px',
-                    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
+                    position: 'relative',
                 }}
+                onMouseEnter={() => setShowTooltip(true)}
+                onMouseLeave={() => setShowTooltip(false)}
             >
-                {iconElement}
+                {showTooltip && (
+                    <div
+                        style={{
+                            position: 'absolute',
+                            bottom: '100%',
+                            left: '50%',
+                            transform: 'translateX(-50%)',
+                            marginBottom: '8px',
+                            zIndex: 1000,
+                            pointerEvents: 'none',
+                        }}
+                    >
+                        {asset && <AssetTooltip element={asset} />}
+                    </div>
+                )}
+                <div
+                    style={{
+                        backgroundColor,
+                        color,
+                        borderRadius: '50%',
+                        cursor: 'pointer',
+                        borderWidth: isSelected ? '3px' : '2px',
+                        borderStyle: 'solid',
+                        borderColor: isSelected ? SELECTED_STROKE_COLOR : MARKER_BORDER_COLOR,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        minHeight: '1px',
+                        aspectRatio: '1',
+                        padding: '5px',
+                        boxShadow: isSelected
+                            ? '0 0 10px rgba(255, 253, 4, 0.8), 0 0 20px rgba(255, 253, 4, 0.6), 0 2px 4px rgba(0, 0, 0, 0.2)'
+                            : '0 2px 4px rgba(0, 0, 0, 0.2)',
+                    }}
+                >
+                    {iconElement}
+                </div>
             </div>
         </Marker>
     );

@@ -15,6 +15,7 @@ import useMapboxDraw from './hooks/useMapboxDraw';
 import { usePreloadAssetIcons } from './hooks/usePreloadAssetIcons';
 import { fetchAssessments } from '@/api/assessments';
 import { useGroupedAssets } from '@/hooks';
+import type { Element } from '@/models';
 
 const MapView = () => {
     const mapRef = useRef<MapRef>(null);
@@ -30,6 +31,8 @@ const MapView = () => {
     const [mapStylePanelOpen, setMapStylePanelOpen] = useState(false);
     const [activePanelView, setActivePanelView] = useState<string | null>('scenario');
     const [selectedAssetTypes, setSelectedAssetTypes] = useState<Record<string, boolean>>({});
+    const [selectedElement, setSelectedElement] = useState<Element | null>(null);
+    const [previousPanelView, setPreviousPanelView] = useState<string | null>('scenario');
 
     const drawRef = useMapboxDraw(mapRef, mapReady);
 
@@ -153,6 +156,36 @@ const MapView = () => {
         setDependentAssets(enabled);
     }, []);
 
+    const handleViewChange = useCallback(
+        (viewId: string | null) => {
+            if (viewId !== 'asset-details' && selectedElement) {
+                setSelectedElement(null);
+            }
+            setActivePanelView(viewId);
+        },
+        [selectedElement],
+    );
+
+    const handleElementClick = useCallback(
+        (elements: Element[]) => {
+            if (elements.length > 0) {
+                if (activePanelView === 'asset-details') {
+                    setSelectedElement(elements[0]);
+                    return;
+                }
+                setPreviousPanelView(activePanelView);
+                setSelectedElement(elements[0]);
+                setActivePanelView('asset-details');
+            }
+        },
+        [activePanelView],
+    );
+
+    const handleBackFromAssetDetails = useCallback(() => {
+        setSelectedElement(null);
+        setActivePanelView(previousPanelView || 'scenario');
+    }, [previousPanelView]);
+
     useEffect(() => {
         if (!mapReady || !mapRef.current || !drawRef.current) {
             return;
@@ -192,7 +225,7 @@ const MapView = () => {
         >
             <MapPanels
                 activeView={activePanelView}
-                onViewChange={setActivePanelView}
+                onViewChange={handleViewChange}
                 selectedAssetTypes={selectedAssetTypes}
                 onAssetTypeToggle={(assetType, enabled) => {
                     setSelectedAssetTypes((prev) => ({
@@ -200,6 +233,8 @@ const MapView = () => {
                         [assetType]: enabled,
                     }));
                 }}
+                selectedElement={selectedElement}
+                onBackFromAssetDetails={handleBackFromAssetDetails}
             />
 
             <Box
@@ -223,7 +258,14 @@ const MapView = () => {
                     styleDiffing
                 >
                     {!isErrorAssessments && assessment && mapReady && (
-                        <AssetLayers assets={assets} dependencies={dependencies} selectedAssetTypes={selectedAssetTypes} mapReady={mapReady} />
+                        <AssetLayers
+                            assets={assets}
+                            dependencies={dependencies}
+                            selectedAssetTypes={selectedAssetTypes}
+                            selectedElements={selectedElement ? [selectedElement] : []}
+                            onElementClick={handleElementClick}
+                            mapReady={mapReady}
+                        />
                     )}
                 </Map>
 
