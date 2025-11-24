@@ -3,7 +3,7 @@
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
-from api import rest_views
+from api import rest_views, views
 from api.schema import schema
 from api.views.asset_types import AssetTypeViewSet
 from api.views.assets import AssetViewSet
@@ -15,9 +15,10 @@ from api.views.users import ApplicationUserViewSet
 router = DefaultRouter()
 router.register(r"assets", AssetViewSet)
 router.register(r"assettypes", AssetTypeViewSet)
-router.register(r"datasources", DataSourceViewSet)
-router.register(r"dependency", DependencyViewSet)
 router.register(r"users", ApplicationUserViewSet, basename="user")
+router.register(r"datasources", DataSourceViewSet, basename="datasource")
+router.register(r"dependency", DependencyViewSet)
+router.register(r"exposurelayers", views.ExposureLayerViewSet, basename="exposurelayer")
 
 urlpatterns = [
     path("graphql/", NoMultipartGraphQLView.as_view(schema=schema), name="graphql"),

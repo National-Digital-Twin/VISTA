@@ -3,10 +3,13 @@
 from typing import ClassVar
 
 from rest_framework import serializers
+from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
 from api.models.asset import Asset
-from api.models.asset_type import AssetCategory, AssetSubCategory, AssetType, DataSource
+from api.models.asset_type import AssetCategory, AssetSubCategory, AssetType
 from api.models.dependency import Dependency
+
+from .models import DataSource, ExposureLayer
 
 
 class AssetCategorySerializer(serializers.ModelSerializer):
@@ -84,3 +87,14 @@ class DependencySerializer(serializers.ModelSerializer):
         model = Dependency
         fields: ClassVar[list[str]] = ["id", "provider_asset", "dependent_asset"]
         read_only_fields: ClassVar[list[str]] = ["id"]
+
+
+class ExposureLayerSerializer(GeoFeatureModelSerializer):
+    """Serializer to output ExposureLayer data as a GeoJSON Feature."""
+
+    class Meta:
+        """Configuration for the `ExposureLayerSerializer`."""
+
+        model = ExposureLayer
+        geo_field = "geometry"  # This field will be the GeoJSON geometry
+        fields = ("id", "name")

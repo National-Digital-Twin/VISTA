@@ -5,9 +5,10 @@ import logging
 import uuid
 from pathlib import Path
 
+from django.core.management.base import BaseCommand
+
 from api.models.asset import Asset
 from api.models.dependency import Dependency
-from django.core.management.base import BaseCommand
 
 
 class Command(BaseCommand):
