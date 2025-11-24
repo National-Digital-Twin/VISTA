@@ -12,26 +12,6 @@ from api.models.dependency import Dependency
 from .models import DataSource, ExposureLayer
 
 
-class AssetCategorySerializer(serializers.ModelSerializer):
-    """Serializer for the Asset Category model."""
-
-    class Meta:
-        """Configuration for the `AssetCategorySerializer`."""
-
-        model = AssetCategory
-        fields: ClassVar[list[str]] = ["id", "name"]
-
-
-class AssetSubCategorySerializer(serializers.ModelSerializer):
-    """Serializer for the Asset Sub Category model."""
-
-    class Meta:
-        """Configuration for the `AssetSubCategorySerializer`."""
-
-        model = AssetSubCategory
-        fields: ClassVar[list[str]] = ["id", "name", "category_id"]
-
-
 class AssetTypeSerializer(serializers.ModelSerializer):
     """Serializer for the Asset Type model."""
 
@@ -39,7 +19,31 @@ class AssetTypeSerializer(serializers.ModelSerializer):
         """Configuration for the `AssetTypeSerializer`."""
 
         model = AssetType
-        fields: ClassVar[list[str]] = ["id", "name", "sub_category_id"]
+        fields: ClassVar[list[str]] = ["id", "name"]
+
+
+class AssetSubCategorySerializer(serializers.ModelSerializer):
+    """Serializer for the Asset Sub Category model."""
+
+    asset_types = AssetTypeSerializer(many=True, read_only=True)
+
+    class Meta:
+        """Configuration for the `AssetSubCategorySerializer`."""
+
+        model = AssetSubCategory
+        fields: ClassVar[list[str]] = ["id", "name", "asset_types"]
+
+
+class AssetCategorySerializer(serializers.ModelSerializer):
+    """Serializer for the Asset Category model."""
+
+    sub_categories = AssetSubCategorySerializer(many=True, read_only=True)
+
+    class Meta:
+        """Configuration for the `AssetCategorySerializer`."""
+
+        model = AssetCategory
+        fields: ClassVar[list[str]] = ["id", "name", "sub_categories"]
 
 
 class AssetSerializer(serializers.ModelSerializer):
