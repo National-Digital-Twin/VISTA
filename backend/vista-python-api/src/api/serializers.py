@@ -46,8 +46,8 @@ class AssetCategorySerializer(serializers.ModelSerializer):
         fields: ClassVar[list[str]] = ["id", "name", "sub_categories"]
 
 
-class AssetSerializer(serializers.ModelSerializer):
-    """Serializer for the Asset model."""
+class AssetListSerializer(serializers.ModelSerializer):
+    """Serializer for the Asset model for list view."""
 
     type = AssetTypeSerializer()
 
@@ -85,12 +85,39 @@ class IdpUserSerializer(serializers.Serializer):
 class DependencySerializer(serializers.ModelSerializer):
     """Serializer for the Dependency model."""
 
+    provider_asset = AssetListSerializer()
+    dependent_asset = AssetListSerializer()
+
     class Meta:
         """Configuration for the `DependencySerializer`."""
 
         model = Dependency
         fields: ClassVar[list[str]] = ["id", "provider_asset", "dependent_asset"]
         read_only_fields: ClassVar[list[str]] = ["id"]
+
+
+class AssetDetailSerializer(serializers.ModelSerializer):
+    """Serializer for the Asset model for detailed view."""
+
+    type = AssetTypeSerializer()
+    providers = serializers.SerializerMethodField()
+    dependents = serializers.SerializerMethodField()
+
+    class Meta:
+        """Configuration for the `AssetSerializer`."""
+
+        model = Asset
+        fields: ClassVar[list[str]] = ["id", "name", "geom", "type", "providers", "dependents"]
+
+    def get_providers(self, obj):
+        """Get providers for asset."""
+        deps = obj.dependent.all()
+        return AssetListSerializer((d.provider_asset for d in deps), many=True).data
+
+    def get_dependents(self, obj):
+        """Get dependents of asset."""
+        deps = obj.provider.all()
+        return AssetListSerializer((d.dependent_asset for d in deps), many=True).data
 
 
 class ExposureLayerSerializer(GeoFeatureModelSerializer):
