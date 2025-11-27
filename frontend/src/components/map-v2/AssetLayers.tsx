@@ -5,82 +5,117 @@ import type { Feature } from 'geojson';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { isIconPreloaded } from './hooks/usePreloadAssetIcons';
 import AssetTooltip from './panels/AssetTooltip';
-import { generatePointAssetFeatures } from '@/components/Map/map-utils';
-import useFindIcon from '@/hooks/useFindIcon';
+import { generatePointAssetFeatures, generateLinearAssetFeatures } from '@/components/Map/map-utils';
 import { findElement } from '@/utils';
-import type { Asset, Dependency, Element } from '@/models';
+import type { Asset, Element } from '@/models';
 
 const SOURCE_ID = 'map-v2-asset-source';
+const LINE_SOURCE_ID = 'map-v2-asset-line-source';
 const LAYER_ID = 'map-v2-asset-layer';
+const LINE_LAYER_ID = 'map-v2-asset-line-layer';
 const CIRCLE_RADIUS = 12;
 const SELECTED_STROKE_COLOR = '#FFFD04';
 const SELECTED_STROKE_WIDTH = 2;
 const DEFAULT_BACKGROUND_COLOR = '#000000';
 const MARKER_BORDER_COLOR = '#FFFD04';
+const DEFAULT_LINE_COLOR = '#00AA00';
+const DEFAULT_LINE_WIDTH = 3;
 
 export interface AssetLayersProps {
     readonly assets: Asset[];
-    readonly dependencies: Dependency[];
     readonly selectedAssetTypes: Record<string, boolean>;
     readonly selectedElements?: Element[];
     readonly onElementClick?: (elements: Element[]) => void;
     readonly mapReady?: boolean;
 }
 
-const AssetLayers = ({ assets, dependencies, selectedAssetTypes, selectedElements = [], onElementClick, mapReady }: AssetLayersProps) => {
+const AssetLayers = ({ assets, selectedAssetTypes, selectedElements = [], onElementClick, mapReady }: AssetLayersProps) => {
     const mapContext = useMap();
     const mapInstance = mapContext?.['map-v2'] || mapContext?.default || null;
 
-    const enabledTypesSet = useMemo(() => {
-        return new Set(
+    const filteredAssets = useMemo(() => {
+        const enabledTypesSet = new Set(
             Object.entries(selectedAssetTypes)
                 .filter(([, enabled]) => enabled)
                 .map(([type]) => type),
         );
-    }, [selectedAssetTypes]);
-
-    const filteredAssets = useMemo(() => {
         return assets.filter((asset) => enabledTypesSet.has(asset.type));
-    }, [assets, enabledTypesSet]);
+    }, [assets, selectedAssetTypes]);
 
-    const selectedElementUris = useMemo(() => {
-        return new Set(selectedElements.map((el) => el.uri));
+    const selectedElementIds = useMemo(() => {
+        return new Set(selectedElements.map((el) => el.id));
     }, [selectedElements]);
 
     const assetMap = useMemo(() => {
         const map = new Map<string, Asset>();
         filteredAssets.forEach((asset) => {
-            map.set(asset.uri, asset);
+            map.set(asset.id, asset);
         });
         return map;
     }, [filteredAssets]);
 
-    const features = useMemo(() => {
-        return generatePointAssetFeatures(filteredAssets, dependencies, selectedElements);
-    }, [filteredAssets, dependencies, selectedElements]);
+    const pointFeaturesData = useMemo(() => {
+        return generatePointAssetFeatures(filteredAssets, [], selectedElements);
+    }, [filteredAssets, selectedElements]);
+
+    const linearFeatures = useMemo(() => {
+        return generateLinearAssetFeatures(filteredAssets, selectedElements);
+    }, [filteredAssets, selectedElements]);
 
     const pointFeatures = useMemo(() => {
-        const points = features.filter((feature) => feature.geometry.type === 'Point');
-        const seenUris = new Set<string>();
-        return points.filter((feature) => {
-            const uri = feature.properties?.uri;
-            if (!uri) {
-                return true;
-            }
-            if (seenUris.has(uri)) {
+        const linearAssetIds = new Set(
+            filteredAssets.filter((asset) => asset.geometry.type === 'LineString' || asset.geometry.type === 'MultiLineString').map((asset) => asset.id),
+        );
+
+        const points = pointFeaturesData.filter((feature) => {
+            if (feature.geometry.type !== 'Point') {
                 return false;
             }
-            seenUris.add(uri);
+            const id = feature.properties?.id;
+            if (id && linearAssetIds.has(id)) {
+                return false;
+            }
             return true;
         });
-    }, [features]);
+
+        const seenIds = new Set<string>();
+        return points.filter((feature) => {
+            const id = feature.properties?.id;
+            if (!id) {
+                return true;
+            }
+            if (seenIds.has(id)) {
+                return false;
+            }
+            seenIds.add(id);
+            return true;
+        });
+    }, [pointFeaturesData, filteredAssets]);
+
+    const lineFeatureCollection = useMemo(() => {
+        const enhancedFeatures = linearFeatures.map((feature) => {
+            const id = feature.properties?.id || '';
+            const isSelected = selectedElementIds.has(id);
+
+            return {
+                ...feature,
+                properties: {
+                    ...feature.properties,
+                    lineColor: DEFAULT_LINE_COLOR,
+                    lineWidth: isSelected ? SELECTED_STROKE_WIDTH + 1 : feature.properties?.lineWidth || DEFAULT_LINE_WIDTH,
+                },
+            };
+        });
+
+        return { type: 'FeatureCollection' as const, features: enhancedFeatures };
+    }, [linearFeatures, selectedElementIds]);
 
     const featureCollection = useMemo(() => {
         const enhancedFeatures = pointFeatures.map((feature) => {
-            const uri = feature.properties?.uri || '';
-            const asset = assetMap.get(uri);
+            const id = feature.properties?.id || '';
+            const asset = assetMap.get(id);
             const backgroundColor = asset?.styles?.backgroundColor || DEFAULT_BACKGROUND_COLOR;
-            const isSelected = selectedElementUris.has(uri);
+            const isSelected = selectedElementIds.has(id);
 
             return {
                 ...feature,
@@ -94,7 +129,7 @@ const AssetLayers = ({ assets, dependencies, selectedAssetTypes, selectedElement
         });
 
         return { type: 'FeatureCollection' as const, features: enhancedFeatures };
-    }, [pointFeatures, assetMap, selectedElementUris]);
+    }, [pointFeatures, assetMap, selectedElementIds]);
 
     const handleMapClick = useCallback(
         (event: { lngLat: { lng: number; lat: number }; point: { x: number; y: number } }) => {
@@ -104,7 +139,7 @@ const AssetLayers = ({ assets, dependencies, selectedAssetTypes, selectedElement
 
             const map = mapInstance.getMap();
             const featuresAtPoint = map.queryRenderedFeatures([event.point.x, event.point.y], {
-                layers: [LAYER_ID],
+                layers: [LAYER_ID, LINE_LAYER_ID],
             });
 
             if (featuresAtPoint.length === 0) {
@@ -112,46 +147,19 @@ const AssetLayers = ({ assets, dependencies, selectedAssetTypes, selectedElement
             }
 
             const clickedFeature = featuresAtPoint[0] as Feature;
-            const clickedUri = clickedFeature.properties?.uri;
-            if (!clickedUri) {
+            const clickedId = clickedFeature.properties?.id;
+            if (!clickedId) {
                 return;
             }
 
-            const connectedDependencies = features.filter((feature) => {
-                if (feature.geometry.type !== 'LineString') {
-                    return false;
-                }
-                const dependent = feature.properties?.dependent;
-                const provider = feature.properties?.provider;
-                return dependent === clickedUri || provider === clickedUri;
-            });
-
-            const connectedAssetUris = new Set<string>();
-            connectedDependencies.forEach((feature) => {
-                const dependent = feature.properties?.dependent;
-                const provider = feature.properties?.provider;
-                if (dependent === clickedUri && provider) {
-                    connectedAssetUris.add(provider);
-                } else if (provider === clickedUri && dependent) {
-                    connectedAssetUris.add(dependent);
-                }
-            });
-
-            const connectedAssets = features.filter((feature) => {
-                const uri = feature.properties?.uri;
-                return uri && connectedAssetUris.has(uri);
-            });
-
-            const allFeatures = [clickedFeature, ...connectedAssets, ...connectedDependencies];
-            const elements = allFeatures
-                .map((feature) => findElement([...filteredAssets, ...dependencies], feature.properties?.uri))
-                .filter((element): element is Element => element !== undefined);
-
-            if (elements.length > 0) {
-                onElementClick(elements);
+            const clickedAsset = findElement(filteredAssets, clickedId);
+            if (!clickedAsset) {
+                return;
             }
+
+            onElementClick([clickedAsset]);
         },
-        [mapInstance, onElementClick, features, filteredAssets, dependencies],
+        [mapInstance, onElementClick, filteredAssets],
     );
 
     useEffect(() => {
@@ -161,40 +169,67 @@ const AssetLayers = ({ assets, dependencies, selectedAssetTypes, selectedElement
 
         const map = mapInstance.getMap();
         map.on('click', LAYER_ID, handleMapClick);
+        map.on('click', LINE_LAYER_ID, handleMapClick);
 
         return () => {
             map.off('click', LAYER_ID, handleMapClick);
+            map.off('click', LINE_LAYER_ID, handleMapClick);
         };
     }, [mapInstance, mapReady, handleMapClick]);
 
-    if (!mapReady || pointFeatures.length === 0) {
+    if (!mapReady || (pointFeatures.length === 0 && linearFeatures.length === 0)) {
         return null;
     }
 
     return (
-        <Source id={SOURCE_ID} type="geojson" data={featureCollection} generateId>
-            <Layer
-                id={LAYER_ID}
-                type="circle"
-                paint={{
-                    'circle-radius': CIRCLE_RADIUS,
-                    'circle-color': ['get', 'backgroundColor'],
-                    'circle-stroke-color': ['get', 'circleStrokeColor'],
-                    'circle-stroke-width': ['get', 'circleStrokeWidth'],
-                }}
-            />
-            {pointFeatures.map((feature) => {
-                const uri = feature.properties?.uri;
-                if (!uri) {
-                    return null;
-                }
+        <>
+            {pointFeatures.length > 0 && (
+                <Source id={SOURCE_ID} type="geojson" data={featureCollection} generateId>
+                    <Layer
+                        id={LAYER_ID}
+                        type="circle"
+                        paint={{
+                            'circle-radius': CIRCLE_RADIUS,
+                            'circle-color': ['get', 'backgroundColor'],
+                            'circle-stroke-color': ['get', 'circleStrokeColor'],
+                            'circle-stroke-width': ['get', 'circleStrokeWidth'],
+                        }}
+                    />
+                    {pointFeatures.map((feature) => {
+                        const id = feature.properties?.id;
+                        if (!id) {
+                            return null;
+                        }
 
-                const asset = assetMap.get(uri);
-                const iconStyles = asset?.styles;
+                        const asset = assetMap.get(id);
+                        const iconStyles = asset?.styles;
 
-                return <AssetMarker key={uri} feature={feature} isSelected={selectedElementUris.has(uri)} iconStyles={iconStyles} asset={asset} />;
-            })}
-        </Source>
+                        return (
+                            <AssetMarker
+                                key={id}
+                                feature={feature}
+                                isSelected={selectedElementIds.has(id)}
+                                iconStyles={iconStyles}
+                                asset={asset}
+                                onElementClick={onElementClick}
+                            />
+                        );
+                    })}
+                </Source>
+            )}
+            {linearFeatures.length > 0 && (
+                <Source id={LINE_SOURCE_ID} type="geojson" data={lineFeatureCollection} generateId>
+                    <Layer
+                        id={LINE_LAYER_ID}
+                        type="line"
+                        paint={{
+                            'line-color': ['get', 'lineColor'],
+                            'line-width': ['get', 'lineWidth'],
+                        }}
+                    />
+                </Source>
+            )}
+        </>
     );
 };
 
@@ -203,13 +238,12 @@ interface AssetMarkerProps {
     readonly isSelected: boolean;
     readonly iconStyles?: Asset['styles'];
     readonly asset: Asset | undefined;
+    readonly onElementClick?: (elements: Element[]) => void;
 }
 
-const AssetMarker = memo(({ feature, isSelected, iconStyles: providedIconStyles, asset }: AssetMarkerProps) => {
+const AssetMarker = memo(({ feature, isSelected, iconStyles: providedIconStyles, asset, onElementClick }: AssetMarkerProps) => {
     const [showTooltip, setShowTooltip] = useState(false);
-    const featureType = feature.properties?.type;
-    const fallbackIconStyles = useFindIcon(featureType || '');
-    const iconStyles = providedIconStyles || fallbackIconStyles;
+    const iconStyles = providedIconStyles || asset?.styles;
 
     const coordinates = feature.geometry.type === 'Point' ? feature.geometry.coordinates : null;
     if (!coordinates || coordinates.length < 2) {
@@ -218,12 +252,12 @@ const AssetMarker = memo(({ feature, isSelected, iconStyles: providedIconStyles,
 
     const [longitude, latitude] = coordinates;
 
-    const backgroundColor = iconStyles.backgroundColor || DEFAULT_BACKGROUND_COLOR;
-    const color = iconStyles.color || '#ffffff';
-    const faIcon = iconStyles.faIcon || '';
-    const iconFallbackText = iconStyles.iconFallbackText || '';
+    const backgroundColor = iconStyles?.backgroundColor || DEFAULT_BACKGROUND_COLOR;
+    const color = iconStyles?.color || '#ffffff';
+    const faIcon = iconStyles?.faIcon || '';
+    const iconFallbackText = iconStyles?.iconFallbackText || '?';
 
-    const fontAwesomeIconName = faIcon.split(' ').pop()?.replace('fa-', '') || null;
+    const fontAwesomeIconName = faIcon ? faIcon.split(' ').pop()?.replace('fa-', '') || null : null;
     const hasAvailableFontAwesomeIcon = fontAwesomeIconName ? isIconPreloaded(fontAwesomeIconName) : false;
 
     const iconElement =
@@ -247,6 +281,12 @@ const AssetMarker = memo(({ feature, isSelected, iconStyles: providedIconStyles,
                     padding: 0,
                     cursor: 'pointer',
                 }}
+                onClick={(e) => {
+                    e.stopPropagation();
+                    if (asset && onElementClick) {
+                        onElementClick([asset]);
+                    }
+                }}
                 onMouseEnter={() => setShowTooltip(true)}
                 onMouseLeave={() => setShowTooltip(false)}
                 onFocus={() => setShowTooltip(true)}
@@ -254,7 +294,9 @@ const AssetMarker = memo(({ feature, isSelected, iconStyles: providedIconStyles,
                 onKeyDown={(e) => {
                     if (e.key === 'Enter' || e.key === ' ') {
                         e.preventDefault();
-                        setShowTooltip(!showTooltip);
+                        if (asset && onElementClick) {
+                            onElementClick([asset]);
+                        }
                     }
                 }}
             >

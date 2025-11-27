@@ -16,10 +16,10 @@ const createTestQueryClient = () => {
     });
 };
 
-const renderWithProviders = (component: React.ReactElement) => {
-    const queryClient = createTestQueryClient();
+const renderWithProviders = (component: React.ReactElement, queryClient?: QueryClient) => {
+    const client = queryClient || createTestQueryClient();
     return render(
-        <QueryClientProvider client={queryClient}>
+        <QueryClientProvider client={client}>
             <ThemeProvider theme={theme}>{component}</ThemeProvider>
         </QueryClientProvider>,
     );
@@ -77,7 +77,7 @@ vi.mock('./MapPanels', () => ({
         <div data-testid="map-panels">
             <button onClick={() => onViewChange(activeView === 'scenario' ? null : 'scenario')}>Toggle Scenario</button>
             <div data-testid="active-view">{activeView || 'none'}</div>
-            <div data-testid="selected-element">{selectedElement?.uri || 'none'}</div>
+            <div data-testid="selected-element">{selectedElement?.id || 'none'}</div>
             {onBackFromAssetDetails && <button onClick={onBackFromAssetDetails}>Back from Asset Details</button>}
         </div>
     ),
@@ -150,11 +150,20 @@ vi.mock('./hooks/usePreloadAssetIcons', () => ({
     usePreloadAssetIcons: vi.fn(),
 }));
 
-vi.mock('@/hooks', () => ({
-    useGroupedAssets: vi.fn().mockReturnValue({
-        isLoadingAssets: false,
-        filteredAssets: [],
-    }),
+const mockUseAssetsByType = vi.fn();
+const mockUseAssetTypeIcons = vi.fn();
+const mockFetchAssetCategories = vi.fn();
+
+vi.mock('@/hooks/useAssetsByType', () => ({
+    useAssetsByType: () => mockUseAssetsByType(),
+}));
+
+vi.mock('@/hooks/useAssetTypeIcons', () => ({
+    useAssetTypeIcons: () => mockUseAssetTypeIcons(),
+}));
+
+vi.mock('@/api/asset-categories', () => ({
+    fetchAssetCategories: (...args: any[]) => mockFetchAssetCategories(...args),
 }));
 
 const waitForElement = async (testId: string) => {
@@ -179,6 +188,15 @@ const openDrawingToolbar = async () => {
 describe('MapView', () => {
     beforeEach(() => {
         vi.clearAllMocks();
+        mockUseAssetsByType.mockReturnValue({
+            assets: [],
+            isLoading: false,
+            hasError: false,
+            errors: [],
+            emptyResults: [],
+        });
+        mockUseAssetTypeIcons.mockReturnValue(new Map());
+        mockFetchAssetCategories.mockResolvedValue([]);
     });
 
     describe('Rendering', () => {

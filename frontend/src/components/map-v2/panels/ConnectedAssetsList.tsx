@@ -1,15 +1,13 @@
 import { capitalCase } from 'change-case';
-import { List, ListItem, ListItemText, Typography, Alert, Divider, Box } from '@mui/material';
+import { List, ListItem, ListItemText, Typography, Alert, Divider } from '@mui/material';
 import { getURIFragment } from '@/utils';
 
 export interface ConnectedAssetsListProps {
     readonly connectedAssets: {
-        uri: string;
+        id: string;
         error?: Error;
         name: string;
         assetType: string;
-        dependentCriticalitySum: number;
-        connectionStrength: number;
     }[];
 }
 
@@ -17,7 +15,7 @@ const ConnectedAssetsList = ({ connectedAssets }: ConnectedAssetsListProps) => {
     return (
         <List>
             {connectedAssets.map((asset, index) => {
-                const key = asset?.uri || asset?.error?.message || 'unknown';
+                const key = asset?.id || asset?.error?.message || 'unknown';
 
                 if (asset?.error) {
                     return (
@@ -30,7 +28,8 @@ const ConnectedAssetsList = ({ connectedAssets }: ConnectedAssetsListProps) => {
                     );
                 }
 
-                const typeLabel = capitalCase(getURIFragment(asset.assetType));
+                const isNewAssetType = asset.assetType && !asset.assetType.includes('#') && !asset.assetType.startsWith('http');
+                const typeLabel = isNewAssetType ? capitalCase(asset.assetType) : capitalCase(getURIFragment(asset.assetType));
 
                 return (
                     <div key={key}>
@@ -43,33 +42,11 @@ const ConnectedAssetsList = ({ connectedAssets }: ConnectedAssetsListProps) => {
                             }}
                         >
                             <ListItemText
-                                primary={asset.name || asset.uri}
+                                primary={asset.name || asset.id}
                                 secondary={
-                                    <Box sx={{ mt: 1 }}>
-                                        <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                                            {typeLabel}
-                                        </Typography>
-                                        <Box
-                                            sx={{
-                                                display: 'grid',
-                                                gridTemplateColumns: '5fr 2fr',
-                                                gap: 1,
-                                            }}
-                                        >
-                                            <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                                                Criticality
-                                            </Typography>
-                                            <Typography variant="body2" color="text.secondary">
-                                                {asset.dependentCriticalitySum ?? 'N/D'}
-                                            </Typography>
-                                            <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                                                Connection Strength
-                                            </Typography>
-                                            <Typography variant="body2" color="text.secondary">
-                                                {asset.connectionStrength ?? 'N/D'}
-                                            </Typography>
-                                        </Box>
-                                    </Box>
+                                    <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                                        {typeLabel}
+                                    </Typography>
                                 }
                             />
                         </ListItem>

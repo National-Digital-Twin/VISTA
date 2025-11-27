@@ -28,7 +28,6 @@ export default class Asset {
     #classificationColorScale: ColorScale | null = null;
     #addresses: string[] = [];
 
-    uri: string;
     id: string;
     type: string;
     name?: string;
@@ -45,7 +44,7 @@ export default class Asset {
     classification?: string;
 
     constructor({
-        uri,
+        id,
         type,
         name,
         lat,
@@ -59,7 +58,7 @@ export default class Asset {
         state,
         classification,
     }: {
-        uri: string;
+        id: string;
         type: string;
         name?: string;
         lat?: number;
@@ -73,8 +72,7 @@ export default class Asset {
         state?: AssetState;
         classification?: string;
     }) {
-        this.uri = uri;
-        this.id = this.uri.split('#')[1];
+        this.id = id;
         this.type = type;
         this.name = name;
         this.lat = lat;
@@ -171,7 +169,7 @@ export default class Asset {
     }
 
     #isSelected<T extends ElementLike>(selectedElements: T[]) {
-        return selectedElements.some((selectedElement) => selectedElement.uri === this.uri);
+        return selectedElements.some((selectedElement) => selectedElement.id === this.id);
     }
 
     get hasLatLng() {
@@ -191,7 +189,6 @@ export default class Asset {
         return {
             type: 'Feature',
             properties: {
-                uri: this.uri,
                 id: this.id,
                 criticality: this.dependent.criticalitySum,
                 type: this.type,
@@ -237,7 +234,6 @@ export default class Asset {
             return {
                 type: 'Feature',
                 properties: {
-                    uri: this.uri,
                     id: this.id,
                     criticality: this.dependent.criticalitySum,
                     lineColor: this.criticalityColor,
@@ -258,7 +254,6 @@ export default class Asset {
             desc: assetInfo?.desc ?? this.description,
             criticalityColor: this.criticalityColor,
             id: this.id,
-            uri: this.uri,
             elementType: this.elementType,
         };
     }

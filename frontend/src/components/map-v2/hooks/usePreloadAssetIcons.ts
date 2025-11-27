@@ -1,7 +1,5 @@
 import { useEffect, useRef, useMemo } from 'react';
 import { icon } from '@fortawesome/fontawesome-svg-core';
-import { useSuspenseQuery } from '@tanstack/react-query';
-import ontologyService from '@/ontology-service';
 import type { Asset } from '@/models';
 
 interface PreloadedIcon {
@@ -38,51 +36,36 @@ function getIconNameFromFaIcon(faIcon?: string): string | null {
 }
 
 export function usePreloadAssetIcons(assets: Asset[]) {
-    const preloadedTypes = useRef<Set<string>>(new Set());
+    const preloadedIcons = useRef<Set<string>>(new Set());
 
-    const { data: styles } = useSuspenseQuery({
-        queryKey: ['ontology-styles'],
-        queryFn: async () => {
-            const iconEntries = await ontologyService.getStyles([]);
-            return Object.fromEntries(
-                Object.keys(iconEntries).map((classUri) => {
-                    const value = iconEntries[classUri];
-                    return [
-                        classUri,
-                        {
-                            faIcon: value.defaultIcons.faIcon,
-                        },
-                    ];
-                }),
-            );
-        },
-    });
-
-    const uniqueAssetTypes = useMemo(() => {
-        return new Set(assets.map((asset) => asset.type).filter(Boolean));
+    const uniqueIcons = useMemo(() => {
+        const iconSet = new Set<string>();
+        assets.forEach((asset) => {
+            const faIcon = asset.styles?.faIcon;
+            if (faIcon) {
+                const iconName = getIconNameFromFaIcon(faIcon);
+                if (iconName) {
+                    iconSet.add(iconName);
+                }
+            }
+        });
+        return iconSet;
     }, [assets]);
 
     useEffect(() => {
-        if (!styles || uniqueAssetTypes.size === 0) {
+        if (uniqueIcons.size === 0) {
             return;
         }
 
-        uniqueAssetTypes.forEach((assetType) => {
-            if (preloadedTypes.current.has(assetType)) {
+        uniqueIcons.forEach((iconName) => {
+            if (preloadedIcons.current.has(iconName)) {
                 return;
             }
 
-            const styleData = styles[assetType];
-            if (styleData?.faIcon) {
-                const iconName = getIconNameFromFaIcon(styleData.faIcon);
-                if (iconName) {
-                    preloadIcon(iconName);
-                }
-            }
-
-            preloadedTypes.current.add(assetType);
+            preloadIcon(iconName);
+            preloadedIcons.current.add(iconName);
         });
-    }, [styles, uniqueAssetTypes]);
+    }, [uniqueIcons]);
 }
 
 export function isIconPreloaded(iconName: string): boolean {

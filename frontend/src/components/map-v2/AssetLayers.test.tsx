@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from '@mui/material/styles';
 import AssetLayers from './AssetLayers';
 import theme from '@/theme';
-import type { Asset, Dependency, Element } from '@/models';
+import type { Asset, Element } from '@/models';
 
 const mockUseMap = vi.fn();
 vi.mock('react-map-gl/maplibre', () => ({
@@ -21,18 +21,21 @@ vi.mock('./hooks/usePreloadAssetIcons', () => ({
 
 vi.mock('@/components/Map/map-utils', () => ({
     generatePointAssetFeatures: vi.fn((assets) =>
-        assets.map((asset: Asset) => ({
-            type: 'Feature',
-            geometry: {
-                type: 'Point',
-                coordinates: [asset.lng || 0, asset.lat || 0],
-            },
-            properties: {
-                uri: asset.uri,
-                type: asset.type,
-            },
-        })),
+        assets
+            .filter((asset: Asset) => asset.lat && asset.lng)
+            .map((asset: Asset) => ({
+                type: 'Feature' as const,
+                geometry: {
+                    type: 'Point' as const,
+                    coordinates: [asset.lng || 0, asset.lat || 0],
+                },
+                properties: {
+                    id: asset.id,
+                    type: asset.type,
+                },
+            })),
     ),
+    generateLinearAssetFeatures: vi.fn(() => []),
 }));
 
 vi.mock('@/hooks/useFindIcon', () => ({
@@ -44,7 +47,7 @@ vi.mock('@/hooks/useFindIcon', () => ({
 }));
 
 vi.mock('@/utils', () => ({
-    findElement: vi.fn((elements, uri) => elements.find((el: Element) => el.uri === uri)),
+    findElement: vi.fn((elements, id) => elements.find((el: Element) => el.id === id)),
 }));
 
 describe('AssetLayers', () => {
@@ -84,7 +87,7 @@ describe('AssetLayers', () => {
     };
 
     const mockAsset: Asset = {
-        uri: 'http://test.com/asset1',
+        id: 'asset1',
         type: 'https://ies.data.gov.uk/ontology/ies4#Hospital',
         lng: 0.5,
         lat: 0.5,
@@ -100,11 +103,23 @@ describe('AssetLayers', () => {
         },
         dependent: {},
         elementType: 'asset',
-    } as Asset;
+        createPointAsset: vi.fn(() => ({
+            type: 'Feature' as const,
+            properties: {
+                id: 'asset1',
+                criticality: 0,
+                type: 'https://ies.data.gov.uk/ontology/ies4#Hospital',
+            },
+            geometry: {
+                type: 'Point' as const,
+                coordinates: [0.5, 0.5],
+            },
+        })),
+        createLinearAsset: vi.fn(() => null),
+    } as unknown as Asset;
 
     const defaultProps = {
         assets: [] as Asset[],
-        dependencies: [] as Dependency[],
         selectedAssetTypes: {} as Record<string, boolean>,
         mapReady: true,
     };
@@ -144,7 +159,7 @@ describe('AssetLayers', () => {
     describe('Asset Filtering', () => {
         it('filters assets by selected asset types', () => {
             const asset1 = { ...mockAsset, type: 'type1' } as Asset;
-            const asset2 = { ...mockAsset, uri: 'asset2', type: 'type2' } as Asset;
+            const asset2 = { ...mockAsset, id: 'asset2', type: 'type2' } as Asset;
 
             renderWithProviders(<AssetLayers {...defaultProps} assets={[asset1, asset2]} selectedAssetTypes={{ type1: true, type2: false }} />);
 
@@ -153,8 +168,8 @@ describe('AssetLayers', () => {
         });
 
         it('handles multiple assets of the same type', () => {
-            const asset1 = { ...mockAsset, uri: 'asset1' } as Asset;
-            const asset2 = { ...mockAsset, uri: 'asset2' } as Asset;
+            const asset1 = { ...mockAsset, id: 'asset1' } as Asset;
+            const asset2 = { ...mockAsset, id: 'asset2' } as Asset;
 
             renderWithProviders(<AssetLayers {...defaultProps} assets={[asset1, asset2]} selectedAssetTypes={{ [mockAsset.type]: true }} />);
 
@@ -166,7 +181,7 @@ describe('AssetLayers', () => {
     describe('Selected Elements', () => {
         it('applies selected styling to selected elements', () => {
             const selectedElement: Element = {
-                uri: mockAsset.uri,
+                id: mockAsset.id,
                 type: mockAsset.type,
                 elementType: 'asset',
             } as Element;
@@ -209,33 +224,24 @@ describe('AssetLayers', () => {
         });
     });
 
-    describe('Dependencies', () => {
-        it('handles dependencies in feature generation', () => {
-            const dependency = {
-                provider: mockAsset,
-                dependent: { ...mockAsset, uri: 'asset2' } as Asset,
-            } as unknown as Dependency;
-
-            renderWithEnabledAsset({ dependencies: [dependency] });
-            expect(screen.getByTestId('source')).toBeInTheDocument();
-        });
-    });
-
     describe('Edge Cases', () => {
         it('handles assets without coordinates', () => {
             const assetWithoutCoords = {
                 ...mockAsset,
                 lng: undefined,
                 lat: undefined,
-            } as Asset;
+                createPointAsset: vi.fn(() => null),
+            } as unknown as Asset;
 
-            renderWithProviders(<AssetLayers {...defaultProps} assets={[assetWithoutCoords]} selectedAssetTypes={{ [mockAsset.type]: true }} />);
-            expect(screen.getByTestId('source')).toBeInTheDocument();
+            const { container } = renderWithProviders(
+                <AssetLayers {...defaultProps} assets={[assetWithoutCoords]} selectedAssetTypes={{ [mockAsset.type]: true }} />,
+            );
+            expect(container.firstChild).toBeNull();
         });
 
-        it('handles duplicate URIs by deduplicating', () => {
-            const asset1 = { ...mockAsset, uri: 'same-uri' } as Asset;
-            const asset2 = { ...mockAsset, uri: 'same-uri', type: mockAsset.type } as Asset;
+        it('handles duplicate IDs by deduplicating', () => {
+            const asset1 = { ...mockAsset, id: 'same-id' } as Asset;
+            const asset2 = { ...mockAsset, id: 'same-id', type: mockAsset.type } as Asset;
 
             renderWithProviders(<AssetLayers {...defaultProps} assets={[asset1, asset2]} selectedAssetTypes={{ [mockAsset.type]: true }} />);
 

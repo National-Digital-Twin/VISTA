@@ -1,87 +1,64 @@
 import { useCallback, useMemo, useState, startTransition } from 'react';
-import { Box, IconButton, Typography, MenuItem, Select, Button, ListItem, ListItemText, Collapse, Backdrop, LinearProgress } from '@mui/material';
+import { Box, IconButton, Typography, MenuItem, Select, Button, ListItem, ListItemText, Collapse } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
-import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { SearchTextField } from '@/components/SearchTextField';
-import { fetchAssessments } from '@/api/assessments';
-import { fetchAssetSpecifications } from '@/api/fetchAssetSpecifications';
-import { useGroupedAssets } from '@/hooks';
-import { capitalize } from '@/utils/capitalize';
+import { fetchAssetCategories, type AssetCategory, type SubCategory, type AssetType } from '@/api/asset-categories';
 import ToggleSwitch from '@/components/ToggleSwitch';
 
 interface AssetsViewProps {
     readonly onClose: () => void;
     readonly selectedAssetTypes?: Record<string, boolean>;
-    readonly onAssetTypeToggle?: (assetType: string, enabled: boolean) => void;
+    readonly onAssetTypeToggle?: (assetTypeId: string, enabled: boolean) => void;
 }
 
 type SortOption = 'a-z' | 'z-a';
 
-function formatAltText(altText: string): string {
-    return altText.replaceAll(/([A-Z])/g, ' $1').trim();
-}
-
-function getDataSourceName(source: string): string {
-    const sourceMap: Record<string, string> = {
-        os_names: 'OS Names',
-        os_ngd: 'OS NGD Buildings',
-        os_ngd_structure: 'OS NGD Structure',
-        os_ngd_water: 'OS NGD Water',
-    };
-    return sourceMap[source] || source;
-}
-
-interface AssetTypeData {
-    readonly type: string;
-    readonly count: number;
-    readonly styles: {
-        readonly alt: string;
-        readonly backgroundColor?: string;
-        readonly color?: string;
-        readonly iconFallbackText?: string;
-    };
-    readonly source?: string;
-}
-
-interface CategoryData {
-    readonly category: string;
-    readonly assetTypes: AssetTypeData[];
-}
-
 interface AssetTypeListItemTextProps {
-    readonly assetType: AssetTypeData;
+    readonly assetType: AssetType;
 }
 
 function AssetTypeListItemText({ assetType }: AssetTypeListItemTextProps) {
-    const dateString = useMemo(() => {
-        const now = new Date();
-        const datePart = now.toLocaleDateString('en-GB', {
-            day: '2-digit',
-            month: 'short',
-            year: 'numeric',
-        });
-        const timePart = now.toLocaleTimeString('en-GB', {
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false,
-        });
-        return `${assetType.source ? getDataSourceName(assetType.source) : 'OS Names'} - ${datePart} @ ${timePart}`;
-    }, [assetType.source]);
-
     return (
         <ListItemText
-            primary={capitalize(formatAltText(assetType.styles.alt))}
-            secondary={dateString}
+            primary={assetType.name}
             primaryTypographyProps={{
                 variant: 'body2',
             }}
-            secondaryTypographyProps={{
-                variant: 'caption',
-                color: 'text.secondary',
-            }}
         />
+    );
+}
+
+interface AssetTypeListProps {
+    readonly assetTypes: AssetType[];
+    readonly selectedAssetTypes: Record<string, boolean>;
+    readonly onToggle: (assetTypeId: string) => void;
+}
+
+function AssetTypeList({ assetTypes, selectedAssetTypes, onToggle }: AssetTypeListProps) {
+    return (
+        <Box sx={{ pl: 2, pr: 1, pb: 1 }}>
+            {assetTypes.map((assetType) => {
+                const isSelected = selectedAssetTypes[assetType.id] || false;
+                return (
+                    <ListItem
+                        key={assetType.id}
+                        sx={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            px: 0,
+                            py: 0.5,
+                        }}
+                    >
+                        <AssetTypeListItemText assetType={assetType} />
+                        <ToggleSwitch checked={isSelected} onChange={() => onToggle(assetType.id)} inputProps={{ 'aria-label': `Toggle ${assetType.name}` }} />
+                    </ListItem>
+                );
+            })}
+        </Box>
     );
 }
 
@@ -89,6 +66,7 @@ const AssetsView = ({ onClose, selectedAssetTypes: externalSelectedAssetTypes = 
     const [searchQuery, setSearchQuery] = useState('');
     const [sortOption, setSortOption] = useState<SortOption>('a-z');
     const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
+    const [expandedSubCategories, setExpandedSubCategories] = useState<Set<string>>(new Set());
     const [localSelectedAssetTypes, setLocalSelectedAssetTypes] = useState<Record<string, boolean>>({});
 
     const selectedAssetTypes = useMemo(
@@ -96,34 +74,15 @@ const AssetsView = ({ onClose, selectedAssetTypes: externalSelectedAssetTypes = 
         [localSelectedAssetTypes, externalSelectedAssetTypes],
     );
 
-    const { isError: isErrorAssessments, data: assessmentsData } = useSuspenseQuery({
-        queryKey: ['assessments'],
-        queryFn: fetchAssessments,
+    const {
+        data: assetCategories,
+        isLoading: isLoadingCategories,
+        isError: isErrorCategories,
+    } = useQuery({
+        queryKey: ['assetCategories'],
+        queryFn: fetchAssetCategories,
+        staleTime: 5 * 60 * 1000,
     });
-
-    const { data: assetSpecifications } = useQuery({
-        queryKey: ['assetSpecifications'],
-        queryFn: fetchAssetSpecifications,
-    });
-
-    const assessment = assessmentsData?.at(0)?.uri;
-
-    const groupedAssetsResult = useGroupedAssets({
-        assessment: assessment || undefined,
-        searchFilter: searchQuery,
-    });
-
-    const isLoadingAssets = groupedAssetsResult.isLoadingAssets;
-    const progress = 'progress' in groupedAssetsResult ? groupedAssetsResult.progress : 0;
-
-    const filteredAssets = useMemo(() => groupedAssetsResult.filteredAssets || [], [groupedAssetsResult.filteredAssets]);
-
-    const assetSpecMap = useMemo(() => {
-        if (!assetSpecifications) {
-            return new Map<string, { source?: string }>();
-        }
-        return new Map(assetSpecifications.map((spec: { type: string; source?: string }) => [spec.type, { source: spec.source }]));
-    }, [assetSpecifications]);
 
     const handleSearchChange = useCallback((value: string) => {
         startTransition(() => {
@@ -135,107 +94,107 @@ const AssetsView = ({ onClose, selectedAssetTypes: externalSelectedAssetTypes = 
         setSortOption(event.target.value as SortOption);
     }, []);
 
-    const toggleCategory = useCallback((category: string) => {
+    const toggleCategory = useCallback((categoryId: string) => {
         setExpandedCategories((prev) => {
             const next = new Set(prev);
-            next.has(category) ? next.delete(category) : next.add(category);
+            next.has(categoryId) ? next.delete(categoryId) : next.add(categoryId);
+            return next;
+        });
+    }, []);
+
+    const toggleSubCategory = useCallback((subCategoryId: string) => {
+        setExpandedSubCategories((prev) => {
+            const next = new Set(prev);
+            next.has(subCategoryId) ? next.delete(subCategoryId) : next.add(subCategoryId);
             return next;
         });
     }, []);
 
     const toggleAssetType = useCallback(
-        (assetType: string) => {
-            const newState = !selectedAssetTypes[assetType];
+        (assetTypeId: string) => {
+            const newState = !selectedAssetTypes[assetTypeId];
             setLocalSelectedAssetTypes((prev) => {
                 const updated = {
                     ...prev,
-                    [assetType]: newState,
+                    [assetTypeId]: newState,
                 };
                 return updated;
             });
-            onAssetTypeToggle?.(assetType, newState);
+            onAssetTypeToggle?.(assetTypeId, newState);
         },
         [selectedAssetTypes, onAssetTypeToggle],
     );
 
-    const categories = useMemo(() => {
-        if (!filteredAssets || filteredAssets.length === 0) {
+    const sortAssetTypes = useCallback((assetTypes: AssetType[], sortDirection: number): AssetType[] => {
+        return assetTypes.toSorted((a, b) => sortDirection * a.name.localeCompare(b.name));
+    }, []);
+
+    const sortSubCategories = useCallback(
+        (subCategories: SubCategory[], sortDirection: number): (SubCategory & { assetTypes: AssetType[] })[] => {
+            return subCategories
+                .toSorted((a, b) => sortDirection * a.name.localeCompare(b.name))
+                .map((subCategory) => ({
+                    ...subCategory,
+                    assetTypes: sortAssetTypes(subCategory.assetTypes, sortDirection),
+                }));
+        },
+        [sortAssetTypes],
+    );
+
+    const sortedCategories = useMemo(() => {
+        if (!assetCategories) {
             return [];
         }
 
-        const categoryMap = new Map<string, Map<string, AssetTypeData>>();
-
-        filteredAssets.forEach((asset) => {
-            const category = asset.secondaryCategory || asset.primaryCategory || 'Other';
-            const type = asset.type;
-
-            if (!categoryMap.has(category)) {
-                categoryMap.set(category, new Map());
-            }
-
-            const typeMap = categoryMap.get(category)!;
-
-            if (typeMap.has(type)) {
-                const existingType = typeMap.get(type)!;
-                typeMap.set(type, {
-                    ...existingType,
-                    count: existingType.count + 1,
-                });
-            } else {
-                const spec = assetSpecMap.get(type);
-                typeMap.set(type, {
-                    type,
-                    count: 1,
-                    styles: asset.styles || {
-                        alt: asset.type.split('#').pop() || asset.type,
-                    },
-                    source: spec?.source,
-                });
-            }
-        });
-
-        const categoryData: CategoryData[] = Array.from(categoryMap.entries()).map(([category, typeMap]) => ({
-            category,
-            assetTypes: Array.from(typeMap.values()),
-        }));
-
         const sortDirection = sortOption === 'a-z' ? 1 : -1;
 
-        const sortedCategories = categoryData.toSorted((a, b) => sortDirection * a.category.localeCompare(b.category));
-
-        const categoriesWithSortedTypes = sortedCategories.map((category) => {
-            const sortedAssetTypes = category.assetTypes.toSorted((a, b) => {
-                const nameA = formatAltText(a.styles.alt).toUpperCase();
-                const nameB = formatAltText(b.styles.alt).toUpperCase();
-                return sortDirection * nameA.localeCompare(nameB);
-            });
-            return {
+        return assetCategories
+            .map((category) => ({
                 ...category,
-                assetTypes: sortedAssetTypes,
-            };
-        });
+                subCategories: sortSubCategories(category.subCategories, sortDirection),
+            }))
+            .toSorted((a, b) => sortDirection * a.name.localeCompare(b.name));
+    }, [assetCategories, sortOption, sortSubCategories]);
 
-        return categoriesWithSortedTypes;
-    }, [filteredAssets, sortOption, assetSpecMap]);
+    const matchesSearch = useCallback((assetType: AssetType, subCategory: SubCategory, category: AssetCategory, searchLower: string): boolean => {
+        return (
+            assetType.name.toLowerCase().includes(searchLower) ||
+            subCategory.name.toLowerCase().includes(searchLower) ||
+            category.name.toLowerCase().includes(searchLower)
+        );
+    }, []);
+
+    const filterSubCategories = useCallback(
+        (subCategories: (SubCategory & { assetTypes: AssetType[] })[], category: AssetCategory, searchLower: string) => {
+            return subCategories
+                .map((subCategory) => {
+                    const filteredAssetTypes = subCategory.assetTypes.filter((assetType) => matchesSearch(assetType, subCategory, category, searchLower));
+                    return filteredAssetTypes.length > 0 ? { ...subCategory, assetTypes: filteredAssetTypes } : null;
+                })
+                .filter((subCategory): subCategory is SubCategory & { assetTypes: AssetType[] } => subCategory !== null);
+        },
+        [matchesSearch],
+    );
 
     const filteredCategories = useMemo(() => {
+        if (!sortedCategories || sortedCategories.length === 0) {
+            return [];
+        }
+
         if (!searchQuery.trim()) {
-            return categories;
+            return sortedCategories;
         }
 
         const searchLower = searchQuery.toLowerCase();
-        return categories
+        return sortedCategories
             .map((category) => {
-                const filteredAssetTypes = category.assetTypes.filter(
-                    (assetType) =>
-                        formatAltText(assetType.styles.alt).toLowerCase().includes(searchLower) || category.category.toLowerCase().includes(searchLower),
-                );
-                return filteredAssetTypes.length > 0 ? { ...category, assetTypes: filteredAssetTypes } : null;
+                const filteredSubCategories = filterSubCategories(category.subCategories, category, searchLower);
+                return filteredSubCategories.length > 0 ? { ...category, subCategories: filteredSubCategories } : null;
             })
-            .filter((category): category is CategoryData => category !== null);
-    }, [categories, searchQuery]);
+            .filter((category): category is AssetCategory & { subCategories: (SubCategory & { assetTypes: AssetType[] })[] } => category !== null);
+    }, [sortedCategories, searchQuery, filterSubCategories]);
 
-    if (isErrorAssessments || !assessment) {
+    if (isErrorCategories) {
         return (
             <Box sx={{ p: 2 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
@@ -247,7 +206,7 @@ const AssetsView = ({ onClose, selectedAssetTypes: externalSelectedAssetTypes = 
                     </IconButton>
                 </Box>
                 <Typography variant="body2" color="text.secondary">
-                    No assessment available
+                    Error loading asset categories
                 </Typography>
             </Box>
         );
@@ -255,25 +214,6 @@ const AssetsView = ({ onClose, selectedAssetTypes: externalSelectedAssetTypes = 
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden', position: 'relative' }}>
-            {isLoadingAssets && (
-                <Backdrop
-                    open={isLoadingAssets}
-                    sx={{
-                        position: 'absolute',
-                        zIndex: 10,
-                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                        inset: 0,
-                    }}
-                >
-                    <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%', px: 2 }}>
-                        <Typography variant="h6" sx={{ color: '#fff', alignSelf: 'center', mb: 2 }}>
-                            Loading datasets {Math.round(progress * 100)}%
-                        </Typography>
-                        <LinearProgress variant="determinate" value={progress * 100} />
-                    </Box>
-                </Backdrop>
-            )}
-
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', p: 2, borderBottom: 1, borderColor: 'divider' }}>
                 <Typography variant="h6" fontWeight={600}>
                     Assets
@@ -310,7 +250,15 @@ const AssetsView = ({ onClose, selectedAssetTypes: externalSelectedAssetTypes = 
             </Box>
 
             <Box sx={{ flex: 1, overflowY: 'auto', position: 'relative' }}>
-                {filteredCategories.length === 0 && !isLoadingAssets && (
+                {isLoadingCategories && (
+                    <Box sx={{ p: 2 }}>
+                        <Typography variant="body2" color="text.secondary">
+                            Loading asset categories...
+                        </Typography>
+                    </Box>
+                )}
+
+                {!isLoadingCategories && filteredCategories.length === 0 && (
                     <Box sx={{ p: 2 }}>
                         <Typography variant="body2" color="text.secondary">
                             No assets found
@@ -319,14 +267,16 @@ const AssetsView = ({ onClose, selectedAssetTypes: externalSelectedAssetTypes = 
                 )}
 
                 {filteredCategories.map((category) => {
-                    const isExpanded = expandedCategories.has(category.category);
+                    const isCategoryExpanded = expandedCategories.has(category.id);
+                    const totalAssetTypes = category.subCategories.reduce((sum, sub) => sum + sub.assetTypes.length, 0);
+
                     return (
-                        <Box key={category.category} sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                        <Box key={category.id} sx={{ borderBottom: 1, borderColor: 'divider' }}>
                             <Box
-                                onClick={() => toggleCategory(category.category)}
+                                onClick={() => toggleCategory(category.id)}
                                 onKeyDown={(e) => {
                                     if (e.key === 'Enter' || e.key === ' ') {
-                                        toggleCategory(category.category);
+                                        toggleCategory(category.id);
                                     }
                                 }}
                                 sx={{
@@ -341,33 +291,49 @@ const AssetsView = ({ onClose, selectedAssetTypes: externalSelectedAssetTypes = 
                                 tabIndex={0}
                             >
                                 <Typography variant="body1" sx={{ flexGrow: 1, fontWeight: 500 }}>
-                                    {category.category} ({category.assetTypes.length})
+                                    {category.name} ({totalAssetTypes})
                                 </Typography>
-                                <IconButton size="small">{isExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}</IconButton>
+                                <IconButton size="small">{isCategoryExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}</IconButton>
                             </Box>
 
-                            <Collapse in={isExpanded}>
-                                <Box sx={{ pl: 2, pr: 1, pb: 1 }}>
-                                    {category.assetTypes.map((assetType) => {
-                                        const isSelected = selectedAssetTypes[assetType.type] || false;
+                            <Collapse in={isCategoryExpanded}>
+                                <Box>
+                                    {category.subCategories.map((subCategory) => {
+                                        const isSubCategoryExpanded = expandedSubCategories.has(subCategory.id);
                                         return (
-                                            <ListItem
-                                                key={assetType.type}
-                                                sx={{
-                                                    display: 'flex',
-                                                    justifyContent: 'space-between',
-                                                    alignItems: 'center',
-                                                    px: 0,
-                                                    py: 0.5,
-                                                }}
-                                            >
-                                                <AssetTypeListItemText assetType={assetType} />
-                                                <ToggleSwitch
-                                                    checked={isSelected}
-                                                    onChange={() => toggleAssetType(assetType.type)}
-                                                    inputProps={{ 'aria-label': `Toggle ${formatAltText(assetType.styles.alt)}` }}
-                                                />
-                                            </ListItem>
+                                            <Box key={subCategory.id} sx={{ pl: 2 }}>
+                                                <Box
+                                                    onClick={() => toggleSubCategory(subCategory.id)}
+                                                    onKeyDown={(e) => {
+                                                        if (e.key === 'Enter' || e.key === ' ') {
+                                                            toggleSubCategory(subCategory.id);
+                                                        }
+                                                    }}
+                                                    sx={{
+                                                        'display': 'flex',
+                                                        'alignItems': 'center',
+                                                        'p': 1.5,
+                                                        'cursor': 'pointer',
+                                                        '&:hover': {
+                                                            backgroundColor: 'action.hover',
+                                                        },
+                                                    }}
+                                                    tabIndex={0}
+                                                >
+                                                    <Typography variant="body2" sx={{ flexGrow: 1, fontWeight: 500 }}>
+                                                        {subCategory.name} ({subCategory.assetTypes.length})
+                                                    </Typography>
+                                                    <IconButton size="small">{isSubCategoryExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}</IconButton>
+                                                </Box>
+
+                                                <Collapse in={isSubCategoryExpanded}>
+                                                    <AssetTypeList
+                                                        assetTypes={subCategory.assetTypes}
+                                                        selectedAssetTypes={selectedAssetTypes}
+                                                        onToggle={toggleAssetType}
+                                                    />
+                                                </Collapse>
+                                            </Box>
                                         );
                                     })}
                                 </Box>

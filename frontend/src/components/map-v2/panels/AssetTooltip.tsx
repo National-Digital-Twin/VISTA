@@ -1,9 +1,6 @@
-import { useQuery } from '@tanstack/react-query';
 import { noCase } from 'change-case';
 import { Box, Typography } from '@mui/material';
-import { getURIFragment, isAsset } from '@/utils';
-import { fetchAssetInfo } from '@/api/combined';
-import { AssetState } from '@/models/Asset';
+import { isAsset } from '@/utils';
 import type { Asset, Element } from '@/models';
 
 interface AssetTooltipProps {
@@ -12,19 +9,11 @@ interface AssetTooltipProps {
 
 const AssetTooltip = ({ element }: AssetTooltipProps) => {
     const elemIsAsset = isAsset(element);
-    const elemIsStatic = elemIsAsset && (element as Asset)?.state === AssetState.Static;
-
-    const { data: assetInfo } = useQuery({
-        queryKey: ['asset-info', element?.uri || ''],
-        queryFn: () => fetchAssetInfo(element?.uri || ''),
-        enabled: elemIsAsset && elemIsStatic,
-        staleTime: 5 * 60 * 1000, // Cache for 5 minutes
-    });
-
-    const details = elemIsAsset ? ((element as Asset)?.getDetails?.(assetInfo) ?? undefined) : undefined;
-    const title = details?.title || element?.uri || 'Unknown';
-    const type = details?.type || (element as Asset)?.type || '';
-    const typeLabel = type ? noCase(getURIFragment(type)) : '';
+    const asset = element as Asset;
+    const details = elemIsAsset ? (asset?.getDetails?.(null) ?? undefined) : undefined;
+    const title = details?.title || asset?.name || element?.id || 'Unknown';
+    const type = asset?.secondaryCategory || '';
+    const typeLabel = type ? noCase(type) : '';
 
     return (
         <Box

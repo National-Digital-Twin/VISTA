@@ -1,18 +1,11 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from '@mui/material/styles';
 import AssetTooltip from './AssetTooltip';
 import Asset, { AssetState } from '@/models/Asset';
 import theme from '@/theme';
-import { fetchAssetInfo } from '@/api/combined';
-
-vi.mock('@/api/combined', () => ({
-    fetchAssetInfo: vi.fn(),
-}));
-
-const mockedFetchAssetInfo = vi.mocked(fetchAssetInfo);
 
 const createTestQueryClient = () => {
     return new QueryClient({
@@ -40,7 +33,6 @@ describe('AssetTooltip', () => {
 
     const createMockAsset = (overrides = {}) => {
         return {
-            uri: 'https://example.com#asset1',
             id: 'asset1',
             type: 'https://example.com#Type1',
             name: 'Test Asset',
@@ -56,12 +48,12 @@ describe('AssetTooltip', () => {
             },
             state: AssetState.Static,
             elementType: 'asset' as const,
+            secondaryCategory: 'Type1',
             getDetails: vi.fn((assetInfo: any) => ({
                 title: assetInfo?.name || 'Test Asset',
                 type: assetInfo?.assetType || 'https://example.com#Type1',
                 criticality: 5,
                 id: 'asset1',
-                uri: 'https://example.com#asset1',
                 elementType: 'asset',
             })),
             ...overrides,
@@ -69,111 +61,52 @@ describe('AssetTooltip', () => {
     };
 
     describe('rendering', () => {
-        it('displays asset title', async () => {
+        it('displays asset name', () => {
             const asset = createMockAsset();
-            mockedFetchAssetInfo.mockResolvedValue({ name: 'Fetched Asset Name', assetType: 'https://example.com#Type1' });
-
             renderWithProviders(<AssetTooltip element={asset} />);
 
-            await waitFor(() => {
-                expect(screen.getByText('Fetched Asset Name')).toBeInTheDocument();
-            });
+            expect(screen.getByText('Test Asset')).toBeInTheDocument();
         });
 
-        it('displays asset type', async () => {
-            const asset = createMockAsset();
-            mockedFetchAssetInfo.mockResolvedValue({ name: 'Test Asset', assetType: 'https://example.com#Type1' });
-
+        it('displays asset type from secondaryCategory', () => {
+            const asset = createMockAsset({ secondaryCategory: 'Type1' });
             renderWithProviders(<AssetTooltip element={asset} />);
 
-            await waitFor(() => {
-                expect(screen.getByText(/type1/i)).toBeInTheDocument();
-            });
+            expect(screen.getByText(/type1/i)).toBeInTheDocument();
         });
 
-        it('falls back to asset name when assetInfo is not available', async () => {
-            const asset = createMockAsset();
-            mockedFetchAssetInfo.mockResolvedValue(null);
-
-            renderWithProviders(<AssetTooltip element={asset} />);
-
-            await waitFor(() => {
-                expect(screen.getByText('Test Asset')).toBeInTheDocument();
-            });
-        });
-
-        it('falls back to URI when name is not available', async () => {
+        it('falls back to ID when name is not available', () => {
             const asset = createMockAsset({ name: undefined });
-            mockedFetchAssetInfo.mockResolvedValue(null);
             asset.getDetails = vi.fn(() => ({
-                title: 'https://example.com#asset1',
+                title: 'asset1',
                 type: 'https://example.com#Type1',
                 desc: '',
                 criticality: 5,
                 criticalityColor: undefined,
                 id: 'asset1',
-                uri: 'https://example.com#asset1',
                 elementType: 'asset' as const,
             }));
 
             renderWithProviders(<AssetTooltip element={asset} />);
 
-            await waitFor(
-                () => {
-                    expect(screen.getByText('https://example.com#asset1')).toBeInTheDocument();
-                },
-                { timeout: 3000 },
-            );
-        });
-    });
-
-    describe('asset state handling', () => {
-        it('does not fetch assetInfo for Live assets', () => {
-            const asset = createMockAsset({ state: AssetState.Live });
-            renderWithProviders(<AssetTooltip element={asset} />);
-
-            expect(mockedFetchAssetInfo).not.toHaveBeenCalled();
+            expect(screen.getByText('asset1')).toBeInTheDocument();
         });
 
-        it('fetches assetInfo for Static assets', async () => {
-            const asset = createMockAsset({ state: AssetState.Static });
-            mockedFetchAssetInfo.mockResolvedValue({ name: 'Test Asset', assetType: 'https://example.com#Type1' });
+        it('displays "Unknown" when no name or ID available', () => {
+            const asset = createMockAsset({ name: undefined, id: '' });
+            asset.getDetails = vi.fn(() => ({
+                title: undefined,
+                type: 'https://example.com#Type1',
+                desc: '',
+                criticality: 5,
+                criticalityColor: undefined,
+                id: '',
+                elementType: 'asset' as const,
+            }));
 
             renderWithProviders(<AssetTooltip element={asset} />);
 
-            await waitFor(() => {
-                expect(mockedFetchAssetInfo).toHaveBeenCalledWith('https://example.com#asset1');
-            });
-        });
-    });
-
-    describe('caching', () => {
-        it('uses cached data when available', async () => {
-            const asset = createMockAsset();
-            mockedFetchAssetInfo.mockResolvedValue({ name: 'Cached Asset', assetType: 'https://example.com#Type1' });
-
-            const queryClient = createTestQueryClient();
-            const { rerender } = render(
-                <QueryClientProvider client={queryClient}>
-                    <ThemeProvider theme={theme}>
-                        <AssetTooltip element={asset} />
-                    </ThemeProvider>
-                </QueryClientProvider>,
-            );
-
-            await waitFor(() => {
-                expect(screen.getByText('Cached Asset')).toBeInTheDocument();
-            });
-
-            rerender(
-                <QueryClientProvider client={queryClient}>
-                    <ThemeProvider theme={theme}>
-                        <AssetTooltip element={asset} />
-                    </ThemeProvider>
-                </QueryClientProvider>,
-            );
-
-            expect(screen.getByText('Cached Asset')).toBeInTheDocument();
+            expect(screen.getByText('Unknown')).toBeInTheDocument();
         });
     });
 });
