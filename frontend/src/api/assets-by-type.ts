@@ -1,7 +1,7 @@
 import { centroid } from '@turf/turf';
 import type { Polygon, Point, LineString, MultiLineString, MultiPolygon, MultiPoint, Geometry } from 'geojson';
 
-import { fetchOptions } from './utils';
+import { createNdtpPythonEndpoint, fetchOptions } from './utils';
 import Asset from '@/models/Asset';
 import type { FoundIcon } from '@/hooks/useFindIcon';
 
@@ -286,11 +286,9 @@ function parseGeometry(geom: string): { lat: number; lng: number; geometry: Geom
     throw new Error(`Unsupported geometry format: ${geom}`);
 }
 
-const BASE_URL = '/ndtp-python/api';
-
 export const fetchAssetsByType = async (assetTypeId: string, iconMap?: Map<string, string>): Promise<Asset[]> => {
     try {
-        const response = await fetch(`${BASE_URL}/assets/?asset_type=${encodeURIComponent(assetTypeId)}`, fetchOptions);
+        const response = await fetch(`${createNdtpPythonEndpoint('assets/')}?asset_type=${encodeURIComponent(assetTypeId)}`, fetchOptions);
 
         if (!response.ok) {
             throw new Error(`Failed to retrieve assets for type ${assetTypeId}: ${response.statusText}`);

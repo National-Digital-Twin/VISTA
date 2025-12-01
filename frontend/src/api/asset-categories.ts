@@ -1,4 +1,4 @@
-import { fetchOptions } from './utils';
+import { createNdtpPythonEndpoint, fetchOptions } from './utils';
 
 export interface AssetType {
     readonly id: string;
@@ -18,11 +18,9 @@ export interface AssetCategory {
     readonly subCategories: SubCategory[];
 }
 
-const BASE_URL = '/ndtp-python/api';
-
 export const fetchAssetCategories = async (): Promise<AssetCategory[]> => {
     try {
-        const response = await fetch(`${BASE_URL}/assetcategories/`, fetchOptions);
+        const response = await fetch(createNdtpPythonEndpoint('assetcategories/'), fetchOptions);
 
         if (!response.ok) {
             throw new Error(`Failed to retrieve asset categories: ${response.statusText}`);

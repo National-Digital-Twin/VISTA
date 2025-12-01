@@ -1,4 +1,4 @@
-import { fetchOptions } from './utils';
+import { createNdtpPythonEndpoint, fetchOptions } from './utils';
 
 export interface AssetDetailsResponse {
     readonly id: string;
@@ -28,10 +28,8 @@ export interface AssetDetailsResponse {
     }>;
 }
 
-const BASE_URL = '/ndtp-python/api';
-
 export const fetchAssetDetails = async (assetId: string): Promise<AssetDetailsResponse> => {
-    const response = await fetch(`${BASE_URL}/assets/${assetId}/`, fetchOptions);
+    const response = await fetch(createNdtpPythonEndpoint(`assets/${assetId}/`), fetchOptions);
     if (!response.ok) {
         throw new Error(`Failed to retrieve asset details for ${assetId}`);
     }
