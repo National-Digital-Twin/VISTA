@@ -1,10 +1,37 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook } from '@testing-library/react';
-import { createPolygonFeature, createMockUseGroupedAssets } from '../test-utils/test-helpers';
 import useAssetsInPolygons from './useAssetsInPolygons';
 import useGroupedAssets from './queries/useGroupedAssets';
 
-// Mock dependencies
+const mockAssets = [
+    { lng: 0.5, lat: 0.5, uri: 'asset1' },
+    { lng: 1.5, lat: 1.5, uri: 'asset2' },
+];
+
+const createPolygonFeature = (
+    coordinates: number[][][] = [
+        [
+            [0, 0],
+            [1, 0],
+            [1, 1],
+            [0, 1],
+            [0, 0],
+        ],
+    ],
+) => ({
+    type: 'Feature',
+    geometry: {
+        type: 'Polygon',
+        coordinates,
+    },
+    properties: {},
+});
+
+const createMockUseGroupedAssets = () => ({
+    isLoadingAssets: false,
+    assets: mockAssets,
+});
+
 vi.mock('./queries/useGroupedAssets', () => ({
     default: vi.fn(),
 }));

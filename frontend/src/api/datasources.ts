@@ -1,3 +1,5 @@
+import { createApiEndpoint, fetchOptions } from './utils';
+
 export interface DataSource {
     id: string;
     name: string;
@@ -7,7 +9,7 @@ export interface DataSource {
 }
 
 export const fetchDataSources = async (): Promise<DataSource[]> => {
-    const response = await fetch('/ndtp-python/api/datasources/');
+    const response = await fetch(createApiEndpoint('datasources/'), fetchOptions);
 
     if (!response.ok) {
         throw new Error(`Failed to fetch data sources: ${response.statusText}`);

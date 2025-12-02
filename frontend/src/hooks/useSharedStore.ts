@@ -15,9 +15,8 @@ export interface State {
     showLiveFloods: boolean;
     minCriticality: number;
     selectedFloodAreas: NonNullable<Feature['id']>[];
-    floodAreaFeatures: Feature[];
-    drawnFeatures: Feature<Polygon>[];
-    selectedFloodAreaFeatureIds: Record<NonNullable<Feature['id']>, boolean>;
+    drawnAreaFeatures: Feature[];
+    selectedDrawnAreaFeatureIds: Record<NonNullable<Feature['id']>, boolean>;
 
     selectAssetType: (assetType: any) => void;
     deselectAssetType: (assetType: any) => void;
@@ -29,11 +28,11 @@ export interface State {
     setMinCriticality: (criticality: number) => void;
 
     setSelectedFloodAreas: (floodAreas: NonNullable<Feature['id']>[]) => void;
-    addFloodAreaFeatures: (features: Feature[]) => void;
-    updateFloodAreaFeatures: (features: Feature[]) => void;
-    deleteFloodAreaFeatures: (featureIds: NonNullable<Feature['id']>[]) => void;
+    addDrawnAreaFeatures: (features: Feature[]) => void;
+    updateDrawnAreaFeatures: (features: Feature[]) => void;
+    deleteDrawnAreaFeatures: (featureIds: NonNullable<Feature['id']>[]) => void;
     toggleFloodAreaFeature: (featureId: NonNullable<Feature['id']>) => void;
-    setFloodAreaFeatures: (features: Feature[]) => void;
+    setDrawnAreaFeatures: (features: Feature[]) => void;
 
     dynamicProximityFeatures: Feature<Polygon, DynamicProximityFeatureProperties>[];
     addDynamicProximityFeatures: (features: Feature<Polygon, DynamicProximityFeatureProperties>[]) => void;
@@ -109,35 +108,34 @@ export default createStore<State>('application-state-storage', (set) => ({
     setMinCriticality: (criticality) => set(() => ({ minCriticality: criticality })),
     selectedFloodAreas: [],
     setSelectedFloodAreas: (floodAreas) => set(() => ({ selectedFloodAreas: floodAreas })),
-    drawnFeatures: [],
-    floodAreaFeatures: [],
-    addFloodAreaFeatures: (features) =>
+    drawnAreaFeatures: [],
+    addDrawnAreaFeatures: (features) =>
         set((state) => ({
-            floodAreaFeatures: [...state.floodAreaFeatures, ...features],
-            selectedFloodAreaFeatureIds: {
-                ...state.selectedFloodAreaFeatureIds,
+            drawnAreaFeatures: [...state.drawnAreaFeatures, ...features],
+            selectedDrawnAreaFeatureIds: {
+                ...state.selectedDrawnAreaFeatureIds,
                 ...Object.fromEntries(features.map(({ id }) => [id, true])),
             },
         })),
-    updateFloodAreaFeatures: updateFeatures('floodAreaFeatures', set),
-    deleteFloodAreaFeatures: (featureIds) =>
+    updateDrawnAreaFeatures: updateFeatures('drawnAreaFeatures', set),
+    deleteDrawnAreaFeatures: (featureIds) =>
         set((state) => {
             return {
-                floodAreaFeatures: state.floodAreaFeatures.filter((f) => f.id && !featureIds.includes(f.id)),
-                selectedFloodAreaFeatureIds: Object.fromEntries(
-                    Object.entries(state.selectedFloodAreaFeatureIds).filter(([featureId]) => !featureIds.includes(featureId)),
+                drawnAreaFeatures: state.drawnAreaFeatures.filter((f) => f.id && !featureIds.includes(f.id)),
+                selectedDrawnAreaFeatureIds: Object.fromEntries(
+                    Object.entries(state.selectedDrawnAreaFeatureIds).filter(([featureId]) => !featureIds.includes(featureId)),
                 ),
             };
         }),
-    selectedFloodAreaFeatureIds: {},
+    selectedDrawnAreaFeatureIds: {},
     toggleFloodAreaFeature: (featureId) =>
         set((state) => ({
-            selectedFloodAreaFeatureIds: {
-                ...state.selectedFloodAreaFeatureIds,
-                [featureId]: !state.selectedFloodAreaFeatureIds[featureId],
+            selectedDrawnAreaFeatureIds: {
+                ...state.selectedDrawnAreaFeatureIds,
+                [featureId]: !state.selectedDrawnAreaFeatureIds[featureId],
             },
         })),
-    setFloodAreaFeatures: (features) => set(() => ({ floodAreaFeatures: features })),
+    setDrawnAreaFeatures: (features) => set(() => ({ drawnAreaFeatures: features })),
     showCpsIconsForAssetTypes: false,
     toggleShowCpsIconsForAssetTypes: () =>
         set((state) => ({

@@ -1,23 +1,5 @@
 import { ArrowBack, Edit } from '@mui/icons-material';
-import {
-    Box,
-    Button,
-    Divider,
-    IconButton,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    Typography,
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogActions,
-    TextField,
-    Link,
-} from '@mui/material';
+import { Box, Button, Divider, IconButton, Typography, Dialog, DialogTitle, DialogContent, DialogActions, TextField } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
@@ -27,10 +9,7 @@ import PageContainer from '@/components/PageContainer';
 export default function Profile() {
     const { userId } = useParams<{ userId?: string }>();
     const navigate = useNavigate();
-    const { getUserDisplayName, getUserOrganisation, getUserMemberSince, getUserAddedBy, getUserType, getUserGroups, getUserEmail, loading, error } =
-        useProfileData(userId);
-
-    const groups = getUserGroups();
+    const { getUserDisplayName, getUserOrganisation, getUserMemberSince, getUserAddedBy, getUserType, getUserEmail, loading, error } = useProfileData(userId);
     const [showRemoveModal, setShowRemoveModal] = useState(false);
     const [confirmText, setConfirmText] = useState('');
 
@@ -175,53 +154,6 @@ export default function Profile() {
                             <Typography fontWeight={'bold'}>Organisation</Typography>
                             <Typography>@{getUserOrganisation()}</Typography>
                         </Box>
-                    </Box>
-
-                    <Divider sx={{ my: 3 }} />
-
-                    <Box>
-                        <Typography variant="h6" sx={{ mb: 2, fontWeight: 300 }}>
-                            Group membership
-                        </Typography>
-                        {groups.length > 0 ? (
-                            <TableContainer sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, auto)' }}>
-                                <Table>
-                                    <TableHead>
-                                        <TableRow>
-                                            <TableCell sx={{ fontWeight: 'bold', border: 'none', py: 1, px: 0 }}>
-                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>Groups</Box>
-                                            </TableCell>
-                                            <TableCell sx={{ fontWeight: 'bold', border: 'none', py: 1, px: 0 }}>
-                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>Member since</Box>
-                                            </TableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {groups.map((group) => (
-                                            <TableRow key={group.name} sx={{ '&:last-child td': { border: 0 } }}>
-                                                <TableCell sx={{ py: 1, px: 0 }}>
-                                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                                        <Link
-                                                            component="button"
-                                                            color="primary"
-                                                            onClick={() => navigate(`/group/${encodeURIComponent(group.name)}`)}
-                                                            sx={{ cursor: 'pointer' }}
-                                                        >
-                                                            {group.name}
-                                                        </Link>
-                                                    </Box>
-                                                </TableCell>
-                                                <TableCell sx={{ py: 1, px: 0 }}>{group.memberSince}</TableCell>
-                                            </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </Table>
-                            </TableContainer>
-                        ) : (
-                            <Typography variant="body1" sx={{ mb: 2 }}>
-                                No group memberships
-                            </Typography>
-                        )}
                     </Box>
                 </Box>
 

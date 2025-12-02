@@ -12,7 +12,7 @@ export default function DrawnPolygonLayerControl({ searchQuery }: Readonly<Layer
 
     const matchesAnyTerm = !searchQuery || matchesParentCategory;
 
-    const features = useSharedStore((state) => state.floodAreaFeatures);
+    const features = useSharedStore((state) => state.drawnAreaFeatures);
 
     if (!matchesAnyTerm || !features?.length) {
         return null;

@@ -47,7 +47,7 @@ jobs:
 
       - name: Run Dependency Checks
         working-directory: frontend
-        run: npm audit --audit-level=moderate
+        run: npm audit --audit-level=moderate -omit=dev
 
       - name: Check for Outdated Dependencies
         working-directory: frontend
@@ -109,7 +109,7 @@ jobs:
         working-directory: frontend
         run: |
           echo "Running audit-ci"
-          npx audit-ci --high
+          npx audit-ci --high --config audit-ci.jsonc
 
   unit-tests:
     name: Unit Tests

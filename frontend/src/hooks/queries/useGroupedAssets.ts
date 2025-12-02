@@ -15,9 +15,10 @@ export interface UseGroupedAssetsOptions {
 type DatasetState<T = any> = {
     id: string;
     category: string;
-    status: 'pending' | 'success' | 'error';
+    status: 'pending' | 'success' | 'error' | 'timeout';
     data?: T;
     error?: unknown;
+    timedOut?: boolean;
 };
 
 /**
@@ -46,18 +47,41 @@ const useGroupedAssets = ({ assessment, searchFilter }: UseGroupedAssetsOptions)
     });
 
     const fetchAssetsWithTimeout = async (assetSpecification: any) => {
-        const timeoutPromise = new Promise((_, reject) => {
-            setTimeout(() => reject(new Error('Query timeout')), 30000);
+        const TIMEOUT_MS = 45000;
+
+        let timeoutId: ReturnType<typeof setTimeout> | undefined;
+        const timeoutPromise = new Promise<never>((_, reject) => {
+            timeoutId = setTimeout(() => {
+                reject(new Error('Query timeout'));
+            }, TIMEOUT_MS);
         });
 
-        const fetchPromise = fetchAssetsForAssetSpecification(assetSpecification)
-            .then((result) => result)
-            .catch((_error) => []);
-
         try {
-            return await Promise.race([fetchPromise, timeoutPromise]);
-        } catch {
-            return [];
+            const fetchPromise = fetchAssetsForAssetSpecification(assetSpecification)
+                .then((result) => {
+                    if (timeoutId) {
+                        clearTimeout(timeoutId);
+                    }
+                    return { data: result, timedOut: false };
+                })
+                .catch((error) => {
+                    if (timeoutId) {
+                        clearTimeout(timeoutId);
+                    }
+                    throw error;
+                });
+
+            const result = await Promise.race([fetchPromise, timeoutPromise]);
+            return result.data;
+        } catch (error) {
+            if (timeoutId) {
+                clearTimeout(timeoutId);
+            }
+            const isTimeout = error instanceof Error && error.message === 'Query timeout';
+            if (isTimeout) {
+                return { __timeout: true };
+            }
+            throw error;
         }
     };
 
@@ -66,7 +90,7 @@ const useGroupedAssets = ({ assessment, searchFilter }: UseGroupedAssetsOptions)
             queryKey: ['dataset', `${assetSpecification.type}-${index}`],
             queryFn: () => fetchAssetsWithTimeout(assetSpecification),
             staleTime: 5 * 60 * 1000,
-            retry: 2,
+            retry: false,
             retryDelay: 1000,
         })),
     });
@@ -75,21 +99,30 @@ const useGroupedAssets = ({ assessment, searchFilter }: UseGroupedAssetsOptions)
         () =>
             queries.map((q, i) => {
                 if (assetSpecifications) {
-                    let status: 'pending' | 'error' | 'success';
+                    let status: 'pending' | 'error' | 'success' | 'timeout';
+                    let timedOut = false;
+                    let data = q.data;
+
                     if (q.isLoading) {
                         status = 'pending';
                     } else if (q.isError) {
                         status = 'error';
+                    } else if (q.data && typeof q.data === 'object' && '__timeout' in q.data) {
+                        status = 'timeout';
+                        timedOut = true;
+                        data = undefined;
                     } else {
                         status = 'success';
                     }
+
                     const dataset = {
                         id: assetSpecifications[i].type,
                         type: assetSpecifications[i].type,
                         category: assetSpecifications[i].secondaryCategory,
                         status,
-                        data: q.data,
+                        data,
                         error: q.error,
+                        timedOut,
                     } as DatasetState;
 
                     return dataset;
@@ -130,7 +163,7 @@ const useGroupedAssets = ({ assessment, searchFilter }: UseGroupedAssetsOptions)
     }, [datasets, staticAssets, staticAssetsError, staticAssetsLoading]);
 
     const assetsLoading = useMemo(() => {
-        const allFinished = datasets.every((d) => d && (d.status === 'success' || d.status === 'error'));
+        const allFinished = datasets.every((d) => d && (d.status === 'success' || d.status === 'error' || d.status === 'timeout'));
         return !allFinished;
     }, [datasets]);
 
@@ -156,10 +189,10 @@ const useGroupedAssets = ({ assessment, searchFilter }: UseGroupedAssetsOptions)
         error: dependenciesError,
     } = useQuery({
         queryKey: ['assets-with-dependencies', assessment ?? ''],
-        enabled: !assetsLoading,
+        enabled: !assetsLoading && !!assessment && assessment.trim() !== '',
         queryFn: async () => {
-            if (!assets) {
-                return;
+            if (!assets || !assessment) {
+                return [];
             }
             const assetTypes = assets.map((asset: { type: any }) => asset.type).filter((value, index, self) => self.indexOf(value) === index);
             let dependencies: Dependency[];

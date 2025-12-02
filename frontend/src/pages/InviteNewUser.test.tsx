@@ -1,8 +1,21 @@
+import React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { screen, fireEvent, waitFor } from '@testing-library/react';
-import { renderWithRouter } from '../test-utils/test-helpers';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import InviteNewUser from './InviteNewUser';
 import { sendInvite } from '@/api/invites';
+
+const renderWithRouter = (ui: React.ReactElement, { initialEntries = ['/'], route = '/*' }: { initialEntries?: string[]; route?: string } = {}) => {
+    const Wrapper = ({ children }: { children: React.ReactNode }) => (
+        <MemoryRouter initialEntries={initialEntries}>
+            <Routes>
+                <Route path={route} element={children} />
+            </Routes>
+        </MemoryRouter>
+    );
+
+    return render(ui, { wrapper: Wrapper });
+};
 
 vi.mock('@/api/invites', () => ({
     sendInvite: vi.fn(),

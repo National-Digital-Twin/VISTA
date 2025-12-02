@@ -11,14 +11,14 @@ import MenuItemRow from '@/components/MenuItemRow';
 const useFloodAreaSharedStore = () =>
     useSharedStore(
         useShallow((state) => ({
-            features: state.floodAreaFeatures,
-            selectedFeatureIds: state.selectedFloodAreaFeatureIds,
+            features: state.drawnAreaFeatures,
+            selectedFeatureIds: state.selectedDrawnAreaFeatureIds,
             selected: state.selectedFloodAreas,
             toggleFeature: state.toggleFloodAreaFeature,
-            setFeatures: state.setFloodAreaFeatures,
-            onAddFeatures: state.addFloodAreaFeatures,
-            onUpdateFeatures: state.updateFloodAreaFeatures,
-            onDeleteFeatures: state.deleteFloodAreaFeatures,
+            setFeatures: state.setDrawnAreaFeatures,
+            onAddFeatures: state.addDrawnAreaFeatures,
+            onUpdateFeatures: state.updateDrawnAreaFeatures,
+            onDeleteFeatures: state.deleteDrawnAreaFeatures,
         })),
     );
 

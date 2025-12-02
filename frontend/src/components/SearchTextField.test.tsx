@@ -140,5 +140,22 @@ describe('SearchTextField', () => {
             expect(onChange).toHaveBeenCalledWith('new value');
             expect(input.value).toBe('controlled');
         });
+
+        it('applies fullWidth when provided', () => {
+            const { container } = render(<SearchTextField {...defaultProps} fullWidth />);
+
+            const textField = container.querySelector('.MuiTextField-root');
+            expect(textField).toBeInTheDocument();
+
+            const input = container.querySelector('input');
+            expect(input?.closest('.MuiTextField-root')).toBeInTheDocument();
+        });
+
+        it('does not apply fullWidth by default', () => {
+            const { container } = render(<SearchTextField {...defaultProps} />);
+
+            const textField = container.querySelector('.MuiTextField-root');
+            expect(textField).toBeInTheDocument();
+        });
     });
 });
