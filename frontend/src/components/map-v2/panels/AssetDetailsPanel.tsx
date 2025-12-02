@@ -4,67 +4,39 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { noCase } from 'change-case';
 import StreetViewSection from './StreetViewSection';
 import ConnectedAssetsSection from './ConnectedAssetsSection';
-import { fetchAssetInfo } from '@/api/combined';
-import { isAsset, getURIFragment } from '@/utils';
+import { fetchAssetDetails } from '@/api/asset-details';
+import { isAsset } from '@/utils';
 import { isEmpty } from '@/utils/isEmpty';
-import { AssetState } from '@/models/Asset';
 import type { Asset, Element } from '@/models';
-import { useDependents, useProviders } from '@/hooks';
 
 interface AssetDetailsPanelProps {
     readonly selectedElement: Element | null;
     readonly onBack: () => void;
 }
 
-const transformToConnectedAsset = (item: any) => {
-    if (item?.error) {
-        return {
-            uri: '',
-            error: item.error,
-            name: '',
-            assetType: '',
-            dependentCriticalitySum: 0,
-            connectionStrength: 0,
-        };
-    }
+const transformConnectedAsset = (item: { id: string; name: string; type: { id: string; name: string } }) => {
     return {
-        uri: item?.uri || '',
-        name: item?.name || '',
-        assetType: item?.assetType || item?.type || '',
-        dependentCriticalitySum: item?.dependentCriticalitySum || 0,
-        connectionStrength: item?.connectionStrength || 0,
+        id: item.id,
+        name: item.name,
+        assetType: item.type.name,
     };
 };
 
 const AssetDetailsPanel = ({ selectedElement, onBack }: AssetDetailsPanelProps) => {
     const elemIsAsset = isAsset(selectedElement ?? undefined);
-    const elemIsStatic = elemIsAsset && (selectedElement as Asset)?.state === AssetState.Static;
+    const assetId = elemIsAsset ? (selectedElement as Asset)?.id : null;
 
-    const assetInfo = useQuery({
-        enabled: elemIsAsset && elemIsStatic && !!selectedElement?.uri,
-        queryKey: ['asset-info', selectedElement?.uri || ''],
-        queryFn: () => fetchAssetInfo(selectedElement?.uri || ''),
+    const assetDetails = useQuery({
+        enabled: elemIsAsset && !!assetId,
+        queryKey: ['asset-details', assetId || ''],
+        queryFn: () => fetchAssetDetails(assetId || ''),
     });
-
-    const {
-        isLoading: isProvidersLoading,
-        isError: isProvidersError,
-        error: providersError,
-        data: providers,
-    } = useProviders(elemIsAsset ?? false, false, selectedElement?.uri || '', {});
-
-    const {
-        isLoading: isDependentsLoading,
-        isError: isDependentsError,
-        error: dependentsError,
-        data: dependents,
-    } = useDependents(elemIsAsset ?? false, false, selectedElement?.uri || '', {});
 
     if (!selectedElement) {
         return null;
     }
 
-    if (assetInfo.isLoading) {
+    if (assetDetails.isLoading) {
         return (
             <Box sx={{ p: 2, display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '200px' }}>
                 <CircularProgress />
@@ -72,15 +44,23 @@ const AssetDetailsPanel = ({ selectedElement, onBack }: AssetDetailsPanelProps) 
         );
     }
 
-    if (assetInfo.isError && elemIsStatic) {
+    if (assetDetails.isError) {
         return (
             <Box sx={{ p: 2 }}>
-                <Alert severity="error">Error fetching details for {selectedElement?.uri || 'this asset'}</Alert>
+                <Alert severity="error">Error fetching details for {selectedElement?.id || 'this asset'}</Alert>
             </Box>
         );
     }
 
-    const details = elemIsAsset ? ((selectedElement as Asset)?.getDetails?.(assetInfo.data) ?? undefined) : undefined;
+    const assetInfoData = assetDetails.data
+        ? {
+              name: assetDetails.data.name,
+              assetType: assetDetails.data.type.name,
+              desc: undefined,
+          }
+        : null;
+
+    const details = elemIsAsset ? ((selectedElement as Asset)?.getDetails?.(assetInfoData) ?? undefined) : undefined;
 
     if (!details || isEmpty(details)) {
         return (
@@ -95,8 +75,8 @@ const AssetDetailsPanel = ({ selectedElement, onBack }: AssetDetailsPanelProps) 
     const streetViewUrl =
         hasCoordinates && assetElement ? `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${assetElement.lat},${assetElement.lng}` : null;
 
-    const filteredDependents = dependents?.map(transformToConnectedAsset).filter((d) => d && !d.error) || [];
-    const filteredProviders = providers?.map(transformToConnectedAsset).filter((p) => p && !p.error) || [];
+    const filteredDependents = assetDetails.data?.dependents?.map(transformConnectedAsset) || [];
+    const filteredProviders = assetDetails.data?.providers?.map(transformConnectedAsset) || [];
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
@@ -116,7 +96,7 @@ const AssetDetailsPanel = ({ selectedElement, onBack }: AssetDetailsPanelProps) 
                     </Typography>
                 </Box>
                 <Box sx={{ px: 2, pb: 2 }}>
-                    {details.type && (
+                    {assetElement?.secondaryCategory && (
                         <Typography
                             variant="body2"
                             sx={{
@@ -125,7 +105,7 @@ const AssetDetailsPanel = ({ selectedElement, onBack }: AssetDetailsPanelProps) 
                                 color: 'text.secondary',
                             }}
                         >
-                            {noCase(getURIFragment(details.type))}
+                            {noCase(assetElement.secondaryCategory)}
                         </Typography>
                     )}
                     {details.desc && (
@@ -145,16 +125,7 @@ const AssetDetailsPanel = ({ selectedElement, onBack }: AssetDetailsPanelProps) 
 
                 <StreetViewSection hasCoordinates={hasCoordinates} streetViewUrl={streetViewUrl} />
 
-                <ConnectedAssetsSection
-                    filteredDependents={filteredDependents}
-                    filteredProviders={filteredProviders}
-                    isDependentsLoading={isDependentsLoading}
-                    isDependentsError={isDependentsError}
-                    dependentsError={dependentsError}
-                    isProvidersLoading={isProvidersLoading}
-                    isProvidersError={isProvidersError}
-                    providersError={providersError}
-                />
+                <ConnectedAssetsSection filteredDependents={filteredDependents} filteredProviders={filteredProviders} />
             </Box>
         </Box>
     );

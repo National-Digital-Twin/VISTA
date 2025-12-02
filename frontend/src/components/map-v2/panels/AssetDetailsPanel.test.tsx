@@ -6,16 +6,10 @@ import { ThemeProvider } from '@mui/material/styles';
 import AssetDetailsPanel from './AssetDetailsPanel';
 import Asset, { AssetState } from '@/models/Asset';
 import theme from '@/theme';
-import { fetchAssetInfo } from '@/api/combined';
-import { useDependents, useProviders } from '@/hooks';
+import { fetchAssetDetails } from '@/api/asset-details';
 
-vi.mock('@/api/combined', () => ({
-    fetchAssetInfo: vi.fn(),
-}));
-
-vi.mock('@/hooks', () => ({
-    useDependents: vi.fn(),
-    useProviders: vi.fn(),
+vi.mock('@/api/asset-details', () => ({
+    fetchAssetDetails: vi.fn(),
 }));
 
 vi.mock('./StreetViewSection', () => ({
@@ -33,9 +27,7 @@ vi.mock('./ConnectedAssetsSection', () => ({
     ),
 }));
 
-const mockedFetchAssetInfo = vi.mocked(fetchAssetInfo);
-const mockedUseDependents = vi.mocked(useDependents);
-const mockedUseProviders = vi.mocked(useProviders);
+const mockedFetchAssetDetails = vi.mocked(fetchAssetDetails);
 
 const createTestQueryClient = () => {
     return new QueryClient({
@@ -59,23 +51,10 @@ const renderWithProviders = (component: React.ReactElement) => {
 describe('AssetDetailsPanel', () => {
     beforeEach(() => {
         vi.clearAllMocks();
-        mockedUseDependents.mockReturnValue({
-            isLoading: false,
-            isError: false,
-            error: null,
-            data: [],
-        });
-        mockedUseProviders.mockReturnValue({
-            isLoading: false,
-            isError: false,
-            error: null,
-            data: [],
-        });
     });
 
     const createMockAsset = (overrides = {}) => {
         return {
-            uri: 'https://example.com#asset1',
             id: 'asset1',
             type: 'https://example.com#Type1',
             name: 'Test Asset',
@@ -91,13 +70,13 @@ describe('AssetDetailsPanel', () => {
             },
             state: AssetState.Static,
             elementType: 'asset' as const,
+            secondaryCategory: 'Type1',
             getDetails: vi.fn((assetInfo: any) => ({
                 title: assetInfo?.name || 'Test Asset',
                 type: assetInfo?.assetType || 'https://example.com#Type1',
                 desc: assetInfo?.desc || 'Test description',
                 criticality: 5,
                 id: 'asset1',
-                uri: 'https://example.com#asset1',
                 elementType: 'asset',
             })),
             ...overrides,
@@ -112,8 +91,8 @@ describe('AssetDetailsPanel', () => {
 
         it('displays loading state', async () => {
             const asset = createMockAsset();
-            const neverResolvingPromise = new Promise(() => {});
-            mockedFetchAssetInfo.mockImplementation(() => neverResolvingPromise);
+            const neverResolvingPromise = new Promise<never>(() => {});
+            mockedFetchAssetDetails.mockImplementation(() => neverResolvingPromise as Promise<any>);
 
             renderWithProviders(<AssetDetailsPanel selectedElement={asset} onBack={vi.fn()} />);
 
@@ -122,10 +101,16 @@ describe('AssetDetailsPanel', () => {
 
         it('displays asset details when loaded', async () => {
             const asset = createMockAsset();
-            mockedFetchAssetInfo.mockResolvedValue({
+            mockedFetchAssetDetails.mockResolvedValue({
+                id: 'asset1',
                 name: 'Fetched Asset Name',
-                assetType: 'https://example.com#Type1',
-                desc: 'Fetched description',
+                geom: 'POINT(-0.1278 51.5074)',
+                type: {
+                    id: 'type1',
+                    name: 'Type1',
+                },
+                providers: [],
+                dependents: [],
             });
 
             renderWithProviders(<AssetDetailsPanel selectedElement={asset} onBack={vi.fn()} />);
@@ -138,10 +123,16 @@ describe('AssetDetailsPanel', () => {
 
         it('displays asset type and description', async () => {
             const asset = createMockAsset();
-            mockedFetchAssetInfo.mockResolvedValue({
+            mockedFetchAssetDetails.mockResolvedValue({
+                id: 'asset1',
                 name: 'Test Asset',
-                assetType: 'https://example.com#Type1',
-                desc: 'Test description',
+                geom: 'POINT(-0.1278 51.5074)',
+                type: {
+                    id: 'type1',
+                    name: 'Type1',
+                },
+                providers: [],
+                dependents: [],
             });
 
             renderWithProviders(<AssetDetailsPanel selectedElement={asset} onBack={vi.fn()} />);
@@ -157,9 +148,16 @@ describe('AssetDetailsPanel', () => {
         it('calls onBack when back button is clicked', async () => {
             const asset = createMockAsset();
             const onBack = vi.fn();
-            mockedFetchAssetInfo.mockResolvedValue({
+            mockedFetchAssetDetails.mockResolvedValue({
+                id: 'asset1',
                 name: 'Test Asset',
-                assetType: 'https://example.com#Type1',
+                geom: 'POINT(-0.1278 51.5074)',
+                type: {
+                    id: 'type1',
+                    name: 'Type1',
+                },
+                providers: [],
+                dependents: [],
             });
 
             renderWithProviders(<AssetDetailsPanel selectedElement={asset} onBack={onBack} />);
@@ -176,9 +174,9 @@ describe('AssetDetailsPanel', () => {
     });
 
     describe('error handling', () => {
-        it('displays error message when assetInfo fetch fails', async () => {
+        it('displays error message when assetDetails fetch fails', async () => {
             const asset = createMockAsset();
-            mockedFetchAssetInfo.mockRejectedValue(new Error('Failed to fetch'));
+            mockedFetchAssetDetails.mockRejectedValue(new Error('Failed to fetch'));
 
             renderWithProviders(<AssetDetailsPanel selectedElement={asset} onBack={vi.fn()} />);
 
@@ -190,7 +188,17 @@ describe('AssetDetailsPanel', () => {
         it('displays warning when details are empty', async () => {
             const asset = createMockAsset();
             asset.getDetails = vi.fn(() => null as any);
-            mockedFetchAssetInfo.mockResolvedValue(null);
+            mockedFetchAssetDetails.mockResolvedValue({
+                id: 'asset1',
+                name: '',
+                geom: 'POINT(-0.1278 51.5074)',
+                type: {
+                    id: 'type1',
+                    name: 'Type1',
+                },
+                providers: [],
+                dependents: [],
+            });
 
             renderWithProviders(<AssetDetailsPanel selectedElement={asset} onBack={vi.fn()} />);
 
@@ -203,9 +211,16 @@ describe('AssetDetailsPanel', () => {
     describe('Street View', () => {
         it('displays Street View section when coordinates are available', async () => {
             const asset = createMockAsset({ lat: 51.5074, lng: -0.1278 });
-            mockedFetchAssetInfo.mockResolvedValue({
+            mockedFetchAssetDetails.mockResolvedValue({
+                id: 'asset1',
                 name: 'Test Asset',
-                assetType: 'https://example.com#Type1',
+                geom: 'POINT(-0.1278 51.5074)',
+                type: {
+                    id: 'type1',
+                    name: 'Type1',
+                },
+                providers: [],
+                dependents: [],
             });
 
             renderWithProviders(<AssetDetailsPanel selectedElement={asset} onBack={vi.fn()} />);
@@ -218,9 +233,16 @@ describe('AssetDetailsPanel', () => {
 
         it('displays no Street View when coordinates are missing', async () => {
             const asset = createMockAsset({ lat: undefined, lng: undefined });
-            mockedFetchAssetInfo.mockResolvedValue({
+            mockedFetchAssetDetails.mockResolvedValue({
+                id: 'asset1',
                 name: 'Test Asset',
-                assetType: 'https://example.com#Type1',
+                geom: 'POINT(-0.1278 51.5074)',
+                type: {
+                    id: 'type1',
+                    name: 'Type1',
+                },
+                providers: [],
+                dependents: [],
             });
 
             renderWithProviders(<AssetDetailsPanel selectedElement={asset} onBack={vi.fn()} />);
@@ -235,35 +257,34 @@ describe('AssetDetailsPanel', () => {
     describe('connected assets', () => {
         it('displays connected assets section', async () => {
             const asset = createMockAsset();
-            mockedFetchAssetInfo.mockResolvedValue({
+            mockedFetchAssetDetails.mockResolvedValue({
+                id: 'asset1',
                 name: 'Test Asset',
-                assetType: 'https://example.com#Type1',
-            });
-            mockedUseDependents.mockReturnValue({
-                isLoading: false,
-                isError: false,
-                error: null,
-                data: [
+                geom: 'POINT(-0.1278 51.5074)',
+                type: {
+                    id: 'type1',
+                    name: 'Type1',
+                },
+                providers: [
                     {
-                        uri: 'https://example.com#dep1',
-                        name: 'Dependent 1',
-                        type: 'https://example.com#Type1',
-                        dependentCriticalitySum: 5,
-                        connectionStrength: 3,
+                        id: 'prov1',
+                        name: 'Provider 1',
+                        geom: 'POINT(-0.1278 51.5074)',
+                        type: {
+                            id: 'type2',
+                            name: 'Type2',
+                        },
                     },
                 ],
-            });
-            mockedUseProviders.mockReturnValue({
-                isLoading: false,
-                isError: false,
-                error: null,
-                data: [
+                dependents: [
                     {
-                        uri: 'https://example.com#prov1',
-                        name: 'Provider 1',
-                        type: 'https://example.com#Type2',
-                        dependentCriticalitySum: 10,
-                        connectionStrength: 7,
+                        id: 'dep1',
+                        name: 'Dependent 1',
+                        geom: 'POINT(-0.1278 51.5074)',
+                        type: {
+                            id: 'type1',
+                            name: 'Type1',
+                        },
                     },
                 ],
             });
@@ -279,32 +300,26 @@ describe('AssetDetailsPanel', () => {
 
         it('filters out assets with errors', async () => {
             const asset = createMockAsset();
-            mockedFetchAssetInfo.mockResolvedValue({
+            mockedFetchAssetDetails.mockResolvedValue({
+                id: 'asset1',
                 name: 'Test Asset',
-                assetType: 'https://example.com#Type1',
-            });
-            mockedUseDependents.mockReturnValue({
-                isLoading: false,
-                isError: false,
-                error: null,
-                data: [
+                geom: 'POINT(-0.1278 51.5074)',
+                type: {
+                    id: 'type1',
+                    name: 'Type1',
+                },
+                providers: [],
+                dependents: [
                     {
-                        uri: 'https://example.com#dep1',
+                        id: 'dep1',
                         name: 'Valid Dependent',
-                        type: 'https://example.com#Type1',
-                        dependentCriticalitySum: 5,
-                        connectionStrength: 3,
-                    },
-                    {
-                        error: new Error('Failed to load'),
+                        geom: 'POINT(-0.1278 51.5074)',
+                        type: {
+                            id: 'type1',
+                            name: 'Type1',
+                        },
                     },
                 ],
-            });
-            mockedUseProviders.mockReturnValue({
-                isLoading: false,
-                isError: false,
-                error: null,
-                data: [],
             });
 
             renderWithProviders(<AssetDetailsPanel selectedElement={asset} onBack={vi.fn()} />);
@@ -316,11 +331,11 @@ describe('AssetDetailsPanel', () => {
     });
 
     describe('asset state handling', () => {
-        it('does not fetch assetInfo for Live assets', () => {
-            const asset = createMockAsset({ state: AssetState.Live });
+        it('does not fetch assetDetails when selectedElement has no id', () => {
+            const asset = createMockAsset({ id: '' });
             renderWithProviders(<AssetDetailsPanel selectedElement={asset} onBack={vi.fn()} />);
 
-            expect(mockedFetchAssetInfo).not.toHaveBeenCalled();
+            expect(mockedFetchAssetDetails).not.toHaveBeenCalled();
         });
     });
 });

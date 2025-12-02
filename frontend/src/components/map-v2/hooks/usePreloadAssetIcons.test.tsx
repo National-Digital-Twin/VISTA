@@ -10,13 +10,6 @@ vi.mock('@fortawesome/fontawesome-svg-core', () => ({
     icon: (args: any) => mockIcon(args),
 }));
 
-const mockGetStyles = vi.fn();
-vi.mock('@/ontology-service', () => ({
-    default: {
-        getStyles: (args: any[]) => mockGetStyles(args),
-    },
-}));
-
 function createQueryClient() {
     return new QueryClient({
         defaultOptions: {
@@ -52,18 +45,6 @@ describe('usePreloadAssetIcons', () => {
     beforeEach(() => {
         vi.clearAllMocks();
         mockIcon.mockReturnValue({ iconName: 'test-icon' });
-        mockGetStyles.mockResolvedValue({
-            'https://ies.data.gov.uk/ontology/ies4#Hospital': {
-                defaultIcons: {
-                    faIcon: 'fa-solid fa-hospital',
-                },
-            },
-            'https://ies.data.gov.uk/ontology/ies4#School': {
-                defaultIcons: {
-                    faIcon: 'fa-solid fa-school',
-                },
-            },
-        });
     });
 
     afterEach(() => {
@@ -73,9 +54,9 @@ describe('usePreloadAssetIcons', () => {
     describe('Icon Preloading', () => {
         it('preloads icons for unique asset types', async () => {
             const assets: Asset[] = [
-                { type: 'https://ies.data.gov.uk/ontology/ies4#Hospital' } as Asset,
-                { type: 'https://ies.data.gov.uk/ontology/ies4#Hospital' } as Asset,
-                { type: 'https://ies.data.gov.uk/ontology/ies4#School' } as Asset,
+                { styles: { faIcon: 'fa-solid fa-hospital' } } as Asset,
+                { styles: { faIcon: 'fa-solid fa-hospital' } } as Asset,
+                { styles: { faIcon: 'fa-solid fa-school' } } as Asset,
             ];
 
             renderHook(() => usePreloadAssetIcons(assets), {
@@ -104,21 +85,11 @@ describe('usePreloadAssetIcons', () => {
             expect(mockIcon).not.toHaveBeenCalled();
         });
 
-        it('handles assets without faIcon in styles', async () => {
-            mockGetStyles.mockResolvedValue({
-                'https://ies.data.gov.uk/ontology/ies4#Hospital': {
-                    defaultIcons: {},
-                },
-            });
-
-            const assets: Asset[] = [{ type: 'https://ies.data.gov.uk/ontology/ies4#Hospital' } as Asset];
+        it('handles assets without faIcon in styles', () => {
+            const assets: Asset[] = [{ styles: {} } as Asset];
 
             renderHook(() => usePreloadAssetIcons(assets), {
                 wrapper: createQueryWrapper(),
-            });
-
-            await waitFor(() => {
-                expect(mockGetStyles).toHaveBeenCalled();
             });
 
             expect(mockIcon).not.toHaveBeenCalled();
@@ -127,21 +98,13 @@ describe('usePreloadAssetIcons', () => {
         it('handles icon preload errors gracefully', () => {
             mockIcon.mockImplementation(createErrorThrowingIconMock());
 
-            const assets: Asset[] = [{ type: 'https://ies.data.gov.uk/ontology/ies4#Hospital' } as Asset];
+            const assets: Asset[] = [{ styles: { faIcon: 'fa-solid fa-hospital' } } as Asset];
 
             expect(() => testIconPreloadWithError(assets)).not.toThrow();
         });
 
         it('extracts icon name correctly from faIcon string', async () => {
-            mockGetStyles.mockResolvedValue({
-                'https://ies.data.gov.uk/ontology/ies4#Hospital': {
-                    defaultIcons: {
-                        faIcon: 'fa-solid fa-hospital-building',
-                    },
-                },
-            });
-
-            const assets: Asset[] = [{ type: 'https://ies.data.gov.uk/ontology/ies4#Hospital' } as Asset];
+            const assets: Asset[] = [{ styles: { faIcon: 'fa-solid fa-hospital-building' } } as Asset];
 
             renderHook(() => usePreloadAssetIcons(assets), {
                 wrapper: createQueryWrapper(),
@@ -162,7 +125,7 @@ describe('usePreloadAssetIcons', () => {
         });
 
         it('returns true for preloaded icons', async () => {
-            const assets: Asset[] = [{ type: 'https://ies.data.gov.uk/ontology/ies4#Hospital' } as Asset];
+            const assets: Asset[] = [{ styles: { faIcon: 'fa-solid fa-hospital' } } as Asset];
 
             renderHook(() => usePreloadAssetIcons(assets), {
                 wrapper: createQueryWrapper(),
@@ -180,15 +143,7 @@ describe('usePreloadAssetIcons', () => {
         it('returns false for icons that failed to load', async () => {
             mockIcon.mockImplementation(createErrorThrowingIconMock());
 
-            mockGetStyles.mockResolvedValue({
-                'https://ies.data.gov.uk/ontology/ies4#TestAsset': {
-                    defaultIcons: {
-                        faIcon: 'fa-solid fa-test-icon',
-                    },
-                },
-            });
-
-            const assets: Asset[] = [{ type: 'https://ies.data.gov.uk/ontology/ies4#TestAsset' } as Asset];
+            const assets: Asset[] = [{ styles: { faIcon: 'fa-solid fa-test-icon' } } as Asset];
 
             renderHook(() => usePreloadAssetIcons(assets), {
                 wrapper: createQueryWrapper(),
@@ -196,18 +151,6 @@ describe('usePreloadAssetIcons', () => {
 
             await waitFor(() => {
                 expect(isIconPreloaded('test-icon')).toBe(false);
-            });
-        });
-    });
-
-    describe('Query Integration', () => {
-        it('calls ontologyService.getStyles with empty array', async () => {
-            renderHook(() => usePreloadAssetIcons([]), {
-                wrapper: createQueryWrapper(),
-            });
-
-            await waitFor(() => {
-                expect(mockGetStyles).toHaveBeenCalledWith([]);
             });
         });
     });

@@ -1,44 +1,23 @@
 import { useState } from 'react';
 import type { SyntheticEvent } from 'react';
-import { Box, Tabs, Tab, Typography, CircularProgress, Alert } from '@mui/material';
+import { Box, Tabs, Tab, Typography } from '@mui/material';
 import ConnectedAssetsList from './ConnectedAssetsList';
 import { a11yProps, TabPanel } from '@/utils/tabHelpers';
 
 interface ConnectedAssetsSectionProps {
     readonly filteredDependents: Array<{
-        uri: string;
-        error?: Error;
+        id: string;
         name: string;
         assetType: string;
-        dependentCriticalitySum: number;
-        connectionStrength: number;
     }>;
     readonly filteredProviders: Array<{
-        uri: string;
-        error?: Error;
+        id: string;
         name: string;
         assetType: string;
-        dependentCriticalitySum: number;
-        connectionStrength: number;
     }>;
-    readonly isDependentsLoading: boolean;
-    readonly isDependentsError: boolean;
-    readonly dependentsError: Error | null;
-    readonly isProvidersLoading: boolean;
-    readonly isProvidersError: boolean;
-    readonly providersError: Error | null;
 }
 
-const ConnectedAssetsSection = ({
-    filteredDependents,
-    filteredProviders,
-    isDependentsLoading,
-    isDependentsError,
-    dependentsError,
-    isProvidersLoading,
-    isProvidersError,
-    providersError,
-}: ConnectedAssetsSectionProps) => {
+const ConnectedAssetsSection = ({ filteredDependents, filteredProviders }: ConnectedAssetsSectionProps) => {
     const [tabValue, setTabValue] = useState(0);
     const totalDependents = filteredDependents.length;
     const totalProviders = filteredProviders.length;
@@ -48,20 +27,6 @@ const ConnectedAssetsSection = ({
     };
 
     const renderDependentsContent = () => {
-        if (isDependentsLoading) {
-            return (
-                <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
-                    <CircularProgress size={24} />
-                </Box>
-            );
-        }
-        if (isDependentsError) {
-            return (
-                <Box sx={{ p: 2 }}>
-                    <Alert severity="error">{dependentsError?.message || 'Error loading dependent assets'}</Alert>
-                </Box>
-            );
-        }
         if (totalDependents === 0) {
             return (
                 <Box sx={{ p: 2 }}>
@@ -75,20 +40,6 @@ const ConnectedAssetsSection = ({
     };
 
     const renderProvidersContent = () => {
-        if (isProvidersLoading) {
-            return (
-                <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
-                    <CircularProgress size={24} />
-                </Box>
-            );
-        }
-        if (isProvidersError) {
-            return (
-                <Box sx={{ p: 2 }}>
-                    <Alert severity="error">{providersError?.message || 'Error loading provider assets'}</Alert>
-                </Box>
-            );
-        }
         if (totalProviders === 0) {
             return (
                 <Box sx={{ p: 2 }}>

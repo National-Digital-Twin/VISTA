@@ -9,7 +9,7 @@ vi.mock('./ConnectedAssetsList', () => ({
     default: ({ connectedAssets }: { connectedAssets: any[] }) => (
         <div data-testid="connected-assets-list">
             {connectedAssets.map((asset) => (
-                <div key={asset.uri}>{asset.name}</div>
+                <div key={asset.id}>{asset.name}</div>
             ))}
         </div>
     ),
@@ -22,33 +22,23 @@ const renderWithTheme = (component: React.ReactElement) => {
 describe('ConnectedAssetsSection', () => {
     const mockDependents = [
         {
-            uri: 'https://example.com#dep1',
+            id: 'dep1',
             name: 'Dependent Asset 1',
             assetType: 'https://example.com#Type1',
-            dependentCriticalitySum: 5,
-            connectionStrength: 3,
         },
     ];
 
     const mockProviders = [
         {
-            uri: 'https://example.com#prov1',
+            id: 'prov1',
             name: 'Provider Asset 1',
             assetType: 'https://example.com#Type2',
-            dependentCriticalitySum: 10,
-            connectionStrength: 7,
         },
     ];
 
     const defaultProps = {
         filteredDependents: mockDependents,
         filteredProviders: mockProviders,
-        isDependentsLoading: false,
-        isDependentsError: false,
-        dependentsError: null,
-        isProvidersLoading: false,
-        isProvidersError: false,
-        providersError: null,
     };
 
     describe('rendering', () => {
@@ -94,42 +84,6 @@ describe('ConnectedAssetsSection', () => {
 
             expect(screen.getByText('Dependent Asset 1')).toBeInTheDocument();
             expect(screen.queryByText('Provider Asset 1')).not.toBeInTheDocument();
-        });
-    });
-
-    describe('loading states', () => {
-        it('displays loading indicator for dependents', () => {
-            renderWithTheme(<ConnectedAssetsSection {...defaultProps} isDependentsLoading={true} />);
-
-            expect(screen.getByRole('progressbar')).toBeInTheDocument();
-        });
-
-        it('displays loading indicator for providers', () => {
-            renderWithTheme(<ConnectedAssetsSection {...defaultProps} isProvidersLoading={true} />);
-
-            const providerTab = screen.getByText('Provider Assets (1)');
-            fireEvent.click(providerTab);
-
-            expect(screen.getByRole('progressbar')).toBeInTheDocument();
-        });
-    });
-
-    describe('error states', () => {
-        it('displays error message for dependents', () => {
-            const error = new Error('Failed to load dependents');
-            renderWithTheme(<ConnectedAssetsSection {...defaultProps} isDependentsError={true} dependentsError={error} />);
-
-            expect(screen.getByText('Failed to load dependents')).toBeInTheDocument();
-        });
-
-        it('displays error message for providers', () => {
-            const error = new Error('Failed to load providers');
-            renderWithTheme(<ConnectedAssetsSection {...defaultProps} isProvidersError={true} providersError={error} />);
-
-            const providerTab = screen.getByText('Provider Assets (1)');
-            fireEvent.click(providerTab);
-
-            expect(screen.getByText('Failed to load providers')).toBeInTheDocument();
         });
     });
 

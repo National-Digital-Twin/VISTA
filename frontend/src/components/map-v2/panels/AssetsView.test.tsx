@@ -5,21 +5,13 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from '@mui/material/styles';
 import AssetsView from './AssetsView';
 import theme from '@/theme';
-import { useGroupedAssets } from '@/hooks';
-import { fetchAssessments } from '@/api/assessments';
-import { fetchAssetSpecifications } from '@/api/fetchAssetSpecifications';
+import { fetchAssetCategories } from '@/api/asset-categories';
 
-vi.mock('@/hooks', () => ({
-    useGroupedAssets: vi.fn(),
+vi.mock('@/api/asset-categories', () => ({
+    fetchAssetCategories: vi.fn(),
 }));
 
-vi.mock('@/api/assessments', () => ({
-    fetchAssessments: vi.fn(),
-}));
-
-vi.mock('@/api/fetchAssetSpecifications', () => ({
-    fetchAssetSpecifications: vi.fn(),
-}));
+const mockedFetchAssetCategories = vi.mocked(fetchAssetCategories);
 
 describe('AssetsView', () => {
     const defaultProps = {
@@ -47,67 +39,49 @@ describe('AssetsView', () => {
         );
     };
 
-    const mockAsset = {
-        uri: 'http://test.com/asset1',
-        type: 'https://ies.data.gov.uk/ontology/ies4#Hospital',
-        primaryCategory: 'Healthcare',
-        secondaryCategory: 'Healthcare Facilities',
-        styles: {
-            alt: 'Hospital',
-            backgroundColor: '#000000',
-            color: '#ffffff',
-            iconFallbackText: 'H',
-        },
-    };
-
-    const mockAssetSpecification = {
-        type: 'https://ies.data.gov.uk/ontology/ies4#Hospital',
-        source: 'os_ngd',
-    };
-
     const setupMocks = (options?: {
-        assessments?: Array<{ uri: string }>;
-        assetSpecifications?: Array<{ type: string; source: string }>;
-        groupedAssets?: {
-            isLoadingAssets?: boolean;
-            filteredAssets?: (typeof mockAsset)[];
-            progress?: number;
-        };
+        assetCategories?: Array<{
+            id: string;
+            name: string;
+            subCategories: Array<{
+                id: string;
+                name: string;
+                assetTypes: Array<{
+                    id: string;
+                    name: string;
+                    icon?: string;
+                }>;
+            }>;
+        }>;
     }) => {
         const {
-            assessments = [{ uri: 'test-uri' }],
-            assetSpecifications = [],
-            groupedAssets = {
-                isLoadingAssets: false,
-                filteredAssets: [],
-            },
+            assetCategories = [
+                {
+                    id: 'cat1',
+                    name: 'Healthcare',
+                    subCategories: [
+                        {
+                            id: 'subcat1',
+                            name: 'Healthcare Facilities',
+                            assetTypes: [
+                                {
+                                    id: 'https://ies.data.gov.uk/ontology/ies4#Hospital',
+                                    name: 'Hospital',
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ],
         } = options || {};
 
-        vi.mocked(fetchAssessments).mockResolvedValue(assessments as any);
-        vi.mocked(fetchAssetSpecifications).mockResolvedValue(assetSpecifications as any);
-        vi.mocked(useGroupedAssets).mockReturnValue(groupedAssets as any);
+        mockedFetchAssetCategories.mockResolvedValue(assetCategories as any);
     };
 
     const waitForComponentReady = async () => {
         await waitFor(() => {
             expect(screen.getByText('Assets')).toBeInTheDocument();
         });
-    };
-
-    const waitForCategory = async (categoryName: string | RegExp = /Healthcare Facilities/) => {
-        await waitFor(() => {
-            expect(screen.getByText(categoryName)).toBeInTheDocument();
-        });
-        return screen.getByText(categoryName);
-    };
-
-    const expandCategory = async (categoryName: string | RegExp = /Healthcare Facilities/) => {
-        const categoryHeader = await waitForCategory(categoryName);
-        fireEvent.click(categoryHeader);
-        await waitFor(() => {
-            expect(screen.getByText('Hospital')).toBeInTheDocument();
-        });
-        return categoryHeader;
     };
 
     describe('Rendering', () => {
@@ -152,61 +126,47 @@ describe('AssetsView', () => {
     });
 
     describe('No Assessment State', () => {
-        it('shows "No assessment available" when assessment is missing', async () => {
-            setupMocks({ assessments: [] });
+        it('shows categories when loaded', async () => {
+            setupMocks();
             renderWithProviders(<AssetsView {...defaultProps} />);
             await waitFor(() => {
-                expect(screen.getByText('No assessment available')).toBeInTheDocument();
+                const healthcareText = screen.getAllByText(/Healthcare/);
+                expect(healthcareText.length).toBeGreaterThan(0);
             });
         });
     });
 
     describe('Loading State', () => {
-        it('shows loading overlay when assets are loading', async () => {
-            setupMocks({
-                groupedAssets: {
-                    isLoadingAssets: true,
-                    filteredAssets: [],
-                    progress: 0.5,
-                },
-            });
+        it('shows loading state when categories are loading', async () => {
+            const neverResolvingPromise = new Promise<never>(() => {});
+            mockedFetchAssetCategories.mockImplementation(() => neverResolvingPromise as Promise<any>);
             renderWithProviders(<AssetsView {...defaultProps} />);
             await waitFor(() => {
-                expect(screen.getByText(/Loading datasets/)).toBeInTheDocument();
-                expect(screen.getByText(/50%/)).toBeInTheDocument();
+                expect(screen.getByText('Loading asset categories...')).toBeInTheDocument();
             });
         });
 
-        it('hides loading overlay when assets are loaded', async () => {
+        it('hides loading state when categories are loaded', async () => {
             setupMocks();
             renderWithProviders(<AssetsView {...defaultProps} />);
             await waitFor(() => {
-                expect(screen.queryByText(/Loading datasets/)).not.toBeInTheDocument();
+                expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
             });
         });
     });
 
     describe('Asset Categories', () => {
         it('displays categories with asset types', async () => {
-            setupMocks({
-                assetSpecifications: [mockAssetSpecification],
-                groupedAssets: {
-                    isLoadingAssets: false,
-                    filteredAssets: [mockAsset],
-                },
-            });
+            setupMocks();
             renderWithProviders(<AssetsView {...defaultProps} />);
-            await waitForCategory();
+            await waitFor(() => {
+                const healthcareText = screen.getAllByText(/Healthcare/);
+                expect(healthcareText.length).toBeGreaterThan(0);
+            });
         });
 
         it('shows category count', async () => {
-            setupMocks({
-                assetSpecifications: [mockAssetSpecification],
-                groupedAssets: {
-                    isLoadingAssets: false,
-                    filteredAssets: [mockAsset],
-                },
-            });
+            setupMocks();
             renderWithProviders(<AssetsView {...defaultProps} />);
             await waitFor(() => {
                 expect(screen.getByText(/Healthcare Facilities \(1\)/)).toBeInTheDocument();
@@ -217,6 +177,11 @@ describe('AssetsView', () => {
             setupMocks();
             renderWithProviders(<AssetsView {...defaultProps} />);
             await waitFor(() => {
+                expect(screen.getByPlaceholderText('Search for a layer')).toBeInTheDocument();
+            });
+            const searchInput = screen.getByPlaceholderText('Search for a layer');
+            fireEvent.change(searchInput, { target: { value: 'NonExistentCategoryName12345' } });
+            await waitFor(() => {
                 expect(screen.getByText('No assets found')).toBeInTheDocument();
             });
         });
@@ -224,47 +189,65 @@ describe('AssetsView', () => {
 
     describe('Category Expansion', () => {
         beforeEach(() => {
-            setupMocks({
-                assetSpecifications: [mockAssetSpecification],
-                groupedAssets: {
-                    isLoadingAssets: false,
-                    filteredAssets: [mockAsset],
-                },
-            });
+            setupMocks();
         });
 
         it('expands category when clicked', async () => {
+            setupMocks();
             renderWithProviders(<AssetsView {...defaultProps} />);
-            await expandCategory();
-        });
-
-        it('collapses category when clicked again', async () => {
-            renderWithProviders(<AssetsView {...defaultProps} />);
-            const categoryHeader = await expandCategory();
-
+            await waitFor(() => {
+                const healthcareElements = screen.getAllByText(/Healthcare/);
+                expect(healthcareElements.length).toBeGreaterThan(0);
+            });
+            const categoryHeaders = screen.getAllByText(/Healthcare/);
+            const categoryHeader =
+                categoryHeaders.find((el) => {
+                    const typography = el.closest('[class*="MuiTypography-body1"]');
+                    const parent = typography?.closest('[class*="MuiBox-root"]');
+                    return parent && parent.getAttribute('tabIndex') === '0';
+                }) || categoryHeaders[0];
             fireEvent.click(categoryHeader);
-
             await waitFor(() => {
                 expect(screen.getByText(/Healthcare Facilities/)).toBeInTheDocument();
             });
+        });
 
-            const hospitalText = screen.queryByText('Hospital');
-            if (hospitalText) {
-                const collapseParent = hospitalText.closest('[class*="MuiCollapse"]');
-                expect(collapseParent).toBeTruthy();
-            }
+        it('collapses category when clicked again', async () => {
+            setupMocks();
+            renderWithProviders(<AssetsView {...defaultProps} />);
+            await waitFor(() => {
+                const healthcareElements = screen.getAllByText(/Healthcare/);
+                expect(healthcareElements.length).toBeGreaterThan(0);
+            });
+            const categoryHeaders = screen.getAllByText(/Healthcare/);
+            const categoryHeader =
+                categoryHeaders.find((el) => {
+                    const typography = el.closest('[class*="MuiTypography-body1"]');
+                    const parent = typography?.closest('[class*="MuiBox-root"]');
+                    return parent && parent.getAttribute('tabIndex') === '0';
+                }) || categoryHeaders[0];
+            fireEvent.click(categoryHeader);
+            await waitFor(() => {
+                expect(screen.getByText(/Healthcare Facilities/)).toBeInTheDocument();
+            });
+            const subCategoryHeader = screen.getByText(/Healthcare Facilities/);
+            fireEvent.click(subCategoryHeader);
+            await waitFor(() => {
+                expect(screen.getByText('Hospital')).toBeInTheDocument();
+            });
+            fireEvent.click(categoryHeader);
+            await waitFor(() => {
+                const collapseElement = categoryHeader.closest('[class*="MuiBox-root"]')?.nextElementSibling;
+                const isHidden =
+                    collapseElement?.getAttribute('aria-hidden') === 'true' || collapseElement?.classList.toString().includes('MuiCollapse-hidden');
+                expect(isHidden).toBe(true);
+            });
         });
     });
 
     describe('Search Functionality', () => {
         beforeEach(() => {
-            setupMocks({
-                assetSpecifications: [mockAssetSpecification],
-                groupedAssets: {
-                    isLoadingAssets: false,
-                    filteredAssets: [mockAsset],
-                },
-            });
+            setupMocks();
         });
 
         it('filters assets by search query', async () => {
@@ -320,32 +303,64 @@ describe('AssetsView', () => {
 
     describe('Asset Type Toggle', () => {
         beforeEach(() => {
-            setupMocks({
-                assetSpecifications: [mockAssetSpecification],
-                groupedAssets: {
-                    isLoadingAssets: false,
-                    filteredAssets: [mockAsset],
-                },
-            });
+            setupMocks();
         });
 
         it('calls onAssetTypeToggle when toggle is clicked', async () => {
+            setupMocks();
             const onAssetTypeToggle = vi.fn();
             renderWithProviders(<AssetsView {...defaultProps} onAssetTypeToggle={onAssetTypeToggle} />);
 
-            await expandCategory();
-
+            await waitFor(() => {
+                const healthcareElements = screen.getAllByText(/Healthcare/);
+                expect(healthcareElements.length).toBeGreaterThan(0);
+            });
+            const categoryHeaders = screen.getAllByText(/Healthcare/);
+            const categoryHeader =
+                categoryHeaders.find((el) => {
+                    const typography = el.closest('[class*="MuiTypography-body1"]');
+                    const parent = typography?.closest('[class*="MuiBox-root"]');
+                    return parent && parent.getAttribute('tabIndex') === '0';
+                }) || categoryHeaders[0];
+            fireEvent.click(categoryHeader);
+            await waitFor(() => {
+                expect(screen.getByText(/Healthcare Facilities/)).toBeInTheDocument();
+            });
+            const subCategoryHeader = screen.getByText(/Healthcare Facilities/);
+            fireEvent.click(subCategoryHeader);
+            await waitFor(() => {
+                expect(screen.getByRole('switch')).toBeInTheDocument();
+            });
             const toggle = screen.getByRole('switch');
             fireEvent.click(toggle);
 
-            expect(onAssetTypeToggle).toHaveBeenCalledWith(mockAsset.type, true);
+            expect(onAssetTypeToggle).toHaveBeenCalledWith('https://ies.data.gov.uk/ontology/ies4#Hospital', true);
         });
 
         it('reflects selected state from props', async () => {
-            renderWithProviders(<AssetsView {...defaultProps} selectedAssetTypes={{ [mockAsset.type]: true }} />);
+            setupMocks();
+            renderWithProviders(<AssetsView {...defaultProps} selectedAssetTypes={{ 'https://ies.data.gov.uk/ontology/ies4#Hospital': true }} />);
 
-            await expandCategory();
-
+            await waitFor(() => {
+                const healthcareElements = screen.getAllByText(/Healthcare/);
+                expect(healthcareElements.length).toBeGreaterThan(0);
+            });
+            const categoryHeaders = screen.getAllByText(/Healthcare/);
+            const categoryHeader =
+                categoryHeaders.find((el) => {
+                    const typography = el.closest('[class*="MuiTypography-body1"]');
+                    const parent = typography?.closest('[class*="MuiBox-root"]');
+                    return parent && parent.getAttribute('tabIndex') === '0';
+                }) || categoryHeaders[0];
+            fireEvent.click(categoryHeader);
+            await waitFor(() => {
+                expect(screen.getByText(/Healthcare Facilities/)).toBeInTheDocument();
+            });
+            const subCategoryHeader = screen.getByText(/Healthcare Facilities/);
+            fireEvent.click(subCategoryHeader);
+            await waitFor(() => {
+                expect(screen.getByRole('switch')).toBeInTheDocument();
+            });
             const toggle = screen.getByRole('switch') as HTMLInputElement;
             expect(toggle.checked).toBe(true);
         });

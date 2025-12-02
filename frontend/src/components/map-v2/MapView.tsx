@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Box } from '@mui/material';
+import { Box, Snackbar, Alert } from '@mui/material';
 import type { MapRef, ViewStateChangeEvent } from 'react-map-gl/maplibre';
 import Map from 'react-map-gl/maplibre';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import 'maplibre-gl/dist/maplibre-gl.css';
 
@@ -13,8 +13,9 @@ import MapPanels from './MapPanels';
 import AssetLayers from './AssetLayers';
 import useMapboxDraw from './hooks/useMapboxDraw';
 import { usePreloadAssetIcons } from './hooks/usePreloadAssetIcons';
-import { fetchAssessments } from '@/api/assessments';
-import { useGroupedAssets } from '@/hooks';
+import { useAssetsByType } from '@/hooks/useAssetsByType';
+import { useAssetTypeIcons } from '@/hooks/useAssetTypeIcons';
+import { fetchAssetCategories } from '@/api/asset-categories';
 import type { Element } from '@/models';
 
 const MapView = () => {
@@ -38,22 +39,74 @@ const MapView = () => {
 
     const mapStyle = useMemo(() => MAP_STYLES[mapStyleKey], [mapStyleKey]);
 
-    const { isError: isErrorAssessments, data: assessmentsData } = useSuspenseQuery({
-        queryKey: ['assessments'],
-        queryFn: fetchAssessments,
+    const selectedAssetTypeIds = useMemo(() => {
+        return Object.entries(selectedAssetTypes)
+            .filter(([, enabled]) => enabled)
+            .map(([typeId]) => typeId);
+    }, [selectedAssetTypes]);
+
+    const iconMap = useAssetTypeIcons();
+    const [emptyResultMessage, setEmptyResultMessage] = useState<string | null>(null);
+    const previousSelectedAssetTypeIdsRef = useRef<Set<string>>(new Set());
+    const previousEmptyResultsRef = useRef<Set<string>>(new Set());
+
+    const { data: assetCategories } = useQuery({
+        queryKey: ['assetCategories'],
+        queryFn: fetchAssetCategories,
+        staleTime: 5 * 60 * 1000,
     });
 
-    const assessment = assessmentsData?.at(0)?.uri;
-
-    const groupedAssetsResult = useGroupedAssets({
-        assessment: assessment || undefined,
+    const { assets, emptyResults } = useAssetsByType({
+        selectedAssetTypeIds,
+        iconMap,
     });
 
-    const assets = groupedAssetsResult.filteredAssets || [];
-    const dependencies = 'dependencies' in groupedAssetsResult && Array.isArray(groupedAssetsResult.dependencies) ? groupedAssetsResult.dependencies : [];
-    const isLoadingAssets = groupedAssetsResult.isLoadingAssets ?? false;
+    const findAssetTypeName = useCallback(
+        (typeId: string): string | null => {
+            if (!assetCategories) {
+                return null;
+            }
+            for (const category of assetCategories) {
+                for (const subCategory of category.subCategories) {
+                    const assetType = subCategory.assetTypes.find((at) => at.id === typeId);
+                    if (assetType) {
+                        return assetType.name;
+                    }
+                }
+            }
+            return null;
+        },
+        [assetCategories],
+    );
 
-    usePreloadAssetIcons(isLoadingAssets ? [] : assets);
+    useEffect(() => {
+        const currentSelectedSet = new Set(selectedAssetTypeIds);
+        const previousSelectedSet = previousSelectedAssetTypeIdsRef.current;
+        const currentEmptyResultsSet = new Set(emptyResults);
+        const previousEmptyResultsSet = previousEmptyResultsRef.current;
+
+        const newlyEnabledTypes = selectedAssetTypeIds.filter((typeId) => !previousSelectedSet.has(typeId));
+        const newlyEnabledEmptyTypes = newlyEnabledTypes.filter((typeId) => emptyResults.includes(typeId));
+
+        const newlyEmptyTypes = emptyResults.filter((typeId) => !previousEmptyResultsSet.has(typeId) && selectedAssetTypeIds.includes(typeId));
+
+        const typesToNotify = [...newlyEnabledEmptyTypes, ...newlyEmptyTypes.filter((id) => !newlyEnabledEmptyTypes.includes(id))];
+
+        if (typesToNotify.length > 0) {
+            const assetTypeNames = typesToNotify.map(findAssetTypeName).filter((name): name is string => name !== null);
+
+            if (assetTypeNames.length > 0) {
+                const message =
+                    assetTypeNames.length === 1 ? `No assets found for "${assetTypeNames[0]}"` : `No assets found for: ${assetTypeNames.join(', ')}`;
+                setEmptyResultMessage(message);
+            }
+        }
+
+        previousSelectedAssetTypeIdsRef.current = currentSelectedSet;
+        previousEmptyResultsRef.current = currentEmptyResultsSet;
+    }, [emptyResults, selectedAssetTypeIds, assetCategories, findAssetTypeName]);
+
+    usePreloadAssetIcons(assets);
 
     const handleMove = useCallback((event: ViewStateChangeEvent) => {
         setViewState(event.viewState);
@@ -257,10 +310,9 @@ const MapView = () => {
                     transformRequest={transformRequest}
                     styleDiffing
                 >
-                    {!isErrorAssessments && assessment && mapReady && (
+                    {mapReady && (
                         <AssetLayers
                             assets={assets}
-                            dependencies={dependencies}
                             selectedAssetTypes={selectedAssetTypes}
                             selectedElements={selectedElement ? [selectedElement] : []}
                             onElementClick={handleElementClick}
@@ -297,6 +349,17 @@ const MapView = () => {
                     viewState={viewState}
                 />
             </Box>
+
+            <Snackbar
+                open={!!emptyResultMessage}
+                autoHideDuration={4000}
+                onClose={() => setEmptyResultMessage(null)}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+            >
+                <Alert severity="info" onClose={() => setEmptyResultMessage(null)}>
+                    {emptyResultMessage}
+                </Alert>
+            </Snackbar>
         </Box>
     );
 };
