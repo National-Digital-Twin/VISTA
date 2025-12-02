@@ -11,11 +11,13 @@ import MapControls from './MapControls';
 import DrawingToolbar from './DrawingToolbar';
 import MapPanels from './MapPanels';
 import AssetLayers from './AssetLayers';
+import ExposureLayers from './ExposureLayers';
 import useMapboxDraw from './hooks/useMapboxDraw';
 import { usePreloadAssetIcons } from './hooks/usePreloadAssetIcons';
 import { useAssetsByType } from '@/hooks/useAssetsByType';
 import { useAssetTypeIcons } from '@/hooks/useAssetTypeIcons';
 import { fetchAssetCategories } from '@/api/asset-categories';
+import { fetchExposureLayers } from '@/api/exposure-layers';
 import type { Element } from '@/models';
 
 const MapView = () => {
@@ -32,6 +34,7 @@ const MapView = () => {
     const [mapStylePanelOpen, setMapStylePanelOpen] = useState(false);
     const [activePanelView, setActivePanelView] = useState<string | null>('scenario');
     const [selectedAssetTypes, setSelectedAssetTypes] = useState<Record<string, boolean>>({});
+    const [selectedExposureLayerIds, setSelectedExposureLayerIds] = useState<Record<string, boolean>>({});
     const [selectedElement, setSelectedElement] = useState<Element | null>(null);
     const [previousPanelView, setPreviousPanelView] = useState<string | null>('scenario');
 
@@ -53,6 +56,12 @@ const MapView = () => {
     const { data: assetCategories } = useQuery({
         queryKey: ['assetCategories'],
         queryFn: fetchAssetCategories,
+        staleTime: 5 * 60 * 1000,
+    });
+
+    const { data: exposureLayers } = useQuery({
+        queryKey: ['exposureLayers'],
+        queryFn: fetchExposureLayers,
         staleTime: 5 * 60 * 1000,
     });
 
@@ -78,7 +87,6 @@ const MapView = () => {
         },
         [assetCategories],
     );
-
     useEffect(() => {
         const currentSelectedSet = new Set(selectedAssetTypeIds);
         const previousSelectedSet = previousSelectedAssetTypeIdsRef.current;
@@ -286,6 +294,13 @@ const MapView = () => {
                         [assetType]: enabled,
                     }));
                 }}
+                selectedExposureLayerIds={selectedExposureLayerIds}
+                onExposureLayerToggle={(layerId, enabled) => {
+                    setSelectedExposureLayerIds((prev) => ({
+                        ...prev,
+                        [layerId]: enabled,
+                    }));
+                }}
                 selectedElement={selectedElement}
                 onBackFromAssetDetails={handleBackFromAssetDetails}
             />
@@ -311,13 +326,18 @@ const MapView = () => {
                     styleDiffing
                 >
                     {mapReady && (
-                        <AssetLayers
-                            assets={assets}
-                            selectedAssetTypes={selectedAssetTypes}
-                            selectedElements={selectedElement ? [selectedElement] : []}
-                            onElementClick={handleElementClick}
-                            mapReady={mapReady}
-                        />
+                        <>
+                            <AssetLayers
+                                assets={assets}
+                                selectedAssetTypes={selectedAssetTypes}
+                                selectedElements={selectedElement ? [selectedElement] : []}
+                                onElementClick={handleElementClick}
+                                mapReady={mapReady}
+                            />
+                            {exposureLayers && (
+                                <ExposureLayers exposureLayers={exposureLayers} selectedExposureLayerIds={selectedExposureLayerIds} mapReady={mapReady} />
+                            )}
+                        </>
                     )}
                 </Map>
 

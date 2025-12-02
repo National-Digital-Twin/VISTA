@@ -88,7 +88,7 @@ describe('AssetLayers', () => {
 
     const mockAsset: Asset = {
         id: 'asset1',
-        type: 'https://ies.data.gov.uk/ontology/ies4#Hospital',
+        type: '35a910f3-f611-4096-ac0b-0928c5612e32',
         lng: 0.5,
         lat: 0.5,
         geometry: {
@@ -108,7 +108,7 @@ describe('AssetLayers', () => {
             properties: {
                 id: 'asset1',
                 criticality: 0,
-                type: 'https://ies.data.gov.uk/ontology/ies4#Hospital',
+                type: '35a910f3-f611-4096-ac0b-0928c5612e32',
             },
             geometry: {
                 type: 'Point' as const,

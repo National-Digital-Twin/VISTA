@@ -65,7 +65,7 @@ describe('AssetsView', () => {
                             name: 'Healthcare Facilities',
                             assetTypes: [
                                 {
-                                    id: 'https://ies.data.gov.uk/ontology/ies4#Hospital',
+                                    id: '35a910f3-f611-4096-ac0b-0928c5612e32',
                                     name: 'Hospital',
                                 },
                             ],
@@ -334,12 +334,12 @@ describe('AssetsView', () => {
             const toggle = screen.getByRole('switch');
             fireEvent.click(toggle);
 
-            expect(onAssetTypeToggle).toHaveBeenCalledWith('https://ies.data.gov.uk/ontology/ies4#Hospital', true);
+            expect(onAssetTypeToggle).toHaveBeenCalledWith('35a910f3-f611-4096-ac0b-0928c5612e32', true);
         });
 
         it('reflects selected state from props', async () => {
             setupMocks();
-            renderWithProviders(<AssetsView {...defaultProps} selectedAssetTypes={{ 'https://ies.data.gov.uk/ontology/ies4#Hospital': true }} />);
+            renderWithProviders(<AssetsView {...defaultProps} selectedAssetTypes={{ '35a910f3-f611-4096-ac0b-0928c5612e32': true }} />);
 
             await waitFor(() => {
                 const healthcareElements = screen.getAllByText(/Healthcare/);

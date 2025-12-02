@@ -45,11 +45,22 @@ interface MapPanelsProps {
     readonly onViewChange?: (viewId: string | null) => void;
     readonly selectedAssetTypes?: Record<string, boolean>;
     readonly onAssetTypeToggle?: (assetType: string, enabled: boolean) => void;
+    readonly selectedExposureLayerIds?: Record<string, boolean>;
+    readonly onExposureLayerToggle?: (layerId: string, enabled: boolean) => void;
     readonly selectedElement?: Element | null;
     readonly onBackFromAssetDetails?: () => void;
 }
 
-const MapPanels = ({ activeView, onViewChange, selectedAssetTypes, onAssetTypeToggle, selectedElement, onBackFromAssetDetails }: MapPanelsProps) => {
+const MapPanels = ({
+    activeView,
+    onViewChange,
+    selectedAssetTypes,
+    onAssetTypeToggle,
+    selectedExposureLayerIds,
+    onExposureLayerToggle,
+    selectedElement,
+    onBackFromAssetDetails,
+}: MapPanelsProps) => {
     const handleItemClick = (itemId: string) => {
         const newActiveView = activeView === itemId ? null : itemId;
         onViewChange?.(newActiveView);
@@ -70,7 +81,13 @@ const MapPanels = ({ activeView, onViewChange, selectedAssetTypes, onAssetTypeTo
             case 'assets':
                 return <AssetsView onClose={handleClosePanel} selectedAssetTypes={selectedAssetTypes} onAssetTypeToggle={onAssetTypeToggle} />;
             case 'exposure':
-                return <ExposureView onClose={handleClosePanel} />;
+                return (
+                    <ExposureView
+                        onClose={handleClosePanel}
+                        selectedExposureLayerIds={selectedExposureLayerIds}
+                        onExposureLayerToggle={onExposureLayerToggle}
+                    />
+                );
             case 'polygons':
                 return <PolygonsView onClose={handleClosePanel} />;
             case 'asset-details':
