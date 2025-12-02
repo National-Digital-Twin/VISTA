@@ -9,7 +9,7 @@ const config = {
     },
     services: {
         ontology: import.meta.env.VITE_ONTOLOGY_SERVICE_URL || '/transparent-proxy',
-        ndtpPythonBaseUrl: import.meta.env.VITE_NDTP_PYTHON_API_BASE_URL || '/ndtp-python/api',
+        apiBaseUrl: import.meta.env.VITE_NDTP_PYTHON_API_BASE_URL || '/ndtp-python/api',
         ndtpPython: '/ndtp-python/api/graphql/',
         user: '/ndtp-python/api/user/',
         users: '/ndtp-python/api/users/',

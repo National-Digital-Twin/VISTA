@@ -1,10 +1,10 @@
 import type { FeatureCollection, Feature, Geometry } from 'geojson';
-import { createNdtpPythonEndpoint, fetchOptions } from './utils';
+import { createApiEndpoint, fetchOptions } from './utils';
 import { parseGeometry as parseGeometryString } from './geometry-parser';
 
 export const fetchExposureLayers = async (): Promise<FeatureCollection> => {
     try {
-        const response = await fetch(createNdtpPythonEndpoint('exposurelayers/'), fetchOptions);
+        const response = await fetch(createApiEndpoint('exposurelayers/'), fetchOptions);
 
         if (!response.ok) {
             throw new Error(`Failed to retrieve exposure layers: ${response.statusText}`);

@@ -8,7 +8,7 @@ vi.mock('./utils', () => ({
             'Content-Type': 'application/json',
         },
     },
-    createNdtpPythonEndpoint: (path: string) => `/ndtp-python/api/${path}`,
+    createApiEndpoint: (path: string) => `/ndtp-python/api/${path}`,
 }));
 
 describe('exposure-layers API', () => {

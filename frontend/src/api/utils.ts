@@ -3,7 +3,7 @@ import config from '@/config/app-config';
 const createParalogEndpoint = (path: string) => `${config.api.url}/${path}`;
 // e.g /asset/parts
 const createOntologyServiceEndpoint = (path: string) => `${config.services.ontology}/${path}`;
-const createNdtpPythonEndpoint = (path: string) => `${config.services.ndtpPythonBaseUrl}/${path}`;
+const createApiEndpoint = (path: string) => `${config.services.apiBaseUrl}/${path}`;
 
 const fetchOptions = {
     headers: {
@@ -11,4 +11,4 @@ const fetchOptions = {
     },
 };
 
-export { createParalogEndpoint, createOntologyServiceEndpoint, createNdtpPythonEndpoint, fetchOptions };
+export { createParalogEndpoint, createOntologyServiceEndpoint, createApiEndpoint, fetchOptions };

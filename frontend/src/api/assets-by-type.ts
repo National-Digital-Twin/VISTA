@@ -1,4 +1,4 @@
-import { createNdtpPythonEndpoint, fetchOptions } from './utils';
+import { createApiEndpoint, fetchOptions } from './utils';
 import { parseGeometryWithLocation } from './geometry-parser';
 import Asset from '@/models/Asset';
 import type { FoundIcon } from '@/hooks/useFindIcon';
@@ -15,7 +15,7 @@ export interface AssetTypeResponse {
 
 export const fetchAssetsByType = async (assetTypeId: string, iconMap?: Map<string, string>): Promise<Asset[]> => {
     try {
-        const response = await fetch(`${createNdtpPythonEndpoint('assets/')}?asset_type=${encodeURIComponent(assetTypeId)}`, fetchOptions);
+        const response = await fetch(`${createApiEndpoint('assets/')}?asset_type=${encodeURIComponent(assetTypeId)}`, fetchOptions);
 
         if (!response.ok) {
             throw new Error(`Failed to retrieve assets for type ${assetTypeId}: ${response.statusText}`);
