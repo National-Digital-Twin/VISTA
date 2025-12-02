@@ -87,7 +87,6 @@ const MapView = () => {
         },
         [assetCategories],
     );
-
     useEffect(() => {
         const currentSelectedSet = new Set(selectedAssetTypeIds);
         const previousSelectedSet = previousSelectedAssetTypeIdsRef.current;
