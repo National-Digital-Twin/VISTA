@@ -50,9 +50,7 @@ class Command(BaseCommand):
         self.stdout.write(f"Reading data from: {file_path}")
 
         if not file_path.exists():
-            self.stdout.write(
-                self.style.ERROR(f"Target file does not exist: {file_path}")
-            )
+            self.stdout.write(self.style.ERROR(f"Target file does not exist: {file_path}"))
             return
 
         # Clear existing data
@@ -75,9 +73,7 @@ class Command(BaseCommand):
             try:
                 geom = GEOSGeometry(json.dumps(item["geometry"]))
 
-                obj = ExposureLayer(
-                    id=item["id"], name=item["name"], geometry=geom
-                )
+                obj = ExposureLayer(id=item["id"], name=item["name"], geometry=geom)
                 objects_to_create.append(obj)
             except Exception as e:
                 msg = f"Skipping item {item.get('name', 'Unknown')}: {e!s}"
@@ -87,7 +83,5 @@ class Command(BaseCommand):
         ExposureLayer.objects.bulk_create(objects_to_create, batch_size=1000)
 
         self.stdout.write(
-            self.style.SUCCESS(
-                f"Successfully loaded {len(objects_to_create)} water bodies."
-            )
+            self.style.SUCCESS(f"Successfully loaded {len(objects_to_create)} water bodies.")
         )
