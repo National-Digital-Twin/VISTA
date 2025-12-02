@@ -10,11 +10,8 @@ export default function Filter() {
     const toggleShowSecondary = useSharedStore((state) => state.toggleShowSecondary);
     const showPrimary = useSharedStore((state) => state.showPrimary);
     const toggleShowPrimary = useSharedStore((state) => state.toggleShowPrimary);
-    const selectedFloodAreas = useSharedStore((state) => state.selectedFloodAreas);
-    const drawnFeatures = useSharedStore((state) => state.floodAreaFeatures);
+    const drawnFeatures = useSharedStore((state) => state.drawnAreaFeatures);
     const { isError: isErrorFloodAreas } = useFloodWatchAreas();
-
-    const showFloodAreaControls = selectedFloodAreas?.length > 0 || drawnFeatures?.length > 0;
 
     if (isErrorFloodAreas) {
         return null;
@@ -22,7 +19,7 @@ export default function Filter() {
 
     return (
         <>
-            {showFloodAreaControls && (
+            {drawnFeatures?.length > 0 && (
                 <Box sx={{ paddingTop: 0, display: 'flex', width: '100%' }}>
                     <Box
                         sx={{

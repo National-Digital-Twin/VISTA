@@ -5,6 +5,7 @@ from rest_framework.routers import DefaultRouter
 
 from api import rest_views, views
 from api.schema import schema
+from api.views.asset_categories import AssetCategoryViewSet
 from api.views.asset_types import AssetTypeViewSet
 from api.views.assets import AssetViewSet
 from api.views.data_sources import DataSourceViewSet
@@ -13,6 +14,7 @@ from api.views.graph import NoMultipartGraphQLView
 from api.views.users import ApplicationUserViewSet
 
 router = DefaultRouter()
+router.register(r"assetcategories", AssetCategoryViewSet)
 router.register(r"assets", AssetViewSet)
 router.register(r"assettypes", AssetTypeViewSet)
 router.register(r"users", ApplicationUserViewSet, basename="user")

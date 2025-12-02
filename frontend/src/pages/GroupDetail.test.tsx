@@ -1,7 +1,20 @@
+import React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { screen, fireEvent } from '@testing-library/react';
-import { renderWithDynamicRoute } from '../test-utils/test-helpers';
+import { render, screen, fireEvent } from '@testing-library/react';
+import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import GroupDetail from './GroupDetail';
+
+const renderWithDynamicRoute = (ui: React.ReactElement, { path, initialEntries }: { path: string; initialEntries: string[] }) => {
+    const Wrapper = ({ children }: { children: React.ReactNode }) => (
+        <MemoryRouter initialEntries={initialEntries}>
+            <Routes>
+                <Route path={path} element={children} />
+            </Routes>
+        </MemoryRouter>
+    );
+
+    return render(ui, { wrapper: Wrapper });
+};
 
 const mockNavigate = vi.fn();
 

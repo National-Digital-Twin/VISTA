@@ -18,7 +18,7 @@ function useHistoricFloodExtents() {
 }
 
 function useDrawnFloodExtents() {
-    return useSharedStore((store) => store.floodAreaFeatures);
+    return useSharedStore((store) => store.drawnAreaFeatures);
 }
 
 function makeFeatureCollection(features: Feature<Polygon>[]): FeatureCollection<Polygon> {

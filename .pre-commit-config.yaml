@@ -82,10 +82,6 @@ repos:
         additional_dependencies:
           - "prettier@3.5.3"
         exclude: ^\.github/
-
-  # This would install and run trufflehog automatically without relying on user's local installation which
-  # could run into the "error occurred with trufflehog updater" issue. It still accomplishes the same result.
-  # The error in running it locally could be resolved with the --no-update argument.
   - repo: https://github.com/trufflesecurity/trufflehog
     rev: v3.90.13
     hooks:

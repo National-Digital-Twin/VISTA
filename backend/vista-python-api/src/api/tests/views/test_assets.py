@@ -37,11 +37,29 @@ def test_list_assets_by_(assets, client):
 
 
 @pytest.mark.django_db
-def test_get_assets(assets, client):
-    """Test that the get function allows filtering by asset type."""
-    asset = assets[0]
+def test_get_assets(full_data, client):
+    """Test that the get function returns metadata and dependency."""
+    asset = full_data["assets"][0]
     response = client.get(f"/api/assets/{asset.id}/")
     data = response.json()
 
+    expected_dependent = next(
+        dependency.dependent_asset
+        for dependency in full_data["dependencies"]
+        if dependency.provider_asset.external_id == asset.external_id
+    )
+    expected_provider = next(
+        dependency.provider_asset
+        for dependency in full_data["dependencies"]
+        if dependency.dependent_asset.external_id == asset.external_id
+    )
     assert response.status_code == http_success_code
-    assert set(data["name"]) == set(asset.name)
+    assert data["name"] == asset.name
+    assert data["geom"] == asset.geom
+    _check_asset(expected_provider, data["providers"][0])
+    _check_asset(expected_dependent, data["dependents"][0])
+
+
+def _check_asset(expected, result):
+    assert expected.name == result["name"]
+    assert expected.geom == result["geom"]

@@ -5,12 +5,18 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { MemoryRouter } from 'react-router-dom';
 import DataRoom from './DataRoom';
 import { fetchDataSources } from '@/api/datasources';
+import { fetchScenarios } from '@/api/scenarios';
 
 vi.mock('@/api/datasources', () => ({
     fetchDataSources: vi.fn(),
 }));
 
+vi.mock('@/api/scenarios', () => ({
+    fetchScenarios: vi.fn(),
+}));
+
 const mockedFetchDataSources = vi.mocked(fetchDataSources);
+const mockedFetchScenarios = vi.mocked(fetchScenarios);
 
 const createWrapper = () => {
     const queryClient = new QueryClient({
@@ -61,8 +67,24 @@ const mockDataSources = [
     },
 ];
 
+const mockScenarios = [
+    {
+        id: 'flood-newport',
+        name: 'Flood in Newport',
+    },
+    {
+        id: 'landslide-ventnor',
+        name: 'Landslide in Ventnor',
+    },
+    {
+        id: 'wildfire-shanklin',
+        name: 'Wildfire in Shanklin',
+    },
+];
+
 beforeEach(() => {
     mockedFetchDataSources.mockResolvedValue(mockDataSources);
+    mockedFetchScenarios.mockResolvedValue(mockScenarios);
 
     sessionStorage.clear();
     vi.clearAllMocks();
@@ -150,6 +172,18 @@ describe('DataRoom', () => {
             expect(floodOption).toBeChecked();
         });
 
+        it('loads scenario from sessionStorage on mount', async () => {
+            sessionStorage.setItem('selectedScenario', 'wildfire-shanklin');
+            setup();
+            await screen.findByText('CQC API');
+
+            const loadScenarioButton = screen.getByRole('button', { name: /load scenario/i });
+            fireEvent.click(loadScenarioButton);
+
+            const wildfireOption = screen.getByRole('radio', { name: /wildfire in shanklin/i });
+            expect(wildfireOption).toBeChecked();
+        });
+
         it('allows selecting different scenarios', async () => {
             setup();
             await screen.findByText('CQC API');
@@ -195,7 +229,7 @@ describe('DataRoom', () => {
             const confirmButton = screen.getByRole('button', { name: /confirm/i });
             fireEvent.click(confirmButton);
 
-            expect(sessionStorage.getItem('selectedScenario')).toBe('Wildfire in Shanklin');
+            expect(sessionStorage.getItem('selectedScenario')).toBe('wildfire-shanklin');
             await waitFor(() => {
                 const dialog = screen.queryByRole('dialog');
                 expect(dialog).not.toBeInTheDocument();
@@ -212,7 +246,7 @@ describe('DataRoom', () => {
             const confirmButton = screen.getByRole('button', { name: /confirm/i });
             fireEvent.click(confirmButton);
 
-            expect(sessionStorage.getItem('selectedScenario')).toBe('Flood in Newport');
+            expect(sessionStorage.getItem('selectedScenario')).toBe('flood-newport');
         });
 
         it('closes modal after confirming scenario selection', async () => {

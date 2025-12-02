@@ -6,16 +6,18 @@ interface SearchTextFieldProps {
     readonly value: string;
     readonly onChange: (value: string) => void;
     readonly minWidth?: number;
+    readonly fullWidth?: boolean;
 }
 
-export function SearchTextField({ placeholder, value, onChange, minWidth = 300 }: SearchTextFieldProps) {
+export function SearchTextField({ placeholder, value, onChange, minWidth = 300, fullWidth = false }: SearchTextFieldProps) {
     return (
         <TextField
             placeholder={placeholder}
             value={value}
             onChange={(e) => onChange(e.target.value)}
+            fullWidth={fullWidth}
             sx={{
-                minWidth,
+                'minWidth': fullWidth ? undefined : minWidth,
                 '& .MuiOutlinedInput-root': {
                     'backgroundColor': 'neutral.main',
                     'borderRadius': '24px',

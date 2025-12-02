@@ -1,0 +1,13 @@
+{
+    "$schema": "https://github.com/IBM/audit-ci/raw/main/docs/schema.json",
+    "low": true,
+    "allowlist": [
+        "GHSA-5j98-mcp5-4vw2|glob",
+        "GHSA-5j98-mcp5-4vw2|jest-circus>jest-runtime>glob",
+        "GHSA-5j98-mcp5-4vw2|jest-cli>jest-config>glob",
+        "GHSA-5j98-mcp5-4vw2|jest-runner>jest-runtime>glob",
+        "GHSA-5j98-mcp5-4vw2|jest>@jest/core>@jest/reporters>glob",
+        "GHSA-5j98-mcp5-4vw2|jest>@jest/core>jest-config>glob",
+        "GHSA-5j98-mcp5-4vw2|@jest/reporters>glob",
+    ],
+}

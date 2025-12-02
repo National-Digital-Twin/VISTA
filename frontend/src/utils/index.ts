@@ -4,14 +4,14 @@ import { isEmpty } from './isEmpty';
 import { prefixLookup } from '@/config/uri-prefix';
 
 /* This type is limited and internal here */
-export type ElementLike = { uri: string; elementType: 'dependency' | 'asset' };
+export type ElementLike = { id: string; elementType: 'dependency' | 'asset' };
 
-export function findElement<T extends ElementLike>(elements: T[], uri: string): T | undefined {
-    return elements?.find((element) => element.uri === uri);
+export function findElement<T extends ElementLike>(elements: T[], id: string): T | undefined {
+    return elements?.find((element) => element.id === id);
 }
 
-export function isElementCached<T extends ElementLike>(elements: T[], uri: string) {
-    return elements?.some((element) => element.uri === uri);
+export function isElementCached<T extends ElementLike>(elements: T[], id: string) {
+    return elements?.some((element) => element.id === id);
 }
 
 export function isAsset<T extends ElementLike>(element?: T) {
@@ -56,7 +56,7 @@ export function getHexColor(colorScale: ColorScale | null, value: number) {
 
 export function getUniqueElements<T extends ElementLike>(elements: T[]) {
     const uniqueElements = elements.reduce((acc, current) => {
-        const isAdded = acc.find((element) => element.uri === current.uri);
+        const isAdded = acc.find((element) => element.id === current.id);
         if (isAdded) {
             return acc;
         } else {

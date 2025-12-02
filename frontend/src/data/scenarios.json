@@ -1,0 +1,14 @@
+[
+    {
+        "id": "flood-newport",
+        "name": "Flood in Newport"
+    },
+    {
+        "id": "landslide-ventnor",
+        "name": "Landslide in Ventnor"
+    },
+    {
+        "id": "wildfire-shanklin",
+        "name": "Wildfire in Shanklin"
+    }
+]

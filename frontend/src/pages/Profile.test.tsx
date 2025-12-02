@@ -1,8 +1,21 @@
+import React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { screen, fireEvent } from '@testing-library/react';
-import { renderWithDynamicRoute } from '../test-utils/test-helpers';
+import { render, screen, fireEvent } from '@testing-library/react';
+import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import Profile from './Profile';
 import { useProfileData } from '@/hooks/useProfileData';
+
+const renderWithDynamicRoute = (ui: React.ReactElement, { path, initialEntries }: { path: string; initialEntries: string[] }) => {
+    const Wrapper = ({ children }: { children: React.ReactNode }) => (
+        <MemoryRouter initialEntries={initialEntries}>
+            <Routes>
+                <Route path={path} element={children} />
+            </Routes>
+        </MemoryRouter>
+    );
+
+    return render(ui, { wrapper: Wrapper });
+};
 
 vi.mock('@/hooks/useProfileData');
 
@@ -33,10 +46,6 @@ describe('Profile', () => {
             memberSince: '2024-01-01',
             addedBy: 'Admin User',
             userType: 'Administrator',
-            groups: [
-                { name: 'Resilience team', memberSince: '2024-01-15' },
-                { name: 'Tywnwell team', memberSince: '2024-01-20' },
-            ],
         },
         loading: false,
         error: null,
@@ -47,10 +56,6 @@ describe('Profile', () => {
         getUserMemberSince: () => '1 Jan 2024',
         getUserAddedBy: () => 'Admin User',
         getUserType: () => 'Administrator',
-        getUserGroups: () => [
-            { name: 'Resilience team', memberSince: '15 Jan 2024' },
-            { name: 'Tywnwell team', memberSince: '20 Jan 2024' },
-        ],
     };
 
     beforeEach(() => {
@@ -68,28 +73,6 @@ describe('Profile', () => {
             expect(screen.getByText('Administrator')).toBeInTheDocument();
             expect(screen.getByText('john.doe@example.com')).toBeInTheDocument();
             expect(screen.getByText('@Test Org')).toBeInTheDocument();
-        });
-    });
-
-    describe('Group Membership', () => {
-        it('renders group information', () => {
-            renderWithUserId('user-123');
-
-            expect(screen.getByText('Resilience team')).toBeInTheDocument();
-            expect(screen.getByText('Tywnwell team')).toBeInTheDocument();
-            expect(screen.getByText('15 Jan 2024')).toBeInTheDocument();
-            expect(screen.getByText('20 Jan 2024')).toBeInTheDocument();
-        });
-
-        it('handles empty groups gracefully', () => {
-            vi.mocked(useProfileData).mockReturnValue({
-                ...mockProfileData,
-                getUserGroups: () => [],
-            });
-
-            renderWithUserId('user-123');
-
-            expect(screen.getByText('No group memberships')).toBeInTheDocument();
         });
     });
 
