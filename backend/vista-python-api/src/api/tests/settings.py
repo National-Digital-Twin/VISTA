@@ -8,6 +8,3 @@ DATABASES = {
         "NAME": ":memory:",
     }
 }
-
-SPATIALITE_LIBRARY_PATH = "/usr/local/lib/mod_spatialite.so"
-GDAL_LIBRARY_PATH = "/usr/local/lib/libgdal.so"
