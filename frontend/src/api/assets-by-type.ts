@@ -49,7 +49,6 @@ export const fetchAssetsByType = async (assetTypeId: string, iconMap?: Map<strin
                     criticalitySum: 0,
                 },
                 styles: defaultIconStyles,
-                secondaryCategory: item.type.name,
             });
         });
     } catch (error) {

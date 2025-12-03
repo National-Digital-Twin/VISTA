@@ -1,19 +1,23 @@
 import { noCase } from 'change-case';
 import { Box, Typography } from '@mui/material';
+import { getAssetTypeName } from '../utils/getAssetTypeName';
 import { isAsset } from '@/utils';
 import type { Asset, Element } from '@/models';
+import type { AssetCategory } from '@/api/asset-categories';
 
 interface AssetTooltipProps {
     readonly element: Element;
+    readonly assetCategories?: AssetCategory[];
 }
 
-const AssetTooltip = ({ element }: AssetTooltipProps) => {
+const AssetTooltip = ({ element, assetCategories }: AssetTooltipProps) => {
     const elemIsAsset = isAsset(element);
-    const asset = element as Asset;
+    const asset = elemIsAsset ? (element as Asset) : null;
     const details = elemIsAsset ? (asset?.getDetails?.(null) ?? undefined) : undefined;
     const title = details?.title || asset?.name || element?.id || 'Unknown';
-    const type = asset?.secondaryCategory || '';
-    const typeLabel = type ? noCase(type) : '';
+
+    const typeName = asset ? getAssetTypeName(asset.type, assetCategories) : null;
+    const typeLabel = typeName ? noCase(typeName) : '';
 
     return (
         <Box

@@ -96,7 +96,7 @@ const AssetDetailsPanel = ({ selectedElement, onBack }: AssetDetailsPanelProps) 
                     </Typography>
                 </Box>
                 <Box sx={{ px: 2, pb: 2 }}>
-                    {assetElement?.secondaryCategory && (
+                    {assetDetails.data?.type.name && (
                         <Typography
                             variant="body2"
                             sx={{
@@ -105,7 +105,7 @@ const AssetDetailsPanel = ({ selectedElement, onBack }: AssetDetailsPanelProps) 
                                 color: 'text.secondary',
                             }}
                         >
-                            {noCase(assetElement.secondaryCategory)}
+                            {noCase(assetDetails.data.type.name)}
                         </Typography>
                     )}
                     {details.desc && (

@@ -14,6 +14,7 @@ import AssetLayers from './AssetLayers';
 import ExposureLayers from './ExposureLayers';
 import useMapboxDraw from './hooks/useMapboxDraw';
 import { usePreloadAssetIcons } from './hooks/usePreloadAssetIcons';
+import { getAssetTypeName } from './utils/getAssetTypeName';
 import { useAssetsByType } from '@/hooks/useAssetsByType';
 import { useAssetTypeIcons } from '@/hooks/useAssetTypeIcons';
 import { fetchAssetCategories } from '@/api/asset-categories';
@@ -24,14 +25,13 @@ const MapView = () => {
     const mapRef = useRef<MapRef>(null);
     const [viewState, setViewState] = useState(DEFAULT_VIEW_STATE);
     const [mapReady, setMapReady] = useState(false);
-    const [legendOpen, setLegendOpen] = useState(false);
-    const [floodWarningsOpen, setFloodWarningsOpen] = useState(false);
     const [drawingToolbarOpen, setDrawingToolbarOpen] = useState(false);
     const [drawingMode, setDrawingMode] = useState<'circle' | 'polygon' | null>(null);
     const [primaryAssets, setPrimaryAssets] = useState(false);
     const [dependentAssets, setDependentAssets] = useState(false);
     const [mapStyleKey, setMapStyleKey] = useState<MapStyleKey>(DEFAULT_MAP_STYLE);
     const [mapStylePanelOpen, setMapStylePanelOpen] = useState(false);
+    const [assetInfoPanelOpen, setAssetInfoPanelOpen] = useState(false);
     const [activePanelView, setActivePanelView] = useState<string | null>('scenario');
     const [selectedAssetTypes, setSelectedAssetTypes] = useState<Record<string, boolean>>({});
     const [selectedExposureLayerIds, setSelectedExposureLayerIds] = useState<Record<string, boolean>>({});
@@ -72,18 +72,7 @@ const MapView = () => {
 
     const findAssetTypeName = useCallback(
         (typeId: string): string | null => {
-            if (!assetCategories) {
-                return null;
-            }
-            for (const category of assetCategories) {
-                for (const subCategory of category.subCategories) {
-                    const assetType = subCategory.assetTypes.find((at) => at.id === typeId);
-                    if (assetType) {
-                        return assetType.name;
-                    }
-                }
-            }
-            return null;
+            return getAssetTypeName(typeId, assetCategories);
         },
         [assetCategories],
     );
@@ -124,30 +113,18 @@ const MapView = () => {
         setMapStyleKey(newStyle);
     }, []);
 
-    const toggleLegend = useCallback(() => {
-        setLegendOpen((prev) => {
-            if (!prev) {
-                setMapStylePanelOpen(false);
-                setFloodWarningsOpen(false);
-            }
-            return !prev;
-        });
-    }, []);
-
     const toggleMapStylePanel = useCallback(() => {
         setMapStylePanelOpen((prev) => {
             if (!prev) {
-                setLegendOpen(false);
-                setFloodWarningsOpen(false);
+                setAssetInfoPanelOpen(false);
             }
             return !prev;
         });
     }, []);
 
-    const toggleFloodWarnings = useCallback(() => {
-        setFloodWarningsOpen((prev) => {
+    const toggleAssetInfoPanel = useCallback(() => {
+        setAssetInfoPanelOpen((prev) => {
             if (!prev) {
-                setLegendOpen(false);
                 setMapStylePanelOpen(false);
             }
             return !prev;
@@ -155,9 +132,8 @@ const MapView = () => {
     }, []);
 
     const closePanels = useCallback(() => {
-        setLegendOpen(false);
         setMapStylePanelOpen(false);
-        setFloodWarningsOpen(false);
+        setAssetInfoPanelOpen(false);
     }, []);
 
     const handleMapLoad = useCallback(() => {
@@ -333,6 +309,7 @@ const MapView = () => {
                                 selectedElements={selectedElement ? [selectedElement] : []}
                                 onElementClick={handleElementClick}
                                 mapReady={mapReady}
+                                assetCategories={assetCategories}
                             />
                             {exposureLayers && (
                                 <ExposureLayers exposureLayers={exposureLayers} selectedExposureLayerIds={selectedExposureLayerIds} mapReady={mapReady} />
@@ -355,10 +332,6 @@ const MapView = () => {
 
                 <MapControls
                     mapRef={mapRef}
-                    legendOpen={legendOpen}
-                    onToggleLegend={toggleLegend}
-                    floodWarningsOpen={floodWarningsOpen}
-                    onToggleFloodWarnings={toggleFloodWarnings}
                     onClosePanels={closePanels}
                     isDrawing={drawingToolbarOpen}
                     onToggleDrawing={handleToggleDrawing}
@@ -366,6 +339,10 @@ const MapView = () => {
                     onMapStyleChange={handleStyleChange}
                     mapStylePanelOpen={mapStylePanelOpen}
                     onToggleMapStylePanel={toggleMapStylePanel}
+                    assetInfoPanelOpen={assetInfoPanelOpen}
+                    onToggleAssetInfoPanel={toggleAssetInfoPanel}
+                    assets={assets}
+                    assetCategories={assetCategories}
                     viewState={viewState}
                 />
             </Box>

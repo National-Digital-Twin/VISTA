@@ -8,6 +8,7 @@ import AssetTooltip from './panels/AssetTooltip';
 import { generatePointAssetFeatures, generateLinearAssetFeatures } from '@/components/Map/map-utils';
 import { findElement } from '@/utils';
 import type { Asset, Element } from '@/models';
+import type { AssetCategory } from '@/api/asset-categories';
 
 const SOURCE_ID = 'map-v2-asset-source';
 const LINE_SOURCE_ID = 'map-v2-asset-line-source';
@@ -27,9 +28,10 @@ export interface AssetLayersProps {
     readonly selectedElements?: Element[];
     readonly onElementClick?: (elements: Element[]) => void;
     readonly mapReady?: boolean;
+    readonly assetCategories?: AssetCategory[];
 }
 
-const AssetLayers = ({ assets, selectedAssetTypes, selectedElements = [], onElementClick, mapReady }: AssetLayersProps) => {
+const AssetLayers = ({ assets, selectedAssetTypes, selectedElements = [], onElementClick, mapReady, assetCategories }: AssetLayersProps) => {
     const mapContext = useMap();
     const mapInstance = mapContext?.['map-v2'] || mapContext?.default || null;
 
@@ -212,6 +214,7 @@ const AssetLayers = ({ assets, selectedAssetTypes, selectedElements = [], onElem
                                 iconStyles={iconStyles}
                                 asset={asset}
                                 onElementClick={onElementClick}
+                                assetCategories={assetCategories}
                             />
                         );
                     })}
@@ -239,9 +242,10 @@ interface AssetMarkerProps {
     readonly iconStyles?: Asset['styles'];
     readonly asset: Asset | undefined;
     readonly onElementClick?: (elements: Element[]) => void;
+    readonly assetCategories?: AssetCategory[];
 }
 
-const AssetMarker = memo(({ feature, isSelected, iconStyles: providedIconStyles, asset, onElementClick }: AssetMarkerProps) => {
+const AssetMarker = memo(({ feature, isSelected, iconStyles: providedIconStyles, asset, onElementClick, assetCategories }: AssetMarkerProps) => {
     const [showTooltip, setShowTooltip] = useState(false);
     const iconStyles = providedIconStyles || asset?.styles;
 
@@ -312,7 +316,7 @@ const AssetMarker = memo(({ feature, isSelected, iconStyles: providedIconStyles,
                             pointerEvents: 'none',
                         }}
                     >
-                        {asset && <AssetTooltip element={asset} />}
+                        {asset && <AssetTooltip element={asset} assetCategories={assetCategories} />}
                     </div>
                 )}
                 <div
