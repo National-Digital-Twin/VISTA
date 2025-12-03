@@ -191,7 +191,7 @@ jobs:
           source venv/bin/activate
           cd backend
           pytest --cov-fail-under=80.0  >> $GITHUB_STEP_SUMMARY
-        continue-on-error: true
+        continue-on-error: false
 
   security-scanning:
     name: Security Scanning
