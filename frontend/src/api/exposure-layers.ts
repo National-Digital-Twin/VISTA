@@ -1,8 +1,24 @@
 import type { FeatureCollection, Feature, Geometry } from 'geojson';
 import { createApiEndpoint, fetchOptions } from './utils';
-import { parseGeometry as parseGeometryString } from './geometry-parser';
 
-export const fetchExposureLayers = async (): Promise<FeatureCollection> => {
+export interface ExposureLayerGroup {
+    readonly id: string;
+    readonly name: string;
+    readonly exposureLayers: ExposureLayer[];
+}
+
+export interface ExposureLayer {
+    readonly id: string;
+    readonly name: string;
+    readonly geometry: Geometry;
+}
+
+export interface ExposureLayersResponse {
+    readonly featureCollection: FeatureCollection;
+    readonly groups: ExposureLayerGroup[];
+}
+
+export const fetchExposureLayers = async (): Promise<ExposureLayersResponse> => {
     try {
         const response = await fetch(createApiEndpoint('exposurelayers/'), fetchOptions);
 
@@ -10,29 +26,41 @@ export const fetchExposureLayers = async (): Promise<FeatureCollection> => {
             throw new Error(`Failed to retrieve exposure layers: ${response.statusText}`);
         }
 
-        const data = await response.json();
+        const data: ExposureLayerGroup[] = await response.json();
 
-        const features: Feature[] = (data.features || [])
-            .map((feature: any) => {
-                const geometry: Geometry | null = typeof feature.geometry === 'string' ? parseGeometryString(feature.geometry) : feature.geometry;
+        const groups: ExposureLayerGroup[] = data.map((group) => ({
+            id: group.id,
+            name: group.name,
+            exposureLayers: group.exposureLayers,
+        }));
 
-                if (!geometry) {
-                    console.warn('Failed to parse geometry for feature:', feature.id, feature.properties?.name);
-                    return null;
-                }
-
-                return {
-                    type: 'Feature',
-                    id: feature.id,
-                    geometry,
-                    properties: feature.properties || {},
-                };
-            })
-            .filter((feature: Feature | null): feature is Feature => feature !== null);
+        const features: Feature[] = data.flatMap((group) =>
+            group.exposureLayers
+                .filter((layer) => {
+                    if (!layer.geometry) {
+                        console.warn('Failed to parse geometry for layer:', layer.id, layer.name);
+                        return false;
+                    }
+                    return true;
+                })
+                .map((layer) => ({
+                    type: 'Feature' as const,
+                    id: layer.id,
+                    geometry: layer.geometry,
+                    properties: {
+                        name: layer.name,
+                        groupId: group.id,
+                        groupName: group.name,
+                    },
+                })),
+        );
 
         return {
-            type: 'FeatureCollection',
-            features,
+            featureCollection: {
+                type: 'FeatureCollection',
+                features,
+            },
+            groups,
         };
     } catch (error) {
         console.error('Error fetching exposure layers:', error);

@@ -4,6 +4,8 @@ import CloseIcon from '@mui/icons-material/Close';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import { useQuery } from '@tanstack/react-query';
+import ArrowDropUp from '@mui/icons-material/ArrowDropUp';
+import ArrowDropDown from '@mui/icons-material/ArrowDropDown';
 import { SearchTextField } from '@/components/SearchTextField';
 import { fetchAssetCategories, type AssetCategory, type SubCategory, type AssetType } from '@/api/asset-categories';
 import ToggleSwitch from '@/components/ToggleSwitch';
@@ -39,7 +41,7 @@ interface AssetTypeListProps {
 
 function AssetTypeList({ assetTypes, selectedAssetTypes, onToggle }: AssetTypeListProps) {
     return (
-        <Box sx={{ pl: 2, pr: 1, pb: 1 }}>
+        <Box sx={{ pb: 1 }}>
             {assetTypes.map((assetType) => {
                 const isSelected = selectedAssetTypes[assetType.id] || false;
                 return (
@@ -49,7 +51,7 @@ function AssetTypeList({ assetTypes, selectedAssetTypes, onToggle }: AssetTypeLi
                             display: 'flex',
                             justifyContent: 'space-between',
                             alignItems: 'center',
-                            px: 0,
+                            px: 2.5,
                             py: 0.5,
                         }}
                     >
@@ -268,7 +270,6 @@ const AssetsView = ({ onClose, selectedAssetTypes: externalSelectedAssetTypes = 
 
                 {filteredCategories.map((category) => {
                     const isCategoryExpanded = expandedCategories.has(category.id);
-                    const totalAssetTypes = category.subCategories.reduce((sum, sub) => sum + sub.assetTypes.length, 0);
 
                     return (
                         <Box key={category.id} sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -282,7 +283,7 @@ const AssetsView = ({ onClose, selectedAssetTypes: externalSelectedAssetTypes = 
                                 sx={{
                                     'display': 'flex',
                                     'alignItems': 'center',
-                                    'p': 1.5,
+                                    'p': 1,
                                     'cursor': 'pointer',
                                     '&:hover': {
                                         backgroundColor: 'action.hover',
@@ -290,10 +291,10 @@ const AssetsView = ({ onClose, selectedAssetTypes: externalSelectedAssetTypes = 
                                 }}
                                 tabIndex={0}
                             >
+                                <IconButton size="small">{isCategoryExpanded ? <ExpandMoreIcon /> : <ExpandLessIcon />}</IconButton>
                                 <Typography variant="body1" sx={{ flexGrow: 1, fontWeight: 500 }}>
-                                    {category.name} ({totalAssetTypes})
+                                    {category.name}
                                 </Typography>
-                                <IconButton size="small">{isCategoryExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}</IconButton>
                             </Box>
 
                             <Collapse in={isCategoryExpanded}>
@@ -301,7 +302,7 @@ const AssetsView = ({ onClose, selectedAssetTypes: externalSelectedAssetTypes = 
                                     {category.subCategories.map((subCategory) => {
                                         const isSubCategoryExpanded = expandedSubCategories.has(subCategory.id);
                                         return (
-                                            <Box key={subCategory.id} sx={{ pl: 2 }}>
+                                            <Box key={subCategory.id}>
                                                 <Box
                                                     onClick={() => toggleSubCategory(subCategory.id)}
                                                     onKeyDown={(e) => {
@@ -312,7 +313,7 @@ const AssetsView = ({ onClose, selectedAssetTypes: externalSelectedAssetTypes = 
                                                     sx={{
                                                         'display': 'flex',
                                                         'alignItems': 'center',
-                                                        'p': 1.5,
+                                                        'p': 1,
                                                         'cursor': 'pointer',
                                                         '&:hover': {
                                                             backgroundColor: 'action.hover',
@@ -320,10 +321,10 @@ const AssetsView = ({ onClose, selectedAssetTypes: externalSelectedAssetTypes = 
                                                     }}
                                                     tabIndex={0}
                                                 >
+                                                    <IconButton size="small">{isSubCategoryExpanded ? <ArrowDropDown /> : <ArrowDropUp />}</IconButton>
                                                     <Typography variant="body2" sx={{ flexGrow: 1, fontWeight: 500 }}>
                                                         {subCategory.name} ({subCategory.assetTypes.length})
                                                     </Typography>
-                                                    <IconButton size="small">{isSubCategoryExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}</IconButton>
                                                 </Box>
 
                                                 <Collapse in={isSubCategoryExpanded}>

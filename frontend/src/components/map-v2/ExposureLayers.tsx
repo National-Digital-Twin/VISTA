@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { Layer, Source } from 'react-map-gl/maplibre';
-import type { Feature, FeatureCollection } from 'geojson';
+import type { FeatureCollection } from 'geojson';
 
 const SOURCE_ID = 'map-v2-exposure-source';
 const LAYER_ID = 'map-v2-exposure-layer';
@@ -40,21 +40,9 @@ const ExposureLayers = ({ exposureLayers, selectedExposureLayerIds, mapReady }: 
     }, [exposureLayers, selectedExposureLayerIds]);
 
     const featureCollection: FeatureCollection = useMemo(() => {
-        const enhancedFeatures: Feature[] = filteredFeatures.map((feature) => {
-            const featureId = feature.id || feature.properties?.id;
-            const idString = featureId !== null && featureId !== undefined ? String(featureId) : undefined;
-
-            return {
-                type: 'Feature',
-                id: idString,
-                geometry: feature.geometry,
-                properties: feature.properties || {},
-            };
-        });
-
         return {
             type: 'FeatureCollection',
-            features: enhancedFeatures,
+            features: filteredFeatures,
         };
     }, [filteredFeatures]);
 
