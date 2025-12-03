@@ -2,12 +2,12 @@
 
 from rest_framework import viewsets
 
-from api.models import ExposureLayer
-from api.serializers import ExposureLayerSerializer
+from api.models import ExposureLayerType
+from api.serializers import ExposureLayerTypeSerializer
 
 
 class ExposureLayerViewSet(viewsets.ReadOnlyModelViewSet):
     """API endpoint that allows exposure layers to be viewed."""
 
-    queryset = ExposureLayer.objects.all()
-    serializer_class = ExposureLayerSerializer
+    queryset = ExposureLayerType.objects.all()
+    serializer_class = ExposureLayerTypeSerializer
