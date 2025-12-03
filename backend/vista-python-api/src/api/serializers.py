@@ -3,13 +3,13 @@
 from typing import ClassVar
 
 from rest_framework import serializers
-from rest_framework_gis.serializers import GeoFeatureModelSerializer
+from rest_framework_gis.fields import GeometryField
 
 from api.models.asset import Asset
 from api.models.asset_type import AssetCategory, AssetSubCategory, AssetType
 from api.models.dependency import Dependency
 
-from .models import DataSource, ExposureLayer
+from .models import DataSource, ExposureLayer, ExposureLayerType
 
 
 class AssetTypeSerializer(serializers.ModelSerializer):
@@ -120,12 +120,25 @@ class AssetDetailSerializer(serializers.ModelSerializer):
         return AssetListSerializer((d.dependent_asset for d in deps), many=True).data
 
 
-class ExposureLayerSerializer(GeoFeatureModelSerializer):
-    """Serializer to output ExposureLayer data as a GeoJSON Feature."""
+class ExposureLayerSerializer(serializers.ModelSerializer):
+    """Serializer for the ExposureLayer model."""
+
+    geometry = GeometryField()
 
     class Meta:
         """Configuration for the `ExposureLayerSerializer`."""
 
         model = ExposureLayer
-        geo_field = "geometry"  # This field will be the GeoJSON geometry
-        fields = ("id", "name")
+        fields: ClassVar[list[str]] = ["id", "name", "geometry"]
+
+
+class ExposureLayerTypeSerializer(serializers.ModelSerializer):
+    """Serializer for the Exposure Layer Type model."""
+
+    exposure_layers = ExposureLayerSerializer(many=True, read_only=True)
+
+    class Meta:
+        """Configuration for the `ExposureLayerTypeSerializer`."""
+
+        model = ExposureLayerType
+        fields: ClassVar[list[str]] = ["id", "name", "exposure_layers"]

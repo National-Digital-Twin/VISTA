@@ -7,7 +7,7 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-    """Create the ExposureLayer model."""
+    """Set related names for asset types and sub-categories."""
 
     dependencies: ClassVar = [
         ("api", "0023_exposurelayer"),

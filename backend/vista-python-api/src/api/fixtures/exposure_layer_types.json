@@ -1,0 +1,16 @@
+[
+  {
+    "model": "api.exposurelayertype",
+    "pk": "2d373dca-1337-4e60-ba08-c8326d27042d",
+    "fields": {
+      "name": "Floods"
+    }
+  },
+  {
+    "model": "api.exposurelayertype",
+    "pk": "60a0280e-bd04-4150-8a9a-f414d21cd031",
+    "fields": {
+      "name": "Environmentally sensitive areas"
+    }
+  }
+]
