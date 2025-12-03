@@ -70,7 +70,6 @@ describe('AssetDetailsPanel', () => {
             },
             state: AssetState.Static,
             elementType: 'asset' as const,
-            secondaryCategory: 'Type1',
             getDetails: vi.fn((assetInfo: any) => ({
                 title: assetInfo?.name || 'Test Asset',
                 type: assetInfo?.assetType || 'https://example.com#Type1',

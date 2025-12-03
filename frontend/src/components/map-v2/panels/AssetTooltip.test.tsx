@@ -48,7 +48,6 @@ describe('AssetTooltip', () => {
             },
             state: AssetState.Static,
             elementType: 'asset' as const,
-            secondaryCategory: 'Type1',
             getDetails: vi.fn((assetInfo: any) => ({
                 title: assetInfo?.name || 'Test Asset',
                 type: assetInfo?.assetType || 'https://example.com#Type1',
@@ -66,13 +65,6 @@ describe('AssetTooltip', () => {
             renderWithProviders(<AssetTooltip element={asset} />);
 
             expect(screen.getByText('Test Asset')).toBeInTheDocument();
-        });
-
-        it('displays asset type from secondaryCategory', () => {
-            const asset = createMockAsset({ secondaryCategory: 'Type1' });
-            renderWithProviders(<AssetTooltip element={asset} />);
-
-            expect(screen.getByText(/type1/i)).toBeInTheDocument();
         });
 
         it('falls back to ID when name is not available', () => {
@@ -107,6 +99,33 @@ describe('AssetTooltip', () => {
             renderWithProviders(<AssetTooltip element={asset} />);
 
             expect(screen.getByText('Unknown')).toBeInTheDocument();
+        });
+
+        it('displays asset type name when assetCategories is provided', () => {
+            const asset = createMockAsset({ type: '35a910f3-f611-4096-ac0b-0928c5612e32' });
+            const assetCategories = [
+                {
+                    id: 'cat1',
+                    name: 'Healthcare',
+                    subCategories: [
+                        {
+                            id: 'subcat1',
+                            name: 'Healthcare Facilities',
+                            assetTypes: [
+                                {
+                                    id: '35a910f3-f611-4096-ac0b-0928c5612e32',
+                                    name: 'Hospital',
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ];
+
+            renderWithProviders(<AssetTooltip element={asset} assetCategories={assetCategories} />);
+
+            expect(screen.getByText('Test Asset')).toBeInTheDocument();
+            expect(screen.getByText(/hospital/i)).toBeInTheDocument();
         });
     });
 });

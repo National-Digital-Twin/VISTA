@@ -262,7 +262,6 @@ describe('assets-by-type API', () => {
             expect(result[0].styles.color).toBe('#DDDDDD');
             expect(result[0].styles.backgroundColor).toBe('#121212');
             expect(result[0].styles.alt).toBe('Hospital');
-            expect(result[0].secondaryCategory).toBe('Hospital');
         });
     });
 });

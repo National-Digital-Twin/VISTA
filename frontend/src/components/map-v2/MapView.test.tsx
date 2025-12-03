@@ -84,24 +84,8 @@ vi.mock('./MapPanels', () => ({
 }));
 
 vi.mock('./MapControls', () => ({
-    default: ({
-        legendOpen,
-        onToggleLegend,
-        floodWarningsOpen,
-        onToggleFloodWarnings,
-        mapStylePanelOpen,
-        onToggleMapStylePanel,
-        isDrawing,
-        onToggleDrawing,
-        onMapStyleChange,
-    }: any) => (
+    default: ({ mapStylePanelOpen, onToggleMapStylePanel, isDrawing, onToggleDrawing, onMapStyleChange }: any) => (
         <div data-testid="map-controls">
-            <button onClick={onToggleLegend} data-testid="legend-toggle">
-                Legend {legendOpen ? 'Open' : 'Closed'}
-            </button>
-            <button onClick={onToggleFloodWarnings} data-testid="flood-warnings-toggle">
-                Flood Warnings {floodWarningsOpen ? 'Open' : 'Closed'}
-            </button>
             <button onClick={onToggleMapStylePanel} data-testid="map-style-toggle">
                 Map Style {mapStylePanelOpen ? 'Open' : 'Closed'}
             </button>
@@ -136,10 +120,6 @@ vi.mock('./hooks/useMapboxDraw', () => ({
             getMode: vi.fn(() => 'simple_select'),
         },
     }),
-}));
-
-vi.mock('@/api/hydrology', () => ({
-    fetchAllLiveStations: vi.fn().mockResolvedValue({ features: [] }),
 }));
 
 vi.mock('@/api/assessments', () => ({
@@ -248,74 +228,6 @@ describe('MapView', () => {
         });
     });
 
-    describe('Legend Panel Toggle', () => {
-        it('toggles legend panel', async () => {
-            renderWithProviders(<MapView />);
-            await waitForElement('legend-toggle');
-
-            const legendToggle = screen.getByTestId('legend-toggle');
-            expect(legendToggle).toHaveTextContent('Legend Closed');
-
-            await act(async () => {
-                legendToggle.click();
-            });
-
-            await waitFor(() => {
-                expect(legendToggle).toHaveTextContent('Legend Open');
-            });
-        });
-
-        it('closes other panels when opening legend', async () => {
-            renderWithProviders(<MapView />);
-            await clickElement('map-style-toggle');
-
-            await waitFor(() => {
-                expect(screen.getByTestId('map-style-toggle')).toHaveTextContent('Map Style Open');
-            });
-
-            await clickElement('legend-toggle');
-
-            await waitFor(() => {
-                expect(screen.getByTestId('legend-toggle')).toHaveTextContent('Legend Open');
-                expect(screen.getByTestId('map-style-toggle')).toHaveTextContent('Map Style Closed');
-            });
-        });
-    });
-
-    describe('Flood Warnings Panel Toggle', () => {
-        it('toggles flood warnings panel', async () => {
-            renderWithProviders(<MapView />);
-            await waitForElement('flood-warnings-toggle');
-
-            const floodWarningsToggle = screen.getByTestId('flood-warnings-toggle');
-            expect(floodWarningsToggle).toHaveTextContent('Flood Warnings Closed');
-
-            await act(async () => {
-                floodWarningsToggle.click();
-            });
-
-            await waitFor(() => {
-                expect(floodWarningsToggle).toHaveTextContent('Flood Warnings Open');
-            });
-        });
-
-        it('closes other panels when opening flood warnings', async () => {
-            renderWithProviders(<MapView />);
-            await clickElement('legend-toggle');
-
-            await waitFor(() => {
-                expect(screen.getByTestId('legend-toggle')).toHaveTextContent('Legend Open');
-            });
-
-            await clickElement('flood-warnings-toggle');
-
-            await waitFor(() => {
-                expect(screen.getByTestId('flood-warnings-toggle')).toHaveTextContent('Flood Warnings Open');
-                expect(screen.getByTestId('legend-toggle')).toHaveTextContent('Legend Closed');
-            });
-        });
-    });
-
     describe('Map Style Panel Toggle', () => {
         it('toggles map style panel', async () => {
             renderWithProviders(<MapView />);
@@ -333,19 +245,27 @@ describe('MapView', () => {
             });
         });
 
-        it('closes other panels when opening map style panel', async () => {
+        it('toggles map style panel state', async () => {
             renderWithProviders(<MapView />);
-            await clickElement('legend-toggle');
+            await waitForElement('map-style-toggle');
 
-            await waitFor(() => {
-                expect(screen.getByTestId('legend-toggle')).toHaveTextContent('Legend Open');
+            const mapStyleToggle = screen.getByTestId('map-style-toggle');
+            expect(mapStyleToggle).toHaveTextContent('Map Style Closed');
+
+            await act(async () => {
+                mapStyleToggle.click();
             });
 
-            await clickElement('map-style-toggle');
+            await waitFor(() => {
+                expect(mapStyleToggle).toHaveTextContent('Map Style Open');
+            });
+
+            await act(async () => {
+                mapStyleToggle.click();
+            });
 
             await waitFor(() => {
-                expect(screen.getByTestId('map-style-toggle')).toHaveTextContent('Map Style Open');
-                expect(screen.getByTestId('legend-toggle')).toHaveTextContent('Legend Closed');
+                expect(mapStyleToggle).toHaveTextContent('Map Style Closed');
             });
         });
     });

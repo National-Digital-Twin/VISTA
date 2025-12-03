@@ -39,14 +39,6 @@ vi.mock('./controls/ZoomOutButton', () => ({
     default: () => <button data-testid="zoom-out-button">Zoom Out</button>,
 }));
 
-vi.mock('./controls/LegendButton', () => ({
-    default: React.forwardRef(({ isOpen, onToggle }: { isOpen: boolean; onToggle: () => void }, ref: any) => (
-        <button ref={ref} data-testid="legend-button" onClick={onToggle}>
-            Legend {isOpen ? 'Open' : 'Closed'}
-        </button>
-    )),
-}));
-
 vi.mock('./controls/MapStyleButton', () => ({
     default: React.forwardRef(({ isOpen, onToggle }: { isOpen: boolean; onToggle: () => void }, ref: any) => (
         <button ref={ref} data-testid="map-style-button" onClick={onToggle}>
@@ -63,22 +55,12 @@ vi.mock('./controls/DrawPolygonButton', () => ({
     ),
 }));
 
-vi.mock('./controls/FloodWarningsButton', () => ({
+vi.mock('./controls/AssetInfoButton', () => ({
     default: React.forwardRef(({ isOpen, onToggle }: { isOpen: boolean; onToggle: () => void }, ref: any) => (
-        <button ref={ref} data-testid="flood-warnings-button" onClick={onToggle}>
-            Flood Warnings {isOpen ? 'Open' : 'Closed'}
+        <button ref={ref} data-testid="asset-info-button" onClick={onToggle}>
+            Asset Info {isOpen ? 'Open' : 'Closed'}
         </button>
     )),
-}));
-
-vi.mock('./controls/panels/LegendPanel', () => ({
-    default: React.forwardRef(({ open }: { open: boolean }, ref: any) =>
-        open ? (
-            <div ref={ref} data-testid="legend-panel">
-                Legend Panel
-            </div>
-        ) : null,
-    ),
 }));
 
 vi.mock('./controls/panels/MapStylePanel', () => ({
@@ -93,18 +75,14 @@ vi.mock('./controls/panels/MapStylePanel', () => ({
     ),
 }));
 
-vi.mock('./controls/panels/FloodWarningsPanel', () => ({
-    default: React.forwardRef(({ open }: { open: boolean }, ref: any) =>
+vi.mock('./controls/panels/AssetInfoPanel', () => ({
+    default: React.forwardRef(({ open, assets, isFullScreen }: { open: boolean; assets: any[]; isFullScreen?: boolean }, ref: any) =>
         open ? (
-            <div ref={ref} data-testid="flood-warnings-panel">
-                Flood Warnings Panel
+            <div ref={ref} data-testid="asset-info-panel" data-fullscreen={isFullScreen}>
+                {assets.length === 0 ? <div>No assets</div> : <div>Asset Table</div>}
             </div>
         ) : null,
     ),
-}));
-
-vi.mock('@/api/hydrology', () => ({
-    fetchAllLiveStations: vi.fn().mockResolvedValue({ features: [] }),
 }));
 
 const createMockMapRef = (): React.RefObject<MapRef | null> => ({
@@ -116,10 +94,6 @@ const createMockMapRef = (): React.RefObject<MapRef | null> => ({
 describe('MapControls', () => {
     const defaultProps = {
         mapRef: createMockMapRef(),
-        legendOpen: false,
-        onToggleLegend: vi.fn(),
-        floodWarningsOpen: false,
-        onToggleFloodWarnings: vi.fn(),
         onClosePanels: vi.fn(),
         isDrawing: false,
         onToggleDrawing: vi.fn(),
@@ -127,6 +101,9 @@ describe('MapControls', () => {
         onMapStyleChange: vi.fn(),
         mapStylePanelOpen: false,
         onToggleMapStylePanel: vi.fn(),
+        assetInfoPanelOpen: false,
+        onToggleAssetInfoPanel: vi.fn(),
+        assets: [],
     };
 
     beforeEach(() => {
@@ -140,61 +117,61 @@ describe('MapControls', () => {
             expect(screen.getByTestId('compass-button')).toBeInTheDocument();
             expect(screen.getByTestId('zoom-in-button')).toBeInTheDocument();
             expect(screen.getByTestId('zoom-out-button')).toBeInTheDocument();
-            expect(screen.getByTestId('legend-button')).toBeInTheDocument();
             expect(screen.getByTestId('map-style-button')).toBeInTheDocument();
             expect(screen.getByTestId('draw-polygon-button')).toBeInTheDocument();
-            expect(screen.getByTestId('flood-warnings-button')).toBeInTheDocument();
+            expect(screen.getByTestId('asset-info-button')).toBeInTheDocument();
         });
 
         it('renders control groups', () => {
             renderWithProviders(<MapControls {...defaultProps} />);
 
-            expect(screen.getByRole('group', { name: 'Flood warnings controls' })).toBeInTheDocument();
             expect(screen.getByRole('group', { name: 'View controls' })).toBeInTheDocument();
             expect(screen.getByRole('group', { name: 'Zoom controls' })).toBeInTheDocument();
             expect(screen.getByRole('group', { name: 'Drawing controls' })).toBeInTheDocument();
+            expect(screen.getByRole('group', { name: 'Asset information controls' })).toBeInTheDocument();
             expect(screen.getByRole('group', { name: 'Map style controls' })).toBeInTheDocument();
-            expect(screen.getByRole('group', { name: 'Map legend controls' })).toBeInTheDocument();
         });
     });
 
     describe('Panel Visibility', () => {
-        it('shows legend panel when legendOpen is true', () => {
-            renderWithProviders(<MapControls {...defaultProps} legendOpen={true} />);
-
-            expect(screen.getByTestId('legend-panel')).toBeInTheDocument();
-        });
-
-        it('hides legend panel when legendOpen is false', () => {
-            renderWithProviders(<MapControls {...defaultProps} legendOpen={false} />);
-
-            expect(screen.queryByTestId('legend-panel')).not.toBeInTheDocument();
-        });
-
         it('shows map style panel when mapStylePanelOpen is true', () => {
             renderWithProviders(<MapControls {...defaultProps} mapStylePanelOpen={true} />);
 
             expect(screen.getByTestId('map-style-panel')).toBeInTheDocument();
         });
 
-        it('shows flood warnings panel when floodWarningsOpen is true', () => {
-            renderWithProviders(<MapControls {...defaultProps} floodWarningsOpen={true} />);
+        it('shows asset info panel when assetInfoPanelOpen is true and no assets', () => {
+            renderWithProviders(<MapControls {...defaultProps} assetInfoPanelOpen={true} assets={[]} />);
 
-            expect(screen.getByTestId('flood-warnings-panel')).toBeInTheDocument();
+            expect(screen.getByTestId('asset-info-panel')).toBeInTheDocument();
+            expect(screen.getByText('No assets')).toBeInTheDocument();
+        });
+
+        it('shows asset info panel when assetInfoPanelOpen is true and assets exist', () => {
+            const mockAssets = [{ id: 'asset1', name: 'Test Asset' }] as any[];
+            renderWithProviders(<MapControls {...defaultProps} assetInfoPanelOpen={true} assets={mockAssets} />);
+
+            expect(screen.getByTestId('asset-info-panel')).toBeInTheDocument();
+            expect(screen.getByText('Asset Table')).toBeInTheDocument();
+        });
+
+        it('renders asset info panel in full screen mode when assets exist', () => {
+            const mockAssets = [{ id: 'asset1', name: 'Test Asset' }] as any[];
+            renderWithProviders(<MapControls {...defaultProps} assetInfoPanelOpen={true} assets={mockAssets} />);
+
+            const panel = screen.getByTestId('asset-info-panel');
+            expect(panel).toHaveAttribute('data-fullscreen', 'true');
+        });
+
+        it('renders asset info panel in compact mode when no assets', () => {
+            renderWithProviders(<MapControls {...defaultProps} assetInfoPanelOpen={true} assets={[]} />);
+
+            const panel = screen.getByTestId('asset-info-panel');
+            expect(panel).toHaveAttribute('data-fullscreen', 'false');
         });
     });
 
     describe('Button Interactions', () => {
-        it('calls onToggleLegend when legend button is clicked', () => {
-            const onToggleLegend = vi.fn();
-            renderWithProviders(<MapControls {...defaultProps} onToggleLegend={onToggleLegend} />);
-
-            const legendButton = screen.getByTestId('legend-button');
-            fireEvent.click(legendButton);
-
-            expect(onToggleLegend).toHaveBeenCalledTimes(1);
-        });
-
         it('calls onToggleMapStylePanel when map style button is clicked', () => {
             const onToggleMapStylePanel = vi.fn();
             renderWithProviders(<MapControls {...defaultProps} onToggleMapStylePanel={onToggleMapStylePanel} />);
@@ -205,16 +182,6 @@ describe('MapControls', () => {
             expect(onToggleMapStylePanel).toHaveBeenCalledTimes(1);
         });
 
-        it('calls onToggleFloodWarnings when flood warnings button is clicked', () => {
-            const onToggleFloodWarnings = vi.fn();
-            renderWithProviders(<MapControls {...defaultProps} onToggleFloodWarnings={onToggleFloodWarnings} />);
-
-            const floodWarningsButton = screen.getByTestId('flood-warnings-button');
-            fireEvent.click(floodWarningsButton);
-
-            expect(onToggleFloodWarnings).toHaveBeenCalledTimes(1);
-        });
-
         it('calls onToggleDrawing when draw polygon button is clicked', () => {
             const onToggleDrawing = vi.fn();
             renderWithProviders(<MapControls {...defaultProps} onToggleDrawing={onToggleDrawing} />);
@@ -223,6 +190,16 @@ describe('MapControls', () => {
             fireEvent.click(drawPolygonButton);
 
             expect(onToggleDrawing).toHaveBeenCalledTimes(1);
+        });
+
+        it('calls onToggleAssetInfoPanel when asset info button is clicked', () => {
+            const onToggleAssetInfoPanel = vi.fn();
+            renderWithProviders(<MapControls {...defaultProps} onToggleAssetInfoPanel={onToggleAssetInfoPanel} />);
+
+            const assetInfoButton = screen.getByTestId('asset-info-button');
+            fireEvent.click(assetInfoButton);
+
+            expect(onToggleAssetInfoPanel).toHaveBeenCalledTimes(1);
         });
     });
 
@@ -241,9 +218,20 @@ describe('MapControls', () => {
     describe('Click Outside Handling', () => {
         it('calls onClosePanels when clicking outside panels', () => {
             const onClosePanels = vi.fn();
-            renderWithProviders(<MapControls {...defaultProps} legendOpen={true} onClosePanels={onClosePanels} />);
+            renderWithProviders(<MapControls {...defaultProps} mapStylePanelOpen={true} onClosePanels={onClosePanels} />);
 
             fireEvent.mouseDown(document.body);
+
+            expect(onClosePanels).toHaveBeenCalled();
+        });
+
+        it('calls onClosePanels when clicking outside asset info panel', () => {
+            const onClosePanels = vi.fn();
+            renderWithProviders(<MapControls {...defaultProps} assetInfoPanelOpen={true} onClosePanels={onClosePanels} />);
+
+            fireEvent.mouseDown(document.body);
+
+            expect(onClosePanels).toHaveBeenCalled();
         });
     });
 });

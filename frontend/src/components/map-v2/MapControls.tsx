@@ -6,14 +6,14 @@ import type { RefObject } from 'react';
 import CompassButton from './controls/CompassButton';
 import ZoomInButton from './controls/ZoomInButton';
 import ZoomOutButton from './controls/ZoomOutButton';
-import LegendButton from './controls/LegendButton';
+import AssetInfoButton from './controls/AssetInfoButton';
 import MapStyleButton from './controls/MapStyleButton';
 import DrawPolygonButton from './controls/DrawPolygonButton';
-import FloodWarningsButton from './controls/FloodWarningsButton';
-import LegendPanel from './controls/panels/LegendPanel';
+import AssetInfoPanel from './controls/panels/AssetInfoPanel';
 import MapStylePanel from './controls/panels/MapStylePanel';
-import FloodWarningsPanel from './controls/panels/FloodWarningsPanel';
 import type { MapStyleKey } from './constants';
+import type { Asset } from '@/models';
+import type { AssetCategory } from '@/api/asset-categories';
 
 const ControlsContainer = styled(Box)({
     display: 'flex',
@@ -44,10 +44,6 @@ const ControlDivider = styled(Box)(({ theme }) => ({
 
 interface MapControlsProps {
     readonly mapRef: RefObject<MapRef | null>;
-    readonly legendOpen: boolean;
-    readonly onToggleLegend: () => void;
-    readonly floodWarningsOpen: boolean;
-    readonly onToggleFloodWarnings: () => void;
     readonly onClosePanels: () => void;
     readonly isDrawing: boolean;
     readonly onToggleDrawing: () => void;
@@ -55,15 +51,15 @@ interface MapControlsProps {
     readonly onMapStyleChange: (style: MapStyleKey) => void;
     readonly mapStylePanelOpen: boolean;
     readonly onToggleMapStylePanel: () => void;
+    readonly assetInfoPanelOpen: boolean;
+    readonly onToggleAssetInfoPanel: () => void;
+    readonly assets: Asset[];
+    readonly assetCategories?: AssetCategory[];
     readonly viewState?: ViewState;
 }
 
 const MapControls = ({
     mapRef,
-    legendOpen,
-    onToggleLegend,
-    floodWarningsOpen,
-    onToggleFloodWarnings,
     onClosePanels,
     isDrawing,
     onToggleDrawing,
@@ -71,36 +67,26 @@ const MapControls = ({
     onMapStyleChange,
     mapStylePanelOpen,
     onToggleMapStylePanel,
+    assetInfoPanelOpen,
+    onToggleAssetInfoPanel,
+    assets,
+    assetCategories,
     viewState,
 }: MapControlsProps) => {
-    const legendPanelRef = useRef<HTMLDivElement>(null);
     const mapStylePanelRef = useRef<HTMLDivElement>(null);
-    const floodWarningsPanelRef = useRef<HTMLDivElement>(null);
-    const legendButtonRef = useRef<HTMLButtonElement>(null);
     const mapStyleButtonRef = useRef<HTMLButtonElement>(null);
-    const floodWarningsButtonRef = useRef<HTMLButtonElement>(null);
+    const assetInfoPanelRef = useRef<HTMLDivElement>(null);
+    const assetInfoButtonRef = useRef<HTMLButtonElement>(null);
 
     useEffect(() => {
-        if (!legendOpen && !mapStylePanelOpen && !floodWarningsOpen) {
+        if (!mapStylePanelOpen && !assetInfoPanelOpen) {
             return;
         }
 
         const handleClickOutside = (event: MouseEvent) => {
             const target = event.target as Node;
 
-            if (legendPanelRef.current?.contains(target)) {
-                return;
-            }
-
             if (mapStylePanelRef.current?.contains(target)) {
-                return;
-            }
-
-            if (floodWarningsPanelRef.current?.contains(target)) {
-                return;
-            }
-
-            if (legendButtonRef.current?.contains(target)) {
                 return;
             }
 
@@ -108,7 +94,11 @@ const MapControls = ({
                 return;
             }
 
-            if (floodWarningsButtonRef.current?.contains(target)) {
+            if (assetInfoPanelRef.current?.contains(target)) {
+                return;
+            }
+
+            if (assetInfoButtonRef.current?.contains(target)) {
                 return;
             }
 
@@ -124,57 +114,74 @@ const MapControls = ({
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
-    }, [legendOpen, mapStylePanelOpen, floodWarningsOpen, onClosePanels]);
+    }, [mapStylePanelOpen, assetInfoPanelOpen, onClosePanels]);
 
     return (
-        <ControlsContainer>
-            <ControlGroup aria-label="Flood warnings controls" sx={{ position: 'relative' }}>
-                <legend style={{ display: 'none' }}>Flood warnings controls</legend>
-                <FloodWarningsButton ref={floodWarningsButtonRef} isOpen={floodWarningsOpen} onToggle={onToggleFloodWarnings} />
-                <Box sx={{ position: 'absolute', top: 0, right: 'calc(100% + 1rem)' }}>
-                    <FloodWarningsPanel ref={floodWarningsPanelRef} open={floodWarningsOpen} />
+        <>
+            <ControlsContainer>
+                <ControlGroup aria-label="View controls">
+                    <legend style={{ display: 'none' }}>View controls</legend>
+                    <CompassButton mapRef={mapRef} bearing={viewState?.bearing ?? 0} />
+                </ControlGroup>
+
+                <ControlGroup aria-label="Zoom controls">
+                    <legend style={{ display: 'none' }}>Zoom controls</legend>
+                    <ZoomInButton mapRef={mapRef} />
+                    <ControlDivider />
+                    <ZoomOutButton mapRef={mapRef} />
+                </ControlGroup>
+
+                <ControlGroup aria-label="Drawing controls">
+                    <legend style={{ display: 'none' }}>Drawing controls</legend>
+                    <DrawPolygonButton isActive={isDrawing} onToggle={onToggleDrawing} />
+                </ControlGroup>
+
+                <ControlGroup aria-label="Asset information controls" sx={{ position: 'relative' }}>
+                    <legend style={{ display: 'none' }}>Asset information controls</legend>
+                    <AssetInfoButton ref={assetInfoButtonRef} isOpen={assetInfoPanelOpen} onToggle={onToggleAssetInfoPanel} />
+                    {assetInfoPanelOpen && assets.length === 0 && (
+                        <Box sx={{ position: 'absolute', top: 0, right: 'calc(100% + 1rem)' }}>
+                            <AssetInfoPanel
+                                ref={assetInfoPanelRef}
+                                open={assetInfoPanelOpen}
+                                assets={assets}
+                                assetCategories={assetCategories}
+                                isFullScreen={false}
+                            />
+                        </Box>
+                    )}
+                </ControlGroup>
+
+                <ControlGroup aria-label="Map style controls" sx={{ position: 'relative' }}>
+                    <legend style={{ display: 'none' }}>Map style controls</legend>
+                    <MapStyleButton ref={mapStyleButtonRef} isOpen={mapStylePanelOpen} onToggle={onToggleMapStylePanel} />
+                    <Box sx={{ position: 'absolute', top: 0, right: 'calc(100% + 1rem)' }}>
+                        <MapStylePanel
+                            ref={mapStylePanelRef}
+                            currentStyle={mapStyleKey}
+                            onStyleChange={onMapStyleChange}
+                            isOpen={mapStylePanelOpen}
+                            onToggle={onToggleMapStylePanel}
+                        />
+                    </Box>
+                </ControlGroup>
+            </ControlsContainer>
+
+            {assetInfoPanelOpen && assets.length > 0 && (
+                <Box
+                    sx={{
+                        position: 'absolute',
+                        left: '1rem',
+                        right: '5rem',
+                        top: '1rem',
+                        bottom: '1rem',
+                        zIndex: 2,
+                    }}
+                >
+                    <AssetInfoPanel ref={assetInfoPanelRef} open={assetInfoPanelOpen} assets={assets} assetCategories={assetCategories} isFullScreen={true} />
                 </Box>
-            </ControlGroup>
-
-            <ControlGroup aria-label="View controls">
-                <legend style={{ display: 'none' }}>View controls</legend>
-                <CompassButton mapRef={mapRef} bearing={viewState?.bearing ?? 0} />
-            </ControlGroup>
-
-            <ControlGroup aria-label="Zoom controls">
-                <legend style={{ display: 'none' }}>Zoom controls</legend>
-                <ZoomInButton mapRef={mapRef} />
-                <ControlDivider />
-                <ZoomOutButton mapRef={mapRef} />
-            </ControlGroup>
-
-            <ControlGroup aria-label="Drawing controls">
-                <legend style={{ display: 'none' }}>Drawing controls</legend>
-                <DrawPolygonButton isActive={isDrawing} onToggle={onToggleDrawing} />
-            </ControlGroup>
-
-            <ControlGroup aria-label="Map style controls" sx={{ position: 'relative' }}>
-                <legend style={{ display: 'none' }}>Map style controls</legend>
-                <MapStyleButton ref={mapStyleButtonRef} isOpen={mapStylePanelOpen} onToggle={onToggleMapStylePanel} />
-                <Box sx={{ position: 'absolute', top: 0, right: 'calc(100% + 1rem)' }}>
-                    <MapStylePanel
-                        ref={mapStylePanelRef}
-                        currentStyle={mapStyleKey}
-                        onStyleChange={onMapStyleChange}
-                        isOpen={mapStylePanelOpen}
-                        onToggle={onToggleMapStylePanel}
-                    />
-                </Box>
-            </ControlGroup>
-
-            <ControlGroup aria-label="Map legend controls" sx={{ position: 'relative' }}>
-                <legend style={{ display: 'none' }}>Map legend controls</legend>
-                <LegendButton ref={legendButtonRef} isOpen={legendOpen} onToggle={onToggleLegend} />
-                <Box sx={{ position: 'absolute', top: 0, right: 'calc(100% + 1rem)' }}>
-                    <LegendPanel ref={legendPanelRef} open={legendOpen} />
-                </Box>
-            </ControlGroup>
-        </ControlsContainer>
+            )}
+        </>
     );
 };
 

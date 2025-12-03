@@ -1,6 +1,5 @@
 import { createTheme } from '@mui/material/styles';
 
-const baseTheme = createTheme();
 const theme = createTheme({
     palette: {
         primary: {
@@ -33,30 +32,6 @@ const theme = createTheme({
     },
     typography: {
         fontFamily: ['Roboto', '"Helvetica Neue"', 'Arial', 'sans-serif'].join(','),
-        body1: {
-            [baseTheme.breakpoints.up('md')]: { fontSize: '0.8rem' },
-            [baseTheme.breakpoints.up('xl')]: { fontSize: '1rem' },
-        },
-        body2: {
-            [baseTheme.breakpoints.up('md')]: { fontSize: '0.675rem' },
-            [baseTheme.breakpoints.up('xl')]: { fontSize: '0.875rem' },
-        },
-        h5: {
-            [baseTheme.breakpoints.up('md')]: { fontSize: '1.2rem' },
-            [baseTheme.breakpoints.up('xl')]: { fontSize: '1.5rem' },
-        },
-        h6: {
-            [baseTheme.breakpoints.up('md')]: { fontSize: '1rem' },
-            [baseTheme.breakpoints.up('xl')]: { fontSize: '1.25rem' },
-        },
-        subtitle1: {
-            [baseTheme.breakpoints.up('md')]: { fontSize: '0.8rem' },
-            [baseTheme.breakpoints.up('xl')]: { fontSize: '1rem' },
-        },
-        subtitle2: {
-            [baseTheme.breakpoints.up('md')]: { fontSize: '0.675rem' },
-            [baseTheme.breakpoints.up('xl')]: { fontSize: '0.875rem' },
-        },
     },
     breakpoints: {
         values: {
