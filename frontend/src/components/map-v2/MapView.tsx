@@ -312,7 +312,11 @@ const MapView = () => {
                                 assetCategories={assetCategories}
                             />
                             {exposureLayers && (
-                                <ExposureLayers exposureLayers={exposureLayers} selectedExposureLayerIds={selectedExposureLayerIds} mapReady={mapReady} />
+                                <ExposureLayers
+                                    exposureLayers={exposureLayers.featureCollection}
+                                    selectedExposureLayerIds={selectedExposureLayerIds}
+                                    mapReady={mapReady}
+                                />
                             )}
                         </>
                     )}
