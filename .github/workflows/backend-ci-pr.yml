@@ -150,6 +150,11 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
+      - name: Install GDAL and SpatiaLite
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gdal-bin libgdal-dev libsqlite3-mod-spatialite
+
       - name: Set up Virtual Environment
         id: venv-cache
         uses: actions/cache@v4
