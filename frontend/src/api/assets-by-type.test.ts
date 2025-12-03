@@ -3,13 +3,12 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { fetchAssetsByType } from './assets-by-type';
 import Asset from '@/models/Asset';
 
-vi.mock('./utils', () => ({
-    fetchOptions: {
-        headers: {
-            'Content-Type': 'application/json',
+vi.mock('@/config/app-config', () => ({
+    default: {
+        services: {
+            apiBaseUrl: '/ndtp-python/api',
         },
     },
-    createApiEndpoint: (path: string) => `/ndtp-python/api/${path}`,
 }));
 
 describe('assets-by-type API', () => {
@@ -52,7 +51,7 @@ describe('assets-by-type API', () => {
             expect(result[0].geometry.type).toBe('Point');
             expect(result[0].lat).toBe(50.67);
             expect(result[0].lng).toBe(-1.4);
-            expect(fetchMock).toHaveBeenCalledWith(expect.stringContaining(`/assets/?asset_type=${encodeURIComponent(mockAssetTypeId)}`), {
+            expect(fetchMock).toHaveBeenCalledWith(expect.stringContaining(`/ndtp-python/api/assets/?asset_type=${encodeURIComponent(mockAssetTypeId)}`), {
                 headers: { 'Content-Type': 'application/json' },
             });
         });

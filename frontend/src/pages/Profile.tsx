@@ -40,9 +40,7 @@ export default function Profile() {
             // TODO: Replace with actual DELETE endpoint
             const response = await fetch(`/api/users/${userId}`, {
                 method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
             });
 
             if (!response.ok) {

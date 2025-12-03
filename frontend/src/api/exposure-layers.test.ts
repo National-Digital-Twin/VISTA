@@ -2,13 +2,12 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 import { fetchExposureLayers } from './exposure-layers';
 
-vi.mock('./utils', () => ({
-    fetchOptions: {
-        headers: {
-            'Content-Type': 'application/json',
+vi.mock('@/config/app-config', () => ({
+    default: {
+        services: {
+            apiBaseUrl: '/ndtp-python/api',
         },
     },
-    createApiEndpoint: (path: string) => `/ndtp-python/api/${path}`,
 }));
 
 describe('exposure-layers API', () => {
@@ -48,7 +47,7 @@ describe('exposure-layers API', () => {
             expect(result.features[0].id).toBe('35a910f3-f611-4096-ac0b-0928c5612e32');
             expect(result.features[0].geometry.type).toBe('Polygon');
             expect(result.features[0].properties?.name).toBe('Test Layer 1');
-            expect(fetchMock).toHaveBeenCalledWith(expect.stringContaining('/exposurelayers/'), {
+            expect(fetchMock).toHaveBeenCalledWith(expect.stringContaining('/ndtp-python/api/exposurelayers/'), {
                 headers: { 'Content-Type': 'application/json' },
             });
         });

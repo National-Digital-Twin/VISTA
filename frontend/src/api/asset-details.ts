@@ -1,4 +1,4 @@
-import { createApiEndpoint, fetchOptions } from './utils';
+import config from '@/config/app-config';
 
 export interface AssetDetailsResponse {
     readonly id: string;
@@ -29,7 +29,9 @@ export interface AssetDetailsResponse {
 }
 
 export const fetchAssetDetails = async (assetId: string): Promise<AssetDetailsResponse> => {
-    const response = await fetch(createApiEndpoint(`assets/${assetId}/`), fetchOptions);
+    const response = await fetch(`${config.services.apiBaseUrl}/assets/${assetId}/`, {
+        headers: { 'Content-Type': 'application/json' },
+    });
     if (!response.ok) {
         throw new Error(`Failed to retrieve asset details for ${assetId}`);
     }

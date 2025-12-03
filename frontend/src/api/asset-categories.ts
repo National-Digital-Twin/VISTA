@@ -1,4 +1,4 @@
-import { createApiEndpoint, fetchOptions } from './utils';
+import config from '@/config/app-config';
 
 export interface AssetType {
     readonly id: string;
@@ -20,7 +20,9 @@ export interface AssetCategory {
 
 export const fetchAssetCategories = async (): Promise<AssetCategory[]> => {
     try {
-        const response = await fetch(createApiEndpoint('assetcategories/'), fetchOptions);
+        const response = await fetch(`${config.services.apiBaseUrl}/assetcategories/`, {
+            headers: { 'Content-Type': 'application/json' },
+        });
 
         if (!response.ok) {
             throw new Error(`Failed to retrieve asset categories: ${response.statusText}`);

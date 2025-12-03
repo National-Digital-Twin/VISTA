@@ -1,4 +1,4 @@
-import { createApiEndpoint, fetchOptions } from './utils';
+import config from '@/config/app-config';
 
 export interface DataSource {
     id: string;
@@ -9,7 +9,9 @@ export interface DataSource {
 }
 
 export const fetchDataSources = async (): Promise<DataSource[]> => {
-    const response = await fetch(createApiEndpoint('datasources/'), fetchOptions);
+    const response = await fetch(`${config.services.apiBaseUrl}/datasources/`, {
+        headers: { 'Content-Type': 'application/json' },
+    });
 
     if (!response.ok) {
         throw new Error(`Failed to fetch data sources: ${response.statusText}`);

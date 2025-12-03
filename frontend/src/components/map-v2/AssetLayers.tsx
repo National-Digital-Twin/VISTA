@@ -5,7 +5,7 @@ import type { Feature } from 'geojson';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { isIconPreloaded } from './hooks/usePreloadAssetIcons';
 import AssetTooltip from './panels/AssetTooltip';
-import { generatePointAssetFeatures, generateLinearAssetFeatures } from '@/components/Map/map-utils';
+import { generatePointAssetFeatures, generateLinearAssetFeatures } from '@/utils/map-utils';
 import { findElement } from '@/utils';
 import type { Asset, Element } from '@/models';
 import type { AssetCategory } from '@/api/asset-categories';

@@ -4,15 +4,10 @@ import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { MapProvider } from 'react-map-gl/maplibre';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ApolloProvider } from '@apollo/client/react';
-import apolloClient from './api/apollo-client';
 import App from '@/App';
 import DevTools from '@/components/DevTools';
 import theme from '@/theme';
 import './index.css';
-import featureFlags, { updateFeatureFlagsFromURL } from '@/config/feature-flags';
-
-updateFeatureFlagsFromURL();
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -36,15 +31,13 @@ root.render(
     <StrictMode>
         <ThemeProvider theme={theme}>
             <CssBaseline />
-            <ApolloProvider client={apolloClient}>
-                <QueryClientProvider client={queryClient}>
-                    <DevTools enabled={featureFlags.devTools}>
-                        <MapProvider>
-                            <App />
-                        </MapProvider>
-                    </DevTools>
-                </QueryClientProvider>
-            </ApolloProvider>
+            <QueryClientProvider client={queryClient}>
+                <DevTools enabled={!import.meta.env.PROD}>
+                    <MapProvider>
+                        <App />
+                    </MapProvider>
+                </DevTools>
+            </QueryClientProvider>
         </ThemeProvider>
     </StrictMode>,
 );

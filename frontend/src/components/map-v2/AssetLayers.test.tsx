@@ -19,7 +19,7 @@ vi.mock('./hooks/usePreloadAssetIcons', () => ({
     isIconPreloaded: vi.fn(() => true),
 }));
 
-vi.mock('@/components/Map/map-utils', () => ({
+vi.mock('@/utils/map-utils', () => ({
     generatePointAssetFeatures: vi.fn((assets) =>
         assets
             .filter((asset: Asset) => asset.lat && asset.lng)

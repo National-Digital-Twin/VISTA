@@ -1,10 +1,12 @@
 import type { FeatureCollection, Feature, Geometry } from 'geojson';
-import { createApiEndpoint, fetchOptions } from './utils';
 import { parseGeometry as parseGeometryString } from './geometry-parser';
+import config from '@/config/app-config';
 
 export const fetchExposureLayers = async (): Promise<FeatureCollection> => {
     try {
-        const response = await fetch(createApiEndpoint('exposurelayers/'), fetchOptions);
+        const response = await fetch(`${config.services.apiBaseUrl}/exposurelayers/`, {
+            headers: { 'Content-Type': 'application/json' },
+        });
 
         if (!response.ok) {
             throw new Error(`Failed to retrieve exposure layers: ${response.statusText}`);

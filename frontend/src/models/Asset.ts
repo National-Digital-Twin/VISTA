@@ -5,7 +5,7 @@ import type { FoundIcon } from '@/hooks/useFindIcon';
 
 import type { ElementLike } from '@/utils';
 import { isEmpty } from '@/utils/isEmpty';
-import { getColorScale, getHexColor, getShortType, getURIFragment } from '@/utils';
+import { getColorScale, getHexColor, getURIFragment } from '@/utils';
 
 export interface AssetGeometryNode {
     uri: string;
@@ -137,10 +137,6 @@ export default class Asset {
 
     get assetClassificationPriority(): number | undefined {
         return this.assetClassification?.priority;
-    }
-
-    get shortType() {
-        return getShortType(this.type);
     }
 
     get primaryType() {

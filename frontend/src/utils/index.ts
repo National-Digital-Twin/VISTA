@@ -1,7 +1,5 @@
 import ColorScale from 'color-scales';
-import { noCase } from 'change-case';
 import { isEmpty } from './isEmpty';
-import { prefixLookup } from '@/config/uri-prefix';
 
 /* This type is limited and internal here */
 export type ElementLike = { id: string; elementType: 'dependency' | 'asset' };
@@ -20,19 +18,6 @@ export function isAsset<T extends ElementLike>(element?: T) {
 
 export function isDependency<T extends ElementLike>(element?: T) {
     return element?.elementType === 'dependency';
-}
-
-export function getShortType(type: string) {
-    if (type) {
-        const URLFragments = type.split('#');
-        if (URLFragments.length === 2) {
-            const prefix = prefixLookup[URLFragments[0]];
-            const name = noCase(URLFragments[1]);
-            return prefix + name;
-        }
-        return type;
-    }
-    return type;
 }
 
 export function getURIFragment(uri: string) {
