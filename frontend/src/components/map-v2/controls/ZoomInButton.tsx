@@ -3,9 +3,9 @@ import type { MapRef } from 'react-map-gl/maplibre';
 import type { RefObject } from 'react';
 import ControlButton from '../ControlButton';
 
-interface ZoomInButtonProps {
-    readonly mapRef: RefObject<MapRef | null>;
-}
+type ZoomInButtonProps = {
+    mapRef: RefObject<MapRef | null>;
+};
 
 const ZoomInButton = ({ mapRef }: ZoomInButtonProps) => {
     const handleClick = useCallback(() => {

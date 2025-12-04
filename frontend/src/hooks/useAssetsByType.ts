@@ -1,12 +1,11 @@
 import { useMemo } from 'react';
 import { useQueries } from '@tanstack/react-query';
-import { fetchAssetsByType } from '@/api/assets-by-type';
-import type { Asset } from '@/models';
+import { fetchAssetsByType, type Asset } from '@/api/assets-by-type';
 
-export interface UseAssetsByTypeOptions {
-    readonly selectedAssetTypeIds: string[];
-    readonly iconMap?: Map<string, string>;
-}
+export type UseAssetsByTypeOptions = {
+    selectedAssetTypeIds: string[];
+    iconMap?: Map<string, string>;
+};
 
 export const useAssetsByType = ({ selectedAssetTypeIds, iconMap }: UseAssetsByTypeOptions) => {
     const queries = useQueries({

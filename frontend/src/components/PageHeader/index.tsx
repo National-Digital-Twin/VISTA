@@ -8,9 +8,9 @@ import Navigation from './Navigation';
 import Notifications from './Notifications';
 import UserMenu from './UserMenu';
 
-interface PageHeaderProps {
+type PageHeaderProps = {
     appName: string;
-}
+};
 
 const PageHeader = ({ appName }: Readonly<PageHeaderProps>) => {
     const theme = useTheme();
@@ -35,8 +35,6 @@ const PageHeader = ({ appName }: Readonly<PageHeaderProps>) => {
             case 'Map':
                 navigate('/');
                 break;
-            default:
-                console.log(`Unknown navigation item: ${item}`);
         }
     };
 

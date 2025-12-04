@@ -1,36 +1,31 @@
 import config from '@/config/app-config';
 
-export interface AssetType {
-    readonly id: string;
-    readonly name: string;
-    readonly icon?: string;
-}
+export type AssetType = {
+    id: string;
+    name: string;
+    icon?: string;
+};
 
-export interface SubCategory {
-    readonly id: string;
-    readonly name: string;
-    readonly assetTypes: AssetType[];
-}
+export type SubCategory = {
+    id: string;
+    name: string;
+    assetTypes: AssetType[];
+};
 
-export interface AssetCategory {
-    readonly id: string;
-    readonly name: string;
-    readonly subCategories: SubCategory[];
-}
+export type AssetCategory = {
+    id: string;
+    name: string;
+    subCategories: SubCategory[];
+};
 
 export const fetchAssetCategories = async (): Promise<AssetCategory[]> => {
-    try {
-        const response = await fetch(`${config.services.apiBaseUrl}/assetcategories/`, {
-            headers: { 'Content-Type': 'application/json' },
-        });
+    const response = await fetch(`${config.services.apiBaseUrl}/assetcategories/`, {
+        headers: { 'Content-Type': 'application/json' },
+    });
 
-        if (!response.ok) {
-            throw new Error(`Failed to retrieve asset categories: ${response.statusText}`);
-        }
-
-        return await response.json();
-    } catch (error) {
-        console.error('Error fetching asset categories:', error);
-        throw error;
+    if (!response.ok) {
+        throw new Error(`Failed to retrieve asset categories: ${response.statusText}`);
     }
+
+    return await response.json();
 };

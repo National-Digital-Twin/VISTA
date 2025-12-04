@@ -1,11 +1,11 @@
 import { useEffect, useRef, useMemo } from 'react';
 import { icon } from '@fortawesome/fontawesome-svg-core';
-import type { Asset } from '@/models';
+import type { Asset } from '@/api/assets-by-type';
 
-interface PreloadedIcon {
-    readonly iconName: string;
-    readonly loaded: boolean;
-}
+type PreloadedIcon = {
+    iconName: string;
+    loaded: boolean;
+};
 
 const iconCache = new Map<string, PreloadedIcon>();
 

@@ -1,10 +1,9 @@
 import { useState } from 'react';
-import type { SyntheticEvent } from 'react';
+import type { SyntheticEvent, ReactNode } from 'react';
 import { Box, Tabs, Tab, Typography } from '@mui/material';
 import ConnectedAssetsList from './ConnectedAssetsList';
-import { a11yProps, TabPanel } from '@/utils/tabHelpers';
 
-interface ConnectedAssetsSectionProps {
+type ConnectedAssetsSectionProps = {
     readonly filteredDependents: Array<{
         id: string;
         name: string;
@@ -15,6 +14,49 @@ interface ConnectedAssetsSectionProps {
         name: string;
         assetType: string;
     }>;
+};
+
+function a11yProps(index: number) {
+    return {
+        'id': `simple-tab-${index}`,
+        'aria-controls': `simple-tabpanel-${index}`,
+    };
+}
+
+type TabPanelProps = {
+    readonly children?: ReactNode;
+    readonly index: number;
+    readonly value: number;
+    readonly containerPadding?: number;
+};
+
+function TabPanel({ children, value, index, containerPadding, ...other }: TabPanelProps) {
+    return (
+        <Box
+            sx={{
+                maxHeight: '100%',
+                height: '100%',
+                width: '100%',
+            }}
+            role="tabpanel"
+            hidden={value !== index}
+            id={`simple-tabpanel-${index}`}
+            aria-labelledby={`simple-tab-${index}`}
+            {...other}
+        >
+            {value === index && (
+                <Box
+                    sx={{
+                        maxHeight: '100%',
+                        overflowY: 'auto',
+                    }}
+                    padding={containerPadding ?? 3}
+                >
+                    {children}
+                </Box>
+            )}
+        </Box>
+    );
 }
 
 const ConnectedAssetsSection = ({ filteredDependents, filteredProviders }: ConnectedAssetsSectionProps) => {

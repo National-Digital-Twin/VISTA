@@ -7,14 +7,14 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { Box, Divider, IconButton, Menu, MenuItem, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import React, { useState } from 'react';
-import { signout } from '@/utils/signout';
+import { signout } from '@/api/auth';
 import { useUserData } from '@/hooks/useUserData';
 
-interface UserMenuProps {
+type UserMenuProps = {
     readonly onMyProfileClick?: () => void;
     readonly onAdminSettingsClick?: () => void;
     readonly onPrivacyClick?: () => void;
-}
+};
 
 export default function UserMenu({ onMyProfileClick, onAdminSettingsClick, onPrivacyClick }: UserMenuProps) {
     const theme = useTheme();

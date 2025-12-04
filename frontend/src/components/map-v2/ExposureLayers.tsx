@@ -9,11 +9,11 @@ const DEFAULT_FILL_OPACITY = 0.3;
 const DEFAULT_STROKE_COLOR = '#2E5C8A';
 const DEFAULT_STROKE_WIDTH = 2;
 
-export interface ExposureLayersProps {
-    readonly exposureLayers: FeatureCollection;
-    readonly selectedExposureLayerIds: Record<string, boolean>;
-    readonly mapReady?: boolean;
-}
+export type ExposureLayersProps = {
+    exposureLayers: FeatureCollection;
+    selectedExposureLayerIds: Record<string, boolean>;
+    mapReady?: boolean;
+};
 
 const ExposureLayers = ({ exposureLayers, selectedExposureLayerIds, mapReady }: ExposureLayersProps) => {
     const filteredFeatures = useMemo(() => {
@@ -33,7 +33,6 @@ const ExposureLayers = ({ exposureLayers, selectedExposureLayerIds, mapReady }: 
             if (idString) {
                 return enabledIdsSet.has(idString);
             }
-            console.warn('Feature missing ID:', feature);
             return false;
         });
         return filtered;

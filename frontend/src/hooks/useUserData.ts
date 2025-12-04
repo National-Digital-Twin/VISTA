@@ -2,7 +2,7 @@ import { format } from 'date-fns';
 import { useEffect, useState } from 'react';
 import config from '@/config/app-config';
 
-interface User {
+type User = {
     email?: string;
     displayName?: string;
     memberSince?: string;
@@ -12,9 +12,9 @@ interface User {
         name: string;
         memberSince: string;
     }>;
-}
+};
 
-interface UseUserDataReturn {
+type UseUserDataReturn = {
     user: User | null;
     loading: boolean;
     getUserDisplayName: () => string;
@@ -24,7 +24,7 @@ interface UseUserDataReturn {
     getUserAddedBy: () => string;
     getUserType: () => string;
     getUserGroups: () => Array<{ name: string; memberSince: string }>;
-}
+};
 
 export function useUserData(): UseUserDataReturn {
     const [user, setUser] = useState<User | null>(null);

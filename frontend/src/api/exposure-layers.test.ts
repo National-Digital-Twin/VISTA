@@ -147,15 +147,10 @@ describe('exposure-layers API', () => {
                 ]),
             });
 
-            const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-
             const result = await fetchExposureLayers();
 
             expect(result.featureCollection.features).toHaveLength(1);
             expect(result.featureCollection.features[0].id).toBe('a1b2c3d4-e5f6-7890-abcd-ef1234567890');
-            expect(consoleWarnSpy).toHaveBeenCalledWith('Failed to parse geometry for layer:', 'f9e8d7c6-b5a4-3210-9876-543210fedcba', 'Invalid Layer');
-
-            consoleWarnSpy.mockRestore();
         });
 
         it('handles multiple groups with multiple layers', async () => {
@@ -236,12 +231,7 @@ describe('exposure-layers API', () => {
         it('throws error on network failure', async () => {
             fetchMock.mockRejectedValue(new Error('Network error'));
 
-            const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-
             await expect(fetchExposureLayers()).rejects.toThrow('Network error');
-            expect(consoleErrorSpy).toHaveBeenCalledWith('Error fetching exposure layers:', expect.any(Error));
-
-            consoleErrorSpy.mockRestore();
         });
 
         it('handles empty groups array', async () => {

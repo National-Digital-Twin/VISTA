@@ -87,7 +87,6 @@ describe('asset-categories API', () => {
             fetchMock.mockRejectedValue(networkError);
 
             await expect(fetchAssetCategories()).rejects.toThrow('Network error');
-            expect(console.error).toHaveBeenCalledWith('Error fetching asset categories:', networkError);
         });
 
         it('handles JSON parsing errors', async () => {
@@ -97,7 +96,6 @@ describe('asset-categories API', () => {
             });
 
             await expect(fetchAssetCategories()).rejects.toThrow('Invalid JSON');
-            expect(console.error).toHaveBeenCalled();
         });
     });
 });

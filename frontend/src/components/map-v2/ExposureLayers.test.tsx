@@ -249,16 +249,11 @@ describe('ExposureLayers', () => {
                 ],
             };
 
-            const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-
             const { container } = renderWithProviders(
                 <ExposureLayers exposureLayers={featureWithoutId} selectedExposureLayerIds={{ 'some-id': true }} mapReady={true} />,
             );
 
             expect(container.firstChild).toBeNull();
-            expect(consoleWarnSpy).toHaveBeenCalled();
-
-            consoleWarnSpy.mockRestore();
         });
     });
 

@@ -4,10 +4,10 @@ import { Badge, IconButton, Tooltip } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { useLocation } from 'react-router-dom';
 
-interface NotificationsProps {
+type NotificationsProps = {
     readonly unseenCount?: number;
     readonly onClick?: () => void;
-}
+};
 
 export default function Notifications({ unseenCount = 0, onClick }: NotificationsProps) {
     const theme = useTheme();

@@ -9,15 +9,15 @@ import type { Feature } from 'geojson';
 import { fetchExposureLayers } from '@/api/exposure-layers';
 import IconToggle from '@/components/IconToggle';
 
-interface ExposureViewProps {
-    readonly onClose: () => void;
-    readonly selectedExposureLayerIds?: Record<string, boolean>;
-    readonly onExposureLayerToggle?: (layerId: string, enabled: boolean) => void;
-}
+type ExposureViewProps = {
+    onClose: () => void;
+    selectedExposureLayerIds?: Record<string, boolean>;
+    onExposureLayerToggle?: (layerId: string, enabled: boolean) => void;
+};
 
-interface ExposureLayerListItemTextProps {
-    readonly layer: Feature;
-}
+type ExposureLayerListItemTextProps = {
+    layer: Feature;
+};
 
 const ExposureLayerListItemText = React.memo(({ layer }: ExposureLayerListItemTextProps) => {
     const name = (layer.properties?.name as string) || 'Unnamed Layer';
@@ -33,11 +33,11 @@ const ExposureLayerListItemText = React.memo(({ layer }: ExposureLayerListItemTe
 
 ExposureLayerListItemText.displayName = 'ExposureLayerListItemText';
 
-interface ExposureLayerListProps {
-    readonly layers: Feature[];
-    readonly selectedExposureLayerIds: Record<string, boolean>;
-    readonly onToggle: (layerId: string) => void;
-}
+type ExposureLayerListProps = {
+    layers: Feature[];
+    selectedExposureLayerIds: Record<string, boolean>;
+    onToggle: (layerId: string) => void;
+};
 
 const ExposureLayerList = React.memo(({ layers, selectedExposureLayerIds, onToggle }: ExposureLayerListProps) => {
     return (
@@ -77,14 +77,14 @@ const ExposureLayerList = React.memo(({ layers, selectedExposureLayerIds, onTogg
 
 ExposureLayerList.displayName = 'ExposureLayerList';
 
-interface ExposureGroupProps {
-    readonly groupName: string;
-    readonly layers: Feature[];
-    readonly isExpanded: boolean;
-    readonly selectedExposureLayerIds: Record<string, boolean>;
-    readonly onToggleGroup: (groupName: string) => void;
-    readonly onToggleLayer: (layerId: string) => void;
-}
+type ExposureGroupProps = {
+    groupName: string;
+    layers: Feature[];
+    isExpanded: boolean;
+    selectedExposureLayerIds: Record<string, boolean>;
+    onToggleGroup: (groupName: string) => void;
+    onToggleLayer: (layerId: string) => void;
+};
 
 const ExposureGroup = React.memo(({ groupName, layers, isExpanded, selectedExposureLayerIds, onToggleGroup, onToggleLayer }: ExposureGroupProps) => {
     const handleToggle = useCallback(
@@ -184,7 +184,6 @@ const ExposureView = ({ onClose, selectedExposureLayerIds: externalSelectedExpos
             const groupName = feature.properties?.groupName as string | undefined;
             const groupId = feature.properties?.groupId as string | undefined;
             if (!groupName || !groupId) {
-                console.warn('Feature missing groupName or groupId:', feature);
                 return;
             }
             if (!groups[groupId]) {

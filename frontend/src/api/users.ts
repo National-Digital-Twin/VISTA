@@ -1,6 +1,6 @@
 import config from '@/config/app-config';
 
-export interface UserData {
+export type UserData = {
     id?: string;
     email?: string;
     name?: string;
@@ -11,11 +11,11 @@ export interface UserData {
     userType?: string;
     userSince?: string;
     groups?: Array<{ name: string; memberSince: string }>;
-}
+};
 
-export interface UsersListResponse {
+export type UsersListResponse = {
     users: UserData[];
-}
+};
 
 const USERS_API_BASE_URL = config.services.users;
 

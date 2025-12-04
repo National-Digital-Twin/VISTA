@@ -1,10 +1,10 @@
 import React from 'react';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
-export interface DevToolsContainerProps {
+export type DevToolsContainerProps = {
     /** Children */
     readonly children: React.ReactNode;
-}
+};
 
 export default function DevToolsContainer({ children }: DevToolsContainerProps) {
     return (

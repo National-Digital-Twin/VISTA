@@ -1,7 +1,7 @@
-export interface Scenario {
+export type Scenario = {
     id: string;
     name: string;
-}
+};
 
 export const fetchScenarios = async (): Promise<Scenario[]> => {
     try {

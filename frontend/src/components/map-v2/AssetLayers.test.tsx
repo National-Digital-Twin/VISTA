@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from '@mui/material/styles';
 import AssetLayers from './AssetLayers';
 import theme from '@/theme';
-import type { Asset, Element } from '@/models';
+import type { Asset } from '@/api/assets-by-type';
 
 const mockUseMap = vi.fn();
 vi.mock('react-map-gl/maplibre', () => ({
@@ -19,25 +19,6 @@ vi.mock('./hooks/usePreloadAssetIcons', () => ({
     isIconPreloaded: vi.fn(() => true),
 }));
 
-vi.mock('@/utils/map-utils', () => ({
-    generatePointAssetFeatures: vi.fn((assets) =>
-        assets
-            .filter((asset: Asset) => asset.lat && asset.lng)
-            .map((asset: Asset) => ({
-                type: 'Feature' as const,
-                geometry: {
-                    type: 'Point' as const,
-                    coordinates: [asset.lng || 0, asset.lat || 0],
-                },
-                properties: {
-                    id: asset.id,
-                    type: asset.type,
-                },
-            })),
-    ),
-    generateLinearAssetFeatures: vi.fn(() => []),
-}));
-
 vi.mock('@/hooks/useFindIcon', () => ({
     default: vi.fn(() => ({
         backgroundColor: '#000000',
@@ -47,7 +28,7 @@ vi.mock('@/hooks/useFindIcon', () => ({
 }));
 
 vi.mock('@/utils', () => ({
-    findElement: vi.fn((elements, id) => elements.find((el: Element) => el.id === id)),
+    findElement: vi.fn((elements, id) => elements.find((el: Asset) => el.id === id)),
 }));
 
 describe('AssetLayers', () => {
@@ -101,22 +82,9 @@ describe('AssetLayers', () => {
             color: '#ffffff',
             iconFallbackText: 'H',
         },
-        dependent: {},
-        elementType: 'asset',
-        createPointAsset: vi.fn(() => ({
-            type: 'Feature' as const,
-            properties: {
-                id: 'asset1',
-                criticality: 0,
-                type: '35a910f3-f611-4096-ac0b-0928c5612e32',
-            },
-            geometry: {
-                type: 'Point' as const,
-                coordinates: [0.5, 0.5],
-            },
-        })),
-        createLinearAsset: vi.fn(() => null),
-    } as unknown as Asset;
+        dependent: { criticalitySum: 0 },
+        elementType: 'asset' as const,
+    } as Asset;
 
     const defaultProps = {
         assets: [] as Asset[],
@@ -168,8 +136,18 @@ describe('AssetLayers', () => {
         });
 
         it('handles multiple assets of the same type', () => {
-            const asset1 = { ...mockAsset, id: 'asset1' } as Asset;
-            const asset2 = { ...mockAsset, id: 'asset2' } as Asset;
+            const asset1 = {
+                ...mockAsset,
+                id: 'asset1',
+                lng: 0.5,
+                lat: 0.5,
+            } as Asset;
+            const asset2 = {
+                ...mockAsset,
+                id: 'asset2',
+                lng: 0.6,
+                lat: 0.6,
+            } as Asset;
 
             renderWithProviders(<AssetLayers {...defaultProps} assets={[asset1, asset2]} selectedAssetTypes={{ [mockAsset.type]: true }} />);
 
@@ -180,11 +158,11 @@ describe('AssetLayers', () => {
 
     describe('Selected Elements', () => {
         it('applies selected styling to selected elements', () => {
-            const selectedElement: Element = {
+            const selectedElement: Asset = {
                 id: mockAsset.id,
                 type: mockAsset.type,
                 elementType: 'asset',
-            } as Element;
+            } as Asset;
 
             renderWithEnabledAsset({ selectedElements: [selectedElement] });
             expect(screen.getByTestId('marker')).toBeInTheDocument();
@@ -230,8 +208,7 @@ describe('AssetLayers', () => {
                 ...mockAsset,
                 lng: undefined,
                 lat: undefined,
-                createPointAsset: vi.fn(() => null),
-            } as unknown as Asset;
+            } as Asset;
 
             const { container } = renderWithProviders(
                 <AssetLayers {...defaultProps} assets={[assetWithoutCoords]} selectedAssetTypes={{ [mockAsset.type]: true }} />,

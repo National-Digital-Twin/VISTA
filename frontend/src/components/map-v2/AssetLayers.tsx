@@ -5,9 +5,9 @@ import type { Feature } from 'geojson';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { isIconPreloaded } from './hooks/usePreloadAssetIcons';
 import AssetTooltip from './panels/AssetTooltip';
-import { generatePointAssetFeatures, generateLinearAssetFeatures } from '@/utils/map-utils';
 import { findElement } from '@/utils';
-import type { Asset, Element } from '@/models';
+import { createPointFeature, createLinearFeature } from '@/utils/assetUtils';
+import type { Asset } from '@/api/assets-by-type';
 import type { AssetCategory } from '@/api/asset-categories';
 
 const SOURCE_ID = 'map-v2-asset-source';
@@ -22,14 +22,14 @@ const MARKER_BORDER_COLOR = '#FFFD04';
 const DEFAULT_LINE_COLOR = '#00AA00';
 const DEFAULT_LINE_WIDTH = 3;
 
-export interface AssetLayersProps {
-    readonly assets: Asset[];
-    readonly selectedAssetTypes: Record<string, boolean>;
-    readonly selectedElements?: Element[];
-    readonly onElementClick?: (elements: Element[]) => void;
-    readonly mapReady?: boolean;
-    readonly assetCategories?: AssetCategory[];
-}
+export type AssetLayersProps = {
+    assets: Asset[];
+    selectedAssetTypes: Record<string, boolean>;
+    selectedElements?: Asset[];
+    onElementClick?: (elements: Asset[]) => void;
+    mapReady?: boolean;
+    assetCategories?: AssetCategory[];
+};
 
 const AssetLayers = ({ assets, selectedAssetTypes, selectedElements = [], onElementClick, mapReady, assetCategories }: AssetLayersProps) => {
     const mapContext = useMap();
@@ -57,11 +57,14 @@ const AssetLayers = ({ assets, selectedAssetTypes, selectedElements = [], onElem
     }, [filteredAssets]);
 
     const pointFeaturesData = useMemo(() => {
-        return generatePointAssetFeatures(filteredAssets, [], selectedElements);
-    }, [filteredAssets, selectedElements]);
+        return filteredAssets.map((asset) => createPointFeature(asset)).filter((feature): feature is Feature => feature !== null);
+    }, [filteredAssets]);
 
     const linearFeatures = useMemo(() => {
-        return generateLinearAssetFeatures(filteredAssets, selectedElements);
+        return filteredAssets
+            .filter((asset) => asset.geometry && (asset.geometry.type === 'LineString' || asset.geometry.type === 'MultiLineString'))
+            .map((asset) => createLinearFeature(asset, selectedElements))
+            .filter((feature): feature is Feature => feature !== null);
     }, [filteredAssets, selectedElements]);
 
     const pointFeatures = useMemo(() => {
@@ -236,14 +239,14 @@ const AssetLayers = ({ assets, selectedAssetTypes, selectedElements = [], onElem
     );
 };
 
-interface AssetMarkerProps {
-    readonly feature: Feature;
-    readonly isSelected: boolean;
-    readonly iconStyles?: Asset['styles'];
-    readonly asset: Asset | undefined;
-    readonly onElementClick?: (elements: Element[]) => void;
-    readonly assetCategories?: AssetCategory[];
-}
+type AssetMarkerProps = {
+    feature: Feature;
+    isSelected: boolean;
+    iconStyles?: Asset['styles'];
+    asset: Asset | undefined;
+    onElementClick?: (elements: Asset[]) => void;
+    assetCategories?: AssetCategory[];
+};
 
 const AssetMarker = memo(({ feature, isSelected, iconStyles: providedIconStyles, asset, onElementClick, assetCategories }: AssetMarkerProps) => {
     const [showTooltip, setShowTooltip] = useState(false);

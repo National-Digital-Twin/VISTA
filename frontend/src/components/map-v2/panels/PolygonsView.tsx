@@ -1,9 +1,9 @@
 import { Box, IconButton, Typography } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
-interface PolygonsViewProps {
-    readonly onClose: () => void;
-}
+type PolygonsViewProps = {
+    onClose: () => void;
+};
 
 const PolygonsView = ({ onClose }: PolygonsViewProps) => {
     return (

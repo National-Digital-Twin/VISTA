@@ -6,16 +6,16 @@ import AssetsView from './panels/AssetsView';
 import ExposureView from './panels/ExposureView';
 import PolygonsView from './panels/PolygonsView';
 import AssetDetailsPanel from './panels/AssetDetailsPanel';
-import type { Element } from '@/models';
+import type { Asset } from '@/api/assets-by-type';
 
 const RAIL_WIDTH = 80;
 const PANEL_WIDTH = 420;
 
-interface MapPanelItem {
-    readonly id: string;
-    readonly label: string;
-    readonly icon: ReactElement;
-}
+type MapPanelItem = {
+    id: string;
+    label: string;
+    icon: ReactElement;
+};
 
 const FIXED_ITEMS: readonly MapPanelItem[] = [
     {
@@ -40,16 +40,16 @@ const FIXED_ITEMS: readonly MapPanelItem[] = [
     },
 ];
 
-interface MapPanelsProps {
-    readonly activeView?: string | null;
-    readonly onViewChange?: (viewId: string | null) => void;
-    readonly selectedAssetTypes?: Record<string, boolean>;
-    readonly onAssetTypeToggle?: (assetType: string, enabled: boolean) => void;
-    readonly selectedExposureLayerIds?: Record<string, boolean>;
-    readonly onExposureLayerToggle?: (layerId: string, enabled: boolean) => void;
-    readonly selectedElement?: Element | null;
-    readonly onBackFromAssetDetails?: () => void;
-}
+type MapPanelsProps = {
+    activeView?: string | null;
+    onViewChange?: (viewId: string | null) => void;
+    selectedAssetTypes?: Record<string, boolean>;
+    onAssetTypeToggle?: (assetType: string, enabled: boolean) => void;
+    selectedExposureLayerIds?: Record<string, boolean>;
+    onExposureLayerToggle?: (layerId: string, enabled: boolean) => void;
+    selectedElement?: Asset | null;
+    onBackFromAssetDetails?: () => void;
+};
 
 const MapPanels = ({
     activeView,

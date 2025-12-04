@@ -33,15 +33,15 @@ const VerticalDivider = styled(Divider)(({ theme }) => ({
     width: 2,
 }));
 
-interface DrawingToolbarProps {
-    readonly drawRef: RefObject<MapboxDraw | null>;
-    readonly drawingMode: 'circle' | 'polygon' | null;
-    readonly onDrawingModeChange: (mode: 'circle' | 'polygon' | null) => void;
-    readonly primaryAssets: boolean;
-    readonly onPrimaryAssetsChange: (enabled: boolean) => void;
-    readonly dependentAssets: boolean;
-    readonly onDependentAssetsChange: (enabled: boolean) => void;
-}
+type DrawingToolbarProps = {
+    drawRef: RefObject<MapboxDraw | null>;
+    drawingMode: 'circle' | 'polygon' | null;
+    onDrawingModeChange: (mode: 'circle' | 'polygon' | null) => void;
+    primaryAssets: boolean;
+    onPrimaryAssetsChange: (enabled: boolean) => void;
+    dependentAssets: boolean;
+    onDependentAssetsChange: (enabled: boolean) => void;
+};
 
 const DrawingToolbar = ({
     drawRef,

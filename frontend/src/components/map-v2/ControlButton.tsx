@@ -25,10 +25,10 @@ const StyledTooltip = styled(Tooltip)(({ theme }) => ({
     },
 }));
 
-interface ControlButtonProps extends Pick<IconButtonProps, 'onClick' | 'disabled' | 'children' | 'aria-label'> {
-    readonly tooltip?: string;
-    readonly isActive?: boolean;
-}
+type ControlButtonProps = Pick<IconButtonProps, 'onClick' | 'disabled' | 'children' | 'aria-label'> & {
+    tooltip?: string;
+    isActive?: boolean;
+};
 
 const ControlButton = forwardRef<HTMLButtonElement, ControlButtonProps>(({ onClick, disabled, children, 'aria-label': ariaLabel, tooltip, isActive }, ref) => {
     const button = (

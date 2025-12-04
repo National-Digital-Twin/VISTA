@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 import { fetchAssetsByType } from './assets-by-type';
-import Asset from '@/models/Asset';
 
 vi.mock('@/config/app-config', () => ({
     default: {
@@ -45,7 +44,6 @@ describe('assets-by-type API', () => {
             const result = await fetchAssetsByType(mockAssetTypeId);
 
             expect(result).toHaveLength(1);
-            expect(result[0]).toBeInstanceOf(Asset);
             expect(result[0].id).toBe('asset-1');
             expect(result[0].name).toBe('Test Asset 1');
             expect(result[0].geometry.type).toBe('Point');
@@ -220,12 +218,7 @@ describe('assets-by-type API', () => {
         it('throws error on network failure', async () => {
             fetchMock.mockRejectedValue(new Error('Network error'));
 
-            const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-
             await expect(fetchAssetsByType(mockAssetTypeId)).rejects.toThrow('Network error');
-            expect(consoleErrorSpy).toHaveBeenCalledWith(`Error fetching assets for type ${mockAssetTypeId}:`, expect.any(Error));
-
-            consoleErrorSpy.mockRestore();
         });
 
         it('handles empty response', async () => {

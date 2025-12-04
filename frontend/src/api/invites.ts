@@ -1,10 +1,10 @@
-export interface InviteData {
+export type InviteData = {
     userType: 'Admin' | 'General';
     email: string;
     groups: string[];
-}
+};
 
-export interface Invite {
+export type Invite = {
     id: string;
     email: string;
     userType: 'Admin' | 'General';
@@ -12,11 +12,11 @@ export interface Invite {
     status: 'Pending' | 'Accepted' | 'Expired';
     sentDate: string;
     daysAgo: number;
-}
+};
 
-export interface InvitesListResponse {
+export type InvitesListResponse = {
     invites: Invite[];
-}
+};
 
 export const sendInvite = async (inviteData: InviteData): Promise<Invite> => {
     // TODO: Replace with actual API endpoint
@@ -25,7 +25,6 @@ export const sendInvite = async (inviteData: InviteData): Promise<Invite> => {
     //     headers: { 'Content-Type': 'application/json' },
     //     body: JSON.stringify(inviteData),
     // });
-    console.error('Not yet implemented:', inviteData);
 
     await new Promise((resolve) => {
         setTimeout(resolve, 1000);
@@ -47,7 +46,6 @@ export const sendInvite = async (inviteData: InviteData): Promise<Invite> => {
 export const fetchAllInvites = async (): Promise<Invite[]> => {
     // TODO: Replace with actual API endpoint
     // const response = await fetch(`${config.services.invites}`);
-    console.error('Not yet implemented');
 
     const response = await fetch('/data/invites.json');
 
@@ -64,12 +62,11 @@ export const fetchAllInvites = async (): Promise<Invite[]> => {
     }));
 };
 
-export const cancelInvite = async (inviteId: string): Promise<void> => {
+export const cancelInvite = async (_inviteId: string): Promise<void> => {
     // TODO: Replace with actual API endpoint
     // const response = await fetch(`${config.services.invites}/${inviteId}`, {
     //     method: 'DELETE',
     // });
-    console.error('Not yet implemented:', inviteId);
 
     await new Promise((resolve) => {
         setTimeout(resolve, 500);
@@ -81,7 +78,6 @@ export const resendInvite = async (inviteId: string): Promise<Invite> => {
     // const response = await fetch(`${config.services.invites}/${inviteId}/resend`, {
     //     method: 'POST',
     // });
-    console.error('Not yet implemented:', inviteId);
 
     await new Promise((resolve) => {
         setTimeout(resolve, 1000);

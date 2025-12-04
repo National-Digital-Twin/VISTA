@@ -4,7 +4,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from '@mui/material/styles';
 import AssetInfoPanel from './AssetInfoPanel';
-import Asset, { AssetState } from '@/models/Asset';
+import type { Asset } from '@/api/assets-by-type';
 import theme from '@/theme';
 import type { AssetCategory } from '@/api/asset-categories';
 
@@ -47,15 +47,8 @@ describe('AssetInfoPanel', () => {
                 faIcon: '',
                 iconFallbackText: 'A',
             },
-            state: AssetState.Static,
+            state: 'Static' as const,
             elementType: 'asset' as const,
-            getDetails: vi.fn((assetInfo: any) => ({
-                title: assetInfo?.name || 'Test Asset 1',
-                type: assetInfo?.assetType || '35a910f3-f611-4096-ac0b-0928c5612e32',
-                criticality: 5,
-                id: 'asset1',
-                elementType: 'asset',
-            })),
             ...overrides,
         } as unknown as Asset;
     };

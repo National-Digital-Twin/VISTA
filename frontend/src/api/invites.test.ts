@@ -3,12 +3,10 @@ import { sendInvite, fetchAllInvites, cancelInvite, resendInvite, type InviteDat
 
 describe('invites API', () => {
     let fetchMock: ReturnType<typeof vi.fn>;
-    let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
 
     beforeEach(() => {
         fetchMock = vi.fn();
         globalThis.fetch = fetchMock as any;
-        consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
         vi.useFakeTimers();
     });
 
@@ -29,7 +27,6 @@ describe('invites API', () => {
             await vi.advanceTimersByTimeAsync(1000);
             const result = await promise;
 
-            expect(consoleErrorSpy).toHaveBeenCalledWith('Not yet implemented:', inviteData);
             expect(result).toHaveProperty('id');
             expect(result.email).toBe('newuser@example.com');
             expect(result.userType).toBe('Admin');
@@ -151,7 +148,6 @@ describe('invites API', () => {
             const result = await fetchAllInvites();
 
             expect(fetchMock).toHaveBeenCalledWith('/data/invites.json');
-            expect(consoleErrorSpy).toHaveBeenCalledWith('Not yet implemented');
             expect(result).toHaveLength(3);
         });
 
@@ -268,8 +264,6 @@ describe('invites API', () => {
             const promise = cancelInvite('invite-123');
             await vi.advanceTimersByTimeAsync(500);
             await promise;
-
-            expect(consoleErrorSpy).toHaveBeenCalledWith('Not yet implemented:', 'invite-123');
         });
 
         it('resolves after delay', async () => {
@@ -296,9 +290,6 @@ describe('invites API', () => {
             const promise2 = cancelInvite('invite-2');
             await vi.advanceTimersByTimeAsync(500);
             await promise2;
-
-            expect(consoleErrorSpy).toHaveBeenCalledWith('Not yet implemented:', 'invite-1');
-            expect(consoleErrorSpy).toHaveBeenCalledWith('Not yet implemented:', 'invite-2');
         });
     });
 
@@ -308,7 +299,6 @@ describe('invites API', () => {
             await vi.advanceTimersByTimeAsync(1000);
             const result = await promise;
 
-            expect(consoleErrorSpy).toHaveBeenCalledWith('Not yet implemented:', 'invite-789');
             expect(result.id).toBe('invite-789');
             expect(result.status).toBe('Pending');
             expect(result.daysAgo).toBe(0);

@@ -12,7 +12,7 @@ vi.mock('@/hooks/useUserData', () => ({
     useUserData: () => mockUseUserData(),
 }));
 
-vi.mock('@/utils/signout', () => ({
+vi.mock('@/api/auth', () => ({
     signout: vi.fn(),
 }));
 
@@ -170,7 +170,7 @@ describe('UserMenu', () => {
     });
 
     it('calls signout when Sign Out is clicked', async () => {
-        const { signout } = await vi.importMock<typeof import('@/utils/signout')>('@/utils/signout');
+        const { signout } = await vi.importMock<typeof import('@/api/auth')>('@/api/auth');
         renderWithProviders(<UserMenu />);
 
         const icon = screen.getByTestId('AccountCircleOutlinedIcon');

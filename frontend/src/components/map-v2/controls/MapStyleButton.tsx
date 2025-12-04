@@ -1,10 +1,10 @@
 import { forwardRef } from 'react';
 import ControlButton from '../ControlButton';
 
-interface MapStyleButtonProps {
-    readonly isOpen: boolean;
-    readonly onToggle: () => void;
-}
+type MapStyleButtonProps = {
+    isOpen: boolean;
+    onToggle: () => void;
+};
 
 const MapStyleButton = forwardRef<HTMLButtonElement, MapStyleButtonProps>(({ isOpen, onToggle }, ref) => {
     return (
