@@ -1,4 +1,4 @@
-"""Serializer for application models."""
+"""Serializers for Asset models."""
 
 from typing import ClassVar
 
@@ -7,9 +7,6 @@ from rest_framework_gis.fields import GeometryField
 
 from api.models.asset import Asset
 from api.models.asset_type import AssetCategory, AssetSubCategory, AssetType
-from api.models.dependency import Dependency
-
-from .models import DataSource, ExposureLayer, ExposureLayerType
 
 
 class AssetTypeSerializer(serializers.ModelSerializer):
@@ -58,42 +55,17 @@ class AssetListSerializer(serializers.ModelSerializer):
         fields: ClassVar[list[str]] = ["id", "name", "geom", "type"]
 
 
-class DataSourceSerializer(serializers.ModelSerializer):
-    """Serializer for the DataSource model."""
+class ScenarioAssetSerializer(serializers.ModelSerializer):
+    """Serializer for assets in scenario context with GeoJSON geometry."""
 
-    asset_count = serializers.IntegerField(read_only=True)
-    last_updated = serializers.DateTimeField(read_only=True)
-
-    class Meta:
-        """Configuration for the `DataSourceSerializer`."""
-
-        model = DataSource
-        fields: ClassVar[list[str]] = ["id", "name", "owner", "asset_count", "last_updated"]
-
-
-class IdpUserSerializer(serializers.Serializer):
-    """Serializer for the IdpUser domain object."""
-
-    id = serializers.CharField()
-    email = serializers.EmailField()
-    name = serializers.CharField(allow_null=True, required=False)
-    enabled = serializers.BooleanField()
-    status = serializers.CharField(allow_null=True, required=False)
-    user_since = serializers.CharField()
-
-
-class DependencySerializer(serializers.ModelSerializer):
-    """Serializer for the Dependency model."""
-
-    provider_asset = AssetListSerializer()
-    dependent_asset = AssetListSerializer()
+    type = AssetTypeSerializer()
+    geometry = GeometryField(source="geom")
 
     class Meta:
-        """Configuration for the `DependencySerializer`."""
+        """Configuration for the `ScenarioAssetSerializer`."""
 
-        model = Dependency
-        fields: ClassVar[list[str]] = ["id", "provider_asset", "dependent_asset"]
-        read_only_fields: ClassVar[list[str]] = ["id"]
+        model = Asset
+        fields: ClassVar[list[str]] = ["id", "name", "geometry", "type"]
 
 
 class AssetDetailSerializer(serializers.ModelSerializer):
@@ -118,27 +90,3 @@ class AssetDetailSerializer(serializers.ModelSerializer):
         """Get dependents of asset."""
         deps = obj.provider.all()
         return AssetListSerializer((d.dependent_asset for d in deps), many=True).data
-
-
-class ExposureLayerSerializer(serializers.ModelSerializer):
-    """Serializer for the ExposureLayer model."""
-
-    geometry = GeometryField()
-
-    class Meta:
-        """Configuration for the `ExposureLayerSerializer`."""
-
-        model = ExposureLayer
-        fields: ClassVar[list[str]] = ["id", "name", "geometry"]
-
-
-class ExposureLayerTypeSerializer(serializers.ModelSerializer):
-    """Serializer for the Exposure Layer Type model."""
-
-    exposure_layers = ExposureLayerSerializer(many=True, read_only=True)
-
-    class Meta:
-        """Configuration for the `ExposureLayerTypeSerializer`."""
-
-        model = ExposureLayerType
-        fields: ClassVar[list[str]] = ["id", "name", "exposure_layers"]

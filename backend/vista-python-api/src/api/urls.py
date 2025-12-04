@@ -21,10 +21,38 @@ router.register(r"users", ApplicationUserViewSet, basename="user")
 router.register(r"datasources", DataSourceViewSet, basename="datasource")
 router.register(r"dependency", DependencyViewSet)
 router.register(r"exposurelayers", views.ExposureLayerViewSet, basename="exposurelayer")
+router.register(r"scenarios", views.ScenarioViewSet, basename="scenario")
 
 urlpatterns = [
     path("graphql/", NoMultipartGraphQLView.as_view(schema=schema), name="graphql"),
     path("user/", rest_views.user_details_view, name="api-user"),
     path("auth/signout/", rest_views.signout_view, name="signout"),
+    path(
+        "scenarios/<uuid:scenario_id>/focus-areas/",
+        views.FocusAreaViewSet.as_view({"get": "list", "post": "create"}),
+        name="focus-area-list",
+    ),
+    path(
+        "scenarios/<uuid:scenario_id>/focus-areas/<uuid:pk>/",
+        views.FocusAreaViewSet.as_view(
+            {"get": "retrieve", "patch": "partial_update", "delete": "destroy"}
+        ),
+        name="focus-area-detail",
+    ),
+    path(
+        "scenarios/<uuid:scenario_id>/visible-asset-types/",
+        views.VisibleAssetTypeView.as_view(),
+        name="visible-asset-types",
+    ),
+    path(
+        "scenarios/<uuid:scenario_id>/asset-types/",
+        views.ScenarioAssetTypesView.as_view(),
+        name="scenario-asset-types",
+    ),
+    path(
+        "scenarios/<uuid:scenario_id>/assets/",
+        views.ScenarioAssetsView.as_view(),
+        name="scenario-assets",
+    ),
     path("", include(router.urls)),
 ]
