@@ -65,7 +65,7 @@ def test_enable_asset_type_map_wide(scenario, asset_type, client):
     """Test enabling an asset type map-wide (no focus area)."""
     response = client.put(
         f"/api/scenarios/{scenario.id}/visible-asset-types/",
-        data=json.dumps({"asset_type_id": str(asset_type.id), "is_active": True}),
+        data=json.dumps({"assetTypeId": str(asset_type.id), "isActive": True}),
         content_type="application/json",
     )
     data = response.json()
@@ -91,9 +91,9 @@ def test_enable_asset_type_for_focus_area(scenario, asset_type, focus_area, clie
         f"/api/scenarios/{scenario.id}/visible-asset-types/",
         data=json.dumps(
             {
-                "asset_type_id": str(asset_type.id),
-                "focus_area_id": str(focus_area.id),
-                "is_active": True,
+                "assetTypeId": str(asset_type.id),
+                "focusAreaId": str(focus_area.id),
+                "isActive": True,
             }
         ),
         content_type="application/json",
@@ -126,7 +126,7 @@ def test_disable_asset_type_deletes_record(scenario, asset_type, client):
 
     response = client.put(
         f"/api/scenarios/{scenario.id}/visible-asset-types/",
-        data=json.dumps({"asset_type_id": str(asset_type.id), "is_active": False}),
+        data=json.dumps({"assetTypeId": str(asset_type.id), "isActive": False}),
         content_type="application/json",
     )
     data = response.json()
@@ -145,7 +145,7 @@ def test_disable_asset_type_deletes_record(scenario, asset_type, client):
 def test_enable_is_idempotent(scenario, asset_type, client):
     """Test that enabling twice doesn't create duplicates."""
     url = f"/api/scenarios/{scenario.id}/visible-asset-types/"
-    payload = json.dumps({"asset_type_id": str(asset_type.id), "is_active": True})
+    payload = json.dumps({"assetTypeId": str(asset_type.id), "isActive": True})
 
     client.put(url, data=payload, content_type="application/json")
     client.put(url, data=payload, content_type="application/json")
@@ -165,7 +165,7 @@ def test_disable_nonexistent_is_noop(scenario, asset_type, client):
     """Test that disabling a non-visible asset type is a no-op."""
     response = client.put(
         f"/api/scenarios/{scenario.id}/visible-asset-types/",
-        data=json.dumps({"asset_type_id": str(asset_type.id), "is_active": False}),
+        data=json.dumps({"assetTypeId": str(asset_type.id), "isActive": False}),
         content_type="application/json",
     )
 
@@ -198,7 +198,7 @@ def test_scenario_asset_types_after_enable(scenario, asset_type, client):
     """Test isActive is true after enabling visibility."""
     client.put(
         f"/api/scenarios/{scenario.id}/visible-asset-types/",
-        data=json.dumps({"asset_type_id": str(asset_type.id), "is_active": True}),
+        data=json.dumps({"assetTypeId": str(asset_type.id), "isActive": True}),
         content_type="application/json",
     )
 
@@ -216,9 +216,9 @@ def test_scenario_asset_types_with_focus_area(scenario, asset_type, focus_area, 
         f"/api/scenarios/{scenario.id}/visible-asset-types/",
         data=json.dumps(
             {
-                "asset_type_id": str(asset_type.id),
-                "focus_area_id": str(focus_area.id),
-                "is_active": True,
+                "assetTypeId": str(asset_type.id),
+                "focusAreaId": str(focus_area.id),
+                "isActive": True,
             }
         ),
         content_type="application/json",
@@ -268,7 +268,7 @@ def test_disable_map_wide_does_not_affect_focus_area(scenario, asset_type, focus
     # Disable map-wide
     response = client.put(
         f"/api/scenarios/{scenario.id}/visible-asset-types/",
-        data=json.dumps({"asset_type_id": str(asset_type.id), "is_active": False}),
+        data=json.dumps({"assetTypeId": str(asset_type.id), "isActive": False}),
         content_type="application/json",
     )
 
@@ -315,9 +315,9 @@ def test_disable_focus_area_does_not_affect_map_wide(scenario, asset_type, focus
         f"/api/scenarios/{scenario.id}/visible-asset-types/",
         data=json.dumps(
             {
-                "asset_type_id": str(asset_type.id),
-                "focus_area_id": str(focus_area.id),
-                "is_active": False,
+                "assetTypeId": str(asset_type.id),
+                "focusAreaId": str(focus_area.id),
+                "isActive": False,
             }
         ),
         content_type="application/json",

@@ -127,7 +127,7 @@ def test_update_focus_area_is_active(focus_areas, scenario, client):
     area = focus_areas[0]
     response = client.patch(
         f"/api/scenarios/{scenario.id}/focus-areas/{area.id}/",
-        data=json.dumps({"is_active": False}),
+        data=json.dumps({"isActive": False}),
         content_type="application/json",
     )
     data = response.json()

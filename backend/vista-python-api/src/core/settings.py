@@ -76,7 +76,8 @@ MIDDLEWARE = [
 ]
 
 REST_FRAMEWORK = {
-    "DEFAULT_RENDERER_CLASSES": ("api.utils.camel_case_renderer.CamelCaseJSONRenderer",),
+    "DEFAULT_RENDERER_CLASSES": ("api.utils.json_case_converter.CamelCaseJSONRenderer",),
+    "DEFAULT_PARSER_CLASSES": ("api.utils.json_case_converter.CamelCaseJSONParser",),
 }
 
 ROOT_URLCONF = "core.urls"
