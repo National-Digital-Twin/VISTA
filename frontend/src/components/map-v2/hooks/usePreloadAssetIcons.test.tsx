@@ -3,7 +3,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { usePreloadAssetIcons, isIconPreloaded } from './usePreloadAssetIcons';
-import type { Asset } from '@/models';
+import type { Asset } from '@/api/assets-by-type';
 
 const mockIcon = vi.fn();
 vi.mock('@fortawesome/fontawesome-svg-core', () => ({

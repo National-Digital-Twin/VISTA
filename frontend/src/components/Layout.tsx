@@ -1,13 +1,9 @@
 import { Box } from '@mui/material';
-import { Outlet, useLocation } from 'react-router-dom';
-import { ElementsProvider } from '../context/ElementContext';
+import { Outlet } from 'react-router-dom';
 import PageHeader from './PageHeader';
 
 export default function Layout() {
-    const location = useLocation();
-    const isLegacyMapRoute = location.pathname === '/legacy-map';
-
-    const content = (
+    return (
         <Box
             sx={{
                 height: '100vh',
@@ -32,10 +28,4 @@ export default function Layout() {
             </Box>
         </Box>
     );
-
-    if (isLegacyMapRoute) {
-        return <ElementsProvider>{content}</ElementsProvider>;
-    }
-
-    return content;
 }

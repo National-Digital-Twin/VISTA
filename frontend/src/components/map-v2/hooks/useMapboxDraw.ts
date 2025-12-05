@@ -5,13 +5,13 @@ import { CircleMode, DragCircleMode } from '@/vendor/mapbox-gl-draw-circle';
 
 type StyleType = 'fill' | 'line' | 'circle' | 'symbol' | 'raster' | 'background';
 
-interface DrawStyle {
-    readonly id: string;
-    readonly type: StyleType;
-    readonly filter?: (string | number | boolean | (string | number | boolean)[])[];
-    readonly layout?: Record<string, string | number | boolean>;
-    readonly paint?: Record<string, string | number | boolean | (string | number)[]>;
-}
+type DrawStyle = {
+    id: string;
+    type: StyleType;
+    filter?: (string | number | boolean | (string | number | boolean)[])[];
+    layout?: Record<string, string | number | boolean>;
+    paint?: Record<string, string | number | boolean | (string | number)[]>;
+};
 
 const DRAW_STYLES: readonly DrawStyle[] = [
     {

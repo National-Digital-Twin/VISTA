@@ -10,17 +10,17 @@ import { SearchTextField } from '@/components/SearchTextField';
 import { fetchAssetCategories, type AssetCategory, type SubCategory, type AssetType } from '@/api/asset-categories';
 import ToggleSwitch from '@/components/ToggleSwitch';
 
-interface AssetsViewProps {
+type AssetsViewProps = {
     readonly onClose: () => void;
     readonly selectedAssetTypes?: Record<string, boolean>;
     readonly onAssetTypeToggle?: (assetTypeId: string, enabled: boolean) => void;
-}
+};
 
 type SortOption = 'a-z' | 'z-a';
 
-interface AssetTypeListItemTextProps {
+type AssetTypeListItemTextProps = {
     readonly assetType: AssetType;
-}
+};
 
 function AssetTypeListItemText({ assetType }: AssetTypeListItemTextProps) {
     return (
@@ -33,11 +33,11 @@ function AssetTypeListItemText({ assetType }: AssetTypeListItemTextProps) {
     );
 }
 
-interface AssetTypeListProps {
+type AssetTypeListProps = {
     readonly assetTypes: AssetType[];
     readonly selectedAssetTypes: Record<string, boolean>;
     readonly onToggle: (assetTypeId: string) => void;
-}
+};
 
 function AssetTypeList({ assetTypes, selectedAssetTypes, onToggle }: AssetTypeListProps) {
     return (

@@ -3,14 +3,14 @@ import type { SyntheticEvent } from 'react';
 import classNames from 'classnames';
 import styles from './style.module.css';
 
-export interface AuthPromptProps {
+export type AuthPromptProps = {
     /** Additional classes to add to the top-level element */
     readonly className?: string;
     /** Error from the last login, if any */
     readonly error?: string;
     /** How to perform a login. If missing, this is disabled */
     readonly onLogIn?: (key: string) => void;
-}
+};
 
 /** Top-level authentication prompt */
 export default function AuthPrompt({ className, error, onLogIn }: AuthPromptProps) {

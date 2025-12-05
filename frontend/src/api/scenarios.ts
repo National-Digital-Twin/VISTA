@@ -1,7 +1,7 @@
-export interface Scenario {
+export type Scenario = {
     id: string;
     name: string;
-}
+};
 
 export const fetchScenarios = async (): Promise<Scenario[]> => {
     try {
@@ -13,7 +13,10 @@ export const fetchScenarios = async (): Promise<Scenario[]> => {
 
         return await response.json();
     } catch {
-        const mockScenarios: Scenario[] = (await import('@/data/scenarios.json')).default as Scenario[];
-        return mockScenarios;
+        const response = await fetch('/data/scenarios.json');
+        if (!response.ok) {
+            throw new Error(`Failed to fetch mock scenarios: ${response.statusText}`);
+        }
+        return await response.json();
     }
 };

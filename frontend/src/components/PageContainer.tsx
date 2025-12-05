@@ -1,9 +1,9 @@
 import React from 'react';
 import { Container, ContainerProps } from '@mui/material';
 
-interface PageContainerProps extends Omit<ContainerProps, 'maxWidth'> {
+type PageContainerProps = Omit<ContainerProps, 'maxWidth'> & {
     children: React.ReactNode;
-}
+};
 
 const PageContainer: React.FC<PageContainerProps> = ({ children, sx, ...props }) => {
     return (

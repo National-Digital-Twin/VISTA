@@ -3,12 +3,12 @@ import { forwardRef, type ChangeEvent } from 'react';
 import type { MapStyleKey } from '../../constants';
 import { MAP_STYLE_OPTIONS } from '../../constants';
 
-interface MapStylePanelProps {
-    readonly currentStyle: MapStyleKey;
-    readonly onStyleChange: (style: MapStyleKey) => void;
-    readonly isOpen: boolean;
-    readonly onToggle: () => void;
-}
+type MapStylePanelProps = {
+    currentStyle: MapStyleKey;
+    onStyleChange: (style: MapStyleKey) => void;
+    isOpen: boolean;
+    onToggle: () => void;
+};
 
 const MapStylePanel = forwardRef<HTMLDivElement, MapStylePanelProps>(({ currentStyle, onStyleChange, isOpen, onToggle }, ref) => {
     const handleStyleChange = (event: ChangeEvent<HTMLInputElement>) => {

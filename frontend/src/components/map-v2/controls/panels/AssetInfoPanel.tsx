@@ -1,15 +1,15 @@
 import { Paper, Stack, Typography, Table, TableContainer, TableHead, TableBody, TableRow, TableCell, TablePagination, Box } from '@mui/material';
 import { forwardRef, useState, useMemo, useCallback } from 'react';
 import { getAssetTypeName } from '../../utils/getAssetTypeName';
-import type { Asset } from '@/models';
+import type { Asset } from '@/api/assets-by-type';
 import type { AssetCategory } from '@/api/asset-categories';
 
-interface AssetInfoPanelProps {
-    readonly open: boolean;
-    readonly assets: Asset[];
-    readonly assetCategories?: AssetCategory[];
-    readonly isFullScreen?: boolean;
-}
+type AssetInfoPanelProps = {
+    open: boolean;
+    assets: Asset[];
+    assetCategories?: AssetCategory[];
+    isFullScreen?: boolean;
+};
 
 const ROWS_PER_PAGE = 20;
 

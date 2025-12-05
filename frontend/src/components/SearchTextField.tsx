@@ -1,13 +1,13 @@
 import { TextField, InputAdornment } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 
-interface SearchTextFieldProps {
+type SearchTextFieldProps = {
     readonly placeholder: string;
     readonly value: string;
     readonly onChange: (value: string) => void;
     readonly minWidth?: number;
     readonly fullWidth?: boolean;
-}
+};
 
 export function SearchTextField({ placeholder, value, onChange, minWidth = 300, fullWidth = false }: SearchTextFieldProps) {
     return (

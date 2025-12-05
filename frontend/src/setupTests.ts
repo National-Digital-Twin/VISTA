@@ -6,18 +6,6 @@ vi.mock('mapbox-gl-draw-geodesic', () => ({
     getCircleCenter: vi.fn(),
 }));
 
-vi.mock('./config/feature-flags', () => ({
-    default: {
-        devTools: true,
-        routing: true,
-        uiNext: true,
-        pageHeader: false,
-        feedbackWidget: false,
-        environmentallySensitiveAreas: true,
-        assetTable: true,
-    },
-}));
-
 vi.mock('./config/app-config', () => ({
     default: {
         map: {
@@ -28,7 +16,6 @@ vi.mock('./config/app-config', () => ({
         },
         services: {
             ontology: '/transparent-proxy',
-            ndtpPython: '/ndtp-python/api/graphql/',
             user: '/ndtp-python/api/user/',
             signout: '/ndtp-python/api/auth/signout/',
         },

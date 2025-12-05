@@ -28,11 +28,6 @@ declare module '*.module.css' {
     export default classes;
 }
 
-declare module '*.graphql' {
-    const Query: import('graphql').DocumentNode;
-    export default Query;
-}
-
 interface ImportMetaEnv {
     readonly MODE: string;
     readonly PROD: boolean;

@@ -10,7 +10,6 @@ const config = {
     services: {
         ontology: import.meta.env.VITE_ONTOLOGY_SERVICE_URL || '/transparent-proxy',
         apiBaseUrl: import.meta.env.VITE_NDTP_PYTHON_API_BASE_URL || '/ndtp-python/api',
-        ndtpPython: '/ndtp-python/api/graphql/',
         user: '/ndtp-python/api/user/',
         users: '/ndtp-python/api/users/',
         signout: '/ndtp-python/api/auth/signout/',
@@ -26,8 +25,8 @@ if (!config.api.url) {
 
 if (!config.services.ontology) {
     config.configErrors.push(
-        "No VITE_PARALOG_API_URI is specified in .env - please check it's present. " +
-            'For local dev this is probably http://localhost:4001. ' +
+        "No VITE_ONTOLOGY_SERVICE_URL is specified in .env - please check it's present. " +
+            'For local dev this is probably http://localhost:3030. ' +
             'Note that these environment variables now all need a VITE_ prefix (see PR #95).',
     );
 }

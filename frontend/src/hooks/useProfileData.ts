@@ -2,7 +2,7 @@ import { format } from 'date-fns';
 import { useEffect, useState } from 'react';
 import { fetchCurrentUser, fetchUserById, UserData } from '@/api/users';
 
-interface ProfileData {
+type ProfileData = {
     user: UserData | null;
     loading: boolean;
     error: string | null;
@@ -14,7 +14,7 @@ interface ProfileData {
     getUserAddedBy: () => string;
     getUserType: () => string;
     getUserGroups: () => Array<{ name: string; memberSince: string }>;
-}
+};
 
 export function useProfileData(userId?: string): ProfileData {
     const [user, setUser] = useState<UserData | null>(null);
@@ -29,18 +29,14 @@ export function useProfileData(userId?: string): ProfileData {
 
             try {
                 if (userId === undefined || userId === null) {
-                    // Only fetch current user when viewing own profile
                     try {
                         const currentUser = await fetchCurrentUser();
                         setCurrentUserId(currentUser?.id || currentUser?.email || null);
-                    } catch (error) {
-                        console.warn('Could not fetch current user, continuing anyway:', error);
+                    } catch {
                         setCurrentUserId(null);
                     }
                     const apiUser = await fetchCurrentUser();
 
-                    // TODO: Mock data for fields not yet returned by the API
-                    // Transform groups from string array to object array
                     const groups = Array.isArray(apiUser?.groups)
                         ? apiUser.groups.map((group: string | { name: string; memberSince: string }) => {
                               if (typeof group === 'string') {
@@ -79,10 +75,7 @@ export function useProfileData(userId?: string): ProfileData {
 
                     setUser(transformedUser);
                 }
-            } catch (error) {
-                console.error('Error fetching profile data:', error);
-
-                // Fallback to test user for development when API fails
+            } catch {
                 setUser({
                     email: 'test.user@example.com',
                     displayName: 'Test user',

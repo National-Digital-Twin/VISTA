@@ -19,7 +19,7 @@ import { useAssetsByType } from '@/hooks/useAssetsByType';
 import { useAssetTypeIcons } from '@/hooks/useAssetTypeIcons';
 import { fetchAssetCategories } from '@/api/asset-categories';
 import { fetchExposureLayers } from '@/api/exposure-layers';
-import type { Element } from '@/models';
+import type { Asset } from '@/api/assets-by-type';
 
 const MapView = () => {
     const mapRef = useRef<MapRef>(null);
@@ -35,7 +35,7 @@ const MapView = () => {
     const [activePanelView, setActivePanelView] = useState<string | null>('scenario');
     const [selectedAssetTypes, setSelectedAssetTypes] = useState<Record<string, boolean>>({});
     const [selectedExposureLayerIds, setSelectedExposureLayerIds] = useState<Record<string, boolean>>({});
-    const [selectedElement, setSelectedElement] = useState<Element | null>(null);
+    const [selectedElement, setSelectedElement] = useState<Asset | null>(null);
     const [previousPanelView, setPreviousPanelView] = useState<string | null>('scenario');
 
     const drawRef = useMapboxDraw(mapRef, mapReady);
@@ -204,7 +204,7 @@ const MapView = () => {
     );
 
     const handleElementClick = useCallback(
-        (elements: Element[]) => {
+        (elements: Asset[]) => {
             if (elements.length > 0) {
                 if (activePanelView === 'asset-details') {
                     setSelectedElement(elements[0]);

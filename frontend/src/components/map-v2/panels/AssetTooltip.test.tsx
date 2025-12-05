@@ -4,7 +4,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from '@mui/material/styles';
 import AssetTooltip from './AssetTooltip';
-import Asset, { AssetState } from '@/models/Asset';
+import type { Asset } from '@/api/assets-by-type';
 import theme from '@/theme';
 
 const createTestQueryClient = () => {
@@ -46,15 +46,8 @@ describe('AssetTooltip', () => {
                 faIcon: '',
                 iconFallbackText: 'A',
             },
-            state: AssetState.Static,
+            state: 'Static' as const,
             elementType: 'asset' as const,
-            getDetails: vi.fn((assetInfo: any) => ({
-                title: assetInfo?.name || 'Test Asset',
-                type: assetInfo?.assetType || 'https://example.com#Type1',
-                criticality: 5,
-                id: 'asset1',
-                elementType: 'asset',
-            })),
             ...overrides,
         } as unknown as Asset;
     };
@@ -69,36 +62,14 @@ describe('AssetTooltip', () => {
 
         it('falls back to ID when name is not available', () => {
             const asset = createMockAsset({ name: undefined });
-            asset.getDetails = vi.fn(() => ({
-                title: 'asset1',
-                type: 'https://example.com#Type1',
-                desc: '',
-                criticality: 5,
-                criticalityColor: undefined,
-                id: 'asset1',
-                elementType: 'asset' as const,
-            }));
-
             renderWithProviders(<AssetTooltip element={asset} />);
-
             expect(screen.getByText('asset1')).toBeInTheDocument();
         });
 
         it('displays "Unknown" when no name or ID available', () => {
             const asset = createMockAsset({ name: undefined, id: '' });
-            asset.getDetails = vi.fn(() => ({
-                title: undefined,
-                type: 'https://example.com#Type1',
-                desc: '',
-                criticality: 5,
-                criticalityColor: undefined,
-                id: '',
-                elementType: 'asset' as const,
-            }));
-
             renderWithProviders(<AssetTooltip element={asset} />);
-
-            expect(screen.getByText('Unknown')).toBeInTheDocument();
+            expect(screen.getByText('Name unknown')).toBeInTheDocument();
         });
 
         it('displays asset type name when assetCategories is provided', () => {

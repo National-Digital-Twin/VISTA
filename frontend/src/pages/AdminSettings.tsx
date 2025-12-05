@@ -7,11 +7,11 @@ import GroupsTab from '@/components/AdminSettings/GroupsTab';
 import InvitesTab from '@/components/AdminSettings/InvitesTab';
 import UsersTab from '@/components/AdminSettings/UsersTab';
 
-interface TabPanelProps {
+type TabPanelProps = {
     readonly children?: React.ReactNode;
     readonly index: number;
     readonly value: number;
-}
+};
 
 function TabPanel({ children, value, index, ...other }: TabPanelProps) {
     return (

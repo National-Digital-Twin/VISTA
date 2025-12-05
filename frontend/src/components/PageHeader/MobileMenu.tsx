@@ -3,12 +3,12 @@ import { Box, Drawer, IconButton, List, ListItemButton, ListItemText } from '@mu
 import { useTheme } from '@mui/material/styles';
 import { useNavigation } from '@/hooks/useNavigation';
 
-interface MobileMenuProps {
+type MobileMenuProps = {
     readonly isOpen: boolean;
     readonly onClose: () => void;
     readonly onNavigationClick?: (item: string) => void;
     readonly appName: string;
-}
+};
 
 const DRAWER_WIDTH = 320;
 

@@ -1,10 +1,10 @@
 import { useMediaQuery, useTheme } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-export interface NavigationItem {
+export type NavigationItem = {
     to: string;
     label: string;
-}
+};
 
 export const NAVIGATION_ITEMS: NavigationItem[] = [
     { to: '/data-room', label: 'Data room' },

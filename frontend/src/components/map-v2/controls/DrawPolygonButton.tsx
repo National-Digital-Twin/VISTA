@@ -1,9 +1,9 @@
 import ControlButton from '../ControlButton';
 
-interface DrawPolygonButtonProps {
-    readonly isActive: boolean;
-    readonly onToggle: () => void;
-}
+type DrawPolygonButtonProps = {
+    isActive: boolean;
+    onToggle: () => void;
+};
 
 const DrawPolygonButton = ({ isActive, onToggle }: DrawPolygonButtonProps) => {
     return (

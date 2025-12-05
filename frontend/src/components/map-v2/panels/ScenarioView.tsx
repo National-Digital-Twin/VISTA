@@ -1,10 +1,10 @@
 import { Box, IconButton, Link, Typography } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
-interface ScenarioViewProps {
-    readonly onItemClick: (itemId: string) => void;
-    readonly onClose: () => void;
-}
+type ScenarioViewProps = {
+    onItemClick: (itemId: string) => void;
+    onClose: () => void;
+};
 
 const ScenarioView = ({ onItemClick, onClose }: ScenarioViewProps) => {
     const scenarioName = 'Flood in Newport';
