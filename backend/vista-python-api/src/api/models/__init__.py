@@ -10,6 +10,7 @@ from .exposure_layer import ExposureLayer, ExposureLayerType
 from .focus_area import FocusArea
 from .scenario import Scenario
 from .visible_asset import VisibleAsset
+from .visible_exposure_layer import VisibleExposureLayer
 
 __all__ = [
     "AssetCategory",
@@ -21,4 +22,5 @@ __all__ = [
     "FocusArea",
     "Scenario",
     "VisibleAsset",
+    "VisibleExposureLayer",
 ]
