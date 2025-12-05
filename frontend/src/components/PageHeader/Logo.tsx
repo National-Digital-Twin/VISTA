@@ -1,10 +1,10 @@
 import MenuIcon from '@mui/icons-material/Menu';
 import { Box, IconButton, useMediaQuery, useTheme } from '@mui/material';
 
-interface LogoProps {
+type LogoProps = {
     readonly appName: string;
     readonly onMobileMenuClick?: () => void;
-}
+};
 
 export default function Logo({ appName, onMobileMenuClick }: LogoProps) {
     const theme = useTheme();

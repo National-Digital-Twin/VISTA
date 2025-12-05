@@ -4,7 +4,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from '@mui/material/styles';
 import AssetDetailsPanel from './AssetDetailsPanel';
-import Asset, { AssetState } from '@/models/Asset';
+import type { Asset } from '@/api/assets-by-type';
 import theme from '@/theme';
 import { fetchAssetDetails } from '@/api/asset-details';
 
@@ -62,24 +62,17 @@ describe('AssetDetailsPanel', () => {
             lng: -0.1278,
             geometry: { type: 'Point', coordinates: [-0.1278, 51.5074] },
             dependent: { criticalitySum: 5 },
+            description: 'Test description',
             styles: {
                 backgroundColor: '#000000',
                 color: '#ffffff',
                 faIcon: '',
                 iconFallbackText: 'A',
             },
-            state: AssetState.Static,
+            state: 'Static' as const,
             elementType: 'asset' as const,
-            getDetails: vi.fn((assetInfo: any) => ({
-                title: assetInfo?.name || 'Test Asset',
-                type: assetInfo?.assetType || 'https://example.com#Type1',
-                desc: assetInfo?.desc || 'Test description',
-                criticality: 5,
-                id: 'asset1',
-                elementType: 'asset',
-            })),
             ...overrides,
-        } as unknown as Asset;
+        } as Asset;
     };
 
     describe('rendering', () => {
@@ -184,9 +177,8 @@ describe('AssetDetailsPanel', () => {
             });
         });
 
-        it('displays warning when details are empty', async () => {
-            const asset = createMockAsset();
-            asset.getDetails = vi.fn(() => null as any);
+        it('displays asset details even when name is empty', async () => {
+            const asset = createMockAsset({ name: '' });
             mockedFetchAssetDetails.mockResolvedValue({
                 id: 'asset1',
                 name: '',
@@ -202,7 +194,7 @@ describe('AssetDetailsPanel', () => {
             renderWithProviders(<AssetDetailsPanel selectedElement={asset} onBack={vi.fn()} />);
 
             await waitFor(() => {
-                expect(screen.getByText(/Unable to retrieve details/i)).toBeInTheDocument();
+                expect(screen.getByText('asset1')).toBeInTheDocument();
             });
         });
     });

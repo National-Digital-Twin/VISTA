@@ -7,12 +7,13 @@ import ConnectedAssetsSection from './ConnectedAssetsSection';
 import { fetchAssetDetails } from '@/api/asset-details';
 import { isAsset } from '@/utils';
 import { isEmpty } from '@/utils/isEmpty';
-import type { Asset, Element } from '@/models';
+import { formatAssetDetails } from '@/utils/assetUtils';
+import type { Asset } from '@/api/assets-by-type';
 
-interface AssetDetailsPanelProps {
-    readonly selectedElement: Element | null;
-    readonly onBack: () => void;
-}
+type AssetDetailsPanelProps = {
+    selectedElement: Asset | null;
+    onBack: () => void;
+};
 
 const transformConnectedAsset = (item: { id: string; name: string; type: { id: string; name: string } }) => {
     return {
@@ -58,9 +59,9 @@ const AssetDetailsPanel = ({ selectedElement, onBack }: AssetDetailsPanelProps) 
               assetType: assetDetails.data.type.name,
               desc: undefined,
           }
-        : null;
+        : undefined;
 
-    const details = elemIsAsset ? ((selectedElement as Asset)?.getDetails?.(assetInfoData) ?? undefined) : undefined;
+    const details = elemIsAsset && selectedElement ? formatAssetDetails(selectedElement, assetInfoData) : undefined;
 
     if (!details || isEmpty(details)) {
         return (
@@ -70,7 +71,7 @@ const AssetDetailsPanel = ({ selectedElement, onBack }: AssetDetailsPanelProps) 
         );
     }
 
-    const assetElement = elemIsAsset ? (selectedElement as Asset) : null;
+    const assetElement = elemIsAsset ? selectedElement : null;
     const hasCoordinates = Boolean(assetElement?.lat && assetElement?.lng);
     const streetViewUrl =
         hasCoordinates && assetElement ? `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${assetElement.lat},${assetElement.lng}` : null;

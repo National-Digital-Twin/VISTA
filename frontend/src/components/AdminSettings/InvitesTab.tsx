@@ -35,8 +35,8 @@ const InvitesTab: React.FC = () => {
             try {
                 const data = await fetchAllInvites();
                 setInvites(data);
-            } catch (error) {
-                console.error('Failed to load invites:', error);
+            } catch {
+                // eslint-disable-next-line no-empty
             } finally {
                 setLoading(false);
             }

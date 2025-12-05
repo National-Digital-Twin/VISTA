@@ -11,11 +11,11 @@ function createMapTilerStyle(styleId: string): string {
     return `${styleId}?key=${token}`;
 }
 
-export interface MapStyle {
-    readonly id: string;
-    readonly name: string;
-    readonly key: MapStyleKey;
-}
+export type MapStyle = {
+    id: string;
+    name: string;
+    key: MapStyleKey;
+};
 
 export const MAP_STYLES: Record<MapStyleKey, string> = {
     os: 'https://api.os.uk/maps/vector/v1/vts/resources/styles?srs=3857',

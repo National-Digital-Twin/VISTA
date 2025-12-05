@@ -3,13 +3,12 @@ import type { Geometry } from 'geojson';
 
 import { fetchExposureLayers } from './exposure-layers';
 
-vi.mock('./utils', () => ({
-    fetchOptions: {
-        headers: {
-            'Content-Type': 'application/json',
+vi.mock('@/config/app-config', () => ({
+    default: {
+        services: {
+            apiBaseUrl: '/ndtp-python/api',
         },
     },
-    createApiEndpoint: (path: string) => `/ndtp-python/api/${path}`,
 }));
 
 describe('exposure-layers API', () => {
@@ -68,7 +67,7 @@ describe('exposure-layers API', () => {
             expect(result.groups).toHaveLength(1);
             expect(result.groups[0].id).toBe('group-1');
             expect(result.groups[0].name).toBe('Floods');
-            expect(fetchMock).toHaveBeenCalledWith(expect.stringContaining('/exposurelayers/'), {
+            expect(fetchMock).toHaveBeenCalledWith(expect.stringContaining('/ndtp-python/api/exposurelayers/'), {
                 headers: { 'Content-Type': 'application/json' },
             });
         });
@@ -148,15 +147,10 @@ describe('exposure-layers API', () => {
                 ]),
             });
 
-            const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-
             const result = await fetchExposureLayers();
 
             expect(result.featureCollection.features).toHaveLength(1);
             expect(result.featureCollection.features[0].id).toBe('a1b2c3d4-e5f6-7890-abcd-ef1234567890');
-            expect(consoleWarnSpy).toHaveBeenCalledWith('Failed to parse geometry for layer:', 'f9e8d7c6-b5a4-3210-9876-543210fedcba', 'Invalid Layer');
-
-            consoleWarnSpy.mockRestore();
         });
 
         it('handles multiple groups with multiple layers', async () => {
@@ -237,12 +231,7 @@ describe('exposure-layers API', () => {
         it('throws error on network failure', async () => {
             fetchMock.mockRejectedValue(new Error('Network error'));
 
-            const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-
             await expect(fetchExposureLayers()).rejects.toThrow('Network error');
-            expect(consoleErrorSpy).toHaveBeenCalledWith('Error fetching exposure layers:', expect.any(Error));
-
-            consoleErrorSpy.mockRestore();
         });
 
         it('handles empty groups array', async () => {

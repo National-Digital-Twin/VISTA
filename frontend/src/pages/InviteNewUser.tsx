@@ -98,8 +98,7 @@ export default function InviteNewUser() {
             setTimeout(() => {
                 navigate('/admin?tab=invites');
             }, 1500);
-        } catch (error) {
-            console.error('Failed to send invite:', error);
+        } catch {
             setError('Failed to send invite. Please try again.');
         } finally {
             setIsLoading(false);

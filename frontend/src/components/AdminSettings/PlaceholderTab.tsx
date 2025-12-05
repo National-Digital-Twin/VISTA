@@ -1,10 +1,10 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
 
-interface PlaceholderTabProps {
+type PlaceholderTabProps = {
     title: string;
     description?: string;
-}
+};
 
 const PlaceholderTab: React.FC<PlaceholderTabProps> = ({ title, description }) => {
     return (

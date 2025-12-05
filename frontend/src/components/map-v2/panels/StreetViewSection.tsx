@@ -2,10 +2,10 @@ import { Box, Alert, Typography } from '@mui/material';
 import StreetviewIcon from '@mui/icons-material/Streetview';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 
-interface StreetViewSectionProps {
-    readonly hasCoordinates: boolean;
-    readonly streetViewUrl: string | null;
-}
+type StreetViewSectionProps = {
+    hasCoordinates: boolean;
+    streetViewUrl: string | null;
+};
 
 const StreetViewSection = ({ hasCoordinates, streetViewUrl }: StreetViewSectionProps) => {
     if (!hasCoordinates || !streetViewUrl) {

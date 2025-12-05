@@ -1,9 +1,9 @@
 import { Box, Button, useTheme } from '@mui/material';
 import { useNavigation } from '@/hooks/useNavigation';
 
-interface NavigationProps {
+type NavigationProps = {
     readonly onNavigationClick?: (item: string) => void;
-}
+};
 
 export default function Navigation({ onNavigationClick }: NavigationProps) {
     const theme = useTheme();

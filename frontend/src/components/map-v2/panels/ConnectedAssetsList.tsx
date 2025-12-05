@@ -2,14 +2,14 @@ import { capitalCase } from 'change-case';
 import { List, ListItem, ListItemText, Typography, Alert, Divider } from '@mui/material';
 import { getURIFragment } from '@/utils';
 
-export interface ConnectedAssetsListProps {
-    readonly connectedAssets: {
+export type ConnectedAssetsListProps = {
+    connectedAssets: {
         id: string;
         error?: Error;
         name: string;
         assetType: string;
     }[];
-}
+};
 
 const ConnectedAssetsList = ({ connectedAssets }: ConnectedAssetsListProps) => {
     return (

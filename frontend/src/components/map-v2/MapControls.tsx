@@ -12,7 +12,7 @@ import DrawPolygonButton from './controls/DrawPolygonButton';
 import AssetInfoPanel from './controls/panels/AssetInfoPanel';
 import MapStylePanel from './controls/panels/MapStylePanel';
 import type { MapStyleKey } from './constants';
-import type { Asset } from '@/models';
+import type { Asset } from '@/api/assets-by-type';
 import type { AssetCategory } from '@/api/asset-categories';
 
 const ControlsContainer = styled(Box)({
@@ -42,21 +42,21 @@ const ControlDivider = styled(Box)(({ theme }) => ({
     width: '100%',
 }));
 
-interface MapControlsProps {
-    readonly mapRef: RefObject<MapRef | null>;
-    readonly onClosePanels: () => void;
-    readonly isDrawing: boolean;
-    readonly onToggleDrawing: () => void;
-    readonly mapStyleKey: MapStyleKey;
-    readonly onMapStyleChange: (style: MapStyleKey) => void;
-    readonly mapStylePanelOpen: boolean;
-    readonly onToggleMapStylePanel: () => void;
-    readonly assetInfoPanelOpen: boolean;
-    readonly onToggleAssetInfoPanel: () => void;
-    readonly assets: Asset[];
-    readonly assetCategories?: AssetCategory[];
-    readonly viewState?: ViewState;
-}
+type MapControlsProps = {
+    mapRef: RefObject<MapRef | null>;
+    onClosePanels: () => void;
+    isDrawing: boolean;
+    onToggleDrawing: () => void;
+    mapStyleKey: MapStyleKey;
+    onMapStyleChange: (style: MapStyleKey) => void;
+    mapStylePanelOpen: boolean;
+    onToggleMapStylePanel: () => void;
+    assetInfoPanelOpen: boolean;
+    onToggleAssetInfoPanel: () => void;
+    assets: Asset[];
+    assetCategories?: AssetCategory[];
+    viewState?: ViewState;
+};
 
 const MapControls = ({
     mapRef,

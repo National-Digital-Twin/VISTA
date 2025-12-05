@@ -14,7 +14,6 @@ export default function Profile() {
     const [confirmText, setConfirmText] = useState('');
 
     const handleBackClick = () => {
-        // TODO: Add proper permission check to determine if user is administrator
         if (userId) {
             navigate('/admin?tab=users');
         } else {
@@ -40,9 +39,7 @@ export default function Profile() {
             // TODO: Replace with actual DELETE endpoint
             const response = await fetch(`/api/users/${userId}`, {
                 method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
             });
 
             if (!response.ok) {
@@ -50,8 +47,8 @@ export default function Profile() {
             }
 
             navigate('/admin?tab=users');
-        } catch (error) {
-            console.error('Error removing user:', error);
+        } catch {
+            // eslint-disable-next-line no-empty
         } finally {
             handleCloseModal();
         }

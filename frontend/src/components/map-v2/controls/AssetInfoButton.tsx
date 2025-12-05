@@ -1,10 +1,10 @@
 import { forwardRef } from 'react';
 import ControlButton from '../ControlButton';
 
-interface AssetInfoButtonProps {
-    readonly isOpen: boolean;
-    readonly onToggle: () => void;
-}
+type AssetInfoButtonProps = {
+    isOpen: boolean;
+    onToggle: () => void;
+};
 
 const AssetInfoButton = forwardRef<HTMLButtonElement, AssetInfoButtonProps>(({ isOpen, onToggle }, ref) => {
     return (

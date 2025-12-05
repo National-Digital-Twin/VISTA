@@ -1,8 +1,9 @@
 import { capitalCase } from 'change-case';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import ontologyService from '@/ontology-service';
+import { OntologyService } from '@national-digital-twin/ontologyservice';
+import config from '@/config/app-config';
 
-export interface FoundIcon {
+export type FoundIcon = {
     /** Class URI */
     classUri: string;
     /** Foreground color */
@@ -15,7 +16,7 @@ export interface FoundIcon {
     alt: string;
     /** Fontawesome icon class */
     faIcon?: string;
-}
+};
 
 // These utilities are taken from the ontology service
 function hasFragment(uri: string) {
@@ -57,6 +58,7 @@ function useStyles(): Record<string, FoundIcon> | undefined {
     const { data, error, isLoading } = useSuspenseQuery({
         queryKey: ['ontology-styles'],
         queryFn: async () => {
+            const ontologyService = new OntologyService(config.services.ontology, 'ontology');
             const iconEntries: Record<
                 string,
                 {
@@ -107,8 +109,7 @@ function useStyles(): Record<string, FoundIcon> | undefined {
     }
 
     if (error) {
-        console.error('Error fetching ontology styles:', error);
-        return undefined; // or handle the error state if needed
+        return undefined;
     }
 
     return data;

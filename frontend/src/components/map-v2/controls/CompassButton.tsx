@@ -3,10 +3,10 @@ import type { MapRef } from 'react-map-gl/maplibre';
 import type { RefObject } from 'react';
 import ControlButton from '../ControlButton';
 
-interface CompassButtonProps {
-    readonly mapRef: RefObject<MapRef | null>;
-    readonly bearing?: number;
-}
+type CompassButtonProps = {
+    mapRef: RefObject<MapRef | null>;
+    bearing?: number;
+};
 
 const CompassButton = ({ mapRef, bearing = 0 }: CompassButtonProps) => {
     const handleClick = useCallback(() => {

@@ -34,7 +34,7 @@
   "typescript.tsdk": "./frontend/node_modules/typescript/lib",
   // TypeScript files only
   "[typescript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.defaultFormatter": "vscode.typescript-language-features",
     "editor.codeActionsOnSave": {
       "source.fixAll.eslint": "explicit"
     },
@@ -42,7 +42,7 @@
   },
   // TypeScript + React files
   "[typescriptreact]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.defaultFormatter": "vscode.typescript-language-features",
     "editor.codeActionsOnSave": {
       "source.fixAll.eslint": "explicit"
     },

@@ -1,11 +1,11 @@
 import React, { lazy, Suspense, memo } from 'react';
 
-export interface DevToolsProps {
+export type DevToolsProps = {
     /** Whether the dev tools are enabled */
     readonly enabled: boolean;
     /** The wrapped app content */
     readonly children: React.ReactNode;
-}
+};
 
 const DevToolsContainer = lazy(() => import('./DevToolsContainer'));
 

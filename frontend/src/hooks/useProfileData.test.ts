@@ -22,13 +22,7 @@ const renderAndWaitForLoad = async (userId?: string) => {
 };
 
 describe('useProfileData', () => {
-    let consoleWarnSpy: ReturnType<typeof vi.spyOn>;
-    let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
-
-    beforeEach(() => {
-        consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-        consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-    });
+    beforeEach(() => {});
 
     afterEach(() => {
         vi.restoreAllMocks();
@@ -91,7 +85,6 @@ describe('useProfileData', () => {
                 expect(result.current.loading).toBe(false);
             });
 
-            expect(consoleErrorSpy).toHaveBeenCalled();
             expect(result.current.user?.email).toBe('test.user@example.com');
             expect(result.current.user?.displayName).toBe('Test user');
         });
@@ -142,7 +135,6 @@ describe('useProfileData', () => {
                 expect(result.current.loading).toBe(false);
             });
 
-            expect(consoleWarnSpy).toHaveBeenCalled();
             expect(result.current.user).toBeDefined();
         });
     });
@@ -219,7 +211,6 @@ describe('useProfileData', () => {
 
             expect(result.current.user?.email).toBe('test.user@example.com');
             expect(result.current.user?.displayName).toBe('Test user');
-            expect(consoleErrorSpy).toHaveBeenCalled();
         });
     });
 

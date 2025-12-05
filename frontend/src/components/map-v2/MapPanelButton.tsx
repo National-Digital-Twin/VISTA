@@ -1,12 +1,12 @@
 import { Box, Typography } from '@mui/material';
 import type { ReactElement } from 'react';
 
-interface MapPanelButtonProps {
-    readonly label: string;
-    readonly icon: ReactElement;
-    readonly isActive: boolean;
-    readonly onClick?: () => void;
-}
+type MapPanelButtonProps = {
+    label: string;
+    icon: ReactElement;
+    isActive: boolean;
+    onClick?: () => void;
+};
 
 const MapPanelButton = ({ label, icon, isActive, onClick }: MapPanelButtonProps) => {
     const getHoverBackgroundColor = () => {

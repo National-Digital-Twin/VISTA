@@ -8,7 +8,6 @@ import AdminSettings from '@/pages/AdminSettings';
 import DataRoom from '@/pages/DataRoom';
 import GroupDetail from '@/pages/GroupDetail';
 import InviteNewUser from '@/pages/InviteNewUser';
-import LegacyMap from '@/pages/LegacyMap';
 import ScenarioMap from '@/pages/ScenarioMap';
 import Notifications from '@/pages/Notifications';
 import PrivacyNotice from '@/pages/PrivacyNotice';
@@ -22,7 +21,6 @@ const AppWrapper = () => {
             element: <Layout />,
             children: [
                 { path: '', element: <ScenarioMap /> },
-                { path: 'legacy-map', element: <LegacyMap /> },
                 { path: 'data-room', element: <DataRoom /> },
                 { path: 'profile', element: <Profile /> },
                 { path: 'admin', element: <AdminSettings /> },

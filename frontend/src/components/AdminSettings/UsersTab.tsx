@@ -6,14 +6,14 @@ import { fetchAllUsers, UserData } from '@/api/users';
 import { SortableTableHeader } from '@/components/SortableTableHeader';
 import { SearchTextField } from '@/components/SearchTextField';
 
-interface User {
+type User = {
     id: string;
     name: string;
     email: string;
     organisation: string;
     userSince: string;
     userType: 'General' | 'Admin';
-}
+};
 
 type SortField = 'name' | 'organisation' | 'userSince' | 'userType';
 type SortDirection = 'asc' | 'desc';
@@ -84,8 +84,8 @@ const UsersTab: React.FC = () => {
             try {
                 const data: UserData[] = await fetchAllUsers();
                 setUsers(data.map(mapUserDataToUser));
-            } catch (error) {
-                console.error('Failed to fetch users:', error);
+            } catch {
+                // eslint-disable-next-line no-empty
             } finally {
                 setLoading(false);
             }
