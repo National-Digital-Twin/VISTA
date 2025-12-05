@@ -58,7 +58,7 @@ def test_enable_exposure_layer_map_wide(scenario, exposure_layer, client):
     """Test enabling an exposure layer type map-wide (no focus area)."""
     response = client.put(
         f"/api/scenarios/{scenario.id}/visible-exposure-layers/",
-        data=json.dumps({"exposure_layer_id": str(exposure_layer.id), "is_active": True}),
+        data=json.dumps({"exposureLayerId": str(exposure_layer.id), "isActive": True}),
         content_type="application/json",
     )
     data = response.json()
@@ -84,9 +84,9 @@ def test_enable_exposure_layer_for_focus_area(scenario, exposure_layer, focus_ar
         f"/api/scenarios/{scenario.id}/visible-exposure-layers/",
         data=json.dumps(
             {
-                "exposure_layer_id": str(exposure_layer.id),
-                "focus_area_id": str(focus_area.id),
-                "is_active": True,
+                "exposureLayerId": str(exposure_layer.id),
+                "focusAreaId": str(focus_area.id),
+                "isActive": True,
             }
         ),
         content_type="application/json",
@@ -119,7 +119,7 @@ def test_disable_exposure_layer_deletes_record(scenario, exposure_layer, client)
 
     response = client.put(
         f"/api/scenarios/{scenario.id}/visible-exposure-layers/",
-        data=json.dumps({"exposure_layer_id": str(exposure_layer.id), "is_active": False}),
+        data=json.dumps({"exposureLayerId": str(exposure_layer.id), "isActive": False}),
         content_type="application/json",
     )
     data = response.json()
@@ -138,7 +138,7 @@ def test_disable_exposure_layer_deletes_record(scenario, exposure_layer, client)
 def test_enable_is_idempotent(scenario, exposure_layer, client):
     """Test that enabling twice doesn't create duplicates."""
     url = f"/api/scenarios/{scenario.id}/visible-exposure-layers/"
-    payload = json.dumps({"exposure_layer_id": str(exposure_layer.id), "is_active": True})
+    payload = json.dumps({"exposureLayerId": str(exposure_layer.id), "isActive": True})
 
     client.put(url, data=payload, content_type="application/json")
     client.put(url, data=payload, content_type="application/json")
@@ -158,7 +158,7 @@ def test_disable_nonexistent_is_noop(scenario, exposure_layer, client):
     """Test that disabling a non-visible asset type is a no-op."""
     response = client.put(
         f"/api/scenarios/{scenario.id}/visible-exposure-layers/",
-        data=json.dumps({"exposure_layer_id": str(exposure_layer.id), "is_active": False}),
+        data=json.dumps({"exposureLayerId": str(exposure_layer.id), "isActive": False}),
         content_type="application/json",
     )
 
@@ -190,7 +190,7 @@ def test_scenario_exposure_layers_after_enable(scenario, exposure_layer, client)
     """Test isActive is true after enabling visibility."""
     client.put(
         f"/api/scenarios/{scenario.id}/visible-exposure-layers/",
-        data=json.dumps({"exposure_layer_id": str(exposure_layer.id), "is_active": True}),
+        data=json.dumps({"exposureLayerId": str(exposure_layer.id), "isActive": True}),
         content_type="application/json",
     )
 
@@ -208,9 +208,9 @@ def test_scenario_exposure_layers_with_focus_area(scenario, exposure_layer, focu
         f"/api/scenarios/{scenario.id}/visible-exposure-layers/",
         data=json.dumps(
             {
-                "exposure_layer_id": str(exposure_layer.id),
-                "focus_area_id": str(focus_area.id),
-                "is_active": True,
+                "exposureLayerId": str(exposure_layer.id),
+                "focusAreaId": str(focus_area.id),
+                "isActive": True,
             }
         ),
         content_type="application/json",
@@ -260,7 +260,7 @@ def test_disable_map_wide_does_not_affect_focus_area(scenario, exposure_layer, f
     # Disable map-wide
     response = client.put(
         f"/api/scenarios/{scenario.id}/visible-exposure-layers/",
-        data=json.dumps({"exposure_layer_id": str(exposure_layer.id), "is_active": False}),
+        data=json.dumps({"exposureLayerId": str(exposure_layer.id), "isActive": False}),
         content_type="application/json",
     )
 
@@ -307,9 +307,9 @@ def test_disable_focus_area_does_not_affect_map_wide(scenario, exposure_layer, f
         f"/api/scenarios/{scenario.id}/visible-exposure-layers/",
         data=json.dumps(
             {
-                "exposure_layer_id": str(exposure_layer.id),
-                "focus_area_id": str(focus_area.id),
-                "is_active": False,
+                "exposureLayerId": str(exposure_layer.id),
+                "focusAreaId": str(focus_area.id),
+                "isActive": False,
             }
         ),
         content_type="application/json",
