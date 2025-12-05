@@ -2,7 +2,7 @@
 
 import pytest
 
-from api.urls import router  # noqa: F401
+from api.urls import router
 
 http_success_code = 200
 
