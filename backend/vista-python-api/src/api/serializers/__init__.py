@@ -22,6 +22,10 @@ from .visible_asset_type import (
     VisibleAssetTypeResponseSerializer,
     VisibleAssetTypeToggleSerializer,
 )
+from .visible_exposure_layers import (
+    VisibleExposureLayerResponseSerializer,
+    VisibleExposureLayerToggleSerializer,
+)
 
 __all__ = [
     "AssetCategorySerializer",
@@ -41,4 +45,6 @@ __all__ = [
     "ScenarioSerializer",
     "VisibleAssetTypeResponseSerializer",
     "VisibleAssetTypeToggleSerializer",
+    "VisibleExposureLayerResponseSerializer",
+    "VisibleExposureLayerToggleSerializer",
 ]

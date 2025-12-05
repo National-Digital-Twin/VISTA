@@ -10,8 +10,10 @@ from .data_sources import DataSourceViewSet
 from .exposure_layer import ExposureLayerViewSet
 from .focus_areas import FocusAreaViewSet
 from .scenario_assets import ScenarioAssetsView, ScenarioAssetTypesView
+from .scenario_exposure_layers import ScenarioExposureLayersView
 from .scenarios import ScenarioViewSet
 from .visible_asset_types import VisibleAssetTypeView
+from .visible_exposure_layers import VisibleExposureLayerView
 
 __all__ = [
     "AssetTypeViewSet",
@@ -21,6 +23,8 @@ __all__ = [
     "FocusAreaViewSet",
     "ScenarioAssetTypesView",
     "ScenarioAssetsView",
+    "ScenarioExposureLayersView",
     "ScenarioViewSet",
     "VisibleAssetTypeView",
+    "VisibleExposureLayerView",
 ]
