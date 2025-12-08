@@ -1,4 +1,5 @@
 import MapboxDraw from '@mapbox/mapbox-gl-draw';
+import type { IControl } from 'maplibre-gl';
 import { useEffect, useRef, type MutableRefObject, type RefObject } from 'react';
 import type { MapRef } from 'react-map-gl/maplibre';
 import { CircleMode, DragCircleMode } from '@/vendor/mapbox-gl-draw-circle';
@@ -13,7 +14,7 @@ type DrawStyle = {
     paint?: Record<string, string | number | boolean | (string | number)[]>;
 };
 
-const DRAW_STYLES: readonly DrawStyle[] = [
+const DRAW_STYLES: DrawStyle[] = [
     {
         id: 'gl-draw-line',
         type: 'line',
@@ -23,7 +24,7 @@ const DRAW_STYLES: readonly DrawStyle[] = [
             'line-join': 'round',
         },
         paint: {
-            'line-color': '#3bb2d0',
+            'line-color': '#FF0C0C',
             'line-dasharray': [0.2, 2],
             'line-width': 2,
         },
@@ -33,9 +34,9 @@ const DRAW_STYLES: readonly DrawStyle[] = [
         type: 'fill',
         filter: ['all', ['==', '$type', 'Polygon'], ['!=', 'mode', 'static']],
         paint: {
-            'fill-color': '#3bb2d0',
-            'fill-outline-color': '#3bb2d0',
-            'fill-opacity': 0.1,
+            'fill-color': '#FF0C0C',
+            'fill-outline-color': '#FF0C0C',
+            'fill-opacity': 0.2,
         },
     },
     {
@@ -44,7 +45,7 @@ const DRAW_STYLES: readonly DrawStyle[] = [
         filter: ['all', ['==', '$type', 'Point'], ['==', 'meta', 'midpoint']],
         paint: {
             'circle-radius': 3,
-            'circle-color': '#3bb2d0',
+            'circle-color': '#FF0C0C',
         },
     },
     {
@@ -56,7 +57,7 @@ const DRAW_STYLES: readonly DrawStyle[] = [
             'line-join': 'round',
         },
         paint: {
-            'line-color': '#3bb2d0',
+            'line-color': '#FF0C0C',
             'line-dasharray': [0.2, 2],
             'line-width': 2,
         },
@@ -70,7 +71,7 @@ const DRAW_STYLES: readonly DrawStyle[] = [
             'line-join': 'round',
         },
         paint: {
-            'line-color': '#3bb2d0',
+            'line-color': '#FF0C0C',
             'line-width': 2,
             'line-dasharray': [0.2, 2],
         },
@@ -90,7 +91,7 @@ const DRAW_STYLES: readonly DrawStyle[] = [
         filter: ['all', ['==', 'meta', 'vertex'], ['==', '$type', 'Point'], ['!=', 'mode', 'static']],
         paint: {
             'circle-radius': 3,
-            'circle-color': '#3bb2d0',
+            'circle-color': '#FF0C0C',
         },
     },
 ];
@@ -101,7 +102,7 @@ const DRAW_CONFIG = {
     touchEnabled: true,
     touchMoveThreshold: 3,
     clickBuffer: 3,
-    keybindings: false,
+    keybindings: true,
     boxSelect: false,
     touchPitch: false,
     mode: 'simple_select',
@@ -123,7 +124,8 @@ const useMapboxDraw = (mapRef: RefObject<MapRef | null>, isReady: boolean): Muta
         const map = mapRef.current.getMap();
         const draw = new MapboxDraw(DRAW_CONFIG);
 
-        map.addControl(draw);
+        // MapboxDraw expects mapbox-gl but we use maplibre-gl
+        map.addControl(draw as unknown as IControl);
         drawRef.current = draw;
     }, [isReady, mapRef]);
 

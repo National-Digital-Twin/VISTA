@@ -45,11 +45,11 @@ const ScenarioView = ({ onItemClick, onClose }: ScenarioViewProps) => {
                 </Box>
 
                 <Box>
-                    <Link component="button" variant="body1" underline="none" onClick={() => onItemClick('polygons')} sx={linkStyle}>
-                        Polygons
+                    <Link component="button" variant="body1" underline="none" onClick={() => onItemClick('focus-area')} sx={linkStyle}>
+                        Focus area
                     </Link>
                     <Typography variant="body2" color="text.secondary">
-                        No polygons added to the map
+                        No focus areas added to the map
                     </Typography>
                 </Box>
             </Box>

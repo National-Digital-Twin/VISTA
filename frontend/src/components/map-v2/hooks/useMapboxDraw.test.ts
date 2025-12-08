@@ -11,7 +11,7 @@ const mockMap = {
 const mockMapRef = {
     current: {
         getMap: () => mockMap,
-    } as MapRef,
+    } as unknown as MapRef,
 };
 
 vi.mock('@mapbox/mapbox-gl-draw', () => {

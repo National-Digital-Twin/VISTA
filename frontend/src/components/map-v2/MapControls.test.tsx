@@ -47,14 +47,6 @@ vi.mock('./controls/MapStyleButton', () => ({
     )),
 }));
 
-vi.mock('./controls/DrawPolygonButton', () => ({
-    default: ({ isActive, onToggle }: { isActive: boolean; onToggle: () => void }) => (
-        <button data-testid="draw-polygon-button" onClick={onToggle}>
-            Draw {isActive ? 'Active' : 'Inactive'}
-        </button>
-    ),
-}));
-
 vi.mock('./controls/AssetInfoButton', () => ({
     default: React.forwardRef(({ isOpen, onToggle }: { isOpen: boolean; onToggle: () => void }, ref: any) => (
         <button ref={ref} data-testid="asset-info-button" onClick={onToggle}>
@@ -95,8 +87,6 @@ describe('MapControls', () => {
     const defaultProps = {
         mapRef: createMockMapRef(),
         onClosePanels: vi.fn(),
-        isDrawing: false,
-        onToggleDrawing: vi.fn(),
         mapStyleKey: 'os' as MapStyleKey,
         onMapStyleChange: vi.fn(),
         mapStylePanelOpen: false,
@@ -118,7 +108,6 @@ describe('MapControls', () => {
             expect(screen.getByTestId('zoom-in-button')).toBeInTheDocument();
             expect(screen.getByTestId('zoom-out-button')).toBeInTheDocument();
             expect(screen.getByTestId('map-style-button')).toBeInTheDocument();
-            expect(screen.getByTestId('draw-polygon-button')).toBeInTheDocument();
             expect(screen.getByTestId('asset-info-button')).toBeInTheDocument();
         });
 
@@ -127,7 +116,6 @@ describe('MapControls', () => {
 
             expect(screen.getByRole('group', { name: 'View controls' })).toBeInTheDocument();
             expect(screen.getByRole('group', { name: 'Zoom controls' })).toBeInTheDocument();
-            expect(screen.getByRole('group', { name: 'Drawing controls' })).toBeInTheDocument();
             expect(screen.getByRole('group', { name: 'Asset information controls' })).toBeInTheDocument();
             expect(screen.getByRole('group', { name: 'Map style controls' })).toBeInTheDocument();
         });
@@ -180,16 +168,6 @@ describe('MapControls', () => {
             fireEvent.click(mapStyleButton);
 
             expect(onToggleMapStylePanel).toHaveBeenCalledTimes(1);
-        });
-
-        it('calls onToggleDrawing when draw polygon button is clicked', () => {
-            const onToggleDrawing = vi.fn();
-            renderWithProviders(<MapControls {...defaultProps} onToggleDrawing={onToggleDrawing} />);
-
-            const drawPolygonButton = screen.getByTestId('draw-polygon-button');
-            fireEvent.click(drawPolygonButton);
-
-            expect(onToggleDrawing).toHaveBeenCalledTimes(1);
         });
 
         it('calls onToggleAssetInfoPanel when asset info button is clicked', () => {

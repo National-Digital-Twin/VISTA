@@ -30,9 +30,9 @@ vi.mock('./panels/ExposureView', () => ({
     ),
 }));
 
-vi.mock('./panels/PolygonsView', () => ({
+vi.mock('./panels/FocusAreaView', () => ({
     default: ({ onClose }: { onClose: () => void }) => (
-        <div data-testid="polygons-view">
+        <div data-testid="focus-area-view">
             <button onClick={onClose}>Close</button>
         </div>
     ),
@@ -61,28 +61,28 @@ describe('MapPanels', () => {
         it('renders all panel buttons', () => {
             renderWithTheme(<MapPanels {...defaultProps} />);
 
+            expect(screen.getByText('Focus area')).toBeInTheDocument();
             expect(screen.getByText('Scenario')).toBeInTheDocument();
             expect(screen.getByText('Assets')).toBeInTheDocument();
             expect(screen.getByText('Exposure')).toBeInTheDocument();
-            expect(screen.getByText('Polygons')).toBeInTheDocument();
         });
 
         it('renders icons for all panels', () => {
             renderWithTheme(<MapPanels {...defaultProps} />);
 
+            expect(screen.getByAltText('Focus area')).toBeInTheDocument();
             expect(screen.getByAltText('Scenario')).toBeInTheDocument();
             expect(screen.getByAltText('Assets')).toBeInTheDocument();
             expect(screen.getByAltText('Exposure')).toBeInTheDocument();
-            expect(screen.getByAltText('Polygons')).toBeInTheDocument();
         });
 
         it('does not render panel content when no view is active', () => {
             renderWithTheme(<MapPanels {...defaultProps} />);
 
+            expect(screen.queryByTestId('focus-area-view')).not.toBeInTheDocument();
             expect(screen.queryByTestId('scenario-view')).not.toBeInTheDocument();
             expect(screen.queryByTestId('assets-view')).not.toBeInTheDocument();
             expect(screen.queryByTestId('exposure-view')).not.toBeInTheDocument();
-            expect(screen.queryByTestId('polygons-view')).not.toBeInTheDocument();
         });
     });
 
@@ -105,10 +105,10 @@ describe('MapPanels', () => {
             expect(screen.getByTestId('exposure-view')).toBeInTheDocument();
         });
 
-        it('renders PolygonsView when polygons is active', () => {
-            renderWithTheme(<MapPanels {...defaultProps} activeView="polygons" />);
+        it('renders FocusAreaView when focus-area is active', () => {
+            renderWithTheme(<MapPanels {...defaultProps} activeView="focus-area" />);
 
-            expect(screen.getByTestId('polygons-view')).toBeInTheDocument();
+            expect(screen.getByTestId('focus-area-view')).toBeInTheDocument();
         });
 
         it('renders AssetDetailsPanel when asset-details is active', () => {
@@ -181,18 +181,20 @@ describe('MapPanels', () => {
     });
 
     describe('Active State Styling', () => {
-        it('marks active button as active', () => {
+        it('marks active button icon container as active', () => {
             renderWithTheme(<MapPanels {...defaultProps} activeView="scenario" />);
 
-            const scenarioButton = screen.getByText('Scenario').closest('div');
-            expect(scenarioButton).toHaveStyle({ backgroundColor: 'rgb(212, 227, 255)' });
+            const scenarioIcon = screen.getByAltText('Scenario');
+            const iconContainer = scenarioIcon.closest('div');
+            expect(iconContainer).toHaveStyle({ backgroundColor: 'rgb(212, 227, 255)' });
         });
 
-        it('does not mark inactive buttons as active', () => {
+        it('does not mark inactive button icon containers as active', () => {
             renderWithTheme(<MapPanels {...defaultProps} activeView="scenario" />);
 
-            const assetsButton = screen.getByText('Assets').closest('div');
-            const bgColor = assetsButton?.style.backgroundColor || (assetsButton ? globalThis.getComputedStyle(assetsButton).backgroundColor : '');
+            const assetsIcon = screen.getByAltText('Assets');
+            const iconContainer = assetsIcon.closest('div');
+            const bgColor = iconContainer?.style.backgroundColor || (iconContainer ? globalThis.getComputedStyle(iconContainer).backgroundColor : '');
             expect(bgColor === 'transparent' || bgColor === 'rgba(0, 0, 0, 0)' || bgColor === '').toBe(true);
         });
     });

@@ -1,22 +1,23 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Box, Snackbar, Alert } from '@mui/material';
+import { useCallback, useMemo, useRef, useState } from 'react';
+import { Box } from '@mui/material';
 import type { MapRef, ViewStateChangeEvent } from 'react-map-gl/maplibre';
 import Map from 'react-map-gl/maplibre';
 import { useQuery } from '@tanstack/react-query';
 
 import 'maplibre-gl/dist/maplibre-gl.css';
+import './mapbox-draw-maplibre.css';
 
 import { DEFAULT_VIEW_STATE, DEFAULT_MAP_STYLE, MAP_STYLES, MAP_VIEW_BOUNDS, type MapStyleKey } from './constants';
 import MapControls from './MapControls';
-import DrawingToolbar from './DrawingToolbar';
 import MapPanels from './MapPanels';
 import AssetLayers from './AssetLayers';
 import ExposureLayers from './ExposureLayers';
 import useMapboxDraw from './hooks/useMapboxDraw';
+import useFocusAreas from './hooks/useFocusAreas';
 import { usePreloadAssetIcons } from './hooks/usePreloadAssetIcons';
-import { getAssetTypeName } from './utils/getAssetTypeName';
-import { useAssetsByType } from '@/hooks/useAssetsByType';
 import { useAssetTypeIcons } from '@/hooks/useAssetTypeIcons';
+import { useActiveScenario } from '@/hooks/useActiveScenario';
+import { useScenarioAssets } from '@/hooks/useScenarioAssets';
 import { fetchAssetCategories } from '@/api/asset-categories';
 import { fetchExposureLayers } from '@/api/exposure-layers';
 import type { Asset } from '@/api/assets-by-type';
@@ -25,33 +26,29 @@ const MapView = () => {
     const mapRef = useRef<MapRef>(null);
     const [viewState, setViewState] = useState(DEFAULT_VIEW_STATE);
     const [mapReady, setMapReady] = useState(false);
-    const [drawingToolbarOpen, setDrawingToolbarOpen] = useState(false);
-    const [drawingMode, setDrawingMode] = useState<'circle' | 'polygon' | null>(null);
-    const [primaryAssets, setPrimaryAssets] = useState(false);
-    const [dependentAssets, setDependentAssets] = useState(false);
     const [mapStyleKey, setMapStyleKey] = useState<MapStyleKey>(DEFAULT_MAP_STYLE);
     const [mapStylePanelOpen, setMapStylePanelOpen] = useState(false);
     const [assetInfoPanelOpen, setAssetInfoPanelOpen] = useState(false);
-    const [activePanelView, setActivePanelView] = useState<string | null>('scenario');
+    const [activePanelView, setActivePanelView] = useState<string | null>('focus-area');
     const [selectedAssetTypes, setSelectedAssetTypes] = useState<Record<string, boolean>>({});
     const [selectedExposureLayerIds, setSelectedExposureLayerIds] = useState<Record<string, boolean>>({});
     const [selectedElement, setSelectedElement] = useState<Asset | null>(null);
-    const [previousPanelView, setPreviousPanelView] = useState<string | null>('scenario');
+    const [previousPanelView, setPreviousPanelView] = useState<string | null>('focus-area');
+    const [mapWideVisible, setMapWideVisible] = useState(true);
 
     const drawRef = useMapboxDraw(mapRef, mapReady);
+    const { data: activeScenario } = useActiveScenario();
+    const scenarioId = activeScenario?.id;
+    const iconMap = useAssetTypeIcons();
+
+    const { isDrawing, startDrawing } = useFocusAreas({
+        scenarioId,
+        mapRef,
+        drawRef,
+        mapReady,
+    });
 
     const mapStyle = useMemo(() => MAP_STYLES[mapStyleKey], [mapStyleKey]);
-
-    const selectedAssetTypeIds = useMemo(() => {
-        return Object.entries(selectedAssetTypes)
-            .filter(([, enabled]) => enabled)
-            .map(([typeId]) => typeId);
-    }, [selectedAssetTypes]);
-
-    const iconMap = useAssetTypeIcons();
-    const [emptyResultMessage, setEmptyResultMessage] = useState<string | null>(null);
-    const previousSelectedAssetTypeIdsRef = useRef<Set<string>>(new Set());
-    const previousEmptyResultsRef = useRef<Set<string>>(new Set());
 
     const { data: assetCategories } = useQuery({
         queryKey: ['assetCategories'],
@@ -65,43 +62,11 @@ const MapView = () => {
         staleTime: 5 * 60 * 1000,
     });
 
-    const { assets, emptyResults } = useAssetsByType({
-        selectedAssetTypeIds,
+    const { assets } = useScenarioAssets({
+        scenarioId,
+        excludeMapWide: !mapWideVisible,
         iconMap,
     });
-
-    const findAssetTypeName = useCallback(
-        (typeId: string): string | null => {
-            return getAssetTypeName(typeId, assetCategories);
-        },
-        [assetCategories],
-    );
-    useEffect(() => {
-        const currentSelectedSet = new Set(selectedAssetTypeIds);
-        const previousSelectedSet = previousSelectedAssetTypeIdsRef.current;
-        const currentEmptyResultsSet = new Set(emptyResults);
-        const previousEmptyResultsSet = previousEmptyResultsRef.current;
-
-        const newlyEnabledTypes = selectedAssetTypeIds.filter((typeId) => !previousSelectedSet.has(typeId));
-        const newlyEnabledEmptyTypes = newlyEnabledTypes.filter((typeId) => emptyResults.includes(typeId));
-
-        const newlyEmptyTypes = emptyResults.filter((typeId) => !previousEmptyResultsSet.has(typeId) && selectedAssetTypeIds.includes(typeId));
-
-        const typesToNotify = [...newlyEnabledEmptyTypes, ...newlyEmptyTypes.filter((id) => !newlyEnabledEmptyTypes.includes(id))];
-
-        if (typesToNotify.length > 0) {
-            const assetTypeNames = typesToNotify.map(findAssetTypeName).filter((name): name is string => name !== null);
-
-            if (assetTypeNames.length > 0) {
-                const message =
-                    assetTypeNames.length === 1 ? `No assets found for "${assetTypeNames[0]}"` : `No assets found for: ${assetTypeNames.join(', ')}`;
-                setEmptyResultMessage(message);
-            }
-        }
-
-        previousSelectedAssetTypeIdsRef.current = currentSelectedSet;
-        previousEmptyResultsRef.current = currentEmptyResultsSet;
-    }, [emptyResults, selectedAssetTypeIds, assetCategories, findAssetTypeName]);
 
     usePreloadAssetIcons(assets);
 
@@ -169,28 +134,8 @@ const MapView = () => {
         return { url: transformedUrl, headers };
     }, []);
 
-    const handleToggleDrawing = useCallback(() => {
-        setDrawingToolbarOpen((prev) => {
-            if (prev) {
-                if (drawRef.current) {
-                    drawRef.current.changeMode('simple_select');
-                }
-                setDrawingMode(null);
-            }
-            return !prev;
-        });
-    }, [drawRef]);
-
-    const handleDrawingModeChange = useCallback((mode: 'circle' | 'polygon' | null) => {
-        setDrawingMode(mode);
-    }, []);
-
-    const handlePrimaryAssetsChange = useCallback((enabled: boolean) => {
-        setPrimaryAssets(enabled);
-    }, []);
-
-    const handleDependentAssetsChange = useCallback((enabled: boolean) => {
-        setDependentAssets(enabled);
+    const handleMapWideVisibleChange = useCallback((visible: boolean) => {
+        setMapWideVisible(visible);
     }, []);
 
     const handleViewChange = useCallback(
@@ -223,33 +168,6 @@ const MapView = () => {
         setActivePanelView(previousPanelView || 'scenario');
     }, [previousPanelView]);
 
-    useEffect(() => {
-        if (!mapReady || !mapRef.current || !drawRef.current) {
-            return;
-        }
-
-        const map = mapRef.current.getMap();
-
-        const handleDrawComplete = () => {
-            setDrawingMode(null);
-        };
-
-        const handleModeChange = () => {
-            const currentMode = drawRef.current?.getMode();
-            if (currentMode === 'simple_select') {
-                setDrawingMode(null);
-            }
-        };
-
-        map.on('draw.create', handleDrawComplete);
-        map.on('draw.modechange', handleModeChange);
-
-        return () => {
-            map.off('draw.create', handleDrawComplete);
-            map.off('draw.modechange', handleModeChange);
-        };
-    }, [mapReady, drawRef]);
-
     return (
         <Box
             sx={{
@@ -279,6 +197,11 @@ const MapView = () => {
                 }}
                 selectedElement={selectedElement}
                 onBackFromAssetDetails={handleBackFromAssetDetails}
+                scenarioId={scenarioId}
+                mapWideVisible={mapWideVisible}
+                onMapWideVisibleChange={handleMapWideVisibleChange}
+                isDrawing={isDrawing}
+                onStartDrawing={startDrawing}
             />
 
             <Box
@@ -305,7 +228,6 @@ const MapView = () => {
                         <>
                             <AssetLayers
                                 assets={assets}
-                                selectedAssetTypes={selectedAssetTypes}
                                 selectedElements={selectedElement ? [selectedElement] : []}
                                 onElementClick={handleElementClick}
                                 mapReady={mapReady}
@@ -322,23 +244,9 @@ const MapView = () => {
                     )}
                 </Map>
 
-                {drawingToolbarOpen && (
-                    <DrawingToolbar
-                        drawRef={drawRef}
-                        drawingMode={drawingMode}
-                        onDrawingModeChange={handleDrawingModeChange}
-                        primaryAssets={primaryAssets}
-                        onPrimaryAssetsChange={handlePrimaryAssetsChange}
-                        dependentAssets={dependentAssets}
-                        onDependentAssetsChange={handleDependentAssetsChange}
-                    />
-                )}
-
                 <MapControls
                     mapRef={mapRef}
                     onClosePanels={closePanels}
-                    isDrawing={drawingToolbarOpen}
-                    onToggleDrawing={handleToggleDrawing}
                     mapStyleKey={mapStyleKey}
                     onMapStyleChange={handleStyleChange}
                     mapStylePanelOpen={mapStylePanelOpen}
@@ -350,17 +258,6 @@ const MapView = () => {
                     viewState={viewState}
                 />
             </Box>
-
-            <Snackbar
-                open={!!emptyResultMessage}
-                autoHideDuration={4000}
-                onClose={() => setEmptyResultMessage(null)}
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-            >
-                <Alert severity="info" onClose={() => setEmptyResultMessage(null)}>
-                    {emptyResultMessage}
-                </Alert>
-            </Snackbar>
         </Box>
     );
 };

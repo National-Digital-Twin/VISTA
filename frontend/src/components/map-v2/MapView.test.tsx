@@ -84,31 +84,14 @@ vi.mock('./MapPanels', () => ({
 }));
 
 vi.mock('./MapControls', () => ({
-    default: ({ mapStylePanelOpen, onToggleMapStylePanel, isDrawing, onToggleDrawing, onMapStyleChange }: any) => (
+    default: ({ mapStylePanelOpen, onToggleMapStylePanel, onMapStyleChange }: any) => (
         <div data-testid="map-controls">
             <button onClick={onToggleMapStylePanel} data-testid="map-style-toggle">
                 Map Style {mapStylePanelOpen ? 'Open' : 'Closed'}
             </button>
-            <button onClick={onToggleDrawing} data-testid="drawing-toggle">
-                Drawing {isDrawing ? 'Open' : 'Closed'}
-            </button>
             <button onClick={() => onMapStyleChange('streets')} data-testid="change-style">
                 Change Style
             </button>
-        </div>
-    ),
-}));
-
-vi.mock('./DrawingToolbar', () => ({
-    default: ({ drawingMode, onDrawingModeChange, primaryAssets, onPrimaryAssetsChange, dependentAssets, onDependentAssetsChange }: any) => (
-        <div data-testid="drawing-toolbar">
-            <div data-testid="drawing-mode">{drawingMode || 'none'}</div>
-            <button onClick={() => onDrawingModeChange('circle')}>Draw Circle</button>
-            <button onClick={() => onDrawingModeChange('polygon')}>Draw Polygon</button>
-            <div data-testid="primary-assets">{primaryAssets ? 'enabled' : 'disabled'}</div>
-            <div data-testid="dependent-assets">{dependentAssets ? 'enabled' : 'disabled'}</div>
-            <button onClick={() => onPrimaryAssetsChange(!primaryAssets)}>Toggle Primary</button>
-            <button onClick={() => onDependentAssetsChange(!dependentAssets)}>Toggle Dependent</button>
         </div>
     ),
 }));
@@ -146,23 +129,22 @@ vi.mock('@/api/asset-categories', () => ({
     fetchAssetCategories: (...args: any[]) => mockFetchAssetCategories(...args),
 }));
 
+vi.mock('@/hooks/useActiveScenario', () => ({
+    useActiveScenario: () => ({
+        data: { id: 'test-scenario-id', name: 'Test Scenario', isActive: true },
+        isLoading: false,
+    }),
+}));
+
+vi.mock('@/api/focus-areas', () => ({
+    fetchFocusAreas: vi.fn().mockResolvedValue([]),
+    createFocusArea: vi.fn().mockResolvedValue({ id: 'new-focus-area', name: 'Area 1', isActive: true }),
+}));
+
 const waitForElement = async (testId: string) => {
     await waitFor(() => {
         expect(screen.getByTestId(testId)).toBeInTheDocument();
     });
-};
-
-const clickElement = async (testId: string) => {
-    await waitForElement(testId);
-    const element = screen.getByTestId(testId);
-    await act(async () => {
-        element.click();
-    });
-};
-
-const openDrawingToolbar = async () => {
-    await clickElement('drawing-toggle');
-    await waitForElement('drawing-toolbar');
 };
 
 describe('MapView', () => {
@@ -194,20 +176,13 @@ describe('MapView', () => {
             renderWithProviders(<MapView />);
             await waitForElement('map-controls');
         });
-
-        it('does not render DrawingToolbar initially', async () => {
-            renderWithProviders(<MapView />);
-            await waitFor(() => {
-                expect(screen.queryByTestId('drawing-toolbar')).not.toBeInTheDocument();
-            });
-        });
     });
 
     describe('Panel State Management', () => {
-        it('starts with scenario panel active', async () => {
+        it('starts with focus-area panel active', async () => {
             renderWithProviders(<MapView />);
             await waitFor(() => {
-                expect(screen.getByTestId('active-view')).toHaveTextContent('scenario');
+                expect(screen.getByTestId('active-view')).toHaveTextContent('focus-area');
             });
         });
 
@@ -222,8 +197,9 @@ describe('MapView', () => {
                 toggleButton.click();
             });
 
+            // Clicking toggles from focus-area to scenario
             await waitFor(() => {
-                expect(screen.getByTestId('active-view')).toHaveTextContent('none');
+                expect(screen.getByTestId('active-view')).toHaveTextContent('scenario');
             });
         });
     });
@@ -281,93 +257,6 @@ describe('MapView', () => {
             });
 
             expect(changeStyleButton).toBeInTheDocument();
-        });
-    });
-
-    describe('Drawing Toolbar', () => {
-        it('shows drawing toolbar when toggled on', async () => {
-            renderWithProviders(<MapView />);
-            await openDrawingToolbar();
-        });
-
-        it('hides drawing toolbar when toggled off', async () => {
-            renderWithProviders(<MapView />);
-            await openDrawingToolbar();
-
-            await clickElement('drawing-toggle');
-
-            await waitFor(() => {
-                expect(screen.queryByTestId('drawing-toolbar')).not.toBeInTheDocument();
-            });
-        });
-
-        it('updates drawing mode when DrawingToolbar changes mode', async () => {
-            renderWithProviders(<MapView />);
-            await openDrawingToolbar();
-
-            const drawCircleButton = screen.getByText('Draw Circle');
-            await act(async () => {
-                drawCircleButton.click();
-            });
-
-            await waitFor(() => {
-                expect(screen.getByTestId('drawing-mode')).toHaveTextContent('circle');
-            });
-        });
-
-        it('resets drawing mode when closing drawing toolbar', async () => {
-            renderWithProviders(<MapView />);
-            await openDrawingToolbar();
-
-            const drawCircleButton = screen.getByText('Draw Circle');
-            await act(async () => {
-                drawCircleButton.click();
-            });
-
-            await waitFor(() => {
-                expect(screen.getByTestId('drawing-mode')).toHaveTextContent('circle');
-            });
-
-            await clickElement('drawing-toggle');
-            await clickElement('drawing-toggle');
-
-            await waitFor(() => {
-                expect(screen.getByTestId('drawing-mode')).toHaveTextContent('none');
-            });
-        });
-    });
-
-    describe('Asset Filters', () => {
-        it('updates primary assets state', async () => {
-            renderWithProviders(<MapView />);
-            await openDrawingToolbar();
-
-            const togglePrimaryButton = screen.getByText('Toggle Primary');
-            expect(screen.getByTestId('primary-assets')).toHaveTextContent('disabled');
-
-            await act(async () => {
-                togglePrimaryButton.click();
-            });
-
-            await waitFor(() => {
-                expect(screen.getByTestId('primary-assets')).toHaveTextContent('enabled');
-            });
-        });
-
-        it('updates dependent assets state', async () => {
-            renderWithProviders(<MapView />);
-            await openDrawingToolbar();
-
-            const toggleDependentButton = screen.getByText('Toggle Dependent');
-            expect(screen.getByTestId('dependent-assets')).toHaveTextContent('disabled');
-
-            await act(async () => {
-                toggleDependentButton.click();
-            });
-
-            await waitFor(() => {
-                expect(screen.getByTestId('dependent-assets')).toHaveTextContent('enabled');
-            });
         });
     });
 

@@ -14,7 +14,7 @@ describe('CompassButton', () => {
         return {
             current: {
                 getMap: () => mockMap,
-            } as MapRef,
+            } as unknown as MapRef,
         };
     };
 

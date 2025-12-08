@@ -8,7 +8,6 @@ import ZoomInButton from './controls/ZoomInButton';
 import ZoomOutButton from './controls/ZoomOutButton';
 import AssetInfoButton from './controls/AssetInfoButton';
 import MapStyleButton from './controls/MapStyleButton';
-import DrawPolygonButton from './controls/DrawPolygonButton';
 import AssetInfoPanel from './controls/panels/AssetInfoPanel';
 import MapStylePanel from './controls/panels/MapStylePanel';
 import type { MapStyleKey } from './constants';
@@ -45,8 +44,6 @@ const ControlDivider = styled(Box)(({ theme }) => ({
 type MapControlsProps = {
     mapRef: RefObject<MapRef | null>;
     onClosePanels: () => void;
-    isDrawing: boolean;
-    onToggleDrawing: () => void;
     mapStyleKey: MapStyleKey;
     onMapStyleChange: (style: MapStyleKey) => void;
     mapStylePanelOpen: boolean;
@@ -61,8 +58,6 @@ type MapControlsProps = {
 const MapControls = ({
     mapRef,
     onClosePanels,
-    isDrawing,
-    onToggleDrawing,
     mapStyleKey,
     onMapStyleChange,
     mapStylePanelOpen,
@@ -129,11 +124,6 @@ const MapControls = ({
                     <ZoomInButton mapRef={mapRef} />
                     <ControlDivider />
                     <ZoomOutButton mapRef={mapRef} />
-                </ControlGroup>
-
-                <ControlGroup aria-label="Drawing controls">
-                    <legend style={{ display: 'none' }}>Drawing controls</legend>
-                    <DrawPolygonButton isActive={isDrawing} onToggle={onToggleDrawing} />
                 </ControlGroup>
 
                 <ControlGroup aria-label="Asset information controls" sx={{ position: 'relative' }}>

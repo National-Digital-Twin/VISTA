@@ -1,0 +1,352 @@
+import { useState, useCallback, type ChangeEvent, type KeyboardEvent, type MouseEvent } from 'react';
+import {
+    Alert,
+    Box,
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    Divider,
+    IconButton,
+    Menu,
+    MenuItem,
+    Portal,
+    Snackbar,
+    TextField,
+    Typography,
+} from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { DeleteOutline, EditNoteOutlined, VisibilityOffOutlined, VisibilityOutlined } from '@mui/icons-material';
+import { fetchFocusAreas, updateFocusArea, deleteFocusArea, type FocusArea } from '@/api/focus-areas';
+
+type FocusAreaViewProps = {
+    readonly onClose: () => void;
+    readonly scenarioId?: string;
+    readonly mapWideVisible: boolean;
+    readonly onMapWideVisibleChange?: (visible: boolean) => void;
+    readonly isDrawing?: boolean;
+    readonly onStartDrawing?: (mode: 'circle' | 'polygon') => void;
+};
+
+type FocusAreaItemProps = {
+    readonly focusArea: FocusArea;
+    readonly scenarioId: string;
+    readonly onError: (message: string) => void;
+};
+
+const FocusAreaItem = ({ focusArea, scenarioId, onError }: FocusAreaItemProps) => {
+    const [isEditing, setIsEditing] = useState(false);
+    const [editName, setEditName] = useState(focusArea.name);
+    const [nameError, setNameError] = useState<string | null>(null);
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+    const queryClient = useQueryClient();
+
+    const updateMutation = useMutation({
+        mutationFn: (data: { name?: string; isActive?: boolean }) => updateFocusArea(scenarioId, focusArea.id, data),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['focusAreas', scenarioId] });
+            queryClient.invalidateQueries({ queryKey: ['scenarioAssets', scenarioId] });
+        },
+        onError: (error) => {
+            console.error('Failed to update focus area', error.message);
+            onError('Failed to update focus area');
+        },
+    });
+
+    const deleteMutation = useMutation({
+        mutationFn: () => deleteFocusArea(scenarioId, focusArea.id),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['focusAreas', scenarioId] });
+            queryClient.invalidateQueries({ queryKey: ['scenarioAssets', scenarioId] });
+        },
+        onError: () => onError('Failed to delete focus area'),
+    });
+
+    const isBusy = updateMutation.isPending || deleteMutation.isPending;
+
+    const handleEditClick = () => {
+        setEditName(focusArea.name);
+        setNameError(null);
+        setIsEditing(true);
+    };
+
+    const handleNameBlur = () => {
+        const trimmedName = editName.trim();
+        if (!trimmedName) {
+            setNameError('Name cannot be empty');
+            return;
+        }
+        setNameError(null);
+        setIsEditing(false);
+        if (trimmedName !== focusArea.name) {
+            updateMutation.mutate({ name: trimmedName });
+        }
+    };
+
+    const handleNameKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Enter') {
+            handleNameBlur();
+        } else if (e.key === 'Escape') {
+            setIsEditing(false);
+            setEditName(focusArea.name);
+            setNameError(null);
+        }
+    };
+
+    const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
+        setEditName(e.target.value);
+        if (nameError) {
+            setNameError(null);
+        }
+    };
+
+    const handleToggleVisibility = () => {
+        updateMutation.mutate({ isActive: !focusArea.isActive });
+    };
+
+    const handleDeleteClick = () => {
+        setDeleteDialogOpen(true);
+    };
+
+    const handleDeleteConfirm = () => {
+        setDeleteDialogOpen(false);
+        deleteMutation.mutate();
+    };
+
+    const handleDeleteCancel = () => {
+        setDeleteDialogOpen(false);
+    };
+
+    return (
+        <Box
+            sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                py: 1,
+                px: 2,
+            }}
+        >
+            <Box sx={{ flex: 1, minWidth: 0 }}>
+                {isEditing ? (
+                    <TextField
+                        value={editName}
+                        onChange={handleNameChange}
+                        onBlur={handleNameBlur}
+                        onKeyDown={handleNameKeyDown}
+                        size="small"
+                        autoFocus
+                        fullWidth
+                        error={!!nameError}
+                        helperText={nameError}
+                        sx={{
+                            '& .MuiInputBase-input': {
+                                py: 0.5,
+                                fontSize: '0.875rem',
+                            },
+                        }}
+                    />
+                ) : (
+                    <Typography
+                        variant="body2"
+                        sx={{
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
+                        }}
+                    >
+                        {focusArea.name}
+                    </Typography>
+                )}
+            </Box>
+            <Box sx={{ display: 'flex' }}>
+                <IconButton size="small" onClick={handleEditClick} disabled={isBusy} aria-label="Edit focus area name" title="Edit name">
+                    <EditNoteOutlined fontSize="small" />
+                </IconButton>
+                <IconButton size="small" onClick={handleDeleteClick} disabled={isBusy} aria-label="Delete focus area" title="Delete">
+                    <DeleteOutline fontSize="small" />
+                </IconButton>
+                <IconButton
+                    size="small"
+                    onClick={handleToggleVisibility}
+                    disabled={isBusy}
+                    aria-label={focusArea.isActive ? 'Hide focus area' : 'Show focus area'}
+                    title={focusArea.isActive ? 'Hide' : 'Show'}
+                >
+                    {focusArea.isActive ? <VisibilityOutlined fontSize="small" color="primary" /> : <VisibilityOffOutlined fontSize="small" />}
+                </IconButton>
+            </Box>
+
+            <Dialog open={deleteDialogOpen} onClose={handleDeleteCancel} maxWidth="xs" fullWidth>
+                <DialogTitle>Delete focus area</DialogTitle>
+                <DialogContent>
+                    <Typography variant="body1">Are you sure you want to delete "{focusArea.name || 'Unnamed focus area'}"?</Typography>
+                </DialogContent>
+                <DialogActions sx={{ p: 2 }}>
+                    <Button onClick={handleDeleteCancel} variant="outlined">
+                        CANCEL
+                    </Button>
+                    <Button onClick={handleDeleteConfirm} variant="contained" color="error">
+                        DELETE
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        </Box>
+    );
+};
+
+const FocusAreaView = ({ onClose, scenarioId, mapWideVisible, onMapWideVisibleChange, isDrawing, onStartDrawing }: FocusAreaViewProps) => {
+    const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
+    const [mutationError, setMutationError] = useState<string | null>(null);
+    const menuOpen = Boolean(menuAnchorEl);
+
+    const {
+        data: focusAreas,
+        isLoading,
+        isError,
+    } = useQuery({
+        queryKey: ['focusAreas', scenarioId],
+        queryFn: () => fetchFocusAreas(scenarioId!),
+        enabled: !!scenarioId,
+        staleTime: 5 * 60 * 1000,
+    });
+
+    const handleDrawMenuClick = (event: MouseEvent<HTMLButtonElement>) => {
+        setMenuAnchorEl(event.currentTarget);
+    };
+
+    const handleDrawCircle = useCallback(() => {
+        setMenuAnchorEl(null);
+        onStartDrawing?.('circle');
+    }, [onStartDrawing]);
+
+    const handleDrawPolygon = useCallback(() => {
+        setMenuAnchorEl(null);
+        onStartDrawing?.('polygon');
+    }, [onStartDrawing]);
+
+    const handleMapWideToggle = () => {
+        onMapWideVisibleChange?.(!mapWideVisible);
+    };
+
+    return (
+        <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', p: 2, borderBottom: 1, borderColor: 'divider' }}>
+                <Typography variant="h6" fontWeight={600}>
+                    Focus area
+                </Typography>
+                <IconButton size="small" onClick={onClose} aria-label="Close panel">
+                    <CloseIcon fontSize="small" />
+                </IconButton>
+            </Box>
+
+            <Box sx={{ flex: 1, overflowY: 'auto' }}>
+                <Box
+                    sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        py: 1.5,
+                        px: 2,
+                    }}
+                >
+                    <Typography variant="body2">Map-wide</Typography>
+                    <IconButton
+                        size="small"
+                        onClick={handleMapWideToggle}
+                        aria-label={mapWideVisible ? 'Hide map-wide assets' : 'Show map-wide assets'}
+                        title={mapWideVisible ? 'Map-wide visible' : 'Map-wide hidden'}
+                    >
+                        {mapWideVisible ? <VisibilityOutlined fontSize="small" color="primary" /> : <VisibilityOffOutlined fontSize="small" />}
+                    </IconButton>
+                </Box>
+
+                <Divider />
+
+                {!scenarioId && (
+                    <Box sx={{ p: 2 }}>
+                        <Typography variant="body2" color="text.secondary">
+                            No scenario selected
+                        </Typography>
+                    </Box>
+                )}
+
+                {scenarioId && isLoading && (
+                    <Box sx={{ p: 2 }}>
+                        <Typography variant="body2" color="text.secondary">
+                            Loading focus areas...
+                        </Typography>
+                    </Box>
+                )}
+
+                {scenarioId && isError && (
+                    <Box sx={{ p: 2 }}>
+                        <Typography variant="body2" color="text.secondary">
+                            Error loading focus areas
+                        </Typography>
+                    </Box>
+                )}
+
+                {scenarioId &&
+                    !isLoading &&
+                    !isError &&
+                    focusAreas?.map((focusArea) => (
+                        <FocusAreaItem key={focusArea.id} focusArea={focusArea} scenarioId={scenarioId} onError={setMutationError} />
+                    ))}
+
+                <Box sx={{ display: 'flex', justifyContent: 'center', m: 2 }}>
+                    <Button
+                        variant="contained"
+                        startIcon={<AddCircleIcon />}
+                        onClick={handleDrawMenuClick}
+                        disabled={!scenarioId || isDrawing}
+                        sx={{
+                            textTransform: 'uppercase',
+                            fontWeight: 500,
+                        }}
+                    >
+                        Draw new focus area
+                    </Button>
+                </Box>
+            </Box>
+            <Menu
+                anchorEl={menuAnchorEl}
+                open={menuOpen}
+                onClose={() => setMenuAnchorEl(null)}
+                anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+                transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+                sx={{
+                    'marginLeft': '1rem',
+                    '& .MuiMenuItem-root': {
+                        padding: '1rem',
+                    },
+                }}
+            >
+                <MenuItem onClick={handleDrawCircle}>
+                    <img src="/icons/map-v2/circle.svg" alt="" width={22} height={22} style={{ marginRight: 8 }} /> Draw circle
+                </MenuItem>
+                <MenuItem onClick={handleDrawPolygon}>
+                    <img src="/icons/map-v2/polygon.svg" alt="" width={22} height={22} style={{ marginRight: 8 }} /> Draw polygon
+                </MenuItem>
+            </Menu>
+
+            <Portal>
+                <Snackbar
+                    open={!!mutationError}
+                    autoHideDuration={5000}
+                    onClose={() => setMutationError(null)}
+                    anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                >
+                    <Alert severity="error" onClose={() => setMutationError(null)}>
+                        {mutationError}
+                    </Alert>
+                </Snackbar>
+            </Portal>
+        </Box>
+    );
+};
+
+export default FocusAreaView;
