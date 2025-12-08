@@ -11,6 +11,7 @@ import {
     IconButton,
     Menu,
     MenuItem,
+    Portal,
     Snackbar,
     TextField,
     Typography,
@@ -283,7 +284,7 @@ const FocusAreaView = ({ onClose, scenarioId, mapWideVisible, onMapWideVisibleCh
 
                 {scenarioId && isError && (
                     <Box sx={{ p: 2 }}>
-                        <Typography variant="body2" color="error">
+                        <Typography variant="body2" color="text.secondary">
                             Error loading focus areas
                         </Typography>
                     </Box>
@@ -331,18 +332,19 @@ const FocusAreaView = ({ onClose, scenarioId, mapWideVisible, onMapWideVisibleCh
                     <img src="/icons/map-v2/polygon.svg" alt="" width={22} height={22} style={{ marginRight: 8 }} /> Draw polygon
                 </MenuItem>
             </Menu>
-            {/* FIXME: snackbar is being overlaid, having to position it on sidebar to see it */}
-            <Snackbar
-                open={!!mutationError}
-                autoHideDuration={5000}
-                onClose={() => setMutationError(null)}
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-                sx={{ marginLeft: 10 }}
-            >
-                <Alert severity="error" onClose={() => setMutationError(null)}>
-                    {mutationError}
-                </Alert>
-            </Snackbar>
+
+            <Portal>
+                <Snackbar
+                    open={!!mutationError}
+                    autoHideDuration={5000}
+                    onClose={() => setMutationError(null)}
+                    anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                >
+                    <Alert severity="error" onClose={() => setMutationError(null)}>
+                        {mutationError}
+                    </Alert>
+                </Snackbar>
+            </Portal>
         </Box>
     );
 };

@@ -10,7 +10,7 @@ export default function DevToolsContainer({ children }: DevToolsContainerProps) 
     return (
         <>
             <React.StrictMode>{children}</React.StrictMode>
-            <ReactQueryDevtools />
+            <ReactQueryDevtools buttonPosition="bottom-left" />
         </>
     );
 }
