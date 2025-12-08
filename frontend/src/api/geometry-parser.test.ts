@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+import type { Geometry } from 'geojson';
 import {
     parseCoordinatePair,
     parseCoordinates,
@@ -12,6 +13,7 @@ import {
     parseMultiPolygonGeometry,
     parseGeometry,
     parseGeometryWithLocation,
+    getLocationFromGeometry,
 } from './geometry-parser';
 
 describe('geometry-parser', () => {
@@ -358,6 +360,172 @@ describe('geometry-parser', () => {
             expect(() => {
                 parseGeometryWithLocation('INVALID_FORMAT');
             }).toThrow('Unsupported geometry format: INVALID_FORMAT');
+        });
+    });
+
+    describe('getLocationFromGeometry', () => {
+        it('extracts location from Point geometry', () => {
+            const geometry: Geometry = {
+                type: 'Point',
+                coordinates: [-1.4, 50.67],
+            };
+            const result = getLocationFromGeometry(geometry);
+            expect(result).toEqual({ lat: 50.67, lng: -1.4 });
+        });
+
+        it('extracts first point from MultiPoint geometry', () => {
+            const geometry: Geometry = {
+                type: 'MultiPoint',
+                coordinates: [
+                    [-1.4, 50.67],
+                    [-1.5, 50.68],
+                ],
+            };
+            const result = getLocationFromGeometry(geometry);
+            expect(result).toEqual({ lat: 50.67, lng: -1.4 });
+        });
+
+        it('returns null for empty MultiPoint geometry', () => {
+            const geometry: Geometry = {
+                type: 'MultiPoint',
+                coordinates: [],
+            };
+            const result = getLocationFromGeometry(geometry);
+            expect(result).toBeNull();
+        });
+
+        it('extracts first point from LineString geometry', () => {
+            const geometry: Geometry = {
+                type: 'LineString',
+                coordinates: [
+                    [-1.4, 50.67],
+                    [-1.5, 50.68],
+                    [-1.6, 50.69],
+                ],
+            };
+            const result = getLocationFromGeometry(geometry);
+            expect(result).toEqual({ lat: 50.67, lng: -1.4 });
+        });
+
+        it('returns null for empty LineString geometry', () => {
+            const geometry: Geometry = {
+                type: 'LineString',
+                coordinates: [],
+            };
+            const result = getLocationFromGeometry(geometry);
+            expect(result).toBeNull();
+        });
+
+        it('extracts first point from MultiLineString geometry', () => {
+            const geometry: Geometry = {
+                type: 'MultiLineString',
+                coordinates: [
+                    [
+                        [-1.4, 50.67],
+                        [-1.5, 50.68],
+                    ],
+                    [
+                        [-2, 51],
+                        [-2.1, 51.1],
+                    ],
+                ],
+            };
+            const result = getLocationFromGeometry(geometry);
+            expect(result).toEqual({ lat: 50.67, lng: -1.4 });
+        });
+
+        it('returns null for empty MultiLineString geometry', () => {
+            const geometry: Geometry = {
+                type: 'MultiLineString',
+                coordinates: [],
+            };
+            const result = getLocationFromGeometry(geometry);
+            expect(result).toBeNull();
+        });
+
+        it('returns null for MultiLineString with empty first line', () => {
+            const geometry: Geometry = {
+                type: 'MultiLineString',
+                coordinates: [[]],
+            };
+            const result = getLocationFromGeometry(geometry);
+            expect(result).toBeNull();
+        });
+
+        it('extracts centroid from Polygon geometry', () => {
+            const geometry: Geometry = {
+                type: 'Polygon',
+                coordinates: [
+                    [
+                        [-1.4, 50.67],
+                        [-1.4, 50.68],
+                        [-1.39, 50.68],
+                        [-1.39, 50.67],
+                        [-1.4, 50.67],
+                    ],
+                ],
+            };
+            const result = getLocationFromGeometry(geometry);
+            expect(result).not.toBeNull();
+            expect(result!.lat).toBeCloseTo(50.675);
+            expect(result!.lng).toBeCloseTo(-1.395);
+        });
+
+        it('returns null for empty Polygon geometry', () => {
+            const geometry: Geometry = {
+                type: 'Polygon',
+                coordinates: [],
+            };
+            const result = getLocationFromGeometry(geometry);
+            expect(result).toBeNull();
+        });
+
+        it('returns null for Polygon with empty ring', () => {
+            const geometry: Geometry = {
+                type: 'Polygon',
+                coordinates: [[]],
+            };
+            const result = getLocationFromGeometry(geometry);
+            expect(result).toBeNull();
+        });
+
+        it('extracts centroid from MultiPolygon geometry', () => {
+            const geometry: Geometry = {
+                type: 'MultiPolygon',
+                coordinates: [
+                    [
+                        [
+                            [-1.4, 50.67],
+                            [-1.4, 50.68],
+                            [-1.39, 50.68],
+                            [-1.39, 50.67],
+                            [-1.4, 50.67],
+                        ],
+                    ],
+                ],
+            };
+            const result = getLocationFromGeometry(geometry);
+            expect(result).not.toBeNull();
+            expect(result!.lat).toBeCloseTo(50.675);
+            expect(result!.lng).toBeCloseTo(-1.395);
+        });
+
+        it('returns null for empty MultiPolygon geometry', () => {
+            const geometry: Geometry = {
+                type: 'MultiPolygon',
+                coordinates: [],
+            };
+            const result = getLocationFromGeometry(geometry);
+            expect(result).toBeNull();
+        });
+
+        it('returns null for unsupported geometry type', () => {
+            const geometry = {
+                type: 'GeometryCollection',
+                geometries: [],
+            } as unknown as Geometry;
+            const result = getLocationFromGeometry(geometry);
+            expect(result).toBeNull();
         });
     });
 });

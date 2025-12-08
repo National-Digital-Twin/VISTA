@@ -71,14 +71,17 @@ const mockScenarios = [
     {
         id: 'flood-newport',
         name: 'Flood in Newport',
+        isActive: true,
     },
     {
         id: 'landslide-ventnor',
         name: 'Landslide in Ventnor',
+        isActive: true,
     },
     {
         id: 'wildfire-shanklin',
         name: 'Wildfire in Shanklin',
+        isActive: true,
     },
 ];
 

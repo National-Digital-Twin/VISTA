@@ -70,4 +70,23 @@ DragCircleMode.toDisplayFeatures = function (state, geojson, display) {
     return display(geojson);
 };
 
+DragCircleMode.onStop = function (state) {
+    dragPan.enable(this);
+    this.updateUIClasses({ mouse: MapboxDraw.constants.cursors.NONE });
+    MapboxDraw.lib.doubleClickZoom.enable(this);
+
+    // Check to see if we've deleted this feature
+    if (this.getFeature(state.polygon.id) === undefined) {
+        return;
+    }
+
+    if (state.polygon.properties.center.length > 0 && state.polygon.coordinates[0].length > 0) {
+        this.map.fire(MapboxDraw.constants.events.CREATE, {
+            features: [state.polygon.toGeoJSON()],
+        });
+    } else {
+        this.deleteFeature([state.polygon.id], { silent: true });
+    }
+};
+
 export default DragCircleMode;

@@ -249,69 +249,72 @@ export function parseGeometry(geomString: string): Geometry | null {
     return null;
 }
 
+export function getLocationFromGeometry(geometry: Geometry): { lat: number; lng: number } | null {
+    switch (geometry.type) {
+        case 'Point':
+            return {
+                lat: geometry.coordinates[1],
+                lng: geometry.coordinates[0],
+            };
+
+        case 'MultiPoint':
+        case 'LineString':
+            if (geometry.coordinates.length === 0) {
+                return null;
+            }
+            return {
+                lat: geometry.coordinates[0][1],
+                lng: geometry.coordinates[0][0],
+            };
+
+        case 'MultiLineString':
+            if (geometry.coordinates.length === 0 || geometry.coordinates[0].length === 0) {
+                return null;
+            }
+            return {
+                lat: geometry.coordinates[0][0][1],
+                lng: geometry.coordinates[0][0][0],
+            };
+
+        case 'Polygon':
+            if (geometry.coordinates.length === 0 || geometry.coordinates[0].length === 0) {
+                return null;
+            }
+            {
+                const centroidPoint = centroid({ type: 'Feature', geometry, properties: {} });
+                const [lng, lat] = centroidPoint.geometry.coordinates;
+                return { lat, lng };
+            }
+
+        case 'MultiPolygon':
+            if (geometry.coordinates.length === 0) {
+                return null;
+            }
+            {
+                const centroidPoint = centroid({ type: 'Feature', geometry, properties: {} });
+                const [lng, lat] = centroidPoint.geometry.coordinates;
+                return { lat, lng };
+            }
+
+        default:
+            return null;
+    }
+}
+
 export function parseGeometryWithLocation(geom: string): { lat: number; lng: number; geometry: Geometry } {
-    const normalizedGeom = normalizeGeometryString(geom);
-
-    const multiPoint = parseMultiPointGeometryInternal(normalizedGeom);
-    if (multiPoint) {
-        const firstPoint = multiPoint.coordinates[0];
-        return {
-            lat: firstPoint[1],
-            lng: firstPoint[0],
-            geometry: multiPoint,
-        };
+    const geometry = parseGeometry(geom);
+    if (!geometry) {
+        throw new Error(`Unsupported geometry format: ${geom}`);
     }
 
-    const point = parsePointGeometryInternal(normalizedGeom);
-    if (point) {
-        return {
-            lat: point.coordinates[1],
-            lng: point.coordinates[0],
-            geometry: point,
-        };
+    const location = getLocationFromGeometry(geometry);
+    if (!location) {
+        throw new Error(`Could not extract location from geometry: ${geom}`);
     }
 
-    const multiLineString = parseMultiLineStringGeometryInternal(normalizedGeom);
-    if (multiLineString) {
-        const firstPoint = multiLineString.coordinates[0][0];
-        return {
-            lat: firstPoint[1],
-            lng: firstPoint[0],
-            geometry: multiLineString,
-        };
-    }
-
-    const lineString = parseLineStringGeometryInternal(normalizedGeom);
-    if (lineString) {
-        const firstPoint = lineString.coordinates[0];
-        return {
-            lat: firstPoint[1],
-            lng: firstPoint[0],
-            geometry: lineString,
-        };
-    }
-
-    const multiPolygon = parseMultiPolygonGeometryInternal(normalizedGeom);
-    if (multiPolygon) {
-        const centroidPoint = centroid({ type: 'Feature', geometry: multiPolygon, properties: {} });
-        const [lng, lat] = centroidPoint.geometry.coordinates;
-        return {
-            lat,
-            lng,
-            geometry: multiPolygon,
-        };
-    }
-
-    const polygon = parsePolygonGeometryInternal(normalizedGeom);
-    if (polygon) {
-        const centroidPoint = centroid({ type: 'Feature', geometry: polygon, properties: {} });
-        const [lng, lat] = centroidPoint.geometry.coordinates;
-        return {
-            lat,
-            lng,
-            geometry: polygon,
-        };
-    }
-
-    throw new Error(`Unsupported geometry format: ${geom}`);
+    return {
+        lat: location.lat,
+        lng: location.lng,
+        geometry,
+    };
 }

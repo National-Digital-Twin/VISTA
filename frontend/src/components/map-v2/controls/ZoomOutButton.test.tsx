@@ -14,7 +14,7 @@ describe('ZoomOutButton', () => {
         return {
             current: {
                 getMap: () => mockMap,
-            } as MapRef,
+            } as unknown as MapRef,
         };
     };
 

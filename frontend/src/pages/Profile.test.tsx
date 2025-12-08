@@ -56,6 +56,7 @@ describe('Profile', () => {
         getUserMemberSince: () => '1 Jan 2024',
         getUserAddedBy: () => 'Admin User',
         getUserType: () => 'Administrator',
+        getUserGroups: () => [],
     };
 
     beforeEach(() => {

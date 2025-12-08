@@ -60,28 +60,31 @@ describe('MapPanelButton', () => {
     });
 
     describe('Active State', () => {
-        it('applies active background color when isActive is true', () => {
+        it('applies active background color to icon container when isActive is true', () => {
             renderWithTheme(<MapPanelButton {...defaultProps} isActive={true} />);
 
-            const button = screen.getByText('Test Panel').closest('div');
-            expect(button).toHaveStyle({ backgroundColor: 'rgb(212, 227, 255)' }); // chip.main color
+            const icon = screen.getByAltText('Test');
+            const iconContainer = icon.closest('div');
+            expect(iconContainer).toHaveStyle({ backgroundColor: 'rgb(212, 227, 255)' }); // chip.main color
         });
 
-        it('applies transparent background when isActive is false', () => {
+        it('applies transparent background to icon container when isActive is false', () => {
             renderWithTheme(<MapPanelButton {...defaultProps} isActive={false} />);
 
-            const button = screen.getByText('Test Panel').closest('div');
-            const bgColor = button?.style.backgroundColor || (button ? globalThis.getComputedStyle(button).backgroundColor : '');
+            const icon = screen.getByAltText('Test');
+            const iconContainer = icon.closest('div');
+            const bgColor = iconContainer?.style.backgroundColor || (iconContainer ? globalThis.getComputedStyle(iconContainer).backgroundColor : '');
             expect(bgColor === 'transparent' || bgColor === 'rgba(0, 0, 0, 0)' || bgColor === '').toBe(true);
         });
 
-        it('maintains active background color on hover when active', () => {
+        it('maintains active background color on icon container hover when active', () => {
             renderWithTheme(<MapPanelButton {...defaultProps} isActive={true} />);
 
-            const button = screen.getByText('Test Panel').closest('div');
-            if (button) {
-                fireEvent.mouseEnter(button);
-                expect(button).toHaveStyle({ backgroundColor: 'rgb(212, 227, 255)' });
+            const icon = screen.getByAltText('Test');
+            const iconContainer = icon.closest('div');
+            if (iconContainer) {
+                fireEvent.mouseEnter(iconContainer);
+                expect(iconContainer).toHaveStyle({ backgroundColor: 'rgb(212, 227, 255)' });
             }
         });
     });

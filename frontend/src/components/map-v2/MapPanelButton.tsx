@@ -2,14 +2,14 @@ import { Box, Typography } from '@mui/material';
 import type { ReactElement } from 'react';
 
 type MapPanelButtonProps = {
-    label: string;
-    icon: ReactElement;
-    isActive: boolean;
-    onClick?: () => void;
+    readonly label: string;
+    readonly icon: ReactElement;
+    readonly isActive: boolean;
+    readonly onClick?: () => void;
 };
 
 const MapPanelButton = ({ label, icon, isActive, onClick }: MapPanelButtonProps) => {
-    const getHoverBackgroundColor = () => {
+    const getHoverBgColor = () => {
         if (!onClick) {
             return isActive ? 'chip.main' : 'transparent';
         }
@@ -20,27 +20,28 @@ const MapPanelButton = ({ label, icon, isActive, onClick }: MapPanelButtonProps)
         <Box
             onClick={onClick}
             sx={{
-                'display': 'flex',
-                'flexDirection': 'column',
-                'alignItems': 'center',
-                'p': 1.5,
-                'cursor': onClick ? 'pointer' : 'default',
-                'bgcolor': isActive ? 'chip.main' : 'transparent',
-                '&:hover': {
-                    bgcolor: getHoverBackgroundColor(),
-                },
-                'transition': 'background-color 0.2s',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                p: 1.5,
+                cursor: onClick ? 'pointer' : 'default',
             }}
         >
             <Box
                 sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    minWidth: 40,
-                    height: 40,
-                    color: 'text.primary',
-                    flexShrink: 0,
+                    'display': 'flex',
+                    'alignItems': 'center',
+                    'justifyContent': 'center',
+                    'width': '100%',
+                    'height': 40,
+                    'color': 'text.primary',
+                    'flexShrink': 0,
+                    'borderRadius': 20,
+                    'bgcolor': isActive ? 'chip.main' : 'transparent',
+                    'transition': 'background-color 0.2s',
+                    '&:hover': {
+                        bgcolor: getHoverBgColor(),
+                    },
                 }}
             >
                 {icon}

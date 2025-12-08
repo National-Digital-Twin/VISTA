@@ -4,7 +4,7 @@ import MapPanelButton from './MapPanelButton';
 import ScenarioView from './panels/ScenarioView';
 import AssetsView from './panels/AssetsView';
 import ExposureView from './panels/ExposureView';
-import PolygonsView from './panels/PolygonsView';
+import FocusAreaView from './panels/FocusAreaView';
 import AssetDetailsPanel from './panels/AssetDetailsPanel';
 import type { Asset } from '@/api/assets-by-type';
 
@@ -18,6 +18,11 @@ type MapPanelItem = {
 };
 
 const FIXED_ITEMS: readonly MapPanelItem[] = [
+    {
+        id: 'focus-area',
+        label: 'Focus area',
+        icon: <img src="/icons/map-v2/focus-area.svg" alt="Focus area" width={24} height={24} />,
+    },
     {
         id: 'scenario',
         label: 'Scenario',
@@ -33,11 +38,6 @@ const FIXED_ITEMS: readonly MapPanelItem[] = [
         label: 'Exposure',
         icon: <img src="/icons/map-v2/exposure.svg" alt="Exposure" width={24} height={24} />,
     },
-    {
-        id: 'polygons',
-        label: 'Polygons',
-        icon: <img src="/icons/map-v2/polygon.svg" alt="Polygons" width={24} height={24} />,
-    },
 ];
 
 type MapPanelsProps = {
@@ -49,6 +49,11 @@ type MapPanelsProps = {
     onExposureLayerToggle?: (layerId: string, enabled: boolean) => void;
     selectedElement?: Asset | null;
     onBackFromAssetDetails?: () => void;
+    scenarioId?: string;
+    mapWideVisible?: boolean;
+    onMapWideVisibleChange?: (visible: boolean) => void;
+    isDrawing?: boolean;
+    onStartDrawing?: (mode: 'circle' | 'polygon') => void;
 };
 
 const MapPanels = ({
@@ -60,6 +65,11 @@ const MapPanels = ({
     onExposureLayerToggle,
     selectedElement,
     onBackFromAssetDetails,
+    scenarioId,
+    mapWideVisible,
+    onMapWideVisibleChange,
+    isDrawing,
+    onStartDrawing,
 }: MapPanelsProps) => {
     const handleItemClick = (itemId: string) => {
         const newActiveView = activeView === itemId ? null : itemId;
@@ -88,8 +98,17 @@ const MapPanels = ({
                         onExposureLayerToggle={onExposureLayerToggle}
                     />
                 );
-            case 'polygons':
-                return <PolygonsView onClose={handleClosePanel} />;
+            case 'focus-area':
+                return (
+                    <FocusAreaView
+                        onClose={handleClosePanel}
+                        scenarioId={scenarioId}
+                        mapWideVisible={mapWideVisible ?? true}
+                        onMapWideVisibleChange={onMapWideVisibleChange}
+                        isDrawing={isDrawing}
+                        onStartDrawing={onStartDrawing}
+                    />
+                );
             case 'asset-details':
                 if (!onBackFromAssetDetails) {
                     return null;

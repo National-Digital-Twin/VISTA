@@ -2,6 +2,14 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 import { fetchScenarios, type Scenario } from './scenarios';
 
+vi.mock('@/config/app-config', () => ({
+    default: {
+        services: {
+            apiBaseUrl: '/ndtp-python/api',
+        },
+    },
+}));
+
 describe('scenarios API', () => {
     let fetchMock: ReturnType<typeof vi.fn>;
 
@@ -17,8 +25,8 @@ describe('scenarios API', () => {
     describe('fetchScenarios', () => {
         it('successfully fetches scenarios from API', async () => {
             const mockScenarios: Scenario[] = [
-                { id: 'scenario1', name: 'Flood in Newport' },
-                { id: 'scenario2', name: 'Landslide in Ventnor' },
+                { id: 'scenario1', name: 'Flood in Newport', isActive: true },
+                { id: 'scenario2', name: 'Landslide in Ventnor', isActive: false },
             ];
 
             fetchMock.mockResolvedValueOnce({
@@ -28,79 +36,21 @@ describe('scenarios API', () => {
 
             const result = await fetchScenarios();
 
-            expect(fetchMock).toHaveBeenCalledWith('/api/scenarios');
+            expect(fetchMock).toHaveBeenCalledWith('/ndtp-python/api/scenarios/');
             expect(result).toEqual(mockScenarios);
             expect(result).toHaveLength(2);
             expect(result[0].id).toBe('scenario1');
             expect(result[0].name).toBe('Flood in Newport');
+            expect(result[0].isActive).toBe(true);
         });
 
-        it('falls back to mock data when API call fails', async () => {
-            const mockScenarios: Scenario[] = [
-                { id: 'flood-newport', name: 'Flood in Newport' },
-                { id: 'landslide-ventnor', name: 'Landslide in Ventnor' },
-            ];
-
-            fetchMock
-                .mockResolvedValueOnce({
-                    ok: false,
-                    statusText: 'Not Found',
-                })
-                .mockResolvedValueOnce({
-                    ok: true,
-                    json: vi.fn().mockResolvedValue(mockScenarios),
-                });
-
-            const result = await fetchScenarios();
-
-            expect(fetchMock).toHaveBeenCalledTimes(2);
-            expect(fetchMock).toHaveBeenNthCalledWith(1, '/api/scenarios');
-            expect(fetchMock).toHaveBeenNthCalledWith(2, '/data/scenarios.json');
-            expect(result).toEqual(mockScenarios);
-        });
-
-        it('falls back to mock data when API call throws network error', async () => {
-            const mockScenarios: Scenario[] = [{ id: 'scenario1', name: 'Test Scenario' }];
-
-            fetchMock.mockRejectedValueOnce(new Error('Network error')).mockResolvedValueOnce({
-                ok: true,
-                json: vi.fn().mockResolvedValue(mockScenarios),
+        it('throws error when API call fails', async () => {
+            fetchMock.mockResolvedValueOnce({
+                ok: false,
+                statusText: 'Not Found',
             });
 
-            const result = await fetchScenarios();
-
-            expect(fetchMock).toHaveBeenCalledTimes(2);
-            expect(fetchMock).toHaveBeenNthCalledWith(1, '/api/scenarios');
-            expect(fetchMock).toHaveBeenNthCalledWith(2, '/data/scenarios.json');
-            expect(result).toEqual(mockScenarios);
-        });
-
-        it('throws error when both API and fallback fail', async () => {
-            fetchMock
-                .mockResolvedValueOnce({
-                    ok: false,
-                    statusText: 'Not Found',
-                })
-                .mockResolvedValueOnce({
-                    ok: false,
-                    statusText: 'Not Found',
-                });
-
-            await expect(fetchScenarios()).rejects.toThrow('Failed to fetch mock scenarios: Not Found');
-        });
-
-        it('throws error when fallback JSON parsing fails', async () => {
-            fetchMock
-                .mockResolvedValueOnce({
-                    ok: false,
-                    statusText: 'Not Found',
-                })
-                .mockResolvedValueOnce({
-                    ok: true,
-                    json: vi.fn().mockRejectedValue(new Error('Invalid JSON')),
-                });
-
-            await expect(fetchScenarios()).rejects.toThrow('Invalid JSON');
+            await expect(fetchScenarios()).rejects.toThrow('Failed to fetch scenarios: Not Found');
         });
 
         it('handles empty scenarios array', async () => {

@@ -27,7 +27,7 @@ describe('ScenarioView', () => {
 
             expect(screen.getByText('Assets')).toBeInTheDocument();
             expect(screen.getByText('Exposure')).toBeInTheDocument();
-            expect(screen.getByText('Polygons')).toBeInTheDocument();
+            expect(screen.getByText('Focus area')).toBeInTheDocument();
         });
 
         it('renders status messages', () => {
@@ -35,7 +35,7 @@ describe('ScenarioView', () => {
 
             expect(screen.getByText('No assets added to the map')).toBeInTheDocument();
             expect(screen.getByText('No exposure added to the map')).toBeInTheDocument();
-            expect(screen.getByText('No polygons added to the map')).toBeInTheDocument();
+            expect(screen.getByText('No focus areas added to the map')).toBeInTheDocument();
         });
 
         it('renders close button', () => {
@@ -67,14 +67,14 @@ describe('ScenarioView', () => {
             expect(onItemClick).toHaveBeenCalledWith('exposure');
         });
 
-        it('calls onItemClick with "polygons" when Polygons link is clicked', () => {
+        it('calls onItemClick with "focus-area" when Focus area link is clicked', () => {
             const onItemClick = vi.fn();
             renderWithTheme(<ScenarioView {...defaultProps} onItemClick={onItemClick} />);
 
-            const polygonsLink = screen.getByText('Polygons');
-            fireEvent.click(polygonsLink);
+            const focusAreaLink = screen.getByText('Focus area');
+            fireEvent.click(focusAreaLink);
 
-            expect(onItemClick).toHaveBeenCalledWith('polygons');
+            expect(onItemClick).toHaveBeenCalledWith('focus-area');
         });
     });
 

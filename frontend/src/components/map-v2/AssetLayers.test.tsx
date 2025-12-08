@@ -88,12 +88,11 @@ describe('AssetLayers', () => {
 
     const defaultProps = {
         assets: [] as Asset[],
-        selectedAssetTypes: {} as Record<string, boolean>,
         mapReady: true,
     };
 
-    const renderWithEnabledAsset = (overrides?: Partial<React.ComponentProps<typeof AssetLayers>>) => {
-        return renderWithProviders(<AssetLayers {...defaultProps} assets={[mockAsset]} selectedAssetTypes={{ [mockAsset.type]: true }} {...overrides} />);
+    const renderWithAsset = (overrides?: Partial<React.ComponentProps<typeof AssetLayers>>) => {
+        return renderWithProviders(<AssetLayers {...defaultProps} assets={[mockAsset]} {...overrides} />);
     };
 
     describe('Rendering', () => {
@@ -108,33 +107,28 @@ describe('AssetLayers', () => {
         });
 
         it('renders Source and Layer when map is ready and assets exist', () => {
-            renderWithEnabledAsset();
+            renderWithAsset();
             expect(screen.getByTestId('source')).toBeInTheDocument();
             expect(screen.getByTestId('layer')).toBeInTheDocument();
         });
 
-        it('renders markers for enabled asset types', () => {
-            renderWithEnabledAsset();
+        it('renders markers for assets', () => {
+            renderWithAsset();
             expect(screen.getByTestId('marker')).toBeInTheDocument();
         });
 
-        it('does not render markers for disabled asset types', () => {
-            renderWithProviders(<AssetLayers {...defaultProps} assets={[mockAsset]} selectedAssetTypes={{ [mockAsset.type]: false }} />);
-            expect(screen.queryByTestId('marker')).not.toBeInTheDocument();
-        });
-    });
-
-    describe('Asset Filtering', () => {
-        it('filters assets by selected asset types', () => {
+        it('renders all assets provided', () => {
             const asset1 = { ...mockAsset, type: 'type1' } as Asset;
             const asset2 = { ...mockAsset, id: 'asset2', type: 'type2' } as Asset;
 
-            renderWithProviders(<AssetLayers {...defaultProps} assets={[asset1, asset2]} selectedAssetTypes={{ type1: true, type2: false }} />);
+            renderWithProviders(<AssetLayers {...defaultProps} assets={[asset1, asset2]} />);
 
             const markers = screen.getAllByTestId('marker');
-            expect(markers).toHaveLength(1);
+            expect(markers).toHaveLength(2);
         });
+    });
 
+    describe('Multiple Assets', () => {
         it('handles multiple assets of the same type', () => {
             const asset1 = {
                 ...mockAsset,
@@ -149,7 +143,7 @@ describe('AssetLayers', () => {
                 lat: 0.6,
             } as Asset;
 
-            renderWithProviders(<AssetLayers {...defaultProps} assets={[asset1, asset2]} selectedAssetTypes={{ [mockAsset.type]: true }} />);
+            renderWithProviders(<AssetLayers {...defaultProps} assets={[asset1, asset2]} />);
 
             const markers = screen.getAllByTestId('marker');
             expect(markers).toHaveLength(2);
@@ -164,12 +158,12 @@ describe('AssetLayers', () => {
                 elementType: 'asset',
             } as Asset;
 
-            renderWithEnabledAsset({ selectedElements: [selectedElement] });
+            renderWithAsset({ selectedElements: [selectedElement] });
             expect(screen.getByTestId('marker')).toBeInTheDocument();
         });
 
         it('handles empty selected elements', () => {
-            renderWithEnabledAsset({ selectedElements: [] });
+            renderWithAsset({ selectedElements: [] });
             expect(screen.getByTestId('marker')).toBeInTheDocument();
         });
     });
@@ -181,20 +175,20 @@ describe('AssetLayers', () => {
             });
 
         it('sets up map click handler when map is ready', async () => {
-            renderWithEnabledAsset({ mapReady: true });
+            renderWithAsset({ mapReady: true });
             expect(screen.getByTestId('source')).toBeInTheDocument();
             await waitForEffect();
             expect(mockMapInstance.on).toHaveBeenCalledWith('click', 'map-v2-asset-layer', expect.any(Function));
         });
 
         it('does not set up click handler when map is not ready', () => {
-            renderWithEnabledAsset({ mapReady: false });
+            renderWithAsset({ mapReady: false });
             expect(screen.queryByTestId('source')).not.toBeInTheDocument();
             expect(mockMapInstance.on).not.toHaveBeenCalled();
         });
 
         it('cleans up click handler on unmount', async () => {
-            const { unmount } = renderWithEnabledAsset({ mapReady: true });
+            const { unmount } = renderWithAsset({ mapReady: true });
             await waitForEffect();
             expect(mockMapInstance.on).toHaveBeenCalled();
             unmount();
@@ -210,9 +204,7 @@ describe('AssetLayers', () => {
                 lat: undefined,
             } as Asset;
 
-            const { container } = renderWithProviders(
-                <AssetLayers {...defaultProps} assets={[assetWithoutCoords]} selectedAssetTypes={{ [mockAsset.type]: true }} />,
-            );
+            const { container } = renderWithProviders(<AssetLayers {...defaultProps} assets={[assetWithoutCoords]} />);
             expect(container.firstChild).toBeNull();
         });
 
@@ -220,7 +212,7 @@ describe('AssetLayers', () => {
             const asset1 = { ...mockAsset, id: 'same-id' } as Asset;
             const asset2 = { ...mockAsset, id: 'same-id', type: mockAsset.type } as Asset;
 
-            renderWithProviders(<AssetLayers {...defaultProps} assets={[asset1, asset2]} selectedAssetTypes={{ [mockAsset.type]: true }} />);
+            renderWithProviders(<AssetLayers {...defaultProps} assets={[asset1, asset2]} />);
 
             const markers = screen.getAllByTestId('marker');
             expect(markers.length).toBeLessThanOrEqual(1);

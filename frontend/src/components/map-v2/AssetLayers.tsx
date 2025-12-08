@@ -24,25 +24,15 @@ const DEFAULT_LINE_WIDTH = 3;
 
 export type AssetLayersProps = {
     assets: Asset[];
-    selectedAssetTypes: Record<string, boolean>;
     selectedElements?: Asset[];
     onElementClick?: (elements: Asset[]) => void;
     mapReady?: boolean;
     assetCategories?: AssetCategory[];
 };
 
-const AssetLayers = ({ assets, selectedAssetTypes, selectedElements = [], onElementClick, mapReady, assetCategories }: AssetLayersProps) => {
+const AssetLayers = ({ assets, selectedElements = [], onElementClick, mapReady, assetCategories }: AssetLayersProps) => {
     const mapContext = useMap();
     const mapInstance = mapContext?.['map-v2'] || mapContext?.default || null;
-
-    const filteredAssets = useMemo(() => {
-        const enabledTypesSet = new Set(
-            Object.entries(selectedAssetTypes)
-                .filter(([, enabled]) => enabled)
-                .map(([type]) => type),
-        );
-        return assets.filter((asset) => enabledTypesSet.has(asset.type));
-    }, [assets, selectedAssetTypes]);
 
     const selectedElementIds = useMemo(() => {
         return new Set(selectedElements.map((el) => el.id));
@@ -50,26 +40,26 @@ const AssetLayers = ({ assets, selectedAssetTypes, selectedElements = [], onElem
 
     const assetMap = useMemo(() => {
         const map = new Map<string, Asset>();
-        filteredAssets.forEach((asset) => {
+        assets.forEach((asset) => {
             map.set(asset.id, asset);
         });
         return map;
-    }, [filteredAssets]);
+    }, [assets]);
 
     const pointFeaturesData = useMemo(() => {
-        return filteredAssets.map((asset) => createPointFeature(asset)).filter((feature): feature is Feature => feature !== null);
-    }, [filteredAssets]);
+        return assets.map((asset) => createPointFeature(asset)).filter((feature): feature is Feature => feature !== null);
+    }, [assets]);
 
     const linearFeatures = useMemo(() => {
-        return filteredAssets
+        return assets
             .filter((asset) => asset.geometry && (asset.geometry.type === 'LineString' || asset.geometry.type === 'MultiLineString'))
             .map((asset) => createLinearFeature(asset, selectedElements))
             .filter((feature): feature is Feature => feature !== null);
-    }, [filteredAssets, selectedElements]);
+    }, [assets, selectedElements]);
 
     const pointFeatures = useMemo(() => {
         const linearAssetIds = new Set(
-            filteredAssets.filter((asset) => asset.geometry.type === 'LineString' || asset.geometry.type === 'MultiLineString').map((asset) => asset.id),
+            assets.filter((asset) => asset.geometry.type === 'LineString' || asset.geometry.type === 'MultiLineString').map((asset) => asset.id),
         );
 
         const points = pointFeaturesData.filter((feature) => {
@@ -95,7 +85,7 @@ const AssetLayers = ({ assets, selectedAssetTypes, selectedElements = [], onElem
             seenIds.add(id);
             return true;
         });
-    }, [pointFeaturesData, filteredAssets]);
+    }, [pointFeaturesData, assets]);
 
     const lineFeatureCollection = useMemo(() => {
         const enhancedFeatures = linearFeatures.map((feature) => {
@@ -157,14 +147,14 @@ const AssetLayers = ({ assets, selectedAssetTypes, selectedElements = [], onElem
                 return;
             }
 
-            const clickedAsset = findElement(filteredAssets, clickedId);
+            const clickedAsset = findElement(assets, clickedId);
             if (!clickedAsset) {
                 return;
             }
 
             onElementClick([clickedAsset]);
         },
-        [mapInstance, onElementClick, filteredAssets],
+        [mapInstance, onElementClick, assets],
     );
 
     useEffect(() => {

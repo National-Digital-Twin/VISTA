@@ -14,7 +14,7 @@ type AssetTooltipProps = {
 const AssetTooltip = ({ element, assetCategories }: AssetTooltipProps) => {
     const elemIsAsset = isAsset(element);
     const asset = elemIsAsset ? element : null;
-    const details = elemIsAsset && asset ? formatAssetDetails(asset, null) : undefined;
+    const details = elemIsAsset && asset ? formatAssetDetails(asset) : undefined;
     const title = details?.title || asset?.name || (element?.id ? String(element.id) : null) || 'Unknown';
 
     const typeName = asset ? getAssetTypeName(asset.type, assetCategories) : null;
