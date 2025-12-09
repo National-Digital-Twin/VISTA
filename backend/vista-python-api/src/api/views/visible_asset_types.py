@@ -66,3 +66,31 @@ class VisibleAssetTypeView(APIView):
         response_serializer = VisibleAssetTypeResponseSerializer(data=response_data)
         response_serializer.is_valid()
         return Response(response_serializer.data, status=status.HTTP_200_OK)
+
+    def delete(self, request, scenario_id=None):
+        """Clear all visibility settings for a focus area or map-wide.
+
+        If focus_area_id query param is provided, clears visibility for that
+        specific focus area. Otherwise, clears map-wide visibility.
+        """
+        scenario = get_object_or_404(Scenario, id=scenario_id, is_active=True)
+        user_id = get_user_id_from_request(request)
+
+        focus_area_id = request.query_params.get("focus_area_id")
+
+        query = VisibleAsset.objects.filter(
+            scenario=scenario,
+            user_id=user_id,
+        )
+
+        if focus_area_id:
+            focus_area = get_object_or_404(
+                FocusArea, id=focus_area_id, scenario=scenario, user_id=user_id
+            )
+            query = query.filter(focus_area=focus_area)
+        else:
+            query = query.filter(focus_area__isnull=True)
+
+        query.delete()
+
+        return Response({"success": True}, status=status.HTTP_200_OK)
