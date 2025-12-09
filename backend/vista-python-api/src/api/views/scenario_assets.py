@@ -1,13 +1,13 @@
 """Views for scenario-scoped asset operations."""
 
-from django.db.models import Q
+from django.db.models import Exists, OuterRef, Q
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from api.models import FocusArea, Scenario, VisibleAsset
 from api.models.asset import Asset
-from api.models.asset_type import AssetCategory
+from api.models.asset_type import AssetType
 from api.serializers import ScenarioAssetSerializer
 from api.utils.auth import get_user_id_from_request
 
@@ -16,13 +16,18 @@ class ScenarioAssetTypesView(APIView):
     """View for listing asset types with visibility status for a scenario."""
 
     def get(self, request, scenario_id):
-        """List all asset categories with nested subcategories and asset types.
+        """List asset categories with nested subcategories and asset types.
 
         Each asset type includes isActive indicating visibility for the user.
 
+        When focus_area_id is provided, only returns asset types that have at
+        least one asset within that focus area's bounds. When omitted (map-wide),
+        returns all asset types.
+
         Query params:
             focus_area_id: Optional UUID. If provided, returns visibility status
-                for that specific focus area. If omitted, returns map-wide
+                for that specific focus area and filters to only asset types
+                with assets in that area. If omitted, returns map-wide
                 (global) visibility status where focus_area is NULL.
         """
         get_object_or_404(Scenario, id=scenario_id)
@@ -42,29 +47,62 @@ class ScenarioAssetTypesView(APIView):
 
         visible_asset_type_ids = set(visible_query.values_list("asset_type_id", flat=True))
 
-        categories = AssetCategory.objects.prefetch_related("sub_categories__asset_types").all()
+        asset_types_query = AssetType.objects.select_related(
+            "sub_category_id__category_id", "data_source_id"
+        )
+
+        if focus_area_id:
+            focus_area = get_object_or_404(
+                FocusArea, id=focus_area_id, scenario_id=scenario_id, user_id=user_id
+            )
+            # Filter to only asset types that have at least one asset in the focus area
+            asset_types_query = asset_types_query.filter(
+                Exists(
+                    Asset.objects.filter(type_id=OuterRef("pk"), geom__within=focus_area.geometry)
+                )
+            )
+
+        asset_types = asset_types_query.order_by(
+            "sub_category_id__category_id__name", "sub_category_id__name", "name"
+        )
+
+        categories_dict = {}
+        for asset_type in asset_types:
+            sub_cat = asset_type.sub_category_id
+            cat = sub_cat.category_id
+            datasource_id = asset_type.data_source_id_id
+
+            if cat.id not in categories_dict:
+                categories_dict[cat.id] = {
+                    "id": str(cat.id),
+                    "name": cat.name,
+                    "subCategories": {},
+                }
+
+            cat_data = categories_dict[cat.id]
+            if sub_cat.id not in cat_data["subCategories"]:
+                cat_data["subCategories"][sub_cat.id] = {
+                    "id": str(sub_cat.id),
+                    "name": sub_cat.name,
+                    "assetTypes": [],
+                }
+
+            cat_data["subCategories"][sub_cat.id]["assetTypes"].append(
+                {
+                    "id": str(asset_type.id),
+                    "name": asset_type.name,
+                    "isActive": asset_type.id in visible_asset_type_ids,
+                    "datasourceId": str(datasource_id) if datasource_id else None,
+                }
+            )
 
         result = [
             {
-                "id": str(category.id),
-                "name": category.name,
-                "subCategories": [
-                    {
-                        "id": str(sub_category.id),
-                        "name": sub_category.name,
-                        "assetTypes": [
-                            {
-                                "id": str(asset_type.id),
-                                "name": asset_type.name,
-                                "isActive": asset_type.id in visible_asset_type_ids,
-                            }
-                            for asset_type in sub_category.asset_types.all()
-                        ],
-                    }
-                    for sub_category in category.sub_categories.all()
-                ],
+                "id": cat_data["id"],
+                "name": cat_data["name"],
+                "subCategories": list(cat_data["subCategories"].values()),
             }
-            for category in categories
+            for cat_data in categories_dict.values()
         ]
 
         return Response(result)

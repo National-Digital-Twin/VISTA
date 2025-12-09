@@ -4,9 +4,10 @@ import json
 import uuid
 
 import pytest
-from django.contrib.gis.geos import GEOSGeometry
+from django.contrib.gis.geos import GEOSGeometry, Point
 
 from api.models import FocusArea, Scenario, VisibleAsset
+from api.models.asset import Asset
 from api.models.asset_type import AssetCategory, AssetSubCategory, AssetType, DataSource
 
 http_success_code = 200
@@ -212,6 +213,15 @@ def test_scenario_asset_types_after_enable(scenario, asset_type, client):
 @pytest.mark.django_db
 def test_scenario_asset_types_with_focus_area(scenario, asset_type, focus_area, client):
     """Test getting visibility for specific focus area."""
+    # Create an asset inside the focus area bounds so the asset type is returned
+    Asset.objects.create(
+        id=uuid.uuid4(),
+        external_id=uuid.uuid4(),
+        name="Test Asset Inside",
+        type=asset_type,
+        geom=Point(0.5, 0.5),  # Inside focus area (0,0 to 1,1)
+    )
+
     client.put(
         f"/api/scenarios/{scenario.id}/visible-asset-types/",
         data=json.dumps(
@@ -340,3 +350,80 @@ def test_disable_focus_area_does_not_affect_map_wide(scenario, asset_type, focus
         focus_area__isnull=True,
         asset_type=asset_type,
     ).exists()
+
+
+@pytest.mark.django_db
+def test_delete_clears_all_map_wide_visibility(scenario, asset_type, client):
+    """Test DELETE clears all map-wide visibility."""
+    mock_user_id = uuid.UUID("00000000-0000-0000-0000-000000000001")
+
+    VisibleAsset.objects.create(
+        scenario=scenario,
+        user_id=mock_user_id,
+        focus_area=None,
+        asset_type=asset_type,
+    )
+
+    response = client.delete(f"/api/scenarios/{scenario.id}/visible-asset-types/")
+
+    assert response.status_code == http_success_code, f"Response: {response.content}"
+    data = response.json()
+
+    assert data["success"] is True
+    assert not VisibleAsset.objects.filter(
+        scenario=scenario,
+        user_id=mock_user_id,
+        focus_area__isnull=True,
+    ).exists()
+
+
+@pytest.mark.django_db
+def test_delete_clears_focus_area_visibility(scenario, asset_type, focus_area, client):
+    """Test DELETE with focus_area_id clears only that focus area's visibility."""
+    mock_user_id = uuid.UUID("00000000-0000-0000-0000-000000000001")
+
+    # Create visibility for both map-wide and focus area
+    VisibleAsset.objects.create(
+        scenario=scenario,
+        user_id=mock_user_id,
+        focus_area=None,
+        asset_type=asset_type,
+    )
+    VisibleAsset.objects.create(
+        scenario=scenario,
+        user_id=mock_user_id,
+        focus_area=focus_area,
+        asset_type=asset_type,
+    )
+
+    response = client.delete(
+        f"/api/scenarios/{scenario.id}/visible-asset-types/?focus_area_id={focus_area.id}"
+    )
+    data = response.json()
+
+    assert response.status_code == http_success_code
+    assert data["success"] is True
+
+    # Focus area visibility should be deleted
+    assert not VisibleAsset.objects.filter(
+        scenario=scenario,
+        user_id=mock_user_id,
+        focus_area=focus_area,
+    ).exists()
+
+    # Map-wide visibility should still exist
+    assert VisibleAsset.objects.filter(
+        scenario=scenario,
+        user_id=mock_user_id,
+        focus_area__isnull=True,
+    ).exists()
+
+
+@pytest.mark.django_db
+def test_delete_with_no_visible_assets(scenario, client):
+    """Test DELETE succeeds even when nothing to delete."""
+    response = client.delete(f"/api/scenarios/{scenario.id}/visible-asset-types/")
+    data = response.json()
+
+    assert response.status_code == http_success_code
+    assert data["success"] is True
