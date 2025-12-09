@@ -5,6 +5,7 @@ import ScenarioView from './panels/ScenarioView';
 import AssetsView from './panels/AssetsView';
 import ExposureView from './panels/ExposureView';
 import FocusAreaView from './panels/FocusAreaView';
+import UtilitiesView from './panels/UtilitiesView';
 import AssetDetailsPanel from './panels/AssetDetailsPanel';
 import type { Asset } from '@/api/assets-by-type';
 
@@ -38,7 +39,17 @@ const FIXED_ITEMS: readonly MapPanelItem[] = [
         label: 'Exposure',
         icon: <img src="/icons/map-v2/exposure.svg" alt="Exposure" width={24} height={24} />,
     },
+    {
+        id: 'utilities',
+        label: 'Utilities',
+        icon: <img src="/icons/map-v2/utilities.svg" alt="Utilities" width={24} height={24} />,
+    },
 ];
+
+type RoadRoutePosition = {
+    readonly lat: number;
+    readonly lng: number;
+} | null;
 
 type MapPanelsProps = {
     activeView?: string | null;
@@ -47,6 +58,8 @@ type MapPanelsProps = {
     onAssetTypeToggle?: (assetType: string, enabled: boolean) => void;
     selectedExposureLayerIds?: Record<string, boolean>;
     onExposureLayerToggle?: (layerId: string, enabled: boolean) => void;
+    selectedUtilityIds?: Record<string, boolean>;
+    onUtilityToggle?: (utilityId: string, enabled: boolean) => void;
     selectedElement?: Asset | null;
     onBackFromAssetDetails?: () => void;
     scenarioId?: string;
@@ -54,6 +67,14 @@ type MapPanelsProps = {
     onMapWideVisibleChange?: (visible: boolean) => void;
     isDrawing?: boolean;
     onStartDrawing?: (mode: 'circle' | 'polygon') => void;
+    roadRouteStart?: RoadRoutePosition;
+    roadRouteEnd?: RoadRoutePosition;
+    roadRouteVehicle?: 'HGV' | 'EmergencyVehicle' | 'Car';
+    roadRouteLoading?: boolean;
+    roadRouteError?: Error | null;
+    roadRouteData?: { routeGeojson: { features: Array<{ properties?: { length?: number; travel_time?: number; speed_kph?: number } }> } };
+    onRoadRouteVehicleChange?: (vehicle: 'HGV' | 'EmergencyVehicle' | 'Car') => void;
+    onRequestPositionSelection?: (type: 'start' | 'end' | null) => void;
 };
 
 const MapPanels = ({
@@ -63,6 +84,8 @@ const MapPanels = ({
     onAssetTypeToggle,
     selectedExposureLayerIds,
     onExposureLayerToggle,
+    selectedUtilityIds,
+    onUtilityToggle,
     selectedElement,
     onBackFromAssetDetails,
     scenarioId,
@@ -70,6 +93,14 @@ const MapPanels = ({
     onMapWideVisibleChange,
     isDrawing,
     onStartDrawing,
+    roadRouteStart,
+    roadRouteEnd,
+    roadRouteVehicle,
+    roadRouteLoading,
+    roadRouteError,
+    roadRouteData,
+    onRoadRouteVehicleChange,
+    onRequestPositionSelection,
 }: MapPanelsProps) => {
     const handleItemClick = (itemId: string) => {
         const newActiveView = activeView === itemId ? null : itemId;
@@ -96,6 +127,22 @@ const MapPanels = ({
                         onClose={handleClosePanel}
                         selectedExposureLayerIds={selectedExposureLayerIds}
                         onExposureLayerToggle={onExposureLayerToggle}
+                    />
+                );
+            case 'utilities':
+                return (
+                    <UtilitiesView
+                        onClose={handleClosePanel}
+                        selectedUtilityIds={selectedUtilityIds}
+                        onUtilityToggle={onUtilityToggle}
+                        roadRouteStart={roadRouteStart}
+                        roadRouteEnd={roadRouteEnd}
+                        roadRouteVehicle={roadRouteVehicle}
+                        roadRouteLoading={roadRouteLoading}
+                        roadRouteError={roadRouteError}
+                        roadRouteData={roadRouteData}
+                        onRoadRouteVehicleChange={onRoadRouteVehicleChange}
+                        onRequestPositionSelection={onRequestPositionSelection}
                     />
                 );
             case 'focus-area':
