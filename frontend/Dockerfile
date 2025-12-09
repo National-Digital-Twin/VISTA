@@ -27,6 +27,11 @@ RUN npm run build
 # Start a new stage from scratch
 FROM nginxinc/nginx-unprivileged:1.29-alpine3.22 AS runner
 
+# Switch to root to update packages, then switch back to nginx user
+USER root
+RUN apk update && apk upgrade && rm -rf /var/cache/apk/*
+USER nginx
+
 # Copy the built files from the builder stage to the runner stage
 COPY --from=builder /app/dist /usr/share/nginx/html
 COPY nginx/nginx.conf /etc/nginx/conf.d/default.conf

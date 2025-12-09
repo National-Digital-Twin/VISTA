@@ -2,7 +2,10 @@ import React from 'react';
 import { render, screen, waitFor, act } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ApolloProvider } from '@apollo/client/react';
 import { ThemeProvider } from '@mui/material/styles';
+import { ApolloClient, InMemoryCache, HttpLink } from '@apollo/client';
+import type { ApolloClient as ApolloClientType } from '@apollo/client';
 import MapView from './MapView';
 import theme from '@/theme';
 
@@ -16,12 +19,25 @@ const createTestQueryClient = () => {
     });
 };
 
-const renderWithProviders = (component: React.ReactElement, queryClient?: QueryClient) => {
-    const client = queryClient || createTestQueryClient();
+const createTestApolloClient = () => {
+    return new ApolloClient({
+        link: new HttpLink({
+            uri: '/test-graphql',
+            fetch: vi.fn(),
+        }),
+        cache: new InMemoryCache(),
+    });
+};
+
+const renderWithProviders = (component: React.ReactElement, queryClient?: QueryClient, apolloClient?: ApolloClientType) => {
+    const qClient = queryClient || createTestQueryClient();
+    const aClient = apolloClient || createTestApolloClient();
     return render(
-        <QueryClientProvider client={client}>
-            <ThemeProvider theme={theme}>{component}</ThemeProvider>
-        </QueryClientProvider>,
+        <ApolloProvider client={aClient}>
+            <QueryClientProvider client={qClient}>
+                <ThemeProvider theme={theme}>{component}</ThemeProvider>
+            </QueryClientProvider>
+        </ApolloProvider>,
     );
 };
 
@@ -62,26 +78,51 @@ vi.mock('react-map-gl/maplibre', () => ({
     })),
 }));
 
-vi.mock('./MapPanels', () => ({
-    default: ({
+vi.mock('./MapPanels', () => {
+    const MockMapPanels = ({
         activeView,
         onViewChange,
         selectedElement,
         onBackFromAssetDetails,
+        onUtilityToggle,
+        onRoadRouteVehicleChange,
+        roadRouteVehicle,
     }: {
         activeView: string | null;
         onViewChange: (view: string | null) => void;
         selectedElement?: any;
         onBackFromAssetDetails?: () => void;
-    }) => (
-        <div data-testid="map-panels">
-            <button onClick={() => onViewChange(activeView === 'scenario' ? null : 'scenario')}>Toggle Scenario</button>
-            <div data-testid="active-view">{activeView || 'none'}</div>
-            <div data-testid="selected-element">{selectedElement?.id || 'none'}</div>
-            {onBackFromAssetDetails && <button onClick={onBackFromAssetDetails}>Back from Asset Details</button>}
-        </div>
-    ),
-}));
+        onUtilityToggle?: (utilityId: string, enabled: boolean) => void;
+        onRoadRouteVehicleChange?: (vehicle: any) => void;
+        roadRouteVehicle?: string;
+    }) => {
+        const [roadRouteEnabled, setRoadRouteEnabled] = React.useState(false);
+
+        const handleToggleRoadRoute = () => {
+            const next = !roadRouteEnabled;
+            setRoadRouteEnabled(next);
+            onUtilityToggle?.('road-route', next);
+        };
+
+        return (
+            <div data-testid="map-panels">
+                <button onClick={() => onViewChange(activeView === 'scenario' ? null : 'scenario')}>Toggle Scenario</button>
+                <button onClick={handleToggleRoadRoute} data-testid="toggle-road-route">
+                    Road Route {roadRouteEnabled ? 'On' : 'Off'}
+                </button>
+                <button onClick={() => onRoadRouteVehicleChange?.('HGV')} data-testid="set-vehicle-hgv">
+                    Set Vehicle HGV
+                </button>
+                <div data-testid="vehicle-value">{roadRouteVehicle || 'Car'}</div>
+                <div data-testid="active-view">{activeView || 'none'}</div>
+                <div data-testid="selected-element">{selectedElement?.id || 'none'}</div>
+                {onBackFromAssetDetails && <button onClick={onBackFromAssetDetails}>Back from Asset Details</button>}
+            </div>
+        );
+    };
+
+    return { default: MockMapPanels };
+});
 
 vi.mock('./MapControls', () => ({
     default: ({ mapStylePanelOpen, onToggleMapStylePanel, onMapStyleChange }: any) => (
@@ -257,6 +298,36 @@ describe('MapView', () => {
             });
 
             expect(changeStyleButton).toBeInTheDocument();
+        });
+    });
+
+    describe('Road route form reset', () => {
+        it('resets vehicle to Car when road route is toggled off', async () => {
+            renderWithProviders(<MapView />);
+            await waitForElement('map-panels');
+
+            await waitForElement('set-vehicle-hgv');
+            const setVehicleButton = screen.getByTestId('set-vehicle-hgv');
+            act(() => {
+                setVehicleButton.click();
+            });
+
+            await waitFor(() => {
+                expect(screen.getByTestId('vehicle-value')).toHaveTextContent('HGV');
+            });
+
+            const toggleRoadRouteButton = screen.getByTestId('toggle-road-route');
+
+            act(() => {
+                toggleRoadRouteButton.click();
+            });
+            act(() => {
+                toggleRoadRouteButton.click();
+            });
+
+            await waitFor(() => {
+                expect(screen.getByTestId('vehicle-value')).toHaveTextContent('Car');
+            });
         });
     });
 

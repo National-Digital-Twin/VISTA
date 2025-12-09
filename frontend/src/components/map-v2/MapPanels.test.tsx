@@ -30,6 +30,14 @@ vi.mock('./panels/ExposureView', () => ({
     ),
 }));
 
+vi.mock('./panels/UtilitiesView', () => ({
+    default: ({ onClose }: { onClose: () => void }) => (
+        <div data-testid="utilities-view">
+            <button onClick={onClose}>Close</button>
+        </div>
+    ),
+}));
+
 vi.mock('./panels/FocusAreaView', () => ({
     default: ({ onClose }: { onClose: () => void }) => (
         <div data-testid="focus-area-view">
@@ -65,6 +73,7 @@ describe('MapPanels', () => {
             expect(screen.getByText('Scenario')).toBeInTheDocument();
             expect(screen.getByText('Assets')).toBeInTheDocument();
             expect(screen.getByText('Exposure')).toBeInTheDocument();
+            expect(screen.getByText('Utilities')).toBeInTheDocument();
         });
 
         it('renders icons for all panels', () => {
@@ -74,6 +83,7 @@ describe('MapPanels', () => {
             expect(screen.getByAltText('Scenario')).toBeInTheDocument();
             expect(screen.getByAltText('Assets')).toBeInTheDocument();
             expect(screen.getByAltText('Exposure')).toBeInTheDocument();
+            expect(screen.getByAltText('Utilities')).toBeInTheDocument();
         });
 
         it('does not render panel content when no view is active', () => {
@@ -83,6 +93,7 @@ describe('MapPanels', () => {
             expect(screen.queryByTestId('scenario-view')).not.toBeInTheDocument();
             expect(screen.queryByTestId('assets-view')).not.toBeInTheDocument();
             expect(screen.queryByTestId('exposure-view')).not.toBeInTheDocument();
+            expect(screen.queryByTestId('utilities-view')).not.toBeInTheDocument();
         });
     });
 
@@ -109,6 +120,12 @@ describe('MapPanels', () => {
             renderWithTheme(<MapPanels {...defaultProps} activeView="focus-area" />);
 
             expect(screen.getByTestId('focus-area-view')).toBeInTheDocument();
+        });
+
+        it('renders UtilitiesView when utilities is active', () => {
+            renderWithTheme(<MapPanels {...defaultProps} activeView="utilities" />);
+
+            expect(screen.getByTestId('utilities-view')).toBeInTheDocument();
         });
 
         it('renders AssetDetailsPanel when asset-details is active', () => {

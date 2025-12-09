@@ -114,9 +114,20 @@ const ExposureGroup = React.memo(({ groupName, layers, isExpanded, selectedExpos
                 }}
                 aria-expanded={isExpanded}
             >
-                <IconButton size="small" aria-label={isExpanded ? 'Collapse' : 'Expand'} sx={{ mr: 1, pointerEvents: 'none' }} tabIndex={-1}>
-                    {isExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-                </IconButton>
+                <Box
+                    component="span"
+                    sx={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        mr: 1,
+                        width: 24,
+                        height: 24,
+                    }}
+                    aria-label={isExpanded ? 'Collapse' : 'Expand'}
+                >
+                    {isExpanded ? <ExpandLessIcon fontSize="small" /> : <ExpandMoreIcon fontSize="small" />}
+                </Box>
                 <Typography variant="body1" sx={{ flexGrow: 1, fontWeight: 500, textAlign: 'left' }}>
                     {groupName}
                 </Typography>
