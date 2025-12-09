@@ -83,7 +83,6 @@ const MapView = () => {
                     endLon: roadRouteEnd.lng,
                     vehicle: roadRouteVehicle,
                 },
-                fetchPolicy: 'network-only',
             });
         }
     }, [roadRouteStart, roadRouteEnd, roadRouteVehicle, isRoadRouteEnabled, getRoadRoute]);
@@ -98,12 +97,12 @@ const MapView = () => {
 
     const mergedUtilities = useMemo(() => {
         if (!isRoadRouteEnabled || !roadRouteStart || !roadRouteEnd) {
-            return { type: 'FeatureCollection', features: [] };
+            return { type: 'FeatureCollection' as const, features: [] };
         }
 
         const routeGeojson = roadRouteQueryData?.roadRoute?.routeGeojson;
         if (!routeGeojson?.features) {
-            return { type: 'FeatureCollection', features: [] };
+            return { type: 'FeatureCollection' as const, features: [] };
         }
 
         const roadRouteFeatures = routeGeojson.features.map((feature) => ({
@@ -116,7 +115,7 @@ const MapView = () => {
         }));
 
         return {
-            type: 'FeatureCollection',
+            type: 'FeatureCollection' as const,
             features: roadRouteFeatures,
         };
     }, [roadRouteQueryData, isRoadRouteEnabled, roadRouteStart, roadRouteEnd]);
@@ -292,7 +291,17 @@ const MapView = () => {
                 roadRouteVehicle={roadRouteVehicle}
                 roadRouteLoading={roadRouteLoading}
                 roadRouteError={roadRouteError}
-                roadRouteData={roadRouteQueryData?.roadRoute}
+                roadRouteData={
+                    roadRouteQueryData?.roadRoute
+                        ? {
+                              routeGeojson: {
+                                  features: roadRouteQueryData.roadRoute.routeGeojson.features.map((f) => ({
+                                      properties: f.properties || {},
+                                  })),
+                              },
+                          }
+                        : undefined
+                }
                 onRoadRouteVehicleChange={setRoadRouteVehicle}
                 onRequestPositionSelection={setPositionSelectionMode}
                 selectedElement={selectedElement}

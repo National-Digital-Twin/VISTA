@@ -73,7 +73,7 @@ type MapPanelsProps = {
     roadRouteLoading?: boolean;
     roadRouteError?: Error | null;
     roadRouteData?: { routeGeojson: { features: Array<{ properties?: { length?: number; travel_time?: number; speed_kph?: number } }> } };
-    onRoadRouteVehicleChange?: (vehicle: 'HGV' | 'EmergencyVehicle' | 'Car') => void;
+    onRoadRouteVehicleChange?: (vehicle: 'HGV' | 'EmergencyVehicle' | 'Car' | undefined) => void;
     onRequestPositionSelection?: (type: 'start' | 'end' | null) => void;
 };
 

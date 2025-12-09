@@ -15,7 +15,9 @@ describe('utilities API', () => {
             expect(result.groups[0].utilities[0].id).toBe('road-route');
             expect(result.groups[0].utilities[0].name).toBe('Route');
             expect(result.groups[0].utilities[0].geometry.type).toBe('LineString');
-            expect(result.groups[0].utilities[0].geometry.coordinates).toEqual([]);
+            if (result.groups[0].utilities[0].geometry.type === 'LineString') {
+                expect(result.groups[0].utilities[0].geometry.coordinates).toEqual([]);
+            }
         });
 
         it('returns consistent structure on multiple calls', async () => {

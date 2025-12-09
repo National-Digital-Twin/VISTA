@@ -415,14 +415,6 @@ describe('UtilitiesView', () => {
                         routeGeojson: {
                             features: [
                                 {
-                                    type: 'Feature',
-                                    geometry: {
-                                        type: 'LineString',
-                                        coordinates: [
-                                            [-1.4, 50.67],
-                                            [-1.39, 50.68],
-                                        ],
-                                    },
                                     properties: {
                                         length: 1000,
                                         travel_time: 120,
