@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ApolloProvider } from '@apollo/client/react';
 import { ThemeProvider } from '@mui/material/styles';
 import { ApolloClient, InMemoryCache, HttpLink } from '@apollo/client';
+import type { ApolloClient as ApolloClientType } from '@apollo/client';
 import MapView from './MapView';
 import theme from '@/theme';
 
@@ -28,7 +29,7 @@ const createTestApolloClient = () => {
     });
 };
 
-const renderWithProviders = (component: React.ReactElement, queryClient?: QueryClient, apolloClient?: ApolloClient<any>) => {
+const renderWithProviders = (component: React.ReactElement, queryClient?: QueryClient, apolloClient?: ApolloClientType) => {
     const qClient = queryClient || createTestQueryClient();
     const aClient = apolloClient || createTestApolloClient();
     return render(
@@ -317,12 +318,11 @@ describe('MapView', () => {
 
             const toggleRoadRouteButton = screen.getByTestId('toggle-road-route');
 
-            // Enable then disable road route
             act(() => {
-                toggleRoadRouteButton.click(); // on
+                toggleRoadRouteButton.click();
             });
             act(() => {
-                toggleRoadRouteButton.click(); // off -> should reset vehicle
+                toggleRoadRouteButton.click();
             });
 
             await waitFor(() => {

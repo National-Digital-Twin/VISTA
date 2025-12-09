@@ -1,7 +1,7 @@
 import { ApolloClient, InMemoryCache, HttpLink, from } from '@apollo/client';
 import { RetryLink } from '@apollo/client/link/retry';
-import roadRoute from './graphql-queries/roadRoute.graphql';
 import config from '@/config/app-config';
+export { default as GET_ROAD_ROUTE } from './graphql-queries/roadRoute.graphql';
 
 const GRAPHQL_ENDPOINT = config.services.graphqlApi;
 
@@ -43,7 +43,5 @@ const client = new ApolloClient({
     link,
     cache,
 });
-
-export const GET_ROAD_ROUTE = roadRoute;
 
 export default client;

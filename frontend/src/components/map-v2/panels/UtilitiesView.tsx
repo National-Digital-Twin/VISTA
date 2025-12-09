@@ -65,6 +65,14 @@ type RoadRouteControlsProps = {
     readonly onVehicleChange: (vehicle: RoadRouteInputParams['vehicle']) => void;
 };
 
+const formatMinutes = (minutes: number) => `${minutes} min${minutes === 1 ? '' : 's'}`;
+
+const formatHoursMinutes = (hours: number, minutes: number) => {
+    const hourLabel = `${hours} hr${hours === 1 ? '' : 's'}`;
+    const minuteLabel = `${minutes} min${minutes === 1 ? '' : 's'}`;
+    return `${hourLabel} ${minuteLabel}`;
+};
+
 const RoadRouteControls = React.memo(
     ({ start, end, vehicle, loading, error, routeData, onStartClick, onEndClick, onVehicleChange }: RoadRouteControlsProps) => {
         const routeSummary = useMemo(() => {
@@ -155,7 +163,7 @@ const RoadRouteControls = React.memo(
                     </Box>
                 )}
 
-                {start && end && !loading && !error && routeData?.routeGeojson?.features && routeData.routeGeojson.features.length === 0 && (
+                {start && end && !loading && !error && routeData?.routeGeojson?.features?.length === 0 && (
                     <Box sx={{ mt: 2, p: 1.5, bgcolor: 'action.hover', borderRadius: 1 }}>
                         <Typography variant="body2" color="text.secondary" align="center">
                             No route available between these points.
@@ -174,8 +182,8 @@ const RoadRouteControls = React.memo(
                         <Typography variant="body2" color="text.secondary">
                             Time:{' '}
                             {routeSummary.timeHours > 0
-                                ? `${routeSummary.timeHours} hr${routeSummary.timeHours > 1 ? 's' : ''} ${routeSummary.remainingMinutes} min${routeSummary.remainingMinutes !== 1 ? 's' : ''}`
-                                : `${routeSummary.timeMinutes} min${routeSummary.timeMinutes !== 1 ? 's' : ''}`}
+                                ? formatHoursMinutes(routeSummary.timeHours, routeSummary.remainingMinutes)
+                                : formatMinutes(routeSummary.timeMinutes)}
                         </Typography>
                         {routeSummary.averageSpeedMph > 0 && (
                             <Typography variant="body2" color="text.secondary">
