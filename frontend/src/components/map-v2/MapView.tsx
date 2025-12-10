@@ -7,12 +7,14 @@ import { useQuery } from '@tanstack/react-query';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import './mapbox-draw-maplibre.css';
 
+import { bbox } from '@turf/turf';
 import { DEFAULT_VIEW_STATE, DEFAULT_MAP_STYLE, MAP_STYLES, MAP_VIEW_BOUNDS, type MapStyleKey } from './constants';
 import MapControls from './MapControls';
 import MapPanels from './MapPanels';
 import AssetLayers from './AssetLayers';
 import ExposureLayers from './ExposureLayers';
 import UtilitiesLayers from './UtilitiesLayers';
+import FocusAreaMask from './FocusAreaMask';
 import useMapboxDraw from './hooks/useMapboxDraw';
 import useFocusAreas from './hooks/useFocusAreas';
 import { usePreloadAssetIcons } from './hooks/usePreloadAssetIcons';
@@ -32,7 +34,6 @@ const MapView = () => {
     const [mapStylePanelOpen, setMapStylePanelOpen] = useState(false);
     const [assetInfoPanelOpen, setAssetInfoPanelOpen] = useState(false);
     const [activePanelView, setActivePanelView] = useState<string | null>('focus-area');
-    const [selectedAssetTypes, setSelectedAssetTypes] = useState<Record<string, boolean>>({});
     const [selectedExposureLayerIds, setSelectedExposureLayerIds] = useState<Record<string, boolean>>({});
     const [selectedUtilityIds, setSelectedUtilityIds] = useState<Record<string, boolean>>({});
     const [selectedElement, setSelectedElement] = useState<Asset | null>(null);
@@ -48,12 +49,46 @@ const MapView = () => {
     const scenarioId = activeScenario?.id;
     const iconMap = useAssetTypeIcons();
 
-    const { isDrawing, startDrawing } = useFocusAreas({
+    const { focusAreas, isDrawing, startDrawing } = useFocusAreas({
         scenarioId,
         mapRef,
         drawRef,
         mapReady,
     });
+
+    const [selectedFocusAreaId, setSelectedFocusAreaId] = useState<string | null>(null);
+    const handleFocusAreaSelect = useCallback(
+        (focusAreaId: string | null) => {
+            setSelectedFocusAreaId(focusAreaId);
+
+            if (!mapReady) {
+                return;
+            }
+            const map = mapRef.current?.getMap();
+            if (!map) {
+                return;
+            }
+
+            const focusArea = focusAreas?.find((fa) => fa.id === focusAreaId);
+            if (focusArea) {
+                const bounds = bbox({ type: 'Feature', geometry: focusArea.geometry, properties: {} });
+                map.fitBounds(
+                    [
+                        [bounds[0], bounds[1]],
+                        [bounds[2], bounds[3]],
+                    ],
+                    { padding: 50, duration: 1000 },
+                );
+            } else {
+                map.flyTo({
+                    center: [DEFAULT_VIEW_STATE.longitude, DEFAULT_VIEW_STATE.latitude],
+                    zoom: DEFAULT_VIEW_STATE.zoom,
+                    duration: 1000,
+                });
+            }
+        },
+        [focusAreas, mapReady],
+    );
 
     const mapStyle = useMemo(() => MAP_STYLES[mapStyleKey], [mapStyleKey]);
 
@@ -233,12 +268,16 @@ const MapView = () => {
                     setSelectedElement(elements[0]);
                     return;
                 }
+                if (activePanelView === 'assets') {
+                    // clear the mask and reset the zoom to the default view
+                    handleFocusAreaSelect(null);
+                }
                 setPreviousPanelView(activePanelView);
                 setSelectedElement(elements[0]);
                 setActivePanelView('asset-details');
             }
         },
-        [activePanelView],
+        [activePanelView, handleFocusAreaSelect],
     );
 
     const handleBackFromAssetDetails = useCallback(() => {
@@ -259,13 +298,6 @@ const MapView = () => {
             <MapPanels
                 activeView={activePanelView}
                 onViewChange={handleViewChange}
-                selectedAssetTypes={selectedAssetTypes}
-                onAssetTypeToggle={(assetType, enabled) => {
-                    setSelectedAssetTypes((prev) => ({
-                        ...prev,
-                        [assetType]: enabled,
-                    }));
-                }}
                 selectedExposureLayerIds={selectedExposureLayerIds}
                 onExposureLayerToggle={(layerId, enabled) => {
                     setSelectedExposureLayerIds((prev) => ({
@@ -311,6 +343,7 @@ const MapView = () => {
                 onMapWideVisibleChange={handleMapWideVisibleChange}
                 isDrawing={isDrawing}
                 onStartDrawing={startDrawing}
+                onFocusAreaSelect={handleFocusAreaSelect}
             />
 
             <Box
@@ -336,6 +369,7 @@ const MapView = () => {
                 >
                     {mapReady && (
                         <>
+                            <FocusAreaMask geometry={focusAreas?.find((fa) => fa.id === selectedFocusAreaId)?.geometry ?? null} />
                             <AssetLayers
                                 assets={assets}
                                 selectedElements={selectedElement ? [selectedElement] : []}

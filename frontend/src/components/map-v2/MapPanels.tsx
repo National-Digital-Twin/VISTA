@@ -25,14 +25,14 @@ const FIXED_ITEMS: readonly MapPanelItem[] = [
         icon: <img src="/icons/map-v2/focus-area.svg" alt="Focus area" width={24} height={24} />,
     },
     {
-        id: 'scenario',
-        label: 'Scenario',
-        icon: <img src="/icons/map-v2/scenario.svg" alt="Scenario" width={24} height={24} />,
-    },
-    {
         id: 'assets',
         label: 'Assets',
         icon: <img src="/icons/map-v2/assets.svg" alt="Assets" width={24} height={24} />,
+    },
+    {
+        id: 'scenario',
+        label: 'Scenario',
+        icon: <img src="/icons/map-v2/scenario.svg" alt="Scenario" width={24} height={24} />,
     },
     {
         id: 'exposure',
@@ -54,8 +54,6 @@ type RoadRoutePosition = {
 type MapPanelsProps = {
     activeView?: string | null;
     onViewChange?: (viewId: string | null) => void;
-    selectedAssetTypes?: Record<string, boolean>;
-    onAssetTypeToggle?: (assetType: string, enabled: boolean) => void;
     selectedExposureLayerIds?: Record<string, boolean>;
     onExposureLayerToggle?: (layerId: string, enabled: boolean) => void;
     selectedUtilityIds?: Record<string, boolean>;
@@ -75,13 +73,12 @@ type MapPanelsProps = {
     roadRouteData?: { routeGeojson: { features: Array<{ properties?: { length?: number; travel_time?: number; speed_kph?: number } }> } };
     onRoadRouteVehicleChange?: (vehicle: 'HGV' | 'EmergencyVehicle' | 'Car' | undefined) => void;
     onRequestPositionSelection?: (type: 'start' | 'end' | null) => void;
+    onFocusAreaSelect?: (focusAreaId: string | null) => void;
 };
 
 const MapPanels = ({
     activeView,
     onViewChange,
-    selectedAssetTypes,
-    onAssetTypeToggle,
     selectedExposureLayerIds,
     onExposureLayerToggle,
     selectedUtilityIds,
@@ -101,13 +98,20 @@ const MapPanels = ({
     roadRouteData,
     onRoadRouteVehicleChange,
     onRequestPositionSelection,
-}: MapPanelsProps) => {
+    onFocusAreaSelect,
+}: Readonly<MapPanelsProps>) => {
     const handleItemClick = (itemId: string) => {
         const newActiveView = activeView === itemId ? null : itemId;
+        if (activeView === 'assets' && newActiveView !== 'assets') {
+            onFocusAreaSelect?.(null);
+        }
         onViewChange?.(newActiveView);
     };
 
     const handleClosePanel = () => {
+        if (activeView === 'assets') {
+            onFocusAreaSelect?.(null);
+        }
         onViewChange?.(null);
     };
 
@@ -120,7 +124,7 @@ const MapPanels = ({
             case 'scenario':
                 return <ScenarioView onItemClick={handleItemClick} onClose={handleClosePanel} />;
             case 'assets':
-                return <AssetsView onClose={handleClosePanel} selectedAssetTypes={selectedAssetTypes} onAssetTypeToggle={onAssetTypeToggle} />;
+                return <AssetsView onClose={handleClosePanel} scenarioId={scenarioId} onFocusAreaSelect={onFocusAreaSelect} />;
             case 'exposure':
                 return (
                     <ExposureView
