@@ -1,6 +1,6 @@
 """Views for scenario-scoped asset operations."""
 
-from django.db.models import Exists, OuterRef, Q
+from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -56,10 +56,16 @@ class ScenarioAssetTypesView(APIView):
                 FocusArea, id=focus_area_id, scenario_id=scenario_id, user_id=user_id
             )
             # Filter to only asset types that have at least one asset in the focus area
-            asset_types_query = asset_types_query.filter(
-                Exists(
-                    Asset.objects.filter(type_id=OuterRef("pk"), geom__within=focus_area.geometry)
+            # and count only assets within the focus area
+            asset_types_query = asset_types_query.annotate(
+                asset_count=Count(
+                    "assets", filter=Q(assets__geom__within=focus_area.geometry), distinct=True
                 )
+            ).filter(asset_count__gt=0)
+        else:
+            # Map-wide: count all assets per type
+            asset_types_query = asset_types_query.annotate(
+                asset_count=Count("assets", distinct=True)
             )
 
         asset_types = asset_types_query.order_by(
@@ -91,6 +97,7 @@ class ScenarioAssetTypesView(APIView):
                 {
                     "id": str(asset_type.id),
                     "name": asset_type.name,
+                    "assetCount": asset_type.asset_count,
                     "isActive": asset_type.id in visible_asset_type_ids,
                     "datasourceId": str(datasource_id) if datasource_id else None,
                 }

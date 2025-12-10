@@ -1,107 +1,183 @@
-import { useCallback, useMemo, useState, startTransition } from 'react';
-import { Box, IconButton, Typography, MenuItem, Select, Button, ListItem, ListItemText, Collapse } from '@mui/material';
+import { useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } from 'react';
+import { Alert, Box, Collapse, FormControl, IconButton, InputLabel, ListItem, MenuItem, Portal, Select, Snackbar, Typography } from '@mui/material';
+import type { SelectChangeEvent } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ExpandLessIcon from '@mui/icons-material/ExpandLess';
-import { useQuery } from '@tanstack/react-query';
-import ArrowDropUp from '@mui/icons-material/ArrowDropUp';
-import ArrowDropDown from '@mui/icons-material/ArrowDropDown';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { LayersClearOutlined } from '@mui/icons-material';
 import { SearchTextField } from '@/components/SearchTextField';
-import { fetchAssetCategories, type AssetCategory, type SubCategory, type AssetType } from '@/api/asset-categories';
-import ToggleSwitch from '@/components/ToggleSwitch';
+import IconToggle from '@/components/IconToggle';
+import { useDataSources } from '@/hooks/useDataSources';
+import { fetchFocusAreas, type FocusArea } from '@/api/focus-areas';
+import type { DataSource } from '@/api/datasources';
+import {
+    fetchScenarioAssetTypes,
+    toggleAssetTypeVisibility,
+    clearAllAssetTypeVisibility,
+    type ScenarioAssetCategory,
+    type ScenarioSubCategory,
+    type ScenarioAssetType,
+} from '@/api/scenario-asset-types';
 
 type AssetsViewProps = {
     readonly onClose: () => void;
-    readonly selectedAssetTypes?: Record<string, boolean>;
-    readonly onAssetTypeToggle?: (assetTypeId: string, enabled: boolean) => void;
+    readonly scenarioId?: string;
+    readonly onFocusAreaSelect?: (focusAreaId: string | null) => void;
 };
 
-type SortOption = 'a-z' | 'z-a';
+const MAP_WIDE_VALUE = '__map_wide__';
 
-type AssetTypeListItemTextProps = {
-    readonly assetType: AssetType;
+type AssetTypeListItemProps = {
+    readonly assetType: ScenarioAssetType;
+    readonly onToggle: (assetTypeId: string, isActive: boolean) => void;
+    readonly disabled?: boolean;
+    readonly dataSource?: DataSource;
 };
 
-function AssetTypeListItemText({ assetType }: AssetTypeListItemTextProps) {
+function AssetTypeListItem({ assetType, onToggle, disabled, dataSource }: AssetTypeListItemProps) {
     return (
-        <ListItemText
-            primary={assetType.name}
-            primaryTypographyProps={{
-                variant: 'body2',
+        <ListItem
+            sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'flex-start',
+                pl: 6,
+                pr: 0,
+                py: 0.5,
             }}
-        />
+        >
+            <Box sx={{ flex: 1, minWidth: 0 }}>
+                <Typography variant="body2" noWrap>
+                    {assetType.name} ({assetType.assetCount})
+                </Typography>
+                {dataSource && (
+                    <Typography variant="caption" color="text.secondary" noWrap component="div" sx={{ cursor: 'default' }}>
+                        {dataSource.name}
+                    </Typography>
+                )}
+            </Box>
+            <Box sx={{ display: 'flex' }}>
+                <IconToggle
+                    checked={assetType.isActive}
+                    onChange={() => onToggle(assetType.id, !assetType.isActive)}
+                    disabled={disabled}
+                    aria-label={assetType.isActive ? `Hide ${assetType.name}` : `Show ${assetType.name}`}
+                    size="small"
+                />
+            </Box>
+        </ListItem>
     );
 }
 
 type AssetTypeListProps = {
-    readonly assetTypes: AssetType[];
-    readonly selectedAssetTypes: Record<string, boolean>;
-    readonly onToggle: (assetTypeId: string) => void;
+    readonly assetTypes: ScenarioAssetType[];
+    readonly onToggle: (assetTypeId: string, isActive: boolean) => void;
+    readonly disabled?: boolean;
+    readonly dataSourceMap: Map<string, DataSource>;
 };
 
-function AssetTypeList({ assetTypes, selectedAssetTypes, onToggle }: AssetTypeListProps) {
+function AssetTypeList({ assetTypes, onToggle, disabled, dataSourceMap }: AssetTypeListProps) {
     return (
         <Box sx={{ pb: 1 }}>
             {assetTypes.map((assetType) => {
-                const isSelected = selectedAssetTypes[assetType.id] || false;
-                return (
-                    <ListItem
-                        key={assetType.id}
-                        sx={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                            px: 2.5,
-                            py: 0.5,
-                        }}
-                    >
-                        <AssetTypeListItemText assetType={assetType} />
-                        <ToggleSwitch checked={isSelected} onChange={() => onToggle(assetType.id)} inputProps={{ 'aria-label': `Toggle ${assetType.name}` }} />
-                    </ListItem>
-                );
+                const dataSource = assetType.datasourceId ? dataSourceMap.get(assetType.datasourceId) : undefined;
+                return <AssetTypeListItem key={assetType.id} assetType={assetType} onToggle={onToggle} disabled={disabled} dataSource={dataSource} />;
             })}
         </Box>
     );
 }
 
-const AssetsView = ({ onClose, selectedAssetTypes: externalSelectedAssetTypes = {}, onAssetTypeToggle }: AssetsViewProps) => {
+const AssetsView = ({ onClose, scenarioId, onFocusAreaSelect }: AssetsViewProps) => {
     const [searchQuery, setSearchQuery] = useState('');
-    const [sortOption, setSortOption] = useState<SortOption>('a-z');
-    const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
+    const deferredSearchQuery = useDeferredValue(searchQuery);
     const [expandedSubCategories, setExpandedSubCategories] = useState<Set<string>>(new Set());
-    const [localSelectedAssetTypes, setLocalSelectedAssetTypes] = useState<Record<string, boolean>>({});
+    const [selectedFocusAreaId, setSelectedFocusAreaId] = useState<string | null>(null);
+    const [mutationError, setMutationError] = useState<string | null>(null);
+    const queryClient = useQueryClient();
+    const { dataSourceMap } = useDataSources();
 
-    const selectedAssetTypes = useMemo(
-        () => ({ ...localSelectedAssetTypes, ...externalSelectedAssetTypes }),
-        [localSelectedAssetTypes, externalSelectedAssetTypes],
-    );
+    const { data: focusAreas, isLoading: isLoadingFocusAreas } = useQuery({
+        queryKey: ['focusAreas', scenarioId],
+        queryFn: () => fetchFocusAreas(scenarioId!),
+        enabled: !!scenarioId,
+        staleTime: 5 * 60 * 1000,
+    });
 
     const {
         data: assetCategories,
         isLoading: isLoadingCategories,
         isError: isErrorCategories,
     } = useQuery({
-        queryKey: ['assetCategories'],
-        queryFn: fetchAssetCategories,
+        queryKey: ['scenarioAssetTypes', scenarioId, selectedFocusAreaId],
+        queryFn: () => fetchScenarioAssetTypes(scenarioId!, selectedFocusAreaId),
+        enabled: !!scenarioId,
         staleTime: 5 * 60 * 1000,
     });
 
+    const visibilityMutation = useMutation({
+        mutationFn: (data: { assetTypeId: string; isActive: boolean }) =>
+            toggleAssetTypeVisibility(scenarioId!, {
+                assetTypeId: data.assetTypeId,
+                focusAreaId: selectedFocusAreaId,
+                isActive: data.isActive,
+            }),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['scenarioAssetTypes', scenarioId] });
+            queryClient.invalidateQueries({ queryKey: ['scenarioAssets', scenarioId] });
+        },
+        onError: () => {
+            setMutationError('Failed to update asset type visibility');
+        },
+    });
+
+    const clearAllMutation = useMutation({
+        mutationFn: () => clearAllAssetTypeVisibility(scenarioId!, selectedFocusAreaId),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['scenarioAssetTypes', scenarioId] });
+            queryClient.invalidateQueries({ queryKey: ['scenarioAssets', scenarioId] });
+        },
+        onError: () => {
+            setMutationError('Failed to clear asset type visibility');
+        },
+    });
+
+    // Expand subcategories that have visible asset types - only on initial load or focus area change
+    const lastFocusAreaIdRef = useRef<string | null | undefined>(undefined);
+    useEffect(() => {
+        if (!assetCategories) {
+            return;
+        }
+
+        if (lastFocusAreaIdRef.current === selectedFocusAreaId) {
+            return;
+        }
+        lastFocusAreaIdRef.current = selectedFocusAreaId;
+
+        const visibleSubCategoryIds = new Set<string>();
+        for (const category of assetCategories) {
+            for (const subCategory of category.subCategories) {
+                const hasVisibleAssets = subCategory.assetTypes.some((at) => at.isActive);
+                if (hasVisibleAssets) {
+                    visibleSubCategoryIds.add(subCategory.id);
+                }
+            }
+        }
+        setExpandedSubCategories(visibleSubCategoryIds);
+    }, [assetCategories, selectedFocusAreaId]);
+
+    const handleFocusAreaChange = useCallback(
+        (event: SelectChangeEvent<string>) => {
+            const value = event.target.value;
+            const newFocusAreaId = value === MAP_WIDE_VALUE ? null : value;
+            setSelectedFocusAreaId(newFocusAreaId);
+            onFocusAreaSelect?.(newFocusAreaId);
+        },
+        [onFocusAreaSelect],
+    );
+
     const handleSearchChange = useCallback((value: string) => {
-        startTransition(() => {
-            setSearchQuery(value);
-        });
-    }, []);
-
-    const handleSortChange = useCallback((event: { target: { value: unknown } }) => {
-        setSortOption(event.target.value as SortOption);
-    }, []);
-
-    const toggleCategory = useCallback((categoryId: string) => {
-        setExpandedCategories((prev) => {
-            const next = new Set(prev);
-            next.has(categoryId) ? next.delete(categoryId) : next.add(categoryId);
-            return next;
-        });
+        setSearchQuery(value);
     }, []);
 
     const toggleSubCategory = useCallback((subCategoryId: string) => {
@@ -112,89 +188,78 @@ const AssetsView = ({ onClose, selectedAssetTypes: externalSelectedAssetTypes = 
         });
     }, []);
 
-    const toggleAssetType = useCallback(
-        (assetTypeId: string) => {
-            const newState = !selectedAssetTypes[assetTypeId];
-            setLocalSelectedAssetTypes((prev) => {
-                const updated = {
-                    ...prev,
-                    [assetTypeId]: newState,
-                };
-                return updated;
-            });
-            onAssetTypeToggle?.(assetTypeId, newState);
+    const handleToggleVisibility = useCallback(
+        (assetTypeId: string, isActive: boolean) => {
+            visibilityMutation.mutate({ assetTypeId, isActive });
         },
-        [selectedAssetTypes, onAssetTypeToggle],
+        [visibilityMutation],
     );
 
-    const sortAssetTypes = useCallback((assetTypes: AssetType[], sortDirection: number): AssetType[] => {
-        return assetTypes.toSorted((a, b) => sortDirection * a.name.localeCompare(b.name));
-    }, []);
+    const handleClearAll = useCallback(() => {
+        clearAllMutation.mutate();
+    }, [clearAllMutation]);
 
-    const sortSubCategories = useCallback(
-        (subCategories: SubCategory[], sortDirection: number): (SubCategory & { assetTypes: AssetType[] })[] => {
-            return subCategories
-                .toSorted((a, b) => sortDirection * a.name.localeCompare(b.name))
-                .map((subCategory) => ({
-                    ...subCategory,
-                    assetTypes: sortAssetTypes(subCategory.assetTypes, sortDirection),
-                }));
+    const matchesSearch = useCallback(
+        (assetType: ScenarioAssetType, subCategory: ScenarioSubCategory, category: ScenarioAssetCategory, searchLower: string): boolean => {
+            return (
+                assetType.name.toLowerCase().includes(searchLower) ||
+                subCategory.name.toLowerCase().includes(searchLower) ||
+                category.name.toLowerCase().includes(searchLower)
+            );
         },
-        [sortAssetTypes],
+        [],
     );
-
-    const sortedCategories = useMemo(() => {
-        if (!assetCategories) {
-            return [];
-        }
-
-        const sortDirection = sortOption === 'a-z' ? 1 : -1;
-
-        return assetCategories
-            .map((category) => ({
-                ...category,
-                subCategories: sortSubCategories(category.subCategories, sortDirection),
-            }))
-            .toSorted((a, b) => sortDirection * a.name.localeCompare(b.name));
-    }, [assetCategories, sortOption, sortSubCategories]);
-
-    const matchesSearch = useCallback((assetType: AssetType, subCategory: SubCategory, category: AssetCategory, searchLower: string): boolean => {
-        return (
-            assetType.name.toLowerCase().includes(searchLower) ||
-            subCategory.name.toLowerCase().includes(searchLower) ||
-            category.name.toLowerCase().includes(searchLower)
-        );
-    }, []);
 
     const filterSubCategories = useCallback(
-        (subCategories: (SubCategory & { assetTypes: AssetType[] })[], category: AssetCategory, searchLower: string) => {
+        (subCategories: ScenarioSubCategory[], category: ScenarioAssetCategory, searchLower: string) => {
             return subCategories
                 .map((subCategory) => {
                     const filteredAssetTypes = subCategory.assetTypes.filter((assetType) => matchesSearch(assetType, subCategory, category, searchLower));
                     return filteredAssetTypes.length > 0 ? { ...subCategory, assetTypes: filteredAssetTypes } : null;
                 })
-                .filter((subCategory): subCategory is SubCategory & { assetTypes: AssetType[] } => subCategory !== null);
+                .filter((subCategory): subCategory is ScenarioSubCategory => subCategory !== null);
         },
         [matchesSearch],
     );
 
     const filteredCategories = useMemo(() => {
-        if (!sortedCategories || sortedCategories.length === 0) {
+        if (!assetCategories || assetCategories.length === 0) {
             return [];
         }
 
-        if (!searchQuery.trim()) {
-            return sortedCategories;
+        if (!deferredSearchQuery.trim()) {
+            return assetCategories;
         }
 
-        const searchLower = searchQuery.toLowerCase();
-        return sortedCategories
+        const searchLower = deferredSearchQuery.toLowerCase();
+        return assetCategories
             .map((category) => {
                 const filteredSubCategories = filterSubCategories(category.subCategories, category, searchLower);
                 return filteredSubCategories.length > 0 ? { ...category, subCategories: filteredSubCategories } : null;
             })
-            .filter((category): category is AssetCategory & { subCategories: (SubCategory & { assetTypes: AssetType[] })[] } => category !== null);
-    }, [sortedCategories, searchQuery, filterSubCategories]);
+            .filter((category): category is ScenarioAssetCategory => category !== null);
+    }, [assetCategories, deferredSearchQuery, filterSubCategories]);
+
+    const focusAreaSelectValue = selectedFocusAreaId ?? MAP_WIDE_VALUE;
+    const isMutating = visibilityMutation.isPending || clearAllMutation.isPending;
+
+    if (!scenarioId) {
+        return (
+            <Box sx={{ p: 2 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+                    <Typography variant="h6" fontWeight={600}>
+                        Assets
+                    </Typography>
+                    <IconButton size="small" onClick={onClose} aria-label="Close panel">
+                        <CloseIcon fontSize="small" />
+                    </IconButton>
+                </Box>
+                <Typography variant="body2" color="text.secondary">
+                    No scenario selected
+                </Typography>
+            </Box>
+        );
+    }
 
     if (isErrorCategories) {
         return (
@@ -226,28 +291,38 @@ const AssetsView = ({ onClose, selectedAssetTypes: externalSelectedAssetTypes = 
             </Box>
 
             <Box sx={{ p: 2, borderBottom: 1, borderColor: 'divider' }}>
-                <Box sx={{ mb: 2 }}>
-                    <SearchTextField placeholder="Search for a layer" value={searchQuery} onChange={handleSearchChange} fullWidth />
-                </Box>
-
-                <Box sx={{ display: 'flex', gap: 1 }}>
+                <FormControl fullWidth size="small" sx={{ mb: 2 }}>
+                    <InputLabel id="focus-area-select-label">Select visible focus area</InputLabel>
                     <Select
-                        value={sortOption}
-                        onChange={handleSortChange}
-                        size="small"
-                        sx={{
-                            'flex': '1 1 50%',
-                            '& .MuiOutlinedInput-notchedOutline': {
-                                borderColor: 'divider',
-                            },
-                        }}
+                        labelId="focus-area-select-label"
+                        value={focusAreaSelectValue}
+                        onChange={handleFocusAreaChange}
+                        label="Select visible focus area"
+                        disabled={isLoadingFocusAreas}
                     >
-                        <MenuItem value="a-z">A-Z</MenuItem>
-                        <MenuItem value="z-a">Z-A</MenuItem>
+                        <MenuItem value={MAP_WIDE_VALUE}>Map wide</MenuItem>
+                        {focusAreas?.map((fa: FocusArea) => (
+                            <MenuItem key={fa.id} value={fa.id} disabled={!fa.isActive}>
+                                {fa.name}
+                            </MenuItem>
+                        ))}
                     </Select>
-                    <Button variant="outlined" size="small" disabled sx={{ flex: '1 1 50%' }}>
-                        FILTER
-                    </Button>
+                </FormControl>
+
+                <FormControl fullWidth size="small" sx={{ mb: 2 }}>
+                    <InputLabel id="filter-mode-select-label">Select filter mode</InputLabel>
+                    <Select labelId="filter-mode-select-label" value="by-asset-type" label="Select filter mode" disabled>
+                        <MenuItem value="by-asset-type">By asset type</MenuItem>
+                    </Select>
+                </FormControl>
+
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Box sx={{ flex: 1 }}>
+                        <SearchTextField placeholder="Search for an asset" value={searchQuery} onChange={handleSearchChange} fullWidth />
+                    </Box>
+                    <IconButton size="small" onClick={handleClearAll} disabled={isMutating} aria-label="Clear all visible assets" title="Clear all">
+                        <LayersClearOutlined fontSize="small" />
+                    </IconButton>
                 </Box>
             </Box>
 
@@ -268,81 +343,85 @@ const AssetsView = ({ onClose, selectedAssetTypes: externalSelectedAssetTypes = 
                     </Box>
                 )}
 
-                {filteredCategories.map((category) => {
-                    const isCategoryExpanded = expandedCategories.has(category.id);
+                {filteredCategories.map((category) => (
+                    <Box key={category.id}>
+                        <Typography
+                            variant="caption"
+                            sx={{
+                                display: 'block',
+                                px: 2,
+                                pt: 2,
+                                pb: 0.5,
+                                fontWeight: 600,
+                                color: 'text.secondary',
+                                textTransform: 'none',
+                            }}
+                        >
+                            {category.name}
+                        </Typography>
 
-                    return (
-                        <Box key={category.id} sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                            <Box
-                                onClick={() => toggleCategory(category.id)}
-                                onKeyDown={(e) => {
-                                    if (e.key === 'Enter' || e.key === ' ') {
-                                        toggleCategory(category.id);
-                                    }
-                                }}
-                                sx={{
-                                    'display': 'flex',
-                                    'alignItems': 'center',
-                                    'p': 1,
-                                    'cursor': 'pointer',
-                                    '&:hover': {
-                                        backgroundColor: 'action.hover',
-                                    },
-                                }}
-                                tabIndex={0}
-                            >
-                                <IconButton size="small">{isCategoryExpanded ? <ExpandMoreIcon /> : <ExpandLessIcon />}</IconButton>
-                                <Typography variant="body1" sx={{ flexGrow: 1, fontWeight: 500 }}>
-                                    {category.name}
-                                </Typography>
-                            </Box>
+                        {category.subCategories.map((subCategory) => {
+                            const isSubCategoryExpanded = expandedSubCategories.has(subCategory.id);
+                            const activeCount = subCategory.assetTypes.filter((at) => at.isActive).length;
+                            return (
+                                <Box key={subCategory.id}>
+                                    <Box
+                                        onClick={() => toggleSubCategory(subCategory.id)}
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter' || e.key === ' ') {
+                                                toggleSubCategory(subCategory.id);
+                                            }
+                                        }}
+                                        sx={{
+                                            'display': 'flex',
+                                            'alignItems': 'center',
+                                            'px': 2,
+                                            'py': 0.75,
+                                            'cursor': 'pointer',
+                                            '&:hover': {
+                                                backgroundColor: 'action.hover',
+                                            },
+                                        }}
+                                        tabIndex={0}
+                                    >
+                                        {isSubCategoryExpanded ? (
+                                            <KeyboardArrowUpIcon fontSize="small" sx={{ mr: 1 }} />
+                                        ) : (
+                                            <KeyboardArrowDownIcon fontSize="small" sx={{ mr: 1 }} />
+                                        )}
+                                        <Typography variant="body2">
+                                            {subCategory.name}
+                                            {activeCount > 0 && ` (${activeCount})`}
+                                        </Typography>
+                                    </Box>
 
-                            <Collapse in={isCategoryExpanded}>
-                                <Box>
-                                    {category.subCategories.map((subCategory) => {
-                                        const isSubCategoryExpanded = expandedSubCategories.has(subCategory.id);
-                                        return (
-                                            <Box key={subCategory.id}>
-                                                <Box
-                                                    onClick={() => toggleSubCategory(subCategory.id)}
-                                                    onKeyDown={(e) => {
-                                                        if (e.key === 'Enter' || e.key === ' ') {
-                                                            toggleSubCategory(subCategory.id);
-                                                        }
-                                                    }}
-                                                    sx={{
-                                                        'display': 'flex',
-                                                        'alignItems': 'center',
-                                                        'p': 1,
-                                                        'cursor': 'pointer',
-                                                        '&:hover': {
-                                                            backgroundColor: 'action.hover',
-                                                        },
-                                                    }}
-                                                    tabIndex={0}
-                                                >
-                                                    <IconButton size="small">{isSubCategoryExpanded ? <ArrowDropDown /> : <ArrowDropUp />}</IconButton>
-                                                    <Typography variant="body2" sx={{ flexGrow: 1, fontWeight: 500 }}>
-                                                        {subCategory.name} ({subCategory.assetTypes.length})
-                                                    </Typography>
-                                                </Box>
-
-                                                <Collapse in={isSubCategoryExpanded}>
-                                                    <AssetTypeList
-                                                        assetTypes={subCategory.assetTypes}
-                                                        selectedAssetTypes={selectedAssetTypes}
-                                                        onToggle={toggleAssetType}
-                                                    />
-                                                </Collapse>
-                                            </Box>
-                                        );
-                                    })}
+                                    <Collapse in={isSubCategoryExpanded}>
+                                        <AssetTypeList
+                                            assetTypes={subCategory.assetTypes}
+                                            onToggle={handleToggleVisibility}
+                                            disabled={isMutating}
+                                            dataSourceMap={dataSourceMap}
+                                        />
+                                    </Collapse>
                                 </Box>
-                            </Collapse>
-                        </Box>
-                    );
-                })}
+                            );
+                        })}
+                    </Box>
+                ))}
             </Box>
+
+            <Portal>
+                <Snackbar
+                    open={!!mutationError}
+                    autoHideDuration={5000}
+                    onClose={() => setMutationError(null)}
+                    anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                >
+                    <Alert severity="error" onClose={() => setMutationError(null)}>
+                        {mutationError}
+                    </Alert>
+                </Snackbar>
+            </Portal>
         </Box>
     );
 };

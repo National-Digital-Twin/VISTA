@@ -97,7 +97,6 @@ jobs:
       - name: TypeScript Check
         working-directory: frontend
         run: npx tsc --noEmit
-        continue-on-error: true
 
       - name: Run Sort-Package-Json (Import Sorting)
         working-directory: frontend

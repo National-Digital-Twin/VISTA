@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState, type RefObject } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import type { Feature, Geometry } from 'geojson';
+import { useQuery } from '@tanstack/react-query';
+import type { Feature } from 'geojson';
 import type MapboxDraw from '@mapbox/mapbox-gl-draw';
 import type { MapRef } from 'react-map-gl/maplibre';
-import { fetchFocusAreas, createFocusArea, updateFocusArea, type FocusArea } from '@/api/focus-areas';
+import useFocusAreaMutations from './useFocusAreaMutations';
+import { fetchFocusAreas, type FocusArea } from '@/api/focus-areas';
 
 type UseFocusAreasOptions = {
     scenarioId: string | undefined;
@@ -13,7 +14,6 @@ type UseFocusAreasOptions = {
 };
 
 const useFocusAreas = ({ scenarioId, mapRef, drawRef, mapReady }: UseFocusAreasOptions) => {
-    const queryClient = useQueryClient();
     const loadedFocusAreaIdsRef = useRef<Set<string>>(new Set());
     const focusAreasRef = useRef<FocusArea[] | undefined>(undefined);
     const [isDrawing, setIsDrawing] = useState(false);
@@ -25,6 +25,8 @@ const useFocusAreas = ({ scenarioId, mapRef, drawRef, mapReady }: UseFocusAreasO
         staleTime: 5 * 60 * 1000,
     });
 
+    const { createFocusArea: createFocusAreaMutate, updateFocusArea: updateFocusAreaMutate } = useFocusAreaMutations({ scenarioId });
+
     // Keep focusAreasRef in sync with query data for use in event handlers
     useEffect(() => {
         focusAreasRef.current = focusAreas;
@@ -35,29 +37,13 @@ const useFocusAreas = ({ scenarioId, mapRef, drawRef, mapReady }: UseFocusAreasO
         loadedFocusAreaIdsRef.current.clear();
     }, [scenarioId]);
 
-    const createFocusAreaMutation = useMutation({
-        mutationFn: (geometry: Geometry) => createFocusArea(scenarioId!, { geometry, isActive: true }),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['focusAreas', scenarioId] });
-            queryClient.invalidateQueries({ queryKey: ['scenarioAssets', scenarioId] });
-        },
-    });
-
-    const updateFocusAreaMutation = useMutation({
-        mutationFn: ({ focusAreaId, geometry }: { focusAreaId: string; geometry: Geometry }) => updateFocusArea(scenarioId!, focusAreaId, { geometry }),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['focusAreas', scenarioId] });
-            queryClient.invalidateQueries({ queryKey: ['scenarioAssets', scenarioId] });
-        },
-    });
-
     // Store mutation functions in refs for stable references in event handlers
-    const createMutateRef = useRef(createFocusAreaMutation.mutate);
-    const updateMutateRef = useRef(updateFocusAreaMutation.mutate);
+    const createMutateRef = useRef(createFocusAreaMutate);
+    const updateMutateRef = useRef(updateFocusAreaMutate);
     useEffect(() => {
-        createMutateRef.current = createFocusAreaMutation.mutate;
-        updateMutateRef.current = updateFocusAreaMutation.mutate;
-    }, [createFocusAreaMutation.mutate, updateFocusAreaMutation.mutate]);
+        createMutateRef.current = createFocusAreaMutate;
+        updateMutateRef.current = updateFocusAreaMutate;
+    }, [createFocusAreaMutate, updateFocusAreaMutate]);
 
     // Sync active focus areas to MapboxDraw
     useEffect(() => {
@@ -155,7 +141,7 @@ const useFocusAreas = ({ scenarioId, mapRef, drawRef, mapReady }: UseFocusAreasO
                     if (hasChanged) {
                         updateMutateRef.current({
                             focusAreaId: String(focusAreaId),
-                            geometry: feature.geometry,
+                            data: { geometry: feature.geometry },
                         });
                     }
                 }
@@ -186,6 +172,7 @@ const useFocusAreas = ({ scenarioId, mapRef, drawRef, mapReady }: UseFocusAreasO
     };
 
     return {
+        focusAreas,
         isDrawing,
         startDrawing,
     };

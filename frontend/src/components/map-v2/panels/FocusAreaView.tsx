@@ -18,9 +18,11 @@ import {
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { DeleteOutline, EditNoteOutlined, VisibilityOffOutlined, VisibilityOutlined } from '@mui/icons-material';
-import { fetchFocusAreas, updateFocusArea, deleteFocusArea, type FocusArea } from '@/api/focus-areas';
+import { useQuery } from '@tanstack/react-query';
+import { DeleteOutline, EditNoteOutlined } from '@mui/icons-material';
+import useFocusAreaMutations from '../hooks/useFocusAreaMutations';
+import IconToggle from '@/components/IconToggle';
+import { fetchFocusAreas, type FocusArea } from '@/api/focus-areas';
 
 type FocusAreaViewProps = {
     readonly onClose: () => void;
@@ -42,30 +44,8 @@ const FocusAreaItem = ({ focusArea, scenarioId, onError }: FocusAreaItemProps) =
     const [editName, setEditName] = useState(focusArea.name);
     const [nameError, setNameError] = useState<string | null>(null);
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-    const queryClient = useQueryClient();
 
-    const updateMutation = useMutation({
-        mutationFn: (data: { name?: string; isActive?: boolean }) => updateFocusArea(scenarioId, focusArea.id, data),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['focusAreas', scenarioId] });
-            queryClient.invalidateQueries({ queryKey: ['scenarioAssets', scenarioId] });
-        },
-        onError: (error) => {
-            console.error('Failed to update focus area', error.message);
-            onError('Failed to update focus area');
-        },
-    });
-
-    const deleteMutation = useMutation({
-        mutationFn: () => deleteFocusArea(scenarioId, focusArea.id),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['focusAreas', scenarioId] });
-            queryClient.invalidateQueries({ queryKey: ['scenarioAssets', scenarioId] });
-        },
-        onError: () => onError('Failed to delete focus area'),
-    });
-
-    const isBusy = updateMutation.isPending || deleteMutation.isPending;
+    const { updateFocusArea: updateFocusAreaMutate, deleteFocusArea: deleteFocusAreaMutate, isMutating } = useFocusAreaMutations({ scenarioId, onError });
 
     const handleEditClick = () => {
         setEditName(focusArea.name);
@@ -82,7 +62,7 @@ const FocusAreaItem = ({ focusArea, scenarioId, onError }: FocusAreaItemProps) =
         setNameError(null);
         setIsEditing(false);
         if (trimmedName !== focusArea.name) {
-            updateMutation.mutate({ name: trimmedName });
+            updateFocusAreaMutate({ focusAreaId: focusArea.id, data: { name: trimmedName } });
         }
     };
 
@@ -104,7 +84,7 @@ const FocusAreaItem = ({ focusArea, scenarioId, onError }: FocusAreaItemProps) =
     };
 
     const handleToggleVisibility = () => {
-        updateMutation.mutate({ isActive: !focusArea.isActive });
+        updateFocusAreaMutate({ focusAreaId: focusArea.id, data: { isActive: !focusArea.isActive } });
     };
 
     const handleDeleteClick = () => {
@@ -113,7 +93,7 @@ const FocusAreaItem = ({ focusArea, scenarioId, onError }: FocusAreaItemProps) =
 
     const handleDeleteConfirm = () => {
         setDeleteDialogOpen(false);
-        deleteMutation.mutate();
+        deleteFocusAreaMutate(focusArea.id);
     };
 
     const handleDeleteCancel = () => {
@@ -162,22 +142,20 @@ const FocusAreaItem = ({ focusArea, scenarioId, onError }: FocusAreaItemProps) =
                     </Typography>
                 )}
             </Box>
-            <Box sx={{ display: 'flex' }}>
-                <IconButton size="small" onClick={handleEditClick} disabled={isBusy} aria-label="Edit focus area name" title="Edit name">
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <IconButton size="small" onClick={handleEditClick} disabled={isMutating} aria-label="Edit focus area name" title="Edit name">
                     <EditNoteOutlined fontSize="small" />
                 </IconButton>
-                <IconButton size="small" onClick={handleDeleteClick} disabled={isBusy} aria-label="Delete focus area" title="Delete">
+                <IconButton size="small" onClick={handleDeleteClick} disabled={isMutating} aria-label="Delete focus area" title="Delete">
                     <DeleteOutline fontSize="small" />
                 </IconButton>
-                <IconButton
-                    size="small"
-                    onClick={handleToggleVisibility}
-                    disabled={isBusy}
+                <IconToggle
+                    checked={focusArea.isActive}
+                    onChange={handleToggleVisibility}
+                    disabled={isMutating}
                     aria-label={focusArea.isActive ? 'Hide focus area' : 'Show focus area'}
-                    title={focusArea.isActive ? 'Hide' : 'Show'}
-                >
-                    {focusArea.isActive ? <VisibilityOutlined fontSize="small" color="primary" /> : <VisibilityOffOutlined fontSize="small" />}
-                </IconButton>
+                    size="small"
+                />
             </Box>
 
             <Dialog open={deleteDialogOpen} onClose={handleDeleteCancel} maxWidth="xs" fullWidth>
@@ -254,14 +232,12 @@ const FocusAreaView = ({ onClose, scenarioId, mapWideVisible, onMapWideVisibleCh
                     }}
                 >
                     <Typography variant="body2">Map-wide</Typography>
-                    <IconButton
-                        size="small"
-                        onClick={handleMapWideToggle}
+                    <IconToggle
+                        checked={mapWideVisible}
+                        onChange={handleMapWideToggle}
                         aria-label={mapWideVisible ? 'Hide map-wide assets' : 'Show map-wide assets'}
-                        title={mapWideVisible ? 'Map-wide visible' : 'Map-wide hidden'}
-                    >
-                        {mapWideVisible ? <VisibilityOutlined fontSize="small" color="primary" /> : <VisibilityOffOutlined fontSize="small" />}
-                    </IconButton>
+                        size="small"
+                    />
                 </Box>
 
                 <Divider />
