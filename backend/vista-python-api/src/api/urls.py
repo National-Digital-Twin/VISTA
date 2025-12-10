@@ -64,5 +64,15 @@ urlpatterns = [
         views.ScenarioAssetsView.as_view(),
         name="scenario-assets",
     ),
+    path(
+        "scenarios/<uuid:scenario_id>/assetscores/",
+        views.AssetScoreViewSet.as_view({"get": "list"}),
+        name="asset-score-list",
+    ),
+    path(
+        "scenarios/<uuid:scenario_id>/assetscores/<uuid:pk>/",
+        views.AssetScoreViewSet.as_view({"get": "retrieve"}),
+        name="asset-score-detail",
+    ),
     path("", include(router.urls)),
 ]

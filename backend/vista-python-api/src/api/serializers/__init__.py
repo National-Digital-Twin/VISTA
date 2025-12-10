@@ -8,6 +8,7 @@ from .asset import (
     AssetTypeSerializer,
     ScenarioAssetSerializer,
 )
+from .asset_score import AssetScoreSerializer
 from .data_source import DataSourceSerializer
 from .dependency import DependencySerializer
 from .exposure_layer import ExposureLayerSerializer, ExposureLayerTypeSerializer
@@ -31,6 +32,7 @@ __all__ = [
     "AssetCategorySerializer",
     "AssetDetailSerializer",
     "AssetListSerializer",
+    "AssetScoreSerializer",
     "AssetSubCategorySerializer",
     "AssetTypeSerializer",
     "DataSourceSerializer",

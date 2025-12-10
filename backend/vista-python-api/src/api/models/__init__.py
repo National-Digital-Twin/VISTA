@@ -4,23 +4,31 @@ Import all models into the 'models' package.
 This makes them available to Django as if they were in a single models.py file.
 """
 
+from .asset import Asset
+from .asset_score import AssetScore
 from .asset_type import AssetCategory, AssetSubCategory, AssetType
 from .data_source import DataSource
+from .dependency import Dependency
 from .exposure_layer import ExposureLayer, ExposureLayerType
 from .focus_area import FocusArea
 from .scenario import Scenario
+from .scenario_asset import ScenarioAsset
 from .visible_asset import VisibleAsset
 from .visible_exposure_layer import VisibleExposureLayer
 
 __all__ = [
+    "Asset",
     "AssetCategory",
+    "AssetScore",
     "AssetSubCategory",
     "AssetType",
     "DataSource",
+    "Dependency",
     "ExposureLayer",
     "ExposureLayerType",
     "FocusArea",
     "Scenario",
+    "ScenarioAsset",
     "VisibleAsset",
     "VisibleExposureLayer",
 ]
