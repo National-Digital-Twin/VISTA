@@ -6,7 +6,7 @@ from api.models import Scenario
 from api.serializers import ScenarioSerializer
 
 
-class ScenarioViewSet(viewsets.ReadOnlyModelViewSet):
+class ScenarioViewSet(viewsets.ModelViewSet):
     """ViewSet for Scenario read operations."""
 
     queryset = Scenario.objects.all()
