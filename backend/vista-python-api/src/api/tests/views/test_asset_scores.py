@@ -142,7 +142,7 @@ def fixture(db):  # noqa: ARG001
 
     exposure_layer_type = ExposureLayerType.objects.create(name="Flood")
     ExposureLayer.objects.create(geometry=poly, type=exposure_layer_type)
-    exposure_layer = ExposureLayer.objects.create(geometry=poly)
+    exposure_layer = ExposureLayer.objects.create(geometry=poly, type=exposure_layer_type)
     vis_exposure_layer = VisibleExposureLayer.objects.create(
         scenario=scenario1, exposure_layer=exposure_layer, user_id=user_id
     )
