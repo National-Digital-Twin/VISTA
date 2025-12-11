@@ -15,6 +15,7 @@ from api.models import (
     AssetType,
     Dependency,
     ExposureLayer,
+    ExposureLayerType,
     Scenario,
     ScenarioAsset,
     VisibleExposureLayer,
@@ -27,18 +28,20 @@ other_user_id = uuid.uuid4()
 
 
 def _get_asset(fixture, asset_id):
-    return next([asset for asset in fixture["assets"] if asset.id == asset_id])
+    return next(iter([asset for asset in fixture["assets"] if asset.id == asset_id]))
 
 
 def _get_criticality_score_for_asset(fixture, asset_id):
     asset = _get_asset(fixture, asset_id)
     asset_type_id = asset.type.id
     return next(
-        [
-            scenario_asset.criticality_score
-            for scenario_asset in fixture["asset_scores"]
-            if scenario_asset.asset_type.id == asset_type_id
-        ]
+        iter(
+            [
+                scenario_asset.criticality_score
+                for scenario_asset in fixture["asset_scores"]
+                if scenario_asset.asset_type.id == asset_type_id
+            ]
+        )
     )
 
 
@@ -109,7 +112,6 @@ def fixture(db):  # noqa: ARG001
         name="Substation1",
         type=type_substation,
     )
-
     type_wastewater_collection = AssetType.objects.create(
         id=uuid.uuid4(), name="Wastewater Collections", sub_category_id=sub_cat
     )
@@ -138,7 +140,8 @@ def fixture(db):  # noqa: ARG001
         ((-0.001, -0.001), (0.001, -0.001), (0.001, 0.001), (-0.001, 0.001), (-0.001, -0.001))
     )
 
-    ExposureLayer.objects.create(geometry=poly)
+    exposure_layer_type = ExposureLayerType.objects.create(name="Flood")
+    ExposureLayer.objects.create(geometry=poly, type=exposure_layer_type)
     exposure_layer = ExposureLayer.objects.create(geometry=poly)
     vis_exposure_layer = VisibleExposureLayer.objects.create(
         scenario=scenario1, exposure_layer=exposure_layer, user_id=user_id
@@ -155,7 +158,7 @@ def fixture(db):  # noqa: ARG001
     )
 
     with connection.cursor() as cursor:
-        cursor.execute("REFRESH MATERIALIZED VIEW public.assets_exposure_layers;")
+        cursor.execute("REFRESH MATERIALIZED VIEW public.assets_within_500m_exposure_layers;")
 
     return {
         "assets": [asset1, asset2, asset3],
@@ -169,11 +172,17 @@ def fixture(db):  # noqa: ARG001
 @pytest.mark.django_db
 def test_list_asset_scores(fixture, client):
     """Test that all asset scores are listed."""
-    response = client.get("/api/assetscores/")
+    scenario = fixture["scenarios"][0]
+    response = client.get(f"/api/scenarios/{scenario.id}/assetscores/")
     data = response.json()
 
     assert response.status_code == http_success_code
-    assert len(data) == len(fixture["asset_scores"])
+    expected_scores = len(fixture["asset_scores"])
+    for asset in fixture["assets"]:
+        exposure_score = _get_exposure_score_for_asset(fixture, asset.id)
+        if exposure_score > 0:
+            expected_scores += 1
+    assert len(data) == expected_scores
 
 
 @pytest.mark.django_db
@@ -181,7 +190,7 @@ def test_list_asset_scores(fixture, client):
 def test_retrieve_asset_score(fixture, client, asset_num, mock_user_id):
     """Test retrieving a single asset score with dependents."""
     asset = fixture["assets"][asset_num]
-    scenario = next(fixture["scenarios"])
+    scenario = fixture["scenarios"][0]
     response = client.get(f"/api/scenarios/{scenario.id}/assetscores/{asset.id}/")
     data = response.json()
 
@@ -198,7 +207,7 @@ def test_retrieve_asset_score(fixture, client, asset_num, mock_user_id):
 def test_retrieve_asset_score_for_alternate_user(fixture, client, asset_num, mock_other_user_id):
     """Test retrieving a single asset score with dependents."""
     asset = fixture["assets"][asset_num]
-    scenario = next(fixture["scenarios"])
+    scenario = fixture["scenarios"][0]
     response = client.get(f"/api/scenarios/{scenario.id}/assetscores/{asset.id}/")
     data = response.json()
 

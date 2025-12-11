@@ -15,18 +15,18 @@ class Migration(migrations.Migration):
     operations: ClassVar = [
         migrations.RunSQL(
             sql="""
-                CREATE MATERIALIZED VIEW public.assets_exposure_layers AS
+                CREATE MATERIALIZED VIEW public.assets_within_500m_exposure_layers AS
                 SELECT a.id AS asset_id,
                     e.id AS exposure_layer_id,
-                    st_intersects(a.geom::geography, e.geometry::geography) AS intersects,
-                    st_dwithin(a.geom::geography, e.geometry::geography, 500::double precision)
-                        AS within_500m
+                    st_intersects(a.geom::geography, e.geometry::geography) AS intersects
                 FROM api_asset a
                 CROSS JOIN api_exposurelayer e
                 WHERE ST_DWithin(a.geom::geography, e.geometry::geography, 500);
+                CREATE INDEX api_assets_within_500m_exposure_layers_exposure_layer_id
+                    ON public.assets_within_500m_exposure_layers (exposure_layer_id);
             """,
             reverse_sql="""
-                DROP MATERIALIZED VIEW IF EXISTS public.assets_exposure_layers;
+                DROP MATERIALIZED VIEW IF EXISTS public.assets_within_500m_exposure_layers;
             """,
         ),
         migrations.RunSQL(
@@ -36,17 +36,16 @@ class Migration(migrations.Migration):
                             SELECT ael.asset_id,
                                 ve.user_id,
                                 ael.exposure_layer_id,
-                                ael.intersects,
-                                ael.within_500m
-                            FROM assets_exposure_layers ael
+                                ael.intersects
+                            FROM assets_within_500m_exposure_layers ael
                                 JOIN api_visibleexposurelayer ve
                                     ON ael.exposure_layer_id = ve.exposure_layer_id
                             ), agg AS (
                             SELECT active_exposure_layers.asset_id, active_exposure_layers.user_id,
                                 count(*) FILTER (WHERE active_exposure_layers.intersects)
                                     AS inter_ct,
-                                count(*) FILTER (WHERE active_exposure_layers.within_500m
-                                    AND NOT active_exposure_layers.intersects) AS near_ct
+                                count(*) FILTER (WHERE NOT active_exposure_layers.intersects)
+                                    AS near_ct
                             FROM active_exposure_layers
                             GROUP BY active_exposure_layers.asset_id, active_exposure_layers.user_id
                             )
@@ -70,7 +69,7 @@ class Migration(migrations.Migration):
                         s_a.scenario_id,
                         exposure.user_id,
                         s_a.criticality_score,
-                        COALESCE(avg(dep_score.score), 0::numeric) AS dependency_score,
+                        COALESCE(avg(dep_score.score), 0) AS dependency_score,
                         COALESCE(exposure.score, 0) AS exposure_score,
                         3 AS redundancy_score
                     FROM api_scenarioasset s_a
@@ -79,10 +78,10 @@ class Migration(migrations.Migration):
                             SELECT a_d.provider_asset_id AS id, s_a_1.criticality_score AS score
                             FROM api_dependency a_d
                             LEFT JOIN api_asset a_1
-                                ON a_d.dependent_asset_id::text = a_1.external_id::text
+                                ON a_d.dependent_asset_id = a_1.external_id
                             LEFT JOIN api_scenarioasset s_a_1
                                 ON s_a_1.asset_type_id = a_1.type_id
-                        ) dep_score ON dep_score.id = a.external_id
+                    ) dep_score ON dep_score.id = a.external_id
                         LEFT JOIN (
                             SELECT veas.asset_id, veas.user_id, veas.score
                             FROM visible_exposure_asset_scores veas
