@@ -125,6 +125,22 @@ describe('useFocusAreas', () => {
             expect(result.current.isDrawing).toBe(false);
         });
 
+        it('returns drawingMode as null initially', () => {
+            const mockMap = createMockMap();
+            const { result } = renderHook(
+                () =>
+                    useFocusAreas({
+                        scenarioId: 'scenario-123',
+                        mapRef: createMockMapRef(mockMap) as any,
+                        drawRef: createMockDrawRef() as any,
+                        mapReady: false,
+                    }),
+                { wrapper: createWrapper(queryClient) },
+            );
+
+            expect(result.current.drawingMode).toBe(null);
+        });
+
         it('returns startDrawing function', () => {
             const mockMap = createMockMap();
             const { result } = renderHook(
@@ -140,10 +156,26 @@ describe('useFocusAreas', () => {
 
             expect(typeof result.current.startDrawing).toBe('function');
         });
+
+        it('returns createCircleAtPoint function', () => {
+            const mockMap = createMockMap();
+            const { result } = renderHook(
+                () =>
+                    useFocusAreas({
+                        scenarioId: 'scenario-123',
+                        mapRef: createMockMapRef(mockMap) as any,
+                        drawRef: createMockDrawRef() as any,
+                        mapReady: false,
+                    }),
+                { wrapper: createWrapper(queryClient) },
+            );
+
+            expect(typeof result.current.createCircleAtPoint).toBe('function');
+        });
     });
 
     describe('startDrawing', () => {
-        it('sets isDrawing to true when called with "polygon"', () => {
+        it('sets isDrawing to true and drawingMode to "polygon" when called with "polygon"', () => {
             const mockMap = createMockMap();
             const mockDrawRef = createMockDrawRef();
             const { result } = renderHook(
@@ -162,10 +194,11 @@ describe('useFocusAreas', () => {
             });
 
             expect(result.current.isDrawing).toBe(true);
+            expect(result.current.drawingMode).toBe('polygon');
             expect(mockDrawRef.current.changeMode).toHaveBeenCalledWith('draw_polygon');
         });
 
-        it('sets isDrawing to true when called with "circle"', () => {
+        it('sets isDrawing to true and drawingMode to "circle" when called with "circle"', () => {
             const mockMap = createMockMap();
             const mockDrawRef = createMockDrawRef();
             const { result } = renderHook(
@@ -184,6 +217,7 @@ describe('useFocusAreas', () => {
             });
 
             expect(result.current.isDrawing).toBe(true);
+            expect(result.current.drawingMode).toBe('circle');
             expect(mockDrawRef.current.changeMode).toHaveBeenCalledWith('drag_circle');
         });
 
@@ -205,6 +239,7 @@ describe('useFocusAreas', () => {
             });
 
             expect(result.current.isDrawing).toBe(false);
+            expect(result.current.drawingMode).toBe(null);
         });
     });
 
@@ -713,6 +748,171 @@ describe('useFocusAreas', () => {
             await waitFor(() => {
                 expect(mockedFetchFocusAreas).toHaveBeenCalledWith('scenario-2');
             });
+        });
+    });
+
+    describe('createCircleAtPoint', () => {
+        it('creates a circle geometry and calls mutation', async () => {
+            mockedCreateFocusArea.mockResolvedValue(createMockFocusArea({ id: 'new-circle' }));
+
+            const mockMap = createMockMap();
+            const mockDrawRef = createMockDrawRef();
+
+            const { result } = renderHook(
+                () =>
+                    useFocusAreas({
+                        scenarioId: 'scenario-123',
+                        mapRef: createMockMapRef(mockMap) as any,
+                        drawRef: mockDrawRef as any,
+                        mapReady: true,
+                    }),
+                { wrapper: createWrapper(queryClient) },
+            );
+
+            act(() => {
+                result.current.startDrawing('circle');
+            });
+
+            expect(result.current.isDrawing).toBe(true);
+            expect(result.current.drawingMode).toBe('circle');
+
+            act(() => {
+                result.current.createCircleAtPoint([-1.4, 50.67], 5);
+            });
+
+            expect(result.current.isDrawing).toBe(false);
+            expect(result.current.drawingMode).toBe(null);
+            expect(mockDrawRef.current.changeMode).toHaveBeenCalledWith('simple_select');
+
+            await waitFor(() => {
+                expect(mockedCreateFocusArea).toHaveBeenCalledWith('scenario-123', {
+                    geometry: expect.objectContaining({
+                        type: 'Polygon',
+                    }),
+                    isActive: true,
+                });
+            });
+        });
+
+        it('resets drawing state when called', () => {
+            const mockMap = createMockMap();
+            const mockDrawRef = createMockDrawRef();
+
+            const { result } = renderHook(
+                () =>
+                    useFocusAreas({
+                        scenarioId: 'scenario-123',
+                        mapRef: createMockMapRef(mockMap) as any,
+                        drawRef: mockDrawRef as any,
+                        mapReady: true,
+                    }),
+                { wrapper: createWrapper(queryClient) },
+            );
+
+            act(() => {
+                result.current.startDrawing('circle');
+            });
+
+            expect(result.current.isDrawing).toBe(true);
+            expect(result.current.drawingMode).toBe('circle');
+
+            act(() => {
+                result.current.createCircleAtPoint([-1.4, 50.67], 2.5);
+            });
+
+            expect(result.current.isDrawing).toBe(false);
+            expect(result.current.drawingMode).toBe(null);
+        });
+    });
+
+    describe('drawingMode reset', () => {
+        it('resets drawingMode to null when draw.create event fires', async () => {
+            mockedCreateFocusArea.mockResolvedValue(createMockFocusArea({ id: 'new-fa' }));
+
+            const mockMap = createMockMap();
+            const mockDrawRef = createMockDrawRef();
+            let createHandler: (event: { features: Feature[] }) => void;
+
+            mockMap.on.mockImplementation((event: string, handler: any) => {
+                if (event === 'draw.create') {
+                    createHandler = handler;
+                }
+            });
+
+            const { result } = renderHook(
+                () =>
+                    useFocusAreas({
+                        scenarioId: 'scenario-123',
+                        mapRef: createMockMapRef(mockMap) as any,
+                        drawRef: mockDrawRef as any,
+                        mapReady: true,
+                    }),
+                { wrapper: createWrapper(queryClient) },
+            );
+
+            await waitFor(() => {
+                expect(mockMap.on).toHaveBeenCalled();
+            });
+
+            act(() => {
+                result.current.startDrawing('polygon');
+            });
+
+            expect(result.current.drawingMode).toBe('polygon');
+
+            const mockFeature: Feature = {
+                type: 'Feature',
+                id: 'temp-123',
+                properties: {},
+                geometry: mockGeometry,
+            };
+
+            act(() => {
+                createHandler({ features: [mockFeature] });
+            });
+
+            expect(result.current.drawingMode).toBe(null);
+        });
+
+        it('resets drawingMode to null when mode changes to simple_select', async () => {
+            const mockMap = createMockMap();
+            const mockDrawRef = createMockDrawRef();
+            let modeChangeHandler: () => void;
+
+            mockMap.on.mockImplementation((event: string, handler: any) => {
+                if (event === 'draw.modechange') {
+                    modeChangeHandler = handler;
+                }
+            });
+
+            mockDrawRef.current.getMode.mockReturnValue('simple_select');
+
+            const { result } = renderHook(
+                () =>
+                    useFocusAreas({
+                        scenarioId: 'scenario-123',
+                        mapRef: createMockMapRef(mockMap) as any,
+                        drawRef: mockDrawRef as any,
+                        mapReady: true,
+                    }),
+                { wrapper: createWrapper(queryClient) },
+            );
+
+            await waitFor(() => {
+                expect(mockMap.on).toHaveBeenCalled();
+            });
+
+            act(() => {
+                result.current.startDrawing('circle');
+            });
+
+            expect(result.current.drawingMode).toBe('circle');
+
+            act(() => {
+                modeChangeHandler();
+            });
+
+            expect(result.current.drawingMode).toBe(null);
         });
     });
 });

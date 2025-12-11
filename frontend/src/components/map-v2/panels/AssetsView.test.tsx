@@ -213,11 +213,11 @@ describe('AssetsView', () => {
     });
 
     describe('Focus Area Selection', () => {
-        it('shows Map wide as default selection', async () => {
+        it('shows Map-wide as default selection', async () => {
             setupMocks();
             renderWithProviders(<AssetsView {...defaultProps} />);
             await waitFor(() => {
-                expect(screen.getByText('Map wide')).toBeInTheDocument();
+                expect(screen.getByText('Map-wide')).toBeInTheDocument();
             });
         });
 
@@ -243,7 +243,7 @@ describe('AssetsView', () => {
                 { timeout: 3000 },
             );
 
-            expect(screen.getByRole('option', { name: 'Map wide' })).toBeInTheDocument();
+            expect(screen.getByRole('option', { name: 'Map-wide' })).toBeInTheDocument();
             expect(screen.getByRole('option', { name: 'Area 1' })).toBeInTheDocument();
         });
 
