@@ -4,6 +4,7 @@ This package contains all the Django view definitions
 that handle incoming API requests.
 """
 
+from .asset_scores import AssetScoreViewSet
 from .asset_types import AssetTypeViewSet
 from .assets import AssetViewSet
 from .data_sources import DataSourceViewSet
@@ -16,6 +17,7 @@ from .visible_asset_types import VisibleAssetTypeView
 from .visible_exposure_layers import VisibleExposureLayerView
 
 __all__ = [
+    "AssetScoreViewSet",
     "AssetTypeViewSet",
     "AssetViewSet",
     "DataSourceViewSet",

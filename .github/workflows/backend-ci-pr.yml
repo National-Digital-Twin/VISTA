@@ -136,6 +136,23 @@ jobs:
   testing:
     name: Unit Testing
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgis/postgis:16-3.4
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres #pragma: allowlist secret
+          POSTGRES_DB: test_db
+        options: >-
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+    env:
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/test_db #pragma: allowlist secret
+      PYTHONUNBUFFERED: 1
     needs: linting
     timeout-minutes: 10
     strategy:
@@ -153,7 +170,7 @@ jobs:
       - name: Install GDAL and SpatiaLite
         run: |
           sudo apt-get update
-          sudo apt-get install -y gdal-bin libgdal-dev libsqlite3-mod-spatialite
+          sudo apt-get install -y gdal-bin libgdal-dev
 
       - name: Set up Virtual Environment
         id: venv-cache
