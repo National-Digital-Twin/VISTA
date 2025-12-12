@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useRef, useState, useEffect } from 'react';
 import { Box } from '@mui/material';
 import type { MapRef, ViewStateChangeEvent } from 'react-map-gl/maplibre';
+import type { MapMouseEvent } from 'maplibre-gl';
 import Map, { Marker } from 'react-map-gl/maplibre';
 import { useQuery } from '@tanstack/react-query';
 
@@ -15,6 +16,7 @@ import AssetLayers from './AssetLayers';
 import ExposureLayers from './ExposureLayers';
 import UtilitiesLayers from './UtilitiesLayers';
 import FocusAreaMask from './FocusAreaMask';
+import RadiusDialog from './RadiusDialog';
 import useMapboxDraw from './hooks/useMapboxDraw';
 import useFocusAreas from './hooks/useFocusAreas';
 import { usePreloadAssetIcons } from './hooks/usePreloadAssetIcons';
@@ -43,13 +45,15 @@ const MapView = () => {
     const [roadRouteEnd, setRoadRouteEnd] = useState<{ lat: number; lng: number } | null>(null);
     const [roadRouteVehicle, setRoadRouteVehicle] = useState<RoadRouteInputParams['vehicle']>('Car');
     const [positionSelectionMode, setPositionSelectionMode] = useState<'start' | 'end' | null>(null);
+    const [pendingCircleCenter, setPendingCircleCenter] = useState<[number, number] | null>(null);
+    const [radiusDialogOpen, setRadiusDialogOpen] = useState(false);
 
     const drawRef = useMapboxDraw(mapRef, mapReady);
     const { data: activeScenario } = useActiveScenario();
     const scenarioId = activeScenario?.id;
     const iconMap = useAssetTypeIcons();
 
-    const { focusAreas, isDrawing, startDrawing } = useFocusAreas({
+    const { focusAreas, isDrawing, drawingMode, startDrawing, createCircleAtPoint } = useFocusAreas({
         scenarioId,
         mapRef,
         drawRef,
@@ -211,12 +215,35 @@ const MapView = () => {
         }
 
         const previousCursor = canvas.style.cursor;
-        canvas.style.cursor = positionSelectionMode ? 'crosshair' : '';
+        canvas.style.cursor = positionSelectionMode || drawingMode === 'circle' ? 'crosshair' : '';
 
         return () => {
             canvas.style.cursor = previousCursor;
         };
-    }, [positionSelectionMode]);
+    }, [positionSelectionMode, drawingMode]);
+
+    // Show radius dialog on click when drawing circles
+    useEffect(() => {
+        if (!mapReady || drawingMode !== 'circle') {
+            return;
+        }
+
+        const map = mapRef.current?.getMap();
+        if (!map) {
+            return;
+        }
+
+        const handleClick = (e: MapMouseEvent) => {
+            setPendingCircleCenter([e.lngLat.lng, e.lngLat.lat]);
+            setRadiusDialogOpen(true);
+        };
+
+        map.on('click', handleClick);
+
+        return () => {
+            map.off('click', handleClick);
+        };
+    }, [mapReady, drawingMode]);
 
     const transformRequest = useCallback((url: string) => {
         let transformedUrl = url;
@@ -362,7 +389,7 @@ const MapView = () => {
                     onClick={handleMapClick}
                     mapStyle={mapStyle}
                     maxBounds={MAP_VIEW_BOUNDS}
-                    style={{ width: '100%', height: '100%', cursor: positionSelectionMode ? 'crosshair' : 'grab' }}
+                    style={{ width: '100%', height: '100%', cursor: positionSelectionMode || drawingMode === 'circle' ? 'crosshair' : 'grab' }}
                     onLoad={handleMapLoad}
                     transformRequest={transformRequest}
                     styleDiffing
@@ -447,6 +474,21 @@ const MapView = () => {
                     viewState={viewState}
                 />
             </Box>
+
+            <RadiusDialog
+                open={radiusDialogOpen}
+                onClose={() => {
+                    setRadiusDialogOpen(false);
+                    setPendingCircleCenter(null);
+                }}
+                onConfirm={(radiusKm) => {
+                    if (pendingCircleCenter) {
+                        createCircleAtPoint(pendingCircleCenter, radiusKm);
+                    }
+                    setRadiusDialogOpen(false);
+                    setPendingCircleCenter(null);
+                }}
+            />
         </Box>
     );
 };

@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState, type RefObject } from 'react';
+import { useEffect, useRef, useState, useCallback, type RefObject } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import type { Feature } from 'geojson';
 import type MapboxDraw from '@mapbox/mapbox-gl-draw';
 import type { MapRef } from 'react-map-gl/maplibre';
+import { circle } from '@turf/turf';
 import useFocusAreaMutations from './useFocusAreaMutations';
 import { fetchFocusAreas, type FocusArea } from '@/api/focus-areas';
 
@@ -16,7 +17,7 @@ type UseFocusAreasOptions = {
 const useFocusAreas = ({ scenarioId, mapRef, drawRef, mapReady }: UseFocusAreasOptions) => {
     const loadedFocusAreaIdsRef = useRef<Set<string>>(new Set());
     const focusAreasRef = useRef<FocusArea[] | undefined>(undefined);
-    const [isDrawing, setIsDrawing] = useState(false);
+    const [drawingMode, setDrawingMode] = useState<'circle' | 'polygon' | null>(null);
 
     const { data: focusAreas } = useQuery({
         queryKey: ['focusAreas', scenarioId],
@@ -102,7 +103,7 @@ const useFocusAreas = ({ scenarioId, mapRef, drawRef, mapReady }: UseFocusAreasO
         const map = mapRef.current.getMap();
 
         const handleDrawCreate = (event: { features: Feature[] }) => {
-            setIsDrawing(false);
+            setDrawingMode(null);
 
             if (!scenarioId || event.features.length === 0) {
                 return;
@@ -119,7 +120,7 @@ const useFocusAreas = ({ scenarioId, mapRef, drawRef, mapReady }: UseFocusAreasO
         const handleModeChange = () => {
             const currentMode = drawRef.current?.getMode();
             if (currentMode === 'simple_select') {
-                setIsDrawing(false);
+                setDrawingMode(null);
             }
         };
 
@@ -168,13 +169,29 @@ const useFocusAreas = ({ scenarioId, mapRef, drawRef, mapReady }: UseFocusAreasO
         } else {
             drawRef.current.changeMode('draw_polygon');
         }
-        setIsDrawing(true);
+        setDrawingMode(mode);
     };
+
+    const createCircleAtPoint = useCallback(
+        (center: [number, number], radiusKm: number) => {
+            const circleFeature = circle(center, radiusKm, { units: 'kilometers' });
+
+            if (drawRef.current) {
+                drawRef.current.changeMode('simple_select');
+            }
+
+            createMutateRef.current(circleFeature.geometry);
+            setDrawingMode(null);
+        },
+        [drawRef],
+    );
 
     return {
         focusAreas,
-        isDrawing,
+        isDrawing: drawingMode !== null,
+        drawingMode,
         startDrawing,
+        createCircleAtPoint,
     };
 };
 

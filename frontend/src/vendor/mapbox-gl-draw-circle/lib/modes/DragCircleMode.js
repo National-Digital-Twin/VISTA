@@ -67,6 +67,12 @@ DragCircleMode.onClick = DragCircleMode.onTap = function (state, _e) {
 DragCircleMode.toDisplayFeatures = function (state, geojson, display) {
     const isActivePolygon = geojson.properties.id === state.polygon.id;
     geojson.properties.active = isActivePolygon ? MapboxDraw.constants.activeStates.ACTIVE : MapboxDraw.constants.activeStates.INACTIVE;
+
+    // don't try render invalid geometry, breaks other features
+    if (isActivePolygon && geojson.geometry.coordinates[0].length < 3) {
+        return;
+    }
+
     return display(geojson);
 };
 

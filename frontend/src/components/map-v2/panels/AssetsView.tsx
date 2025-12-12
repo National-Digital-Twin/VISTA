@@ -300,7 +300,7 @@ const AssetsView = ({ onClose, scenarioId, onFocusAreaSelect }: AssetsViewProps)
                         label="Select visible focus area"
                         disabled={isLoadingFocusAreas}
                     >
-                        <MenuItem value={MAP_WIDE_VALUE}>Map wide</MenuItem>
+                        <MenuItem value={MAP_WIDE_VALUE}>Map-wide</MenuItem>
                         {focusAreas?.map((fa: FocusArea) => (
                             <MenuItem key={fa.id} value={fa.id} disabled={!fa.isActive}>
                                 {fa.name}
