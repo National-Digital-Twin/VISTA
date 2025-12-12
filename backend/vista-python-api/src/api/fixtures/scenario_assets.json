@@ -520,5 +520,527 @@
             "asset_type_id": "91f8cf4d-8f88-4cb8-bb04-efddccce95de",
             "criticality_score": "2"
         }
+    },
+    {
+        "model": "api.ScenarioAsset",
+        "pk": "57cfb125-6ee2-4ee2-96d3-9b1148ecbbd5",
+        "fields": {
+            "scenario_id": "1efb2fc4-b300-4496-8342-932f3a9fc982",
+            "asset_type_id": "08192a3b-3456-4e56-789a-bcdef0123456",
+            "criticality_score": "3"
+        }
+    },
+    {
+        "model": "api.ScenarioAsset",
+        "pk": "61ec17d0-b4d1-44f5-b787-d2d707f486dd",
+        "fields": {
+            "scenario_id": "1efb2fc4-b300-4496-8342-932f3a9fc982",
+            "asset_type_id": "f708192a-2345-4d45-6789-abcdef012345",
+            "criticality_score": "3"
+        }
+    },
+    {
+        "model": "api.ScenarioAsset",
+        "pk": "c645952a-1115-479a-bcd8-c9ea624320ba",
+        "fields": {
+            "scenario_id": "1efb2fc4-b300-4496-8342-932f3a9fc982",
+            "asset_type_id": "aa7ce68f-74c8-4500-a1f3-c2558366a64e",
+            "criticality_score": "3"
+        }
+    },
+    {
+        "model": "api.ScenarioAsset",
+        "pk": "49b56da1-8de6-4c77-b35e-cca611cc0741",
+        "fields": {
+            "scenario_id": "1efb2fc4-b300-4496-8342-932f3a9fc982",
+            "asset_type_id": "600d93c1-4be0-4a28-b5d0-501b53b2953d",
+            "criticality_score": "3"
+        }
+    },
+    {
+        "model": "api.ScenarioAsset",
+        "pk": "0da0b07a-59bf-4d03-9348-f8ca0e162489",
+        "fields": {
+            "scenario_id": "1efb2fc4-b300-4496-8342-932f3a9fc982",
+            "asset_type_id": "23baf52b-ef94-4932-a441-1aa5f0a33fa2",
+            "criticality_score": "3"
+        }
+    },
+    {
+        "model": "api.ScenarioAsset",
+        "pk": "40efe683-15f8-4589-8d81-4b63e1a250f4",
+        "fields": {
+            "scenario_id": "1efb2fc4-b300-4496-8342-932f3a9fc982",
+            "asset_type_id": "c83e79b2-1b36-4e9a-8971-4a521b45e29f",
+            "criticality_score": "2"
+        }
+    },
+    {
+        "model": "api.ScenarioAsset",
+        "pk": "6416732f-a865-4995-a986-4bce0f71de1e",
+        "fields": {
+            "scenario_id": "1efb2fc4-b300-4496-8342-932f3a9fc982",
+            "asset_type_id": "0cfdbbd6-7ff9-46d3-9cf5-c1c960a4a4ce",
+            "criticality_score": "3"
+        }
+    },
+    {
+        "model": "api.ScenarioAsset",
+        "pk": "69da7153-e708-4793-85da-74eaeab3641f",
+        "fields": {
+            "scenario_id": "1efb2fc4-b300-4496-8342-932f3a9fc982",
+            "asset_type_id": "c0a30e0f-9f2a-4dc5-bb30-fbbafbfdbf4c",
+            "criticality_score": "1"
+        }
+    },
+    {
+        "model": "api.ScenarioAsset",
+        "pk": "3edffaca-0995-4f1a-9fd1-d916d203d1b2",
+        "fields": {
+            "scenario_id": "1efb2fc4-b300-4496-8342-932f3a9fc982",
+            "asset_type_id": "5eb80725-0c4d-4c54-8a7f-5b7cdd39d08f",
+            "criticality_score": "0"
+        }
+    },
+    {
+        "model": "api.ScenarioAsset",
+        "pk": "06b1c8a2-56e7-477c-9e9b-7fa975036db8",
+        "fields": {
+            "scenario_id": "1efb2fc4-b300-4496-8342-932f3a9fc982",
+            "asset_type_id": "a1efbfa2-84f1-41a5-9f06-b4a9d3c3b2a1",
+            "criticality_score": "1"
+        }
+    },
+    {
+        "model": "api.ScenarioAsset",
+        "pk": "e0328806-8493-40bc-b8df-cea784a3a989",
+        "fields": {
+            "scenario_id": "1efb2fc4-b300-4496-8342-932f3a9fc982",
+            "asset_type_id": "7f2b5a44-9f5d-44b2-8190-c1b1c8e59e7d",
+            "criticality_score": "1"
+        }
+    },
+    {
+        "model": "api.ScenarioAsset",
+        "pk": "9358a66c-14fd-4d88-8dd1-41f87f5a426d",
+        "fields": {
+            "scenario_id": "1efb2fc4-b300-4496-8342-932f3a9fc982",
+            "asset_type_id": "3db4c594-76d8-480a-b52b-4f40d4d6b3da",
+            "criticality_score": "1"
+        }
+    },
+    {
+        "model": "api.ScenarioAsset",
+        "pk": "5680eabb-9c6d-41f6-ac02-e5f07e9b9d7b",
+        "fields": {
+            "scenario_id": "1efb2fc4-b300-4496-8342-932f3a9fc982",
+            "asset_type_id": "49afc7ff-6126-4860-b893-6329a0cd6e49",
+            "criticality_score": "1"
+        }
+    },
+    {
+        "model": "api.ScenarioAsset",
+        "pk": "6fa89dd9-d60b-4a2f-b320-6346d695f36f",
+        "fields": {
+            "scenario_id": "1efb2fc4-b300-4496-8342-932f3a9fc982",
+            "asset_type_id": "db10c6b5-bfb4-4d10-8c82-9296b7f123d8",
+            "criticality_score": "3"
+        }
+    },
+    {
+        "model": "api.ScenarioAsset",
+        "pk": "b168a0bb-be9c-457f-a0ca-134f459ac501",
+        "fields": {
+            "scenario_id": "1efb2fc4-b300-4496-8342-932f3a9fc982",
+            "asset_type_id": "ea8c3b9e-7d5c-43a1-9860-9e3f9aefb4f7",
+            "criticality_score": "2"
+        }
+    },
+    {
+        "model": "api.ScenarioAsset",
+        "pk": "3971847f-1452-44ff-a473-c3f8f721e8e8",
+        "fields": {
+            "scenario_id": "1efb2fc4-b300-4496-8342-932f3a9fc982",
+            "asset_type_id": "f7c3d1b1-76a3-4b41-9e0c-2d4c2c3d5b6e",
+            "criticality_score": "0"
+        }
+    },
+    {
+        "model": "api.ScenarioAsset",
+        "pk": "15547125-24af-4b8d-91c3-3f39c7f3858d",
+        "fields": {
+            "scenario_id": "1efb2fc4-b300-4496-8342-932f3a9fc982",
+            "asset_type_id": "93ce28ec-1c6f-4b3b-b9c1-1fdd14b14c71",
+            "criticality_score": "3"
+        }
+    },
+    {
+        "model": "api.ScenarioAsset",
+        "pk": "4bd10676-0395-4a1f-96d8-d28c2b33e3c0",
+        "fields": {
+            "scenario_id": "1efb2fc4-b300-4496-8342-932f3a9fc982",
+            "asset_type_id": "3b4c5d6e-8901-4c2d-210f-8b9c0d1e2f3a",
+            "criticality_score": "2"
+        }
+    },
+    {
+        "model": "api.ScenarioAsset",
+        "pk": "bad46eb3-636a-4191-9ebd-92075625a251",
+        "fields": {
+            "scenario_id": "1efb2fc4-b300-4496-8342-932f3a9fc982",
+            "asset_type_id": "19b7f8c2-4a4d-4b4e-9f3c-3d3b2a4e5f6a",
+            "criticality_score": "1"
+        }
+    },
+    {
+        "model": "api.ScenarioAsset",
+        "pk": "115b8721-6215-4877-8bea-6fcfd462b5ef",
+        "fields": {
+            "scenario_id": "1efb2fc4-b300-4496-8342-932f3a9fc982",
+            "asset_type_id": "22ec421d-d85a-48b8-9f17-ffda0ea4082d",
+            "criticality_score": "0"
+        }
+    },
+    {
+        "model": "api.ScenarioAsset",
+        "pk": "aa797779-409f-4fd3-ba24-c170ec45b8d2",
+        "fields": {
+            "scenario_id": "1efb2fc4-b300-4496-8342-932f3a9fc982",
+            "asset_type_id": "6e7f8a9b-1234-4f50-1e2e-1e2f3a4b5c6d",
+            "criticality_score": "1"
+        }
+    },
+    {
+        "model": "api.ScenarioAsset",
+        "pk": "009a3ed0-3f99-47a4-91d7-217fb31f8c69",
+        "fields": {
+            "scenario_id": "1efb2fc4-b300-4496-8342-932f3a9fc982",
+            "asset_type_id": "fd7ad4e5-0c77-4043-bcf7-03e244c688a5",
+            "criticality_score": "0"
+        }
+    },
+    {
+        "model": "api.ScenarioAsset",
+        "pk": "a476360e-508e-4a47-9fc2-ad2061de37c6",
+        "fields": {
+            "scenario_id": "1efb2fc4-b300-4496-8342-932f3a9fc982",
+            "asset_type_id": "9b0c1d2e-4567-4253-4b5b-4b5c6d7e8f9a",
+            "criticality_score": "0"
+        }
+    },
+    {
+        "model": "api.ScenarioAsset",
+        "pk": "c22f96eb-c6d6-4389-a42e-bb0bda4735d1",
+        "fields": {
+            "scenario_id": "1efb2fc4-b300-4496-8342-932f3a9fc982",
+            "asset_type_id": "b82184b3-864f-4991-8e6e-b2b8c62b2c67",
+            "criticality_score": "2"
+        }
+    },
+    {
+        "model": "api.ScenarioAsset",
+        "pk": "993767f2-64db-4117-865b-084d096ccb58",
+        "fields": {
+            "scenario_id": "1efb2fc4-b300-4496-8342-932f3a9fc982",
+            "asset_type_id": "b1b70277-cccb-45c4-a0de-94692b871894",
+            "criticality_score": "1"
+        }
+    },
+    {
+        "model": "api.ScenarioAsset",
+        "pk": "e5281cd3-670d-48b7-8d59-f637f3d35d24",
+        "fields": {
+            "scenario_id": "1efb2fc4-b300-4496-8342-932f3a9fc982",
+            "asset_type_id": "55a2567c-a127-4488-90f1-039fffe51d74",
+            "criticality_score": "0"
+        }
+    },
+    {
+        "model": "api.ScenarioAsset",
+        "pk": "58f3ce87-6bd5-4515-bc09-6bb04c371cc5",
+        "fields": {
+            "scenario_id": "1efb2fc4-b300-4496-8342-932f3a9fc982",
+            "asset_type_id": "1f6d2c1e-0f6d-4b09-9a2e-3bfcf1e64b4a",
+            "criticality_score": "2"
+        }
+    },
+    {
+        "model": "api.ScenarioAsset",
+        "pk": "20f9275f-b4e4-40ff-b256-ebdc1e5c3e5c",
+        "fields": {
+            "scenario_id": "1efb2fc4-b300-4496-8342-932f3a9fc982",
+            "asset_type_id": "2c0b6f61-1a45-4694-a09a-35ab65e2df60",
+            "criticality_score": "0"
+        }
+    },
+    {
+        "model": "api.ScenarioAsset",
+        "pk": "b3c20fc4-12e3-4548-a771-4cc1ec8108ce",
+        "fields": {
+            "scenario_id": "1efb2fc4-b300-4496-8342-932f3a9fc982",
+            "asset_type_id": "7f8a9b0c-2345-4051-2d3d-2f3a4b5c6d7e",
+            "criticality_score": "1"
+        }
+    },
+    {
+        "model": "api.ScenarioAsset",
+        "pk": "a4530033-8eac-4921-9ebf-cabb4173cbd3",
+        "fields": {
+            "scenario_id": "1efb2fc4-b300-4496-8342-932f3a9fc982",
+            "asset_type_id": "5a6c7d8e-1234-4b56-9876-1a2b3c4d5e6f",
+            "criticality_score": "2"
+        }
+    },
+    {
+        "model": "api.ScenarioAsset",
+        "pk": "51f50bc2-0ea3-42f5-b232-31773fd56f35",
+        "fields": {
+            "scenario_id": "1efb2fc4-b300-4496-8342-932f3a9fc982",
+            "asset_type_id": "27d0af04-2e76-4d26-8c5f-33899cf373ad",
+            "criticality_score": "0"
+        }
+    },
+    {
+        "model": "api.ScenarioAsset",
+        "pk": "efb7e3bb-c584-497c-b4f2-cc827b623950",
+        "fields": {
+            "scenario_id": "1efb2fc4-b300-4496-8342-932f3a9fc982",
+            "asset_type_id": "a98e6e10-64dc-42f3-8450-09d2e2d0bc4d",
+            "criticality_score": "1"
+        }
+    },
+    {
+        "model": "api.ScenarioAsset",
+        "pk": "1abced7c-677c-4586-867b-8a8dccc74706",
+        "fields": {
+            "scenario_id": "1efb2fc4-b300-4496-8342-932f3a9fc982",
+            "asset_type_id": "2ef53e53-d6c5-4809-b76d-b08fc2a5f82e",
+            "criticality_score": "2"
+        }
+    },
+    {
+        "model": "api.ScenarioAsset",
+        "pk": "c71790ef-e169-4de9-b94e-012544a4eb9e",
+        "fields": {
+            "scenario_id": "1efb2fc4-b300-4496-8342-932f3a9fc982",
+            "asset_type_id": "2bfa71aa-f1e5-4f09-a4a1-d201a1cf5bda",
+            "criticality_score": "3"
+        }
+    },
+    {
+        "model": "api.ScenarioAsset",
+        "pk": "21468f4c-0a9c-43f4-8953-ae29d646f70d",
+        "fields": {
+            "scenario_id": "1efb2fc4-b300-4496-8342-932f3a9fc982",
+            "asset_type_id": "8834842c-7034-44b6-9a16-67b7c4f5ecdd",
+            "criticality_score": "3"
+        }
+    },
+    {
+        "model": "api.ScenarioAsset",
+        "pk": "0b6dfe48-4359-4e06-b496-40debe69d6a4",
+        "fields": {
+            "scenario_id": "1efb2fc4-b300-4496-8342-932f3a9fc982",
+            "asset_type_id": "a13f7876-c2ea-4f6c-8ea4-1e8be6082a36",
+            "criticality_score": "3"
+        }
+    },
+    {
+        "model": "api.ScenarioAsset",
+        "pk": "730355f4-43a1-4f96-8c68-5acae9e5ee29",
+        "fields": {
+            "scenario_id": "1efb2fc4-b300-4496-8342-932f3a9fc982",
+            "asset_type_id": "8c9d0e1f-3456-4d78-7654-3c4d5e6f7a8b",
+            "criticality_score": "0"
+        }
+    },
+    {
+        "model": "api.ScenarioAsset",
+        "pk": "f530ecd3-8c59-4cdd-af19-48ea7fc3c4d2",
+        "fields": {
+            "scenario_id": "1efb2fc4-b300-4496-8342-932f3a9fc982",
+            "asset_type_id": "b3c4d5e6-7f80-4901-2345-6789abcdef01",
+            "criticality_score": "2"
+        }
+    },
+    {
+        "model": "api.ScenarioAsset",
+        "pk": "eb35b7ec-85bb-4837-8094-f7f8010023c3",
+        "fields": {
+            "scenario_id": "1efb2fc4-b300-4496-8342-932f3a9fc982",
+            "asset_type_id": "5d6e7f8a-0123-4e4f-0f1f-0d1e2f3a4b5c",
+            "criticality_score": "1"
+        }
+    },
+    {
+        "model": "api.ScenarioAsset",
+        "pk": "6da410e0-02f2-438d-92b8-24bacf18417b",
+        "fields": {
+            "scenario_id": "1efb2fc4-b300-4496-8342-932f3a9fc982",
+            "asset_type_id": "7b8c9d0e-2345-4c67-8765-2b3c4d5e6f7a",
+            "criticality_score": "1"
+        }
+    },
+    {
+        "model": "api.ScenarioAsset",
+        "pk": "75fe08f1-51fb-4d69-a18d-42cc1176f537",
+        "fields": {
+            "scenario_id": "1efb2fc4-b300-4496-8342-932f3a9fc982",
+            "asset_type_id": "1f2a3b4c-6789-4a0b-4321-6f7a8b9c0d1e",
+            "criticality_score": "1"
+        }
+    },
+    {
+        "model": "api.ScenarioAsset",
+        "pk": "79a33ea9-3c88-4bba-a47c-89dcd776a2f7",
+        "fields": {
+            "scenario_id": "1efb2fc4-b300-4496-8342-932f3a9fc982",
+            "asset_type_id": "6fd26d69-5f0b-4d8e-a949-57364b42e6b2",
+            "criticality_score": "2"
+        }
+    },
+    {
+        "model": "api.ScenarioAsset",
+        "pk": "0154dbcd-59c7-4138-8d0f-db926a9019eb",
+        "fields": {
+            "scenario_id": "1efb2fc4-b300-4496-8342-932f3a9fc982",
+            "asset_type_id": "be893214-b517-45b0-92e8-362de90865cc",
+            "criticality_score": "1"
+        }
+    },
+    {
+        "model": "api.ScenarioAsset",
+        "pk": "a335af68-f01f-41ff-908a-e17b353111b6",
+        "fields": {
+            "scenario_id": "1efb2fc4-b300-4496-8342-932f3a9fc982",
+            "asset_type_id": "3df1452a-b1b3-4a39-9ac2-6b2a8303b6f0",
+            "criticality_score": "1"
+        }
+    },
+    {
+        "model": "api.ScenarioAsset",
+        "pk": "b61f27a6-7f74-4ebb-b043-0e64ac996d6f",
+        "fields": {
+            "scenario_id": "1efb2fc4-b300-4496-8342-932f3a9fc982",
+            "asset_type_id": "98ac0ed2-c86f-4eea-b236-02cf93ff5d10",
+            "criticality_score": "3"
+        }
+    },
+    {
+        "model": "api.ScenarioAsset",
+        "pk": "4767e301-73a1-497a-93ac-834f2d95bcff",
+        "fields": {
+            "scenario_id": "1efb2fc4-b300-4496-8342-932f3a9fc982",
+            "asset_type_id": "d1f3c5a7-8b9e-4c2a-91b2-6a3e5d4f1c2b",
+            "criticality_score": "3"
+        }
+    },
+    {
+        "model": "api.ScenarioAsset",
+        "pk": "9c15f3cb-b3dd-4a64-b9ff-98018fd3eb69",
+        "fields": {
+            "scenario_id": "1efb2fc4-b300-4496-8342-932f3a9fc982",
+            "asset_type_id": "4f5b26b5-bb30-49ad-bdc8-20d12a3edfc2",
+            "criticality_score": "3"
+        }
+    },
+    {
+        "model": "api.ScenarioAsset",
+        "pk": "f8c5a930-f39b-44be-970b-366aa6af9208",
+        "fields": {
+            "scenario_id": "1efb2fc4-b300-4496-8342-932f3a9fc982",
+            "asset_type_id": "3c1d1f99-22c6-4b5e-80c2-8c4c5b72f1bb",
+            "criticality_score": "1"
+        }
+    },
+    {
+        "model": "api.ScenarioAsset",
+        "pk": "c54f7710-6355-477e-97a0-b1d6db362b2f",
+        "fields": {
+            "scenario_id": "1efb2fc4-b300-4496-8342-932f3a9fc982",
+            "asset_type_id": "fbefc59e-d5de-4d35-92e5-3ed091b4b3cd",
+            "criticality_score": "2"
+        }
+    },
+    {
+        "model": "api.ScenarioAsset",
+        "pk": "1d365468-4add-4307-9f4a-a700e32b04b9",
+        "fields": {
+            "scenario_id": "1efb2fc4-b300-4496-8342-932f3a9fc982",
+            "asset_type_id": "ff232445-6a44-43dc-b58d-4d5e50ed2dd8",
+            "criticality_score": "3"
+        }
+    },
+    {
+        "model": "api.ScenarioAsset",
+        "pk": "13c2015d-a35d-4d84-91c5-adcff7a19c9f",
+        "fields": {
+            "scenario_id": "1efb2fc4-b300-4496-8342-932f3a9fc982",
+            "asset_type_id": "4d3a6316-9393-489b-a90a-f7e7b8735944",
+            "criticality_score": "2"
+        }
+    },
+    {
+        "model": "api.ScenarioAsset",
+        "pk": "22694740-e34b-4459-838f-e9b64e78535c",
+        "fields": {
+            "scenario_id": "1efb2fc4-b300-4496-8342-932f3a9fc982",
+            "asset_type_id": "e61b9f64-17df-4e13-9dbf-2c5a7e24a0ac",
+            "criticality_score": "1"
+        }
+    },
+    {
+        "model": "api.ScenarioAsset",
+        "pk": "6a89baa0-d557-4955-9a7f-683523e348df",
+        "fields": {
+            "scenario_id": "1efb2fc4-b300-4496-8342-932f3a9fc982",
+            "asset_type_id": "e6f70819-1023-4c34-5678-9abcdef01234",
+            "criticality_score": "3"
+        }
+    },
+    {
+        "model": "api.ScenarioAsset",
+        "pk": "ebf419f2-4844-4544-b7ca-28171d4bb1f0",
+        "fields": {
+            "scenario_id": "1efb2fc4-b300-4496-8342-932f3a9fc982",
+            "asset_type_id": "d5e6f708-9102-4b23-4567-89abcdef0123",
+            "criticality_score": "3"
+        }
+    },
+    {
+        "model": "api.ScenarioAsset",
+        "pk": "64b161c3-3e05-42ec-b740-2587228c0b0b",
+        "fields": {
+            "scenario_id": "1efb2fc4-b300-4496-8342-932f3a9fc982",
+            "asset_type_id": "c4d5e6f7-8091-4a12-3456-789abcdef012",
+            "criticality_score": "3"
+        }
+    },
+    {
+        "model": "api.ScenarioAsset",
+        "pk": "59907200-8106-4a05-8ef8-e39a61de2f3a",
+        "fields": {
+            "scenario_id": "1efb2fc4-b300-4496-8342-932f3a9fc982",
+            "asset_type_id": "0ad824c1-d3d4-4f4b-8c72-7a5b04a7b623",
+            "criticality_score": "3"
+        }
+    },
+    {
+        "model": "api.ScenarioAsset",
+        "pk": "b7f9f37a-2432-4530-9c80-f0c0569b3e54",
+        "fields": {
+            "scenario_id": "1efb2fc4-b300-4496-8342-932f3a9fc982",
+            "asset_type_id": "a2b3c4d5-6e7f-4890-1234-56789abcdef0",
+            "criticality_score": "3"
+        }
+    },
+    {
+        "model": "api.ScenarioAsset",
+        "pk": "807c1ff6-8bdd-42a4-97b4-b8286b29e9d1",
+        "fields": {
+            "scenario_id": "1efb2fc4-b300-4496-8342-932f3a9fc982",
+            "asset_type_id": "91f8cf4d-8f88-4cb8-bb04-efddccce95de",
+            "criticality_score": "2"
+        }
     }
 ]
