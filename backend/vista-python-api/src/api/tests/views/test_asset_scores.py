@@ -60,12 +60,12 @@ def _get_dependency_score_for_asset(fixture, asset_id, scenario_id):
     return 0
 
 
-def _get_exposure_score_for_asset(fixture, asset_id):
+def _get_exposure_score_for_asset(fixture, asset_id, scenario_id):
     asset = _get_asset(fixture, asset_id)
     in_count = 0
     near_count = 0
     for exposure_layer in fixture["exposure_layers"]:
-        if fixture["vis_exposure_layer"][0].exposure_layer.id != exposure_layer.id:
+        if scenario_id != exposure_layer.scenario.id:
             continue
         poly_m = exposure_layer.exposure_layer.geometry.transform(3857, clone=True)
         pt_m = asset.geom.transform(3857, clone=True)
@@ -200,7 +200,7 @@ def test_list_asset_scores(fixture, client):
     assert response.status_code == http_success_code
     expected_scores = len(fixture["asset_scores"])
     for asset in fixture["assets"]:
-        exposure_score = _get_exposure_score_for_asset(fixture, asset.id)
+        exposure_score = _get_exposure_score_for_asset(fixture, asset.id, scenario.id)
         if exposure_score > 0:
             expected_scores += 1
     assert len(data) == expected_scores
@@ -227,7 +227,10 @@ def test_retrieve_asset_score(fixture, client, asset_num, scenario_num, mock_use
         data["dependencyScore"]
         == f"{_get_dependency_score_for_asset(fixture, asset.id, scenario.id):.2f}"
     )
-    assert data["exposureScore"] == f"{_get_exposure_score_for_asset(fixture, asset.id):.2f}"
+    assert (
+        data["exposureScore"]
+        == f"{_get_exposure_score_for_asset(fixture, asset.id, scenario.id):.2f}"
+    )
     assert data["redundancyScore"] == f"{3:.2f}"
 
 
