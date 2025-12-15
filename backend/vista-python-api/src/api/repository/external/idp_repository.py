@@ -1,5 +1,6 @@
 """An identity provider repository."""
 
+from datetime import UTC, datetime
 from typing import ClassVar
 
 import boto3
@@ -13,14 +14,42 @@ class IdpRepository:
 
     user_pool_id: ClassVar[str] = settings.COGNITO_USER_POOL_ID
     user_group_name: ClassVar[str] = settings.COGNITO_MAIN_USER_GROUP_NAME
+    admin_user_group_name: ClassVar[str] = settings.COGNITO_ADMIN_USER_GROUP_NAME
 
     def __init__(self):
         """Construct an instance."""
         self.client = boto3.client("cognito-idp", region_name=settings.REGION)
 
+    def _stub_users(self):
+        return [
+            {
+                "Username": "local.user",
+                "email": "local.user@example.com",
+                "name": "Local User",
+                "UserCreateDate": datetime.now(UTC),
+                "UserStatus": "Confirmed",
+            },
+            {
+                "Username": "local.user2",
+                "email": "local.user2@example.com",
+                "name": "Local User2",
+                "UserCreateDate": datetime.now(UTC),
+                "UserStatus": "Confirmed",
+            },
+        ]
+
     def list_users_in_group(self) -> list[IdpUser]:
         """Get a list of users known to the identity provider."""
-        response = self.client.list_users_in_group(
+        if not settings.IS_PROD:
+            return [IdpUser.from_cognito(user, True) for user in self._stub_users()]
+        all_user_response = self.client.list_users_in_group(
             UserPoolId=self.user_pool_id, GroupName=self.user_group_name
         )
-        return [IdpUser.from_cognito(user) for user in response["Users"]]
+        admin_user_response = self.client.list_users_in_group(
+            UserPoolId=self.user_pool_id, GroupName=self.admin_user_group_name
+        )
+        admins = [user.get("Username") for user in admin_user_response["Users"]]
+        return [
+            IdpUser.from_cognito(user, user.get("Username") in admins)
+            for user in all_user_response["Users"]
+        ]

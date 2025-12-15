@@ -7,7 +7,7 @@ import uuid
 import pytest
 from rest_framework.exceptions import AuthenticationFailed
 
-from api.utils.auth import get_user_id_from_request
+from api.utils.auth import get_user_id_from_request, get_user_is_admin_from_request
 
 
 def _create_jwt(payload: dict) -> str:
@@ -32,19 +32,27 @@ def user_id():
     return uuid.UUID("a662a214-60e1-7064-9816-9fde0e9489b2")
 
 
+def _base_token(user_id, groups):
+    return {
+        "sub": str(user_id),
+        "cognito:groups": groups,
+        "iss": "https://cognito-idp.eu-west-2.amazonaws.com/eu-west-2_test",
+        "token_use": "access",
+        "exp": 9999999999,
+        "iat": 1700000000,
+    }
+
+
 @pytest.fixture
 def valid_token(user_id):
     """Create a valid JWT token with standard Cognito claims."""
-    return _create_jwt(
-        {
-            "sub": str(user_id),
-            "cognito:groups": ["vista_access"],
-            "iss": "https://cognito-idp.eu-west-2.amazonaws.com/eu-west-2_test",
-            "token_use": "access",
-            "exp": 9999999999,
-            "iat": 1700000000,
-        }
-    )
+    return _create_jwt(_base_token(user_id, ["vista_access"]))
+
+
+@pytest.fixture
+def valid_admin_token(user_id):
+    """Create a valid JWT token with standard Cognito claims."""
+    return _create_jwt(_base_token(user_id, ["vista_access", "vista_admin"]))
 
 
 class TestGetUserIdFromRequest:
@@ -101,3 +109,68 @@ class TestGetUserIdFromRequest:
 
         with pytest.raises(AuthenticationFailed, match="Invalid token format"):
             get_user_id_from_request(request)
+
+
+class TestGetUserIsAdminFromRequest:
+    """Tests for get_user_id_from_request function."""
+
+    def test_returns_true_in_dev_mode(self, settings):
+        """In development mode, returns true."""
+        settings.IS_PROD = False
+        request = MockRequest()
+
+        result = get_user_is_admin_from_request(request)
+
+        assert result
+
+    def test_extracts_user_is_admin_from_valid_token(self, settings, valid_admin_token):
+        """Extracts the sub claim from a valid JWT token."""
+        settings.IS_PROD = True
+        request = MockRequest({"X-Auth-Request-Access-Token": valid_admin_token})
+
+        result = get_user_is_admin_from_request(request)
+
+        assert result
+
+    def test_extracts_user_is_not_admin_from_valid_token(self, settings, valid_token):
+        """Extracts the sub claim from a valid JWT token."""
+        settings.IS_PROD = True
+        request = MockRequest({"X-Auth-Request-Access-Token": valid_token})
+
+        result = get_user_is_admin_from_request(request)
+
+        assert not result
+
+    def test_raises_error_when_token_missing(self, settings):
+        """Raises AuthenticationFailed when token header is missing."""
+        settings.IS_PROD = True
+        request = MockRequest()
+
+        with pytest.raises(AuthenticationFailed, match="Missing X-Auth-Request-Access-Token"):
+            get_user_is_admin_from_request(request)
+
+    def test_raises_error_for_malformed_token(self, settings):
+        """Raises AuthenticationFailed when token is not a valid JWT."""
+        settings.IS_PROD = True
+        request = MockRequest({"X-Auth-Request-Access-Token": "not-a-jwt"})
+
+        with pytest.raises(AuthenticationFailed, match="Invalid token format"):
+            get_user_is_admin_from_request(request)
+
+    def test_raises_error_when_sub_claim_missing(self, settings):
+        """Raises AuthenticationFailed when sub claim is not in token."""
+        settings.IS_PROD = True
+        token = _create_jwt({"exp": 9999999999})
+        request = MockRequest({"X-Auth-Request-Access-Token": token})
+
+        with pytest.raises(AuthenticationFailed, match="Invalid token format"):
+            get_user_is_admin_from_request(request)
+
+    def test_raises_error_when_sub_is_not_valid_uuid(self, settings):
+        """Raises AuthenticationFailed when sub claim is not a valid UUID."""
+        settings.IS_PROD = True
+        token = _create_jwt({"sub": "not-a-uuid"})
+        request = MockRequest({"X-Auth-Request-Access-Token": token})
+
+        with pytest.raises(AuthenticationFailed, match="Invalid token format"):
+            get_user_is_admin_from_request(request)

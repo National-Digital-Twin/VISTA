@@ -1,14 +1,19 @@
 """Views for interfacing with application users."""
 
+from typing import ClassVar
+
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
 
+from api.permissions import Administrator
 from api.repository.external.idp_repository import IdpRepository
 from api.serializers import IdpUserSerializer
 
 
 class ApplicationUserViewSet(ViewSet):
     """Views for interfacing with application users."""
+
+    permission_classes: ClassVar = [Administrator]
 
     def __init__(self, **kwargs):
         """Construct an instance of `ApplicationUserViewSet`."""
