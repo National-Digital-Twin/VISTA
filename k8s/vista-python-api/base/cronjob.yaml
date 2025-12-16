@@ -3,7 +3,7 @@ kind: CronJob
 metadata:
   name: vista-python-api-refresh-data
 spec:
-  schedule: "0 14 * * *"
+  schedule: "0 2 * * *"
   concurrencyPolicy: Forbid
   successfulJobsHistoryLimit: 1
   failedJobsHistoryLimit: 3
