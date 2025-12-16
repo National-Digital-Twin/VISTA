@@ -47,13 +47,12 @@ COPY /vista-python-api/src .
 
 COPY ./entrypoint.sh .
 
-RUN chmod 600 /vista-python-api/src/core/.docker_vista_pgpass
-
-# Change ownership of necessary files and directories to the non-root user
-RUN chown -R appuser:appuser /vista-python-api/src /venv ./entrypoint.sh
+RUN chmod 600 /vista-python-api/src/core/.docker_vista_pgpass \
+&& chmod +x /vista-python-api/src/api/db_setup.sh \
+&& chown -R appuser:appuser /vista-python-api/src /venv ./entrypoint.sh
 
 # Switch to the non-root user
 USER appuser
 
 EXPOSE 8000
-ENTRYPOINT ["./entrypoint.sh"]
+CMD  ["/venv/bin/gunicorn", "--config=python:core.gunicorn"]
