@@ -46,3 +46,6 @@ lint-backend:
 lint-frontend:
 	cd frontend && npx prettier --check "src/**/*.{js,ts,tsx}" --write
 	cd frontend && npx sort-package-json --check
+
+backend-up:
+	cd frontend/dev && docker compose up -d
