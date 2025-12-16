@@ -87,9 +87,7 @@ class NhsDataSourceHandler(DataSourceHandler):
             params = {"q": address_str, "limit": 1}
 
             self.logger.info("Geocoding address: %s", address_str)
-            response = await self.fetch_from_url_with_retry(
-                "https://photon.komoot.io/api/", params=params
-            )
+            response = await self.fetch_from_url("https://photon.komoot.io/api/", params=params)
 
             if response and "features" in response and len(response["features"]) > 0:
                 # Photon returns GeoJSON coordinates as [lon, lat]

@@ -16,7 +16,7 @@ from api.models import ExposureLayer, ExposureLayerType
 class Command(BaseCommand):
     """Loads exposure layer data from files in api/data/."""
 
-    flood_file_name = "flood_data.json"
+    flood_file_name = "water_bodies_data.json"
     environmentally_sensitive_area_file_name = "environmental-stewardship-schema-areas-esa.json"
     flood_type_id = "2d373dca-1337-4e60-ba08-c8326d27042d"
     environmentally_sensitive_area_type_id = "60a0280e-bd04-4150-8a9a-f414d21cd031"
@@ -118,5 +118,8 @@ class Command(BaseCommand):
 
     def handle(self, *_args, **_kwargs):
         """Handle the command execution."""
-        self.import_floods()
-        self.import_environmentally_sensitive_areas()
+        if settings.DATA_REFRESH_ENABLED:
+            self.import_floods()
+            self.import_environmentally_sensitive_areas()
+        else:
+            self.logger.warning("Data refresh is not enabled.")

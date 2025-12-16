@@ -35,6 +35,28 @@ class DataSourceHandler:
         reader = csv.DictReader(csv_data)
         return list(reader)
 
+    async def fetch_from_url(self, url: str, **kwargs) -> dict | None:
+        """
+        Fetch JSON data from a URL.
+
+        :param url: The URL to fetch.
+        :param retries: How many times to retry on failure.
+        :param backoff: Base delay between retries (in seconds).
+        :return: Parsed JSON response.
+        :raises: Exception if failure.
+        """
+        http_params = kwargs.get("params")
+        headers = kwargs.get("headers")
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            try:
+                response = await client.get(url, params=http_params, headers=headers)
+                response.raise_for_status()
+                return response.json()
+
+            except Exception as err:
+                raise RuntimeError from err(f"Failed to fetch {url}: {err}")
+        return None
+
     async def fetch_from_url_with_retry(
         self, url: str, retries: int = 5, backoff: float = 0.5, **kwargs
     ) -> dict | None:

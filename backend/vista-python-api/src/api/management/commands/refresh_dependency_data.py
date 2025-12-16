@@ -5,6 +5,7 @@ import logging
 import uuid
 from pathlib import Path
 
+from django.conf import settings
 from django.core.management.base import BaseCommand
 
 from api.models.asset import Asset
@@ -37,9 +38,12 @@ class Command(BaseCommand):
 
     def handle(self, **_kwargs):
         """Command to load external data into the application's database."""
-        assets = Asset.objects.all()
-        dependencies = self.get_dependencies_from_csv(assets)
-        self.logger.info("Fetched %s dependencies", len(dependencies))
+        if settings.DATA_REFRESH_ENABLED:
+            assets = Asset.objects.all()
+            dependencies = self.get_dependencies_from_csv(assets)
+            self.logger.info("Fetched %s dependencies", len(dependencies))
 
-        Dependency.objects.all().delete()
-        Dependency.objects.bulk_create(dependencies)
+            Dependency.objects.all().delete()
+            Dependency.objects.bulk_create(dependencies)
+        else:
+            self.logger.warning("Data refresh is not enabled.")

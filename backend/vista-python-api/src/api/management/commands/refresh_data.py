@@ -7,6 +7,7 @@ from asyncio import as_completed, create_task
 from pathlib import Path
 
 from asgiref.sync import async_to_sync
+from django.conf import settings
 from django.core.management.base import BaseCommand
 
 from api.models.asset import Asset
@@ -80,7 +81,10 @@ class Command(BaseCommand):
 
     def handle(self, **_kwargs):
         """Command to load external data into the application's database."""
-        assets = async_to_sync(self.get_assets)()
+        if settings.DATA_REFRESH_ENABLED:
+            assets = async_to_sync(self.get_assets)()
 
-        Asset.objects.all().delete()
-        Asset.objects.bulk_create(assets)
+            Asset.objects.all().delete()
+            Asset.objects.bulk_create(assets)
+        else:
+            self.logger.warning("Data refresh is not enabled.")
