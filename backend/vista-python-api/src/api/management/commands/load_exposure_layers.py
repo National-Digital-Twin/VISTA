@@ -118,8 +118,5 @@ class Command(BaseCommand):
 
     def handle(self, *_args, **_kwargs):
         """Handle the command execution."""
-        if settings.DATA_REFRESH_ENABLED:
-            self.import_floods()
-            self.import_environmentally_sensitive_areas()
-        else:
-            self.logger.warning("Data refresh is not enabled.")
+        self.import_floods()
+        self.import_environmentally_sensitive_areas()

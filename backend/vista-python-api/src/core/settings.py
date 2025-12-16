@@ -27,7 +27,6 @@ IS_PROD = ENVIRONMENT == "production"
 
 SECRET_KEY = env("DJANGO_SECRET_KEY", default=env.NOTSET if IS_PROD else get_secret_key(BASE_DIR))
 
-DATA_REFRESH_ENABLED = env("DATA_REFRESH_ENABLED", default=False)
 CQC_API_KEY = env("CQC_API_KEY", default="replace")
 OS_NGD_API_KEY = env("OS_NGD_API_KEY", default="replace")
 OS_NAMES_API_KEY = env("OS_NAMES_API_KEY", default="replace")
