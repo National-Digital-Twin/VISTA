@@ -6,6 +6,7 @@ resources:
   - deployment.yaml
   - service.yaml
   - job.yaml
+  - cronjob.yaml
 
 labels:
   - pairs:
