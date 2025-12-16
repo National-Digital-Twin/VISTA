@@ -1,6 +1,6 @@
 """Fetch live data and return assets."""
 
-from api.repository.external.handlers import handler_registry
+from api.repository.external.asset_data_source_handlers import handler_registry
 
 
 async def fetch(asset_specification):
