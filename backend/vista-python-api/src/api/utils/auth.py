@@ -45,7 +45,10 @@ def get_user_id_from_request(request) -> uuid.UUID:
         return uuid.UUID("00000000-0000-0000-0000-000000000001")
     jwt = _validate_header_fetch_jwt(request)
     token = _decode_jwt(jwt)
-    return uuid.UUID(token["sub"])
+    try:
+        return uuid.UUID(token["sub"])
+    except (IndexError, KeyError, ValueError) as e:
+        raise AuthenticationFailed(f"Invalid token format: {e}") from e
 
 
 def get_user_is_admin_from_request(request) -> bool:

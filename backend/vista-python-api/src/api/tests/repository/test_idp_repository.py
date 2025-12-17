@@ -31,8 +31,9 @@ def test_repository_initializes_boto_client():
         mock_client.assert_called_once_with("cognito-idp", region_name="eu-west-2")
 
 
-def test_list_users_in_group_calls_cognito_correctly(repository, mock_boto_client):
+def test_list_users_in_group_calls_cognito_correctly(repository, mock_boto_client, settings):
     """Ensure both user and admin groups are queried."""
+    settings.IS_PROD = True
     mock_boto_client.list_users_in_group.side_effect = [
         {"Users": []},
         {"Users": []},
@@ -49,8 +50,9 @@ def test_list_users_in_group_calls_cognito_correctly(repository, mock_boto_clien
     )
 
 
-def test_list_users_in_group_marks_admins_correctly(repository, mock_boto_client):
+def test_list_users_in_group_marks_admins_correctly(repository, mock_boto_client, settings):
     """Ensure users are marked admin when username is in admin group."""
+    settings.IS_PROD = True
     users = [
         {"Username": "user1"},
         {"Username": "admin1"},
@@ -85,8 +87,9 @@ def test_list_users_in_group_marks_admins_correctly(repository, mock_boto_client
     )
 
 
-def test_list_users_in_group_returns_empty_list(repository, mock_boto_client):
+def test_list_users_in_group_returns_empty_list(repository, mock_boto_client, settings):
     """Ensure empty Cognito responses return empty list."""
+    settings.IS_PROD = True
     mock_boto_client.list_users_in_group.side_effect = [
         {"Users": []},
         {"Users": []},

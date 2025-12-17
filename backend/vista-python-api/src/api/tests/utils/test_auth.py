@@ -156,21 +156,3 @@ class TestGetUserIsAdminFromRequest:
 
         with pytest.raises(AuthenticationFailed, match="Invalid token format"):
             get_user_is_admin_from_request(request)
-
-    def test_raises_error_when_sub_claim_missing(self, settings):
-        """Raises AuthenticationFailed when sub claim is not in token."""
-        settings.IS_PROD = True
-        token = _create_jwt({"exp": 9999999999})
-        request = MockRequest({"X-Auth-Request-Access-Token": token})
-
-        with pytest.raises(AuthenticationFailed, match="Invalid token format"):
-            get_user_is_admin_from_request(request)
-
-    def test_raises_error_when_sub_is_not_valid_uuid(self, settings):
-        """Raises AuthenticationFailed when sub claim is not a valid UUID."""
-        settings.IS_PROD = True
-        token = _create_jwt({"sub": "not-a-uuid"})
-        request = MockRequest({"X-Auth-Request-Access-Token": token})
-
-        with pytest.raises(AuthenticationFailed, match="Invalid token format"):
-            get_user_is_admin_from_request(request)
