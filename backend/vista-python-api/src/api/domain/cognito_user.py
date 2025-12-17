@@ -13,9 +13,10 @@ class IdpUser:
     enabled: bool = True
     status: str | None = None
     user_since: str | None = None
+    is_admin: bool = False
 
     @classmethod
-    def from_cognito(cls, data: dict) -> "IdpUser":
+    def from_cognito(cls, data: dict, is_admin: bool) -> "IdpUser":
         """Map AWS Cognito API response into domain model."""
         attrs = {attr["Name"]: attr["Value"] for attr in data.get("Attributes", [])}
 
@@ -29,4 +30,5 @@ class IdpUser:
             enabled=data.get("Enabled", True),
             status=data.get("UserStatus"),
             user_since=user_since,
+            is_admin=is_admin,
         )

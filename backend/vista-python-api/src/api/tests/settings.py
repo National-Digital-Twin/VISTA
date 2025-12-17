@@ -14,3 +14,7 @@ DATABASES = {
         "PORT": os.getenv("TEST_DB_PORT", "5432"),
     }
 }
+COGNITO_USER_POOL_ID = "test-pool-id"
+COGNITO_MAIN_USER_GROUP_NAME = "users"
+COGNITO_ADMIN_USER_GROUP_NAME = "admins"
+REGION = "eu-west-2"

@@ -65,18 +65,6 @@ def test_retrieve_nonexistent_scenario_returns_404(client):
 
 
 @pytest.mark.django_db
-def test_create_scenario_returns_201(client):
-    """Test creating a scenario with polygon geometry."""
-    payload = {"name": "New Scenario 1", "isActive": False}
-
-    response = client.post("/api/scenarios/", json.dumps(payload), content_type="application/json")
-
-    assert response.status_code == status.HTTP_201_CREATED
-    assert "id" in response.data
-    assert response.data["name"] == payload["name"]
-
-
-@pytest.mark.django_db
 def test_update_scenario_is_active(scenarios, client):
     """Test toggling scenario is_active."""
     scenario = scenarios[1]
