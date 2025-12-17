@@ -23,16 +23,20 @@ class IdpRepository:
     def _stub_users(self):
         return [
             {
-                "Username": "local.user",
-                "email": "local.user@example.com",
-                "name": "Local User",
+                "Username": "1",
+                "Attributes": [
+                    {"Name": "email", "Value": "local.user@example.com"},
+                    {"Name": "name", "Value": "Local User"},
+                ],
                 "UserCreateDate": datetime.now(UTC),
                 "UserStatus": "Confirmed",
             },
             {
-                "Username": "local.user2",
-                "email": "local.user2@example.com",
-                "name": "Local User2",
+                "Username": "2",
+                "Attributes": [
+                    {"Name": "email", "Value": "local.user2@example.com"},
+                    {"Name": "name", "Value": "Local User2"},
+                ],
                 "UserCreateDate": datetime.now(UTC),
                 "UserStatus": "Confirmed",
             },
@@ -41,7 +45,9 @@ class IdpRepository:
     def list_users_in_group(self) -> list[IdpUser]:
         """Get a list of users known to the identity provider."""
         if not settings.IS_PROD:
-            return [IdpUser.from_cognito(user, True) for user in self._stub_users()]
+            return [
+                IdpUser.from_cognito(user, int(user["Username"]) % 2) for user in self._stub_users()
+            ]
         all_user_response = self.client.list_users_in_group(
             UserPoolId=self.user_pool_id, GroupName=self.user_group_name
         )

@@ -7,6 +7,10 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET
 from rest_framework.decorators import api_view
 
+from api.repository.external.idp_repository import IdpRepository
+
+idp_repository = IdpRepository()
+
 
 @csrf_exempt
 @api_view(["GET"])
@@ -19,7 +23,13 @@ def user_details_view(request):
     """
     if not settings.IS_PROD:
         return JsonResponse(
-            {"content": {"displayName": "Local User", "email": "local.user@local.com"}}
+            {
+                "content": {
+                    "displayName": "Local User",
+                    "email": "local.user@local.com",
+                    "userType": "General",
+                }
+            }
         )
 
     token = request.headers.get("X-Auth-Request-Access-Token")
@@ -33,6 +43,24 @@ def user_details_view(request):
         response = requests.get(
             url=forward_url, headers={"X-Auth-Request-Access-Token": token}, params=request.GET
         )
+        if "application/json" in response.headers.get("Content-Type", ""):
+            data = response.json()
+
+            # Adjust this path if your data is nested
+            content = data.get("content", data)
+
+            if "cognito:groups" in content:
+                content["userType"] = (
+                    "Admin"
+                    if settings.COGNITO_ADMIN_USER_GROUP_NAME in content["cognito:groups"]
+                    else "General"
+                )
+
+            return JsonResponse(
+                data,
+                status=response.status_code,
+                safe=False,
+            )
         return HttpResponse(
             response.content,
             status=response.status_code,

@@ -81,7 +81,7 @@ export function useProfileData(userId?: string): ProfileData {
                     displayName: 'Test user',
                     memberSince: '2025-06-02T12:00:00Z',
                     addedBy: 'Application owner',
-                    userType: 'Administrator',
+                    userType: 'Admin',
                     groups: [
                         { name: 'Resilience team', memberSince: '2025-06-02T12:00:00Z' },
                         { name: 'Tywnwell team', memberSince: '2025-06-02T12:00:00Z' },

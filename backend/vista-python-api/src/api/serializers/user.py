@@ -12,4 +12,4 @@ class IdpUserSerializer(serializers.Serializer):
     enabled = serializers.BooleanField()
     status = serializers.CharField(allow_null=True, required=False)
     user_since = serializers.CharField()
-    is_admin = serializers.BooleanField()
+    user_type = serializers.CharField()
