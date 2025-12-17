@@ -24,12 +24,6 @@ def find_exposure_layer_in_tree(data, exposure_layer_id):
 
 
 @pytest.fixture
-def scenario(db):  # noqa: ARG001
-    """Create a sample scenario."""
-    return Scenario.objects.create(name="Test Scenario", is_active=True)
-
-
-@pytest.fixture
 def exposure_layer(db):  # noqa: ARG001
     """Create a sample exposure layer."""
     exposure_layer_type = ExposureLayerType.objects.create(id=uuid.uuid4(), name="Type 1")
@@ -49,7 +43,9 @@ def focus_area(db, scenario):  # noqa: ARG001
         user_id=mock_user_id,
         name="Test Area",
         geometry=geom,
+        filter_mode="by_asset_type",
         is_active=True,
+        is_system=False,
     )
 
 

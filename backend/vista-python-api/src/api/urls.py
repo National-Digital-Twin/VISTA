@@ -74,5 +74,10 @@ urlpatterns = [
         views.AssetScoreViewSet.as_view({"get": "retrieve"}),
         name="asset-score-detail",
     ),
+    path(
+        "scenarios/<uuid:scenario_id>/asset-score-filters/",
+        views.AssetScoreFiltersView.as_view(),
+        name="asset-score-filters",
+    ),
     path("", include(router.urls)),
 ]

@@ -13,14 +13,21 @@ from api.models import FocusArea
 class FocusAreaSerializer(serializers.ModelSerializer):
     """Serializer for FocusArea model."""
 
-    geometry = GeometryField()
+    geometry = GeometryField(allow_null=True)
 
     class Meta:
         """Configuration for the serializer."""
 
         model = FocusArea
-        fields: ClassVar[list[str]] = ["id", "name", "is_active", "geometry"]
-        read_only_fields: ClassVar[list[str]] = ["id"]
+        fields: ClassVar[list[str]] = [
+            "id",
+            "name",
+            "geometry",
+            "filter_mode",
+            "is_active",
+            "is_system",
+        ]
+        read_only_fields: ClassVar[list[str]] = ["id", "is_system"]
 
 
 class FocusAreaCreateSerializer(serializers.Serializer):
@@ -28,7 +35,6 @@ class FocusAreaCreateSerializer(serializers.Serializer):
 
     geometry = serializers.JSONField()
     name = serializers.CharField(required=False, max_length=255, allow_blank=True)
-    is_active = serializers.BooleanField(required=False, default=True)
 
     def validate_geometry(self, value):
         """Convert GeoJSON geometry to GEOS geometry."""
@@ -43,8 +49,11 @@ class FocusAreaUpdateSerializer(serializers.Serializer):
     """Serializer for updating a FocusArea."""
 
     name = serializers.CharField(required=False, max_length=255)
-    is_active = serializers.BooleanField(required=False)
     geometry = serializers.JSONField(required=False, allow_null=True)
+    filter_mode = serializers.ChoiceField(
+        choices=["by_asset_type", "by_score_only"], required=False
+    )
+    is_active = serializers.BooleanField(required=False)
 
     def validate_geometry(self, value):
         """Convert GeoJSON geometry to GEOS geometry."""
