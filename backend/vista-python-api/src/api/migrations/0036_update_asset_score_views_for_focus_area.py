@@ -1,0 +1,98 @@
+"""Update asset score views to use focus_area relationship."""
+
+from typing import ClassVar
+
+from django.db import migrations
+
+
+class Migration(migrations.Migration):
+    """Update views to join through focus_area instead of direct user_id/scenario_id."""
+
+    dependencies: ClassVar = [
+        ("api", "0035_visible_exposure_layer_schema"),
+    ]
+
+    operations: ClassVar = [
+        migrations.RunSQL(
+            sql="""
+                DROP VIEW IF EXISTS public.asset_scores;
+                DROP VIEW IF EXISTS public.visible_exposure_asset_scores;
+                CREATE VIEW public.visible_exposure_asset_scores AS
+                     WITH active_exposure_layers AS (
+                        SELECT ael.asset_id,
+                            fa.user_id,
+                            fa.scenario_id,
+                            ael.exposure_layer_id,
+                            ael.intersects
+                        FROM assets_within_500m_exposure_layers ael
+                            JOIN api_visibleexposurelayer ve
+                                ON ael.exposure_layer_id = ve.exposure_layer_id
+                            JOIN api_focusarea fa
+                                ON ve.focus_area_id = fa.id
+                        ), agg AS (
+                        SELECT active_exposure_layers.asset_id,
+                            active_exposure_layers.user_id,
+                            active_exposure_layers.scenario_id,
+                            count(*) FILTER (WHERE active_exposure_layers.intersects) AS inter_ct,
+                            count(*) FILTER (WHERE NOT active_exposure_layers.intersects) AS near_ct
+                        FROM active_exposure_layers
+                        GROUP BY active_exposure_layers.asset_id, active_exposure_layers.user_id,
+                            active_exposure_layers.scenario_id
+                        )
+                SELECT asset_id,
+                    user_id,
+                    scenario_id,
+                        CASE
+                            WHEN inter_ct > 1 THEN 3
+                            WHEN inter_ct = 1 THEN 2
+                            WHEN near_ct >= 1 THEN 1
+                            ELSE 0
+                        END AS score
+                FROM agg;
+            """,
+            reverse_sql="""
+                DROP VIEW IF EXISTS public.visible_exposure_asset_scores;
+            """,
+        ),
+        # No changes to asset_scores view, same as before.
+        migrations.RunSQL(
+            sql="""
+                CREATE VIEW public.asset_scores AS
+                     SELECT a.id,
+                        s_a.scenario_id,
+                        exposure.user_id,
+                        s_a.criticality_score,
+                        COALESCE(avg(dep_score.score), 0::numeric) AS dependency_score,
+                        COALESCE(exposure.score, 0) AS exposure_score,
+                        3 AS redundancy_score
+                    FROM api_scenarioasset s_a
+                        LEFT JOIN api_asset a ON a.type_id = s_a.asset_type_id
+                        LEFT JOIN ( SELECT a_d.provider_asset_id AS id,
+                                s_a_1.criticality_score AS score,
+                                s_a_1.scenario_id AS scenario_id
+                            FROM api_dependency a_d
+                                LEFT JOIN api_asset a_1 ON a_d.dependent_asset_id = a_1.external_id
+                                LEFT JOIN api_scenarioasset s_a_1
+                                    ON s_a_1.asset_type_id = a_1.type_id) dep_score
+                                ON dep_score.id = a.external_id
+                                    AND dep_score.scenario_id = s_a.scenario_id
+                        LEFT JOIN ( SELECT veas.asset_id,
+                                veas.user_id,
+                                veas.scenario_id,
+                                veas.score
+                            FROM visible_exposure_asset_scores veas
+                            UNION ALL
+                            SELECT veas.asset_id,
+                                NULL::uuid AS user_id,
+                                veas.scenario_id,
+                                0 AS score
+                            FROM visible_exposure_asset_scores veas) exposure
+                            ON exposure.asset_id = a.id AND exposure.scenario_id = s_a.scenario_id
+                    GROUP BY a.id, s_a.scenario_id, exposure.user_id, s_a.criticality_score,
+                        exposure.score;
+            """,
+            reverse_sql="""
+                DROP VIEW IF EXISTS public.asset_scores;
+            """,
+        ),
+    ]
