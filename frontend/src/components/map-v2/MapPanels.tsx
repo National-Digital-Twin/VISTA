@@ -54,8 +54,7 @@ type RoadRoutePosition = {
 type MapPanelsProps = {
     activeView?: string | null;
     onViewChange?: (viewId: string | null) => void;
-    selectedExposureLayerIds?: Record<string, boolean>;
-    onExposureLayerToggle?: (layerId: string, enabled: boolean) => void;
+    selectedFocusAreaId?: string | null;
     selectedUtilityIds?: Record<string, boolean>;
     onUtilityToggle?: (utilityId: string, enabled: boolean) => void;
     selectedElement?: Asset | null;
@@ -79,8 +78,7 @@ type MapPanelsProps = {
 const MapPanels = ({
     activeView,
     onViewChange,
-    selectedExposureLayerIds,
-    onExposureLayerToggle,
+    selectedFocusAreaId,
     selectedUtilityIds,
     onUtilityToggle,
     selectedElement,
@@ -102,16 +100,10 @@ const MapPanels = ({
 }: Readonly<MapPanelsProps>) => {
     const handleItemClick = (itemId: string) => {
         const newActiveView = activeView === itemId ? null : itemId;
-        if (activeView === 'assets' && newActiveView !== 'assets') {
-            onFocusAreaSelect?.(null);
-        }
         onViewChange?.(newActiveView);
     };
 
     const handleClosePanel = () => {
-        if (activeView === 'assets') {
-            onFocusAreaSelect?.(null);
-        }
         onViewChange?.(null);
     };
 
@@ -124,13 +116,21 @@ const MapPanels = ({
             case 'scenario':
                 return <ScenarioView onItemClick={handleItemClick} onClose={handleClosePanel} />;
             case 'assets':
-                return <AssetsView onClose={handleClosePanel} scenarioId={scenarioId} onFocusAreaSelect={onFocusAreaSelect} />;
+                return (
+                    <AssetsView
+                        onClose={handleClosePanel}
+                        scenarioId={scenarioId}
+                        selectedFocusAreaId={selectedFocusAreaId}
+                        onFocusAreaSelect={onFocusAreaSelect}
+                    />
+                );
             case 'exposure':
                 return (
                     <ExposureView
                         onClose={handleClosePanel}
-                        selectedExposureLayerIds={selectedExposureLayerIds}
-                        onExposureLayerToggle={onExposureLayerToggle}
+                        scenarioId={scenarioId}
+                        selectedFocusAreaId={selectedFocusAreaId}
+                        onFocusAreaSelect={onFocusAreaSelect}
                     />
                 );
             case 'utilities':

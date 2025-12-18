@@ -1,6 +1,8 @@
 import { useMemo } from 'react';
 import { Layer, Source } from 'react-map-gl/maplibre';
-import type { FeatureCollection } from 'geojson';
+import { useQueries } from '@tanstack/react-query';
+import type { FeatureCollection, Feature } from 'geojson';
+import { fetchExposureLayers } from '@/api/exposure-layers';
 
 const SOURCE_ID = 'map-v2-exposure-source';
 const LAYER_ID = 'map-v2-exposure-layer';
@@ -10,33 +12,91 @@ const DEFAULT_STROKE_COLOR = '#2E5C8A';
 const DEFAULT_STROKE_WIDTH = 2;
 
 export type ExposureLayersProps = {
-    exposureLayers: FeatureCollection;
-    selectedExposureLayerIds: Record<string, boolean>;
+    scenarioId?: string;
+    selectedFocusAreaId?: string | null;
     mapReady?: boolean;
+    isInFocusAreaPanel?: boolean;
+    mapWideVisible?: boolean;
+    activeFocusAreaIds?: string[];
 };
 
-const ExposureLayers = ({ exposureLayers, selectedExposureLayerIds, mapReady }: ExposureLayersProps) => {
-    const filteredFeatures = useMemo(() => {
-        const enabledIdsSet = new Set(
-            Object.entries(selectedExposureLayerIds)
-                .filter(([, enabled]) => enabled)
-                .map(([id]) => id),
-        );
-
-        if (enabledIdsSet.size === 0) {
+const ExposureLayers = ({
+    scenarioId,
+    selectedFocusAreaId,
+    mapReady,
+    isInFocusAreaPanel = false,
+    mapWideVisible = true,
+    activeFocusAreaIds = [],
+}: ExposureLayersProps) => {
+    const queryConfigs = useMemo(() => {
+        if (!scenarioId) {
             return [];
         }
 
-        const filtered = exposureLayers.features.filter((feature) => {
-            const featureId = feature.id || feature.properties?.id;
-            const idString = featureId !== null && featureId !== undefined ? String(featureId) : null;
-            if (idString) {
-                return enabledIdsSet.has(idString);
+        if (isInFocusAreaPanel) {
+            const configs = [];
+            if (mapWideVisible) {
+                configs.push({
+                    queryKey: ['exposureLayers', scenarioId, null],
+                    queryFn: () => fetchExposureLayers(scenarioId, null),
+                    staleTime: 0,
+                });
             }
-            return false;
+            activeFocusAreaIds.forEach((faId) => {
+                configs.push({
+                    queryKey: ['exposureLayers', scenarioId, faId],
+                    queryFn: () => fetchExposureLayers(scenarioId, faId),
+                    staleTime: 0,
+                });
+            });
+            return configs;
+        }
+
+        return [
+            {
+                queryKey: ['exposureLayers', scenarioId, selectedFocusAreaId],
+                queryFn: () => fetchExposureLayers(scenarioId, selectedFocusAreaId),
+                staleTime: 0,
+            },
+        ];
+    }, [scenarioId, isInFocusAreaPanel, mapWideVisible, activeFocusAreaIds, selectedFocusAreaId]);
+
+    const exposureQueries = useQueries({
+        queries: queryConfigs.length > 0 ? queryConfigs : [],
+    });
+
+    const isLoading = exposureQueries.some((q) => q.isLoading);
+
+    const filteredFeatures = useMemo(() => {
+        const activeFeatureIds = new Set<string>();
+        const featuresById = new Map<string, Feature>();
+
+        exposureQueries.forEach((query) => {
+            if (!query.data?.featureCollection?.features) {
+                return;
+            }
+
+            query.data.featureCollection.features.forEach((feature: Feature) => {
+                const featureId = feature.id?.toString() || feature.properties?.id;
+                if (!featureId) {
+                    return;
+                }
+
+                if (!featuresById.has(featureId)) {
+                    featuresById.set(featureId, feature);
+                }
+
+                if (feature.properties?.isActive === true) {
+                    activeFeatureIds.add(featureId);
+                }
+            });
         });
-        return filtered;
-    }, [exposureLayers, selectedExposureLayerIds]);
+
+        return Array.from(featuresById.values()).filter((feature) => {
+            const featureId = feature.id?.toString() || feature.properties?.id;
+            return featureId && activeFeatureIds.has(featureId);
+        });
+    }, [exposureQueries]);
 
     const featureCollection: FeatureCollection = useMemo(() => {
         return {
@@ -45,12 +105,12 @@ const ExposureLayers = ({ exposureLayers, selectedExposureLayerIds, mapReady }: 
         };
     }, [filteredFeatures]);
 
-    if (!mapReady || filteredFeatures.length === 0) {
+    if (!mapReady || !scenarioId || isLoading || filteredFeatures.length === 0) {
         return null;
     }
 
     return (
-        <Source id={SOURCE_ID} type="geojson" data={featureCollection}>
+        <Source id={SOURCE_ID} type="geojson" data={featureCollection} generateId>
             <Layer
                 id={LAYER_ID}
                 type="fill"

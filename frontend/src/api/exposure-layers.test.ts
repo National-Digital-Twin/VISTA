@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import type { Geometry } from 'geojson';
 
-import { fetchExposureLayers } from './exposure-layers';
+import { fetchExposureLayers, fetchExposureLayerGeometry, fetchExposureLayerVisibility, mergeGeometryWithVisibility } from './exposure-layers';
 
 vi.mock('@/config/app-config', () => ({
     default: {
@@ -14,262 +14,297 @@ vi.mock('@/config/app-config', () => ({
 describe('exposure-layers API', () => {
     let fetchMock: ReturnType<typeof vi.fn>;
 
+    const mockGeometry: Geometry = {
+        type: 'Polygon',
+        coordinates: [
+            [
+                [-1.4, 50.67],
+                [-1.4, 50.68],
+                [-1.39, 50.68],
+                [-1.39, 50.67],
+                [-1.4, 50.67],
+            ],
+        ],
+    };
+
+    const mockGeometry2: Geometry = {
+        type: 'Polygon',
+        coordinates: [
+            [
+                [-1.3, 50.66],
+                [-1.3, 50.67],
+                [-1.29, 50.67],
+                [-1.29, 50.66],
+                [-1.3, 50.66],
+            ],
+        ],
+    };
+
     beforeEach(() => {
         fetchMock = vi.fn();
-        globalThis.fetch = fetchMock as any;
+        globalThis.fetch = fetchMock as typeof fetch;
     });
 
     afterEach(() => {
         vi.restoreAllMocks();
     });
 
-    describe('fetchExposureLayers', () => {
-        it('successfully fetches exposure layers with polygon geometry', async () => {
-            const mockGeometry: Geometry = {
-                type: 'Polygon',
-                coordinates: [
-                    [
-                        [-1.4, 50.67],
-                        [-1.4, 50.68],
-                        [-1.39, 50.68],
-                        [-1.39, 50.67],
-                        [-1.4, 50.67],
-                    ],
-                ],
-            };
-
+    describe('fetchExposureLayerGeometry', () => {
+        it('fetches geometry from exposurelayers endpoint', async () => {
             fetchMock.mockResolvedValue({
                 ok: true,
                 json: vi.fn().mockResolvedValue([
                     {
                         id: 'group-1',
                         name: 'Floods',
-                        exposureLayers: [
-                            {
-                                id: '35a910f3-f611-4096-ac0b-0928c5612e32',
-                                name: 'Test Layer 1',
-                                geometry: mockGeometry,
-                            },
-                        ],
+                        exposureLayers: [{ id: 'layer-1', name: 'Test Layer 1', geometry: mockGeometry }],
                     },
                 ]),
             });
 
-            const result = await fetchExposureLayers();
+            const result = await fetchExposureLayerGeometry();
 
-            expect(result.featureCollection.type).toBe('FeatureCollection');
-            expect(result.featureCollection.features).toHaveLength(1);
-            expect(result.featureCollection.features[0].id).toBe('35a910f3-f611-4096-ac0b-0928c5612e32');
-            expect(result.featureCollection.features[0].geometry.type).toBe('Polygon');
-            expect(result.featureCollection.features[0].properties?.name).toBe('Test Layer 1');
-            expect(result.featureCollection.features[0].properties?.groupId).toBe('group-1');
-            expect(result.featureCollection.features[0].properties?.groupName).toBe('Floods');
-            expect(result.groups).toHaveLength(1);
-            expect(result.groups[0].id).toBe('group-1');
-            expect(result.groups[0].name).toBe('Floods');
-            expect(fetchMock).toHaveBeenCalledWith(expect.stringContaining('/ndtp-python/api/exposurelayers/'), {
+            expect(result).toHaveLength(1);
+            expect(result[0].id).toBe('group-1');
+            expect(fetchMock).toHaveBeenCalledWith('/ndtp-python/api/exposurelayers/', {
                 headers: { 'Content-Type': 'application/json' },
             });
-        });
-
-        it('successfully handles multipolygon geometry', async () => {
-            const mockGeometry: Geometry = {
-                type: 'MultiPolygon',
-                coordinates: [
-                    [
-                        [
-                            [-1.4, 50.67],
-                            [-1.4, 50.68],
-                            [-1.39, 50.68],
-                            [-1.39, 50.67],
-                            [-1.4, 50.67],
-                        ],
-                    ],
-                ],
-            };
-
-            fetchMock.mockResolvedValue({
-                ok: true,
-                json: vi.fn().mockResolvedValue([
-                    {
-                        id: 'group-1',
-                        name: 'Floods',
-                        exposureLayers: [
-                            {
-                                id: 'e34e3c22-a28f-45e5-99b5-a24b55ba875f',
-                                name: 'Test Layer 2',
-                                geometry: mockGeometry,
-                            },
-                        ],
-                    },
-                ]),
-            });
-
-            const result = await fetchExposureLayers();
-
-            expect(result.featureCollection.features).toHaveLength(1);
-            expect(result.featureCollection.features[0].geometry.type).toBe('MultiPolygon');
-        });
-
-        it('filters out layers with missing geometry', async () => {
-            const mockGeometry: Geometry = {
-                type: 'Polygon',
-                coordinates: [
-                    [
-                        [-1.4, 50.67],
-                        [-1.4, 50.68],
-                        [-1.39, 50.68],
-                        [-1.39, 50.67],
-                        [-1.4, 50.67],
-                    ],
-                ],
-            };
-
-            fetchMock.mockResolvedValue({
-                ok: true,
-                json: vi.fn().mockResolvedValue([
-                    {
-                        id: 'group-1',
-                        name: 'Floods',
-                        exposureLayers: [
-                            {
-                                id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
-                                name: 'Valid Layer',
-                                geometry: mockGeometry,
-                            },
-                            {
-                                id: 'f9e8d7c6-b5a4-3210-9876-543210fedcba',
-                                name: 'Invalid Layer',
-                                geometry: null as any,
-                            },
-                        ],
-                    },
-                ]),
-            });
-
-            const result = await fetchExposureLayers();
-
-            expect(result.featureCollection.features).toHaveLength(1);
-            expect(result.featureCollection.features[0].id).toBe('a1b2c3d4-e5f6-7890-abcd-ef1234567890');
-        });
-
-        it('handles multiple groups with multiple layers', async () => {
-            const mockGeometry1: Geometry = {
-                type: 'Polygon',
-                coordinates: [
-                    [
-                        [-1.4, 50.67],
-                        [-1.4, 50.68],
-                        [-1.39, 50.68],
-                        [-1.39, 50.67],
-                        [-1.4, 50.67],
-                    ],
-                ],
-            };
-
-            const mockGeometry2: Geometry = {
-                type: 'Polygon',
-                coordinates: [
-                    [
-                        [-1.3, 50.66],
-                        [-1.3, 50.67],
-                        [-1.29, 50.67],
-                        [-1.29, 50.66],
-                        [-1.3, 50.66],
-                    ],
-                ],
-            };
-
-            fetchMock.mockResolvedValue({
-                ok: true,
-                json: vi.fn().mockResolvedValue([
-                    {
-                        id: 'group-1',
-                        name: 'Floods',
-                        exposureLayers: [
-                            {
-                                id: 'layer-1',
-                                name: 'Test Layer 1',
-                                geometry: mockGeometry1,
-                            },
-                        ],
-                    },
-                    {
-                        id: 'group-2',
-                        name: 'Environmentally sensitive areas',
-                        exposureLayers: [
-                            {
-                                id: 'layer-2',
-                                name: 'Test Layer 2',
-                                geometry: mockGeometry2,
-                            },
-                        ],
-                    },
-                ]),
-            });
-
-            const result = await fetchExposureLayers();
-
-            expect(result.featureCollection.features).toHaveLength(2);
-            expect(result.groups).toHaveLength(2);
-            expect(result.groups[0].name).toBe('Floods');
-            expect(result.groups[1].name).toBe('Environmentally sensitive areas');
-            expect(result.featureCollection.features[0].properties?.groupName).toBe('Floods');
-            expect(result.featureCollection.features[1].properties?.groupName).toBe('Environmentally sensitive areas');
         });
 
         it('throws error when response is not ok', async () => {
             fetchMock.mockResolvedValue({
                 ok: false,
-                status: 500,
                 statusText: 'Internal Server Error',
             });
 
-            await expect(fetchExposureLayers()).rejects.toThrow('Failed to retrieve exposure layers: Internal Server Error');
+            await expect(fetchExposureLayerGeometry()).rejects.toThrow('Failed to retrieve exposure layer geometry: Internal Server Error');
+        });
+    });
+
+    describe('fetchExposureLayerVisibility', () => {
+        it('fetches visibility from scenario endpoint', async () => {
+            fetchMock.mockResolvedValue({
+                ok: true,
+                json: vi.fn().mockResolvedValue([
+                    {
+                        id: 'group-1',
+                        name: 'Floods',
+                        exposureLayers: [{ id: 'layer-1', name: 'Test Layer 1', isActive: true }],
+                    },
+                ]),
+            });
+
+            const result = await fetchExposureLayerVisibility('scenario-1');
+
+            expect(result).toHaveLength(1);
+            expect(result[0].exposureLayers[0].isActive).toBe(true);
+            expect(fetchMock).toHaveBeenCalledWith('/ndtp-python/api/scenarios/scenario-1/exposure-layers/', {
+                headers: { 'Content-Type': 'application/json' },
+            });
         });
 
-        it('throws error on network failure', async () => {
-            fetchMock.mockRejectedValue(new Error('Network error'));
-
-            await expect(fetchExposureLayers()).rejects.toThrow('Network error');
-        });
-
-        it('handles empty groups array', async () => {
+        it('includes focus_area_id in query when provided', async () => {
             fetchMock.mockResolvedValue({
                 ok: true,
                 json: vi.fn().mockResolvedValue([]),
             });
 
-            const result = await fetchExposureLayers();
+            await fetchExposureLayerVisibility('scenario-1', 'focus-area-1');
+
+            expect(fetchMock).toHaveBeenCalledWith('/ndtp-python/api/scenarios/scenario-1/exposure-layers/?focus_area_id=focus-area-1', {
+                headers: { 'Content-Type': 'application/json' },
+            });
+        });
+
+        it('does not include focus_area_id when null', async () => {
+            fetchMock.mockResolvedValue({
+                ok: true,
+                json: vi.fn().mockResolvedValue([]),
+            });
+
+            await fetchExposureLayerVisibility('scenario-1', null);
+
+            expect(fetchMock).toHaveBeenCalledWith('/ndtp-python/api/scenarios/scenario-1/exposure-layers/', {
+                headers: { 'Content-Type': 'application/json' },
+            });
+        });
+
+        it('throws error when response is not ok', async () => {
+            fetchMock.mockResolvedValue({
+                ok: false,
+                statusText: 'Internal Server Error',
+            });
+
+            await expect(fetchExposureLayerVisibility('scenario-1')).rejects.toThrow('Failed to retrieve exposure layer visibility: Internal Server Error');
+        });
+    });
+
+    describe('mergeGeometryWithVisibility', () => {
+        it('merges geometry and visibility data', () => {
+            const geometryData = [
+                {
+                    id: 'group-1',
+                    name: 'Floods',
+                    exposureLayers: [
+                        { id: 'layer-1', name: 'Test Layer 1', geometry: mockGeometry },
+                        { id: 'layer-2', name: 'Test Layer 2', geometry: mockGeometry2 },
+                    ],
+                },
+            ];
+
+            const visibilityData = [
+                {
+                    id: 'group-1',
+                    name: 'Floods',
+                    exposureLayers: [
+                        { id: 'layer-1', name: 'Test Layer 1', isActive: true },
+                        { id: 'layer-2', name: 'Test Layer 2', isActive: false },
+                    ],
+                },
+            ];
+
+            const result = mergeGeometryWithVisibility(geometryData, visibilityData);
+
+            expect(result.groups[0].exposureLayers[0].isActive).toBe(true);
+            expect(result.groups[0].exposureLayers[1].isActive).toBe(false);
+            expect(result.featureCollection.features[0].properties?.isActive).toBe(true);
+            expect(result.featureCollection.features[1].properties?.isActive).toBe(false);
+        });
+
+        it('defaults isActive to false when not in visibility data', () => {
+            const geometryData = [
+                {
+                    id: 'group-1',
+                    name: 'Floods',
+                    exposureLayers: [{ id: 'layer-1', name: 'Test Layer 1', geometry: mockGeometry }],
+                },
+            ];
+
+            const visibilityData: typeof geometryData = [];
+
+            const result = mergeGeometryWithVisibility(geometryData, visibilityData);
+
+            expect(result.groups[0].exposureLayers[0].isActive).toBe(false);
+        });
+
+        it('filters out layers without geometry in featureCollection', () => {
+            const geometryData = [
+                {
+                    id: 'group-1',
+                    name: 'Floods',
+                    exposureLayers: [
+                        { id: 'layer-1', name: 'Test Layer 1', geometry: mockGeometry },
+                        { id: 'layer-2', name: 'Test Layer 2', geometry: undefined },
+                    ],
+                },
+            ];
+
+            const visibilityData = [
+                {
+                    id: 'group-1',
+                    name: 'Floods',
+                    exposureLayers: [
+                        { id: 'layer-1', name: 'Test Layer 1', isActive: true },
+                        { id: 'layer-2', name: 'Test Layer 2', isActive: true },
+                    ],
+                },
+            ];
+
+            const result = mergeGeometryWithVisibility(geometryData, visibilityData);
+
+            expect(result.featureCollection.features).toHaveLength(1);
+            expect(result.groups[0].exposureLayers).toHaveLength(2);
+        });
+    });
+
+    describe('fetchExposureLayers', () => {
+        it('fetches and merges geometry and visibility data', async () => {
+            fetchMock
+                .mockResolvedValueOnce({
+                    ok: true,
+                    json: vi.fn().mockResolvedValue([
+                        {
+                            id: 'group-1',
+                            name: 'Floods',
+                            exposureLayers: [{ id: 'layer-1', name: 'Test Layer 1', geometry: mockGeometry }],
+                        },
+                    ]),
+                })
+                .mockResolvedValueOnce({
+                    ok: true,
+                    json: vi.fn().mockResolvedValue([
+                        {
+                            id: 'group-1',
+                            name: 'Floods',
+                            exposureLayers: [{ id: 'layer-1', name: 'Test Layer 1', isActive: true }],
+                        },
+                    ]),
+                });
+
+            const result = await fetchExposureLayers('scenario-1');
+
+            expect(result.featureCollection.type).toBe('FeatureCollection');
+            expect(result.featureCollection.features).toHaveLength(1);
+            expect(result.featureCollection.features[0].properties?.isActive).toBe(true);
+            expect(fetchMock).toHaveBeenCalledTimes(2);
+        });
+
+        it('passes focusAreaId to visibility fetch', async () => {
+            fetchMock
+                .mockResolvedValueOnce({
+                    ok: true,
+                    json: vi.fn().mockResolvedValue([]),
+                })
+                .mockResolvedValueOnce({
+                    ok: true,
+                    json: vi.fn().mockResolvedValue([]),
+                });
+
+            await fetchExposureLayers('scenario-1', 'focus-area-1');
+
+            expect(fetchMock).toHaveBeenCalledWith('/ndtp-python/api/exposurelayers/', expect.any(Object));
+            expect(fetchMock).toHaveBeenCalledWith('/ndtp-python/api/scenarios/scenario-1/exposure-layers/?focus_area_id=focus-area-1', expect.any(Object));
+        });
+
+        it('handles empty groups array', async () => {
+            fetchMock
+                .mockResolvedValueOnce({
+                    ok: true,
+                    json: vi.fn().mockResolvedValue([]),
+                })
+                .mockResolvedValueOnce({
+                    ok: true,
+                    json: vi.fn().mockResolvedValue([]),
+                });
+
+            const result = await fetchExposureLayers('scenario-1');
 
             expect(result.featureCollection.type).toBe('FeatureCollection');
             expect(result.featureCollection.features).toHaveLength(0);
             expect(result.groups).toHaveLength(0);
         });
 
-        it('handles groups with empty exposure layers', async () => {
-            fetchMock.mockResolvedValue({
-                ok: true,
-                json: vi.fn().mockResolvedValue([
-                    {
-                        id: 'group-1',
-                        name: 'Floods',
-                        exposureLayers: [],
-                    },
-                    {
-                        id: 'group-2',
-                        name: 'Environmentally sensitive areas',
-                        exposureLayers: [],
-                    },
-                ]),
+        it('throws error when geometry fetch fails', async () => {
+            fetchMock.mockResolvedValueOnce({
+                ok: false,
+                statusText: 'Internal Server Error',
             });
 
-            const result = await fetchExposureLayers();
+            await expect(fetchExposureLayers('scenario-1')).rejects.toThrow('Failed to retrieve exposure layer geometry: Internal Server Error');
+        });
 
-            expect(result.featureCollection.features).toHaveLength(0);
-            expect(result.groups).toHaveLength(2);
-            expect(result.groups[0].exposureLayers).toHaveLength(0);
-            expect(result.groups[1].exposureLayers).toHaveLength(0);
+        it('throws error when visibility fetch fails', async () => {
+            fetchMock
+                .mockResolvedValueOnce({
+                    ok: true,
+                    json: vi.fn().mockResolvedValue([]),
+                })
+                .mockResolvedValueOnce({
+                    ok: false,
+                    statusText: 'Internal Server Error',
+                });
+
+            await expect(fetchExposureLayers('scenario-1')).rejects.toThrow('Failed to retrieve exposure layer visibility: Internal Server Error');
         });
     });
 });

@@ -11,6 +11,8 @@ WORKDIR /vista-python-api/core
 RUN apt-get update && apt-get upgrade -y \
     && apt-get install -y build-essential \
     libstdc++6 \
+    gdal-bin \
+    libgdal-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Install poetry globally

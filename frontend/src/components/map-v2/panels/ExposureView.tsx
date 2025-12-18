@@ -1,18 +1,58 @@
-import React, { useCallback, useMemo, useState } from 'react';
-import { Box, IconButton, Typography, ListItem, ListItemText, Collapse, Button } from '@mui/material';
+import React, { useCallback, useMemo, useState, useEffect } from 'react';
+import {
+    Box,
+    IconButton,
+    Typography,
+    ListItem,
+    ListItemText,
+    Collapse,
+    Button,
+    FormControl,
+    InputLabel,
+    MenuItem,
+    Select,
+    Alert,
+    Portal,
+    Snackbar,
+} from '@mui/material';
+import type { SelectChangeEvent } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import type { Feature } from 'geojson';
 
-import { fetchExposureLayers } from '@/api/exposure-layers';
+import { fetchExposureLayers, toggleExposureLayerVisibility, type ExposureLayerGroup } from '@/api/exposure-layers';
+import { fetchFocusAreas, type FocusArea } from '@/api/focus-areas';
 import IconToggle from '@/components/IconToggle';
+
+const MAP_WIDE_VALUE = '__map_wide__';
+
+const getGroupNamesWithActiveLayers = (groups: ExposureLayerGroup[]): Set<string> => {
+    const names = new Set<string>();
+    for (const group of groups) {
+        if (group.exposureLayers.some((layer) => layer.isActive)) {
+            names.add(group.name);
+        }
+    }
+    return names;
+};
+
+const buildLayerVisibilityMap = (groups: ExposureLayerGroup[]): Record<string, boolean> => {
+    const ids: Record<string, boolean> = {};
+    for (const group of groups) {
+        for (const layer of group.exposureLayers) {
+            ids[layer.id] = layer.isActive ?? false;
+        }
+    }
+    return ids;
+};
 
 type ExposureViewProps = {
     onClose: () => void;
-    selectedExposureLayerIds?: Record<string, boolean>;
-    onExposureLayerToggle?: (layerId: string, enabled: boolean) => void;
+    scenarioId?: string;
+    selectedFocusAreaId?: string | null;
+    onFocusAreaSelect?: (focusAreaId: string | null) => void;
 };
 
 type ExposureLayerListItemTextProps = {
@@ -37,9 +77,10 @@ type ExposureLayerListProps = {
     layers: Feature[];
     selectedExposureLayerIds: Record<string, boolean>;
     onToggle: (layerId: string) => void;
+    disabled?: boolean;
 };
 
-const ExposureLayerList = React.memo(({ layers, selectedExposureLayerIds, onToggle }: ExposureLayerListProps) => {
+const ExposureLayerList = React.memo(({ layers, selectedExposureLayerIds, onToggle, disabled }: ExposureLayerListProps) => {
     return (
         <Box sx={{ pl: 2, pr: 1, pb: 1 }}>
             {layers.map((layer) => {
@@ -65,6 +106,7 @@ const ExposureLayerList = React.memo(({ layers, selectedExposureLayerIds, onTogg
                         <IconToggle
                             checked={isSelected}
                             onChange={() => onToggle(layerId)}
+                            disabled={disabled}
                             aria-label={isSelected ? `Hide ${name}` : `Show ${name}`}
                             size="small"
                         />
@@ -84,9 +126,10 @@ type ExposureGroupProps = {
     selectedExposureLayerIds: Record<string, boolean>;
     onToggleGroup: (groupName: string) => void;
     onToggleLayer: (layerId: string) => void;
+    disabled?: boolean;
 };
 
-const ExposureGroup = React.memo(({ groupName, layers, isExpanded, selectedExposureLayerIds, onToggleGroup, onToggleLayer }: ExposureGroupProps) => {
+const ExposureGroup = React.memo(({ groupName, layers, isExpanded, selectedExposureLayerIds, onToggleGroup, onToggleLayer, disabled }: ExposureGroupProps) => {
     const handleToggle = useCallback(
         (e: React.MouseEvent | React.KeyboardEvent) => {
             e.stopPropagation();
@@ -134,7 +177,7 @@ const ExposureGroup = React.memo(({ groupName, layers, isExpanded, selectedExpos
             </Button>
 
             <Collapse in={isExpanded}>
-                <ExposureLayerList layers={layers} selectedExposureLayerIds={selectedExposureLayerIds} onToggle={onToggleLayer} />
+                <ExposureLayerList layers={layers} selectedExposureLayerIds={selectedExposureLayerIds} onToggle={onToggleLayer} disabled={disabled} />
             </Collapse>
         </Box>
     );
@@ -142,24 +185,55 @@ const ExposureGroup = React.memo(({ groupName, layers, isExpanded, selectedExpos
 
 ExposureGroup.displayName = 'ExposureGroup';
 
-const ExposureView = ({ onClose, selectedExposureLayerIds: externalSelectedExposureLayerIds = {}, onExposureLayerToggle }: ExposureViewProps) => {
+const ExposureView = ({ onClose, scenarioId, selectedFocusAreaId, onFocusAreaSelect }: ExposureViewProps) => {
     const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
-    const [localSelectedExposureLayerIds, setLocalSelectedExposureLayerIds] = useState<Record<string, boolean>>({});
+    const [mutationError, setMutationError] = useState<string | null>(null);
+    const queryClient = useQueryClient();
+    const currentFocusAreaId = selectedFocusAreaId ?? null;
 
-    const selectedExposureLayerIds = useMemo(
-        () => ({ ...localSelectedExposureLayerIds, ...externalSelectedExposureLayerIds }),
-        [localSelectedExposureLayerIds, externalSelectedExposureLayerIds],
-    );
+    const { data: focusAreas, isLoading: isLoadingFocusAreas } = useQuery({
+        queryKey: ['focusAreas', scenarioId],
+        queryFn: () => fetchFocusAreas(scenarioId!),
+        enabled: !!scenarioId,
+        staleTime: 5 * 60 * 1000,
+    });
 
     const {
         data: exposureLayersData,
         isLoading: isLoadingLayers,
         isError: isErrorLayers,
     } = useQuery({
-        queryKey: ['exposureLayers'],
-        queryFn: fetchExposureLayers,
-        staleTime: 5 * 60 * 1000,
+        queryKey: ['exposureLayers', scenarioId, currentFocusAreaId],
+        queryFn: () => fetchExposureLayers(scenarioId!, currentFocusAreaId),
+        enabled: !!scenarioId,
+        staleTime: 0,
+        refetchOnMount: true,
     });
+
+    const visibilityMutation = useMutation({
+        mutationFn: (data: { exposureLayerId: string; isActive: boolean }) => {
+            return toggleExposureLayerVisibility(scenarioId!, {
+                exposureLayerId: data.exposureLayerId,
+                focusAreaId: currentFocusAreaId,
+                isActive: data.isActive,
+            });
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['exposureLayers', scenarioId] });
+        },
+        onError: () => {
+            setMutationError('Failed to update exposure layer visibility');
+        },
+    });
+
+    useEffect(() => {
+        if (!exposureLayersData?.groups) {
+            return;
+        }
+
+        const groupNamesWithActiveLayers = getGroupNamesWithActiveLayers(exposureLayersData.groups);
+        setExpandedGroups((prev) => new Set([...prev, ...groupNamesWithActiveLayers]));
+    }, [exposureLayersData]);
 
     const toggleGroup = useCallback((groupName: string) => {
         setExpandedGroups((prev) => {
@@ -169,19 +243,22 @@ const ExposureView = ({ onClose, selectedExposureLayerIds: externalSelectedExpos
         });
     }, []);
 
+    const handleFocusAreaChange = useCallback(
+        (event: SelectChangeEvent<string>) => {
+            const value = event.target.value;
+            const newFocusAreaId = value === MAP_WIDE_VALUE ? null : value;
+            onFocusAreaSelect?.(newFocusAreaId);
+        },
+        [onFocusAreaSelect],
+    );
+
     const toggleExposureLayer = useCallback(
         (layerId: string) => {
-            const newState = !selectedExposureLayerIds[layerId];
-            setLocalSelectedExposureLayerIds((prev) => {
-                const updated = {
-                    ...prev,
-                    [layerId]: newState,
-                };
-                return updated;
-            });
-            onExposureLayerToggle?.(layerId, newState);
+            const currentState = exposureLayersData?.groups.flatMap((g) => g.exposureLayers).find((l) => l.id === layerId)?.isActive ?? false;
+            const newState = !currentState;
+            visibilityMutation.mutate({ exposureLayerId: layerId, isActive: newState });
         },
-        [selectedExposureLayerIds, onExposureLayerToggle],
+        [exposureLayersData, visibilityMutation],
     );
 
     const groupedLayers = useMemo(() => {
@@ -214,6 +291,34 @@ const ExposureView = ({ onClose, selectedExposureLayerIds: externalSelectedExpos
         return groups;
     }, [exposureLayersData]);
 
+    const selectedExposureLayerIds = useMemo(() => {
+        if (!exposureLayersData?.groups) {
+            return {};
+        }
+        return buildLayerVisibilityMap(exposureLayersData.groups);
+    }, [exposureLayersData]);
+
+    const focusAreaSelectValue = currentFocusAreaId ?? MAP_WIDE_VALUE;
+    const isMutating = visibilityMutation.isPending;
+
+    if (!scenarioId) {
+        return (
+            <Box sx={{ p: 2 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+                    <Typography variant="h6" fontWeight={600}>
+                        Exposure
+                    </Typography>
+                    <IconButton size="small" onClick={onClose} aria-label="Close panel">
+                        <CloseIcon fontSize="small" />
+                    </IconButton>
+                </Box>
+                <Typography variant="body2" color="text.secondary">
+                    No scenario selected
+                </Typography>
+            </Box>
+        );
+    }
+
     if (isErrorLayers) {
         return (
             <Box sx={{ p: 2 }}>
@@ -233,46 +338,81 @@ const ExposureView = ({ onClose, selectedExposureLayerIds: externalSelectedExpos
     }
 
     return (
-        <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden', position: 'relative' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', p: 2, borderBottom: 1, borderColor: 'divider' }}>
-                <Typography variant="h6" fontWeight={600}>
-                    Exposure
-                </Typography>
-                <IconButton size="small" onClick={onClose} aria-label="Close panel">
-                    <CloseIcon fontSize="small" />
-                </IconButton>
+        <>
+            <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden', position: 'relative' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', p: 2, borderBottom: 1, borderColor: 'divider' }}>
+                    <Typography variant="h6" fontWeight={600}>
+                        Exposure
+                    </Typography>
+                    <IconButton size="small" onClick={onClose} aria-label="Close panel">
+                        <CloseIcon fontSize="small" />
+                    </IconButton>
+                </Box>
+
+                <Box sx={{ p: 2, borderBottom: 1, borderColor: 'divider' }}>
+                    <FormControl fullWidth size="small">
+                        <InputLabel id="focus-area-select-label">Focus area</InputLabel>
+                        <Select
+                            labelId="focus-area-select-label"
+                            value={focusAreaSelectValue}
+                            onChange={handleFocusAreaChange}
+                            label="Focus area"
+                            disabled={isLoadingFocusAreas}
+                        >
+                            <MenuItem value={MAP_WIDE_VALUE}>Map wide</MenuItem>
+                            {focusAreas?.map((fa: FocusArea) => (
+                                <MenuItem key={fa.id} value={fa.id} disabled={!fa.isActive}>
+                                    {fa.name}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                </Box>
+
+                <Box sx={{ flex: 1, overflowY: 'auto', position: 'relative' }}>
+                    {isLoadingLayers && (
+                        <Box sx={{ p: 2 }}>
+                            <Typography variant="body2" color="text.secondary">
+                                Loading exposure layers...
+                            </Typography>
+                        </Box>
+                    )}
+
+                    {!isLoadingLayers && Object.keys(groupedLayers).length === 0 && (
+                        <Box sx={{ p: 2 }}>
+                            <Typography variant="body2" color="text.secondary">
+                                No exposure layers found
+                            </Typography>
+                        </Box>
+                    )}
+
+                    {Object.entries(groupedLayers).map(([groupId, groupData]) => (
+                        <ExposureGroup
+                            key={groupId}
+                            groupName={groupData.name}
+                            layers={groupData.layers}
+                            isExpanded={expandedGroups.has(groupData.name)}
+                            selectedExposureLayerIds={selectedExposureLayerIds}
+                            onToggleGroup={toggleGroup}
+                            onToggleLayer={toggleExposureLayer}
+                            disabled={isMutating}
+                        />
+                    ))}
+                </Box>
             </Box>
-
-            <Box sx={{ flex: 1, overflowY: 'auto', position: 'relative' }}>
-                {isLoadingLayers && (
-                    <Box sx={{ p: 2 }}>
-                        <Typography variant="body2" color="text.secondary">
-                            Loading exposure layers...
-                        </Typography>
-                    </Box>
-                )}
-
-                {!isLoadingLayers && Object.keys(groupedLayers).length === 0 && (
-                    <Box sx={{ p: 2 }}>
-                        <Typography variant="body2" color="text.secondary">
-                            No exposure layers found
-                        </Typography>
-                    </Box>
-                )}
-
-                {Object.entries(groupedLayers).map(([groupId, groupData]) => (
-                    <ExposureGroup
-                        key={groupId}
-                        groupName={groupData.name}
-                        layers={groupData.layers}
-                        isExpanded={expandedGroups.has(groupData.name)}
-                        selectedExposureLayerIds={selectedExposureLayerIds}
-                        onToggleGroup={toggleGroup}
-                        onToggleLayer={toggleExposureLayer}
-                    />
-                ))}
-            </Box>
-        </Box>
+            <Portal>
+                <Snackbar
+                    open={!!mutationError}
+                    autoHideDuration={6000}
+                    onClose={() => setMutationError(null)}
+                    anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                >
+                    <Alert onClose={() => setMutationError(null)} severity="error" sx={{ width: '100%' }}>
+                        {mutationError}
+                    </Alert>
+                </Snackbar>
+            </Portal>
+        </>
     );
 };
 

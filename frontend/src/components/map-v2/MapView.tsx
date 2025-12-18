@@ -3,7 +3,7 @@ import { Box } from '@mui/material';
 import type { MapRef, ViewStateChangeEvent } from 'react-map-gl/maplibre';
 import type { MapMouseEvent } from 'maplibre-gl';
 import Map, { Marker } from 'react-map-gl/maplibre';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueries } from '@tanstack/react-query';
 
 import 'maplibre-gl/dist/maplibre-gl.css';
 import './mapbox-draw-maplibre.css';
@@ -24,9 +24,24 @@ import { useAssetTypeIcons } from '@/hooks/useAssetTypeIcons';
 import { useActiveScenario } from '@/hooks/useActiveScenario';
 import { useScenarioAssets } from '@/hooks/useScenarioAssets';
 import { fetchAssetCategories } from '@/api/asset-categories';
-import { fetchExposureLayers } from '@/api/exposure-layers';
+import { fetchScenarioAssetTypes } from '@/api/scenario-asset-types';
 import { useRoadRouteLazyQuery, type RoadRouteInputParams } from '@/api/utilities';
 import type { Asset } from '@/api/assets-by-type';
+import type { ScenarioAssetCategory } from '@/api/scenario-asset-types';
+
+const extractVisibleAssetTypeIds = (categories: ScenarioAssetCategory[]): string[] => {
+    const ids: string[] = [];
+    for (const category of categories) {
+        for (const subCategory of category.subCategories ?? []) {
+            for (const assetType of subCategory.assetTypes ?? []) {
+                if (assetType.isActive) {
+                    ids.push(assetType.id);
+                }
+            }
+        }
+    }
+    return ids;
+};
 
 const MapView = () => {
     const mapRef = useRef<MapRef>(null);
@@ -36,7 +51,6 @@ const MapView = () => {
     const [mapStylePanelOpen, setMapStylePanelOpen] = useState(false);
     const [assetInfoPanelOpen, setAssetInfoPanelOpen] = useState(false);
     const [activePanelView, setActivePanelView] = useState<string | null>('focus-area');
-    const [selectedExposureLayerIds, setSelectedExposureLayerIds] = useState<Record<string, boolean>>({});
     const [selectedUtilityIds, setSelectedUtilityIds] = useState<Record<string, boolean>>({});
     const [selectedElement, setSelectedElement] = useState<Asset | null>(null);
     const [previousPanelView, setPreviousPanelView] = useState<string | null>('focus-area');
@@ -102,12 +116,6 @@ const MapView = () => {
         staleTime: 5 * 60 * 1000,
     });
 
-    const { data: exposureLayers } = useQuery({
-        queryKey: ['exposureLayers'],
-        queryFn: fetchExposureLayers,
-        staleTime: 5 * 60 * 1000,
-    });
-
     const [getRoadRoute, { data: roadRouteQueryData, loading: roadRouteLoading, error: roadRouteError }] = useRoadRouteLazyQuery();
 
     const isRoadRouteEnabled = selectedUtilityIds['road-route'] ?? false;
@@ -126,11 +134,74 @@ const MapView = () => {
         }
     }, [roadRouteStart, roadRouteEnd, roadRouteVehicle, isRoadRouteEnabled, getRoadRoute]);
 
-    const { assets } = useScenarioAssets({
+    const { assets: allAssets } = useScenarioAssets({
         scenarioId,
         excludeMapWide: !mapWideVisible,
         iconMap,
     });
+
+    const isInFocusAreaPanel = activePanelView === 'focus-area';
+
+    const activeFocusAreaIds = useMemo(() => {
+        if (!focusAreas) {
+            return [];
+        }
+        return focusAreas.filter((fa) => fa.isActive).map((fa) => fa.id);
+    }, [focusAreas]);
+
+    const assetTypeQueryConfigs = useMemo(() => {
+        if (!scenarioId) {
+            return [];
+        }
+
+        if (isInFocusAreaPanel) {
+            const configs = [];
+            if (mapWideVisible) {
+                configs.push({
+                    queryKey: ['scenarioAssetTypes', scenarioId, null],
+                    queryFn: () => fetchScenarioAssetTypes(scenarioId, null),
+                    staleTime: 0,
+                });
+            }
+            activeFocusAreaIds.forEach((faId) => {
+                configs.push({
+                    queryKey: ['scenarioAssetTypes', scenarioId, faId],
+                    queryFn: () => fetchScenarioAssetTypes(scenarioId, faId),
+                    staleTime: 0,
+                });
+            });
+            return configs;
+        }
+
+        return [
+            {
+                queryKey: ['scenarioAssetTypes', scenarioId, selectedFocusAreaId],
+                queryFn: () => fetchScenarioAssetTypes(scenarioId, selectedFocusAreaId),
+                staleTime: 0,
+            },
+        ];
+    }, [scenarioId, isInFocusAreaPanel, mapWideVisible, activeFocusAreaIds, selectedFocusAreaId]);
+
+    const assetTypeQueries = useQueries({
+        queries: assetTypeQueryConfigs.length > 0 ? assetTypeQueryConfigs : [],
+    });
+
+    const visibleAssetTypeIds = useMemo(() => {
+        const ids = new Set<string>();
+        for (const query of assetTypeQueries) {
+            if (query.data && Array.isArray(query.data)) {
+                extractVisibleAssetTypeIds(query.data).forEach((id) => ids.add(id));
+            }
+        }
+        return ids;
+    }, [assetTypeQueries]);
+
+    const assets = useMemo(() => {
+        if (visibleAssetTypeIds.size === 0) {
+            return [];
+        }
+        return allAssets.filter((asset) => visibleAssetTypeIds.has(asset.type));
+    }, [allAssets, visibleAssetTypeIds]);
 
     usePreloadAssetIcons(assets);
 
@@ -325,13 +396,7 @@ const MapView = () => {
             <MapPanels
                 activeView={activePanelView}
                 onViewChange={handleViewChange}
-                selectedExposureLayerIds={selectedExposureLayerIds}
-                onExposureLayerToggle={(layerId, enabled) => {
-                    setSelectedExposureLayerIds((prev) => ({
-                        ...prev,
-                        [layerId]: enabled,
-                    }));
-                }}
+                selectedFocusAreaId={selectedFocusAreaId}
                 selectedUtilityIds={selectedUtilityIds}
                 onUtilityToggle={(utilityId, enabled) => {
                     setSelectedUtilityIds((prev) => ({
@@ -396,7 +461,9 @@ const MapView = () => {
                 >
                     {mapReady && (
                         <>
-                            <FocusAreaMask geometry={focusAreas?.find((fa) => fa.id === selectedFocusAreaId)?.geometry ?? null} />
+                            {!isInFocusAreaPanel && selectedFocusAreaId && (
+                                <FocusAreaMask geometry={focusAreas?.find((fa) => fa.id === selectedFocusAreaId)?.geometry ?? null} />
+                            )}
                             <AssetLayers
                                 assets={assets}
                                 selectedElements={selectedElement ? [selectedElement] : []}
@@ -404,13 +471,14 @@ const MapView = () => {
                                 mapReady={mapReady}
                                 assetCategories={assetCategories}
                             />
-                            {exposureLayers && (
-                                <ExposureLayers
-                                    exposureLayers={exposureLayers.featureCollection}
-                                    selectedExposureLayerIds={selectedExposureLayerIds}
-                                    mapReady={mapReady}
-                                />
-                            )}
+                            <ExposureLayers
+                                scenarioId={scenarioId}
+                                selectedFocusAreaId={selectedFocusAreaId}
+                                mapReady={mapReady}
+                                isInFocusAreaPanel={isInFocusAreaPanel}
+                                mapWideVisible={mapWideVisible}
+                                activeFocusAreaIds={activeFocusAreaIds}
+                            />
                             <UtilitiesLayers utilities={mergedUtilities} selectedUtilityIds={selectedUtilityIds} mapReady={mapReady} />
                             {roadRouteStart && (
                                 <Marker longitude={roadRouteStart.lng} latitude={roadRouteStart.lat} anchor="bottom">
