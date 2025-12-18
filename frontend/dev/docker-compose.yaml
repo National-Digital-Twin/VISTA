@@ -1,4 +1,3 @@
-version: '3'
 services:
     zookeeper:
         container_name: vista-zookeeper
@@ -56,16 +55,16 @@ services:
                 condition: service_healthy
         volumes:
             - ./data/ontology.ttl:/work/ontology.ttl
-    api:
-        container_name: smart-cache-vista-api
-        image: smart-cache-vista-api
-        ports:
-            - 4001:4001
-        environment:
-            JENA_URL: secure-agent-graph
-            JENA_PORT: 3030
-            PORT: 4001
-            JENA_DATASET: knowledge
+    # api:
+    #     container_name: smart-cache-vista-api
+    #     image: smart-cache-vista-api
+    #     ports:
+    #         - 4001:4001
+    #     environment:
+    #         JENA_URL: secure-agent-graph
+    #         JENA_PORT: 3030
+    #         PORT: 4001
+    #         JENA_DATASET: knowledge
     transparent-proxy:
         container_name: vista-transparent-proxy
         image: vista-transparent-proxy
@@ -79,7 +78,7 @@ services:
         depends_on:
             - secure-agent-graph
     postgres:
-        image: postgis/postgis:latest
+        image: postgis/postgis:16-3.4
         container_name: postgis
         environment:
             POSTGRES_USER: postgres
@@ -90,6 +89,7 @@ services:
     vista-python-api:
         container_name: vista-python-api
         image: vista-python-api
+        pull_policy: build
         env_file:
             - '../../backend/.env.docker'
         build:
@@ -99,6 +99,7 @@ services:
             - 8000:8000
     migrate-and-seed:
         image: vista-python-api
+        pull_policy: build
         command: ['/vista-python-api/src/api/db_setup.sh']
         env_file:
             - '../../backend/.env.docker'

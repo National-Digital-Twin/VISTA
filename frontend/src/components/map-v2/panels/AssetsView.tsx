@@ -23,6 +23,7 @@ import {
 type AssetsViewProps = {
     readonly onClose: () => void;
     readonly scenarioId?: string;
+    readonly selectedFocusAreaId?: string | null;
     readonly onFocusAreaSelect?: (focusAreaId: string | null) => void;
 };
 
@@ -88,14 +89,14 @@ function AssetTypeList({ assetTypes, onToggle, disabled, dataSourceMap }: AssetT
     );
 }
 
-const AssetsView = ({ onClose, scenarioId, onFocusAreaSelect }: AssetsViewProps) => {
+const AssetsView = ({ onClose, scenarioId, selectedFocusAreaId, onFocusAreaSelect }: AssetsViewProps) => {
     const [searchQuery, setSearchQuery] = useState('');
     const deferredSearchQuery = useDeferredValue(searchQuery);
     const [expandedSubCategories, setExpandedSubCategories] = useState<Set<string>>(new Set());
-    const [selectedFocusAreaId, setSelectedFocusAreaId] = useState<string | null>(null);
     const [mutationError, setMutationError] = useState<string | null>(null);
     const queryClient = useQueryClient();
     const { dataSourceMap } = useDataSources();
+    const currentFocusAreaId = selectedFocusAreaId ?? null;
 
     const { data: focusAreas, isLoading: isLoadingFocusAreas } = useQuery({
         queryKey: ['focusAreas', scenarioId],
@@ -109,8 +110,8 @@ const AssetsView = ({ onClose, scenarioId, onFocusAreaSelect }: AssetsViewProps)
         isLoading: isLoadingCategories,
         isError: isErrorCategories,
     } = useQuery({
-        queryKey: ['scenarioAssetTypes', scenarioId, selectedFocusAreaId],
-        queryFn: () => fetchScenarioAssetTypes(scenarioId!, selectedFocusAreaId),
+        queryKey: ['scenarioAssetTypes', scenarioId, currentFocusAreaId],
+        queryFn: () => fetchScenarioAssetTypes(scenarioId!, currentFocusAreaId),
         enabled: !!scenarioId,
         staleTime: 5 * 60 * 1000,
     });
@@ -119,7 +120,7 @@ const AssetsView = ({ onClose, scenarioId, onFocusAreaSelect }: AssetsViewProps)
         mutationFn: (data: { assetTypeId: string; isActive: boolean }) =>
             toggleAssetTypeVisibility(scenarioId!, {
                 assetTypeId: data.assetTypeId,
-                focusAreaId: selectedFocusAreaId,
+                focusAreaId: currentFocusAreaId,
                 isActive: data.isActive,
             }),
         onSuccess: () => {
@@ -132,7 +133,7 @@ const AssetsView = ({ onClose, scenarioId, onFocusAreaSelect }: AssetsViewProps)
     });
 
     const clearAllMutation = useMutation({
-        mutationFn: () => clearAllAssetTypeVisibility(scenarioId!, selectedFocusAreaId),
+        mutationFn: () => clearAllAssetTypeVisibility(scenarioId!, currentFocusAreaId),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['scenarioAssetTypes', scenarioId] });
             queryClient.invalidateQueries({ queryKey: ['scenarioAssets', scenarioId] });
@@ -149,10 +150,10 @@ const AssetsView = ({ onClose, scenarioId, onFocusAreaSelect }: AssetsViewProps)
             return;
         }
 
-        if (lastFocusAreaIdRef.current === selectedFocusAreaId) {
+        if (lastFocusAreaIdRef.current === currentFocusAreaId) {
             return;
         }
-        lastFocusAreaIdRef.current = selectedFocusAreaId;
+        lastFocusAreaIdRef.current = currentFocusAreaId;
 
         const visibleSubCategoryIds = new Set<string>();
         for (const category of assetCategories) {
@@ -164,13 +165,12 @@ const AssetsView = ({ onClose, scenarioId, onFocusAreaSelect }: AssetsViewProps)
             }
         }
         setExpandedSubCategories(visibleSubCategoryIds);
-    }, [assetCategories, selectedFocusAreaId]);
+    }, [assetCategories, currentFocusAreaId]);
 
     const handleFocusAreaChange = useCallback(
         (event: SelectChangeEvent<string>) => {
             const value = event.target.value;
             const newFocusAreaId = value === MAP_WIDE_VALUE ? null : value;
-            setSelectedFocusAreaId(newFocusAreaId);
             onFocusAreaSelect?.(newFocusAreaId);
         },
         [onFocusAreaSelect],
@@ -240,7 +240,7 @@ const AssetsView = ({ onClose, scenarioId, onFocusAreaSelect }: AssetsViewProps)
             .filter((category): category is ScenarioAssetCategory => category !== null);
     }, [assetCategories, deferredSearchQuery, filterSubCategories]);
 
-    const focusAreaSelectValue = selectedFocusAreaId ?? MAP_WIDE_VALUE;
+    const focusAreaSelectValue = currentFocusAreaId ?? MAP_WIDE_VALUE;
     const isMutating = visibilityMutation.isPending || clearAllMutation.isPending;
 
     if (!scenarioId) {

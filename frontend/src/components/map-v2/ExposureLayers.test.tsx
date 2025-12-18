@@ -1,16 +1,16 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from '@mui/material/styles';
-import type { FeatureCollection } from 'geojson';
+import type { FeatureCollection, Geometry } from 'geojson';
 
 import ExposureLayers from './ExposureLayers';
 import theme from '@/theme';
+import { fetchExposureLayers, type ExposureLayersResponse } from '@/api/exposure-layers';
 
-const mockUseMap = vi.fn();
 vi.mock('react-map-gl/maplibre', () => ({
-    useMap: () => mockUseMap(),
+    useMap: () => ({}),
     Source: ({ children, data }: { children: React.ReactNode; data: FeatureCollection }) => (
         <div data-testid="source" data-features-count={data.features.length}>
             {children}
@@ -19,56 +19,67 @@ vi.mock('react-map-gl/maplibre', () => ({
     Layer: ({ id }: { id: string }) => <div data-testid={`layer-${id}`} />,
 }));
 
+vi.mock('@/api/exposure-layers', () => ({
+    fetchExposureLayers: vi.fn(),
+}));
+
+const mockedFetchExposureLayers = vi.mocked(fetchExposureLayers);
+
 describe('ExposureLayers', () => {
-    const mockPolygonFeature: FeatureCollection = {
-        type: 'FeatureCollection',
-        features: [
-            {
-                type: 'Feature',
-                id: '35a910f3-f611-4096-ac0b-0928c5612e32',
-                geometry: {
-                    type: 'Polygon',
-                    coordinates: [
-                        [
-                            [-1.4, 50.67],
-                            [-1.4, 50.68],
-                            [-1.39, 50.68],
-                            [-1.39, 50.67],
-                            [-1.4, 50.67],
-                        ],
-                    ],
-                },
-                properties: {
-                    name: 'Caul Bourne',
-                },
-            },
-            {
-                type: 'Feature',
-                id: 'e34e3c22-a28f-45e5-99b5-a24b55ba875f',
-                geometry: {
-                    type: 'Polygon',
-                    coordinates: [
-                        [
-                            [-1.3, 50.66],
-                            [-1.3, 50.67],
-                            [-1.29, 50.67],
-                            [-1.29, 50.66],
-                            [-1.3, 50.66],
-                        ],
-                    ],
-                },
-                properties: {
-                    name: 'River Medina',
-                },
-            },
+    const mockGeometry1: Geometry = {
+        type: 'Polygon',
+        coordinates: [
+            [
+                [-1.4, 50.67],
+                [-1.4, 50.68],
+                [-1.39, 50.68],
+                [-1.39, 50.67],
+                [-1.4, 50.67],
+            ],
         ],
     };
 
-    const defaultProps = {
-        exposureLayers: mockPolygonFeature,
-        selectedExposureLayerIds: {} as Record<string, boolean>,
-        mapReady: true,
+    const mockGeometry2: Geometry = {
+        type: 'Polygon',
+        coordinates: [
+            [
+                [-1.3, 50.66],
+                [-1.3, 50.67],
+                [-1.29, 50.67],
+                [-1.29, 50.66],
+                [-1.3, 50.66],
+            ],
+        ],
     };
+
+    const createMockResponse = (layers: Array<{ id: string; name: string; isActive: boolean; geometry: Geometry }>): ExposureLayersResponse => ({
+        featureCollection: {
+            type: 'FeatureCollection',
+            features: layers.map((layer) => ({
+                type: 'Feature',
+                id: layer.id,
+                geometry: layer.geometry,
+                properties: {
+                    name: layer.name,
+                    groupId: 'group-1',
+                    groupName: 'Floods',
+                    isActive: layer.isActive,
+                },
+            })),
+        },
+        groups: [
+            {
+                id: 'group-1',
+                name: 'Floods',
+                exposureLayers: layers.map((layer) => ({
+                    id: layer.id,
+                    name: layer.name,
+                    geometry: layer.geometry,
+                    isActive: layer.isActive,
+                })),
+            },
+        ],
+    });
 
     let queryClient: QueryClient;
 
@@ -81,7 +92,6 @@ describe('ExposureLayers', () => {
             },
         });
         vi.clearAllMocks();
-        mockUseMap.mockReturnValue({});
     });
 
     const renderWithProviders = (component: React.ReactElement) => {
@@ -94,254 +104,219 @@ describe('ExposureLayers', () => {
 
     describe('Rendering', () => {
         it('returns null when map is not ready', () => {
-            const { container } = renderWithProviders(<ExposureLayers {...defaultProps} mapReady={false} />);
+            const { container } = renderWithProviders(<ExposureLayers scenarioId="scenario-1" mapReady={false} />);
             expect(container.firstChild).toBeNull();
         });
 
-        it('returns null when there are no selected layers', () => {
-            const { container } = renderWithProviders(<ExposureLayers {...defaultProps} />);
+        it('returns null when scenarioId is not provided', () => {
+            const { container } = renderWithProviders(<ExposureLayers mapReady={true} />);
             expect(container.firstChild).toBeNull();
         });
 
-        it('returns null when filtered features is empty', () => {
-            const { container } = renderWithProviders(<ExposureLayers {...defaultProps} selectedExposureLayerIds={{ 'non-existent-id': true }} />);
-            expect(container.firstChild).toBeNull();
-        });
+        it('renders Source and Layers when data is loaded with active layers', async () => {
+            mockedFetchExposureLayers.mockResolvedValue(createMockResponse([{ id: 'layer-1', name: 'Caul Bourne', isActive: true, geometry: mockGeometry1 }]));
 
-        it('renders Source and Layers when map is ready and layers are selected', () => {
-            renderWithProviders(<ExposureLayers {...defaultProps} selectedExposureLayerIds={{ '35a910f3-f611-4096-ac0b-0928c5612e32': true }} />);
-            expect(screen.getByTestId('source')).toBeInTheDocument();
+            renderWithProviders(<ExposureLayers scenarioId="scenario-1" mapReady={true} />);
+
+            await waitFor(() => {
+                expect(screen.getByTestId('source')).toBeInTheDocument();
+            });
             expect(screen.getByTestId('layer-map-v2-exposure-layer')).toBeInTheDocument();
             expect(screen.getByTestId('layer-map-v2-exposure-layer-outline')).toBeInTheDocument();
+        });
+
+        it('returns null when no layers are active', async () => {
+            mockedFetchExposureLayers.mockResolvedValue(createMockResponse([{ id: 'layer-1', name: 'Caul Bourne', isActive: false, geometry: mockGeometry1 }]));
+
+            const { container } = renderWithProviders(<ExposureLayers scenarioId="scenario-1" mapReady={true} />);
+
+            await waitFor(() => {
+                expect(mockedFetchExposureLayers).toHaveBeenCalled();
+            });
+
+            await waitFor(() => {
+                expect(container.querySelector('[data-testid="source"]')).toBeNull();
+            });
         });
     });
 
     describe('Layer Filtering', () => {
-        it('filters layers by selected exposure layer IDs', () => {
-            renderWithProviders(
-                <ExposureLayers
-                    {...defaultProps}
-                    selectedExposureLayerIds={{ '35a910f3-f611-4096-ac0b-0928c5612e32': true, 'e34e3c22-a28f-45e5-99b5-a24b55ba875f': false }}
-                />,
+        it('only renders active layers', async () => {
+            mockedFetchExposureLayers.mockResolvedValue(
+                createMockResponse([
+                    { id: 'layer-1', name: 'Caul Bourne', isActive: true, geometry: mockGeometry1 },
+                    { id: 'layer-2', name: 'River Medina', isActive: false, geometry: mockGeometry2 },
+                ]),
             );
-            const source = screen.getByTestId('source');
-            expect(source).toHaveAttribute('data-features-count', '1');
+
+            renderWithProviders(<ExposureLayers scenarioId="scenario-1" mapReady={true} />);
+
+            await waitFor(() => {
+                const source = screen.getByTestId('source');
+                expect(source).toHaveAttribute('data-features-count', '1');
+            });
         });
 
-        it('renders all selected layers', () => {
-            renderWithProviders(
-                <ExposureLayers
-                    {...defaultProps}
-                    selectedExposureLayerIds={{ '35a910f3-f611-4096-ac0b-0928c5612e32': true, 'e34e3c22-a28f-45e5-99b5-a24b55ba875f': true }}
-                />,
+        it('renders all active layers', async () => {
+            mockedFetchExposureLayers.mockResolvedValue(
+                createMockResponse([
+                    { id: 'layer-1', name: 'Caul Bourne', isActive: true, geometry: mockGeometry1 },
+                    { id: 'layer-2', name: 'River Medina', isActive: true, geometry: mockGeometry2 },
+                ]),
             );
-            const source = screen.getByTestId('source');
-            expect(source).toHaveAttribute('data-features-count', '2');
-        });
 
-        it('handles multiple layers of the same type', () => {
-            const multipleLayers: FeatureCollection = {
-                type: 'FeatureCollection',
-                features: [
-                    ...mockPolygonFeature.features,
-                    {
-                        type: 'Feature',
-                        id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
-                        geometry: {
-                            type: 'Polygon',
-                            coordinates: [
-                                [
-                                    [-1.2, 50.65],
-                                    [-1.2, 50.66],
-                                    [-1.19, 50.66],
-                                    [-1.19, 50.65],
-                                    [-1.2, 50.65],
-                                ],
-                            ],
-                        },
-                        properties: {
-                            name: 'Layer 3',
-                        },
-                    },
-                ],
-            };
+            renderWithProviders(<ExposureLayers scenarioId="scenario-1" mapReady={true} />);
 
-            renderWithProviders(
-                <ExposureLayers
-                    exposureLayers={multipleLayers}
-                    selectedExposureLayerIds={{
-                        '35a910f3-f611-4096-ac0b-0928c5612e32': true,
-                        'e34e3c22-a28f-45e5-99b5-a24b55ba875f': true,
-                        'a1b2c3d4-e5f6-7890-abcd-ef1234567890': true,
-                    }}
-                    mapReady={true}
-                />,
-            );
-            const source = screen.getByTestId('source');
-            expect(source).toHaveAttribute('data-features-count', '3');
+            await waitFor(() => {
+                const source = screen.getByTestId('source');
+                expect(source).toHaveAttribute('data-features-count', '2');
+            });
         });
     });
 
-    describe('Feature ID Handling', () => {
-        it('handles features with id property', () => {
-            renderWithProviders(<ExposureLayers {...defaultProps} selectedExposureLayerIds={{ '35a910f3-f611-4096-ac0b-0928c5612e32': true }} />);
-            expect(screen.getByTestId('source')).toBeInTheDocument();
+    describe('Focus Area Selection', () => {
+        it('fetches data for selected focus area', async () => {
+            mockedFetchExposureLayers.mockResolvedValue(createMockResponse([{ id: 'layer-1', name: 'Caul Bourne', isActive: true, geometry: mockGeometry1 }]));
+
+            renderWithProviders(<ExposureLayers scenarioId="scenario-1" selectedFocusAreaId="focus-area-1" mapReady={true} />);
+
+            await waitFor(() => {
+                expect(mockedFetchExposureLayers).toHaveBeenCalledWith('scenario-1', 'focus-area-1');
+            });
         });
 
-        it('handles features with id in properties', () => {
-            const featureWithPropertyId: FeatureCollection = {
-                type: 'FeatureCollection',
-                features: [
-                    {
-                        type: 'Feature',
-                        properties: {
-                            id: '11111111-2222-3333-4444-555555555555',
-                            name: 'Test Layer',
-                        },
-                        geometry: {
-                            type: 'Polygon',
-                            coordinates: [
-                                [
-                                    [-1.4, 50.67],
-                                    [-1.4, 50.68],
-                                    [-1.39, 50.68],
-                                    [-1.39, 50.67],
-                                    [-1.4, 50.67],
-                                ],
-                            ],
-                        },
-                    },
-                ],
-            };
+        it('fetches map-wide data when no focus area is selected', async () => {
+            mockedFetchExposureLayers.mockResolvedValue(createMockResponse([{ id: 'layer-1', name: 'Caul Bourne', isActive: true, geometry: mockGeometry1 }]));
 
-            renderWithProviders(
-                <ExposureLayers
-                    exposureLayers={featureWithPropertyId}
-                    selectedExposureLayerIds={{ '11111111-2222-3333-4444-555555555555': true }}
-                    mapReady={true}
-                />,
-            );
-            expect(screen.getByTestId('source')).toBeInTheDocument();
-        });
+            renderWithProviders(<ExposureLayers scenarioId="scenario-1" selectedFocusAreaId={null} mapReady={true} />);
 
-        it('filters out features without IDs', () => {
-            const featureWithoutId: FeatureCollection = {
-                type: 'FeatureCollection',
-                features: [
-                    {
-                        type: 'Feature',
-                        properties: {
-                            name: 'Test Layer',
-                        },
-                        geometry: {
-                            type: 'Polygon',
-                            coordinates: [
-                                [
-                                    [-1.4, 50.67],
-                                    [-1.4, 50.68],
-                                    [-1.39, 50.68],
-                                    [-1.39, 50.67],
-                                    [-1.4, 50.67],
-                                ],
-                            ],
-                        },
-                    },
-                ],
-            };
-
-            const { container } = renderWithProviders(
-                <ExposureLayers exposureLayers={featureWithoutId} selectedExposureLayerIds={{ 'some-id': true }} mapReady={true} />,
-            );
-
-            expect(container.firstChild).toBeNull();
+            await waitFor(() => {
+                expect(mockedFetchExposureLayers).toHaveBeenCalledWith('scenario-1', null);
+            });
         });
     });
 
-    describe('MultiPolygon Support', () => {
-        it('handles MultiPolygon geometries', () => {
-            const multiPolygonFeature: FeatureCollection = {
-                type: 'FeatureCollection',
-                features: [
-                    {
-                        type: 'Feature',
-                        id: 'f9e8d7c6-b5a4-3210-9876-543210fedcba',
-                        geometry: {
-                            type: 'MultiPolygon',
-                            coordinates: [
-                                [
-                                    [
-                                        [-1.4, 50.67],
-                                        [-1.4, 50.68],
-                                        [-1.39, 50.68],
-                                        [-1.39, 50.67],
-                                        [-1.4, 50.67],
-                                    ],
-                                ],
-                            ],
-                        },
-                        properties: {
-                            name: 'MultiPolygon Layer',
-                        },
-                    },
-                ],
-            };
+    describe('Focus Area Panel Aggregation', () => {
+        it('fetches data for all active focus areas when in focus area panel', async () => {
+            mockedFetchExposureLayers.mockResolvedValue(createMockResponse([{ id: 'layer-1', name: 'Caul Bourne', isActive: true, geometry: mockGeometry1 }]));
 
             renderWithProviders(
                 <ExposureLayers
-                    exposureLayers={multiPolygonFeature}
-                    selectedExposureLayerIds={{ 'f9e8d7c6-b5a4-3210-9876-543210fedcba': true }}
+                    scenarioId="scenario-1"
                     mapReady={true}
+                    isInFocusAreaPanel={true}
+                    mapWideVisible={true}
+                    activeFocusAreaIds={['fa-1', 'fa-2']}
                 />,
             );
-            expect(screen.getByTestId('source')).toBeInTheDocument();
+
+            await waitFor(() => {
+                expect(mockedFetchExposureLayers).toHaveBeenCalledWith('scenario-1', null);
+                expect(mockedFetchExposureLayers).toHaveBeenCalledWith('scenario-1', 'fa-1');
+                expect(mockedFetchExposureLayers).toHaveBeenCalledWith('scenario-1', 'fa-2');
+            });
+        });
+
+        it('does not fetch map-wide when mapWideVisible is false', async () => {
+            mockedFetchExposureLayers.mockResolvedValue(createMockResponse([{ id: 'layer-1', name: 'Caul Bourne', isActive: true, geometry: mockGeometry1 }]));
+
+            renderWithProviders(
+                <ExposureLayers scenarioId="scenario-1" mapReady={true} isInFocusAreaPanel={true} mapWideVisible={false} activeFocusAreaIds={['fa-1']} />,
+            );
+
+            await waitFor(() => {
+                expect(mockedFetchExposureLayers).toHaveBeenCalledWith('scenario-1', 'fa-1');
+                expect(mockedFetchExposureLayers).not.toHaveBeenCalledWith('scenario-1', null);
+            });
+        });
+
+        it('aggregates active layers from multiple focus areas', async () => {
+            mockedFetchExposureLayers
+                .mockResolvedValueOnce(createMockResponse([{ id: 'layer-1', name: 'Caul Bourne', isActive: true, geometry: mockGeometry1 }]))
+                .mockResolvedValueOnce(createMockResponse([{ id: 'layer-2', name: 'River Medina', isActive: true, geometry: mockGeometry2 }]));
+
+            renderWithProviders(
+                <ExposureLayers
+                    scenarioId="scenario-1"
+                    mapReady={true}
+                    isInFocusAreaPanel={true}
+                    mapWideVisible={false}
+                    activeFocusAreaIds={['fa-1', 'fa-2']}
+                />,
+            );
+
+            await waitFor(() => {
+                const source = screen.getByTestId('source');
+                expect(source).toHaveAttribute('data-features-count', '2');
+            });
         });
     });
 
     describe('Edge Cases', () => {
-        it('handles empty exposure layers', () => {
-            const emptyLayers: FeatureCollection = {
-                type: 'FeatureCollection',
-                features: [],
-            };
+        it('handles empty response', async () => {
+            mockedFetchExposureLayers.mockResolvedValue({
+                featureCollection: { type: 'FeatureCollection', features: [] },
+                groups: [],
+            });
 
-            const { container } = renderWithProviders(
-                <ExposureLayers exposureLayers={emptyLayers} selectedExposureLayerIds={{ 'any-id': true }} mapReady={true} />,
-            );
-            expect(container.firstChild).toBeNull();
+            const { container } = renderWithProviders(<ExposureLayers scenarioId="scenario-1" mapReady={true} />);
+
+            await waitFor(() => {
+                expect(mockedFetchExposureLayers).toHaveBeenCalled();
+            });
+
+            await waitFor(() => {
+                expect(container.querySelector('[data-testid="source"]')).toBeNull();
+            });
         });
 
-        it('handles features with empty properties', () => {
-            const featureWithEmptyProperties: FeatureCollection = {
-                type: 'FeatureCollection',
-                features: [
-                    {
-                        type: 'Feature',
-                        id: '22222222-3333-4444-5555-666666666666',
-                        geometry: {
-                            type: 'Polygon',
-                            coordinates: [
-                                [
-                                    [-1.4, 50.67],
-                                    [-1.4, 50.68],
-                                    [-1.39, 50.68],
-                                    [-1.39, 50.67],
-                                    [-1.4, 50.67],
-                                ],
-                            ],
+        it('handles features without IDs', async () => {
+            mockedFetchExposureLayers.mockResolvedValue({
+                featureCollection: {
+                    type: 'FeatureCollection',
+                    features: [
+                        {
+                            type: 'Feature',
+                            geometry: mockGeometry1,
+                            properties: { name: 'Test Layer', isActive: true },
                         },
-                        properties: {},
-                    },
-                ],
-            };
+                    ],
+                },
+                groups: [],
+            });
 
-            renderWithProviders(
-                <ExposureLayers
-                    exposureLayers={featureWithEmptyProperties}
-                    selectedExposureLayerIds={{ '22222222-3333-4444-5555-666666666666': true }}
-                    mapReady={true}
-                />,
-            );
-            expect(screen.getByTestId('source')).toBeInTheDocument();
+            const { container } = renderWithProviders(<ExposureLayers scenarioId="scenario-1" mapReady={true} />);
+
+            await waitFor(() => {
+                expect(mockedFetchExposureLayers).toHaveBeenCalled();
+            });
+
+            await waitFor(() => {
+                expect(container.querySelector('[data-testid="source"]')).toBeNull();
+            });
+        });
+
+        it('uses properties.id when feature.id is not set', async () => {
+            mockedFetchExposureLayers.mockResolvedValue({
+                featureCollection: {
+                    type: 'FeatureCollection',
+                    features: [
+                        {
+                            type: 'Feature',
+                            geometry: mockGeometry1,
+                            properties: { id: 'prop-id-1', name: 'Test Layer', isActive: true },
+                        },
+                    ],
+                },
+                groups: [],
+            });
+
+            renderWithProviders(<ExposureLayers scenarioId="scenario-1" mapReady={true} />);
+
+            await waitFor(() => {
+                const source = screen.getByTestId('source');
+                expect(source).toHaveAttribute('data-features-count', '1');
+            });
         });
     });
 });

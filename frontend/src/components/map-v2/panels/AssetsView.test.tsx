@@ -247,9 +247,10 @@ describe('AssetsView', () => {
             expect(screen.getByRole('option', { name: 'Area 1' })).toBeInTheDocument();
         });
 
-        it('refetches asset types when focus area changes', async () => {
+        it('calls onFocusAreaSelect when focus area changes', async () => {
+            const onFocusAreaSelect = vi.fn();
             setupMocks();
-            renderWithProviders(<AssetsView {...defaultProps} />);
+            renderWithProviders(<AssetsView {...defaultProps} onFocusAreaSelect={onFocusAreaSelect} />);
 
             await waitFor(() => {
                 expect(mockedFetchFocusAreas).toHaveBeenCalled();
@@ -271,6 +272,15 @@ describe('AssetsView', () => {
 
             const area1Option = screen.getByRole('option', { name: 'Area 1' });
             fireEvent.click(area1Option);
+
+            await waitFor(() => {
+                expect(onFocusAreaSelect).toHaveBeenCalledWith('focus-area-1');
+            });
+        });
+
+        it('fetches asset types for the selected focus area', async () => {
+            setupMocks();
+            renderWithProviders(<AssetsView {...defaultProps} selectedFocusAreaId="focus-area-1" />);
 
             await waitFor(() => {
                 expect(mockedFetchScenarioAssetTypes).toHaveBeenCalledWith('test-scenario-id', 'focus-area-1');

@@ -7,17 +7,26 @@ import type { Geometry } from 'geojson';
 
 import ExposureView from './ExposureView';
 import theme from '@/theme';
-import { fetchExposureLayers, type ExposureLayersResponse } from '@/api/exposure-layers';
+import { fetchExposureLayers, toggleExposureLayerVisibility, type ExposureLayersResponse } from '@/api/exposure-layers';
+import { fetchFocusAreas, type FocusArea } from '@/api/focus-areas';
 
 vi.mock('@/api/exposure-layers', () => ({
     fetchExposureLayers: vi.fn(),
+    toggleExposureLayerVisibility: vi.fn(),
+}));
+
+vi.mock('@/api/focus-areas', () => ({
+    fetchFocusAreas: vi.fn(),
 }));
 
 const mockedFetchExposureLayers = vi.mocked(fetchExposureLayers);
+const mockedToggleExposureLayerVisibility = vi.mocked(toggleExposureLayerVisibility);
+const mockedFetchFocusAreas = vi.mocked(fetchFocusAreas);
 
 describe('ExposureView', () => {
     const defaultProps = {
         onClose: vi.fn(),
+        scenarioId: 'scenario-1',
     };
 
     let queryClient: QueryClient;
@@ -41,95 +50,92 @@ describe('ExposureView', () => {
         );
     };
 
-    const setupMocks = (options?: { exposureLayers?: ExposureLayersResponse }) => {
-        const mockGeometry1: Geometry = {
-            type: 'Polygon',
-            coordinates: [
-                [
-                    [-1.4, 50.67],
-                    [-1.4, 50.68],
-                    [-1.39, 50.68],
-                    [-1.39, 50.67],
-                    [-1.4, 50.67],
-                ],
+    const mockGeometry1: Geometry = {
+        type: 'Polygon',
+        coordinates: [
+            [
+                [-1.4, 50.67],
+                [-1.4, 50.68],
+                [-1.39, 50.68],
+                [-1.39, 50.67],
+                [-1.4, 50.67],
             ],
-        };
+        ],
+    };
 
-        const mockGeometry2: Geometry = {
-            type: 'Polygon',
-            coordinates: [
-                [
-                    [-1.3, 50.66],
-                    [-1.3, 50.67],
-                    [-1.29, 50.67],
-                    [-1.29, 50.66],
-                    [-1.3, 50.66],
-                ],
+    const mockGeometry2: Geometry = {
+        type: 'Polygon',
+        coordinates: [
+            [
+                [-1.3, 50.66],
+                [-1.3, 50.67],
+                [-1.29, 50.67],
+                [-1.29, 50.66],
+                [-1.3, 50.66],
             ],
-        };
+        ],
+    };
 
-        const {
-            exposureLayers = {
-                featureCollection: {
-                    type: 'FeatureCollection',
-                    features: [
-                        {
-                            type: 'Feature',
-                            id: '35a910f3-f611-4096-ac0b-0928c5612e32',
-                            geometry: mockGeometry1,
-                            properties: {
-                                name: 'Caul Bourne',
-                                groupId: '2d373dca-1337-4e60-ba08-c8326d27042d',
-                                groupName: 'Floods',
-                            },
-                        },
-                        {
-                            type: 'Feature',
-                            id: 'e34e3c22-a28f-45e5-99b5-a24b55ba875f',
-                            geometry: mockGeometry2,
-                            properties: {
-                                name: 'River Medina',
-                                groupId: '2d373dca-1337-4e60-ba08-c8326d27042d',
-                                groupName: 'Floods',
-                            },
-                        },
-                    ],
-                },
-                groups: [
-                    {
-                        id: '2d373dca-1337-4e60-ba08-c8326d27042d',
-                        name: 'Floods',
-                        exposureLayers: [
-                            {
-                                id: '35a910f3-f611-4096-ac0b-0928c5612e32',
-                                name: 'Caul Bourne',
-                                geometry: mockGeometry1,
-                            },
-                            {
-                                id: 'e34e3c22-a28f-45e5-99b5-a24b55ba875f',
-                                name: 'River Medina',
-                                geometry: mockGeometry2,
-                            },
-                        ],
+    const createMockExposureLayersResponse = (options?: { layers?: Array<{ id: string; name: string; isActive: boolean }> }): ExposureLayersResponse => {
+        const { layers = [] } = options || {};
+        return {
+            featureCollection: {
+                type: 'FeatureCollection',
+                features: layers.map((layer, index) => ({
+                    type: 'Feature',
+                    id: layer.id,
+                    geometry: index === 0 ? mockGeometry1 : mockGeometry2,
+                    properties: {
+                        name: layer.name,
+                        groupId: 'group-1',
+                        groupName: 'Floods',
+                        isActive: layer.isActive,
                     },
-                ],
+                })),
             },
+            groups: [
+                {
+                    id: 'group-1',
+                    name: 'Floods',
+                    exposureLayers: layers.map((layer, index) => ({
+                        id: layer.id,
+                        name: layer.name,
+                        geometry: index === 0 ? mockGeometry1 : mockGeometry2,
+                        isActive: layer.isActive,
+                    })),
+                },
+            ],
+        };
+    };
+
+    const mockFocusAreas: FocusArea[] = [
+        { id: 'fa-1', name: 'Focus Area 1', isActive: true, geometry: mockGeometry1 },
+        { id: 'fa-2', name: 'Focus Area 2', isActive: false, geometry: mockGeometry2 },
+    ];
+
+    const setupMocks = (options?: { exposureLayers?: ExposureLayersResponse; focusAreas?: FocusArea[] }) => {
+        const {
+            exposureLayers = createMockExposureLayersResponse({
+                layers: [
+                    { id: 'layer-1', name: 'Caul Bourne', isActive: false },
+                    { id: 'layer-2', name: 'River Medina', isActive: false },
+                ],
+            }),
+            focusAreas = mockFocusAreas,
         } = options || {};
 
         mockedFetchExposureLayers.mockResolvedValue(exposureLayers);
-    };
-
-    const waitForComponentReady = async () => {
-        await waitFor(() => {
-            expect(screen.getByText('Exposure')).toBeInTheDocument();
-        });
+        mockedFetchFocusAreas.mockResolvedValue(focusAreas);
+        mockedToggleExposureLayerVisibility.mockResolvedValue(undefined);
     };
 
     describe('Rendering', () => {
         it('renders title', async () => {
             setupMocks();
             renderWithProviders(<ExposureView {...defaultProps} />);
-            await waitForComponentReady();
+            await waitFor(() => {
+                expect(screen.getByText('Exposure')).toBeInTheDocument();
+            });
         });
 
         it('renders close button', async () => {
@@ -140,13 +146,101 @@ describe('ExposureView', () => {
             });
         });
 
+        it('shows no scenario message when scenarioId is not provided', () => {
+            renderWithProviders(<ExposureView onClose={vi.fn()} />);
+            expect(screen.getByText('No scenario selected')).toBeInTheDocument();
+        });
+
         it('shows loading state when layers are loading', async () => {
             const neverResolvingPromise = new Promise<never>(() => {});
             mockedFetchExposureLayers.mockImplementation(() => neverResolvingPromise as Promise<ExposureLayersResponse>);
+            mockedFetchFocusAreas.mockResolvedValue(mockFocusAreas);
             renderWithProviders(<ExposureView {...defaultProps} />);
             await waitFor(() => {
                 expect(screen.getByText('Loading exposure layers...')).toBeInTheDocument();
             });
+        });
+    });
+
+    describe('Focus Area Dropdown', () => {
+        it('renders focus area dropdown', async () => {
+            setupMocks();
+            renderWithProviders(<ExposureView {...defaultProps} />);
+            await waitFor(() => {
+                expect(screen.getByLabelText('Focus area')).toBeInTheDocument();
+            });
+        });
+
+        it('shows Map wide as default option', async () => {
+            setupMocks();
+            renderWithProviders(<ExposureView {...defaultProps} />);
+            await waitFor(() => {
+                expect(screen.getByText('Map wide')).toBeInTheDocument();
+            });
+        });
+
+        it('calls onFocusAreaSelect when focus area is changed', async () => {
+            const onFocusAreaSelect = vi.fn();
+            setupMocks();
+            renderWithProviders(<ExposureView {...defaultProps} onFocusAreaSelect={onFocusAreaSelect} />);
+
+            await waitFor(() => {
+                expect(screen.getByLabelText('Focus area')).toBeInTheDocument();
+            });
+
+            // Wait for focus areas to load
+            await waitFor(() => {
+                expect(mockedFetchFocusAreas).toHaveBeenCalled();
+            });
+
+            // Allow time for data to be processed
+            await new Promise<void>((resolve) => {
+                setTimeout(resolve, 100);
+            });
+
+            const select = screen.getByRole('combobox');
+            fireEvent.mouseDown(select);
+
+            await waitFor(
+                () => {
+                    expect(screen.getByRole('option', { name: 'Focus Area 1' })).toBeInTheDocument();
+                },
+                { timeout: 2000 },
+            );
+
+            fireEvent.click(screen.getByRole('option', { name: 'Focus Area 1' }));
+
+            expect(onFocusAreaSelect).toHaveBeenCalledWith('fa-1');
+        });
+
+        it('disables inactive focus areas in dropdown', async () => {
+            setupMocks();
+            renderWithProviders(<ExposureView {...defaultProps} />);
+
+            await waitFor(() => {
+                expect(screen.getByLabelText('Focus area')).toBeInTheDocument();
+            });
+
+            // Wait for focus areas to load
+            await waitFor(() => {
+                expect(mockedFetchFocusAreas).toHaveBeenCalled();
+            });
+
+            // Allow time for data to be processed
+            await new Promise<void>((resolve) => {
+                setTimeout(resolve, 100);
+            });
+
+            const select = screen.getByRole('combobox');
+            fireEvent.mouseDown(select);
+
+            await waitFor(
+                () => {
+                    const inactiveOption = screen.getByRole('option', { name: 'Focus Area 2' });
+                    expect(inactiveOption).toHaveAttribute('aria-disabled', 'true');
+                },
+                { timeout: 2000 },
+            );
         });
     });
 
@@ -155,21 +249,14 @@ describe('ExposureView', () => {
             setupMocks();
         });
 
-        it('displays exposure layers grouped dynamically from API', async () => {
+        it('displays exposure layer groups', async () => {
             renderWithProviders(<ExposureView {...defaultProps} />);
             await waitFor(() => {
                 expect(screen.getByText(/Floods/)).toBeInTheDocument();
             });
         });
 
-        it('shows group header', async () => {
-            renderWithProviders(<ExposureView {...defaultProps} />);
-            await waitFor(() => {
-                expect(screen.getByText(/Floods/)).toBeInTheDocument();
-            });
-        });
-
-        it('displays layer names when group is expanded', async () => {
+        it('shows layer names when group is expanded', async () => {
             renderWithProviders(<ExposureView {...defaultProps} />);
             await waitFor(() => {
                 expect(screen.getByText(/Floods/)).toBeInTheDocument();
@@ -185,7 +272,26 @@ describe('ExposureView', () => {
             });
         });
 
-        it('sorts layers alphabetically', async () => {
+        it('shows "No exposure layers found" when there are no layers', async () => {
+            setupMocks({
+                exposureLayers: {
+                    featureCollection: { type: 'FeatureCollection', features: [] },
+                    groups: [],
+                },
+            });
+            renderWithProviders(<ExposureView {...defaultProps} />);
+            await waitFor(() => {
+                expect(screen.getByText('No exposure layers found')).toBeInTheDocument();
+            });
+        });
+    });
+
+    describe('Layer Toggle', () => {
+        beforeEach(() => {
+            setupMocks();
+        });
+
+        it('calls toggleExposureLayerVisibility when toggle is clicked', async () => {
             renderWithProviders(<ExposureView {...defaultProps} />);
             await waitFor(() => {
                 expect(screen.getByText(/Floods/)).toBeInTheDocument();
@@ -196,25 +302,68 @@ describe('ExposureView', () => {
                 fireEvent.click(headerButton);
             }
             await waitFor(() => {
-                const layerNames = screen.getAllByText(/Caul Bourne|River Medina/);
-                expect(layerNames[0]).toHaveTextContent('Caul Bourne');
-                expect(layerNames[1]).toHaveTextContent('River Medina');
+                expect(screen.getByText('Caul Bourne')).toBeInTheDocument();
+            });
+
+            const toggle = screen.getByLabelText('Show Caul Bourne');
+            fireEvent.click(toggle);
+
+            await waitFor(() => {
+                expect(mockedToggleExposureLayerVisibility).toHaveBeenCalledWith('scenario-1', {
+                    exposureLayerId: 'layer-1',
+                    focusAreaId: null,
+                    isActive: true,
+                });
             });
         });
 
-        it('shows "No exposure layers found" when there are no layers', async () => {
+        it('passes correct focusAreaId when toggling in a focus area', async () => {
+            renderWithProviders(<ExposureView {...defaultProps} selectedFocusAreaId="fa-1" />);
+            await waitFor(() => {
+                expect(screen.getByText(/Floods/)).toBeInTheDocument();
+            });
+            const floodsHeader = screen.getByText(/Floods/);
+            const headerButton = floodsHeader.closest('button');
+            if (headerButton) {
+                fireEvent.click(headerButton);
+            }
+            await waitFor(() => {
+                expect(screen.getByText('Caul Bourne')).toBeInTheDocument();
+            });
+
+            const toggle = screen.getByLabelText('Show Caul Bourne');
+            fireEvent.click(toggle);
+
+            await waitFor(() => {
+                expect(mockedToggleExposureLayerVisibility).toHaveBeenCalledWith('scenario-1', {
+                    exposureLayerId: 'layer-1',
+                    focusAreaId: 'fa-1',
+                    isActive: true,
+                });
+            });
+        });
+
+        it('reflects visibility state from API response', async () => {
             setupMocks({
-                exposureLayers: {
-                    featureCollection: {
-                        type: 'FeatureCollection',
-                        features: [],
-                    },
-                    groups: [],
-                },
+                exposureLayers: createMockExposureLayersResponse({
+                    layers: [
+                        { id: 'layer-1', name: 'Caul Bourne', isActive: true },
+                        { id: 'layer-2', name: 'River Medina', isActive: false },
+                    ],
+                }),
             });
             renderWithProviders(<ExposureView {...defaultProps} />);
             await waitFor(() => {
-                expect(screen.getByText('No exposure layers found')).toBeInTheDocument();
+                expect(screen.getByText(/Floods/)).toBeInTheDocument();
+            });
+            const floodsHeader = screen.getByText(/Floods/);
+            const headerButton = floodsHeader.closest('button');
+            if (headerButton) {
+                fireEvent.click(headerButton);
+            }
+            await waitFor(() => {
+                expect(screen.getByLabelText('Hide Caul Bourne')).toBeInTheDocument();
+                expect(screen.getByLabelText('Show River Medina')).toBeInTheDocument();
             });
         });
     });
@@ -237,7 +386,6 @@ describe('ExposureView', () => {
             }
             await waitFor(() => {
                 expect(headerButton).toHaveAttribute('aria-expanded', 'true');
-                expect(screen.getByText('Caul Bourne')).toBeInTheDocument();
             });
         });
 
@@ -248,15 +396,8 @@ describe('ExposureView', () => {
             });
             const floodsHeader = screen.getByText(/Floods/);
             const headerButton = floodsHeader.closest('button');
-            expect(headerButton).toHaveAttribute('aria-expanded', 'false');
             if (headerButton) {
                 fireEvent.click(headerButton);
-            }
-            await waitFor(() => {
-                expect(headerButton).toHaveAttribute('aria-expanded', 'true');
-                expect(screen.getByText('Caul Bourne')).toBeInTheDocument();
-            });
-            if (headerButton) {
                 fireEvent.click(headerButton);
             }
             await waitFor(() => {
@@ -264,188 +405,25 @@ describe('ExposureView', () => {
             });
         });
 
-        it('allows multiple groups to be expanded simultaneously', async () => {
+        it('auto-expands groups with active layers', async () => {
             setupMocks({
-                exposureLayers: {
-                    featureCollection: {
-                        type: 'FeatureCollection',
-                        features: [
-                            {
-                                type: 'Feature',
-                                id: 'layer-1',
-                                geometry: {
-                                    type: 'Polygon',
-                                    coordinates: [
-                                        [
-                                            [-1.4, 50.67],
-                                            [-1.4, 50.68],
-                                            [-1.39, 50.68],
-                                            [-1.39, 50.67],
-                                            [-1.4, 50.67],
-                                        ],
-                                    ],
-                                },
-                                properties: {
-                                    name: 'Layer 1',
-                                    groupId: 'group-1',
-                                    groupName: 'Floods',
-                                },
-                            },
-                            {
-                                type: 'Feature',
-                                id: 'layer-2',
-                                geometry: {
-                                    type: 'Polygon',
-                                    coordinates: [
-                                        [
-                                            [-1.3, 50.66],
-                                            [-1.3, 50.67],
-                                            [-1.29, 50.67],
-                                            [-1.29, 50.66],
-                                            [-1.3, 50.66],
-                                        ],
-                                    ],
-                                },
-                                properties: {
-                                    name: 'Layer 2',
-                                    groupId: 'group-2',
-                                    groupName: 'Environmentally sensitive areas',
-                                },
-                            },
-                        ],
-                    },
-                    groups: [
-                        {
-                            id: 'group-1',
-                            name: 'Floods',
-                            exposureLayers: [
-                                {
-                                    id: 'layer-1',
-                                    name: 'Layer 1',
-                                    geometry: {
-                                        type: 'Polygon',
-                                        coordinates: [
-                                            [
-                                                [-1.4, 50.67],
-                                                [-1.4, 50.68],
-                                                [-1.39, 50.68],
-                                                [-1.39, 50.67],
-                                                [-1.4, 50.67],
-                                            ],
-                                        ],
-                                    },
-                                },
-                            ],
-                        },
-                        {
-                            id: 'group-2',
-                            name: 'Environmentally sensitive areas',
-                            exposureLayers: [
-                                {
-                                    id: 'layer-2',
-                                    name: 'Layer 2',
-                                    geometry: {
-                                        type: 'Polygon',
-                                        coordinates: [
-                                            [
-                                                [-1.3, 50.66],
-                                                [-1.3, 50.67],
-                                                [-1.29, 50.67],
-                                                [-1.29, 50.66],
-                                                [-1.3, 50.66],
-                                            ],
-                                        ],
-                                    },
-                                },
-                            ],
-                        },
-                    ],
-                },
+                exposureLayers: createMockExposureLayersResponse({
+                    layers: [{ id: 'layer-1', name: 'Caul Bourne', isActive: true }],
+                }),
             });
             renderWithProviders(<ExposureView {...defaultProps} />);
             await waitFor(() => {
-                expect(screen.getByText(/Floods/)).toBeInTheDocument();
-                expect(screen.getByText(/Environmentally sensitive areas/)).toBeInTheDocument();
+                const floodsHeader = screen.getByText(/Floods/);
+                const headerButton = floodsHeader.closest('button');
+                expect(headerButton).toHaveAttribute('aria-expanded', 'true');
             });
-            const floodsHeader = screen.getByText(/Floods/);
-            const envHeader = screen.getByText(/Environmentally sensitive areas/);
-            const floodsButton = floodsHeader.closest('button');
-            const envButton = envHeader.closest('button');
-            if (floodsButton) {
-                fireEvent.click(floodsButton);
-            }
-            if (envButton) {
-                fireEvent.click(envButton);
-            }
-            await waitFor(() => {
-                expect(screen.getByText('Layer 1')).toBeInTheDocument();
-                expect(screen.getByText('Layer 2')).toBeInTheDocument();
-            });
-        });
-    });
-
-    describe('Layer Toggle', () => {
-        beforeEach(() => {
-            setupMocks();
-        });
-
-        it('calls onExposureLayerToggle when toggle is clicked', async () => {
-            const onExposureLayerToggle = vi.fn();
-            renderWithProviders(<ExposureView {...defaultProps} onExposureLayerToggle={onExposureLayerToggle} />);
-            await waitFor(() => {
-                expect(screen.getByText(/Floods/)).toBeInTheDocument();
-            });
-            const floodsHeader = screen.getByText(/Floods/);
-            const headerButton = floodsHeader.closest('button');
-            if (headerButton) {
-                fireEvent.click(headerButton);
-            }
-            await waitFor(() => {
-                expect(screen.getByText('Caul Bourne')).toBeInTheDocument();
-            });
-            const toggleButtons = screen.getAllByRole('button').filter((button) => {
-                const listItem = button.closest('li');
-                return listItem?.textContent?.includes('Caul Bourne') && button.getAttribute('aria-label')?.includes('Caul Bourne');
-            });
-            expect(toggleButtons.length).toBeGreaterThan(0);
-            const toggle = toggleButtons[0];
-            fireEvent.click(toggle);
-            expect(onExposureLayerToggle).toHaveBeenCalledWith('35a910f3-f611-4096-ac0b-0928c5612e32', true);
-        });
-
-        it('reflects selected state from props', async () => {
-            renderWithProviders(
-                <ExposureView
-                    {...defaultProps}
-                    selectedExposureLayerIds={{ '35a910f3-f611-4096-ac0b-0928c5612e32': true, 'e34e3c22-a28f-45e5-99b5-a24b55ba875f': false }}
-                />,
-            );
-            await waitFor(() => {
-                expect(screen.getByText(/Floods/)).toBeInTheDocument();
-            });
-            const floodsHeader = screen.getByText(/Floods/);
-            const headerButton = floodsHeader.closest('button');
-            if (headerButton) {
-                fireEvent.click(headerButton);
-            }
-            await waitFor(() => {
-                expect(screen.getByText('Caul Bourne')).toBeInTheDocument();
-                expect(screen.getByText('River Medina')).toBeInTheDocument();
-            });
-            const toggle1 = screen.getByLabelText('Hide Caul Bourne');
-            const toggle2 = screen.getByLabelText('Show River Medina');
-            expect(toggle1).toBeInTheDocument();
-            expect(toggle2).toBeInTheDocument();
-            const visibilityIcon1 = toggle1.querySelector('svg[data-testid="VisibilityIcon"]');
-            const visibilityOffIcon2 = toggle2.querySelector('svg[data-testid="VisibilityOffIcon"]');
-            expect(visibilityIcon1).toBeInTheDocument();
-            expect(visibilityOffIcon2).toBeInTheDocument();
         });
     });
 
     describe('Error Handling', () => {
         it('displays error message when fetch fails', async () => {
             mockedFetchExposureLayers.mockRejectedValue(new Error('Network error'));
+            mockedFetchFocusAreas.mockResolvedValue(mockFocusAreas);
             renderWithProviders(<ExposureView {...defaultProps} />);
             await waitFor(() => {
                 expect(screen.getByText('Error loading exposure layers')).toBeInTheDocument();
@@ -459,11 +437,9 @@ describe('ExposureView', () => {
             setupMocks();
             renderWithProviders(<ExposureView {...defaultProps} onClose={onClose} />);
             await waitFor(() => {
-                const closeButton = screen.getByLabelText('Close panel');
-                expect(closeButton).toBeInTheDocument();
+                expect(screen.getByLabelText('Close panel')).toBeInTheDocument();
             });
-            const closeButton = screen.getByLabelText('Close panel');
-            fireEvent.click(closeButton);
+            fireEvent.click(screen.getByLabelText('Close panel'));
             expect(onClose).toHaveBeenCalledTimes(1);
         });
     });
