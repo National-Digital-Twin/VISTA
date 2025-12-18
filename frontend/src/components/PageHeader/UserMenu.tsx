@@ -110,7 +110,7 @@ export default function UserMenu({ onMyProfileClick, onAdminSettingsClick, onPri
                         <Typography variant="body2">My Profile</Typography>
                     </Box>
                 </MenuItem>
-                {getUserType() == 'Admin' && (
+                {getUserType() === 'Admin' && (
                     <MenuItem onClick={handleAdminSettings}>
                         <Box
                             sx={{

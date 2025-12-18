@@ -7,7 +7,7 @@ user_a = {
     "enabled": True,
     "status": "CONFIRMED",
     "user_since": "2022-02-20",
-    "is_admin": True,
+    "user_type": "Admin",
 }
 
 http_success_code = 200

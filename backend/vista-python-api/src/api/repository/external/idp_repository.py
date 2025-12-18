@@ -46,7 +46,8 @@ class IdpRepository:
         """Get a list of users known to the identity provider."""
         if not settings.IS_PROD:
             return [
-                IdpUser.from_cognito(user, int(user["Username"]) % 2) for user in self._stub_users()
+                IdpUser.from_cognito(user, bool(int(user["Username"]) % 2))
+                for user in self._stub_users()
             ]
         all_user_response = self.client.list_users_in_group(
             UserPoolId=self.user_pool_id, GroupName=self.user_group_name
