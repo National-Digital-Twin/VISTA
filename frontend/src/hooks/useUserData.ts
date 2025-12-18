@@ -46,7 +46,6 @@ export function useUserData(): UseUserDataReturn {
                     ...apiUser,
                     memberSince: '2025-06-02T12:00:00Z',
                     addedBy: 'Application owner',
-                    userType: 'General',
                     groups: [
                         { name: 'Resilience team', memberSince: '2025-06-02T12:00:00Z' },
                         { name: 'Tywnwell team', memberSince: '2025-06-02T12:00:00Z' },
