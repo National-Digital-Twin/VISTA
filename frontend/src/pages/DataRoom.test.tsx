@@ -15,6 +15,11 @@ vi.mock('@/api/scenarios', () => ({
     fetchScenarios: vi.fn(),
 }));
 
+const mockUseUserData = vi.fn();
+vi.mock('@/hooks/useUserData', () => ({
+    useUserData: () => mockUseUserData(),
+}));
+
 const mockedFetchDataSources = vi.mocked(fetchDataSources);
 const mockedFetchScenarios = vi.mocked(fetchScenarios);
 
@@ -86,11 +91,14 @@ const mockScenarios = [
 ];
 
 beforeEach(() => {
+    vi.clearAllMocks();
     mockedFetchDataSources.mockResolvedValue(mockDataSources);
     mockedFetchScenarios.mockResolvedValue(mockScenarios);
+    mockUseUserData.mockReturnValue({
+        getUserType: () => 'Admin',
+    });
 
     sessionStorage.clear();
-    vi.clearAllMocks();
 });
 
 describe('DataRoom', () => {
@@ -141,6 +149,18 @@ describe('DataRoom', () => {
         const rows = await screen.findAllByRole('row');
         const dataRows = rows.slice(1);
         expect(dataRows).toHaveLength(mockDataSources.length);
+    });
+
+    it('does not render load scenario for non-admin user', async () => {
+        mockUseUserData.mockReturnValue({
+            getUserType: () => 'General',
+        });
+        setup();
+        const loadScenarioButton = screen.getByRole('button', { name: /load scenario/i });
+        fireEvent.click(loadScenarioButton);
+
+        const modalHeader = screen.queryByText('Choose scenario');
+        expect(modalHeader).not.toBeInTheDocument();
     });
 
     describe('Scenario Modal', () => {

@@ -7,6 +7,9 @@ import UserMenu from './UserMenu';
 import theme from '@/theme';
 
 const mockUseUserData = vi.fn();
+const templateName = 'John Doe';
+const templateEmail = 'example.com';
+const templateUserType = 'Admin';
 
 vi.mock('@/hooks/useUserData', () => ({
     useUserData: () => mockUseUserData(),
@@ -39,8 +42,9 @@ describe('UserMenu', () => {
     beforeEach(() => {
         vi.clearAllMocks();
         mockUseUserData.mockReturnValue({
-            getUserDisplayName: () => 'John Doe',
-            getUserEmailDomain: () => 'example.com',
+            getUserDisplayName: () => templateName,
+            getUserEmailDomain: () => templateEmail,
+            getUserType: () => templateUserType,
             loading: false,
         });
     });
@@ -78,7 +82,7 @@ describe('UserMenu', () => {
         }
 
         await waitFor(() => {
-            expect(screen.getByText('John Doe')).toBeInTheDocument();
+            expect(screen.getByText(templateName)).toBeInTheDocument();
         });
     });
 
@@ -92,14 +96,15 @@ describe('UserMenu', () => {
         }
 
         await waitFor(() => {
-            expect(screen.getByText('example.com')).toBeInTheDocument();
+            expect(screen.getByText(templateEmail)).toBeInTheDocument();
         });
     });
 
     it('displays loading state when user data is loading', async () => {
         mockUseUserData.mockReturnValue({
-            getUserDisplayName: () => 'John Doe',
-            getUserEmailDomain: () => 'example.com',
+            getUserDisplayName: () => templateName,
+            getUserEmailDomain: () => templateEmail,
+            getUserType: () => templateUserType,
             loading: true,
         });
         renderWithProviders(<UserMenu />);
@@ -113,6 +118,24 @@ describe('UserMenu', () => {
         await waitFor(() => {
             expect(screen.getAllByText('Loading...')).toHaveLength(2);
         });
+    });
+
+    it('does not display admin settings for general user', async () => {
+        mockUseUserData.mockReturnValue({
+            getUserDisplayName: () => templateName,
+            getUserEmailDomain: () => templateEmail,
+            getUserType: () => 'General',
+            loading: true,
+        });
+        renderWithProviders(<UserMenu />);
+
+        const icon = screen.getByTestId('AccountCircleOutlinedIcon');
+        const button = icon.closest('button');
+        if (button) {
+            fireEvent.click(button);
+        }
+
+        expect(screen.queryByText('Admin settings')).not.toBeInTheDocument();
     });
 
     it('calls onMyProfileClick when My Profile is clicked', async () => {

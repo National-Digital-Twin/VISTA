@@ -46,7 +46,7 @@ export function useUserData(): UseUserDataReturn {
                     ...apiUser,
                     memberSince: '2025-06-02T12:00:00Z',
                     addedBy: 'Application owner',
-                    userType: 'Administrator',
+                    userType: 'General',
                     groups: [
                         { name: 'Resilience team', memberSince: '2025-06-02T12:00:00Z' },
                         { name: 'Tywnwell team', memberSince: '2025-06-02T12:00:00Z' },
@@ -62,7 +62,7 @@ export function useUserData(): UseUserDataReturn {
                     displayName: 'Test user',
                     memberSince: '2025-06-02T12:00:00Z',
                     addedBy: 'Application owner',
-                    userType: 'Administrator',
+                    userType: 'General',
                     groups: [
                         { name: 'Resilience team', memberSince: '2025-06-02T12:00:00Z' },
                         { name: 'Tywnwell team', memberSince: '2025-06-02T12:00:00Z' },
@@ -112,7 +112,7 @@ export function useUserData(): UseUserDataReturn {
     };
 
     const getUserType = () => {
-        return user?.userType || 'Administrator';
+        return user?.userType || 'General';
     };
 
     const getUserGroups = () => {

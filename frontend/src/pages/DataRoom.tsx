@@ -34,6 +34,7 @@ import { SortableTableHeader } from '@/components/SortableTableHeader';
 import { SearchTextField } from '@/components/SearchTextField';
 import { fetchDataSources, DataSource } from '@/api/datasources';
 import { fetchScenarios, Scenario } from '@/api/scenarios';
+import { useUserData } from '@/hooks/useUserData';
 
 type SortField = 'name' | 'owner' | 'assetCount' | 'lastUpdated';
 type SortDirection = 'asc' | 'desc';
@@ -106,6 +107,7 @@ export default function DataRoom() {
         retry: 2,
         retryDelay: 1000,
     });
+    const { getUserType } = useUserData();
     const [searchTerm, setSearchTerm] = useState('');
     const [sortField, setSortField] = useState<SortField>('name');
     const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
@@ -223,6 +225,7 @@ export default function DataRoom() {
                         <Stack spacing={1}>
                             <Button
                                 disableRipple
+                                disabled={getUserType() !== 'Admin'}
                                 variant="text"
                                 startIcon={<AccountTreeIcon fontSize="small" />}
                                 onClick={handleLoadScenarioClick}

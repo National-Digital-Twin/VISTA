@@ -114,6 +114,6 @@ def test_returns_mock_users_in_dev_mode(settings, repository):
         result = repository.list_users_in_group()
 
     assert result == [
-        {"username": "local.user", "is_admin": True},
-        {"username": "local.user2", "is_admin": True},
+        {"username": "1", "is_admin": True},
+        {"username": "2", "is_admin": False},
     ]

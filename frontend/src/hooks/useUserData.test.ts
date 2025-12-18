@@ -80,7 +80,7 @@ describe('useUserData', () => {
 
             expect(result.current.user?.memberSince).toBe('2025-06-02T12:00:00Z');
             expect(result.current.user?.addedBy).toBe('Application owner');
-            expect(result.current.user?.userType).toBe('Administrator');
+            expect(result.current.user?.userType).toBe('General');
             expect(result.current.user?.groups).toHaveLength(4);
         });
 
@@ -163,8 +163,8 @@ describe('useUserData', () => {
             await testHelperFunction({ addedBy: 'admin@example.com', email: 'test@example.com' }, 'getUserAddedBy', 'Application owner');
         });
 
-        it('getUserType returns hardcoded Administrator', async () => {
-            await testHelperFunction({ userType: 'General', email: 'test@example.com' }, 'getUserType', 'Administrator');
+        it('getUserType returns hardcoded General', async () => {
+            await testHelperFunction({ email: 'test@example.com' }, 'getUserType', 'General');
         });
 
         it('getUserGroups returns hardcoded groups', async () => {

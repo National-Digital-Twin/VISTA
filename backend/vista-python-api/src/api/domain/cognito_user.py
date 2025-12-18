@@ -13,7 +13,7 @@ class IdpUser:
     enabled: bool = True
     status: str | None = None
     user_since: str | None = None
-    is_admin: bool = False
+    user_type: str | None = "General"
 
     @classmethod
     def from_cognito(cls, data: dict, is_admin: bool) -> "IdpUser":
@@ -22,6 +22,7 @@ class IdpUser:
 
         user_create_date = data.get("UserCreateDate")
         user_since = user_create_date.strftime("%Y-%m-%d")
+        user_type = "Admin" if is_admin else "General"
 
         return cls(
             id=data.get("Username"),
@@ -30,5 +31,5 @@ class IdpUser:
             enabled=data.get("Enabled", True),
             status=data.get("UserStatus"),
             user_since=user_since,
-            is_admin=is_admin,
+            user_type=user_type,
         )

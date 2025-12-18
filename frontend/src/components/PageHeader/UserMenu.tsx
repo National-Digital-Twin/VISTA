@@ -19,7 +19,7 @@ type UserMenuProps = {
 export default function UserMenu({ onMyProfileClick, onAdminSettingsClick, onPrivacyClick }: UserMenuProps) {
     const theme = useTheme();
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-    const { getUserDisplayName, getUserEmailDomain, loading } = useUserData();
+    const { getUserDisplayName, getUserEmailDomain, getUserType, loading } = useUserData();
 
     const open = Boolean(anchorEl);
 
@@ -110,20 +110,21 @@ export default function UserMenu({ onMyProfileClick, onAdminSettingsClick, onPri
                         <Typography variant="body2">My Profile</Typography>
                     </Box>
                 </MenuItem>
-
-                <MenuItem onClick={handleAdminSettings}>
-                    <Box
-                        sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 1,
-                            color: 'text.primary',
-                        }}
-                    >
-                        <SettingsOutlinedIcon fontSize="small" />
-                        <Typography variant="body2">Admin Settings</Typography>
-                    </Box>
-                </MenuItem>
+                {getUserType() === 'Admin' && (
+                    <MenuItem onClick={handleAdminSettings}>
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 1,
+                                color: 'text.primary',
+                            }}
+                        >
+                            <SettingsOutlinedIcon fontSize="small" />
+                            <Typography variant="body2">Admin Settings</Typography>
+                        </Box>
+                    </MenuItem>
+                )}
 
                 <MenuItem onClick={handlePrivacyNotice}>
                     <Box
