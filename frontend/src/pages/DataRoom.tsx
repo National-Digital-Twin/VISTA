@@ -69,16 +69,16 @@ const getFieldValue = (source: DataSource, field: SortField): string | number =>
 
 const compareDataSources =
     (field: SortField, direction: SortDirection) =>
-        (a: DataSource, b: DataSource): number => {
-            const aValue = getFieldValue(a, field);
-            const bValue = getFieldValue(b, field);
+    (a: DataSource, b: DataSource): number => {
+        const aValue = getFieldValue(a, field);
+        const bValue = getFieldValue(b, field);
 
-            if (typeof aValue === 'number' && typeof bValue === 'number') {
-                return direction === 'asc' ? aValue - bValue : bValue - aValue;
-            }
+        if (typeof aValue === 'number' && typeof bValue === 'number') {
+            return direction === 'asc' ? aValue - bValue : bValue - aValue;
+        }
 
-            return direction === 'asc' ? String(aValue).localeCompare(String(bValue)) : String(bValue).localeCompare(String(aValue));
-        };
+        return direction === 'asc' ? String(aValue).localeCompare(String(bValue)) : String(bValue).localeCompare(String(aValue));
+    };
 
 const dataSourceMatchesSearch = (dataSource: DataSource, searchLower: string): boolean => {
     const matchesName = dataSource.name.toLowerCase().includes(searchLower);
