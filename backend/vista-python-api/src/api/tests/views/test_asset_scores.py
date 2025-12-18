@@ -16,6 +16,7 @@ from api.models import (
     Dependency,
     ExposureLayer,
     ExposureLayerType,
+    FocusArea,
     Scenario,
     ScenarioAsset,
     VisibleExposureLayer,
@@ -65,7 +66,7 @@ def _get_exposure_score_for_asset(fixture, asset_id, scenario_id):
     in_count = 0
     near_count = 0
     for exposure_layer in fixture["exposure_layers"]:
-        if scenario_id != exposure_layer.scenario.id:
+        if scenario_id != exposure_layer.focus_area.scenario.id:
             continue
         poly_m = exposure_layer.exposure_layer.geometry.transform(3857, clone=True)
         pt_m = asset.geom.transform(3857, clone=True)
@@ -147,8 +148,16 @@ def fixture(db):  # noqa: ARG001
     exposure_layer_type = ExposureLayerType.objects.create(name="Flood")
     ExposureLayer.objects.create(geometry=poly, type=exposure_layer_type)
     exposure_layer = ExposureLayer.objects.create(geometry=poly, type=exposure_layer_type)
+    focus_area = FocusArea.objects.create(
+        scenario=scenario1,
+        user_id=user_id,
+        name="Map-wide",
+        geometry=None,
+        is_system=True,
+        is_active=True,
+    )
     vis_exposure_layer = VisibleExposureLayer.objects.create(
-        scenario=scenario1, exposure_layer=exposure_layer, user_id=user_id
+        focus_area=focus_area, exposure_layer=exposure_layer
     )
 
     scenario_asset_1 = ScenarioAsset.objects.create(
