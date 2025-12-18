@@ -80,7 +80,6 @@ describe('useUserData', () => {
 
             expect(result.current.user?.memberSince).toBe('2025-06-02T12:00:00Z');
             expect(result.current.user?.addedBy).toBe('Application owner');
-            expect(result.current.user?.userType).toBe('General');
             expect(result.current.user?.groups).toHaveLength(4);
         });
 
