@@ -3,11 +3,43 @@
 import uuid
 
 import pytest
-from django.contrib.gis.geos import Point
+from django.contrib.gis.geos import Point, Polygon
 
+from api.models import FocusArea, Scenario, ScenarioAsset
 from api.models.asset import Asset
 from api.models.asset_type import AssetCategory, AssetSubCategory, AssetType, DataSource
 from api.models.dependency import Dependency
+
+
+@pytest.fixture
+def mock_user_id():
+    """Return the mock dev user ID (matches get_user_id_from_request in dev mode)."""
+    return uuid.UUID("00000000-0000-0000-0000-000000000001")
+
+
+@pytest.fixture
+def scenario(db):  # noqa: ARG001
+    """Create test scenario."""
+    return Scenario.objects.create(
+        id=uuid.uuid4(),
+        name="Test Scenario",
+        is_active=True,
+    )
+
+
+@pytest.fixture
+def mapwide_focus_area(scenario, mock_user_id):
+    """Create map-wide focus area."""
+    return FocusArea.objects.create(
+        id=uuid.uuid4(),
+        scenario=scenario,
+        user_id=mock_user_id,
+        name="Map-wide",
+        geometry=None,
+        filter_mode="by_asset_type",
+        is_active=True,
+        is_system=True,
+    )
 
 
 @pytest.fixture

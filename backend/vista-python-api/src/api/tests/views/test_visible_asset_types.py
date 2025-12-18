@@ -26,12 +26,6 @@ def find_asset_type_in_tree(data, asset_type_id):
 
 
 @pytest.fixture
-def scenario(db):  # noqa: ARG001
-    """Create a sample scenario."""
-    return Scenario.objects.create(name="Test Scenario", is_active=True)
-
-
-@pytest.fixture
 def asset_type(db):  # noqa: ARG001
     """Create a sample asset type."""
     category = AssetCategory.objects.create(id=uuid.uuid4(), name="Test Category")
@@ -48,39 +42,43 @@ def asset_type(db):  # noqa: ARG001
 
 
 @pytest.fixture
-def focus_area(db, scenario):  # noqa: ARG001
+def focus_area(db, scenario, mock_user_id):  # noqa: ARG001
     """Create a sample focus area."""
-    mock_user_id = uuid.UUID("00000000-0000-0000-0000-000000000001")
     geom = GEOSGeometry("POLYGON((0 0, 0 1, 1 1, 1 0, 0 0))")
     return FocusArea.objects.create(
         scenario=scenario,
         user_id=mock_user_id,
         name="Test Area",
         geometry=geom,
+        filter_mode="by_asset_type",
         is_active=True,
+        is_system=False,
     )
 
 
 @pytest.mark.django_db
-def test_enable_asset_type_map_wide(scenario, asset_type, client):
-    """Test enabling an asset type map-wide (no focus area)."""
+def test_enable_asset_type_map_wide(scenario, asset_type, mapwide_focus_area, client):
+    """Test enabling an asset type map-wide (using map-wide focus area)."""
     response = client.put(
         f"/api/scenarios/{scenario.id}/visible-asset-types/",
-        data=json.dumps({"assetTypeId": str(asset_type.id), "isActive": True}),
+        data=json.dumps(
+            {
+                "assetTypeId": str(asset_type.id),
+                "focusAreaId": str(mapwide_focus_area.id),
+                "isActive": True,
+            }
+        ),
         content_type="application/json",
     )
     data = response.json()
 
     assert response.status_code == http_success_code
     assert data["assetTypeId"] == str(asset_type.id)
-    assert data["focusAreaId"] is None
+    assert data["focusAreaId"] == str(mapwide_focus_area.id)
     assert data["isActive"] is True
 
-    mock_user_id = uuid.UUID("00000000-0000-0000-0000-000000000001")
     assert VisibleAsset.objects.filter(
-        scenario=scenario,
-        user_id=mock_user_id,
-        focus_area__isnull=True,
+        focus_area=mapwide_focus_area,
         asset_type=asset_type,
     ).exists()
 
@@ -105,29 +103,29 @@ def test_enable_asset_type_for_focus_area(scenario, asset_type, focus_area, clie
     assert data["focusAreaId"] == str(focus_area.id)
     assert data["isActive"] is True
 
-    mock_user_id = uuid.UUID("00000000-0000-0000-0000-000000000001")
     assert VisibleAsset.objects.filter(
-        scenario=scenario,
-        user_id=mock_user_id,
         focus_area=focus_area,
         asset_type=asset_type,
     ).exists()
 
 
 @pytest.mark.django_db
-def test_disable_asset_type_deletes_record(scenario, asset_type, client):
+def test_disable_asset_type_deletes_record(scenario, asset_type, mapwide_focus_area, client):
     """Test that disabling an asset type deletes the VisibleAsset record."""
-    mock_user_id = uuid.UUID("00000000-0000-0000-0000-000000000001")
     VisibleAsset.objects.create(
-        scenario=scenario,
-        user_id=mock_user_id,
-        focus_area=None,
+        focus_area=mapwide_focus_area,
         asset_type=asset_type,
     )
 
     response = client.put(
         f"/api/scenarios/{scenario.id}/visible-asset-types/",
-        data=json.dumps({"assetTypeId": str(asset_type.id), "isActive": False}),
+        data=json.dumps(
+            {
+                "assetTypeId": str(asset_type.id),
+                "focusAreaId": str(mapwide_focus_area.id),
+                "isActive": False,
+            }
+        ),
         content_type="application/json",
     )
     data = response.json()
@@ -135,38 +133,45 @@ def test_disable_asset_type_deletes_record(scenario, asset_type, client):
     assert response.status_code == http_success_code
     assert data["isActive"] is False
     assert not VisibleAsset.objects.filter(
-        scenario=scenario,
-        user_id=mock_user_id,
-        focus_area__isnull=True,
+        focus_area=mapwide_focus_area,
         asset_type=asset_type,
     ).exists()
 
 
 @pytest.mark.django_db
-def test_enable_is_idempotent(scenario, asset_type, client):
+def test_enable_is_idempotent(scenario, asset_type, mapwide_focus_area, client):
     """Test that enabling twice doesn't create duplicates."""
     url = f"/api/scenarios/{scenario.id}/visible-asset-types/"
-    payload = json.dumps({"assetTypeId": str(asset_type.id), "isActive": True})
+    payload = json.dumps(
+        {
+            "assetTypeId": str(asset_type.id),
+            "focusAreaId": str(mapwide_focus_area.id),
+            "isActive": True,
+        }
+    )
 
     client.put(url, data=payload, content_type="application/json")
     client.put(url, data=payload, content_type="application/json")
 
-    mock_user_id = uuid.UUID("00000000-0000-0000-0000-000000000001")
     count = VisibleAsset.objects.filter(
-        scenario=scenario,
-        user_id=mock_user_id,
-        focus_area__isnull=True,
+        focus_area=mapwide_focus_area,
         asset_type=asset_type,
     ).count()
     assert count == 1
 
 
 @pytest.mark.django_db
-def test_disable_nonexistent_is_noop(scenario, asset_type, client):
+def test_disable_nonexistent_is_noop(scenario, asset_type, mapwide_focus_area, client):
     """Test that disabling a non-visible asset type is a no-op."""
     response = client.put(
         f"/api/scenarios/{scenario.id}/visible-asset-types/",
-        data=json.dumps({"assetTypeId": str(asset_type.id), "isActive": False}),
+        data=json.dumps(
+            {
+                "assetTypeId": str(asset_type.id),
+                "focusAreaId": str(mapwide_focus_area.id),
+                "isActive": False,
+            }
+        ),
         content_type="application/json",
     )
 
@@ -195,15 +200,23 @@ def test_scenario_asset_types_with_visibility(scenario, asset_type, client):
 
 
 @pytest.mark.django_db
-def test_scenario_asset_types_after_enable(scenario, asset_type, client):
+def test_scenario_asset_types_after_enable(scenario, asset_type, mapwide_focus_area, client):
     """Test isActive is true after enabling visibility."""
     client.put(
         f"/api/scenarios/{scenario.id}/visible-asset-types/",
-        data=json.dumps({"assetTypeId": str(asset_type.id), "isActive": True}),
+        data=json.dumps(
+            {
+                "assetTypeId": str(asset_type.id),
+                "focusAreaId": str(mapwide_focus_area.id),
+                "isActive": True,
+            }
+        ),
         content_type="application/json",
     )
 
-    response = client.get(f"/api/scenarios/{scenario.id}/asset-types/")
+    response = client.get(
+        f"/api/scenarios/{scenario.id}/asset-types/?focus_area_id={mapwide_focus_area.id}"
+    )
     data = response.json()
 
     asset_type_data = find_asset_type_in_tree(data, asset_type.id)
@@ -211,7 +224,9 @@ def test_scenario_asset_types_after_enable(scenario, asset_type, client):
 
 
 @pytest.mark.django_db
-def test_scenario_asset_types_with_focus_area(scenario, asset_type, focus_area, client):
+def test_scenario_asset_types_with_focus_area(
+    scenario, asset_type, focus_area, mapwide_focus_area, client
+):
     """Test getting visibility for specific focus area."""
     # Create an asset inside the focus area bounds so the asset type is returned
     Asset.objects.create(
@@ -242,7 +257,9 @@ def test_scenario_asset_types_with_focus_area(scenario, asset_type, focus_area, 
     asset_type_data = find_asset_type_in_tree(data, asset_type.id)
     assert asset_type_data["isActive"] is True
 
-    response_map_wide = client.get(f"/api/scenarios/{scenario.id}/asset-types/")
+    response_map_wide = client.get(
+        f"/api/scenarios/{scenario.id}/asset-types/?focus_area_id={mapwide_focus_area.id}"
+    )
     data_map_wide = response_map_wide.json()
     asset_type_data_map = find_asset_type_in_tree(data_map_wide, asset_type.id)
     assert asset_type_data_map["isActive"] is False
@@ -257,20 +274,16 @@ def test_scenario_asset_types_invalid_scenario(client):
 
 
 @pytest.mark.django_db
-def test_disable_map_wide_does_not_affect_focus_area(scenario, asset_type, focus_area, client):
+def test_disable_map_wide_does_not_affect_focus_area(
+    scenario, asset_type, focus_area, mapwide_focus_area, client
+):
     """Test that disabling map-wide visibility doesn't delete focus-area-specific visibility."""
-    mock_user_id = uuid.UUID("00000000-0000-0000-0000-000000000001")
-
     # Enable both map-wide and focus-area-specific
     VisibleAsset.objects.create(
-        scenario=scenario,
-        user_id=mock_user_id,
-        focus_area=None,
+        focus_area=mapwide_focus_area,
         asset_type=asset_type,
     )
     VisibleAsset.objects.create(
-        scenario=scenario,
-        user_id=mock_user_id,
         focus_area=focus_area,
         asset_type=asset_type,
     )
@@ -278,7 +291,13 @@ def test_disable_map_wide_does_not_affect_focus_area(scenario, asset_type, focus
     # Disable map-wide
     response = client.put(
         f"/api/scenarios/{scenario.id}/visible-asset-types/",
-        data=json.dumps({"assetTypeId": str(asset_type.id), "isActive": False}),
+        data=json.dumps(
+            {
+                "assetTypeId": str(asset_type.id),
+                "focusAreaId": str(mapwide_focus_area.id),
+                "isActive": False,
+            }
+        ),
         content_type="application/json",
     )
 
@@ -286,36 +305,28 @@ def test_disable_map_wide_does_not_affect_focus_area(scenario, asset_type, focus
 
     # Map-wide should be deleted
     assert not VisibleAsset.objects.filter(
-        scenario=scenario,
-        user_id=mock_user_id,
-        focus_area__isnull=True,
+        focus_area=mapwide_focus_area,
         asset_type=asset_type,
     ).exists()
 
     # Focus-area-specific should still exist
     assert VisibleAsset.objects.filter(
-        scenario=scenario,
-        user_id=mock_user_id,
         focus_area=focus_area,
         asset_type=asset_type,
     ).exists()
 
 
 @pytest.mark.django_db
-def test_disable_focus_area_does_not_affect_map_wide(scenario, asset_type, focus_area, client):
+def test_disable_focus_area_does_not_affect_map_wide(
+    scenario, asset_type, focus_area, mapwide_focus_area, client
+):
     """Test that disabling focus-area visibility doesn't delete map-wide visibility."""
-    mock_user_id = uuid.UUID("00000000-0000-0000-0000-000000000001")
-
     # Enable both map-wide and focus-area-specific
     VisibleAsset.objects.create(
-        scenario=scenario,
-        user_id=mock_user_id,
-        focus_area=None,
+        focus_area=mapwide_focus_area,
         asset_type=asset_type,
     )
     VisibleAsset.objects.create(
-        scenario=scenario,
-        user_id=mock_user_id,
         focus_area=focus_area,
         asset_type=asset_type,
     )
@@ -337,61 +348,49 @@ def test_disable_focus_area_does_not_affect_map_wide(scenario, asset_type, focus
 
     # Focus-area-specific should be deleted
     assert not VisibleAsset.objects.filter(
-        scenario=scenario,
-        user_id=mock_user_id,
         focus_area=focus_area,
         asset_type=asset_type,
     ).exists()
 
     # Map-wide should still exist
     assert VisibleAsset.objects.filter(
-        scenario=scenario,
-        user_id=mock_user_id,
-        focus_area__isnull=True,
+        focus_area=mapwide_focus_area,
         asset_type=asset_type,
     ).exists()
 
 
 @pytest.mark.django_db
-def test_delete_clears_all_map_wide_visibility(scenario, asset_type, client):
+def test_delete_clears_all_map_wide_visibility(scenario, asset_type, mapwide_focus_area, client):
     """Test DELETE clears all map-wide visibility."""
-    mock_user_id = uuid.UUID("00000000-0000-0000-0000-000000000001")
-
     VisibleAsset.objects.create(
-        scenario=scenario,
-        user_id=mock_user_id,
-        focus_area=None,
+        focus_area=mapwide_focus_area,
         asset_type=asset_type,
     )
 
-    response = client.delete(f"/api/scenarios/{scenario.id}/visible-asset-types/")
+    response = client.delete(
+        f"/api/scenarios/{scenario.id}/visible-asset-types/?focus_area_id={mapwide_focus_area.id}"
+    )
 
     assert response.status_code == http_success_code, f"Response: {response.content}"
     data = response.json()
 
     assert data["success"] is True
     assert not VisibleAsset.objects.filter(
-        scenario=scenario,
-        user_id=mock_user_id,
-        focus_area__isnull=True,
+        focus_area=mapwide_focus_area,
     ).exists()
 
 
 @pytest.mark.django_db
-def test_delete_clears_focus_area_visibility(scenario, asset_type, focus_area, client):
+def test_delete_clears_focus_area_visibility(
+    scenario, asset_type, focus_area, mapwide_focus_area, client
+):
     """Test DELETE with focus_area_id clears only that focus area's visibility."""
-    mock_user_id = uuid.UUID("00000000-0000-0000-0000-000000000001")
-
     # Create visibility for both map-wide and focus area
     VisibleAsset.objects.create(
-        scenario=scenario,
-        user_id=mock_user_id,
-        focus_area=None,
+        focus_area=mapwide_focus_area,
         asset_type=asset_type,
     )
     VisibleAsset.objects.create(
-        scenario=scenario,
-        user_id=mock_user_id,
         focus_area=focus_area,
         asset_type=asset_type,
     )
@@ -406,23 +405,21 @@ def test_delete_clears_focus_area_visibility(scenario, asset_type, focus_area, c
 
     # Focus area visibility should be deleted
     assert not VisibleAsset.objects.filter(
-        scenario=scenario,
-        user_id=mock_user_id,
         focus_area=focus_area,
     ).exists()
 
     # Map-wide visibility should still exist
     assert VisibleAsset.objects.filter(
-        scenario=scenario,
-        user_id=mock_user_id,
-        focus_area__isnull=True,
+        focus_area=mapwide_focus_area,
     ).exists()
 
 
 @pytest.mark.django_db
-def test_delete_with_no_visible_assets(scenario, client):
+def test_delete_with_no_visible_assets(scenario, mapwide_focus_area, client):
     """Test DELETE succeeds even when nothing to delete."""
-    response = client.delete(f"/api/scenarios/{scenario.id}/visible-asset-types/")
+    response = client.delete(
+        f"/api/scenarios/{scenario.id}/visible-asset-types/?focus_area_id={mapwide_focus_area.id}"
+    )
     data = response.json()
 
     assert response.status_code == http_success_code
