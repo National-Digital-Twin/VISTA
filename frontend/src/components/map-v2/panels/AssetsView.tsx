@@ -1,24 +1,37 @@
 import { useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } from 'react';
-import { Alert, Box, Collapse, FormControl, IconButton, InputLabel, ListItem, MenuItem, Portal, Select, Snackbar, Typography } from '@mui/material';
+import {
+    Alert,
+    Box,
+    CircularProgress,
+    Collapse,
+    FormControl,
+    IconButton,
+    InputLabel,
+    ListItem,
+    MenuItem,
+    Portal,
+    Select,
+    Snackbar,
+    Typography,
+} from '@mui/material';
 import type { SelectChangeEvent } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import FilterListIcon from '@mui/icons-material/FilterList';
+import { useQuery } from '@tanstack/react-query';
 import { LayersClearOutlined } from '@mui/icons-material';
+import useAssetFilterMutations from '../hooks/useAssetFilterMutations';
+import { isDefaultFilter } from '../hooks/useScoreFilterState';
+import { GlobalScoreFilter } from './GlobalScoreFilter';
+import { ScoreFilterPopup } from './ScoreFilterPopup';
 import { SearchTextField } from '@/components/SearchTextField';
 import IconToggle from '@/components/IconToggle';
 import { useDataSources } from '@/hooks/useDataSources';
 import { fetchFocusAreas, type FocusArea } from '@/api/focus-areas';
+import { fetchAssetScoreFilters, type AssetScoreFilter, type ScoreFilterValues } from '@/api/asset-score-filters';
 import type { DataSource } from '@/api/datasources';
-import {
-    fetchScenarioAssetTypes,
-    toggleAssetTypeVisibility,
-    clearAllAssetTypeVisibility,
-    type ScenarioAssetCategory,
-    type ScenarioSubCategory,
-    type ScenarioAssetType,
-} from '@/api/scenario-asset-types';
+import { fetchScenarioAssetTypes, type ScenarioAssetCategory, type ScenarioSubCategory, type ScenarioAssetType } from '@/api/scenario-asset-types';
 
 type AssetsViewProps = {
     readonly onClose: () => void;
@@ -27,16 +40,20 @@ type AssetsViewProps = {
     readonly onFocusAreaSelect?: (focusAreaId: string | null) => void;
 };
 
-const MAP_WIDE_VALUE = '__map_wide__';
+type FilterMode = FocusArea['filterMode'];
 
 type AssetTypeListItemProps = {
     readonly assetType: ScenarioAssetType;
     readonly onToggle: (assetTypeId: string, isActive: boolean) => void;
+    readonly onOpenScoreFilter: (assetType: ScenarioAssetType) => void;
+    readonly hasFilter: boolean;
     readonly disabled?: boolean;
     readonly dataSource?: DataSource;
 };
 
-function AssetTypeListItem({ assetType, onToggle, disabled, dataSource }: AssetTypeListItemProps) {
+function AssetTypeListItem({ assetType, onToggle, onOpenScoreFilter, hasFilter, disabled, dataSource }: AssetTypeListItemProps) {
+    const countDisplay = hasFilter ? `(${assetType.filteredAssetCount}/${assetType.assetCount})` : `(${assetType.assetCount})`;
+
     return (
         <ListItem
             sx={{
@@ -50,7 +67,7 @@ function AssetTypeListItem({ assetType, onToggle, disabled, dataSource }: AssetT
         >
             <Box sx={{ flex: 1, minWidth: 0 }}>
                 <Typography variant="body2" noWrap>
-                    {assetType.name} ({assetType.assetCount})
+                    {assetType.name} {countDisplay}
                 </Typography>
                 {dataSource && (
                     <Typography variant="caption" color="text.secondary" noWrap component="div" sx={{ cursor: 'default' }}>
@@ -58,7 +75,16 @@ function AssetTypeListItem({ assetType, onToggle, disabled, dataSource }: AssetT
                     </Typography>
                 )}
             </Box>
-            <Box sx={{ display: 'flex' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <IconButton
+                    size="small"
+                    onClick={() => onOpenScoreFilter(assetType)}
+                    disabled={disabled}
+                    aria-label={`Filter ${assetType.name} by score`}
+                    sx={{ color: hasFilter ? 'primary.main' : 'inherit' }}
+                >
+                    <FilterListIcon fontSize="small" />
+                </IconButton>
                 <IconToggle
                     checked={assetType.isActive}
                     onChange={() => onToggle(assetType.id, !assetType.isActive)}
@@ -71,36 +97,63 @@ function AssetTypeListItem({ assetType, onToggle, disabled, dataSource }: AssetT
     );
 }
 
+AssetTypeListItem.displayName = 'AssetTypeListItem';
+
 type AssetTypeListProps = {
     readonly assetTypes: ScenarioAssetType[];
     readonly onToggle: (assetTypeId: string, isActive: boolean) => void;
+    readonly onOpenScoreFilter: (assetType: ScenarioAssetType) => void;
+    readonly getScoreFilter: (assetTypeId: string) => AssetScoreFilter | undefined;
     readonly disabled?: boolean;
     readonly dataSourceMap: Map<string, DataSource>;
 };
 
-function AssetTypeList({ assetTypes, onToggle, disabled, dataSourceMap }: AssetTypeListProps) {
+function AssetTypeList({ assetTypes, onToggle, onOpenScoreFilter, getScoreFilter, disabled, dataSourceMap }: AssetTypeListProps) {
     return (
         <Box sx={{ pb: 1 }}>
             {assetTypes.map((assetType) => {
                 const dataSource = assetType.datasourceId ? dataSourceMap.get(assetType.datasourceId) : undefined;
-                return <AssetTypeListItem key={assetType.id} assetType={assetType} onToggle={onToggle} disabled={disabled} dataSource={dataSource} />;
+                const hasFilter = getScoreFilter(assetType.id) !== undefined;
+                return (
+                    <AssetTypeListItem
+                        key={assetType.id}
+                        assetType={assetType}
+                        onToggle={onToggle}
+                        onOpenScoreFilter={onOpenScoreFilter}
+                        hasFilter={hasFilter}
+                        disabled={disabled}
+                        dataSource={dataSource}
+                    />
+                );
             })}
         </Box>
     );
 }
+
+AssetTypeList.displayName = 'AssetTypeList';
 
 const AssetsView = ({ onClose, scenarioId, selectedFocusAreaId, onFocusAreaSelect }: AssetsViewProps) => {
     const [searchQuery, setSearchQuery] = useState('');
     const deferredSearchQuery = useDeferredValue(searchQuery);
     const [expandedSubCategories, setExpandedSubCategories] = useState<Set<string>>(new Set());
     const [mutationError, setMutationError] = useState<string | null>(null);
-    const queryClient = useQueryClient();
     const { dataSourceMap } = useDataSources();
     const currentFocusAreaId = selectedFocusAreaId ?? null;
+
+    const [selectedFilterMode, setSelectedFilterMode] = useState<FilterMode>('by_asset_type');
+    const [scoreFilterPopupOpen, setScoreFilterPopupOpen] = useState(false);
+    const [scoreFilterAssetType, setScoreFilterAssetType] = useState<ScenarioAssetType | null>(null);
 
     const { data: focusAreas, isLoading: isLoadingFocusAreas } = useQuery({
         queryKey: ['focusAreas', scenarioId],
         queryFn: () => fetchFocusAreas(scenarioId!),
+        enabled: !!scenarioId,
+        staleTime: 5 * 60 * 1000,
+    });
+
+    const { data: scoreFilters } = useQuery({
+        queryKey: ['assetScoreFilters', scenarioId],
+        queryFn: () => fetchAssetScoreFilters(scenarioId!),
         enabled: !!scenarioId,
         staleTime: 5 * 60 * 1000,
     });
@@ -116,32 +169,35 @@ const AssetsView = ({ onClose, scenarioId, selectedFocusAreaId, onFocusAreaSelec
         staleTime: 5 * 60 * 1000,
     });
 
-    const visibilityMutation = useMutation({
-        mutationFn: (data: { assetTypeId: string; isActive: boolean }) =>
-            toggleAssetTypeVisibility(scenarioId!, {
-                assetTypeId: data.assetTypeId,
-                focusAreaId: currentFocusAreaId,
-                isActive: data.isActive,
-            }),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['scenarioAssetTypes', scenarioId] });
-            queryClient.invalidateQueries({ queryKey: ['scenarioAssets', scenarioId] });
-        },
-        onError: () => {
-            setMutationError('Failed to update asset type visibility');
-        },
+    const { toggleVisibility, clearAll, updateFilterMode, applyScoreFilter, deleteScoreFilter, isFilterModePending, isMutating } = useAssetFilterMutations({
+        scenarioId,
+        selectedFocusAreaId: currentFocusAreaId,
+        selectedFilterMode,
+        onError: setMutationError,
     });
 
-    const clearAllMutation = useMutation({
-        mutationFn: () => clearAllAssetTypeVisibility(scenarioId!, currentFocusAreaId),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['scenarioAssetTypes', scenarioId] });
-            queryClient.invalidateQueries({ queryKey: ['scenarioAssets', scenarioId] });
-        },
-        onError: () => {
-            setMutationError('Failed to clear asset type visibility');
-        },
-    });
+    // Update selected filter mode when focus areas data loads or selected focus area changes
+    // Also auto-select first active focus area if current selection is inactive
+    useEffect(() => {
+        if (focusAreas) {
+            const currentScope = focusAreas.find((fa) => fa.id === selectedFocusAreaId);
+            if (!currentScope?.isActive) {
+                // Current selection is inactive, select the first active focus area
+                const firstActiveScope = focusAreas.find((fa) => fa.isActive);
+                if (firstActiveScope) {
+                    onFocusAreaSelect?.(firstActiveScope.id);
+                    setSelectedFilterMode(firstActiveScope.filterMode);
+                } else {
+                    // No active focus areas - clear the selection
+                    onFocusAreaSelect?.(null);
+                }
+                return;
+            }
+            if (currentScope) {
+                setSelectedFilterMode(currentScope.filterMode);
+            }
+        }
+    }, [focusAreas, selectedFocusAreaId, onFocusAreaSelect]);
 
     // Expand subcategories that have visible asset types - only on initial load or focus area change
     const lastFocusAreaIdRef = useRef<string | null | undefined>(undefined);
@@ -169,8 +225,7 @@ const AssetsView = ({ onClose, scenarioId, selectedFocusAreaId, onFocusAreaSelec
 
     const handleFocusAreaChange = useCallback(
         (event: SelectChangeEvent<string>) => {
-            const value = event.target.value;
-            const newFocusAreaId = value === MAP_WIDE_VALUE ? null : value;
+            const newFocusAreaId = event.target.value || null;
             onFocusAreaSelect?.(newFocusAreaId);
         },
         [onFocusAreaSelect],
@@ -190,14 +245,91 @@ const AssetsView = ({ onClose, scenarioId, selectedFocusAreaId, onFocusAreaSelec
 
     const handleToggleVisibility = useCallback(
         (assetTypeId: string, isActive: boolean) => {
-            visibilityMutation.mutate({ assetTypeId, isActive });
+            toggleVisibility({ assetTypeId, isActive });
         },
-        [visibilityMutation],
+        [toggleVisibility],
     );
 
     const handleClearAll = useCallback(() => {
-        clearAllMutation.mutate();
-    }, [clearAllMutation]);
+        clearAll();
+    }, [clearAll]);
+
+    const handleFilterModeChange = useCallback(
+        (event: SelectChangeEvent<string>) => {
+            const newMode = event.target.value as FilterMode;
+            if (selectedFocusAreaId) {
+                updateFilterMode({ focusAreaId: selectedFocusAreaId, filterMode: newMode });
+            }
+        },
+        [updateFilterMode, selectedFocusAreaId],
+    );
+
+    const handleOpenScoreFilter = useCallback((assetType: ScenarioAssetType) => {
+        setScoreFilterAssetType(assetType);
+        setScoreFilterPopupOpen(true);
+    }, []);
+
+    const handleCloseScoreFilter = useCallback(() => {
+        setScoreFilterPopupOpen(false);
+        setScoreFilterAssetType(null);
+    }, []);
+
+    const handleApplyScoreFilter = useCallback(
+        (filter: ScoreFilterValues) => {
+            if (scoreFilterAssetType) {
+                if (isDefaultFilter(filter)) {
+                    deleteScoreFilter({
+                        focusAreaId: selectedFocusAreaId ?? null,
+                        assetTypeId: scoreFilterAssetType.id,
+                    });
+                } else {
+                    applyScoreFilter({
+                        focusAreaId: selectedFocusAreaId ?? null,
+                        assetTypeId: scoreFilterAssetType.id,
+                        filter,
+                    });
+                }
+            }
+            handleCloseScoreFilter();
+        },
+        [applyScoreFilter, deleteScoreFilter, selectedFocusAreaId, scoreFilterAssetType, handleCloseScoreFilter],
+    );
+
+    const handleApplyGlobalScoreFilter = useCallback(
+        (filter: ScoreFilterValues) => {
+            if (isDefaultFilter(filter)) {
+                deleteScoreFilter({
+                    focusAreaId: selectedFocusAreaId ?? null,
+                    assetTypeId: null,
+                });
+            } else {
+                applyScoreFilter({
+                    focusAreaId: selectedFocusAreaId ?? null,
+                    assetTypeId: null,
+                    filter,
+                });
+            }
+        },
+        [applyScoreFilter, deleteScoreFilter, selectedFocusAreaId],
+    );
+
+    const handleClearGlobalScoreFilter = useCallback(() => {
+        deleteScoreFilter({
+            focusAreaId: selectedFocusAreaId ?? null,
+            assetTypeId: null,
+        });
+    }, [deleteScoreFilter, selectedFocusAreaId]);
+
+    const getScoreFilterForAssetType = useCallback(
+        (assetTypeId: string): AssetScoreFilter | undefined => {
+            return scoreFilters?.find((sf) => sf.focusAreaId === selectedFocusAreaId && sf.assetTypeId === assetTypeId);
+        },
+        [scoreFilters, selectedFocusAreaId],
+    );
+
+    const globalScoreFilter = useMemo(() => {
+        return scoreFilters?.find((sf) => sf.focusAreaId === selectedFocusAreaId && sf.assetTypeId === null);
+    }, [scoreFilters, selectedFocusAreaId]);
 
     const matchesSearch = useCallback(
         (assetType: ScenarioAssetType, subCategory: ScenarioSubCategory, category: ScenarioAssetCategory, searchLower: string): boolean => {
@@ -240,8 +372,116 @@ const AssetsView = ({ onClose, scenarioId, selectedFocusAreaId, onFocusAreaSelec
             .filter((category): category is ScenarioAssetCategory => category !== null);
     }, [assetCategories, deferredSearchQuery, filterSubCategories]);
 
-    const focusAreaSelectValue = currentFocusAreaId ?? MAP_WIDE_VALUE;
-    const isMutating = visibilityMutation.isPending || clearAllMutation.isPending;
+    const focusAreaSelectValue = focusAreas && currentFocusAreaId ? currentFocusAreaId : '';
+    const hasActiveScope = focusAreas?.some((fa) => fa.isActive) ?? false;
+
+    const renderContentArea = () => {
+        if (!hasActiveScope) {
+            return null;
+        }
+
+        if (selectedFilterMode === 'by_score_only') {
+            return (
+                <GlobalScoreFilter
+                    onApply={handleApplyGlobalScoreFilter}
+                    onClear={handleClearGlobalScoreFilter}
+                    initialValues={globalScoreFilter}
+                    disabled={isMutating}
+                />
+            );
+        }
+
+        return (
+            <>
+                {isLoadingCategories && (
+                    <Box sx={{ p: 2 }}>
+                        <Typography variant="body2" color="text.secondary">
+                            Loading asset categories...
+                        </Typography>
+                    </Box>
+                )}
+
+                {!isLoadingCategories && filteredCategories.length === 0 && (
+                    <Box sx={{ p: 2 }}>
+                        <Typography variant="body2" color="text.secondary">
+                            No assets found
+                        </Typography>
+                    </Box>
+                )}
+
+                {filteredCategories.map((category) => (
+                    <Box key={category.id}>
+                        <Typography
+                            variant="caption"
+                            sx={{
+                                display: 'block',
+                                px: 2,
+                                pt: 2,
+                                pb: 0.5,
+                                fontWeight: 600,
+                                color: 'text.secondary',
+                                textTransform: 'none',
+                            }}
+                        >
+                            {category.name}
+                        </Typography>
+
+                        {category.subCategories.map((subCategory) => {
+                            const isSubCategoryExpanded = expandedSubCategories.has(subCategory.id);
+                            const activeCount = subCategory.assetTypes.filter((at) => at.isActive).length;
+                            return (
+                                <Box key={subCategory.id}>
+                                    <Box
+                                        onClick={() => toggleSubCategory(subCategory.id)}
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter' || e.key === ' ') {
+                                                e.preventDefault();
+                                                toggleSubCategory(subCategory.id);
+                                            }
+                                        }}
+                                        sx={{
+                                            'display': 'flex',
+                                            'alignItems': 'center',
+                                            'px': 2,
+                                            'py': 0.75,
+                                            'cursor': 'pointer',
+                                            '&:hover': {
+                                                backgroundColor: 'action.hover',
+                                            },
+                                        }}
+                                        tabIndex={0}
+                                        role="button"
+                                        aria-expanded={isSubCategoryExpanded}
+                                    >
+                                        {isSubCategoryExpanded ? (
+                                            <KeyboardArrowUpIcon fontSize="small" sx={{ mr: 1 }} />
+                                        ) : (
+                                            <KeyboardArrowDownIcon fontSize="small" sx={{ mr: 1 }} />
+                                        )}
+                                        <Typography variant="body2">
+                                            {subCategory.name}
+                                            {activeCount > 0 && ` (${activeCount})`}
+                                        </Typography>
+                                    </Box>
+
+                                    <Collapse in={isSubCategoryExpanded}>
+                                        <AssetTypeList
+                                            assetTypes={subCategory.assetTypes}
+                                            onToggle={handleToggleVisibility}
+                                            disabled={isMutating}
+                                            dataSourceMap={dataSourceMap}
+                                            onOpenScoreFilter={handleOpenScoreFilter}
+                                            getScoreFilter={getScoreFilterForAssetType}
+                                        />
+                                    </Collapse>
+                                </Box>
+                            );
+                        })}
+                    </Box>
+                ))}
+            </>
+        );
+    };
 
     if (!scenarioId) {
         return (
@@ -300,8 +540,7 @@ const AssetsView = ({ onClose, scenarioId, selectedFocusAreaId, onFocusAreaSelec
                         label="Select visible focus area"
                         disabled={isLoadingFocusAreas}
                     >
-                        <MenuItem value={MAP_WIDE_VALUE}>Map-wide</MenuItem>
-                        {focusAreas?.map((fa: FocusArea) => (
+                        {focusAreas?.map((fa) => (
                             <MenuItem key={fa.id} value={fa.id} disabled={!fa.isActive}>
                                 {fa.name}
                             </MenuItem>
@@ -311,104 +550,68 @@ const AssetsView = ({ onClose, scenarioId, selectedFocusAreaId, onFocusAreaSelec
 
                 <FormControl fullWidth size="small" sx={{ mb: 2 }}>
                     <InputLabel id="filter-mode-select-label">Select filter mode</InputLabel>
-                    <Select labelId="filter-mode-select-label" value="by-asset-type" label="Select filter mode" disabled>
-                        <MenuItem value="by-asset-type">By asset type</MenuItem>
+                    <Select
+                        labelId="filter-mode-select-label"
+                        value={selectedFilterMode}
+                        onChange={handleFilterModeChange}
+                        label="Select filter mode"
+                        disabled={isMutating || !hasActiveScope}
+                    >
+                        <MenuItem value="by_asset_type">By asset type</MenuItem>
+                        <MenuItem value="by_score_only">By VISTA score</MenuItem>
                     </Select>
                 </FormControl>
 
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <Box sx={{ flex: 1 }}>
-                        <SearchTextField placeholder="Search for an asset" value={searchQuery} onChange={handleSearchChange} fullWidth />
+                {!hasActiveScope && (
+                    <Typography variant="body2" color="text.secondary">
+                        Enable a focus area or map-wide visibility to configure asset filters
+                    </Typography>
+                )}
+
+                {hasActiveScope && selectedFilterMode === 'by_asset_type' && (
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Box sx={{ flex: 1 }}>
+                            <SearchTextField placeholder="Search for an asset" value={searchQuery} onChange={handleSearchChange} fullWidth />
+                        </Box>
+                        <IconButton size="small" onClick={handleClearAll} disabled={isMutating} aria-label="Clear all visible assets" title="Clear all">
+                            <LayersClearOutlined fontSize="small" />
+                        </IconButton>
                     </Box>
-                    <IconButton size="small" onClick={handleClearAll} disabled={isMutating} aria-label="Clear all visible assets" title="Clear all">
-                        <LayersClearOutlined fontSize="small" />
-                    </IconButton>
-                </Box>
+                )}
             </Box>
 
             <Box sx={{ flex: 1, overflowY: 'auto', position: 'relative' }}>
-                {isLoadingCategories && (
-                    <Box sx={{ p: 2 }}>
-                        <Typography variant="body2" color="text.secondary">
-                            Loading asset categories...
-                        </Typography>
+                {isFilterModePending && (
+                    <Box
+                        sx={{
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            bottom: 0,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            backgroundColor: 'rgba(255, 255, 255, 0.7)',
+                            zIndex: 1,
+                        }}
+                    >
+                        <CircularProgress size={32} />
                     </Box>
                 )}
-
-                {!isLoadingCategories && filteredCategories.length === 0 && (
-                    <Box sx={{ p: 2 }}>
-                        <Typography variant="body2" color="text.secondary">
-                            No assets found
-                        </Typography>
-                    </Box>
-                )}
-
-                {filteredCategories.map((category) => (
-                    <Box key={category.id}>
-                        <Typography
-                            variant="caption"
-                            sx={{
-                                display: 'block',
-                                px: 2,
-                                pt: 2,
-                                pb: 0.5,
-                                fontWeight: 600,
-                                color: 'text.secondary',
-                                textTransform: 'none',
-                            }}
-                        >
-                            {category.name}
-                        </Typography>
-
-                        {category.subCategories.map((subCategory) => {
-                            const isSubCategoryExpanded = expandedSubCategories.has(subCategory.id);
-                            const activeCount = subCategory.assetTypes.filter((at) => at.isActive).length;
-                            return (
-                                <Box key={subCategory.id}>
-                                    <Box
-                                        onClick={() => toggleSubCategory(subCategory.id)}
-                                        onKeyDown={(e) => {
-                                            if (e.key === 'Enter' || e.key === ' ') {
-                                                toggleSubCategory(subCategory.id);
-                                            }
-                                        }}
-                                        sx={{
-                                            'display': 'flex',
-                                            'alignItems': 'center',
-                                            'px': 2,
-                                            'py': 0.75,
-                                            'cursor': 'pointer',
-                                            '&:hover': {
-                                                backgroundColor: 'action.hover',
-                                            },
-                                        }}
-                                        tabIndex={0}
-                                    >
-                                        {isSubCategoryExpanded ? (
-                                            <KeyboardArrowUpIcon fontSize="small" sx={{ mr: 1 }} />
-                                        ) : (
-                                            <KeyboardArrowDownIcon fontSize="small" sx={{ mr: 1 }} />
-                                        )}
-                                        <Typography variant="body2">
-                                            {subCategory.name}
-                                            {activeCount > 0 && ` (${activeCount})`}
-                                        </Typography>
-                                    </Box>
-
-                                    <Collapse in={isSubCategoryExpanded}>
-                                        <AssetTypeList
-                                            assetTypes={subCategory.assetTypes}
-                                            onToggle={handleToggleVisibility}
-                                            disabled={isMutating}
-                                            dataSourceMap={dataSourceMap}
-                                        />
-                                    </Collapse>
-                                </Box>
-                            );
-                        })}
-                    </Box>
-                ))}
+                {renderContentArea()}
             </Box>
+
+            {scoreFilterPopupOpen && scoreFilterAssetType && (
+                <ScoreFilterPopup
+                    key={scoreFilterAssetType.id}
+                    open={scoreFilterPopupOpen}
+                    onClose={handleCloseScoreFilter}
+                    onApply={handleApplyScoreFilter}
+                    assetTypeName={scoreFilterAssetType.name}
+                    initialValues={getScoreFilterForAssetType(scoreFilterAssetType.id)}
+                />
+            )}
 
             <Portal>
                 <Snackbar

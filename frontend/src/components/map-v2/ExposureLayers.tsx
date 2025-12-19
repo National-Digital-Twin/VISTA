@@ -16,40 +16,26 @@ export type ExposureLayersProps = {
     selectedFocusAreaId?: string | null;
     mapReady?: boolean;
     isInFocusAreaPanel?: boolean;
-    mapWideVisible?: boolean;
     activeFocusAreaIds?: string[];
 };
 
-const ExposureLayers = ({
-    scenarioId,
-    selectedFocusAreaId,
-    mapReady,
-    isInFocusAreaPanel = false,
-    mapWideVisible = true,
-    activeFocusAreaIds = [],
-}: ExposureLayersProps) => {
+const ExposureLayers = ({ scenarioId, selectedFocusAreaId, mapReady, isInFocusAreaPanel = false, activeFocusAreaIds = [] }: ExposureLayersProps) => {
     const queryConfigs = useMemo(() => {
         if (!scenarioId) {
             return [];
         }
 
         if (isInFocusAreaPanel) {
-            const configs = [];
-            if (mapWideVisible) {
-                configs.push({
-                    queryKey: ['exposureLayers', scenarioId, null],
-                    queryFn: () => fetchExposureLayers(scenarioId, null),
-                    staleTime: 0,
-                });
-            }
-            activeFocusAreaIds.forEach((faId) => {
-                configs.push({
-                    queryKey: ['exposureLayers', scenarioId, faId],
-                    queryFn: () => fetchExposureLayers(scenarioId, faId),
-                    staleTime: 0,
-                });
-            });
-            return configs;
+            // Query for all active focus areas (including system/map-wide)
+            return activeFocusAreaIds.map((faId) => ({
+                queryKey: ['exposureLayers', scenarioId, faId],
+                queryFn: () => fetchExposureLayers(scenarioId, faId),
+                staleTime: 0,
+            }));
+        }
+
+        if (!selectedFocusAreaId) {
+            return [];
         }
 
         return [
@@ -59,7 +45,7 @@ const ExposureLayers = ({
                 staleTime: 0,
             },
         ];
-    }, [scenarioId, isInFocusAreaPanel, mapWideVisible, activeFocusAreaIds, selectedFocusAreaId]);
+    }, [scenarioId, isInFocusAreaPanel, activeFocusAreaIds, selectedFocusAreaId]);
 
     const exposureQueries = useQueries({
         queries: queryConfigs.length > 0 ? queryConfigs : [],

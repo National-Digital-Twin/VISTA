@@ -33,8 +33,10 @@ const mockGeometry: Geometry = {
 const createMockFocusArea = (overrides?: Partial<FocusArea>): FocusArea => ({
     id: 'focus-area-1',
     name: 'Test Focus Area',
-    isActive: true,
     geometry: mockGeometry,
+    filterMode: 'by_asset_type',
+    isActive: true,
+    isSystem: false,
     ...overrides,
 });
 
@@ -157,7 +159,7 @@ describe('useFocusAreaMutations', () => {
         expect(invalidateSpy).not.toHaveBeenCalledWith(expect.objectContaining({ queryKey: ['scenarioAssetTypes', 'scenario-123', 'fa-1'] }));
     });
 
-    it('updateFocusArea also invalidates scenarioAssetTypes when geometry changes', async () => {
+    it('updateFocusArea also invalidates scenarioAssetTypes and exposureLayers when geometry changes', async () => {
         mockedUpdateFocusArea.mockResolvedValue(createMockFocusArea());
         const invalidateSpy = vi.spyOn(queryClient, 'invalidateQueries');
 
@@ -186,6 +188,7 @@ describe('useFocusAreaMutations', () => {
             expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['focusAreas', 'scenario-123'] });
             expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['scenarioAssets', 'scenario-123'] });
             expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['scenarioAssetTypes', 'scenario-123', 'fa-1'] });
+            expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['exposureLayers', 'scenario-123', 'fa-1'] });
         });
     });
 
@@ -238,6 +241,7 @@ describe('useFocusAreaMutations', () => {
             expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['focusAreas', 'scenario-123'] });
             expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['scenarioAssets', 'scenario-123'] });
             expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['scenarioAssetTypes', 'scenario-123', 'fa-1'] });
+            expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['exposureLayers', 'scenario-123', 'fa-1'] });
         });
     });
 

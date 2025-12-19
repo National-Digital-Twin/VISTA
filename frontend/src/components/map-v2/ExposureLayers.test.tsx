@@ -116,7 +116,7 @@ describe('ExposureLayers', () => {
         it('renders Source and Layers when data is loaded with active layers', async () => {
             mockedFetchExposureLayers.mockResolvedValue(createMockResponse([{ id: 'layer-1', name: 'Caul Bourne', isActive: true, geometry: mockGeometry1 }]));
 
-            renderWithProviders(<ExposureLayers scenarioId="scenario-1" mapReady={true} />);
+            renderWithProviders(<ExposureLayers scenarioId="scenario-1" selectedFocusAreaId="focus-area-1" mapReady={true} />);
 
             await waitFor(() => {
                 expect(screen.getByTestId('source')).toBeInTheDocument();
@@ -128,7 +128,7 @@ describe('ExposureLayers', () => {
         it('returns null when no layers are active', async () => {
             mockedFetchExposureLayers.mockResolvedValue(createMockResponse([{ id: 'layer-1', name: 'Caul Bourne', isActive: false, geometry: mockGeometry1 }]));
 
-            const { container } = renderWithProviders(<ExposureLayers scenarioId="scenario-1" mapReady={true} />);
+            const { container } = renderWithProviders(<ExposureLayers scenarioId="scenario-1" selectedFocusAreaId="focus-area-1" mapReady={true} />);
 
             await waitFor(() => {
                 expect(mockedFetchExposureLayers).toHaveBeenCalled();
@@ -149,7 +149,7 @@ describe('ExposureLayers', () => {
                 ]),
             );
 
-            renderWithProviders(<ExposureLayers scenarioId="scenario-1" mapReady={true} />);
+            renderWithProviders(<ExposureLayers scenarioId="scenario-1" selectedFocusAreaId="focus-area-1" mapReady={true} />);
 
             await waitFor(() => {
                 const source = screen.getByTestId('source');
@@ -165,7 +165,7 @@ describe('ExposureLayers', () => {
                 ]),
             );
 
-            renderWithProviders(<ExposureLayers scenarioId="scenario-1" mapReady={true} />);
+            renderWithProviders(<ExposureLayers scenarioId="scenario-1" selectedFocusAreaId="focus-area-1" mapReady={true} />);
 
             await waitFor(() => {
                 const source = screen.getByTestId('source');
@@ -185,14 +185,18 @@ describe('ExposureLayers', () => {
             });
         });
 
-        it('fetches map-wide data when no focus area is selected', async () => {
+        it('does not fetch when no focus area is selected', async () => {
             mockedFetchExposureLayers.mockResolvedValue(createMockResponse([{ id: 'layer-1', name: 'Caul Bourne', isActive: true, geometry: mockGeometry1 }]));
 
-            renderWithProviders(<ExposureLayers scenarioId="scenario-1" selectedFocusAreaId={null} mapReady={true} />);
+            const { container } = renderWithProviders(<ExposureLayers scenarioId="scenario-1" selectedFocusAreaId={null} mapReady={true} />);
 
-            await waitFor(() => {
-                expect(mockedFetchExposureLayers).toHaveBeenCalledWith('scenario-1', null);
+            // Wait a bit to ensure no fetch is triggered
+            await new Promise((resolve) => {
+                setTimeout(resolve, 50);
             });
+
+            expect(mockedFetchExposureLayers).not.toHaveBeenCalled();
+            expect(container.firstChild).toBeNull();
         });
     });
 
@@ -201,32 +205,24 @@ describe('ExposureLayers', () => {
             mockedFetchExposureLayers.mockResolvedValue(createMockResponse([{ id: 'layer-1', name: 'Caul Bourne', isActive: true, geometry: mockGeometry1 }]));
 
             renderWithProviders(
-                <ExposureLayers
-                    scenarioId="scenario-1"
-                    mapReady={true}
-                    isInFocusAreaPanel={true}
-                    mapWideVisible={true}
-                    activeFocusAreaIds={['fa-1', 'fa-2']}
-                />,
+                <ExposureLayers scenarioId="scenario-1" mapReady={true} isInFocusAreaPanel={true} activeFocusAreaIds={['map-wide-1', 'fa-1', 'fa-2']} />,
             );
 
             await waitFor(() => {
-                expect(mockedFetchExposureLayers).toHaveBeenCalledWith('scenario-1', null);
+                expect(mockedFetchExposureLayers).toHaveBeenCalledWith('scenario-1', 'map-wide-1');
                 expect(mockedFetchExposureLayers).toHaveBeenCalledWith('scenario-1', 'fa-1');
                 expect(mockedFetchExposureLayers).toHaveBeenCalledWith('scenario-1', 'fa-2');
             });
         });
 
-        it('does not fetch map-wide when mapWideVisible is false', async () => {
+        it('only fetches for provided focus area IDs', async () => {
             mockedFetchExposureLayers.mockResolvedValue(createMockResponse([{ id: 'layer-1', name: 'Caul Bourne', isActive: true, geometry: mockGeometry1 }]));
 
-            renderWithProviders(
-                <ExposureLayers scenarioId="scenario-1" mapReady={true} isInFocusAreaPanel={true} mapWideVisible={false} activeFocusAreaIds={['fa-1']} />,
-            );
+            renderWithProviders(<ExposureLayers scenarioId="scenario-1" mapReady={true} isInFocusAreaPanel={true} activeFocusAreaIds={['fa-1']} />);
 
             await waitFor(() => {
                 expect(mockedFetchExposureLayers).toHaveBeenCalledWith('scenario-1', 'fa-1');
-                expect(mockedFetchExposureLayers).not.toHaveBeenCalledWith('scenario-1', null);
+                expect(mockedFetchExposureLayers).toHaveBeenCalledTimes(1);
             });
         });
 
@@ -235,15 +231,7 @@ describe('ExposureLayers', () => {
                 .mockResolvedValueOnce(createMockResponse([{ id: 'layer-1', name: 'Caul Bourne', isActive: true, geometry: mockGeometry1 }]))
                 .mockResolvedValueOnce(createMockResponse([{ id: 'layer-2', name: 'River Medina', isActive: true, geometry: mockGeometry2 }]));
 
-            renderWithProviders(
-                <ExposureLayers
-                    scenarioId="scenario-1"
-                    mapReady={true}
-                    isInFocusAreaPanel={true}
-                    mapWideVisible={false}
-                    activeFocusAreaIds={['fa-1', 'fa-2']}
-                />,
-            );
+            renderWithProviders(<ExposureLayers scenarioId="scenario-1" mapReady={true} isInFocusAreaPanel={true} activeFocusAreaIds={['fa-1', 'fa-2']} />);
 
             await waitFor(() => {
                 const source = screen.getByTestId('source');
@@ -259,7 +247,7 @@ describe('ExposureLayers', () => {
                 groups: [],
             });
 
-            const { container } = renderWithProviders(<ExposureLayers scenarioId="scenario-1" mapReady={true} />);
+            const { container } = renderWithProviders(<ExposureLayers scenarioId="scenario-1" selectedFocusAreaId="focus-area-1" mapReady={true} />);
 
             await waitFor(() => {
                 expect(mockedFetchExposureLayers).toHaveBeenCalled();
@@ -285,7 +273,7 @@ describe('ExposureLayers', () => {
                 groups: [],
             });
 
-            const { container } = renderWithProviders(<ExposureLayers scenarioId="scenario-1" mapReady={true} />);
+            const { container } = renderWithProviders(<ExposureLayers scenarioId="scenario-1" selectedFocusAreaId="focus-area-1" mapReady={true} />);
 
             await waitFor(() => {
                 expect(mockedFetchExposureLayers).toHaveBeenCalled();
@@ -311,7 +299,7 @@ describe('ExposureLayers', () => {
                 groups: [],
             });
 
-            renderWithProviders(<ExposureLayers scenarioId="scenario-1" mapReady={true} />);
+            renderWithProviders(<ExposureLayers scenarioId="scenario-1" selectedFocusAreaId="focus-area-1" mapReady={true} />);
 
             await waitFor(() => {
                 const source = screen.getByTestId('source');

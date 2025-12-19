@@ -82,7 +82,7 @@ describe('exposure-layers API', () => {
     });
 
     describe('fetchExposureLayerVisibility', () => {
-        it('fetches visibility from scenario endpoint', async () => {
+        it('fetches visibility from scenario endpoint with focus_area_id', async () => {
             fetchMock.mockResolvedValue({
                 ok: true,
                 json: vi.fn().mockResolvedValue([
@@ -94,37 +94,11 @@ describe('exposure-layers API', () => {
                 ]),
             });
 
-            const result = await fetchExposureLayerVisibility('scenario-1');
+            const result = await fetchExposureLayerVisibility('scenario-1', 'focus-area-1');
 
             expect(result).toHaveLength(1);
             expect(result[0].exposureLayers[0].isActive).toBe(true);
-            expect(fetchMock).toHaveBeenCalledWith('/ndtp-python/api/scenarios/scenario-1/exposure-layers/', {
-                headers: { 'Content-Type': 'application/json' },
-            });
-        });
-
-        it('includes focus_area_id in query when provided', async () => {
-            fetchMock.mockResolvedValue({
-                ok: true,
-                json: vi.fn().mockResolvedValue([]),
-            });
-
-            await fetchExposureLayerVisibility('scenario-1', 'focus-area-1');
-
             expect(fetchMock).toHaveBeenCalledWith('/ndtp-python/api/scenarios/scenario-1/exposure-layers/?focus_area_id=focus-area-1', {
-                headers: { 'Content-Type': 'application/json' },
-            });
-        });
-
-        it('does not include focus_area_id when null', async () => {
-            fetchMock.mockResolvedValue({
-                ok: true,
-                json: vi.fn().mockResolvedValue([]),
-            });
-
-            await fetchExposureLayerVisibility('scenario-1', null);
-
-            expect(fetchMock).toHaveBeenCalledWith('/ndtp-python/api/scenarios/scenario-1/exposure-layers/', {
                 headers: { 'Content-Type': 'application/json' },
             });
         });
@@ -135,7 +109,9 @@ describe('exposure-layers API', () => {
                 statusText: 'Internal Server Error',
             });
 
-            await expect(fetchExposureLayerVisibility('scenario-1')).rejects.toThrow('Failed to retrieve exposure layer visibility: Internal Server Error');
+            await expect(fetchExposureLayerVisibility('scenario-1', 'focus-area-1')).rejects.toThrow(
+                'Failed to retrieve exposure layer visibility: Internal Server Error',
+            );
         });
     });
 
@@ -171,7 +147,7 @@ describe('exposure-layers API', () => {
             expect(result.featureCollection.features[1].properties?.isActive).toBe(false);
         });
 
-        it('defaults isActive to false when not in visibility data', () => {
+        it('returns empty groups when visibility data is empty', () => {
             const geometryData = [
                 {
                     id: 'group-1',
@@ -184,7 +160,8 @@ describe('exposure-layers API', () => {
 
             const result = mergeGeometryWithVisibility(geometryData, visibilityData);
 
-            expect(result.groups[0].exposureLayers[0].isActive).toBe(false);
+            expect(result.groups).toHaveLength(0);
+            expect(result.featureCollection.features).toHaveLength(0);
         });
 
         it('filters out layers without geometry in featureCollection', () => {
@@ -241,7 +218,7 @@ describe('exposure-layers API', () => {
                     ]),
                 });
 
-            const result = await fetchExposureLayers('scenario-1');
+            const result = await fetchExposureLayers('scenario-1', 'focus-area-1');
 
             expect(result.featureCollection.type).toBe('FeatureCollection');
             expect(result.featureCollection.features).toHaveLength(1);
@@ -249,7 +226,7 @@ describe('exposure-layers API', () => {
             expect(fetchMock).toHaveBeenCalledTimes(2);
         });
 
-        it('passes focusAreaId to visibility fetch', async () => {
+        it('includes focusAreaId in visibility fetch URL', async () => {
             fetchMock
                 .mockResolvedValueOnce({
                     ok: true,
@@ -277,7 +254,7 @@ describe('exposure-layers API', () => {
                     json: vi.fn().mockResolvedValue([]),
                 });
 
-            const result = await fetchExposureLayers('scenario-1');
+            const result = await fetchExposureLayers('scenario-1', 'focus-area-1');
 
             expect(result.featureCollection.type).toBe('FeatureCollection');
             expect(result.featureCollection.features).toHaveLength(0);
@@ -290,7 +267,9 @@ describe('exposure-layers API', () => {
                 statusText: 'Internal Server Error',
             });
 
-            await expect(fetchExposureLayers('scenario-1')).rejects.toThrow('Failed to retrieve exposure layer geometry: Internal Server Error');
+            await expect(fetchExposureLayers('scenario-1', 'focus-area-1')).rejects.toThrow(
+                'Failed to retrieve exposure layer geometry: Internal Server Error',
+            );
         });
 
         it('throws error when visibility fetch fails', async () => {
@@ -304,7 +283,9 @@ describe('exposure-layers API', () => {
                     statusText: 'Internal Server Error',
                 });
 
-            await expect(fetchExposureLayers('scenario-1')).rejects.toThrow('Failed to retrieve exposure layer visibility: Internal Server Error');
+            await expect(fetchExposureLayers('scenario-1', 'focus-area-1')).rejects.toThrow(
+                'Failed to retrieve exposure layer visibility: Internal Server Error',
+            );
         });
     });
 });

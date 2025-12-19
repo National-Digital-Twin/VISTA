@@ -4,8 +4,10 @@ import config from '@/config/app-config';
 export type FocusArea = {
     id: string;
     name: string;
+    geometry: Geometry | null;
+    filterMode: 'by_asset_type' | 'by_score_only';
     isActive: boolean;
-    geometry: Geometry;
+    isSystem: boolean;
 };
 
 export type CreateFocusAreaRequest = {
@@ -16,8 +18,9 @@ export type CreateFocusAreaRequest = {
 
 export type UpdateFocusAreaRequest = {
     name?: string;
-    isActive?: boolean;
     geometry?: Geometry;
+    filterMode?: 'by_asset_type' | 'by_score_only';
+    isActive?: boolean;
 };
 
 export const fetchFocusAreas = async (scenarioId: string): Promise<FocusArea[]> => {

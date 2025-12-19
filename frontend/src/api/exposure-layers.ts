@@ -21,7 +21,7 @@ export type ExposureLayersResponse = {
 
 export type ToggleExposureLayerVisibilityRequest = {
     exposureLayerId: string;
-    focusAreaId?: string | null;
+    focusAreaId: string;
     isActive: boolean;
 };
 
@@ -37,11 +37,8 @@ export const fetchExposureLayerGeometry = async (): Promise<ExposureLayerGroup[]
     return response.json();
 };
 
-export const fetchExposureLayerVisibility = async (scenarioId: string, focusAreaId?: string | null): Promise<ExposureLayerGroup[]> => {
-    let url = `${config.services.apiBaseUrl}/scenarios/${scenarioId}/exposure-layers/`;
-    if (focusAreaId !== undefined && focusAreaId !== null) {
-        url += `?focus_area_id=${focusAreaId}`;
-    }
+export const fetchExposureLayerVisibility = async (scenarioId: string, focusAreaId: string): Promise<ExposureLayerGroup[]> => {
+    const url = `${config.services.apiBaseUrl}/scenarios/${scenarioId}/exposure-layers/?focus_area_id=${focusAreaId}`;
 
     const response = await fetch(url, {
         headers: { 'Content-Type': 'application/json' },
@@ -55,19 +52,25 @@ export const fetchExposureLayerVisibility = async (scenarioId: string, focusArea
 };
 
 export const mergeGeometryWithVisibility = (geometryData: ExposureLayerGroup[], visibilityData: ExposureLayerGroup[]): ExposureLayersResponse => {
-    const visibilityMap = new Map<string, boolean>();
-    visibilityData.forEach((group) => {
+    // Build geometry lookup from geometryData
+    const geometryMap = new Map<string, Geometry>();
+    geometryData.forEach((group) => {
         group.exposureLayers.forEach((layer) => {
-            visibilityMap.set(layer.id, layer.isActive ?? false);
+            if (layer.geometry) {
+                geometryMap.set(layer.id, layer.geometry);
+            }
         });
     });
 
-    const mergedGroups: ExposureLayerGroup[] = geometryData.map((group) => ({
+    // Use visibilityData as the source of truth for which layers to include
+    // (backend already filters by focus area geometry)
+    const mergedGroups: ExposureLayerGroup[] = visibilityData.map((group) => ({
         id: group.id,
         name: group.name,
         exposureLayers: group.exposureLayers.map((layer) => ({
             ...layer,
-            isActive: visibilityMap.get(layer.id) ?? false,
+            geometry: geometryMap.get(layer.id),
+            isActive: layer.isActive ?? false,
         })),
     }));
 
@@ -96,7 +99,7 @@ export const mergeGeometryWithVisibility = (geometryData: ExposureLayerGroup[], 
     };
 };
 
-export const fetchExposureLayers = async (scenarioId: string, focusAreaId?: string | null): Promise<ExposureLayersResponse> => {
+export const fetchExposureLayers = async (scenarioId: string, focusAreaId: string): Promise<ExposureLayersResponse> => {
     const [geometryData, visibilityData] = await Promise.all([fetchExposureLayerGeometry(), fetchExposureLayerVisibility(scenarioId, focusAreaId)]);
 
     return mergeGeometryWithVisibility(geometryData, visibilityData);
@@ -108,7 +111,7 @@ export const toggleExposureLayerVisibility = async (scenarioId: string, data: To
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
             exposureLayerId: data.exposureLayerId,
-            focusAreaId: data.focusAreaId ?? null,
+            focusAreaId: data.focusAreaId,
             isActive: data.isActive,
         }),
     });

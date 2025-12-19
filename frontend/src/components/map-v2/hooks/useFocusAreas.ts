@@ -56,6 +56,11 @@ const useFocusAreas = ({ scenarioId, mapRef, drawRef, mapReady }: UseFocusAreasO
         const activeFocusAreaIds = new Set<string>();
 
         for (const focusArea of focusAreas) {
+            // Skip system focus areas (map-wide) - they have no geometry
+            if (focusArea.isSystem || !focusArea.geometry) {
+                continue;
+            }
+
             if (!focusArea.isActive) {
                 continue;
             }

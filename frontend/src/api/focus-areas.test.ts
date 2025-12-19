@@ -30,8 +30,10 @@ describe('focus-areas API', () => {
     const mockFocusArea: FocusArea = {
         id: 'fa-123',
         name: 'Test Focus Area',
-        isActive: true,
         geometry: mockGeometry,
+        filterMode: 'by_asset_type',
+        isActive: true,
+        isSystem: false,
     };
 
     beforeEach(() => {
@@ -45,7 +47,10 @@ describe('focus-areas API', () => {
 
     describe('fetchFocusAreas', () => {
         it('successfully fetches focus areas from API', async () => {
-            const mockFocusAreas: FocusArea[] = [mockFocusArea, { id: 'fa-456', name: 'Another Area', isActive: false, geometry: mockGeometry }];
+            const mockFocusAreas: FocusArea[] = [
+                mockFocusArea,
+                { id: 'fa-456', name: 'Another Area', geometry: mockGeometry, filterMode: 'by_asset_type', isActive: true, isSystem: false },
+            ];
 
             fetchMock.mockResolvedValueOnce({
                 ok: true,
@@ -61,7 +66,6 @@ describe('focus-areas API', () => {
             expect(result).toHaveLength(2);
             expect(result[0].id).toBe('fa-123');
             expect(result[0].name).toBe('Test Focus Area');
-            expect(result[0].isActive).toBe(true);
         });
 
         it('throws error when API call fails', async () => {
