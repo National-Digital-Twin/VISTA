@@ -10,8 +10,8 @@ const clampDependencyValue = (value: string): string => {
     if (value === '' || value === '-') {
         return value;
     }
-    const num = parseFloat(value);
-    if (isNaN(num)) {
+    const num = Number.parseFloat(value);
+    if (Number.isNaN(num)) {
         return value;
     }
     if (num < MIN_DEPENDENCY) {
