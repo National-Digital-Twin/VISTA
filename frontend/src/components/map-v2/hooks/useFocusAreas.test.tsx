@@ -33,8 +33,10 @@ const mockGeometry: Geometry = {
 const createMockFocusArea = (overrides?: Partial<FocusArea>): FocusArea => ({
     id: 'focus-area-1',
     name: 'Test Focus Area',
-    isActive: true,
     geometry: mockGeometry,
+    filterMode: 'by_asset_type',
+    isActive: true,
+    isSystem: false,
     ...overrides,
 });
 

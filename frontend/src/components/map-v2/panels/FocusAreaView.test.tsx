@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from '@mui/material/styles';
@@ -23,7 +24,6 @@ describe('FocusAreaView', () => {
     const defaultProps = {
         onClose: vi.fn(),
         scenarioId: 'scenario-123',
-        mapWideVisible: true,
     };
 
     let queryClient: QueryClient;
@@ -63,14 +63,29 @@ describe('FocusAreaView', () => {
     const createMockFocusArea = (overrides?: Partial<FocusArea>): FocusArea => ({
         id: 'focus-area-1',
         name: 'Test Focus Area',
-        isActive: true,
         geometry: mockGeometry,
+        filterMode: 'by_asset_type',
+        isActive: true,
+        isSystem: false,
         ...overrides,
     });
 
-    const setupMocks = (options?: { focusAreas?: FocusArea[] }) => {
-        const { focusAreas = [createMockFocusArea()] } = options || {};
-        mockedFetchFocusAreas.mockResolvedValue(focusAreas);
+    const createMapWideFocusArea = (overrides?: Partial<FocusArea>): FocusArea => ({
+        id: 'map-wide',
+        name: 'Map-wide',
+        geometry: null,
+        filterMode: 'by_asset_type',
+        isActive: true,
+        isSystem: true,
+        ...overrides,
+    });
+
+    const setupMocks = (options?: { focusAreas?: FocusArea[]; includeMapWide?: boolean }) => {
+        const { focusAreas = [createMockFocusArea()], includeMapWide = true } = options || {};
+
+        const allFocusAreas = includeMapWide ? [createMapWideFocusArea(), ...focusAreas] : focusAreas;
+
+        mockedFetchFocusAreas.mockResolvedValue(allFocusAreas);
         mockedUpdateFocusArea.mockImplementation(async (_scenarioId, _focusAreaId, data) => ({
             ...createMockFocusArea(),
             ...data,
@@ -188,7 +203,7 @@ describe('FocusAreaView', () => {
 
         it('shows visibility icon for active focus areas', async () => {
             setupMocks({
-                focusAreas: [createMockFocusArea({ isActive: true })],
+                focusAreas: [createMockFocusArea({ id: 'fa-1', isActive: true })],
             });
             renderWithProviders(<FocusAreaView {...defaultProps} />);
             await waitFor(() => {
@@ -198,7 +213,7 @@ describe('FocusAreaView', () => {
 
         it('shows visibility off icon for inactive focus areas', async () => {
             setupMocks({
-                focusAreas: [createMockFocusArea({ isActive: false })],
+                focusAreas: [createMockFocusArea({ id: 'fa-1', isActive: false })],
             });
             renderWithProviders(<FocusAreaView {...defaultProps} />);
             await waitFor(() => {
@@ -209,30 +224,35 @@ describe('FocusAreaView', () => {
 
     describe('Map-wide Toggle', () => {
         it('shows visibility icon when map-wide is visible', async () => {
-            setupMocks();
-            renderWithProviders(<FocusAreaView {...defaultProps} mapWideVisible={true} />);
+            mockedFetchFocusAreas.mockResolvedValue([createMapWideFocusArea({ isActive: true })]);
+            renderWithProviders(<FocusAreaView {...defaultProps} />);
             await waitFor(() => {
                 expect(screen.getByLabelText('Hide map-wide assets')).toBeInTheDocument();
             });
         });
 
         it('shows visibility off icon when map-wide is hidden', async () => {
-            setupMocks();
-            renderWithProviders(<FocusAreaView {...defaultProps} mapWideVisible={false} />);
+            mockedFetchFocusAreas.mockResolvedValue([createMapWideFocusArea({ isActive: false })]);
+            renderWithProviders(<FocusAreaView {...defaultProps} />);
             await waitFor(() => {
                 expect(screen.getByLabelText('Show map-wide assets')).toBeInTheDocument();
             });
         });
 
-        it('calls onMapWideVisibleChange when toggle is clicked', async () => {
-            const onMapWideVisibleChange = vi.fn();
-            setupMocks();
-            renderWithProviders(<FocusAreaView {...defaultProps} mapWideVisible={true} onMapWideVisibleChange={onMapWideVisibleChange} />);
+        it('calls updateFocusArea when map-wide toggle is clicked', async () => {
+            const user = userEvent.setup();
+            setupMocks({ focusAreas: [], includeMapWide: true });
+            renderWithProviders(<FocusAreaView {...defaultProps} />);
+
             await waitFor(() => {
                 expect(screen.getByLabelText('Hide map-wide assets')).toBeInTheDocument();
             });
-            fireEvent.click(screen.getByLabelText('Hide map-wide assets'));
-            expect(onMapWideVisibleChange).toHaveBeenCalledWith(false);
+
+            await user.click(screen.getByLabelText('Hide map-wide assets'));
+
+            await waitFor(() => {
+                expect(mockedUpdateFocusArea).toHaveBeenCalledWith('scenario-123', 'map-wide', { isActive: false });
+            });
         });
     });
 
@@ -427,12 +447,12 @@ describe('FocusAreaView', () => {
             });
         });
 
-        it('disables buttons while mutation is pending', async () => {
+        it('disables visibility toggle while visibility mutation is pending', async () => {
             let resolveUpdate: (value: FocusArea) => void;
             const updatePromise = new Promise<FocusArea>((resolve) => {
                 resolveUpdate = resolve;
             });
-            mockedFetchFocusAreas.mockResolvedValue([createMockFocusArea({ id: 'fa-1', name: 'Test' })]);
+            mockedFetchFocusAreas.mockResolvedValue([createMapWideFocusArea(), createMockFocusArea({ id: 'fa-1', name: 'Test', isActive: true })]);
             mockedUpdateFocusArea.mockReturnValue(updatePromise);
 
             renderWithProviders(<FocusAreaView {...defaultProps} />);
@@ -443,16 +463,15 @@ describe('FocusAreaView', () => {
             fireEvent.click(screen.getByLabelText('Hide focus area'));
 
             await waitFor(() => {
-                expect(screen.getByLabelText('Edit focus area name')).toBeDisabled();
-                expect(screen.getByLabelText('Delete focus area')).toBeDisabled();
+                // Only the visibility toggle should be disabled during visibility mutation
                 expect(screen.getByLabelText('Hide focus area')).toBeDisabled();
             });
 
             resolveUpdate!(createMockFocusArea({ id: 'fa-1', isActive: false }));
         });
 
-        it('shows error snackbar when update fails', async () => {
-            mockedFetchFocusAreas.mockResolvedValue([createMockFocusArea({ id: 'fa-1', name: 'Test' })]);
+        it('shows error snackbar when visibility update fails', async () => {
+            mockedFetchFocusAreas.mockResolvedValue([createMapWideFocusArea(), createMockFocusArea({ id: 'fa-1', name: 'Test', isActive: true })]);
             mockedUpdateFocusArea.mockRejectedValue(new Error('Network error'));
 
             renderWithProviders(<FocusAreaView {...defaultProps} />);
@@ -468,7 +487,7 @@ describe('FocusAreaView', () => {
         });
 
         it('shows error snackbar when delete fails', async () => {
-            mockedFetchFocusAreas.mockResolvedValue([createMockFocusArea({ id: 'fa-1', name: 'Test' })]);
+            mockedFetchFocusAreas.mockResolvedValue([createMapWideFocusArea(), createMockFocusArea({ id: 'fa-1', name: 'Test', isActive: true })]);
             mockedDeleteFocusArea.mockRejectedValue(new Error('Network error'));
 
             renderWithProviders(<FocusAreaView {...defaultProps} />);

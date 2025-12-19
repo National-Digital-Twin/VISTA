@@ -3,7 +3,7 @@ import { Box } from '@mui/material';
 import type { MapRef, ViewStateChangeEvent } from 'react-map-gl/maplibre';
 import type { MapMouseEvent } from 'maplibre-gl';
 import Map, { Marker } from 'react-map-gl/maplibre';
-import { useQuery, useQueries } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import 'maplibre-gl/dist/maplibre-gl.css';
 import './mapbox-draw-maplibre.css';
@@ -24,24 +24,8 @@ import { useAssetTypeIcons } from '@/hooks/useAssetTypeIcons';
 import { useActiveScenario } from '@/hooks/useActiveScenario';
 import { useScenarioAssets } from '@/hooks/useScenarioAssets';
 import { fetchAssetCategories } from '@/api/asset-categories';
-import { fetchScenarioAssetTypes } from '@/api/scenario-asset-types';
 import { useRoadRouteLazyQuery, type RoadRouteInputParams } from '@/api/utilities';
 import type { Asset } from '@/api/assets-by-type';
-import type { ScenarioAssetCategory } from '@/api/scenario-asset-types';
-
-const extractVisibleAssetTypeIds = (categories: ScenarioAssetCategory[]): string[] => {
-    const ids: string[] = [];
-    for (const category of categories) {
-        for (const subCategory of category.subCategories ?? []) {
-            for (const assetType of subCategory.assetTypes ?? []) {
-                if (assetType.isActive) {
-                    ids.push(assetType.id);
-                }
-            }
-        }
-    }
-    return ids;
-};
 
 const MapView = () => {
     const mapRef = useRef<MapRef>(null);
@@ -54,7 +38,6 @@ const MapView = () => {
     const [selectedUtilityIds, setSelectedUtilityIds] = useState<Record<string, boolean>>({});
     const [selectedElement, setSelectedElement] = useState<Asset | null>(null);
     const [previousPanelView, setPreviousPanelView] = useState<string | null>('focus-area');
-    const [mapWideVisible, setMapWideVisible] = useState(true);
     const [roadRouteStart, setRoadRouteStart] = useState<{ lat: number; lng: number } | null>(null);
     const [roadRouteEnd, setRoadRouteEnd] = useState<{ lat: number; lng: number } | null>(null);
     const [roadRouteVehicle, setRoadRouteVehicle] = useState<RoadRouteInputParams['vehicle']>('Car');
@@ -88,7 +71,7 @@ const MapView = () => {
             }
 
             const focusArea = focusAreas?.find((fa) => fa.id === focusAreaId);
-            if (focusArea) {
+            if (focusArea?.geometry) {
                 const bounds = bbox({ type: 'Feature', geometry: focusArea.geometry, properties: {} });
                 map.fitBounds(
                     [
@@ -134,14 +117,14 @@ const MapView = () => {
         }
     }, [roadRouteStart, roadRouteEnd, roadRouteVehicle, isRoadRouteEnabled, getRoadRoute]);
 
-    const { assets: allAssets } = useScenarioAssets({
+    const { assets } = useScenarioAssets({
         scenarioId,
-        excludeMapWide: !mapWideVisible,
         iconMap,
     });
 
     const isInFocusAreaPanel = activePanelView === 'focus-area';
 
+    // Get IDs of all active focus areas (including system/map-wide)
     const activeFocusAreaIds = useMemo(() => {
         if (!focusAreas) {
             return [];
@@ -149,59 +132,6 @@ const MapView = () => {
         return focusAreas.filter((fa) => fa.isActive).map((fa) => fa.id);
     }, [focusAreas]);
 
-    const assetTypeQueryConfigs = useMemo(() => {
-        if (!scenarioId) {
-            return [];
-        }
-
-        if (isInFocusAreaPanel) {
-            const configs = [];
-            if (mapWideVisible) {
-                configs.push({
-                    queryKey: ['scenarioAssetTypes', scenarioId, null],
-                    queryFn: () => fetchScenarioAssetTypes(scenarioId, null),
-                    staleTime: 0,
-                });
-            }
-            activeFocusAreaIds.forEach((faId) => {
-                configs.push({
-                    queryKey: ['scenarioAssetTypes', scenarioId, faId],
-                    queryFn: () => fetchScenarioAssetTypes(scenarioId, faId),
-                    staleTime: 0,
-                });
-            });
-            return configs;
-        }
-
-        return [
-            {
-                queryKey: ['scenarioAssetTypes', scenarioId, selectedFocusAreaId],
-                queryFn: () => fetchScenarioAssetTypes(scenarioId, selectedFocusAreaId),
-                staleTime: 0,
-            },
-        ];
-    }, [scenarioId, isInFocusAreaPanel, mapWideVisible, activeFocusAreaIds, selectedFocusAreaId]);
-
-    const assetTypeQueries = useQueries({
-        queries: assetTypeQueryConfigs.length > 0 ? assetTypeQueryConfigs : [],
-    });
-
-    const visibleAssetTypeIds = useMemo(() => {
-        const ids = new Set<string>();
-        for (const query of assetTypeQueries) {
-            if (query.data && Array.isArray(query.data)) {
-                extractVisibleAssetTypeIds(query.data).forEach((id) => ids.add(id));
-            }
-        }
-        return ids;
-    }, [assetTypeQueries]);
-
-    const assets = useMemo(() => {
-        if (visibleAssetTypeIds.size === 0) {
-            return [];
-        }
-        return allAssets.filter((asset) => visibleAssetTypeIds.has(asset.type));
-    }, [allAssets, visibleAssetTypeIds]);
 
     usePreloadAssetIcons(assets);
 
@@ -345,10 +275,6 @@ const MapView = () => {
         return { url: transformedUrl, headers };
     }, []);
 
-    const handleMapWideVisibleChange = useCallback((visible: boolean) => {
-        setMapWideVisible(visible);
-    }, []);
-
     const handleViewChange = useCallback(
         (viewId: string | null) => {
             if (viewId !== 'asset-details' && selectedElement) {
@@ -418,12 +344,12 @@ const MapView = () => {
                 roadRouteData={
                     roadRouteQueryData?.roadRoute
                         ? {
-                              routeGeojson: {
-                                  features: roadRouteQueryData.roadRoute.routeGeojson.features.map((f) => ({
-                                      properties: f.properties || {},
-                                  })),
-                              },
-                          }
+                            routeGeojson: {
+                                features: roadRouteQueryData.roadRoute.routeGeojson.features.map((f) => ({
+                                    properties: f.properties || {},
+                                })),
+                            },
+                        }
                         : undefined
                 }
                 onRoadRouteVehicleChange={setRoadRouteVehicle}
@@ -431,8 +357,6 @@ const MapView = () => {
                 selectedElement={selectedElement}
                 onBackFromAssetDetails={handleBackFromAssetDetails}
                 scenarioId={scenarioId}
-                mapWideVisible={mapWideVisible}
-                onMapWideVisibleChange={handleMapWideVisibleChange}
                 isDrawing={isDrawing}
                 onStartDrawing={startDrawing}
                 onFocusAreaSelect={handleFocusAreaSelect}
@@ -476,7 +400,6 @@ const MapView = () => {
                                 selectedFocusAreaId={selectedFocusAreaId}
                                 mapReady={mapReady}
                                 isInFocusAreaPanel={isInFocusAreaPanel}
-                                mapWideVisible={mapWideVisible}
                                 activeFocusAreaIds={activeFocusAreaIds}
                             />
                             <UtilitiesLayers utilities={mergedUtilities} selectedUtilityIds={selectedUtilityIds} mapReady={mapReady} />

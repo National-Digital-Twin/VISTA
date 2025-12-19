@@ -27,8 +27,6 @@ import { fetchFocusAreas, type FocusArea } from '@/api/focus-areas';
 type FocusAreaViewProps = {
     readonly onClose: () => void;
     readonly scenarioId?: string;
-    readonly mapWideVisible: boolean;
-    readonly onMapWideVisibleChange?: (visible: boolean) => void;
     readonly isDrawing?: boolean;
     readonly onStartDrawing?: (mode: 'circle' | 'polygon') => void;
 };
@@ -176,7 +174,7 @@ const FocusAreaItem = ({ focusArea, scenarioId, onError }: FocusAreaItemProps) =
     );
 };
 
-const FocusAreaView = ({ onClose, scenarioId, mapWideVisible, onMapWideVisibleChange, isDrawing, onStartDrawing }: FocusAreaViewProps) => {
+const FocusAreaView = ({ onClose, scenarioId, isDrawing, onStartDrawing }: FocusAreaViewProps) => {
     const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
     const [mutationError, setMutationError] = useState<string | null>(null);
     const menuOpen = Boolean(menuAnchorEl);
@@ -191,6 +189,18 @@ const FocusAreaView = ({ onClose, scenarioId, mapWideVisible, onMapWideVisibleCh
         enabled: !!scenarioId,
         staleTime: 5 * 60 * 1000,
     });
+
+    const { updateFocusArea: updateFocusAreaMutate, isMutating } = useFocusAreaMutations({
+        scenarioId,
+        onError: setMutationError,
+    });
+
+    // Find map-wide focus area (isSystem === true)
+    const mapWideFocusArea = focusAreas?.find((fa) => fa.isSystem);
+    const mapWideVisible = mapWideFocusArea?.isActive ?? true;
+
+    // User focus areas (non-system)
+    const userFocusAreas = focusAreas?.filter((fa) => !fa.isSystem) ?? [];
 
     const handleDrawMenuClick = (event: MouseEvent<HTMLButtonElement>) => {
         setMenuAnchorEl(event.currentTarget);
@@ -207,7 +217,9 @@ const FocusAreaView = ({ onClose, scenarioId, mapWideVisible, onMapWideVisibleCh
     }, [onStartDrawing]);
 
     const handleMapWideToggle = () => {
-        onMapWideVisibleChange?.(!mapWideVisible);
+        if (mapWideFocusArea) {
+            updateFocusAreaMutate({ focusAreaId: mapWideFocusArea.id, data: { isActive: !mapWideVisible } });
+        }
     };
 
     return (
@@ -235,6 +247,7 @@ const FocusAreaView = ({ onClose, scenarioId, mapWideVisible, onMapWideVisibleCh
                     <IconToggle
                         checked={mapWideVisible}
                         onChange={handleMapWideToggle}
+                        disabled={isMutating}
                         aria-label={mapWideVisible ? 'Hide map-wide assets' : 'Show map-wide assets'}
                         size="small"
                     />
@@ -269,7 +282,7 @@ const FocusAreaView = ({ onClose, scenarioId, mapWideVisible, onMapWideVisibleCh
                 {scenarioId &&
                     !isLoading &&
                     !isError &&
-                    focusAreas?.map((focusArea) => (
+                    userFocusAreas.map((focusArea) => (
                         <FocusAreaItem key={focusArea.id} focusArea={focusArea} scenarioId={scenarioId} onError={setMutationError} />
                     ))}
 
