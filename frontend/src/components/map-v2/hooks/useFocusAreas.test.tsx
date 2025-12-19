@@ -64,6 +64,7 @@ type MockMapboxDraw = {
     delete: ReturnType<typeof vi.fn>;
     changeMode: ReturnType<typeof vi.fn>;
     getMode: ReturnType<typeof vi.fn>;
+    getSelectedIds: ReturnType<typeof vi.fn>;
 };
 
 type MockMap = {
@@ -78,6 +79,7 @@ function createMockDrawRef(): { current: MockMapboxDraw } {
             delete: vi.fn(),
             changeMode: vi.fn(),
             getMode: vi.fn().mockReturnValue('simple_select'),
+            getSelectedIds: vi.fn().mockReturnValue([]),
         },
     };
 }
@@ -915,6 +917,316 @@ describe('useFocusAreas', () => {
             });
 
             expect(result.current.drawingMode).toBe(null);
+        });
+    });
+
+    describe('selectedFocusAreaId sync to MapboxDraw', () => {
+        it('selects the focus area in draw when selectedFocusAreaId is provided and area is loaded', async () => {
+            const mockFocusAreas = [createMockFocusArea({ id: 'fa-1', isActive: true })];
+            mockedFetchFocusAreas.mockResolvedValue(mockFocusAreas);
+
+            const mockMap = createMockMap();
+            const mockDrawRef = createMockDrawRef();
+            mockDrawRef.current.getSelectedIds.mockReturnValue([]);
+
+            const { rerender } = renderHook(
+                ({ selectedFocusAreaId }) =>
+                    useFocusAreas({
+                        scenarioId: 'scenario-123',
+                        mapRef: createMockMapRef(mockMap) as any,
+                        drawRef: mockDrawRef as any,
+                        mapReady: true,
+                        isEditable: true,
+                        selectedFocusAreaId,
+                    }),
+                { wrapper: createWrapper(queryClient), initialProps: { selectedFocusAreaId: null as string | null } },
+            );
+
+            // Wait for focus area to be loaded into draw
+            await waitFor(() => {
+                expect(mockDrawRef.current.add).toHaveBeenCalled();
+            });
+
+            // Clear the changeMode calls from initialization
+            mockDrawRef.current.changeMode.mockClear();
+
+            // Now set the selectedFocusAreaId
+            rerender({ selectedFocusAreaId: 'fa-1' });
+
+            await waitFor(() => {
+                expect(mockDrawRef.current.changeMode).toHaveBeenCalledWith('simple_select', { featureIds: ['fa-1'] });
+            });
+        });
+
+        it('does not select if focus area is not loaded in draw', async () => {
+            const mockFocusAreas = [createMockFocusArea({ id: 'fa-1', isActive: false })];
+            mockedFetchFocusAreas.mockResolvedValue(mockFocusAreas);
+
+            const mockMap = createMockMap();
+            const mockDrawRef = createMockDrawRef();
+
+            renderHook(
+                () =>
+                    useFocusAreas({
+                        scenarioId: 'scenario-123',
+                        mapRef: createMockMapRef(mockMap) as any,
+                        drawRef: mockDrawRef as any,
+                        mapReady: true,
+                        isEditable: true,
+                        selectedFocusAreaId: 'fa-1',
+                    }),
+                { wrapper: createWrapper(queryClient) },
+            );
+
+            await waitFor(() => {
+                expect(mockedFetchFocusAreas).toHaveBeenCalled();
+            });
+
+            expect(mockDrawRef.current.changeMode).not.toHaveBeenCalledWith('simple_select', expect.objectContaining({ featureIds: ['fa-1'] }));
+        });
+
+        it('does not change selection if already selected', async () => {
+            const mockFocusAreas = [createMockFocusArea({ id: 'fa-1', isActive: true })];
+            mockedFetchFocusAreas.mockResolvedValue(mockFocusAreas);
+
+            const mockMap = createMockMap();
+            const mockDrawRef = createMockDrawRef();
+            mockDrawRef.current.getSelectedIds.mockReturnValue(['fa-1']);
+
+            renderHook(
+                () =>
+                    useFocusAreas({
+                        scenarioId: 'scenario-123',
+                        mapRef: createMockMapRef(mockMap) as any,
+                        drawRef: mockDrawRef as any,
+                        mapReady: true,
+                        isEditable: true,
+                        selectedFocusAreaId: 'fa-1',
+                    }),
+                { wrapper: createWrapper(queryClient) },
+            );
+
+            await waitFor(() => {
+                expect(mockDrawRef.current.add).toHaveBeenCalled();
+            });
+
+            // Wait a bit to ensure no additional changeMode calls are made
+            await new Promise<void>((resolve) => {
+                setTimeout(resolve, 50);
+            });
+
+            // changeMode should only have been called for draw modes, not for selection
+            expect(mockDrawRef.current.changeMode).not.toHaveBeenCalledWith('simple_select', expect.objectContaining({ featureIds: ['fa-1'] }));
+        });
+    });
+
+    describe('draw.selectionchange handler', () => {
+        it('calls onFocusAreaSelect when a focus area is selected in draw', async () => {
+            const mockFocusAreas = [createMockFocusArea({ id: 'fa-1', isActive: true })];
+            mockedFetchFocusAreas.mockResolvedValue(mockFocusAreas);
+
+            const mockMap = createMockMap();
+            const mockDrawRef = createMockDrawRef();
+            const onFocusAreaSelect = vi.fn();
+            let selectionChangeHandler: (event: { features: Feature[] }) => void;
+
+            mockMap.on.mockImplementation((event: string, handler: any) => {
+                if (event === 'draw.selectionchange') {
+                    selectionChangeHandler = handler;
+                }
+            });
+
+            renderHook(
+                () =>
+                    useFocusAreas({
+                        scenarioId: 'scenario-123',
+                        mapRef: createMockMapRef(mockMap) as any,
+                        drawRef: mockDrawRef as any,
+                        mapReady: true,
+                        onFocusAreaSelect,
+                    }),
+                { wrapper: createWrapper(queryClient) },
+            );
+
+            await waitFor(() => {
+                expect(mockDrawRef.current.add).toHaveBeenCalled();
+            });
+
+            const selectedFeature: Feature = {
+                type: 'Feature',
+                id: 'fa-1',
+                properties: {},
+                geometry: mockGeometry,
+            };
+
+            act(() => {
+                selectionChangeHandler({ features: [selectedFeature] });
+            });
+
+            expect(onFocusAreaSelect).toHaveBeenCalledWith('fa-1');
+        });
+
+        it('reverts to map-wide focus area when selection is cleared', async () => {
+            const mapWideFocusArea = createMockFocusArea({ id: 'map-wide', isActive: true, isSystem: true, geometry: null });
+            const userFocusArea = createMockFocusArea({ id: 'fa-1', isActive: true });
+            mockedFetchFocusAreas.mockResolvedValue([mapWideFocusArea, userFocusArea]);
+
+            const mockMap = createMockMap();
+            const mockDrawRef = createMockDrawRef();
+            const onFocusAreaSelect = vi.fn();
+            let selectionChangeHandler: (event: { features: Feature[] }) => void;
+
+            mockMap.on.mockImplementation((event: string, handler: any) => {
+                if (event === 'draw.selectionchange') {
+                    selectionChangeHandler = handler;
+                }
+            });
+
+            renderHook(
+                () =>
+                    useFocusAreas({
+                        scenarioId: 'scenario-123',
+                        mapRef: createMockMapRef(mockMap) as any,
+                        drawRef: mockDrawRef as any,
+                        mapReady: true,
+                        onFocusAreaSelect,
+                    }),
+                { wrapper: createWrapper(queryClient) },
+            );
+
+            await waitFor(() => {
+                expect(mockDrawRef.current.add).toHaveBeenCalled();
+            });
+
+            act(() => {
+                selectionChangeHandler({ features: [] });
+            });
+
+            expect(onFocusAreaSelect).toHaveBeenCalledWith('map-wide');
+        });
+
+        it('does not call onFocusAreaSelect if callback is not provided', async () => {
+            const mockFocusAreas = [createMockFocusArea({ id: 'fa-1', isActive: true })];
+            mockedFetchFocusAreas.mockResolvedValue(mockFocusAreas);
+
+            const mockMap = createMockMap();
+            const mockDrawRef = createMockDrawRef();
+            let selectionChangeHandler: (event: { features: Feature[] }) => void;
+
+            mockMap.on.mockImplementation((event: string, handler: any) => {
+                if (event === 'draw.selectionchange') {
+                    selectionChangeHandler = handler;
+                }
+            });
+
+            renderHook(
+                () =>
+                    useFocusAreas({
+                        scenarioId: 'scenario-123',
+                        mapRef: createMockMapRef(mockMap) as any,
+                        drawRef: mockDrawRef as any,
+                        mapReady: true,
+                    }),
+                { wrapper: createWrapper(queryClient) },
+            );
+
+            await waitFor(() => {
+                expect(mockDrawRef.current.add).toHaveBeenCalled();
+            });
+
+            const selectedFeature: Feature = {
+                type: 'Feature',
+                id: 'fa-1',
+                properties: {},
+                geometry: mockGeometry,
+            };
+
+            // Should not throw
+            act(() => {
+                selectionChangeHandler({ features: [selectedFeature] });
+            });
+        });
+
+        it('registers draw.selectionchange event handler', async () => {
+            const mockMap = createMockMap();
+            const mockDrawRef = createMockDrawRef();
+
+            renderHook(
+                () =>
+                    useFocusAreas({
+                        scenarioId: 'scenario-123',
+                        mapRef: createMockMapRef(mockMap) as any,
+                        drawRef: mockDrawRef as any,
+                        mapReady: true,
+                    }),
+                { wrapper: createWrapper(queryClient) },
+            );
+
+            await waitFor(() => {
+                expect(mockMap.on).toHaveBeenCalledWith('draw.selectionchange', expect.any(Function));
+            });
+        });
+    });
+
+    describe('isEditable behavior', () => {
+        it('clears all drawn features when isEditable becomes false', async () => {
+            const mockFocusAreas = [createMockFocusArea({ id: 'fa-1', isActive: true }), createMockFocusArea({ id: 'fa-2', isActive: true })];
+            mockedFetchFocusAreas.mockResolvedValue(mockFocusAreas);
+
+            const mockMap = createMockMap();
+            const mockDrawRef = createMockDrawRef();
+
+            const { rerender } = renderHook(
+                ({ isEditable }) =>
+                    useFocusAreas({
+                        scenarioId: 'scenario-123',
+                        mapRef: createMockMapRef(mockMap) as any,
+                        drawRef: mockDrawRef as any,
+                        mapReady: true,
+                        isEditable,
+                    }),
+                {
+                    wrapper: createWrapper(queryClient),
+                    initialProps: { isEditable: true },
+                },
+            );
+
+            await waitFor(() => {
+                expect(mockDrawRef.current.add).toHaveBeenCalledTimes(2);
+            });
+
+            rerender({ isEditable: false });
+
+            await waitFor(() => {
+                expect(mockDrawRef.current.delete).toHaveBeenCalledWith('fa-1');
+                expect(mockDrawRef.current.delete).toHaveBeenCalledWith('fa-2');
+            });
+        });
+
+        it('does not add focus areas to draw when isEditable is false', async () => {
+            const mockFocusAreas = [createMockFocusArea({ id: 'fa-1', isActive: true })];
+            mockedFetchFocusAreas.mockResolvedValue(mockFocusAreas);
+
+            const mockMap = createMockMap();
+            const mockDrawRef = createMockDrawRef();
+
+            renderHook(
+                () =>
+                    useFocusAreas({
+                        scenarioId: 'scenario-123',
+                        mapRef: createMockMapRef(mockMap) as any,
+                        drawRef: mockDrawRef as any,
+                        mapReady: true,
+                        isEditable: false,
+                    }),
+                { wrapper: createWrapper(queryClient) },
+            );
+
+            await waitFor(() => {
+                expect(mockedFetchFocusAreas).toHaveBeenCalled();
+            });
+
+            expect(mockDrawRef.current.add).not.toHaveBeenCalled();
         });
     });
 });

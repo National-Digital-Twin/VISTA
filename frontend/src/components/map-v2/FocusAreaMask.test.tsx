@@ -6,8 +6,8 @@ import type { Geometry } from 'geojson';
 import FocusAreaMask from './FocusAreaMask';
 
 vi.mock('react-map-gl/maplibre', () => ({
-    Source: ({ children, data }: { children: ReactNode; data: unknown }) => (
-        <div data-testid="source" data-geometry={JSON.stringify(data)}>
+    Source: ({ children, data, id }: { children: ReactNode; data: unknown; id: string }) => (
+        <div data-testid={`source-${id}`} data-geometry={JSON.stringify(data)}>
             {children}
         </div>
     ),
@@ -62,17 +62,24 @@ describe('FocusAreaMask', () => {
             expect(container.firstChild).toBeNull();
         });
 
-        it('renders Source and Layer when geometry is valid Polygon', () => {
+        it('renders mask Source and Layer when geometry is valid Polygon', () => {
             render(<FocusAreaMask geometry={mockPolygonGeometry} />);
-            expect(screen.getByTestId('source')).toBeInTheDocument();
+            expect(screen.getByTestId('source-focus-area-mask-source')).toBeInTheDocument();
             expect(screen.getByTestId('layer-focus-area-mask-layer')).toBeInTheDocument();
+        });
+
+        it('renders focus highlight Source and Layers when geometry is valid Polygon', () => {
+            render(<FocusAreaMask geometry={mockPolygonGeometry} />);
+            expect(screen.getByTestId('source-focus-area-highlight-source')).toBeInTheDocument();
+            expect(screen.getByTestId('layer-focus-area-highlight-fill-layer')).toBeInTheDocument();
+            expect(screen.getByTestId('layer-focus-area-highlight-line-layer')).toBeInTheDocument();
         });
     });
 
     describe('Mask Geometry', () => {
         it('creates a mask with world bounds and focus area as hole', () => {
             render(<FocusAreaMask geometry={mockPolygonGeometry} />);
-            const source = screen.getByTestId('source');
+            const source = screen.getByTestId('source-focus-area-mask-source');
             const data = JSON.parse(source.dataset.geometry || '{}');
 
             expect(data.type).toBe('Feature');
@@ -94,7 +101,7 @@ describe('FocusAreaMask', () => {
 
         it('reverses the focus area coordinates for the hole', () => {
             render(<FocusAreaMask geometry={mockPolygonGeometry} />);
-            const source = screen.getByTestId('source');
+            const source = screen.getByTestId('source-focus-area-mask-source');
             const data = JSON.parse(source.dataset.geometry || '{}');
 
             const originalCoords = mockPolygonGeometry.coordinates[0];
@@ -103,6 +110,17 @@ describe('FocusAreaMask', () => {
             // Hole should be reversed coordinates
             expect(hole[0]).toEqual(originalCoords[originalCoords.length - 1]);
             expect(hole[hole.length - 1]).toEqual(originalCoords[0]);
+        });
+    });
+
+    describe('Focus Highlight Geometry', () => {
+        it('creates a focus feature with the original geometry', () => {
+            render(<FocusAreaMask geometry={mockPolygonGeometry} />);
+            const source = screen.getByTestId('source-focus-area-highlight-source');
+            const data = JSON.parse(source.dataset.geometry || '{}');
+
+            expect(data.type).toBe('Feature');
+            expect(data.geometry).toEqual(mockPolygonGeometry);
         });
     });
 

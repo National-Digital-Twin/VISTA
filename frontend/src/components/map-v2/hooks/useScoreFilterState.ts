@@ -39,6 +39,7 @@ export type UseScoreFilterStateReturn = {
     buildFilterPayload: () => ScoreFilterValues;
     resetToDefaults: () => void;
     isDefaultFilter: () => boolean;
+    isValidRange: () => boolean;
 };
 
 export function useScoreFilterState({ initialValues }: UseScoreFilterStateOptions = {}): UseScoreFilterStateReturn {
@@ -51,7 +52,7 @@ export function useScoreFilterState({ initialValues }: UseScoreFilterStateOption
     const handleCheckboxChange = useCallback((setter: Dispatch<SetStateAction<number[]>>, value: number, checked: boolean) => {
         setter((prev) => {
             if (checked) {
-                return [...prev, value].sort();
+                return [...prev, value].sort((a, b) => a - b);
             }
             return prev.filter((v) => v !== value);
         });
@@ -87,6 +88,12 @@ export function useScoreFilterState({ initialValues }: UseScoreFilterStateOption
         setDependencyMax(DEFAULT_DEPENDENCY_MAX);
     }, []);
 
+    const isValidRange = useCallback(() => {
+        const min = Number.parseFloat(dependencyMin);
+        const max = Number.parseFloat(dependencyMax);
+        return !Number.isNaN(min) && !Number.isNaN(max) && min <= max;
+    }, [dependencyMin, dependencyMax]);
+
     return {
         criticalityValues,
         setCriticalityValues,
@@ -102,6 +109,7 @@ export function useScoreFilterState({ initialValues }: UseScoreFilterStateOption
         buildFilterPayload,
         resetToDefaults,
         isDefaultFilter: checkIsDefaultFilter,
+        isValidRange,
     };
 }
 

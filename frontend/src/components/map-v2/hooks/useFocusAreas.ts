@@ -12,9 +12,12 @@ type UseFocusAreasOptions = {
     mapRef: RefObject<MapRef | null>;
     drawRef: RefObject<MapboxDraw | null>;
     mapReady: boolean;
+    isEditable?: boolean;
+    selectedFocusAreaId?: string | null;
+    onFocusAreaSelect?: (focusAreaId: string | null) => void;
 };
 
-const useFocusAreas = ({ scenarioId, mapRef, drawRef, mapReady }: UseFocusAreasOptions) => {
+const useFocusAreas = ({ scenarioId, mapRef, drawRef, mapReady, isEditable = true, selectedFocusAreaId, onFocusAreaSelect }: UseFocusAreasOptions) => {
     const loadedFocusAreaIdsRef = useRef<Set<string>>(new Set());
     const focusAreasRef = useRef<FocusArea[] | undefined>(undefined);
     const [drawingMode, setDrawingMode] = useState<'circle' | 'polygon' | null>(null);
@@ -41,27 +44,42 @@ const useFocusAreas = ({ scenarioId, mapRef, drawRef, mapReady }: UseFocusAreasO
     // Store mutation functions in refs for stable references in event handlers
     const createMutateRef = useRef(createFocusAreaMutate);
     const updateMutateRef = useRef(updateFocusAreaMutate);
+    const onFocusAreaSelectRef = useRef(onFocusAreaSelect);
     useEffect(() => {
         createMutateRef.current = createFocusAreaMutate;
         updateMutateRef.current = updateFocusAreaMutate;
-    }, [createFocusAreaMutate, updateFocusAreaMutate]);
+        onFocusAreaSelectRef.current = onFocusAreaSelect;
+    }, [createFocusAreaMutate, updateFocusAreaMutate, onFocusAreaSelect]);
 
-    // Sync active focus areas to MapboxDraw
+    // Sync active focus areas to MapboxDraw (only when editable)
     useEffect(() => {
-        if (!mapReady || !drawRef.current || !focusAreas) {
+        if (!mapReady || !drawRef.current) {
             return;
         }
 
         const draw = drawRef.current;
+
+        // If not editable, clear all drawn features
+        if (!isEditable) {
+            loadedFocusAreaIdsRef.current.forEach((id) => {
+                try {
+                    draw.delete(id);
+                } catch {
+                    // Feature may already be deleted
+                }
+            });
+            loadedFocusAreaIdsRef.current.clear();
+            return;
+        }
+
+        if (!focusAreas) {
+            return;
+        }
+
         const activeFocusAreaIds = new Set<string>();
 
         for (const focusArea of focusAreas) {
-            // Skip system focus areas (map-wide) - they have no geometry
-            if (focusArea.isSystem || !focusArea.geometry) {
-                continue;
-            }
-
-            if (!focusArea.isActive) {
+            if (!focusArea.isActive || !focusArea.geometry) {
                 continue;
             }
 
@@ -97,7 +115,24 @@ const useFocusAreas = ({ scenarioId, mapRef, drawRef, mapReady }: UseFocusAreasO
             }
             loadedFocusAreaIdsRef.current.delete(id);
         }
-    }, [mapReady, drawRef, focusAreas]);
+    }, [mapReady, drawRef, focusAreas, isEditable]);
+
+    // Sync selectedFocusAreaId to MapboxDraw selection (when selected from side panel)
+    useEffect(() => {
+        if (!mapReady || !drawRef.current || !selectedFocusAreaId) {
+            return;
+        }
+
+        // Only select if it's loaded in draw (i.e., it's an active focus area with isEditable=true)
+        if (loadedFocusAreaIdsRef.current.has(selectedFocusAreaId)) {
+            const draw = drawRef.current;
+            const currentSelected = draw.getSelectedIds();
+
+            if (currentSelected.length !== 1 || currentSelected[0] !== selectedFocusAreaId) {
+                draw.changeMode('simple_select', { featureIds: [selectedFocusAreaId] });
+            }
+        }
+    }, [mapReady, drawRef, selectedFocusAreaId]);
 
     // Handle draw events
     useEffect(() => {
@@ -154,14 +189,37 @@ const useFocusAreas = ({ scenarioId, mapRef, drawRef, mapReady }: UseFocusAreasO
             }
         };
 
+        const handleSelectionChange = (event: { features: Feature[] }) => {
+            if (!onFocusAreaSelectRef.current) {
+                return;
+            }
+
+            if (event.features.length > 0) {
+                const selectedFeature = event.features[0];
+                const focusAreaId = selectedFeature.id;
+                if (focusAreaId && loadedFocusAreaIdsRef.current.has(String(focusAreaId))) {
+                    onFocusAreaSelectRef.current(String(focusAreaId));
+                }
+            } else {
+                // Nothing selected - revert to map-wide
+                const currentFocusAreas = focusAreasRef.current;
+                const mapWideFocusArea = currentFocusAreas?.find((fa) => fa.isSystem);
+                if (mapWideFocusArea) {
+                    onFocusAreaSelectRef.current(mapWideFocusArea.id);
+                }
+            }
+        };
+
         map.on('draw.create', handleDrawCreate);
         map.on('draw.modechange', handleModeChange);
         map.on('draw.update', handleDrawUpdate);
+        map.on('draw.selectionchange', handleSelectionChange);
 
         return () => {
             map.off('draw.create', handleDrawCreate);
             map.off('draw.modechange', handleModeChange);
             map.off('draw.update', handleDrawUpdate);
+            map.off('draw.selectionchange', handleSelectionChange);
         };
     }, [mapReady, mapRef, drawRef, scenarioId]);
 

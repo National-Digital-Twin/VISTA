@@ -17,11 +17,15 @@ type ScenarioAssetResponse = {
 
 export type FetchScenarioAssetsOptions = {
     scenarioId: string;
+    focusAreaId?: string | null;
     iconMap?: Map<string, string>;
 };
 
-export const fetchScenarioAssets = async ({ scenarioId, iconMap }: FetchScenarioAssetsOptions): Promise<Asset[]> => {
-    const url = `${config.services.apiBaseUrl}/scenarios/${scenarioId}/assets/`;
+export const fetchScenarioAssets = async ({ scenarioId, focusAreaId, iconMap }: FetchScenarioAssetsOptions): Promise<Asset[]> => {
+    let url = `${config.services.apiBaseUrl}/scenarios/${scenarioId}/assets/`;
+    if (focusAreaId) {
+        url += `?focus_area_id=${encodeURIComponent(focusAreaId)}`;
+    }
 
     const response = await fetch(url, {
         headers: { 'Content-Type': 'application/json' },

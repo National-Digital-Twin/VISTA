@@ -235,10 +235,11 @@ describe('ExposureView', () => {
             const select = screen.getByRole('combobox');
             fireEvent.mouseDown(select);
 
+            // Inactive focus areas should now be selectable (not disabled)
             await waitFor(
                 () => {
                     const inactiveOption = screen.getByRole('option', { name: 'Focus Area 2' });
-                    expect(inactiveOption).toHaveAttribute('aria-disabled', 'true');
+                    expect(inactiveOption).not.toHaveAttribute('aria-disabled', 'true');
                 },
                 { timeout: 2000 },
             );

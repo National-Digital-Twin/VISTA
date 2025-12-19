@@ -26,6 +26,7 @@ export function ScoreFilterPopup({ open, onClose, onApply, assetTypeName, initia
         setDependencyMax,
         handleCheckboxChange,
         buildFilterPayload,
+        isValidRange,
     } = useScoreFilterState({ initialValues });
 
     const handleApply = useCallback(() => {
@@ -79,7 +80,7 @@ export function ScoreFilterPopup({ open, onClose, onApply, assetTypeName, initia
                 <Button onClick={onClose} variant="outlined" size="small" sx={{ minWidth: 96 }}>
                     Cancel
                 </Button>
-                <Button onClick={handleApply} variant="contained" size="small" sx={{ minWidth: 96 }}>
+                <Button onClick={handleApply} variant="contained" size="small" sx={{ minWidth: 96 }} disabled={!isValidRange()}>
                     Apply
                 </Button>
             </DialogActions>
