@@ -59,32 +59,6 @@ describe('scenario-assets API', () => {
             expect(result[0].elementType).toBe('asset');
         });
 
-        it('includes exclude_map_wide query parameter when excludeMapWide is true', async () => {
-            fetchMock.mockResolvedValueOnce({
-                ok: true,
-                json: vi.fn().mockResolvedValue([]),
-            });
-
-            await fetchScenarioAssets({ scenarioId: 'scenario-123', excludeMapWide: true });
-
-            expect(fetchMock).toHaveBeenCalledWith('/ndtp-python/api/scenarios/scenario-123/assets/?exclude_map_wide=true', {
-                headers: { 'Content-Type': 'application/json' },
-            });
-        });
-
-        it('does not include query parameter when excludeMapWide is false', async () => {
-            fetchMock.mockResolvedValueOnce({
-                ok: true,
-                json: vi.fn().mockResolvedValue([]),
-            });
-
-            await fetchScenarioAssets({ scenarioId: 'scenario-123', excludeMapWide: false });
-
-            expect(fetchMock).toHaveBeenCalledWith('/ndtp-python/api/scenarios/scenario-123/assets/', {
-                headers: { 'Content-Type': 'application/json' },
-            });
-        });
-
         it('throws error when API call fails', async () => {
             fetchMock.mockResolvedValueOnce({
                 ok: false,

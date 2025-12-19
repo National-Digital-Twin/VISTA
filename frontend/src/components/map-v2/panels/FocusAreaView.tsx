@@ -27,19 +27,21 @@ import { fetchFocusAreas, type FocusArea } from '@/api/focus-areas';
 type FocusAreaViewProps = {
     readonly onClose: () => void;
     readonly scenarioId?: string;
-    readonly mapWideVisible: boolean;
-    readonly onMapWideVisibleChange?: (visible: boolean) => void;
     readonly isDrawing?: boolean;
     readonly onStartDrawing?: (mode: 'circle' | 'polygon') => void;
+    readonly selectedFocusAreaId?: string | null;
+    readonly onFocusAreaSelect?: (focusAreaId: string | null) => void;
 };
 
 type FocusAreaItemProps = {
     readonly focusArea: FocusArea;
     readonly scenarioId: string;
     readonly onError: (message: string) => void;
+    readonly isSelected?: boolean;
+    readonly onSelect?: (focusAreaId: string) => void;
 };
 
-const FocusAreaItem = ({ focusArea, scenarioId, onError }: FocusAreaItemProps) => {
+const FocusAreaItem = ({ focusArea, scenarioId, onError, isSelected, onSelect }: FocusAreaItemProps) => {
     const [isEditing, setIsEditing] = useState(false);
     const [editName, setEditName] = useState(focusArea.name);
     const [nameError, setNameError] = useState<string | null>(null);
@@ -47,7 +49,12 @@ const FocusAreaItem = ({ focusArea, scenarioId, onError }: FocusAreaItemProps) =
 
     const { updateFocusArea: updateFocusAreaMutate, deleteFocusArea: deleteFocusAreaMutate, isMutating } = useFocusAreaMutations({ scenarioId, onError });
 
-    const handleEditClick = () => {
+    const handleClick = () => {
+        onSelect?.(focusArea.id);
+    };
+
+    const handleEditClick = (e: MouseEvent) => {
+        e.stopPropagation();
         setEditName(focusArea.name);
         setNameError(null);
         setIsEditing(true);
@@ -83,11 +90,13 @@ const FocusAreaItem = ({ focusArea, scenarioId, onError }: FocusAreaItemProps) =
         }
     };
 
-    const handleToggleVisibility = () => {
+    const handleToggleVisibility = (e: MouseEvent | KeyboardEvent) => {
+        e.stopPropagation();
         updateFocusAreaMutate({ focusAreaId: focusArea.id, data: { isActive: !focusArea.isActive } });
     };
 
-    const handleDeleteClick = () => {
+    const handleDeleteClick = (e: MouseEvent) => {
+        e.stopPropagation();
         setDeleteDialogOpen(true);
     };
 
@@ -102,12 +111,18 @@ const FocusAreaItem = ({ focusArea, scenarioId, onError }: FocusAreaItemProps) =
 
     return (
         <Box
+            onClick={handleClick}
             sx={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                py: 1,
-                px: 2,
+                'display': 'flex',
+                'alignItems': 'center',
+                'justifyContent': 'space-between',
+                'py': 1,
+                'px': 2,
+                'cursor': 'pointer',
+                'backgroundColor': isSelected ? 'action.selected' : 'transparent',
+                '&:hover': {
+                    backgroundColor: isSelected ? 'action.selected' : 'action.hover',
+                },
             }}
         >
             <Box sx={{ flex: 1, minWidth: 0 }}>
@@ -176,7 +191,7 @@ const FocusAreaItem = ({ focusArea, scenarioId, onError }: FocusAreaItemProps) =
     );
 };
 
-const FocusAreaView = ({ onClose, scenarioId, mapWideVisible, onMapWideVisibleChange, isDrawing, onStartDrawing }: FocusAreaViewProps) => {
+const FocusAreaView = ({ onClose, scenarioId, isDrawing, onStartDrawing, selectedFocusAreaId, onFocusAreaSelect }: FocusAreaViewProps) => {
     const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
     const [mutationError, setMutationError] = useState<string | null>(null);
     const menuOpen = Boolean(menuAnchorEl);
@@ -192,6 +207,18 @@ const FocusAreaView = ({ onClose, scenarioId, mapWideVisible, onMapWideVisibleCh
         staleTime: 5 * 60 * 1000,
     });
 
+    const { updateFocusArea: updateFocusAreaMutate, isMutating } = useFocusAreaMutations({
+        scenarioId,
+        onError: setMutationError,
+    });
+
+    // Find map-wide focus area (isSystem === true)
+    const mapWideFocusArea = focusAreas?.find((fa) => fa.isSystem);
+    const mapWideVisible = mapWideFocusArea?.isActive ?? true;
+
+    // User focus areas (non-system)
+    const userFocusAreas = focusAreas?.filter((fa) => !fa.isSystem) ?? [];
+
     const handleDrawMenuClick = (event: MouseEvent<HTMLButtonElement>) => {
         setMenuAnchorEl(event.currentTarget);
     };
@@ -206,8 +233,11 @@ const FocusAreaView = ({ onClose, scenarioId, mapWideVisible, onMapWideVisibleCh
         onStartDrawing?.('polygon');
     }, [onStartDrawing]);
 
-    const handleMapWideToggle = () => {
-        onMapWideVisibleChange?.(!mapWideVisible);
+    const handleMapWideToggle = (e: MouseEvent | KeyboardEvent) => {
+        e.stopPropagation();
+        if (mapWideFocusArea) {
+            updateFocusAreaMutate({ focusAreaId: mapWideFocusArea.id, data: { isActive: !mapWideVisible } });
+        }
     };
 
     return (
@@ -223,18 +253,25 @@ const FocusAreaView = ({ onClose, scenarioId, mapWideVisible, onMapWideVisibleCh
 
             <Box sx={{ flex: 1, overflowY: 'auto' }}>
                 <Box
+                    onClick={() => mapWideFocusArea && onFocusAreaSelect?.(mapWideFocusArea.id)}
                     sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        py: 1.5,
-                        px: 2,
+                        'display': 'flex',
+                        'alignItems': 'center',
+                        'justifyContent': 'space-between',
+                        'py': 1.5,
+                        'px': 2,
+                        'cursor': 'pointer',
+                        'backgroundColor': selectedFocusAreaId === mapWideFocusArea?.id ? 'action.selected' : 'transparent',
+                        '&:hover': {
+                            backgroundColor: selectedFocusAreaId === mapWideFocusArea?.id ? 'action.selected' : 'action.hover',
+                        },
                     }}
                 >
                     <Typography variant="body2">Map-wide</Typography>
                     <IconToggle
                         checked={mapWideVisible}
                         onChange={handleMapWideToggle}
+                        disabled={isMutating}
                         aria-label={mapWideVisible ? 'Hide map-wide assets' : 'Show map-wide assets'}
                         size="small"
                     />
@@ -269,8 +306,15 @@ const FocusAreaView = ({ onClose, scenarioId, mapWideVisible, onMapWideVisibleCh
                 {scenarioId &&
                     !isLoading &&
                     !isError &&
-                    focusAreas?.map((focusArea) => (
-                        <FocusAreaItem key={focusArea.id} focusArea={focusArea} scenarioId={scenarioId} onError={setMutationError} />
+                    userFocusAreas.map((focusArea) => (
+                        <FocusAreaItem
+                            key={focusArea.id}
+                            focusArea={focusArea}
+                            scenarioId={scenarioId}
+                            onError={setMutationError}
+                            isSelected={selectedFocusAreaId === focusArea.id}
+                            onSelect={onFocusAreaSelect}
+                        />
                     ))}
 
                 <Box sx={{ display: 'flex', justifyContent: 'center', m: 2 }}>

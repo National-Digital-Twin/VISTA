@@ -7,7 +7,7 @@ class VisibleAssetTypeToggleSerializer(serializers.Serializer):
     """Serializer for toggling asset type visibility."""
 
     asset_type_id = serializers.UUIDField()
-    focus_area_id = serializers.UUIDField(required=False, allow_null=True)
+    focus_area_id = serializers.UUIDField()
     is_active = serializers.BooleanField()
 
 

@@ -1,12 +1,13 @@
 CREATE VIEW public.visible_exposure_asset_scores AS
         WITH active_exposure_layers AS (
         SELECT ael.asset_id,
-            ve.user_id,
-            ve.scenario_id,
+            fa.user_id,
+            fa.scenario_id,
             ael.exposure_layer_id,
             ael.intersects
         FROM assets_within_500m_exposure_layers ael
             JOIN api_visibleexposurelayer ve ON ael.exposure_layer_id = ve.exposure_layer_id
+            JOIN api_focusarea fa ON ve.focus_area_id = fa.id
         ), agg AS (
         SELECT active_exposure_layers.asset_id,
             active_exposure_layers.user_id,

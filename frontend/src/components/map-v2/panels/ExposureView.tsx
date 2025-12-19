@@ -1,32 +1,14 @@
 import React, { useCallback, useMemo, useState, useEffect } from 'react';
-import {
-    Box,
-    IconButton,
-    Typography,
-    ListItem,
-    ListItemText,
-    Collapse,
-    Button,
-    FormControl,
-    InputLabel,
-    MenuItem,
-    Select,
-    Alert,
-    Portal,
-    Snackbar,
-} from '@mui/material';
-import type { SelectChangeEvent } from '@mui/material';
+import { Box, IconButton, Typography, ListItem, ListItemText, Collapse, Button, Alert, Portal, Snackbar } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import type { Feature } from 'geojson';
 
+import FocusAreaSelector from './FocusAreaSelector';
 import { fetchExposureLayers, toggleExposureLayerVisibility, type ExposureLayerGroup } from '@/api/exposure-layers';
-import { fetchFocusAreas, type FocusArea } from '@/api/focus-areas';
 import IconToggle from '@/components/IconToggle';
-
-const MAP_WIDE_VALUE = '__map_wide__';
 
 const getGroupNamesWithActiveLayers = (groups: ExposureLayerGroup[]): Set<string> => {
     const names = new Set<string>();
@@ -191,27 +173,23 @@ const ExposureView = ({ onClose, scenarioId, selectedFocusAreaId, onFocusAreaSel
     const queryClient = useQueryClient();
     const currentFocusAreaId = selectedFocusAreaId ?? null;
 
-    const { data: focusAreas, isLoading: isLoadingFocusAreas } = useQuery({
-        queryKey: ['focusAreas', scenarioId],
-        queryFn: () => fetchFocusAreas(scenarioId!),
-        enabled: !!scenarioId,
-        staleTime: 5 * 60 * 1000,
-    });
-
     const {
         data: exposureLayersData,
         isLoading: isLoadingLayers,
         isError: isErrorLayers,
     } = useQuery({
         queryKey: ['exposureLayers', scenarioId, currentFocusAreaId],
-        queryFn: () => fetchExposureLayers(scenarioId!, currentFocusAreaId),
-        enabled: !!scenarioId,
+        queryFn: () => fetchExposureLayers(scenarioId!, currentFocusAreaId!),
+        enabled: !!scenarioId && !!currentFocusAreaId,
         staleTime: 0,
         refetchOnMount: true,
     });
 
     const visibilityMutation = useMutation({
         mutationFn: (data: { exposureLayerId: string; isActive: boolean }) => {
+            if (!currentFocusAreaId) {
+                return Promise.reject(new Error('No focus area selected'));
+            }
             return toggleExposureLayerVisibility(scenarioId!, {
                 exposureLayerId: data.exposureLayerId,
                 focusAreaId: currentFocusAreaId,
@@ -242,15 +220,6 @@ const ExposureView = ({ onClose, scenarioId, selectedFocusAreaId, onFocusAreaSel
             return next;
         });
     }, []);
-
-    const handleFocusAreaChange = useCallback(
-        (event: SelectChangeEvent<string>) => {
-            const value = event.target.value;
-            const newFocusAreaId = value === MAP_WIDE_VALUE ? null : value;
-            onFocusAreaSelect?.(newFocusAreaId);
-        },
-        [onFocusAreaSelect],
-    );
 
     const toggleExposureLayer = useCallback(
         (layerId: string) => {
@@ -298,7 +267,6 @@ const ExposureView = ({ onClose, scenarioId, selectedFocusAreaId, onFocusAreaSel
         return buildLayerVisibilityMap(exposureLayersData.groups);
     }, [exposureLayersData]);
 
-    const focusAreaSelectValue = currentFocusAreaId ?? MAP_WIDE_VALUE;
     const isMutating = visibilityMutation.isPending;
 
     if (!scenarioId) {
@@ -350,23 +318,12 @@ const ExposureView = ({ onClose, scenarioId, selectedFocusAreaId, onFocusAreaSel
                 </Box>
 
                 <Box sx={{ p: 2, borderBottom: 1, borderColor: 'divider' }}>
-                    <FormControl fullWidth size="small">
-                        <InputLabel id="focus-area-select-label">Focus area</InputLabel>
-                        <Select
-                            labelId="focus-area-select-label"
-                            value={focusAreaSelectValue}
-                            onChange={handleFocusAreaChange}
-                            label="Focus area"
-                            disabled={isLoadingFocusAreas}
-                        >
-                            <MenuItem value={MAP_WIDE_VALUE}>Map wide</MenuItem>
-                            {focusAreas?.map((fa: FocusArea) => (
-                                <MenuItem key={fa.id} value={fa.id} disabled={!fa.isActive}>
-                                    {fa.name}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
+                    <FocusAreaSelector
+                        scenarioId={scenarioId}
+                        selectedFocusAreaId={currentFocusAreaId}
+                        onFocusAreaSelect={onFocusAreaSelect ?? (() => {})}
+                        label="Focus area"
+                    />
                 </Box>
 
                 <Box sx={{ flex: 1, overflowY: 'auto', position: 'relative' }}>

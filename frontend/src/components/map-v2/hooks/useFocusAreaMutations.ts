@@ -15,8 +15,9 @@ const useFocusAreaMutations = ({ scenarioId, onError }: UseFocusAreaMutationsOpt
         queryClient.invalidateQueries({ queryKey: ['scenarioAssets', scenarioId] });
     };
 
-    const invalidateAssetTypesForFocusArea = (focusAreaId: string) => {
+    const invalidateQueriesForFocusArea = (focusAreaId: string) => {
         queryClient.invalidateQueries({ queryKey: ['scenarioAssetTypes', scenarioId, focusAreaId] });
+        queryClient.invalidateQueries({ queryKey: ['exposureLayers', scenarioId, focusAreaId] });
     };
 
     const createMutation = useMutation({
@@ -30,7 +31,7 @@ const useFocusAreaMutations = ({ scenarioId, onError }: UseFocusAreaMutationsOpt
         onSuccess: (_data, variables) => {
             invalidateFocusAreaList();
             if (variables.data.geometry !== undefined) {
-                invalidateAssetTypesForFocusArea(variables.focusAreaId);
+                invalidateQueriesForFocusArea(variables.focusAreaId);
             }
         },
         onError: () => onError?.('Failed to update focus area'),
@@ -40,7 +41,7 @@ const useFocusAreaMutations = ({ scenarioId, onError }: UseFocusAreaMutationsOpt
         mutationFn: (focusAreaId: string) => deleteFocusArea(scenarioId!, focusAreaId),
         onSuccess: (_data, focusAreaId) => {
             invalidateFocusAreaList();
-            invalidateAssetTypesForFocusArea(focusAreaId);
+            invalidateQueriesForFocusArea(focusAreaId);
         },
         onError: () => onError?.('Failed to delete focus area'),
     });

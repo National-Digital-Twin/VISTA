@@ -17,18 +17,15 @@ type ScenarioAssetResponse = {
 
 export type FetchScenarioAssetsOptions = {
     scenarioId: string;
-    excludeMapWide?: boolean;
+    focusAreaId?: string | null;
     iconMap?: Map<string, string>;
 };
 
-export const fetchScenarioAssets = async ({ scenarioId, excludeMapWide, iconMap }: FetchScenarioAssetsOptions): Promise<Asset[]> => {
-    const params = new URLSearchParams();
-    if (excludeMapWide) {
-        params.set('exclude_map_wide', 'true');
+export const fetchScenarioAssets = async ({ scenarioId, focusAreaId, iconMap }: FetchScenarioAssetsOptions): Promise<Asset[]> => {
+    let url = `${config.services.apiBaseUrl}/scenarios/${scenarioId}/assets/`;
+    if (focusAreaId) {
+        url += `?focus_area_id=${encodeURIComponent(focusAreaId)}`;
     }
-
-    const query = params.size ? `?${params}` : '';
-    const url = `${config.services.apiBaseUrl}/scenarios/${scenarioId}/assets/${query}`;
 
     const response = await fetch(url, {
         headers: { 'Content-Type': 'application/json' },

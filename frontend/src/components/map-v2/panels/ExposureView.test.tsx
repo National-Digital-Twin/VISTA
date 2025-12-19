@@ -109,8 +109,9 @@ describe('ExposureView', () => {
     };
 
     const mockFocusAreas: FocusArea[] = [
-        { id: 'fa-1', name: 'Focus Area 1', isActive: true, geometry: mockGeometry1 },
-        { id: 'fa-2', name: 'Focus Area 2', isActive: false, geometry: mockGeometry2 },
+        { id: 'map-wide-1', name: 'Map-wide', isActive: true, geometry: null, filterMode: 'by_asset_type', isSystem: true },
+        { id: 'fa-1', name: 'Focus Area 1', isActive: true, geometry: mockGeometry1, filterMode: 'by_asset_type', isSystem: false },
+        { id: 'fa-2', name: 'Focus Area 2', isActive: false, geometry: mockGeometry2, filterMode: 'by_asset_type', isSystem: false },
     ];
 
     const setupMocks = (options?: { exposureLayers?: ExposureLayersResponse; focusAreas?: FocusArea[] }) => {
@@ -155,7 +156,7 @@ describe('ExposureView', () => {
             const neverResolvingPromise = new Promise<never>(() => {});
             mockedFetchExposureLayers.mockImplementation(() => neverResolvingPromise as Promise<ExposureLayersResponse>);
             mockedFetchFocusAreas.mockResolvedValue(mockFocusAreas);
-            renderWithProviders(<ExposureView {...defaultProps} />);
+            renderWithProviders(<ExposureView {...defaultProps} selectedFocusAreaId="map-wide-1" />);
             await waitFor(() => {
                 expect(screen.getByText('Loading exposure layers...')).toBeInTheDocument();
             });
@@ -171,11 +172,11 @@ describe('ExposureView', () => {
             });
         });
 
-        it('shows Map wide as default option', async () => {
+        it('shows Map-wide as default option', async () => {
             setupMocks();
-            renderWithProviders(<ExposureView {...defaultProps} />);
+            renderWithProviders(<ExposureView {...defaultProps} selectedFocusAreaId="map-wide-1" />);
             await waitFor(() => {
-                expect(screen.getByText('Map wide')).toBeInTheDocument();
+                expect(screen.getByText('Map-wide')).toBeInTheDocument();
             });
         });
 
@@ -234,10 +235,11 @@ describe('ExposureView', () => {
             const select = screen.getByRole('combobox');
             fireEvent.mouseDown(select);
 
+            // Inactive focus areas should now be selectable (not disabled)
             await waitFor(
                 () => {
                     const inactiveOption = screen.getByRole('option', { name: 'Focus Area 2' });
-                    expect(inactiveOption).toHaveAttribute('aria-disabled', 'true');
+                    expect(inactiveOption).not.toHaveAttribute('aria-disabled', 'true');
                 },
                 { timeout: 2000 },
             );
@@ -250,14 +252,14 @@ describe('ExposureView', () => {
         });
 
         it('displays exposure layer groups', async () => {
-            renderWithProviders(<ExposureView {...defaultProps} />);
+            renderWithProviders(<ExposureView {...defaultProps} selectedFocusAreaId="map-wide-1" />);
             await waitFor(() => {
                 expect(screen.getByText(/Floods/)).toBeInTheDocument();
             });
         });
 
         it('shows layer names when group is expanded', async () => {
-            renderWithProviders(<ExposureView {...defaultProps} />);
+            renderWithProviders(<ExposureView {...defaultProps} selectedFocusAreaId="map-wide-1" />);
             await waitFor(() => {
                 expect(screen.getByText(/Floods/)).toBeInTheDocument();
             });
@@ -279,7 +281,7 @@ describe('ExposureView', () => {
                     groups: [],
                 },
             });
-            renderWithProviders(<ExposureView {...defaultProps} />);
+            renderWithProviders(<ExposureView {...defaultProps} selectedFocusAreaId="map-wide-1" />);
             await waitFor(() => {
                 expect(screen.getByText('No exposure layers found')).toBeInTheDocument();
             });
@@ -292,7 +294,7 @@ describe('ExposureView', () => {
         });
 
         it('calls toggleExposureLayerVisibility when toggle is clicked', async () => {
-            renderWithProviders(<ExposureView {...defaultProps} />);
+            renderWithProviders(<ExposureView {...defaultProps} selectedFocusAreaId="map-wide-1" />);
             await waitFor(() => {
                 expect(screen.getByText(/Floods/)).toBeInTheDocument();
             });
@@ -311,7 +313,7 @@ describe('ExposureView', () => {
             await waitFor(() => {
                 expect(mockedToggleExposureLayerVisibility).toHaveBeenCalledWith('scenario-1', {
                     exposureLayerId: 'layer-1',
-                    focusAreaId: null,
+                    focusAreaId: 'map-wide-1',
                     isActive: true,
                 });
             });
@@ -352,7 +354,7 @@ describe('ExposureView', () => {
                     ],
                 }),
             });
-            renderWithProviders(<ExposureView {...defaultProps} />);
+            renderWithProviders(<ExposureView {...defaultProps} selectedFocusAreaId="map-wide-1" />);
             await waitFor(() => {
                 expect(screen.getByText(/Floods/)).toBeInTheDocument();
             });
@@ -374,7 +376,7 @@ describe('ExposureView', () => {
         });
 
         it('expands group when clicked', async () => {
-            renderWithProviders(<ExposureView {...defaultProps} />);
+            renderWithProviders(<ExposureView {...defaultProps} selectedFocusAreaId="map-wide-1" />);
             await waitFor(() => {
                 expect(screen.getByText(/Floods/)).toBeInTheDocument();
             });
@@ -390,7 +392,7 @@ describe('ExposureView', () => {
         });
 
         it('collapses group when clicked again', async () => {
-            renderWithProviders(<ExposureView {...defaultProps} />);
+            renderWithProviders(<ExposureView {...defaultProps} selectedFocusAreaId="map-wide-1" />);
             await waitFor(() => {
                 expect(screen.getByText(/Floods/)).toBeInTheDocument();
             });
@@ -411,7 +413,7 @@ describe('ExposureView', () => {
                     layers: [{ id: 'layer-1', name: 'Caul Bourne', isActive: true }],
                 }),
             });
-            renderWithProviders(<ExposureView {...defaultProps} />);
+            renderWithProviders(<ExposureView {...defaultProps} selectedFocusAreaId="map-wide-1" />);
             await waitFor(() => {
                 const floodsHeader = screen.getByText(/Floods/);
                 const headerButton = floodsHeader.closest('button');
@@ -424,7 +426,7 @@ describe('ExposureView', () => {
         it('displays error message when fetch fails', async () => {
             mockedFetchExposureLayers.mockRejectedValue(new Error('Network error'));
             mockedFetchFocusAreas.mockResolvedValue(mockFocusAreas);
-            renderWithProviders(<ExposureView {...defaultProps} />);
+            renderWithProviders(<ExposureView {...defaultProps} selectedFocusAreaId="map-wide-1" />);
             await waitFor(() => {
                 expect(screen.getByText('Error loading exposure layers')).toBeInTheDocument();
             });

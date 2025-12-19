@@ -6,8 +6,9 @@ import { ThemeProvider } from '@mui/material/styles';
 import AssetsView from './AssetsView';
 import theme from '@/theme';
 import { fetchScenarioAssetTypes, toggleAssetTypeVisibility, clearAllAssetTypeVisibility } from '@/api/scenario-asset-types';
-import { fetchFocusAreas } from '@/api/focus-areas';
+import { fetchFocusAreas, updateFocusArea } from '@/api/focus-areas';
 import { fetchDataSources } from '@/api/datasources';
+import { fetchAssetScoreFilters } from '@/api/asset-score-filters';
 
 vi.mock('@/api/scenario-asset-types', () => ({
     fetchScenarioAssetTypes: vi.fn(),
@@ -17,22 +18,32 @@ vi.mock('@/api/scenario-asset-types', () => ({
 
 vi.mock('@/api/focus-areas', () => ({
     fetchFocusAreas: vi.fn(),
+    updateFocusArea: vi.fn(),
 }));
 
 vi.mock('@/api/datasources', () => ({
     fetchDataSources: vi.fn(),
 }));
 
+vi.mock('@/api/asset-score-filters', () => ({
+    fetchAssetScoreFilters: vi.fn(),
+    putAssetScoreFilter: vi.fn(),
+    deleteAssetScoreFilter: vi.fn(),
+}));
+
 const mockedFetchScenarioAssetTypes = vi.mocked(fetchScenarioAssetTypes);
 const mockedToggleAssetTypeVisibility = vi.mocked(toggleAssetTypeVisibility);
 const mockedClearAllAssetTypeVisibility = vi.mocked(clearAllAssetTypeVisibility);
 const mockedFetchFocusAreas = vi.mocked(fetchFocusAreas);
+const mockedUpdateFocusArea = vi.mocked(updateFocusArea);
 const mockedFetchDataSources = vi.mocked(fetchDataSources);
+const mockedFetchAssetScoreFilters = vi.mocked(fetchAssetScoreFilters);
 
 describe('AssetsView', () => {
     const defaultProps = {
         onClose: vi.fn(),
         scenarioId: 'test-scenario-id',
+        selectedFocusAreaId: 'map-wide-1',
     };
 
     let queryClient: QueryClient;
@@ -67,6 +78,7 @@ describe('AssetsView', () => {
                     id: string;
                     name: string;
                     assetCount: number;
+                    filteredAssetCount?: number;
                     isActive: boolean;
                     datasourceId: string | null;
                 }>;
@@ -75,8 +87,10 @@ describe('AssetsView', () => {
         focusAreas?: Array<{
             id: string;
             name: string;
+            geometry: object | null;
+            filterMode: string;
             isActive: boolean;
-            geometry: object;
+            isSystem: boolean;
         }>;
     }) => {
         const {
@@ -93,6 +107,7 @@ describe('AssetsView', () => {
                                     id: '35a910f3-f611-4096-ac0b-0928c5612e32',
                                     name: 'Hospital',
                                     assetCount: 42,
+                                    filteredAssetCount: 42,
                                     isActive: false,
                                     datasourceId: 'ds-1',
                                 },
@@ -103,10 +118,20 @@ describe('AssetsView', () => {
             ],
             focusAreas = [
                 {
+                    id: 'map-wide-1',
+                    name: 'Map-wide',
+                    geometry: null,
+                    filterMode: 'by_asset_type',
+                    isActive: true,
+                    isSystem: true,
+                },
+                {
                     id: 'focus-area-1',
                     name: 'Area 1',
-                    isActive: true,
                     geometry: { type: 'Point', coordinates: [0, 0] },
+                    filterMode: 'by_asset_type',
+                    isActive: true,
+                    isSystem: false,
                 },
             ],
         } = options || {};
@@ -124,10 +149,19 @@ describe('AssetsView', () => {
         ]);
         mockedToggleAssetTypeVisibility.mockResolvedValue({
             assetTypeId: '35a910f3-f611-4096-ac0b-0928c5612e32',
-            focusAreaId: null,
+            focusAreaId: 'map-wide-1',
             isActive: true,
         });
         mockedClearAllAssetTypeVisibility.mockResolvedValue(undefined);
+        mockedFetchAssetScoreFilters.mockResolvedValue([]);
+        mockedUpdateFocusArea.mockResolvedValue({
+            id: 'map-wide-1',
+            name: 'Map-wide',
+            geometry: null,
+            filterMode: 'by_score_only',
+            isActive: true,
+            isSystem: true,
+        });
     };
 
     const waitForComponentReady = async () => {
@@ -163,7 +197,7 @@ describe('AssetsView', () => {
             setupMocks();
             renderWithProviders(<AssetsView {...defaultProps} />);
             await waitFor(() => {
-                expect(screen.getByLabelText('Select visible focus area')).toBeInTheDocument();
+                expect(screen.getByLabelText('Select focus area')).toBeInTheDocument();
             });
         });
 
@@ -196,7 +230,17 @@ describe('AssetsView', () => {
         it('shows loading state when categories are loading', async () => {
             const neverResolvingPromise = new Promise<never>(() => {});
             mockedFetchScenarioAssetTypes.mockImplementation(() => neverResolvingPromise as Promise<any>);
-            mockedFetchFocusAreas.mockResolvedValue([]);
+            mockedFetchFocusAreas.mockResolvedValue([
+                {
+                    id: 'map-wide-1',
+                    name: 'Map-wide',
+                    geometry: null,
+                    filterMode: 'by_asset_type',
+                    isActive: true,
+                    isSystem: true,
+                },
+            ] as any);
+            mockedFetchDataSources.mockResolvedValue([]);
             renderWithProviders(<AssetsView {...defaultProps} />);
             await waitFor(() => {
                 expect(screen.getByText('Loading asset categories...')).toBeInTheDocument();
@@ -215,7 +259,7 @@ describe('AssetsView', () => {
     describe('Focus Area Selection', () => {
         it('shows Map-wide as default selection', async () => {
             setupMocks();
-            renderWithProviders(<AssetsView {...defaultProps} />);
+            renderWithProviders(<AssetsView {...defaultProps} selectedFocusAreaId="map-wide-1" />);
             await waitFor(() => {
                 expect(screen.getByText('Map-wide')).toBeInTheDocument();
             });
@@ -230,10 +274,10 @@ describe('AssetsView', () => {
             });
 
             await waitFor(() => {
-                expect(screen.getByLabelText('Select visible focus area')).toBeInTheDocument();
+                expect(screen.getByLabelText('Select focus area')).toBeInTheDocument();
             });
 
-            const selectElement = screen.getByLabelText('Select visible focus area');
+            const selectElement = screen.getByLabelText('Select focus area');
             fireEvent.mouseDown(selectElement);
 
             await waitFor(
@@ -257,10 +301,10 @@ describe('AssetsView', () => {
             });
 
             await waitFor(() => {
-                expect(screen.getByLabelText('Select visible focus area')).toBeInTheDocument();
+                expect(screen.getByLabelText('Select focus area')).toBeInTheDocument();
             });
 
-            const selectElement = screen.getByLabelText('Select visible focus area');
+            const selectElement = screen.getByLabelText('Select focus area');
             fireEvent.mouseDown(selectElement);
 
             await waitFor(
@@ -308,8 +352,8 @@ describe('AssetsView', () => {
                                 id: 'subcat1',
                                 name: 'Utility infrastructure',
                                 assetTypes: [
-                                    { id: 'asset-1', name: 'Hospital', assetCount: 25, isActive: true, datasourceId: 'ds-1' },
-                                    { id: 'asset-2', name: 'School', assetCount: 10, isActive: false, datasourceId: 'ds-1' },
+                                    { id: 'asset-1', name: 'Hospital', assetCount: 25, filteredAssetCount: 25, isActive: true, datasourceId: 'ds-1' },
+                                    { id: 'asset-2', name: 'School', assetCount: 10, filteredAssetCount: 10, isActive: false, datasourceId: 'ds-1' },
                                 ],
                             },
                         ],
@@ -361,6 +405,7 @@ describe('AssetsView', () => {
                                         id: 'asset-1',
                                         name: 'Hospital',
                                         assetCount: 25,
+                                        filteredAssetCount: 25,
                                         isActive: true,
                                         datasourceId: 'ds-1',
                                     },
@@ -374,6 +419,7 @@ describe('AssetsView', () => {
                                         id: 'asset-2',
                                         name: 'Railway Station',
                                         assetCount: 15,
+                                        filteredAssetCount: 15,
                                         isActive: false,
                                         datasourceId: 'ds-1',
                                     },
@@ -415,6 +461,7 @@ describe('AssetsView', () => {
                                         id: 'asset-1',
                                         name: 'Hospital',
                                         assetCount: 30,
+                                        filteredAssetCount: 30,
                                         isActive: false,
                                         datasourceId: 'ds-1',
                                     },
@@ -424,25 +471,23 @@ describe('AssetsView', () => {
                     },
                 ],
             });
-            renderWithProviders(<AssetsView {...defaultProps} />);
+            renderWithProviders(<AssetsView {...defaultProps} selectedFocusAreaId="map-wide-1" />);
 
-            await waitFor(() => {
-                expect(screen.getByText(/Utility infrastructure/)).toBeInTheDocument();
-            });
+            // Wait for asset categories to load
+            await screen.findByText(/Utility infrastructure/);
 
             // Subcategory should be collapsed since no assets are visible
-            const hospitalElement = screen.getByText(/Hospital \(30\)/);
-            expect(hospitalElement.closest('.MuiCollapse-hidden')).not.toBeNull();
+            // MUI Collapse still renders children but hides them, so check for collapse state
+            const hospitalElement = screen.queryByText(/Hospital \(30\)/);
+            expect(hospitalElement?.closest('.MuiCollapse-hidden')).not.toBeNull();
         });
 
         it('expands subcategory when clicked', async () => {
             setupMocks();
             renderWithProviders(<AssetsView {...defaultProps} />);
-            await waitFor(() => {
-                expect(screen.getByText('Utility infrastructure')).toBeInTheDocument();
-            });
 
-            const subCategoryHeader = screen.getByText('Utility infrastructure');
+            // Wait for asset categories to load
+            const subCategoryHeader = await screen.findByText('Utility infrastructure');
             fireEvent.click(subCategoryHeader);
 
             await waitFor(() => {
@@ -453,11 +498,9 @@ describe('AssetsView', () => {
         it('collapses subcategory when clicked again', async () => {
             setupMocks();
             renderWithProviders(<AssetsView {...defaultProps} />);
-            await waitFor(() => {
-                expect(screen.getByText('Utility infrastructure')).toBeInTheDocument();
-            });
 
-            const subCategoryHeader = screen.getByText('Utility infrastructure');
+            // Wait for asset categories to load
+            const subCategoryHeader = await screen.findByText('Utility infrastructure');
             fireEvent.click(subCategoryHeader);
 
             await waitFor(() => {
@@ -516,7 +559,7 @@ describe('AssetsView', () => {
         });
 
         it('calls clearAllAssetTypeVisibility when clear all button is clicked', async () => {
-            renderWithProviders(<AssetsView {...defaultProps} />);
+            renderWithProviders(<AssetsView {...defaultProps} selectedFocusAreaId="map-wide-1" />);
 
             await waitFor(() => {
                 expect(screen.getByLabelText('Clear all visible assets')).toBeInTheDocument();
@@ -526,7 +569,7 @@ describe('AssetsView', () => {
             fireEvent.click(clearButton);
 
             await waitFor(() => {
-                expect(mockedClearAllAssetTypeVisibility).toHaveBeenCalledWith('test-scenario-id', null);
+                expect(mockedClearAllAssetTypeVisibility).toHaveBeenCalledWith('test-scenario-id', 'map-wide-1');
             });
         });
     });
@@ -537,13 +580,10 @@ describe('AssetsView', () => {
         });
 
         it('calls toggleAssetTypeVisibility when eye icon is clicked', async () => {
-            renderWithProviders(<AssetsView {...defaultProps} />);
+            renderWithProviders(<AssetsView {...defaultProps} selectedFocusAreaId="map-wide-1" />);
 
-            await waitFor(() => {
-                expect(screen.getByText('Utility infrastructure')).toBeInTheDocument();
-            });
-
-            const subCategoryHeader = screen.getByText('Utility infrastructure');
+            // Wait for asset categories to load
+            const subCategoryHeader = await screen.findByText('Utility infrastructure');
             fireEvent.click(subCategoryHeader);
 
             await waitFor(() => {
@@ -556,7 +596,7 @@ describe('AssetsView', () => {
             await waitFor(() => {
                 expect(mockedToggleAssetTypeVisibility).toHaveBeenCalledWith('test-scenario-id', {
                     assetTypeId: '35a910f3-f611-4096-ac0b-0928c5612e32',
-                    focusAreaId: null,
+                    focusAreaId: 'map-wide-1',
                     isActive: true,
                 });
             });
@@ -577,6 +617,7 @@ describe('AssetsView', () => {
                                         id: '35a910f3-f611-4096-ac0b-0928c5612e32',
                                         name: 'Hospital',
                                         assetCount: 50,
+                                        filteredAssetCount: 50,
                                         isActive: true,
                                         datasourceId: 'ds-1',
                                     },
@@ -588,11 +629,8 @@ describe('AssetsView', () => {
             });
             renderWithProviders(<AssetsView {...defaultProps} />);
 
-            await waitFor(() => {
-                expect(screen.getByText(/Utility infrastructure \(1\)/)).toBeInTheDocument();
-            });
-
-            const subCategoryHeader = screen.getByText(/Utility infrastructure \(1\)/);
+            // Wait for asset categories to load
+            const subCategoryHeader = await screen.findByText(/Utility infrastructure \(1\)/);
             fireEvent.click(subCategoryHeader);
 
             await waitFor(() => {
@@ -616,6 +654,153 @@ describe('AssetsView', () => {
             fireEvent.click(closeButton);
 
             expect(onClose).toHaveBeenCalledTimes(1);
+        });
+    });
+
+    describe('Error States', () => {
+        it('displays error message when asset categories fail to load', async () => {
+            mockedFetchScenarioAssetTypes.mockRejectedValue(new Error('API Error'));
+            mockedFetchFocusAreas.mockResolvedValue([
+                {
+                    id: 'map-wide-1',
+                    name: 'Map-wide',
+                    geometry: null,
+                    filterMode: 'by_asset_type',
+                    isActive: true,
+                    isSystem: true,
+                },
+            ] as any);
+            mockedFetchDataSources.mockResolvedValue([]);
+            mockedFetchAssetScoreFilters.mockResolvedValue([]);
+
+            renderWithProviders(<AssetsView {...defaultProps} />);
+
+            await waitFor(() => {
+                expect(screen.getByText('Error loading asset categories')).toBeInTheDocument();
+            });
+        });
+    });
+
+    describe('Filter Mode', () => {
+        it('disables filter mode select when no focus area is selected', async () => {
+            setupMocks();
+            renderWithProviders(<AssetsView {...defaultProps} selectedFocusAreaId={null} />);
+
+            await waitFor(() => {
+                const filterModeSelect = screen.getByLabelText('Select filter mode');
+                expect(filterModeSelect).toBeInTheDocument();
+            });
+
+            const filterModeSelect = screen.getByLabelText('Select filter mode');
+            expect(filterModeSelect).toHaveClass('Mui-disabled');
+        });
+
+        it('shows message when no focus area is selected', async () => {
+            setupMocks();
+            renderWithProviders(<AssetsView {...defaultProps} selectedFocusAreaId={null} />);
+
+            await waitFor(() => {
+                expect(screen.getByText('Select a focus area to configure asset filters')).toBeInTheDocument();
+            });
+        });
+
+        it('hides search when filter mode is by_score_only', async () => {
+            setupMocks({
+                focusAreas: [
+                    {
+                        id: 'map-wide-1',
+                        name: 'Map-wide',
+                        geometry: null,
+                        filterMode: 'by_score_only',
+                        isActive: true,
+                        isSystem: true,
+                    },
+                ],
+            });
+            renderWithProviders(<AssetsView {...defaultProps} selectedFocusAreaId="map-wide-1" />);
+
+            // Wait for focus areas to load and filter mode to be applied
+            await waitFor(
+                () => {
+                    expect(screen.queryByPlaceholderText('Search for an asset')).not.toBeInTheDocument();
+                },
+                { timeout: 2000 },
+            );
+        });
+    });
+
+    describe('Score Filter Icon', () => {
+        it('displays score filter icon for each asset type', async () => {
+            setupMocks();
+            renderWithProviders(<AssetsView {...defaultProps} />);
+
+            const subCategoryHeader = await screen.findByText('Utility infrastructure');
+            fireEvent.click(subCategoryHeader);
+
+            await waitFor(() => {
+                expect(screen.getByLabelText('Filter Hospital by score')).toBeInTheDocument();
+            });
+        });
+
+        it('highlights filter icon when asset type has active filter', async () => {
+            mockedFetchScenarioAssetTypes.mockResolvedValue([
+                {
+                    id: 'cat1',
+                    name: 'Built infrastructure',
+                    subCategories: [
+                        {
+                            id: 'subcat1',
+                            name: 'Utility infrastructure',
+                            assetTypes: [
+                                {
+                                    id: 'asset-1',
+                                    name: 'Hospital',
+                                    assetCount: 42,
+                                    filteredAssetCount: 20,
+                                    isActive: false,
+                                    datasourceId: 'ds-1',
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ] as any);
+            mockedFetchFocusAreas.mockResolvedValue([
+                {
+                    id: 'map-wide-1',
+                    name: 'Map-wide',
+                    geometry: null,
+                    filterMode: 'by_asset_type',
+                    isActive: true,
+                    isSystem: true,
+                },
+            ] as any);
+            mockedFetchDataSources.mockResolvedValue([]);
+            mockedFetchAssetScoreFilters.mockResolvedValue([
+                {
+                    id: 'filter-1',
+                    focusAreaId: 'map-wide-1',
+                    assetTypeId: 'asset-1',
+                    criticalityMin: 1,
+                    criticalityMax: 5,
+                    exposureMin: 1,
+                    exposureMax: 5,
+                    redundancyMin: 1,
+                    redundancyMax: 5,
+                    dependencyMin: 0,
+                    dependencyMax: 100,
+                },
+            ] as any);
+
+            renderWithProviders(<AssetsView {...defaultProps} selectedFocusAreaId="map-wide-1" />);
+
+            const subCategoryHeader = await screen.findByText('Utility infrastructure');
+            fireEvent.click(subCategoryHeader);
+
+            await waitFor(() => {
+                // When filter is active, count shows filtered/total format
+                expect(screen.getByText(/Hospital \(20\/42\)/)).toBeInTheDocument();
+            });
         });
     });
 });

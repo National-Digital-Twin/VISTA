@@ -60,8 +60,6 @@ type MapPanelsProps = {
     selectedElement?: Asset | null;
     onBackFromAssetDetails?: () => void;
     scenarioId?: string;
-    mapWideVisible?: boolean;
-    onMapWideVisibleChange?: (visible: boolean) => void;
     isDrawing?: boolean;
     onStartDrawing?: (mode: 'circle' | 'polygon') => void;
     roadRouteStart?: RoadRoutePosition;
@@ -84,8 +82,6 @@ const MapPanels = ({
     selectedElement,
     onBackFromAssetDetails,
     scenarioId,
-    mapWideVisible,
-    onMapWideVisibleChange,
     isDrawing,
     onStartDrawing,
     roadRouteStart,
@@ -154,10 +150,10 @@ const MapPanels = ({
                     <FocusAreaView
                         onClose={handleClosePanel}
                         scenarioId={scenarioId}
-                        mapWideVisible={mapWideVisible ?? true}
-                        onMapWideVisibleChange={onMapWideVisibleChange}
                         isDrawing={isDrawing}
                         onStartDrawing={onStartDrawing}
+                        selectedFocusAreaId={selectedFocusAreaId}
+                        onFocusAreaSelect={onFocusAreaSelect}
                     />
                 );
             case 'asset-details':

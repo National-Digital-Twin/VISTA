@@ -22,8 +22,7 @@ class VisibleAssetTypeView(APIView):
         When is_active is true, creates a VisibleAsset record.
         When is_active is false, deletes the VisibleAsset record.
 
-        If focus_area_id is provided, toggles visibility for that specific
-        focus area. Otherwise, toggles map-wide visibility.
+        Requires focus_area_id to specify which focus area to toggle visibility for.
         """
         scenario = get_object_or_404(Scenario, id=scenario_id, is_active=True)
         user_id = get_user_id_from_request(request)
@@ -32,28 +31,21 @@ class VisibleAssetTypeView(APIView):
         serializer.is_valid(raise_exception=True)
 
         asset_type_id = serializer.validated_data["asset_type_id"]
-        focus_area_id = serializer.validated_data.get("focus_area_id")
+        focus_area_id = serializer.validated_data["focus_area_id"]
         is_active = serializer.validated_data["is_active"]
 
         asset_type = get_object_or_404(AssetType, id=asset_type_id)
-
-        focus_area = None
-        if focus_area_id:
-            focus_area = get_object_or_404(
-                FocusArea, id=focus_area_id, scenario=scenario, user_id=user_id
-            )
+        focus_area = get_object_or_404(
+            FocusArea, id=focus_area_id, scenario=scenario, user_id=user_id
+        )
 
         if is_active:
             VisibleAsset.objects.get_or_create(
-                scenario=scenario,
-                user_id=user_id,
                 focus_area=focus_area,
                 asset_type=asset_type,
             )
         else:
             VisibleAsset.objects.filter(
-                scenario=scenario,
-                user_id=user_id,
                 focus_area=focus_area,
                 asset_type=asset_type,
             ).delete()
@@ -68,29 +60,24 @@ class VisibleAssetTypeView(APIView):
         return Response(response_serializer.data, status=status.HTTP_200_OK)
 
     def delete(self, request, scenario_id=None):
-        """Clear all visibility settings for a focus area or map-wide.
+        """Clear all visibility settings for a focus area.
 
-        If focus_area_id query param is provided, clears visibility for that
-        specific focus area. Otherwise, clears map-wide visibility.
+        Requires focus_area_id query param to specify which focus area to clear.
         """
         scenario = get_object_or_404(Scenario, id=scenario_id, is_active=True)
         user_id = get_user_id_from_request(request)
 
         focus_area_id = request.query_params.get("focus_area_id")
+        if not focus_area_id:
+            return Response(
+                {"detail": "focus_area_id query param is required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
-        query = VisibleAsset.objects.filter(
-            scenario=scenario,
-            user_id=user_id,
+        focus_area = get_object_or_404(
+            FocusArea, id=focus_area_id, scenario=scenario, user_id=user_id
         )
 
-        if focus_area_id:
-            focus_area = get_object_or_404(
-                FocusArea, id=focus_area_id, scenario=scenario, user_id=user_id
-            )
-            query = query.filter(focus_area=focus_area)
-        else:
-            query = query.filter(focus_area__isnull=True)
-
-        query.delete()
+        VisibleAsset.objects.filter(focus_area=focus_area).delete()
 
         return Response({"success": True}, status=status.HTTP_200_OK)

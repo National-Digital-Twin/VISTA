@@ -65,7 +65,6 @@ describe('useScenarioAssets', () => {
             await waitFor(() => {
                 expect(fetchScenarioAssets).toHaveBeenCalledWith({
                     scenarioId: 'scenario-123',
-                    excludeMapWide: undefined,
                     iconMap: undefined,
                 });
             });
@@ -119,22 +118,6 @@ describe('useScenarioAssets', () => {
     });
 
     describe('Options', () => {
-        it('passes excludeMapWide option to fetch function', async () => {
-            vi.mocked(fetchScenarioAssets).mockResolvedValue([]);
-
-            renderHook(() => useScenarioAssets({ scenarioId: 'scenario-123', excludeMapWide: true }), {
-                wrapper: TestWrapper,
-            });
-
-            await waitFor(() => {
-                expect(fetchScenarioAssets).toHaveBeenCalledWith({
-                    scenarioId: 'scenario-123',
-                    excludeMapWide: true,
-                    iconMap: undefined,
-                });
-            });
-        });
-
         it('passes iconMap option to fetch function', async () => {
             vi.mocked(fetchScenarioAssets).mockResolvedValue([]);
             const iconMap = new Map([['type-1', 'fa-building']]);
@@ -146,7 +129,6 @@ describe('useScenarioAssets', () => {
             await waitFor(() => {
                 expect(fetchScenarioAssets).toHaveBeenCalledWith({
                     scenarioId: 'scenario-123',
-                    excludeMapWide: undefined,
                     iconMap,
                 });
             });
@@ -195,25 +177,6 @@ describe('useScenarioAssets', () => {
             });
 
             expect(fetchScenarioAssets).toHaveBeenCalledWith(expect.objectContaining({ scenarioId: 'scenario-2' }));
-        });
-
-        it('refetches when excludeMapWide changes', async () => {
-            vi.mocked(fetchScenarioAssets).mockResolvedValue([]);
-
-            const { rerender } = renderHook(({ excludeMapWide }) => useScenarioAssets({ scenarioId: 'scenario-1', excludeMapWide }), {
-                wrapper: TestWrapper,
-                initialProps: { excludeMapWide: false },
-            });
-
-            await waitFor(() => {
-                expect(fetchScenarioAssets).toHaveBeenCalledWith(expect.objectContaining({ excludeMapWide: false }));
-            });
-
-            rerender({ excludeMapWide: true });
-
-            await waitFor(() => {
-                expect(fetchScenarioAssets).toHaveBeenCalledWith(expect.objectContaining({ excludeMapWide: true }));
-            });
         });
     });
 });
