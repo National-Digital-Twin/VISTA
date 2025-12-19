@@ -8,7 +8,7 @@ from django.contrib.gis.geos import GEOSGeometry, Point
 from django.db import connection
 from django.test.utils import CaptureQueriesContext
 
-from api.models import AssetScoreFilter, FocusArea, ScenarioAsset, VisibleAsset
+from api.models import AssetScoreFilter, FocusArea, Scenario, ScenarioAsset, VisibleAsset
 from api.models.asset import Asset
 from api.models.asset_type import AssetCategory, AssetSubCategory, AssetType, DataSource
 
@@ -166,6 +166,236 @@ def test_scenario_assets_no_visibility_returns_empty(scenario, assets_for_scenar
 
     assert response.status_code == http_success_code
     assert len(data) == 0
+
+
+# =============================================================================
+# Focus Area ID Query Parameter Tests
+# =============================================================================
+
+
+@pytest.mark.django_db
+def test_scenario_assets_with_focus_area_id_returns_only_that_area(
+    scenario,
+    asset_types_for_scenario,
+    assets_for_scenario,
+    focus_area,
+    client,
+):
+    """Test that focus_area_id query param returns only assets for that focus area."""
+    rail_type = asset_types_for_scenario["rail"]
+
+    VisibleAsset.objects.create(
+        focus_area=focus_area,
+        asset_type=rail_type,
+    )
+
+    response = client.get(f"/api/scenarios/{scenario.id}/assets/?focus_area_id={focus_area.id}")
+    data = response.json()
+
+    assert response.status_code == http_success_code
+    assert len(data) == 1
+    assert data[0]["name"] == assets_for_scenario["rail_inside"].name
+
+
+@pytest.mark.django_db
+def test_scenario_assets_with_focus_area_id_ignores_other_focus_areas(  # noqa: PLR0913
+    scenario,
+    asset_types_for_scenario,
+    assets_for_scenario,
+    focus_area,
+    mapwide_focus_area,
+    client,
+):
+    """Test that focus_area_id param ignores other active focus areas."""
+    rail_type = asset_types_for_scenario["rail"]
+    hospital_type = asset_types_for_scenario["hospital"]
+
+    # Enable rail on the focus area we query
+    VisibleAsset.objects.create(focus_area=focus_area, asset_type=rail_type)
+    # Enable hospital on map-wide (should be ignored when querying specific focus area)
+    VisibleAsset.objects.create(focus_area=mapwide_focus_area, asset_type=hospital_type)
+
+    response = client.get(f"/api/scenarios/{scenario.id}/assets/?focus_area_id={focus_area.id}")
+    data = response.json()
+
+    # Should only return rail inside focus area, not hospitals from map-wide
+    assert response.status_code == http_success_code
+    assert len(data) == 1
+    assert data[0]["name"] == assets_for_scenario["rail_inside"].name
+
+
+@pytest.mark.django_db
+def test_scenario_assets_with_invalid_focus_area_id_returns_404(scenario, client):
+    """Test that invalid focus_area_id returns 404."""
+    fake_id = uuid.uuid4()
+    response = client.get(f"/api/scenarios/{scenario.id}/assets/?focus_area_id={fake_id}")
+    assert response.status_code == http_not_found
+
+
+@pytest.mark.django_db
+def test_scenario_assets_with_focus_area_id_wrong_scenario_returns_404(
+    scenario,  # noqa: ARG001
+    focus_area,
+    client,
+):
+    """Test that focus_area_id for different scenario returns 404."""
+    # Create another scenario
+    other_scenario = Scenario.objects.create(
+        id=uuid.uuid4(),
+        name="Other Scenario",
+        is_active=True,
+    )
+
+    # Try to access focus area from wrong scenario
+    url = f"/api/scenarios/{other_scenario.id}/assets/?focus_area_id={focus_area.id}"
+    response = client.get(url)
+    assert response.status_code == http_not_found
+
+
+@pytest.mark.django_db
+def test_scenario_assets_with_focus_area_id_wrong_user_returns_404(
+    scenario,
+    asset_types_for_scenario,
+    client,
+):
+    """Test that focus_area_id for different user returns 404."""
+    other_user_id = uuid.UUID("00000000-0000-0000-0000-000000000002")
+    rail_type = asset_types_for_scenario["rail"]
+
+    # Create focus area for another user
+    other_fa = FocusArea.objects.create(
+        scenario=scenario,
+        user_id=other_user_id,
+        name="Other User FA",
+        geometry=GEOSGeometry("POLYGON((0 0, 0 1, 1 1, 1 0, 0 0))"),
+        filter_mode="by_asset_type",
+        is_active=True,
+        is_system=False,
+    )
+    VisibleAsset.objects.create(focus_area=other_fa, asset_type=rail_type)
+
+    # Current user shouldn't be able to access it
+    response = client.get(f"/api/scenarios/{scenario.id}/assets/?focus_area_id={other_fa.id}")
+    assert response.status_code == http_not_found
+
+
+@pytest.mark.django_db
+def test_scenario_assets_with_focus_area_id_no_visibility_returns_empty(
+    scenario,
+    assets_for_scenario,  # noqa: ARG001
+    focus_area,
+    client,
+):
+    """Test that focus_area_id with no visible assets returns empty."""
+    # Don't add any VisibleAsset records
+    response = client.get(f"/api/scenarios/{scenario.id}/assets/?focus_area_id={focus_area.id}")
+    data = response.json()
+
+    assert response.status_code == http_success_code
+    assert len(data) == 0
+
+
+@pytest.mark.django_db
+def test_scenario_assets_with_focus_area_id_by_score_only_mode(
+    scenario,
+    score_test_types,
+    score_test_assets,
+    mock_user_id,
+    client,
+):
+    """Test focus_area_id with by_score_only mode returns scored assets."""
+    station_type = score_test_types["station"]
+    pylon_type = score_test_types["pylon"]
+
+    # Create ScenarioAsset records
+    ScenarioAsset.objects.create(scenario=scenario, asset_type=station_type, criticality_score=3)
+    ScenarioAsset.objects.create(scenario=scenario, asset_type=pylon_type, criticality_score=1)
+
+    # Create focus area with by_score_only mode
+    geom = GEOSGeometry("POLYGON((0 0, 0 1, 1 1, 1 0, 0 0))")
+    fa = FocusArea.objects.create(
+        scenario=scenario,
+        user_id=mock_user_id,
+        name="Score Only FA",
+        geometry=geom,
+        filter_mode="by_score_only",
+        is_active=True,
+        is_system=False,
+    )
+
+    response = client.get(f"/api/scenarios/{scenario.id}/assets/?focus_area_id={fa.id}")
+    data = response.json()
+
+    # Both scored assets are inside geometry
+    assert response.status_code == http_success_code
+    assert len(data) == 2
+    names = [a["name"] for a in data]
+    assert score_test_assets["station"].name in names
+    assert score_test_assets["pylon"].name in names
+
+
+@pytest.mark.django_db
+def test_scenario_assets_with_focus_area_id_and_score_filter(
+    scenario,
+    score_test_types,
+    score_test_assets,
+    mock_user_id,
+    client,
+):
+    """Test focus_area_id with score filter applies the filter correctly."""
+    station_type = score_test_types["station"]
+    pylon_type = score_test_types["pylon"]
+
+    # Create ScenarioAsset records with different criticality scores
+    ScenarioAsset.objects.create(scenario=scenario, asset_type=station_type, criticality_score=3)
+    ScenarioAsset.objects.create(scenario=scenario, asset_type=pylon_type, criticality_score=1)
+
+    # Create focus area with by_score_only mode and global filter
+    geom = GEOSGeometry("POLYGON((0 0, 0 1, 1 1, 1 0, 0 0))")
+    fa = FocusArea.objects.create(
+        scenario=scenario,
+        user_id=mock_user_id,
+        name="Filtered Score FA",
+        geometry=geom,
+        filter_mode="by_score_only",
+        is_active=True,
+        is_system=False,
+    )
+    # Only allow criticality=3
+    AssetScoreFilter.objects.create(focus_area=fa, asset_type=None, criticality_values=[3])
+
+    response = client.get(f"/api/scenarios/{scenario.id}/assets/?focus_area_id={fa.id}")
+    data = response.json()
+
+    # Only station (criticality=3) should be returned
+    assert response.status_code == http_success_code
+    assert len(data) == 1
+    assert data[0]["name"] == score_test_assets["station"].name
+
+
+@pytest.mark.django_db
+def test_scenario_assets_with_mapwide_focus_area_id(
+    scenario,
+    asset_types_for_scenario,
+    assets_for_scenario,
+    mapwide_focus_area,
+    client,
+):
+    """Test focus_area_id works with map-wide focus area (no geometry)."""
+    rail_type = asset_types_for_scenario["rail"]
+
+    VisibleAsset.objects.create(focus_area=mapwide_focus_area, asset_type=rail_type)
+
+    url = f"/api/scenarios/{scenario.id}/assets/?focus_area_id={mapwide_focus_area.id}"
+    response = client.get(url)
+    data = response.json()
+
+    # Should return all rail assets (no geometry filter)
+    assert response.status_code == http_success_code
+    assert len(data) == 2
+    names = [a["name"] for a in data]
+    assert assets_for_scenario["rail_inside"].name in names
+    assert assets_for_scenario["rail_outside"].name in names
 
 
 @pytest.mark.django_db

@@ -39,6 +39,20 @@ class ScenarioAssetsView(APIView):
         """List assets visible in the scenario for the current user."""
         get_object_or_404(Scenario, id=scenario_id)
         user_id = get_user_id_from_request(request)
+        focus_area_id = request.query_params.get("focus_area_id", None)
+
+        if focus_area_id:
+            focus_area = get_object_or_404(
+                FocusArea.objects.prefetch_related("visible_assets", "asset_score_filters"),
+                id=focus_area_id,
+                scenario_id=scenario_id,
+                user_id=user_id,
+            )
+            combined_q = _build_focus_area_q(focus_area, scenario_id, user_id)
+            if not combined_q:
+                return Response([])
+            assets = Asset.objects.filter(combined_q).select_related("type").distinct()
+            return Response(ScenarioAssetSerializer(assets, many=True).data)
 
         focus_areas = FocusArea.objects.filter(
             scenario_id=scenario_id,

@@ -1,4 +1,4 @@
-import { useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } from 'react';
 import {
     Alert,
     Box,
@@ -25,6 +25,7 @@ import useAssetFilterMutations from '../hooks/useAssetFilterMutations';
 import { isDefaultFilter } from '../hooks/useScoreFilterState';
 import { GlobalScoreFilter } from './GlobalScoreFilter';
 import { ScoreFilterPopup } from './ScoreFilterPopup';
+import FocusAreaSelector from './FocusAreaSelector';
 import { SearchTextField } from '@/components/SearchTextField';
 import IconToggle from '@/components/IconToggle';
 import { useDataSources } from '@/hooks/useDataSources';
@@ -41,6 +42,78 @@ type AssetsViewProps = {
 };
 
 type FilterMode = FocusArea['filterMode'];
+
+type SubCategoryItemProps = {
+    readonly subCategory: ScenarioSubCategory;
+    readonly isExpanded: boolean;
+    readonly onToggleExpand: (id: string) => void;
+    readonly onToggleVisibility: (assetTypeId: string, isActive: boolean) => void;
+    readonly onOpenScoreFilter: (assetType: ScenarioAssetType) => void;
+    readonly getScoreFilter: (assetTypeId: string) => AssetScoreFilter | undefined;
+    readonly isMutating: boolean;
+    readonly dataSourceMap: Map<string, DataSource>;
+};
+
+function SubCategoryItem({
+    subCategory,
+    isExpanded,
+    onToggleExpand,
+    onToggleVisibility,
+    onOpenScoreFilter,
+    getScoreFilter,
+    isMutating,
+    dataSourceMap,
+}: SubCategoryItemProps) {
+    const activeCount = subCategory.assetTypes.filter((at) => at.isActive).length;
+
+    const handleClick = () => onToggleExpand(subCategory.id);
+
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            onToggleExpand(subCategory.id);
+        }
+    };
+
+    return (
+        <Box>
+            <Box
+                onClick={handleClick}
+                onKeyDown={handleKeyDown}
+                sx={{
+                    'display': 'flex',
+                    'alignItems': 'center',
+                    'px': 2,
+                    'py': 0.75,
+                    'cursor': 'pointer',
+                    '&:hover': {
+                        backgroundColor: 'action.hover',
+                    },
+                }}
+                tabIndex={0}
+                role="button"
+                aria-expanded={isExpanded}
+            >
+                {isExpanded ? <KeyboardArrowUpIcon fontSize="small" sx={{ mr: 1 }} /> : <KeyboardArrowDownIcon fontSize="small" sx={{ mr: 1 }} />}
+                <Typography variant="body2">
+                    {subCategory.name}
+                    {activeCount > 0 && ` (${activeCount})`}
+                </Typography>
+            </Box>
+
+            <Collapse in={isExpanded}>
+                <AssetTypeList
+                    assetTypes={subCategory.assetTypes}
+                    onToggle={onToggleVisibility}
+                    disabled={isMutating}
+                    dataSourceMap={dataSourceMap}
+                    onOpenScoreFilter={onOpenScoreFilter}
+                    getScoreFilter={getScoreFilter}
+                />
+            </Collapse>
+        </Box>
+    );
+}
 
 type AssetTypeListItemProps = {
     readonly assetType: ScenarioAssetType;
@@ -144,7 +217,7 @@ const AssetsView = ({ onClose, scenarioId, selectedFocusAreaId, onFocusAreaSelec
     const [scoreFilterPopupOpen, setScoreFilterPopupOpen] = useState(false);
     const [scoreFilterAssetType, setScoreFilterAssetType] = useState<ScenarioAssetType | null>(null);
 
-    const { data: focusAreas, isLoading: isLoadingFocusAreas } = useQuery({
+    const { data: focusAreas } = useQuery({
         queryKey: ['focusAreas', scenarioId],
         queryFn: () => fetchFocusAreas(scenarioId!),
         enabled: !!scenarioId,
@@ -177,27 +250,14 @@ const AssetsView = ({ onClose, scenarioId, selectedFocusAreaId, onFocusAreaSelec
     });
 
     // Update selected filter mode when focus areas data loads or selected focus area changes
-    // Also auto-select first active focus area if current selection is inactive
     useEffect(() => {
         if (focusAreas) {
             const currentScope = focusAreas.find((fa) => fa.id === selectedFocusAreaId);
-            if (!currentScope?.isActive) {
-                // Current selection is inactive, select the first active focus area
-                const firstActiveScope = focusAreas.find((fa) => fa.isActive);
-                if (firstActiveScope) {
-                    onFocusAreaSelect?.(firstActiveScope.id);
-                    setSelectedFilterMode(firstActiveScope.filterMode);
-                } else {
-                    // No active focus areas - clear the selection
-                    onFocusAreaSelect?.(null);
-                }
-                return;
-            }
             if (currentScope) {
                 setSelectedFilterMode(currentScope.filterMode);
             }
         }
-    }, [focusAreas, selectedFocusAreaId, onFocusAreaSelect]);
+    }, [focusAreas, selectedFocusAreaId]);
 
     // Expand subcategories that have visible asset types - only on initial load or focus area change
     const lastFocusAreaIdRef = useRef<string | null | undefined>(undefined);
@@ -222,14 +282,6 @@ const AssetsView = ({ onClose, scenarioId, selectedFocusAreaId, onFocusAreaSelec
         }
         setExpandedSubCategories(visibleSubCategoryIds);
     }, [assetCategories, currentFocusAreaId]);
-
-    const handleFocusAreaChange = useCallback(
-        (event: SelectChangeEvent<string>) => {
-            const newFocusAreaId = event.target.value || null;
-            onFocusAreaSelect?.(newFocusAreaId);
-        },
-        [onFocusAreaSelect],
-    );
 
     const handleSearchChange = useCallback((value: string) => {
         setSearchQuery(value);
@@ -372,11 +424,10 @@ const AssetsView = ({ onClose, scenarioId, selectedFocusAreaId, onFocusAreaSelec
             .filter((category): category is ScenarioAssetCategory => category !== null);
     }, [assetCategories, deferredSearchQuery, filterSubCategories]);
 
-    const focusAreaSelectValue = focusAreas && currentFocusAreaId ? currentFocusAreaId : '';
-    const hasActiveScope = focusAreas?.some((fa) => fa.isActive) ?? false;
+    const hasSelectedScope = !!selectedFocusAreaId;
 
     const renderContentArea = () => {
-        if (!hasActiveScope) {
+        if (!hasSelectedScope) {
             return null;
         }
 
@@ -426,57 +477,19 @@ const AssetsView = ({ onClose, scenarioId, selectedFocusAreaId, onFocusAreaSelec
                             {category.name}
                         </Typography>
 
-                        {category.subCategories.map((subCategory) => {
-                            const isSubCategoryExpanded = expandedSubCategories.has(subCategory.id);
-                            const activeCount = subCategory.assetTypes.filter((at) => at.isActive).length;
-                            return (
-                                <Box key={subCategory.id}>
-                                    <Box
-                                        onClick={() => toggleSubCategory(subCategory.id)}
-                                        onKeyDown={(e) => {
-                                            if (e.key === 'Enter' || e.key === ' ') {
-                                                e.preventDefault();
-                                                toggleSubCategory(subCategory.id);
-                                            }
-                                        }}
-                                        sx={{
-                                            'display': 'flex',
-                                            'alignItems': 'center',
-                                            'px': 2,
-                                            'py': 0.75,
-                                            'cursor': 'pointer',
-                                            '&:hover': {
-                                                backgroundColor: 'action.hover',
-                                            },
-                                        }}
-                                        tabIndex={0}
-                                        role="button"
-                                        aria-expanded={isSubCategoryExpanded}
-                                    >
-                                        {isSubCategoryExpanded ? (
-                                            <KeyboardArrowUpIcon fontSize="small" sx={{ mr: 1 }} />
-                                        ) : (
-                                            <KeyboardArrowDownIcon fontSize="small" sx={{ mr: 1 }} />
-                                        )}
-                                        <Typography variant="body2">
-                                            {subCategory.name}
-                                            {activeCount > 0 && ` (${activeCount})`}
-                                        </Typography>
-                                    </Box>
-
-                                    <Collapse in={isSubCategoryExpanded}>
-                                        <AssetTypeList
-                                            assetTypes={subCategory.assetTypes}
-                                            onToggle={handleToggleVisibility}
-                                            disabled={isMutating}
-                                            dataSourceMap={dataSourceMap}
-                                            onOpenScoreFilter={handleOpenScoreFilter}
-                                            getScoreFilter={getScoreFilterForAssetType}
-                                        />
-                                    </Collapse>
-                                </Box>
-                            );
-                        })}
+                        {category.subCategories.map((subCategory) => (
+                            <SubCategoryItem
+                                key={subCategory.id}
+                                subCategory={subCategory}
+                                isExpanded={expandedSubCategories.has(subCategory.id)}
+                                onToggleExpand={toggleSubCategory}
+                                onToggleVisibility={handleToggleVisibility}
+                                onOpenScoreFilter={handleOpenScoreFilter}
+                                getScoreFilter={getScoreFilterForAssetType}
+                                isMutating={isMutating}
+                                dataSourceMap={dataSourceMap}
+                            />
+                        ))}
                     </Box>
                 ))}
             </>
@@ -531,22 +544,14 @@ const AssetsView = ({ onClose, scenarioId, selectedFocusAreaId, onFocusAreaSelec
             </Box>
 
             <Box sx={{ p: 2, borderBottom: 1, borderColor: 'divider' }}>
-                <FormControl fullWidth size="small" sx={{ mb: 2 }}>
-                    <InputLabel id="focus-area-select-label">Select visible focus area</InputLabel>
-                    <Select
-                        labelId="focus-area-select-label"
-                        value={focusAreaSelectValue}
-                        onChange={handleFocusAreaChange}
-                        label="Select visible focus area"
-                        disabled={isLoadingFocusAreas}
-                    >
-                        {focusAreas?.map((fa) => (
-                            <MenuItem key={fa.id} value={fa.id} disabled={!fa.isActive}>
-                                {fa.name}
-                            </MenuItem>
-                        ))}
-                    </Select>
-                </FormControl>
+                <Box sx={{ mb: 2 }}>
+                    <FocusAreaSelector
+                        scenarioId={scenarioId}
+                        selectedFocusAreaId={currentFocusAreaId}
+                        onFocusAreaSelect={onFocusAreaSelect ?? (() => {})}
+                        label="Select focus area"
+                    />
+                </Box>
 
                 <FormControl fullWidth size="small" sx={{ mb: 2 }}>
                     <InputLabel id="filter-mode-select-label">Select filter mode</InputLabel>
@@ -555,20 +560,20 @@ const AssetsView = ({ onClose, scenarioId, selectedFocusAreaId, onFocusAreaSelec
                         value={selectedFilterMode}
                         onChange={handleFilterModeChange}
                         label="Select filter mode"
-                        disabled={isMutating || !hasActiveScope}
+                        disabled={isMutating || !hasSelectedScope}
                     >
                         <MenuItem value="by_asset_type">By asset type</MenuItem>
                         <MenuItem value="by_score_only">By VISTA score</MenuItem>
                     </Select>
                 </FormControl>
 
-                {!hasActiveScope && (
+                {!hasSelectedScope && (
                     <Typography variant="body2" color="text.secondary">
-                        Enable a focus area or map-wide visibility to configure asset filters
+                        Select a focus area to configure asset filters
                     </Typography>
                 )}
 
-                {hasActiveScope && selectedFilterMode === 'by_asset_type' && (
+                {hasSelectedScope && selectedFilterMode === 'by_asset_type' && (
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <Box sx={{ flex: 1 }}>
                             <SearchTextField placeholder="Search for an asset" value={searchQuery} onChange={handleSearchChange} fullWidth />

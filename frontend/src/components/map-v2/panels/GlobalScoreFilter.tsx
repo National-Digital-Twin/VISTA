@@ -27,6 +27,7 @@ export function GlobalScoreFilter({ onApply, onClear, initialValues, disabled }:
         handleCheckboxChange,
         buildFilterPayload,
         resetToDefaults,
+        isValidRange,
     } = useScoreFilterState({ initialValues });
 
     const handleApply = useCallback(() => {
@@ -69,7 +70,7 @@ export function GlobalScoreFilter({ onApply, onClear, initialValues, disabled }:
                 <IconButton size="small" onClick={handleClear} disabled={disabled} title="Clear filter">
                     <LayersClearOutlined fontSize="small" />
                 </IconButton>
-                <Button variant="contained" size="small" onClick={handleApply} disabled={disabled}>
+                <Button variant="contained" size="small" onClick={handleApply} disabled={disabled || !isValidRange()}>
                     Apply
                 </Button>
             </Box>

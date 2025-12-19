@@ -1,29 +1,13 @@
 import React, { useCallback, useMemo, useState, useEffect } from 'react';
-import {
-    Box,
-    IconButton,
-    Typography,
-    ListItem,
-    ListItemText,
-    Collapse,
-    Button,
-    FormControl,
-    InputLabel,
-    MenuItem,
-    Select,
-    Alert,
-    Portal,
-    Snackbar,
-} from '@mui/material';
-import type { SelectChangeEvent } from '@mui/material';
+import { Box, IconButton, Typography, ListItem, ListItemText, Collapse, Button, Alert, Portal, Snackbar } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import type { Feature } from 'geojson';
 
+import FocusAreaSelector from './FocusAreaSelector';
 import { fetchExposureLayers, toggleExposureLayerVisibility, type ExposureLayerGroup } from '@/api/exposure-layers';
-import { fetchFocusAreas, type FocusArea } from '@/api/focus-areas';
 import IconToggle from '@/components/IconToggle';
 
 const getGroupNamesWithActiveLayers = (groups: ExposureLayerGroup[]): Set<string> => {
@@ -189,28 +173,6 @@ const ExposureView = ({ onClose, scenarioId, selectedFocusAreaId, onFocusAreaSel
     const queryClient = useQueryClient();
     const currentFocusAreaId = selectedFocusAreaId ?? null;
 
-    const { data: focusAreas, isLoading: isLoadingFocusAreas } = useQuery({
-        queryKey: ['focusAreas', scenarioId],
-        queryFn: () => fetchFocusAreas(scenarioId!),
-        enabled: !!scenarioId,
-        staleTime: 5 * 60 * 1000,
-    });
-
-    // Auto-select first active focus area when current selection is inactive
-    useEffect(() => {
-        if (focusAreas) {
-            const currentScope = focusAreas.find((fa) => fa.id === selectedFocusAreaId);
-            if (!currentScope?.isActive) {
-                const firstActiveScope = focusAreas.find((fa) => fa.isActive);
-                if (firstActiveScope) {
-                    onFocusAreaSelect?.(firstActiveScope.id);
-                } else {
-                    onFocusAreaSelect?.(null);
-                }
-            }
-        }
-    }, [focusAreas, selectedFocusAreaId, onFocusAreaSelect]);
-
     const {
         data: exposureLayersData,
         isLoading: isLoadingLayers,
@@ -259,13 +221,6 @@ const ExposureView = ({ onClose, scenarioId, selectedFocusAreaId, onFocusAreaSel
         });
     }, []);
 
-    const handleFocusAreaChange = useCallback(
-        (event: SelectChangeEvent<string>) => {
-            onFocusAreaSelect?.(event.target.value || null);
-        },
-        [onFocusAreaSelect],
-    );
-
     const toggleExposureLayer = useCallback(
         (layerId: string) => {
             const currentState = exposureLayersData?.groups.flatMap((g) => g.exposureLayers).find((l) => l.id === layerId)?.isActive ?? false;
@@ -312,7 +267,6 @@ const ExposureView = ({ onClose, scenarioId, selectedFocusAreaId, onFocusAreaSel
         return buildLayerVisibilityMap(exposureLayersData.groups);
     }, [exposureLayersData]);
 
-    const focusAreaSelectValue = focusAreas && currentFocusAreaId ? currentFocusAreaId : '';
     const isMutating = visibilityMutation.isPending;
 
     if (!scenarioId) {
@@ -364,22 +318,12 @@ const ExposureView = ({ onClose, scenarioId, selectedFocusAreaId, onFocusAreaSel
                 </Box>
 
                 <Box sx={{ p: 2, borderBottom: 1, borderColor: 'divider' }}>
-                    <FormControl fullWidth size="small">
-                        <InputLabel id="focus-area-select-label">Focus area</InputLabel>
-                        <Select
-                            labelId="focus-area-select-label"
-                            value={focusAreaSelectValue}
-                            onChange={handleFocusAreaChange}
-                            label="Focus area"
-                            disabled={isLoadingFocusAreas}
-                        >
-                            {focusAreas?.map((fa: FocusArea) => (
-                                <MenuItem key={fa.id} value={fa.id} disabled={!fa.isActive}>
-                                    {fa.name}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
+                    <FocusAreaSelector
+                        scenarioId={scenarioId}
+                        selectedFocusAreaId={currentFocusAreaId}
+                        onFocusAreaSelect={onFocusAreaSelect ?? (() => {})}
+                        label="Focus area"
+                    />
                 </Box>
 
                 <Box sx={{ flex: 1, overflowY: 'auto', position: 'relative' }}>

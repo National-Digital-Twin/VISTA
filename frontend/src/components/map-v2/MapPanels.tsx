@@ -146,7 +146,16 @@ const MapPanels = ({
                     />
                 );
             case 'focus-area':
-                return <FocusAreaView onClose={handleClosePanel} scenarioId={scenarioId} isDrawing={isDrawing} onStartDrawing={onStartDrawing} />;
+                return (
+                    <FocusAreaView
+                        onClose={handleClosePanel}
+                        scenarioId={scenarioId}
+                        isDrawing={isDrawing}
+                        onStartDrawing={onStartDrawing}
+                        selectedFocusAreaId={selectedFocusAreaId}
+                        onFocusAreaSelect={onFocusAreaSelect}
+                    />
+                );
             case 'asset-details':
                 if (!onBackFromAssetDetails) {
                     return null;

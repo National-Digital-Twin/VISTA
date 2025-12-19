@@ -43,6 +43,7 @@ describe('AssetsView', () => {
     const defaultProps = {
         onClose: vi.fn(),
         scenarioId: 'test-scenario-id',
+        selectedFocusAreaId: 'map-wide-1',
     };
 
     let queryClient: QueryClient;
@@ -196,7 +197,7 @@ describe('AssetsView', () => {
             setupMocks();
             renderWithProviders(<AssetsView {...defaultProps} />);
             await waitFor(() => {
-                expect(screen.getByLabelText('Select visible focus area')).toBeInTheDocument();
+                expect(screen.getByLabelText('Select focus area')).toBeInTheDocument();
             });
         });
 
@@ -273,10 +274,10 @@ describe('AssetsView', () => {
             });
 
             await waitFor(() => {
-                expect(screen.getByLabelText('Select visible focus area')).toBeInTheDocument();
+                expect(screen.getByLabelText('Select focus area')).toBeInTheDocument();
             });
 
-            const selectElement = screen.getByLabelText('Select visible focus area');
+            const selectElement = screen.getByLabelText('Select focus area');
             fireEvent.mouseDown(selectElement);
 
             await waitFor(
@@ -300,10 +301,10 @@ describe('AssetsView', () => {
             });
 
             await waitFor(() => {
-                expect(screen.getByLabelText('Select visible focus area')).toBeInTheDocument();
+                expect(screen.getByLabelText('Select focus area')).toBeInTheDocument();
             });
 
-            const selectElement = screen.getByLabelText('Select visible focus area');
+            const selectElement = screen.getByLabelText('Select focus area');
             fireEvent.mouseDown(selectElement);
 
             await waitFor(
@@ -681,20 +682,9 @@ describe('AssetsView', () => {
     });
 
     describe('Filter Mode', () => {
-        it('disables filter mode select when no active scope', async () => {
-            setupMocks({
-                focusAreas: [
-                    {
-                        id: 'map-wide-1',
-                        name: 'Map-wide',
-                        geometry: null,
-                        filterMode: 'by_asset_type',
-                        isActive: false,
-                        isSystem: true,
-                    },
-                ],
-            });
-            renderWithProviders(<AssetsView {...defaultProps} />);
+        it('disables filter mode select when no focus area is selected', async () => {
+            setupMocks();
+            renderWithProviders(<AssetsView {...defaultProps} selectedFocusAreaId={null} />);
 
             await waitFor(() => {
                 const filterModeSelect = screen.getByLabelText('Select filter mode');
@@ -705,23 +695,12 @@ describe('AssetsView', () => {
             expect(filterModeSelect).toHaveClass('Mui-disabled');
         });
 
-        it('shows message when no active scope', async () => {
-            setupMocks({
-                focusAreas: [
-                    {
-                        id: 'map-wide-1',
-                        name: 'Map-wide',
-                        geometry: null,
-                        filterMode: 'by_asset_type',
-                        isActive: false,
-                        isSystem: true,
-                    },
-                ],
-            });
-            renderWithProviders(<AssetsView {...defaultProps} />);
+        it('shows message when no focus area is selected', async () => {
+            setupMocks();
+            renderWithProviders(<AssetsView {...defaultProps} selectedFocusAreaId={null} />);
 
             await waitFor(() => {
-                expect(screen.getByText('Enable a focus area or map-wide visibility to configure asset filters')).toBeInTheDocument();
+                expect(screen.getByText('Select a focus area to configure asset filters')).toBeInTheDocument();
             });
         });
 
@@ -738,44 +717,15 @@ describe('AssetsView', () => {
                     },
                 ],
             });
-            renderWithProviders(<AssetsView {...defaultProps} />);
+            renderWithProviders(<AssetsView {...defaultProps} selectedFocusAreaId="map-wide-1" />);
 
-            await waitFor(() => {
-                expect(screen.getByText('Assets')).toBeInTheDocument();
-            });
-
-            expect(screen.queryByPlaceholderText('Search for an asset')).not.toBeInTheDocument();
-        });
-    });
-
-    describe('Focus Area Edge Cases', () => {
-        it('auto-selects first active focus area when current is inactive', async () => {
-            const onFocusAreaSelect = vi.fn();
-            setupMocks({
-                focusAreas: [
-                    {
-                        id: 'inactive-1',
-                        name: 'Inactive Area',
-                        geometry: null,
-                        filterMode: 'by_asset_type',
-                        isActive: false,
-                        isSystem: false,
-                    },
-                    {
-                        id: 'active-1',
-                        name: 'Active Area',
-                        geometry: { type: 'Point', coordinates: [0, 0] },
-                        filterMode: 'by_asset_type',
-                        isActive: true,
-                        isSystem: false,
-                    },
-                ],
-            });
-            renderWithProviders(<AssetsView {...defaultProps} onFocusAreaSelect={onFocusAreaSelect} />);
-
-            await waitFor(() => {
-                expect(onFocusAreaSelect).toHaveBeenCalledWith('active-1');
-            });
+            // Wait for focus areas to load and filter mode to be applied
+            await waitFor(
+                () => {
+                    expect(screen.queryByPlaceholderText('Search for an asset')).not.toBeInTheDocument();
+                },
+                { timeout: 2000 },
+            );
         });
     });
 

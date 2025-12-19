@@ -37,6 +37,14 @@ function createQueryClient() {
     });
 }
 
+function createDeferredPromise<T>(): { promise: Promise<T>; resolve: (value: T) => void } {
+    let resolve!: (value: T) => void;
+    const promise = new Promise<T>((r) => {
+        resolve = r;
+    });
+    return { promise, resolve };
+}
+
 function createWrapper(queryClient: QueryClient) {
     return function Wrapper({ children }: { children: ReactNode }) {
         return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
@@ -486,13 +494,8 @@ describe('useAssetFilterMutations', () => {
         });
 
         it('is true while visibility mutation is pending', async () => {
-            let resolveVisibility: () => void;
-            mockedToggleAssetTypeVisibility.mockImplementation(
-                () =>
-                    new Promise((resolve) => {
-                        resolveVisibility = () => resolve({ assetTypeId: 'asset-1', focusAreaId: 'fa-1', isActive: true });
-                    }),
-            );
+            const deferred = createDeferredPromise<{ assetTypeId: string; focusAreaId: string; isActive: boolean }>();
+            mockedToggleAssetTypeVisibility.mockReturnValue(deferred.promise);
 
             const { result } = renderHook(
                 () =>
@@ -513,7 +516,7 @@ describe('useAssetFilterMutations', () => {
             });
 
             act(() => {
-                resolveVisibility!();
+                deferred.resolve({ assetTypeId: 'asset-1', focusAreaId: 'fa-1', isActive: true });
             });
 
             await waitFor(() => {
@@ -522,13 +525,8 @@ describe('useAssetFilterMutations', () => {
         });
 
         it('is true while clearAll mutation is pending', async () => {
-            let resolveClearAll: () => void;
-            mockedClearAllAssetTypeVisibility.mockImplementation(
-                () =>
-                    new Promise((resolve) => {
-                        resolveClearAll = () => resolve(undefined);
-                    }),
-            );
+            const deferred = createDeferredPromise<void>();
+            mockedClearAllAssetTypeVisibility.mockReturnValue(deferred.promise);
 
             const { result } = renderHook(
                 () =>
@@ -549,7 +547,7 @@ describe('useAssetFilterMutations', () => {
             });
 
             act(() => {
-                resolveClearAll!();
+                deferred.resolve();
             });
 
             await waitFor(() => {
@@ -574,21 +572,16 @@ describe('useAssetFilterMutations', () => {
         });
 
         it('is true while filter mode mutation is pending', async () => {
-            let resolveFilterMode: () => void;
-            mockedUpdateFocusArea.mockImplementation(
-                () =>
-                    new Promise((resolve) => {
-                        resolveFilterMode = () =>
-                            resolve({
-                                id: 'fa-1',
-                                name: 'Focus Area',
-                                geometry: null,
-                                filterMode: 'by_score_only',
-                                isActive: true,
-                                isSystem: false,
-                            });
-                    }),
-            );
+            const mockResponse = {
+                id: 'fa-1',
+                name: 'Focus Area',
+                geometry: null,
+                filterMode: 'by_score_only' as const,
+                isActive: true,
+                isSystem: false,
+            };
+            const deferred = createDeferredPromise<typeof mockResponse>();
+            mockedUpdateFocusArea.mockReturnValue(deferred.promise);
 
             const { result } = renderHook(
                 () =>
@@ -609,7 +602,7 @@ describe('useAssetFilterMutations', () => {
             });
 
             act(() => {
-                resolveFilterMode!();
+                deferred.resolve(mockResponse);
             });
 
             await waitFor(() => {

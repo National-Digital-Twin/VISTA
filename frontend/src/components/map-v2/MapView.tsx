@@ -8,7 +8,7 @@ import { useQuery } from '@tanstack/react-query';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import './mapbox-draw-maplibre.css';
 
-import { bbox } from '@turf/turf';
+import { bbox, booleanPointInPolygon, point } from '@turf/turf';
 import { DEFAULT_VIEW_STATE, DEFAULT_MAP_STYLE, MAP_STYLES, MAP_VIEW_BOUNDS, type MapStyleKey } from './constants';
 import MapControls from './MapControls';
 import MapPanels from './MapPanels';
@@ -16,6 +16,7 @@ import AssetLayers from './AssetLayers';
 import ExposureLayers from './ExposureLayers';
 import UtilitiesLayers from './UtilitiesLayers';
 import FocusAreaMask from './FocusAreaMask';
+import FocusAreaOutline from './FocusAreaOutline';
 import RadiusDialog from './RadiusDialog';
 import useMapboxDraw from './hooks/useMapboxDraw';
 import useFocusAreas from './hooks/useFocusAreas';
@@ -50,14 +51,18 @@ const MapView = () => {
     const scenarioId = activeScenario?.id;
     const iconMap = useAssetTypeIcons();
 
+    const isInFocusAreaPanel = activePanelView === 'focus-area';
+    const [selectedFocusAreaId, setSelectedFocusAreaId] = useState<string | null>(null);
+
     const { focusAreas, isDrawing, drawingMode, startDrawing, createCircleAtPoint } = useFocusAreas({
         scenarioId,
         mapRef,
         drawRef,
         mapReady,
+        isEditable: isInFocusAreaPanel,
+        selectedFocusAreaId,
+        onFocusAreaSelect: setSelectedFocusAreaId,
     });
-
-    const [selectedFocusAreaId, setSelectedFocusAreaId] = useState<string | null>(null);
     const handleFocusAreaSelect = useCallback(
         (focusAreaId: string | null) => {
             setSelectedFocusAreaId(focusAreaId);
@@ -91,6 +96,16 @@ const MapView = () => {
         [focusAreas, mapReady],
     );
 
+    // Auto-select map-wide focus area when focusAreas loads and nothing is selected
+    useEffect(() => {
+        if (focusAreas && !selectedFocusAreaId) {
+            const mapWideFocusArea = focusAreas.find((fa) => fa.isSystem);
+            if (mapWideFocusArea) {
+                setSelectedFocusAreaId(mapWideFocusArea.id);
+            }
+        }
+    }, [focusAreas, selectedFocusAreaId]);
+
     const mapStyle = useMemo(() => MAP_STYLES[mapStyleKey], [mapStyleKey]);
 
     const { data: assetCategories } = useQuery({
@@ -117,12 +132,12 @@ const MapView = () => {
         }
     }, [roadRouteStart, roadRouteEnd, roadRouteVehicle, isRoadRouteEnabled, getRoadRoute]);
 
+    const shouldFilterByFocusArea = activePanelView === 'assets' || activePanelView === 'exposure';
     const { assets } = useScenarioAssets({
         scenarioId,
+        focusAreaId: shouldFilterByFocusArea ? selectedFocusAreaId : undefined,
         iconMap,
     });
-
-    const isInFocusAreaPanel = activePanelView === 'focus-area';
 
     // Get IDs of all active focus areas (including system/map-wide)
     const activeFocusAreaIds = useMemo(() => {
@@ -131,7 +146,6 @@ const MapView = () => {
         }
         return focusAreas.filter((fa) => fa.isActive).map((fa) => fa.id);
     }, [focusAreas]);
-
 
     usePreloadAssetIcons(assets);
 
@@ -246,6 +260,46 @@ const MapView = () => {
         };
     }, [mapReady, drawingMode]);
 
+    // Handle clicks outside inactive focus areas to deselect them
+    useEffect(() => {
+        if (!mapReady || !isInFocusAreaPanel || !selectedFocusAreaId) {
+            return;
+        }
+
+        const selectedFocusArea = focusAreas?.find((fa) => fa.id === selectedFocusAreaId);
+        // Only handle clicks for inactive, non-system focus areas (active ones are handled by MapboxDraw)
+        if (!selectedFocusArea || selectedFocusArea.isActive || selectedFocusArea.isSystem) {
+            return;
+        }
+
+        const map = mapRef.current?.getMap();
+        if (!map) {
+            return;
+        }
+
+        const handleClickOutside = (e: MapMouseEvent) => {
+            const clickPoint = point([e.lngLat.lng, e.lngLat.lat]);
+            const geometry = selectedFocusArea.geometry;
+
+            if (geometry && (geometry.type === 'Polygon' || geometry.type === 'MultiPolygon')) {
+                const isInside = booleanPointInPolygon(clickPoint, geometry);
+                if (!isInside) {
+                    // Click was outside - revert to map-wide
+                    const mapWideFocusArea = focusAreas?.find((fa) => fa.isSystem);
+                    if (mapWideFocusArea) {
+                        setSelectedFocusAreaId(mapWideFocusArea.id);
+                    }
+                }
+            }
+        };
+
+        map.on('click', handleClickOutside);
+
+        return () => {
+            map.off('click', handleClickOutside);
+        };
+    }, [mapReady, isInFocusAreaPanel, selectedFocusAreaId, focusAreas]);
+
     const transformRequest = useCallback((url: string) => {
         let transformedUrl = url;
         const headers: Record<string, string> = {};
@@ -344,12 +398,12 @@ const MapView = () => {
                 roadRouteData={
                     roadRouteQueryData?.roadRoute
                         ? {
-                            routeGeojson: {
-                                features: roadRouteQueryData.roadRoute.routeGeojson.features.map((f) => ({
-                                    properties: f.properties || {},
-                                })),
-                            },
-                        }
+                              routeGeojson: {
+                                  features: roadRouteQueryData.roadRoute.routeGeojson.features.map((f) => ({
+                                      properties: f.properties || {},
+                                  })),
+                              },
+                          }
                         : undefined
                 }
                 onRoadRouteVehicleChange={setRoadRouteVehicle}
@@ -388,6 +442,16 @@ const MapView = () => {
                             {!isInFocusAreaPanel && selectedFocusAreaId && (
                                 <FocusAreaMask geometry={focusAreas?.find((fa) => fa.id === selectedFocusAreaId)?.geometry ?? null} />
                             )}
+                            {isInFocusAreaPanel &&
+                                selectedFocusAreaId &&
+                                (() => {
+                                    const selectedFocusArea = focusAreas?.find((fa) => fa.id === selectedFocusAreaId);
+                                    // Show gray outline for inactive focus areas in the Focus Area panel
+                                    if (selectedFocusArea && !selectedFocusArea.isActive && selectedFocusArea.geometry) {
+                                        return <FocusAreaOutline geometry={selectedFocusArea.geometry} lineColor="#888888" />;
+                                    }
+                                    return null;
+                                })()}
                             <AssetLayers
                                 assets={assets}
                                 selectedElements={selectedElement ? [selectedElement] : []}
