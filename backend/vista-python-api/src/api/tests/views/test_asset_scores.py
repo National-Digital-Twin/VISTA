@@ -105,7 +105,7 @@ def fixture(db):  # noqa: ARG001
     cat = AssetCategory.objects.create(id=uuid.uuid4(), name="Cat")
     sub_cat = AssetSubCategory.objects.create(category_id=cat, id=uuid.uuid4(), name="SubCat")
     scenario1 = Scenario.objects.create(name="Scenario1", is_active=True)
-    scenario2 = Scenario.objects.create(name="Scenario2", is_active=True)
+    scenario2 = Scenario.objects.create(name="Scenario2", is_active=False)
 
     type_substation = AssetType.objects.create(
         id=uuid.uuid4(), name="Substations", sub_category_id=sub_cat

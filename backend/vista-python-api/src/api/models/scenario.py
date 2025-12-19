@@ -1,8 +1,10 @@
 """Scenario model."""
 
 import uuid
+from typing import ClassVar
 
 from django.db import models
+from django.db.models import Q
 
 
 class Scenario(models.Model):
@@ -11,6 +13,18 @@ class Scenario(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255)
     is_active = models.BooleanField()
+    code = models.CharField(max_length=255, blank=True, default="")
+
+    class Meta:
+        """Meta configuration."""
+
+        constraints: ClassVar = [
+            models.UniqueConstraint(
+                fields=["is_active"],
+                condition=Q(is_active=True),
+                name="only_one_active_entity",
+            )
+        ]
 
     def __str__(self):
         """Return string representation."""
