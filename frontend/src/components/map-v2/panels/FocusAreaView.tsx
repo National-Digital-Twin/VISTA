@@ -100,7 +100,8 @@ const FocusAreaItem = ({ focusArea, scenarioId, onError, isSelected, onSelect }:
         setDeleteDialogOpen(true);
     };
 
-    const handleDeleteConfirm = () => {
+    const handleDeleteConfirm = (e: MouseEvent) => {
+        e.stopPropagation();
         setDeleteDialogOpen(false);
         deleteFocusAreaMutate(focusArea.id);
     };

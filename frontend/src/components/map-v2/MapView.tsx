@@ -96,13 +96,18 @@ const MapView = () => {
         [focusAreas, mapReady],
     );
 
-    // Auto-select map-wide focus area when focusAreas loads and nothing is selected
     useEffect(() => {
-        if (focusAreas && !selectedFocusAreaId) {
-            const mapWideFocusArea = focusAreas.find((fa) => fa.isSystem);
-            if (mapWideFocusArea) {
-                setSelectedFocusAreaId(mapWideFocusArea.id);
+        if (!focusAreas) {
+            if (selectedFocusAreaId) {
+                setSelectedFocusAreaId(null);
             }
+            return;
+        }
+
+        const selectionValid = selectedFocusAreaId && focusAreas.some((fa) => fa.id === selectedFocusAreaId);
+        if (!selectionValid) {
+            const mapWideFocusArea = focusAreas.find((fa) => fa.isSystem);
+            setSelectedFocusAreaId(mapWideFocusArea?.id ?? null);
         }
     }, [focusAreas, selectedFocusAreaId]);
 

@@ -48,8 +48,11 @@ vi.mock('react-map-gl/maplibre', () => ({
                 on: vi.fn(),
                 off: vi.fn(),
                 easeTo: vi.fn(),
+                flyTo: vi.fn(),
+                fitBounds: vi.fn(),
                 zoomIn: vi.fn(),
                 zoomOut: vi.fn(),
+                getCanvas: vi.fn(() => ({ style: {} })),
             }),
         }));
 
@@ -71,8 +74,11 @@ vi.mock('react-map-gl/maplibre', () => ({
                 on: vi.fn(),
                 off: vi.fn(),
                 easeTo: vi.fn(),
+                flyTo: vi.fn(),
+                fitBounds: vi.fn(),
                 zoomIn: vi.fn(),
                 zoomOut: vi.fn(),
+                getCanvas: vi.fn(() => ({ style: {} })),
             }),
         },
     })),
@@ -87,6 +93,8 @@ vi.mock('./MapPanels', () => {
         onUtilityToggle,
         onRoadRouteVehicleChange,
         roadRouteVehicle,
+        selectedFocusAreaId,
+        onFocusAreaSelect,
     }: {
         activeView: string | null;
         onViewChange: (view: string | null) => void;
@@ -95,6 +103,8 @@ vi.mock('./MapPanels', () => {
         onUtilityToggle?: (utilityId: string, enabled: boolean) => void;
         onRoadRouteVehicleChange?: (vehicle: any) => void;
         roadRouteVehicle?: string;
+        selectedFocusAreaId?: string | null;
+        onFocusAreaSelect?: (focusAreaId: string | null) => void;
     }) => {
         const [roadRouteEnabled, setRoadRouteEnabled] = React.useState(false);
 
@@ -113,9 +123,13 @@ vi.mock('./MapPanels', () => {
                 <button onClick={() => onRoadRouteVehicleChange?.('HGV')} data-testid="set-vehicle-hgv">
                     Set Vehicle HGV
                 </button>
+                <button onClick={() => onFocusAreaSelect?.('user-focus-area-1')} data-testid="select-user-focus-area">
+                    Select User Focus Area
+                </button>
                 <div data-testid="vehicle-value">{roadRouteVehicle || 'Car'}</div>
                 <div data-testid="active-view">{activeView || 'none'}</div>
                 <div data-testid="selected-element">{selectedElement?.id || 'none'}</div>
+                <div data-testid="selected-focus-area-id">{selectedFocusAreaId || 'none'}</div>
                 {onBackFromAssetDetails && <button onClick={onBackFromAssetDetails}>Back from Asset Details</button>}
             </div>
         );
@@ -177,8 +191,9 @@ vi.mock('@/hooks/useActiveScenario', () => ({
     }),
 }));
 
+const mockFetchFocusAreas = vi.fn();
 vi.mock('@/api/focus-areas', () => ({
-    fetchFocusAreas: vi.fn().mockResolvedValue([]),
+    fetchFocusAreas: (...args: any[]) => mockFetchFocusAreas(...args),
     createFocusArea: vi.fn().mockResolvedValue({ id: 'new-focus-area', name: 'Area 1', isActive: true }),
 }));
 
@@ -200,6 +215,7 @@ describe('MapView', () => {
         });
         mockUseAssetTypeIcons.mockReturnValue(new Map());
         mockFetchAssetCategories.mockResolvedValue([]);
+        mockFetchFocusAreas.mockResolvedValue([]);
     });
 
     describe('Rendering', () => {
@@ -345,6 +361,55 @@ describe('MapView', () => {
         it('sets mapReady when map loads', async () => {
             renderWithProviders(<MapView />);
             await waitForElement('map');
+        });
+    });
+
+    describe('Focus Area Selection', () => {
+        it('auto-selects map-wide focus area on initial load', async () => {
+            mockFetchFocusAreas.mockResolvedValue([
+                { id: 'map-wide-id', name: 'Map-wide', isSystem: true, isActive: true },
+                { id: 'user-focus-area-1', name: 'User Area 1', isSystem: false, isActive: true },
+            ]);
+
+            renderWithProviders(<MapView />);
+
+            await waitFor(() => {
+                expect(screen.getByTestId('selected-focus-area-id')).toHaveTextContent('map-wide-id');
+            });
+        });
+
+        it('resets to map-wide when selected focus area is deleted', async () => {
+            const queryClient = createTestQueryClient();
+
+            mockFetchFocusAreas.mockResolvedValue([
+                { id: 'map-wide-id', name: 'Map-wide', isSystem: true, isActive: true },
+                { id: 'user-focus-area-1', name: 'User Area 1', isSystem: false, isActive: true },
+            ]);
+
+            renderWithProviders(<MapView />, queryClient);
+
+            await waitFor(() => {
+                expect(screen.getByTestId('selected-focus-area-id')).toHaveTextContent('map-wide-id');
+            });
+
+            const selectUserFocusAreaButton = screen.getByTestId('select-user-focus-area');
+            await act(async () => {
+                selectUserFocusAreaButton.click();
+            });
+
+            await waitFor(() => {
+                expect(screen.getByTestId('selected-focus-area-id')).toHaveTextContent('user-focus-area-1');
+            });
+
+            mockFetchFocusAreas.mockResolvedValue([{ id: 'map-wide-id', name: 'Map-wide', isSystem: true, isActive: true }]);
+
+            await act(async () => {
+                queryClient.invalidateQueries({ queryKey: ['focusAreas'] });
+            });
+
+            await waitFor(() => {
+                expect(screen.getByTestId('selected-focus-area-id')).toHaveTextContent('map-wide-id');
+            });
         });
     });
 });
