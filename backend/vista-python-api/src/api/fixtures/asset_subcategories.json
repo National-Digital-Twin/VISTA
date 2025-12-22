@@ -81,14 +81,6 @@
   },
   {
     "model": "api.assetsubcategory",
-    "pk": "7b42fa0a-44e3-4d79-ae5e-f85a1a6ee5aa",
-    "fields": {
-      "category_id": "7f4a99e2-8156-4e1a-b6cb-cb621372dbf7",
-      "name": "Third sector"
-    }
-  },
-  {
-    "model": "api.assetsubcategory",
     "pk": "e3a5cebb-6bc1-44ef-ae33-029f3731d7ad",
     "fields": {
       "category_id": "4b1c52b6-8d6f-4b7a-b63e-2a10f94e4b41",

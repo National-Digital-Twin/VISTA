@@ -367,7 +367,7 @@
     "model": "api.assettype",
     "pk": "f7c3d1b1-76a3-4b41-9e0c-2d4c2c3d5b6e",
     "fields": {
-      "sub_category_id": "7b42fa0a-44e3-4d79-ae5e-f85a1a6ee5aa",
+      "sub_category_id": "c0560b0a-cc7b-4d09-95b5-b31f2513142c",
       "data_source_id": "84e986cd-73dc-4324-8639-1b97d491ce25",
       "name": "Lifeboat station",
       "icon": "fa-life-ring"
