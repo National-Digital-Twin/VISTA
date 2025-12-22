@@ -3,7 +3,6 @@ import { Layer, Source, Marker, useMap } from 'react-map-gl/maplibre';
 import type { Feature } from 'geojson';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { isIconPreloaded } from './hooks/usePreloadAssetIcons';
 import AssetTooltip from './panels/AssetTooltip';
 import { findElement } from '@/utils';
 import { createPointFeature, createLinearFeature } from '@/utils/assetUtils';
@@ -255,14 +254,12 @@ const AssetMarker = memo(({ feature, isSelected, iconStyles: providedIconStyles,
     const iconFallbackText = iconStyles?.iconFallbackText || '?';
 
     const fontAwesomeIconName = faIcon ? faIcon.split(' ').pop()?.replace('fa-', '') || null : null;
-    const hasAvailableFontAwesomeIcon = fontAwesomeIconName ? isIconPreloaded(fontAwesomeIconName) : false;
 
-    const iconElement =
-        hasAvailableFontAwesomeIcon && fontAwesomeIconName ? (
-            <FontAwesomeIcon icon={['fas', fontAwesomeIconName] as never} style={{ fontSize: '12px' }} />
-        ) : (
-            <span style={{ fontSize: '10px', fontWeight: 'bold' }}>{iconFallbackText}</span>
-        );
+    const iconElement = fontAwesomeIconName ? (
+        <FontAwesomeIcon icon={['fas', fontAwesomeIconName] as never} style={{ fontSize: '12px' }} />
+    ) : (
+        <span style={{ fontSize: '10px', fontWeight: 'bold' }}>{iconFallbackText}</span>
+    );
 
     const ariaLabel = asset?.name || 'Asset marker';
 
