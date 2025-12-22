@@ -281,7 +281,7 @@
     "model": "api.assettype",
     "pk": "1f6d2c1e-0f6d-4b09-9a2e-3bfcf1e64b4a",
     "fields": {
-      "sub_category_id": "6f35e5de-f91c-4663-a7d8-cb4f5a1a4c67",
+      "sub_category_id": "faed503a-bc59-4e63-bcc2-0f7e020d2063",
       "data_source_id": "84e986cd-73dc-4324-8639-1b97d491ce25",
       "name": "Motor vehicle fuelling or charging station",
       "icon": "fa-gas-pump"
@@ -291,7 +291,7 @@
     "model": "api.assettype",
     "pk": "c83e79b2-1b36-4e9a-8971-4a521b45e29f",
     "fields": {
-      "sub_category_id": "6f35e5de-f91c-4663-a7d8-cb4f5a1a4c67",
+      "sub_category_id": "aa6b8a3b-2394-4e02-bc8a-b36c4b20e875",
       "data_source_id": "84e986cd-73dc-4324-8639-1b97d491ce25",
       "name": "Veterinary hospital",
       "icon": "fa-shield-dog"
@@ -301,7 +301,7 @@
     "model": "api.assettype",
     "pk": "0ad824c1-d3d4-4f4b-8c72-7a5b04a7b623",
     "fields": {
-      "sub_category_id": "6f35e5de-f91c-4663-a7d8-cb4f5a1a4c67",
+      "sub_category_id": "a22c10fd-c0cd-4722-a391-9df2a09db6ef",
       "data_source_id": "84e986cd-73dc-4324-8639-1b97d491ce25",
       "name": "Waste disposal complex"
     }
