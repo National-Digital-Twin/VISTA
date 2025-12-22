@@ -74,6 +74,16 @@ vi.mock('./MobileMenu', () => ({
         isOpen ? <div data-testid="mobile-menu">MobileMenu: {appName}</div> : null,
 }));
 
+const mockUseActiveScenario = vi.fn();
+vi.mock('@/hooks/useActiveScenario', () => ({
+    useActiveScenario: () => mockUseActiveScenario(),
+}));
+
+const mockUseUserData = vi.fn();
+vi.mock('@/hooks/useUserData', () => ({
+    useUserData: () => mockUseUserData(),
+}));
+
 const createTestQueryClient = () => {
     return new QueryClient({
         defaultOptions: {
@@ -107,6 +117,8 @@ describe('PageHeader', () => {
     beforeEach(() => {
         vi.clearAllMocks();
         mockUseMediaQuery.mockReturnValue(false);
+        mockUseActiveScenario.mockReturnValue({ data: null });
+        mockUseUserData.mockReturnValue({ getUserType: () => 'General' });
     });
 
     it('renders PageHeader with app name', () => {
@@ -241,5 +253,127 @@ describe('PageHeader', () => {
 
         expect(consoleSpy).not.toHaveBeenCalled();
         consoleSpy.mockRestore();
+    });
+
+    describe('Scenario Name Display', () => {
+        it('displays scenario name when active scenario exists', () => {
+            mockUseActiveScenario.mockReturnValue({
+                data: { id: 'scenario-1', name: 'Flood in Newport', isActive: true },
+            });
+
+            renderWithProviders(<PageHeader appName="VISTA" />);
+
+            expect(screen.getByText('Flood in Newport')).toBeInTheDocument();
+        });
+
+        it('does not display scenario name when no active scenario', () => {
+            mockUseActiveScenario.mockReturnValue({ data: null });
+
+            renderWithProviders(<PageHeader appName="VISTA" />);
+
+            expect(screen.queryByText('Flood in Newport')).not.toBeInTheDocument();
+        });
+
+        it('does not display scenario name when active scenario has no name', () => {
+            mockUseActiveScenario.mockReturnValue({
+                data: { id: 'scenario-1', name: '', isActive: true },
+            });
+
+            renderWithProviders(<PageHeader appName="VISTA" />);
+
+            const scenarioElements = screen.queryAllByText(/Flood|Newport|Scenario/);
+            expect(scenarioElements.length).toBe(0);
+        });
+
+        it('displays scenario name as plain text for non-admin users', () => {
+            mockUseActiveScenario.mockReturnValue({
+                data: { id: 'scenario-1', name: 'Flood in Newport', isActive: true },
+            });
+            mockUseUserData.mockReturnValue({ getUserType: () => 'General' });
+
+            renderWithProviders(<PageHeader appName="VISTA" />);
+
+            const scenarioText = screen.getByText('Flood in Newport');
+            expect(scenarioText).toBeInTheDocument();
+            expect(scenarioText.tagName).toBe('H6');
+        });
+
+        it('displays scenario name as clickable link for admin users', () => {
+            mockUseActiveScenario.mockReturnValue({
+                data: { id: 'scenario-1', name: 'Flood in Newport', isActive: true },
+            });
+            mockUseUserData.mockReturnValue({ getUserType: () => 'Admin' });
+
+            renderWithProviders(<PageHeader appName="VISTA" />);
+
+            const scenarioLink = screen.getByText('Flood in Newport');
+            expect(scenarioLink).toBeInTheDocument();
+            expect(scenarioLink.closest('button')).toBeInTheDocument();
+        });
+
+        it('navigates to data-room with query parameter when admin clicks scenario name', () => {
+            mockUseActiveScenario.mockReturnValue({
+                data: { id: 'scenario-1', name: 'Flood in Newport', isActive: true },
+            });
+            mockUseUserData.mockReturnValue({ getUserType: () => 'Admin' });
+
+            const { navigate } = renderWithProviders(<PageHeader appName="VISTA" />);
+
+            const scenarioLink = screen.getByText('Flood in Newport');
+            fireEvent.click(scenarioLink);
+
+            expect(navigate).toHaveBeenCalledWith('/data-room?openScenarioModal=true');
+        });
+
+        it('does not navigate when non-admin clicks scenario name', () => {
+            mockUseActiveScenario.mockReturnValue({
+                data: { id: 'scenario-1', name: 'Flood in Newport', isActive: true },
+            });
+            mockUseUserData.mockReturnValue({ getUserType: () => 'General' });
+
+            const { navigate } = renderWithProviders(<PageHeader appName="VISTA" />);
+
+            const scenarioText = screen.getByText('Flood in Newport');
+            fireEvent.click(scenarioText);
+
+            expect(navigate).not.toHaveBeenCalled();
+        });
+
+        it('updates scenario name when active scenario changes', () => {
+            const { rerender } = renderWithProviders(<PageHeader appName="VISTA" />);
+
+            mockUseActiveScenario.mockReturnValue({
+                data: { id: 'scenario-1', name: 'Flood in Newport', isActive: true },
+            });
+
+            rerender(
+                <MemoryRouter>
+                    <QueryClientProvider client={createTestQueryClient()}>
+                        <ThemeProvider theme={theme}>
+                            <PageHeader appName="VISTA" />
+                        </ThemeProvider>
+                    </QueryClientProvider>
+                </MemoryRouter>,
+            );
+
+            expect(screen.getByText('Flood in Newport')).toBeInTheDocument();
+
+            mockUseActiveScenario.mockReturnValue({
+                data: { id: 'scenario-2', name: 'Landslide in Ventnor', isActive: true },
+            });
+
+            rerender(
+                <MemoryRouter>
+                    <QueryClientProvider client={createTestQueryClient()}>
+                        <ThemeProvider theme={theme}>
+                            <PageHeader appName="VISTA" />
+                        </ThemeProvider>
+                    </QueryClientProvider>
+                </MemoryRouter>,
+            );
+
+            expect(screen.queryByText('Flood in Newport')).not.toBeInTheDocument();
+            expect(screen.getByText('Landslide in Ventnor')).toBeInTheDocument();
+        });
     });
 });

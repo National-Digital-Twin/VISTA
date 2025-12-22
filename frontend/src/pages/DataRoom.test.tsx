@@ -23,7 +23,7 @@ vi.mock('@/hooks/useUserData', () => ({
 const mockedFetchDataSources = vi.mocked(fetchDataSources);
 const mockedFetchScenarios = vi.mocked(fetchScenarios);
 
-const createWrapper = () => {
+const createWrapper = (initialEntries: string[] = ['/data-room']) => {
     const queryClient = new QueryClient({
         defaultOptions: {
             queries: {
@@ -33,14 +33,14 @@ const createWrapper = () => {
     });
 
     return ({ children }: { children: ReactNode }) => (
-        <MemoryRouter>
+        <MemoryRouter initialEntries={initialEntries}>
             <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
         </MemoryRouter>
     );
 };
 
-const setup = () => {
-    const Wrapper = createWrapper();
+const setup = (initialEntries: string[] = ['/data-room']) => {
+    const Wrapper = createWrapper(initialEntries);
     return render(
         <Wrapper>
             <DataRoom />
@@ -286,6 +286,45 @@ describe('DataRoom', () => {
                 const dialog = screen.queryByRole('dialog');
                 expect(dialog).not.toBeInTheDocument();
             });
+        });
+    });
+
+    describe('Query Parameter Handling', () => {
+        it('opens scenario modal when openScenarioModal query parameter is present', async () => {
+            setup(['/data-room?openScenarioModal=true']);
+
+            await waitFor(() => {
+                expect(screen.getByText('Choose scenario')).toBeInTheDocument();
+            });
+        });
+
+        it('removes openScenarioModal query parameter after opening modal', async () => {
+            setup(['/data-room?openScenarioModal=true']);
+
+            await waitFor(() => {
+                expect(screen.getByText('Choose scenario')).toBeInTheDocument();
+            });
+
+            await waitFor(() => {
+                const url = globalThis.location.href;
+                expect(url).not.toContain('openScenarioModal');
+            });
+        });
+
+        it('does not open modal when query parameter is not present', async () => {
+            setup(['/data-room']);
+
+            await screen.findByText('CQC API');
+
+            expect(screen.queryByText('Choose scenario')).not.toBeInTheDocument();
+        });
+
+        it('does not open modal when query parameter is false', async () => {
+            setup(['/data-room?openScenarioModal=false']);
+
+            await screen.findByText('CQC API');
+
+            expect(screen.queryByText('Choose scenario')).not.toBeInTheDocument();
         });
     });
 });
