@@ -9,7 +9,7 @@ class Migration(migrations.Migration):
     """Add uniqueness constraint to scenario and code field."""
 
     dependencies: ClassVar = [
-        ("api", "0031_update_asset_score_exposure_scenario"),
+        ("api", "0036_update_asset_score_views_for_focus_area"),
     ]
 
     operations: ClassVar = [

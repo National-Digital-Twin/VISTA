@@ -33,7 +33,7 @@ import PageContainer from '@/components/PageContainer';
 import { SortableTableHeader } from '@/components/SortableTableHeader';
 import { SearchTextField } from '@/components/SearchTextField';
 import { fetchDataSources, DataSource } from '@/api/datasources';
-import { fetchScenarios, Scenario, updateScenario } from '@/api/scenarios';
+import { fetchScenarios, Scenario, setActiveScenario } from '@/api/scenarios';
 import { useUserData } from '@/hooks/useUserData';
 
 type SortField = 'name' | 'owner' | 'assetCount' | 'lastUpdated';
@@ -153,7 +153,7 @@ export default function DataRoom() {
 
     const activateScenarioMutation = useMutation({
         mutationFn: (scenarioId: string) => {
-            return updateScenario(scenarioId);
+            return setActiveScenario(scenarioId);
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['scenarios'] });

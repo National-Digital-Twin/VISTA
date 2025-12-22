@@ -243,7 +243,7 @@ def test_scenario_assets_with_focus_area_id_wrong_scenario_returns_404(
     other_scenario = Scenario.objects.create(
         id=uuid.uuid4(),
         name="Other Scenario",
-        is_active=True,
+        is_active=False,
     )
 
     # Try to access focus area from wrong scenario

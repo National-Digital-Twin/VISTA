@@ -15,7 +15,7 @@ export const fetchScenarios = async (): Promise<Scenario[]> => {
     return response.json();
 };
 
-export const updateScenario = async (id: string): Promise<void> => {
+export const setActiveScenario = async (id: string): Promise<void> => {
     const response = await fetch(`${config.services.apiBaseUrl}/scenarios/${id}/activate/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

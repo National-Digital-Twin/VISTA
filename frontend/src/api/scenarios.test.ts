@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
-import { fetchScenarios, updateScenario, type Scenario } from './scenarios';
+import { fetchScenarios, setActiveScenario, type Scenario } from './scenarios';
 
 vi.mock('@/config/app-config', () => ({
     default: {
@@ -74,7 +74,7 @@ describe('scenarios API', () => {
                 statusText: 'No Content',
             });
 
-            await updateScenario(scenario_id);
+            await setActiveScenario(scenario_id);
 
             const [url, options] = fetchMock.mock.calls[0];
 
@@ -89,7 +89,7 @@ describe('scenarios API', () => {
                 statusText: 'Not Found',
             });
 
-            await expect(updateScenario('scenario1')).rejects.toThrow('Failed to activate scenario: Not Found');
+            await expect(setActiveScenario('scenario1')).rejects.toThrow('Failed to activate scenario: Not Found');
         });
     });
 });
