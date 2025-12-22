@@ -42,10 +42,11 @@ describe('ConnectedAssetsSection', () => {
     };
 
     describe('rendering', () => {
-        it('renders Connected Assets header', () => {
+        it('renders tabs with dependent and provider assets', () => {
             renderWithTheme(<ConnectedAssetsSection {...defaultProps} />);
 
-            expect(screen.getByText('Connected Assets')).toBeInTheDocument();
+            expect(screen.getByText('Dependent Assets (1)')).toBeInTheDocument();
+            expect(screen.getByText('Provider Assets (1)')).toBeInTheDocument();
         });
 
         it('renders tabs with correct labels and counts', () => {

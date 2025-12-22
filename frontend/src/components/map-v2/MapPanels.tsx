@@ -1,7 +1,6 @@
 import type { ReactElement } from 'react';
 import { Box, Paper } from '@mui/material';
 import MapPanelButton from './MapPanelButton';
-import ScenarioView from './panels/ScenarioView';
 import AssetsView from './panels/AssetsView';
 import ExposureView from './panels/ExposureView';
 import FocusAreaView from './panels/FocusAreaView';
@@ -30,11 +29,6 @@ const FIXED_ITEMS: readonly MapPanelItem[] = [
         icon: <img src="/icons/map-v2/assets.svg" alt="Assets" width={24} height={24} />,
     },
     {
-        id: 'scenario',
-        label: 'Scenario',
-        icon: <img src="/icons/map-v2/scenario.svg" alt="Scenario" width={24} height={24} />,
-    },
-    {
         id: 'exposure',
         label: 'Exposure',
         icon: <img src="/icons/map-v2/exposure.svg" alt="Exposure" width={24} height={24} />,
@@ -59,6 +53,7 @@ type MapPanelsProps = {
     onUtilityToggle?: (utilityId: string, enabled: boolean) => void;
     selectedElement?: Asset | null;
     onBackFromAssetDetails?: () => void;
+    onCloseFromAssetDetails?: () => void;
     scenarioId?: string;
     isDrawing?: boolean;
     onStartDrawing?: (mode: 'circle' | 'polygon') => void;
@@ -71,6 +66,11 @@ type MapPanelsProps = {
     onRoadRouteVehicleChange?: (vehicle: 'HGV' | 'EmergencyVehicle' | 'Car' | undefined) => void;
     onRequestPositionSelection?: (type: 'start' | 'end' | null) => void;
     onFocusAreaSelect?: (focusAreaId: string | null) => void;
+    onConnectedAssetsVisibilityChange?: (
+        visible: boolean,
+        dependents: Array<{ id: string; geom: string; type: { name: string } }>,
+        providers: Array<{ id: string; geom: string; type: { name: string } }>,
+    ) => void;
 };
 
 const MapPanels = ({
@@ -81,6 +81,7 @@ const MapPanels = ({
     onUtilityToggle,
     selectedElement,
     onBackFromAssetDetails,
+    onCloseFromAssetDetails,
     scenarioId,
     isDrawing,
     onStartDrawing,
@@ -93,6 +94,7 @@ const MapPanels = ({
     onRoadRouteVehicleChange,
     onRequestPositionSelection,
     onFocusAreaSelect,
+    onConnectedAssetsVisibilityChange,
 }: Readonly<MapPanelsProps>) => {
     const handleItemClick = (itemId: string) => {
         const newActiveView = activeView === itemId ? null : itemId;
@@ -109,8 +111,6 @@ const MapPanels = ({
         }
 
         switch (activeView) {
-            case 'scenario':
-                return <ScenarioView onItemClick={handleItemClick} onClose={handleClosePanel} />;
             case 'assets':
                 return (
                     <AssetsView
@@ -160,7 +160,15 @@ const MapPanels = ({
                 if (!onBackFromAssetDetails) {
                     return null;
                 }
-                return <AssetDetailsPanel selectedElement={selectedElement || null} onBack={onBackFromAssetDetails} />;
+                return (
+                    <AssetDetailsPanel
+                        selectedElement={selectedElement ?? null}
+                        onBack={onBackFromAssetDetails}
+                        onClose={onCloseFromAssetDetails}
+                        scenarioId={scenarioId}
+                        onConnectedAssetsVisibilityChange={onConnectedAssetsVisibilityChange}
+                    />
+                );
             default:
                 return null;
         }

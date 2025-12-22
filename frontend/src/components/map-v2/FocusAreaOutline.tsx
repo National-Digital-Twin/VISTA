@@ -20,7 +20,6 @@ const FocusAreaOutline = ({ geometry, fillColor = 'transparent', fillOpacity = 0
             return null;
         }
 
-        // For Polygon, check it has valid coordinates
         if (geometry.type === 'Polygon') {
             const outerRing = (geometry.coordinates as Position[][])[0];
             if (!outerRing || outerRing.length === 0) {

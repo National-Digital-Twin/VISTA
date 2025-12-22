@@ -31,17 +31,14 @@ const useFocusAreas = ({ scenarioId, mapRef, drawRef, mapReady, isEditable = tru
 
     const { createFocusArea: createFocusAreaMutate, updateFocusArea: updateFocusAreaMutate } = useFocusAreaMutations({ scenarioId });
 
-    // Keep focusAreasRef in sync with query data for use in event handlers
     useEffect(() => {
         focusAreasRef.current = focusAreas;
     }, [focusAreas]);
 
-    // Clear loaded IDs when scenario changes
     useEffect(() => {
         loadedFocusAreaIdsRef.current.clear();
     }, [scenarioId]);
 
-    // Store mutation functions in refs for stable references in event handlers
     const createMutateRef = useRef(createFocusAreaMutate);
     const updateMutateRef = useRef(updateFocusAreaMutate);
     const onFocusAreaSelectRef = useRef(onFocusAreaSelect);
@@ -51,7 +48,6 @@ const useFocusAreas = ({ scenarioId, mapRef, drawRef, mapReady, isEditable = tru
         onFocusAreaSelectRef.current = onFocusAreaSelect;
     }, [createFocusAreaMutate, updateFocusAreaMutate, onFocusAreaSelect]);
 
-    // Sync active focus areas to MapboxDraw (only when editable)
     useEffect(() => {
         if (!mapReady || !drawRef.current) {
             return;
@@ -59,13 +55,12 @@ const useFocusAreas = ({ scenarioId, mapRef, drawRef, mapReady, isEditable = tru
 
         const draw = drawRef.current;
 
-        // If not editable, clear all drawn features
         if (!isEditable) {
             loadedFocusAreaIdsRef.current.forEach((id) => {
                 try {
                     draw.delete(id);
                 } catch {
-                    // Feature may already be deleted
+                    void 0;
                 }
             });
             loadedFocusAreaIdsRef.current.clear();
@@ -111,19 +106,17 @@ const useFocusAreas = ({ scenarioId, mapRef, drawRef, mapReady, isEditable = tru
             try {
                 draw.delete(id);
             } catch {
-                // Feature may already be deleted
+                void 0;
             }
             loadedFocusAreaIdsRef.current.delete(id);
         }
     }, [mapReady, drawRef, focusAreas, isEditable]);
 
-    // Sync selectedFocusAreaId to MapboxDraw selection (when selected from side panel)
     useEffect(() => {
         if (!mapReady || !drawRef.current || !selectedFocusAreaId) {
             return;
         }
 
-        // Only select if it's loaded in draw (i.e., it's an active focus area with isEditable=true)
         if (loadedFocusAreaIdsRef.current.has(selectedFocusAreaId)) {
             const draw = drawRef.current;
             const currentSelected = draw.getSelectedIds();
@@ -134,7 +127,6 @@ const useFocusAreas = ({ scenarioId, mapRef, drawRef, mapReady, isEditable = tru
         }
     }, [mapReady, drawRef, selectedFocusAreaId]);
 
-    // Handle draw events
     useEffect(() => {
         if (!mapReady || !mapRef.current || !drawRef.current) {
             return;
@@ -201,7 +193,6 @@ const useFocusAreas = ({ scenarioId, mapRef, drawRef, mapReady, isEditable = tru
                     onFocusAreaSelectRef.current(String(focusAreaId));
                 }
             } else {
-                // Nothing selected - revert to map-wide
                 const currentFocusAreas = focusAreasRef.current;
                 const mapWideFocusArea = currentFocusAreas?.find((fa) => fa.isSystem);
                 if (mapWideFocusArea) {

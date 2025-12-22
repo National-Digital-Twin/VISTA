@@ -26,7 +26,6 @@ const ExposureLayers = ({ scenarioId, selectedFocusAreaId, mapReady, isInFocusAr
         }
 
         if (isInFocusAreaPanel) {
-            // Query for all active focus areas (including system/map-wide)
             return activeFocusAreaIds.map((faId) => ({
                 queryKey: ['exposureLayers', scenarioId, faId],
                 queryFn: () => fetchExposureLayers(scenarioId, faId),

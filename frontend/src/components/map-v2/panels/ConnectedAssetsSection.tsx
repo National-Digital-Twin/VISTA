@@ -96,15 +96,10 @@ const ConnectedAssetsSection = ({ filteredDependents, filteredProviders }: Conne
 
     return (
         <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
-            <Box sx={{ px: 2, py: 2 }}>
-                <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>
-                    Connected Assets
-                </Typography>
-            </Box>
             <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
                 <Tabs value={tabValue} onChange={handleTabChange} aria-label="connected asset tabs" variant="fullWidth" sx={{ px: 2 }}>
-                    <Tab label={`Dependent Assets (${totalDependents})`} {...a11yProps(0)} />
-                    <Tab label={`Provider Assets (${totalProviders})`} {...a11yProps(1)} />
+                    <Tab label={`Dependent Assets (${totalDependents})`} sx={{ fontSize: '12px' }} {...a11yProps(0)} />
+                    <Tab label={`Provider Assets (${totalProviders})`} sx={{ fontSize: '12px' }} {...a11yProps(1)} />
                 </Tabs>
 
                 <Box sx={{ flex: 1, overflowY: 'auto' }}>
