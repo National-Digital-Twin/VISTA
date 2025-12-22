@@ -212,11 +212,9 @@ const FocusAreaView = ({ onClose, scenarioId, isDrawing, onStartDrawing, selecte
         onError: setMutationError,
     });
 
-    // Find map-wide focus area (isSystem === true)
     const mapWideFocusArea = focusAreas?.find((fa) => fa.isSystem);
     const mapWideVisible = mapWideFocusArea?.isActive ?? true;
 
-    // User focus areas (non-system)
     const userFocusAreas = focusAreas?.filter((fa) => !fa.isSystem) ?? [];
 
     const handleDrawMenuClick = (event: MouseEvent<HTMLButtonElement>) => {

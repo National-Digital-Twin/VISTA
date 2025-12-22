@@ -5,15 +5,6 @@ import { ThemeProvider } from '@mui/material/styles';
 import MapPanels from './MapPanels';
 import theme from '@/theme';
 
-vi.mock('./panels/ScenarioView', () => ({
-    default: ({ onItemClick, onClose }: { onItemClick: (id: string) => void; onClose: () => void }) => (
-        <div data-testid="scenario-view">
-            <button onClick={() => onItemClick('assets')}>Go to Assets</button>
-            <button onClick={onClose}>Close</button>
-        </div>
-    ),
-}));
-
 vi.mock('./panels/AssetsView', () => ({
     default: ({ onClose }: { onClose: () => void }) => (
         <div data-testid="assets-view">
@@ -47,10 +38,15 @@ vi.mock('./panels/FocusAreaView', () => ({
 }));
 
 vi.mock('./panels/AssetDetailsPanel', () => ({
-    default: ({ selectedElement, onBack }: { selectedElement: any; onBack: () => void }) => (
+    default: ({ selectedElement, onBack, onClose }: { selectedElement: any; onBack: () => void; onClose?: () => void }) => (
         <div data-testid="asset-details-panel">
             <div>Asset: {selectedElement?.uri || 'none'}</div>
             <button onClick={onBack}>Back</button>
+            {onClose && (
+                <button onClick={onClose} data-testid="close-button">
+                    Close
+                </button>
+            )}
         </div>
     ),
 }));
@@ -70,7 +66,6 @@ describe('MapPanels', () => {
             renderWithTheme(<MapPanels {...defaultProps} />);
 
             expect(screen.getByText('Focus area')).toBeInTheDocument();
-            expect(screen.getByText('Scenario')).toBeInTheDocument();
             expect(screen.getByText('Assets')).toBeInTheDocument();
             expect(screen.getByText('Exposure')).toBeInTheDocument();
             expect(screen.getByText('Utilities')).toBeInTheDocument();
@@ -80,7 +75,6 @@ describe('MapPanels', () => {
             renderWithTheme(<MapPanels {...defaultProps} />);
 
             expect(screen.getByAltText('Focus area')).toBeInTheDocument();
-            expect(screen.getByAltText('Scenario')).toBeInTheDocument();
             expect(screen.getByAltText('Assets')).toBeInTheDocument();
             expect(screen.getByAltText('Exposure')).toBeInTheDocument();
             expect(screen.getByAltText('Utilities')).toBeInTheDocument();
@@ -90,7 +84,6 @@ describe('MapPanels', () => {
             renderWithTheme(<MapPanels {...defaultProps} />);
 
             expect(screen.queryByTestId('focus-area-view')).not.toBeInTheDocument();
-            expect(screen.queryByTestId('scenario-view')).not.toBeInTheDocument();
             expect(screen.queryByTestId('assets-view')).not.toBeInTheDocument();
             expect(screen.queryByTestId('exposure-view')).not.toBeInTheDocument();
             expect(screen.queryByTestId('utilities-view')).not.toBeInTheDocument();
@@ -98,12 +91,6 @@ describe('MapPanels', () => {
     });
 
     describe('Panel Activation', () => {
-        it('renders ScenarioView when scenario is active', () => {
-            renderWithTheme(<MapPanels {...defaultProps} activeView="scenario" />);
-
-            expect(screen.getByTestId('scenario-view')).toBeInTheDocument();
-        });
-
         it('renders AssetsView when assets is active', () => {
             renderWithTheme(<MapPanels {...defaultProps} activeView="assets" />);
 
@@ -142,30 +129,6 @@ describe('MapPanels', () => {
             const onViewChange = vi.fn();
             renderWithTheme(<MapPanels {...defaultProps} onViewChange={onViewChange} />);
 
-            const scenarioButton = screen.getByText('Scenario').closest('div');
-            if (scenarioButton) {
-                fireEvent.click(scenarioButton);
-            }
-
-            expect(onViewChange).toHaveBeenCalledWith('scenario');
-        });
-
-        it('closes panel when clicking active button again', () => {
-            const onViewChange = vi.fn();
-            renderWithTheme(<MapPanels {...defaultProps} activeView="scenario" onViewChange={onViewChange} />);
-
-            const scenarioButton = screen.getByText('Scenario').closest('div');
-            if (scenarioButton) {
-                fireEvent.click(scenarioButton);
-            }
-
-            expect(onViewChange).toHaveBeenCalledWith(null);
-        });
-
-        it('switches between panels', () => {
-            const onViewChange = vi.fn();
-            renderWithTheme(<MapPanels {...defaultProps} activeView="scenario" onViewChange={onViewChange} />);
-
             const assetsButton = screen.getByText('Assets').closest('div');
             if (assetsButton) {
                 fireEvent.click(assetsButton);
@@ -173,19 +136,33 @@ describe('MapPanels', () => {
 
             expect(onViewChange).toHaveBeenCalledWith('assets');
         });
-    });
 
-    describe('Panel Close', () => {
-        it('closes panel when close button is clicked in ScenarioView', () => {
+        it('closes panel when clicking active button again', () => {
             const onViewChange = vi.fn();
-            renderWithTheme(<MapPanels {...defaultProps} activeView="scenario" onViewChange={onViewChange} />);
+            renderWithTheme(<MapPanels {...defaultProps} activeView="assets" onViewChange={onViewChange} />);
 
-            const closeButton = screen.getByText('Close');
-            fireEvent.click(closeButton);
+            const assetsButton = screen.getByText('Assets').closest('div');
+            if (assetsButton) {
+                fireEvent.click(assetsButton);
+            }
 
             expect(onViewChange).toHaveBeenCalledWith(null);
         });
 
+        it('switches between panels', () => {
+            const onViewChange = vi.fn();
+            renderWithTheme(<MapPanels {...defaultProps} activeView="assets" onViewChange={onViewChange} />);
+
+            const exposureButton = screen.getByText('Exposure').closest('div');
+            if (exposureButton) {
+                fireEvent.click(exposureButton);
+            }
+
+            expect(onViewChange).toHaveBeenCalledWith('exposure');
+        });
+    });
+
+    describe('Panel Close', () => {
         it('closes panel when close button is clicked in AssetsView', () => {
             const onViewChange = vi.fn();
             renderWithTheme(<MapPanels {...defaultProps} activeView="assets" onViewChange={onViewChange} />);
@@ -199,32 +176,20 @@ describe('MapPanels', () => {
 
     describe('Active State Styling', () => {
         it('marks active button icon container as active', () => {
-            renderWithTheme(<MapPanels {...defaultProps} activeView="scenario" />);
+            renderWithTheme(<MapPanels {...defaultProps} activeView="assets" />);
 
-            const scenarioIcon = screen.getByAltText('Scenario');
-            const iconContainer = scenarioIcon.closest('div');
+            const assetsIcon = screen.getByAltText('Assets');
+            const iconContainer = assetsIcon.closest('div');
             expect(iconContainer).toHaveStyle({ backgroundColor: 'rgb(212, 227, 255)' });
         });
 
         it('does not mark inactive button icon containers as active', () => {
-            renderWithTheme(<MapPanels {...defaultProps} activeView="scenario" />);
+            renderWithTheme(<MapPanels {...defaultProps} activeView="assets" />);
 
-            const assetsIcon = screen.getByAltText('Assets');
-            const iconContainer = assetsIcon.closest('div');
+            const exposureIcon = screen.getByAltText('Exposure');
+            const iconContainer = exposureIcon.closest('div');
             const bgColor = iconContainer?.style.backgroundColor || (iconContainer ? globalThis.getComputedStyle(iconContainer).backgroundColor : '');
             expect(bgColor === 'transparent' || bgColor === 'rgba(0, 0, 0, 0)' || bgColor === '').toBe(true);
-        });
-    });
-
-    describe('Navigation from ScenarioView', () => {
-        it('navigates to assets from ScenarioView', () => {
-            const onViewChange = vi.fn();
-            renderWithTheme(<MapPanels {...defaultProps} activeView="scenario" onViewChange={onViewChange} />);
-
-            const goToAssetsButton = screen.getByText('Go to Assets');
-            fireEvent.click(goToAssetsButton);
-
-            expect(onViewChange).toHaveBeenCalledWith('assets');
         });
     });
 
@@ -263,12 +228,38 @@ describe('MapPanels', () => {
                 />,
             );
 
-            const scenarioButton = screen.getByText('Scenario').closest('div');
-            if (scenarioButton) {
-                fireEvent.click(scenarioButton);
+            const exposureButton = screen.getByText('Exposure').closest('div');
+            if (exposureButton) {
+                fireEvent.click(exposureButton);
             }
 
-            expect(onViewChange).toHaveBeenCalledWith('scenario');
+            expect(onViewChange).toHaveBeenCalledWith('exposure');
+        });
+
+        it('calls onCloseFromAssetDetails when close button is clicked', () => {
+            const onCloseFromAssetDetails = vi.fn();
+            const mockAsset = { uri: 'https://example.com#asset1' } as any;
+            renderWithTheme(
+                <MapPanels
+                    {...defaultProps}
+                    activeView="asset-details"
+                    selectedElement={mockAsset}
+                    onBackFromAssetDetails={vi.fn()}
+                    onCloseFromAssetDetails={onCloseFromAssetDetails}
+                />,
+            );
+
+            const closeButton = screen.getByTestId('close-button');
+            fireEvent.click(closeButton);
+
+            expect(onCloseFromAssetDetails).toHaveBeenCalledTimes(1);
+        });
+
+        it('does not render close button when onCloseFromAssetDetails is not provided', () => {
+            const mockAsset = { uri: 'https://example.com#asset1' } as any;
+            renderWithTheme(<MapPanels {...defaultProps} activeView="asset-details" selectedElement={mockAsset} onBackFromAssetDetails={vi.fn()} />);
+
+            expect(screen.queryByTestId('close-button')).not.toBeInTheDocument();
         });
     });
 });

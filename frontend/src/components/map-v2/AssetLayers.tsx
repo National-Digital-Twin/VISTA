@@ -14,9 +14,9 @@ const SOURCE_ID = 'map-v2-asset-source';
 const LINE_SOURCE_ID = 'map-v2-asset-line-source';
 const LAYER_ID = 'map-v2-asset-layer';
 const LINE_LAYER_ID = 'map-v2-asset-line-layer';
-const CIRCLE_RADIUS = 12;
-const SELECTED_STROKE_COLOR = '#FFFD04';
-const SELECTED_STROKE_WIDTH = 2;
+const CIRCLE_RADIUS = 14;
+const SELECTED_STROKE_COLOR = '#1976d2';
+const SELECTED_STROKE_WIDTH = 3;
 const DEFAULT_BACKGROUND_COLOR = '#000000';
 const MARKER_BORDER_COLOR = '#FFFD04';
 const DEFAULT_LINE_COLOR = '#00AA00';
@@ -110,21 +110,20 @@ const AssetLayers = ({ assets, selectedElements = [], onElementClick, mapReady, 
             const id = feature.properties?.id || '';
             const asset = assetMap.get(id);
             const backgroundColor = asset?.styles?.backgroundColor || DEFAULT_BACKGROUND_COLOR;
-            const isSelected = selectedElementIds.has(id);
 
             return {
                 ...feature,
                 properties: {
                     ...feature.properties,
                     backgroundColor,
-                    circleStrokeColor: isSelected ? SELECTED_STROKE_COLOR : backgroundColor,
-                    circleStrokeWidth: isSelected ? SELECTED_STROKE_WIDTH : 0,
+                    circleStrokeColor: MARKER_BORDER_COLOR,
+                    circleStrokeWidth: 2,
                 },
             };
         });
 
         return { type: 'FeatureCollection' as const, features: enhancedFeatures };
-    }, [pointFeatures, assetMap, selectedElementIds]);
+    }, [pointFeatures, assetMap]);
 
     const handleMapClick = useCallback(
         (event: { lngLat: { lng: number; lat: number }; point: { x: number; y: number } }) => {
@@ -188,6 +187,7 @@ const AssetLayers = ({ assets, selectedElements = [], onElementClick, mapReady, 
                             'circle-color': ['get', 'backgroundColor'],
                             'circle-stroke-color': ['get', 'circleStrokeColor'],
                             'circle-stroke-width': ['get', 'circleStrokeWidth'],
+                            'circle-stroke-opacity': 1,
                         }}
                     />
                     {pointFeatures.map((feature) => {
@@ -318,18 +318,17 @@ const AssetMarker = memo(({ feature, isSelected, iconStyles: providedIconStyles,
                         color,
                         borderRadius: '50%',
                         cursor: 'pointer',
-                        borderWidth: isSelected ? '3px' : '2px',
+                        borderWidth: '2px',
                         borderStyle: 'solid',
-                        borderColor: isSelected ? SELECTED_STROKE_COLOR : MARKER_BORDER_COLOR,
+                        borderColor: MARKER_BORDER_COLOR,
+                        outline: isSelected ? `4px solid ${SELECTED_STROKE_COLOR}` : 'none',
+                        outlineOffset: '0',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        minHeight: '1px',
-                        aspectRatio: '1',
-                        padding: '5px',
-                        boxShadow: isSelected
-                            ? '0 0 10px rgba(255, 253, 4, 0.8), 0 0 20px rgba(255, 253, 4, 0.6), 0 2px 4px rgba(0, 0, 0, 0.2)'
-                            : '0 2px 4px rgba(0, 0, 0, 0.2)',
+                        width: '28px',
+                        height: '28px',
+                        padding: '6px',
                     }}
                 >
                     {iconElement}

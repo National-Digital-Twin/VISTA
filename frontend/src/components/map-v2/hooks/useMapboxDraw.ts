@@ -124,7 +124,6 @@ const useMapboxDraw = (mapRef: RefObject<MapRef | null>, isReady: boolean): Muta
         const map = mapRef.current.getMap();
         const draw = new MapboxDraw(DRAW_CONFIG);
 
-        // MapboxDraw expects mapbox-gl but we use maplibre-gl
         map.addControl(draw as unknown as IControl);
         drawRef.current = draw;
     }, [isReady, mapRef]);

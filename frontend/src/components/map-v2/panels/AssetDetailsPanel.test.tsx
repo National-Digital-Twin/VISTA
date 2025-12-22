@@ -1,4 +1,4 @@
-import React from 'react';
+import type { ReactElement } from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -7,15 +7,10 @@ import AssetDetailsPanel from './AssetDetailsPanel';
 import type { Asset } from '@/api/assets-by-type';
 import theme from '@/theme';
 import { fetchAssetDetails } from '@/api/asset-details';
+import { fetchAssetScore } from '@/api/asset-scores';
 
 vi.mock('@/api/asset-details', () => ({
     fetchAssetDetails: vi.fn(),
-}));
-
-vi.mock('./StreetViewSection', () => ({
-    default: ({ hasCoordinates, streetViewUrl }: { hasCoordinates: boolean; streetViewUrl: string | null }) => (
-        <div data-testid="street-view-section">{hasCoordinates && streetViewUrl ? 'Street View Available' : 'No Street View'}</div>
-    ),
 }));
 
 vi.mock('./ConnectedAssetsSection', () => ({
@@ -27,7 +22,16 @@ vi.mock('./ConnectedAssetsSection', () => ({
     ),
 }));
 
+vi.mock('./AssetScore', () => ({
+    default: ({ score }: { score: any }) => <div data-testid="asset-score">Score: {score.criticalityScore}</div>,
+}));
+
+vi.mock('@/api/asset-scores', () => ({
+    fetchAssetScore: vi.fn(),
+}));
+
 const mockedFetchAssetDetails = vi.mocked(fetchAssetDetails);
+const mockedFetchAssetScore = vi.mocked(fetchAssetScore);
 
 const createTestQueryClient = () => {
     return new QueryClient({
@@ -39,7 +43,7 @@ const createTestQueryClient = () => {
     });
 };
 
-const renderWithProviders = (component: React.ReactElement) => {
+const renderWithProviders = (component: ReactElement) => {
     const queryClient = createTestQueryClient();
     return render(
         <QueryClientProvider client={queryClient}>
@@ -109,7 +113,6 @@ describe('AssetDetailsPanel', () => {
 
             await waitFor(() => {
                 expect(screen.getByText('Fetched Asset Name')).toBeInTheDocument();
-                expect(screen.getByText('Asset Details')).toBeInTheDocument();
             });
         });
 
@@ -131,7 +134,7 @@ describe('AssetDetailsPanel', () => {
 
             await waitFor(() => {
                 expect(screen.getByText(/type1/i)).toBeInTheDocument();
-                expect(screen.getByText('Test description')).toBeInTheDocument();
+                expect(screen.getByText(/Asset ID:/)).toBeInTheDocument();
             });
         });
     });
@@ -200,7 +203,7 @@ describe('AssetDetailsPanel', () => {
     });
 
     describe('Street View', () => {
-        it('displays Street View section when coordinates are available', async () => {
+        it('displays Street View icon when coordinates are available', async () => {
             const asset = createMockAsset({ lat: 51.5074, lng: -0.1278 });
             mockedFetchAssetDetails.mockResolvedValue({
                 id: 'asset1',
@@ -217,12 +220,13 @@ describe('AssetDetailsPanel', () => {
             renderWithProviders(<AssetDetailsPanel selectedElement={asset} onBack={vi.fn()} />);
 
             await waitFor(() => {
-                expect(screen.getByTestId('street-view-section')).toBeInTheDocument();
-                expect(screen.getByText('Street View Available')).toBeInTheDocument();
+                const streetViewLink = screen.getByRole('link', { name: '' });
+                expect(streetViewLink).toBeInTheDocument();
+                expect(streetViewLink).toHaveAttribute('href', expect.stringContaining('google.com/maps'));
             });
         });
 
-        it('displays no Street View when coordinates are missing', async () => {
+        it('does not display Street View icon when coordinates are missing', async () => {
             const asset = createMockAsset({ lat: undefined, lng: undefined });
             mockedFetchAssetDetails.mockResolvedValue({
                 id: 'asset1',
@@ -239,9 +243,12 @@ describe('AssetDetailsPanel', () => {
             renderWithProviders(<AssetDetailsPanel selectedElement={asset} onBack={vi.fn()} />);
 
             await waitFor(() => {
-                expect(screen.getByTestId('street-view-section')).toBeInTheDocument();
-                expect(screen.getByText('No Street View')).toBeInTheDocument();
+                expect(screen.getByText('Test Asset')).toBeInTheDocument();
             });
+
+            const streetViewLinks = screen.queryAllByRole('link');
+            const hasStreetViewLink = streetViewLinks.some((link) => link.getAttribute('href')?.includes('google.com/maps'));
+            expect(hasStreetViewLink).toBe(false);
         });
     });
 
@@ -327,6 +334,255 @@ describe('AssetDetailsPanel', () => {
             renderWithProviders(<AssetDetailsPanel selectedElement={asset} onBack={vi.fn()} />);
 
             expect(mockedFetchAssetDetails).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('asset scores', () => {
+        it('displays asset score when available', async () => {
+            const asset = createMockAsset();
+            const scenarioId = 'scenario-123';
+            mockedFetchAssetDetails.mockResolvedValue({
+                id: 'asset1',
+                name: 'Test Asset',
+                geom: 'POINT(-0.1278 51.5074)',
+                type: {
+                    id: 'type1',
+                    name: 'Type1',
+                },
+                providers: [],
+                dependents: [],
+            });
+            mockedFetchAssetScore.mockResolvedValue({
+                id: 'score-1',
+                scenarioId,
+                userId: 'user-1',
+                criticalityScore: '3.0',
+                dependencyScore: '2.5',
+                exposureScore: '1.5',
+                redundancyScore: '0.5',
+            });
+
+            renderWithProviders(<AssetDetailsPanel selectedElement={asset} onBack={vi.fn()} scenarioId={scenarioId} />);
+
+            await waitFor(() => {
+                expect(screen.getByTestId('asset-score')).toBeInTheDocument();
+            });
+        });
+
+        it('does not fetch asset score when scenarioId is missing', async () => {
+            const asset = createMockAsset();
+            mockedFetchAssetDetails.mockResolvedValue({
+                id: 'asset1',
+                name: 'Test Asset',
+                geom: 'POINT(-0.1278 51.5074)',
+                type: {
+                    id: 'type1',
+                    name: 'Type1',
+                },
+                providers: [],
+                dependents: [],
+            });
+
+            renderWithProviders(<AssetDetailsPanel selectedElement={asset} onBack={vi.fn()} />);
+
+            await waitFor(() => {
+                expect(screen.getByText('Test Asset')).toBeInTheDocument();
+            });
+
+            expect(mockedFetchAssetScore).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('close button', () => {
+        it('displays close button when onClose is provided', async () => {
+            const asset = createMockAsset();
+            const onClose = vi.fn();
+            mockedFetchAssetDetails.mockResolvedValue({
+                id: 'asset1',
+                name: 'Test Asset',
+                geom: 'POINT(-0.1278 51.5074)',
+                type: {
+                    id: 'type1',
+                    name: 'Type1',
+                },
+                providers: [],
+                dependents: [],
+            });
+
+            renderWithProviders(<AssetDetailsPanel selectedElement={asset} onBack={vi.fn()} onClose={onClose} />);
+
+            await waitFor(() => {
+                expect(screen.getByLabelText('Close panel')).toBeInTheDocument();
+            });
+        });
+
+        it('calls onClose when close button is clicked', async () => {
+            const asset = createMockAsset();
+            const onClose = vi.fn();
+            mockedFetchAssetDetails.mockResolvedValue({
+                id: 'asset1',
+                name: 'Test Asset',
+                geom: 'POINT(-0.1278 51.5074)',
+                type: {
+                    id: 'type1',
+                    name: 'Type1',
+                },
+                providers: [],
+                dependents: [],
+            });
+
+            renderWithProviders(<AssetDetailsPanel selectedElement={asset} onBack={vi.fn()} onClose={onClose} />);
+
+            await waitFor(() => {
+                expect(screen.getByLabelText('Close panel')).toBeInTheDocument();
+            });
+
+            const closeButton = screen.getByLabelText('Close panel');
+            fireEvent.click(closeButton);
+
+            expect(onClose).toHaveBeenCalledTimes(1);
+        });
+
+        it('does not display close button when onClose is not provided', async () => {
+            const asset = createMockAsset();
+            mockedFetchAssetDetails.mockResolvedValue({
+                id: 'asset1',
+                name: 'Test Asset',
+                geom: 'POINT(-0.1278 51.5074)',
+                type: {
+                    id: 'type1',
+                    name: 'Type1',
+                },
+                providers: [],
+                dependents: [],
+            });
+
+            renderWithProviders(<AssetDetailsPanel selectedElement={asset} onBack={vi.fn()} />);
+
+            await waitFor(() => {
+                expect(screen.getByText('Test Asset')).toBeInTheDocument();
+            });
+
+            expect(screen.queryByLabelText('Close panel')).not.toBeInTheDocument();
+        });
+    });
+
+    describe('visibility toggles', () => {
+        it('resets visibility toggles when asset changes', async () => {
+            const asset1 = createMockAsset({ id: 'asset1' });
+            const asset2 = createMockAsset({ id: 'asset2' });
+            const onConnectedAssetsVisibilityChange = vi.fn();
+            mockedFetchAssetDetails.mockResolvedValue({
+                id: 'asset1',
+                name: 'Test Asset',
+                geom: 'POINT(-0.1278 51.5074)',
+                type: {
+                    id: 'type1',
+                    name: 'Type1',
+                },
+                providers: [
+                    {
+                        id: 'prov1',
+                        name: 'Provider 1',
+                        geom: 'POINT(-0.1278 51.5074)',
+                        type: {
+                            id: 'type2',
+                            name: 'Type2',
+                        },
+                    },
+                ],
+                dependents: [],
+            });
+
+            const { rerender } = renderWithProviders(
+                <AssetDetailsPanel selectedElement={asset1} onBack={vi.fn()} onConnectedAssetsVisibilityChange={onConnectedAssetsVisibilityChange} />,
+            );
+
+            await waitFor(() => {
+                expect(screen.getByText('View provider assets')).toBeInTheDocument();
+            });
+
+            const visibilityButton = screen.getAllByRole('button').find((btn) => btn.getAttribute('aria-label')?.includes('visibility'));
+            if (visibilityButton) {
+                fireEvent.click(visibilityButton);
+            }
+
+            mockedFetchAssetDetails.mockResolvedValue({
+                id: 'asset2',
+                name: 'Test Asset 2',
+                geom: 'POINT(-0.1278 51.5074)',
+                type: {
+                    id: 'type1',
+                    name: 'Type1',
+                },
+                providers: [],
+                dependents: [],
+            });
+
+            const queryClient = createTestQueryClient();
+            rerender(
+                <QueryClientProvider client={queryClient}>
+                    <ThemeProvider theme={theme}>
+                        <AssetDetailsPanel selectedElement={asset2} onBack={vi.fn()} onConnectedAssetsVisibilityChange={onConnectedAssetsVisibilityChange} />
+                    </ThemeProvider>
+                </QueryClientProvider>,
+            );
+
+            await waitFor(() => {
+                expect(onConnectedAssetsVisibilityChange).toHaveBeenCalledWith(false, [], []);
+            });
+        });
+    });
+
+    describe('swipeable views', () => {
+        it('displays scores view by default', async () => {
+            const asset = createMockAsset();
+            mockedFetchAssetDetails.mockResolvedValue({
+                id: 'asset1',
+                name: 'Test Asset',
+                geom: 'POINT(-0.1278 51.5074)',
+                type: {
+                    id: 'type1',
+                    name: 'Type1',
+                },
+                providers: [],
+                dependents: [],
+            });
+
+            renderWithProviders(<AssetDetailsPanel selectedElement={asset} onBack={vi.fn()} />);
+
+            await waitFor(() => {
+                expect(screen.getByText('View dependent assets')).toBeInTheDocument();
+                expect(screen.getByText('View provider assets')).toBeInTheDocument();
+            });
+        });
+
+        it('navigates to connected assets view when link is clicked', async () => {
+            const asset = createMockAsset();
+            mockedFetchAssetDetails.mockResolvedValue({
+                id: 'asset1',
+                name: 'Test Asset',
+                geom: 'POINT(-0.1278 51.5074)',
+                type: {
+                    id: 'type1',
+                    name: 'Type1',
+                },
+                providers: [],
+                dependents: [],
+            });
+
+            renderWithProviders(<AssetDetailsPanel selectedElement={asset} onBack={vi.fn()} />);
+
+            await waitFor(() => {
+                expect(screen.getByText('View dependent assets')).toBeInTheDocument();
+            });
+
+            const dependentLink = screen.getByText('View dependent assets');
+            fireEvent.click(dependentLink);
+
+            await waitFor(() => {
+                expect(screen.getByText('Connected Assets')).toBeInTheDocument();
+            });
         });
     });
 });

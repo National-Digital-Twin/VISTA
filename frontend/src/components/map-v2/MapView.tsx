@@ -18,6 +18,7 @@ import UtilitiesLayers from './UtilitiesLayers';
 import FocusAreaMask from './FocusAreaMask';
 import FocusAreaOutline from './FocusAreaOutline';
 import RadiusDialog from './RadiusDialog';
+import ConnectedAssetsLayer from './ConnectedAssetsLayer';
 import useMapboxDraw from './hooks/useMapboxDraw';
 import useFocusAreas from './hooks/useFocusAreas';
 import { usePreloadAssetIcons } from './hooks/usePreloadAssetIcons';
@@ -25,6 +26,7 @@ import { useAssetTypeIcons } from '@/hooks/useAssetTypeIcons';
 import { useActiveScenario } from '@/hooks/useActiveScenario';
 import { useScenarioAssets } from '@/hooks/useScenarioAssets';
 import { fetchAssetCategories } from '@/api/asset-categories';
+import { fetchAssetDetails } from '@/api/asset-details';
 import { useRoadRouteLazyQuery, type RoadRouteInputParams } from '@/api/utilities';
 import type { Asset } from '@/api/assets-by-type';
 
@@ -39,6 +41,10 @@ const MapView = () => {
     const [selectedUtilityIds, setSelectedUtilityIds] = useState<Record<string, boolean>>({});
     const [selectedElement, setSelectedElement] = useState<Asset | null>(null);
     const [previousPanelView, setPreviousPanelView] = useState<string | null>('focus-area');
+    const [connectedAssets, setConnectedAssets] = useState<{
+        dependents: Array<{ id: string; geom: string; type: { name: string } }>;
+        providers: Array<{ id: string; geom: string; type: { name: string } }>;
+    }>({ dependents: [], providers: [] });
     const [roadRouteStart, setRoadRouteStart] = useState<{ lat: number; lng: number } | null>(null);
     const [roadRouteEnd, setRoadRouteEnd] = useState<{ lat: number; lng: number } | null>(null);
     const [roadRouteVehicle, setRoadRouteVehicle] = useState<RoadRouteInputParams['vehicle']>('Car');
@@ -96,7 +102,6 @@ const MapView = () => {
         [focusAreas, mapReady],
     );
 
-    // Auto-select map-wide focus area when focusAreas loads and nothing is selected
     useEffect(() => {
         if (focusAreas && !selectedFocusAreaId) {
             const mapWideFocusArea = focusAreas.find((fa) => fa.isSystem);
@@ -139,7 +144,12 @@ const MapView = () => {
         iconMap,
     });
 
-    // Get IDs of all active focus areas (including system/map-wide)
+    const selectedAssetDetails = useQuery({
+        enabled: !!selectedElement?.id,
+        queryKey: ['asset-details', selectedElement?.id || ''],
+        queryFn: () => fetchAssetDetails(selectedElement!.id),
+    });
+
     const activeFocusAreaIds = useMemo(() => {
         if (!focusAreas) {
             return [];
@@ -237,7 +247,6 @@ const MapView = () => {
         };
     }, [positionSelectionMode, drawingMode]);
 
-    // Show radius dialog on click when drawing circles
     useEffect(() => {
         if (!mapReady || drawingMode !== 'circle') {
             return;
@@ -260,14 +269,12 @@ const MapView = () => {
         };
     }, [mapReady, drawingMode]);
 
-    // Handle clicks outside inactive focus areas to deselect them
     useEffect(() => {
         if (!mapReady || !isInFocusAreaPanel || !selectedFocusAreaId) {
             return;
         }
 
         const selectedFocusArea = focusAreas?.find((fa) => fa.id === selectedFocusAreaId);
-        // Only handle clicks for inactive, non-system focus areas (active ones are handled by MapboxDraw)
         if (!selectedFocusArea || selectedFocusArea.isActive || selectedFocusArea.isSystem) {
             return;
         }
@@ -284,7 +291,6 @@ const MapView = () => {
             if (geometry && (geometry.type === 'Polygon' || geometry.type === 'MultiPolygon')) {
                 const isInside = booleanPointInPolygon(clickPoint, geometry);
                 if (!isInside) {
-                    // Click was outside - revert to map-wide
                     const mapWideFocusArea = focusAreas?.find((fa) => fa.isSystem);
                     if (mapWideFocusArea) {
                         setSelectedFocusAreaId(mapWideFocusArea.id);
@@ -331,10 +337,14 @@ const MapView = () => {
 
     const handleViewChange = useCallback(
         (viewId: string | null) => {
-            if (viewId !== 'asset-details' && selectedElement) {
+            if (viewId === 'assets' && selectedElement) {
+                setActivePanelView('asset-details');
+            } else if (viewId !== 'asset-details' && viewId !== 'assets') {
                 setSelectedElement(null);
+                setActivePanelView(viewId);
+            } else {
+                setActivePanelView(viewId);
             }
-            setActivePanelView(viewId);
         },
         [selectedElement],
     );
@@ -347,7 +357,6 @@ const MapView = () => {
                     return;
                 }
                 if (activePanelView === 'assets') {
-                    // clear the mask and reset the zoom to the default view
                     handleFocusAreaSelect(null);
                 }
                 setPreviousPanelView(activePanelView);
@@ -360,8 +369,29 @@ const MapView = () => {
 
     const handleBackFromAssetDetails = useCallback(() => {
         setSelectedElement(null);
-        setActivePanelView(previousPanelView || 'scenario');
+        setConnectedAssets({ dependents: [], providers: [] });
+        setActivePanelView(previousPanelView || 'focus-area');
     }, [previousPanelView]);
+
+    const handleCloseAssetDetails = useCallback(() => {
+        setConnectedAssets({ dependents: [], providers: [] });
+        setActivePanelView(null);
+    }, []);
+
+    const handleConnectedAssetsVisibilityChange = useCallback(
+        (
+            visible: boolean,
+            dependents: Array<{ id: string; geom: string; type: { name: string } }>,
+            providers: Array<{ id: string; geom: string; type: { name: string } }>,
+        ) => {
+            if (visible) {
+                setConnectedAssets({ dependents, providers });
+            } else {
+                setConnectedAssets({ dependents: [], providers: [] });
+            }
+        },
+        [],
+    );
 
     return (
         <Box
@@ -410,10 +440,12 @@ const MapView = () => {
                 onRequestPositionSelection={setPositionSelectionMode}
                 selectedElement={selectedElement}
                 onBackFromAssetDetails={handleBackFromAssetDetails}
+                onCloseFromAssetDetails={handleCloseAssetDetails}
                 scenarioId={scenarioId}
                 isDrawing={isDrawing}
                 onStartDrawing={startDrawing}
                 onFocusAreaSelect={handleFocusAreaSelect}
+                onConnectedAssetsVisibilityChange={handleConnectedAssetsVisibilityChange}
             />
 
             <Box
@@ -446,7 +478,6 @@ const MapView = () => {
                                 selectedFocusAreaId &&
                                 (() => {
                                     const selectedFocusArea = focusAreas?.find((fa) => fa.id === selectedFocusAreaId);
-                                    // Show gray outline for inactive focus areas in the Focus Area panel
                                     if (selectedFocusArea && !selectedFocusArea.isActive && selectedFocusArea.geometry) {
                                         return <FocusAreaOutline geometry={selectedFocusArea.geometry} lineColor="#888888" />;
                                     }
@@ -466,6 +497,19 @@ const MapView = () => {
                                 isInFocusAreaPanel={isInFocusAreaPanel}
                                 activeFocusAreaIds={activeFocusAreaIds}
                             />
+                            {selectedElement && selectedAssetDetails.data && (
+                                <ConnectedAssetsLayer
+                                    selectedAsset={{
+                                        id: selectedElement.id,
+                                        lat: selectedElement.lat,
+                                        lng: selectedElement.lng,
+                                        geom: selectedAssetDetails.data.geom,
+                                    }}
+                                    dependents={connectedAssets.dependents}
+                                    providers={connectedAssets.providers}
+                                    mapReady={mapReady}
+                                />
+                            )}
                             <UtilitiesLayers utilities={mergedUtilities} selectedUtilityIds={selectedUtilityIds} mapReady={mapReady} />
                             {roadRouteStart && (
                                 <Marker longitude={roadRouteStart.lng} latitude={roadRouteStart.lat} anchor="bottom">

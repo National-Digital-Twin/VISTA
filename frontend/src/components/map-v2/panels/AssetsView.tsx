@@ -249,7 +249,6 @@ const AssetsView = ({ onClose, scenarioId, selectedFocusAreaId, onFocusAreaSelec
         onError: setMutationError,
     });
 
-    // Update selected filter mode when focus areas data loads or selected focus area changes
     useEffect(() => {
         if (focusAreas) {
             const currentScope = focusAreas.find((fa) => fa.id === selectedFocusAreaId);
@@ -259,7 +258,6 @@ const AssetsView = ({ onClose, scenarioId, selectedFocusAreaId, onFocusAreaSelec
         }
     }, [focusAreas, selectedFocusAreaId]);
 
-    // Expand subcategories that have visible asset types - only on initial load or focus area change
     const lastFocusAreaIdRef = useRef<string | null | undefined>(undefined);
     useEffect(() => {
         if (!assetCategories) {
