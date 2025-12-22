@@ -65,15 +65,44 @@ def test_retrieve_nonexistent_scenario_returns_404(client):
 
 
 @pytest.mark.django_db
-def test_update_scenario_is_active(scenarios, client):
+def test_activate_scenario_returns_204(scenarios, client):
     """Test toggling scenario is_active."""
-    scenario = scenarios[1]
-    response = client.patch(
-        f"/api/scenarios/{scenario.id}/",
-        data=json.dumps({"isActive": not scenario.is_active}),
+    scenario = scenarios[0]
+    previously_active_scenario = scenarios[1]
+
+    response = client.post(
+        f"/api/scenarios/{scenario.id}/activate/",
         content_type="application/json",
     )
-    data = response.json()
+    active_scenario = Scenario.objects.filter(is_active=True)
 
-    assert response.status_code == status.HTTP_200_OK
-    assert data["isActive"] != scenario.is_active
+    assert response.status_code == status.HTTP_204_NO_CONTENT
+    assert len(active_scenario) == 1
+    assert active_scenario[0].id == scenario.id
+    assert active_scenario[0].id != previously_active_scenario.id
+
+
+@pytest.mark.django_db
+def test_activate_already_active_scenario_returns_204(scenarios, client):
+    """Test toggling scenario is_active."""
+    scenario = scenarios[1]
+
+    response = client.post(
+        f"/api/scenarios/{scenario.id}/activate/",
+        content_type="application/json",
+    )
+    active_scenario = Scenario.objects.filter(is_active=True)
+
+    assert response.status_code == status.HTTP_204_NO_CONTENT
+    assert len(active_scenario) == 1
+    assert active_scenario[0].id == scenario.id
+
+
+@pytest.mark.django_db
+def test_activate_non_existent_scenario_returns_404(scenarios, client):  # noqa: ARG001
+    """Test toggling scenario is_active."""
+    response = client.post(
+        f"/api/scenarios/{uuid.uuid4()}/activate/",
+        content_type="application/json",
+    )
+    assert response.status_code == status.HTTP_404_NOT_FOUND

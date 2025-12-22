@@ -27,7 +27,7 @@ def user_details_view(request):
                 "content": {
                     "displayName": "Local User",
                     "email": "local.user@local.com",
-                    "userType": "General",
+                    "userType": "Admin",
                 }
             }
         )

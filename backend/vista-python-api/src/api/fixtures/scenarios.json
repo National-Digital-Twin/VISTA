@@ -3,23 +3,17 @@
     "model": "api.scenario",
     "pk": "e933f21e-ebd9-4a6d-bf60-ef94bced3227",
     "fields": {
-      "name": "Flood in Newport",
+      "name": "Flood",
+      "code": "F.001",
       "is_active": true
-    }
-  },
-  {
-    "model": "api.scenario",
-    "pk": "f18cc65f-a6e9-45da-a310-699c6a608db5",
-    "fields": {
-      "name": "Landslide in Ventnor",
-      "is_active": false
     }
   },
   {
     "model": "api.scenario",
     "pk": "1efb2fc4-b300-4496-8342-932f3a9fc982",
     "fields": {
-      "name": "Wildfire in Shanklin",
+      "name": "Wildfire",
+      "code": "W.001",
       "is_active": false
     }
   }

@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
     Box,
     Typography,
@@ -33,7 +33,7 @@ import PageContainer from '@/components/PageContainer';
 import { SortableTableHeader } from '@/components/SortableTableHeader';
 import { SearchTextField } from '@/components/SearchTextField';
 import { fetchDataSources, DataSource } from '@/api/datasources';
-import { fetchScenarios, Scenario } from '@/api/scenarios';
+import { fetchScenarios, Scenario, setActiveScenario } from '@/api/scenarios';
 import { useUserData } from '@/hooks/useUserData';
 
 type SortField = 'name' | 'owner' | 'assetCount' | 'lastUpdated';
@@ -108,18 +108,34 @@ export default function DataRoom() {
         retryDelay: 1000,
     });
     const { getUserType } = useUserData();
+    const queryClient = useQueryClient();
     const [searchTerm, setSearchTerm] = useState('');
     const [sortField, setSortField] = useState<SortField>('name');
     const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
-    const [errorSnackbarOpen, setErrorSnackbarOpen] = useState(false);
     const [scenarioModalOpen, setScenarioModalOpen] = useState(false);
+    const [errorSnackbarOpen, setErrorSnackbarOpen] = useState(false);
+    const [errorQueue, setErrorQueue] = useState<string[]>([]);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const showError = (message: string) => {
+        setErrorQueue((prev) => [...prev, message]);
+    };
+    const handleClose = () => {
+        setErrorSnackbarOpen(false);
+        setErrorMessage(null);
+    };
+
     const scenarios = scenariosData ?? [];
     const defaultScenario = scenarios.length > 0 ? scenarios[0].id : '';
     const [selectedScenario, setSelectedScenario] = useState<string>(() => {
         const stored = sessionStorage.getItem('selectedScenario');
         return stored ?? defaultScenario;
     });
-    const errorMessage = isError ? (error?.message ?? 'Failed to fetch data sources') : null;
+
+    useEffect(() => {
+        if (isError) {
+            showError(error?.message ?? 'Failed to fetch data sources');
+        }
+    }, [isError, error]);
 
     useEffect(() => {
         if (scenariosData && scenariosData.length > 0 && !selectedScenario) {
@@ -128,12 +144,25 @@ export default function DataRoom() {
     }, [scenariosData, selectedScenario]);
 
     useEffect(() => {
-        if (errorMessage) {
+        if (!errorSnackbarOpen && errorQueue.length > 0) {
+            setErrorMessage(errorQueue[0]);
             setErrorSnackbarOpen(true);
-        } else {
-            setErrorSnackbarOpen(false);
+            setErrorQueue((prev) => prev.slice(1));
         }
-    }, [errorMessage]);
+    }, [errorQueue, errorSnackbarOpen]);
+
+    const activateScenarioMutation = useMutation({
+        mutationFn: (scenarioId: string) => {
+            return setActiveScenario(scenarioId);
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['scenarios'] });
+        },
+        onError: () => {
+            showError('Failed to activate scenario');
+        },
+    });
+
     const totalDataSources = data?.length ?? 0;
 
     const filteredDataSources = useMemo<DataSource[]>(() => {
@@ -174,6 +203,7 @@ export default function DataRoom() {
 
     const handleScenarioConfirm = () => {
         sessionStorage.setItem('selectedScenario', selectedScenario);
+        activateScenarioMutation.mutate(selectedScenario);
         setScenarioModalOpen(false);
     };
 
@@ -426,7 +456,7 @@ export default function DataRoom() {
                 onClose={() => setErrorSnackbarOpen(false)}
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
             >
-                <Alert severity="error" onClose={() => setErrorSnackbarOpen(false)}>
+                <Alert severity="error" onClose={handleClose}>
                     {errorMessage}
                 </Alert>
             </Snackbar>
