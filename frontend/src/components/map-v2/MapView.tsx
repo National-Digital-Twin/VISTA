@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useRef, useState, useEffect } from 'react';
-import { Box } from '@mui/material';
+import { Box, CircularProgress } from '@mui/material';
 import type { MapRef, ViewStateChangeEvent } from 'react-map-gl/maplibre';
 import type { MapMouseEvent } from 'maplibre-gl';
 import Map, { Marker } from 'react-map-gl/maplibre';
@@ -51,6 +51,7 @@ const MapView = () => {
     const [positionSelectionMode, setPositionSelectionMode] = useState<'start' | 'end' | null>(null);
     const [pendingCircleCenter, setPendingCircleCenter] = useState<[number, number] | null>(null);
     const [radiusDialogOpen, setRadiusDialogOpen] = useState(false);
+    const [isSpritesGenerating, setIsSpritesGenerating] = useState(false);
 
     const drawRef = useMapboxDraw(mapRef, mapReady);
     const { data: activeScenario } = useActiveScenario();
@@ -144,7 +145,7 @@ const MapView = () => {
     }, [roadRouteStart, roadRouteEnd, roadRouteVehicle, isRoadRouteEnabled, getRoadRoute]);
 
     const shouldFilterByFocusArea = activePanelView === 'assets' || activePanelView === 'exposure';
-    const { assets } = useScenarioAssets({
+    const { assets, isFetching: isAssetsFetching } = useScenarioAssets({
         scenarioId,
         focusAreaId: shouldFilterByFocusArea ? selectedFocusAreaId : undefined,
         iconMap,
@@ -495,13 +496,7 @@ const MapView = () => {
                                 onElementClick={handleElementClick}
                                 mapReady={mapReady}
                                 assetCategories={assetCategories}
-                            />
-                            <ExposureLayers
-                                scenarioId={scenarioId}
-                                selectedFocusAreaId={selectedFocusAreaId}
-                                mapReady={mapReady}
-                                isInFocusAreaPanel={isInFocusAreaPanel}
-                                activeFocusAreaIds={activeFocusAreaIds}
+                                onGeneratingChange={setIsSpritesGenerating}
                             />
                             {selectedElement && selectedAssetDetails.data && (
                                 <ConnectedAssetsLayer
@@ -516,6 +511,13 @@ const MapView = () => {
                                     mapReady={mapReady}
                                 />
                             )}
+                            <ExposureLayers
+                                scenarioId={scenarioId}
+                                selectedFocusAreaId={selectedFocusAreaId}
+                                mapReady={mapReady}
+                                isInFocusAreaPanel={isInFocusAreaPanel}
+                                activeFocusAreaIds={activeFocusAreaIds}
+                            />
                             <UtilitiesLayers utilities={mergedUtilities} selectedUtilityIds={selectedUtilityIds} mapReady={mapReady} />
                             {roadRouteStart && (
                                 <Marker longitude={roadRouteStart.lng} latitude={roadRouteStart.lat} anchor="bottom">
@@ -564,6 +566,25 @@ const MapView = () => {
                         </>
                     )}
                 </Map>
+
+                {(isAssetsFetching || isSpritesGenerating) && (
+                    <Box
+                        sx={{
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            bottom: 0,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            backgroundColor: 'rgba(255, 255, 255, 0.5)',
+                            zIndex: 10,
+                        }}
+                    >
+                        <CircularProgress size={48} />
+                    </Box>
+                )}
 
                 <MapControls
                     mapRef={mapRef}
