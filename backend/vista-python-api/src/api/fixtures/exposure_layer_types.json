@@ -10,7 +10,8 @@
     "model": "api.exposurelayertype",
     "pk": "60a0280e-bd04-4150-8a9a-f414d21cd031",
     "fields": {
-      "name": "Environmentally sensitive areas"
+      "name": "Environmentally sensitive areas",
+      "impacts_exposure_score": false
     }
   }
 ]

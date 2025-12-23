@@ -66,7 +66,10 @@ def _get_exposure_score_for_asset(fixture, asset_id, scenario_id):
     in_count = 0
     near_count = 0
     for exposure_layer in fixture["exposure_layers"]:
-        if scenario_id != exposure_layer.focus_area.scenario.id:
+        if (
+            scenario_id != exposure_layer.focus_area.scenario.id
+            or not exposure_layer.exposure_layer.type.impacts_exposure_score
+        ):
             continue
         poly_m = exposure_layer.exposure_layer.geometry.transform(3857, clone=True)
         pt_m = asset.geom.transform(3857, clone=True)
@@ -160,6 +163,15 @@ def fixture(db):  # noqa: ARG001
         focus_area=focus_area, exposure_layer=exposure_layer
     )
 
+    exposure_layer_type2 = ExposureLayerType.objects.create(
+        name="Wildfire", impacts_exposure_score=False
+    )
+    ExposureLayer.objects.create(geometry=poly, type=exposure_layer_type2)
+    exposure_layer2 = ExposureLayer.objects.create(geometry=poly, type=exposure_layer_type2)
+    vis_exposure_layer2 = VisibleExposureLayer.objects.create(
+        focus_area=focus_area, exposure_layer=exposure_layer2
+    )
+
     scenario_asset_1 = ScenarioAsset.objects.create(
         scenario=scenario1, asset_type=type_substation, criticality_score=3
     )
@@ -194,7 +206,7 @@ def fixture(db):  # noqa: ARG001
             scenario_asset_6,
         ],
         "dependencies": [dep1, dep2],
-        "exposure_layers": [vis_exposure_layer],
+        "exposure_layers": [vis_exposure_layer, vis_exposure_layer2],
         "scenarios": [scenario1, scenario2],
     }
 
