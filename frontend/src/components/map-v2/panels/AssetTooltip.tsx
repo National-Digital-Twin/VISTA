@@ -29,6 +29,7 @@ const AssetTooltip = ({ element, assetCategories }: AssetTooltipProps) => {
                 borderRadius: 1,
                 minWidth: '240px',
                 maxWidth: '300px',
+                textAlign: 'center',
             }}
         >
             <Typography variant="body2" sx={{ fontWeight: 600, mb: typeLabel ? 0.5 : 0 }}>

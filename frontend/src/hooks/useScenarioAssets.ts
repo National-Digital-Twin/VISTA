@@ -18,6 +18,7 @@ export const useScenarioAssets = ({ scenarioId, focusAreaId, iconMap }: UseScena
     return {
         assets: query.data ?? [],
         isLoading: query.isLoading,
+        isFetching: query.isFetching,
         hasError: query.isError,
         error: query.error,
     };

@@ -1,8 +1,9 @@
-import { useCallback, useMemo, useEffect, memo, useState } from 'react';
-import { Layer, Source, Marker, useMap } from 'react-map-gl/maplibre';
+import { useCallback, useMemo, useEffect, useState, useRef } from 'react';
+import { Layer, Source, useMap } from 'react-map-gl/maplibre';
 import type { Feature } from 'geojson';
+import type { MapLayerMouseEvent } from 'maplibre-gl';
+import { findIconDefinition as faIconLookup, type IconName } from '@fortawesome/fontawesome-svg-core';
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import AssetTooltip from './panels/AssetTooltip';
 import { findElement } from '@/utils';
 import { createPointFeature, createLinearFeature } from '@/utils/assetUtils';
@@ -11,9 +12,16 @@ import type { AssetCategory } from '@/api/asset-categories';
 
 const SOURCE_ID = 'map-v2-asset-source';
 const LINE_SOURCE_ID = 'map-v2-asset-line-source';
-const LAYER_ID = 'map-v2-asset-layer';
+export const ASSET_SYMBOL_LAYER_ID = 'map-v2-asset-symbol-layer';
+const ASSET_SELECTION_RING_LAYER_ID = 'map-v2-asset-selection-ring-layer';
 const LINE_LAYER_ID = 'map-v2-asset-line-layer';
+
 const CIRCLE_RADIUS = 14;
+const BORDER_WIDTH = 3;
+const SELECTION_OUTLINE_WIDTH = 4;
+const ICON_SIZE = 14;
+const FALLBACK_FONT_SIZE = 12;
+const SPRITE_PADDING = 2;
 const SELECTED_STROKE_COLOR = '#1976d2';
 const SELECTED_STROKE_WIDTH = 3;
 const DEFAULT_BACKGROUND_COLOR = '#000000';
@@ -21,17 +29,87 @@ const MARKER_BORDER_COLOR = '#FFFD04';
 const DEFAULT_LINE_COLOR = '#00AA00';
 const DEFAULT_LINE_WIDTH = 3;
 
+const SYMBOL_LAYER_LAYOUT = {
+    'icon-image': ['get', 'markerId'] as ['get', string],
+    'icon-size': 1,
+    'icon-allow-overlap': true,
+    'icon-keep-upright': true,
+    'icon-pitch-alignment': 'viewport' as const,
+    'icon-rotation-alignment': 'viewport' as const,
+    'icon-padding': 2,
+    'icon-optional': false,
+    'symbol-placement': 'point' as const,
+};
+
+type MarkerStyle = {
+    iconName: string;
+    iconFallbackText: string;
+    backgroundColor: string;
+};
+
+async function generateMarkerSprite(style: MarkerStyle): Promise<HTMLCanvasElement> {
+    const totalRadius = CIRCLE_RADIUS + BORDER_WIDTH;
+    const size = (totalRadius + SPRITE_PADDING) * 2;
+    const center = size / 2;
+
+    let iconSvg = '';
+    if (style.iconName) {
+        const iconDef = faIconLookup({ prefix: 'fas', iconName: style.iconName as IconName });
+        if (iconDef?.icon) {
+            const [width, height, , , pathData] = iconDef.icon;
+            const iconScale = ICON_SIZE / Math.max(width, height);
+            const offsetX = center - (width * iconScale) / 2;
+            const offsetY = center - (height * iconScale) / 2;
+            const path = Array.isArray(pathData) ? pathData[0] : pathData;
+            iconSvg = `<g transform="translate(${offsetX},${offsetY}) scale(${iconScale})"><path d="${path}" fill="#ffffff"/></g>`;
+        }
+    }
+
+    if (!iconSvg) {
+        iconSvg = `<text x="${center}" y="${center}" font-family="sans-serif" font-size="${FALLBACK_FONT_SIZE}" font-weight="bold" fill="#ffffff" text-anchor="middle" dominant-baseline="central">${style.iconFallbackText.substring(0, 2)}</text>`;
+    }
+
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}">
+        <circle cx="${center}" cy="${center}" r="${CIRCLE_RADIUS + BORDER_WIDTH}" fill="${MARKER_BORDER_COLOR}"/>
+        <circle cx="${center}" cy="${center}" r="${CIRCLE_RADIUS}" fill="${style.backgroundColor}"/>
+        ${iconSvg}
+    </svg>`;
+
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext('2d');
+            if (!ctx) {
+                reject(new Error('Failed to get canvas 2d context'));
+                return;
+            }
+            ctx.drawImage(img, 0, 0);
+            resolve(canvas);
+        };
+        img.onerror = () => reject(new Error('Failed to load SVG image'));
+        img.src = 'data:image/svg+xml,' + encodeURIComponent(svg);
+    });
+}
+
 export type AssetLayersProps = {
     assets: Asset[];
     selectedElements?: Asset[];
     onElementClick?: (elements: Asset[]) => void;
     mapReady?: boolean;
     assetCategories?: AssetCategory[];
+    onGeneratingChange?: (isGenerating: boolean) => void;
 };
 
-const AssetLayers = ({ assets, selectedElements = [], onElementClick, mapReady, assetCategories }: AssetLayersProps) => {
+const AssetLayers = ({ assets, selectedElements = [], onElementClick, mapReady, assetCategories, onGeneratingChange }: AssetLayersProps) => {
     const mapContext = useMap();
     const mapInstance = mapContext?.['map-v2'] || mapContext?.default || null;
+    const addedIconsRef = useRef<Set<string>>(new Set());
+
+    const [hoveredAsset, setHoveredAsset] = useState<Asset | null>(null);
+    const [tooltipPosition, setTooltipPosition] = useState<{ x: number; y: number } | null>(null);
 
     const selectedElementIds = useMemo(() => {
         return new Set(selectedElements.map((el) => el.id));
@@ -44,6 +122,22 @@ const AssetLayers = ({ assets, selectedElements = [], onElementClick, mapReady, 
         });
         return map;
     }, [assets]);
+
+    const uniqueMarkerStyles = useMemo(() => {
+        const styles = new Map<string, MarkerStyle>();
+        assetMap.forEach((asset) => {
+            const faIcon = asset.styles?.faIcon || '';
+            const iconName = faIcon ? faIcon.split(' ').pop()?.replace('fa-', '') || '' : '';
+            const iconFallbackText = asset.styles?.iconFallbackText || '?';
+            const backgroundColor = asset.styles?.backgroundColor || DEFAULT_BACKGROUND_COLOR;
+            const markerId = `marker-${iconName || iconFallbackText}-${backgroundColor.replace('#', '')}`;
+
+            if (!styles.has(markerId)) {
+                styles.set(markerId, { iconName, iconFallbackText, backgroundColor });
+            }
+        });
+        return styles;
+    }, [assetMap]);
 
     const pointFeaturesData = useMemo(() => {
         return assets.map((asset) => createPointFeature(asset)).filter((feature): feature is Feature => feature !== null);
@@ -108,38 +202,89 @@ const AssetLayers = ({ assets, selectedElements = [], onElementClick, mapReady, 
         const enhancedFeatures = pointFeatures.map((feature) => {
             const id = feature.properties?.id || '';
             const asset = assetMap.get(id);
+            const isSelected = selectedElementIds.has(id);
+
             const backgroundColor = asset?.styles?.backgroundColor || DEFAULT_BACKGROUND_COLOR;
+            const faIcon = asset?.styles?.faIcon || '';
+            const iconFallbackText = asset?.styles?.iconFallbackText || '?';
+
+            const iconName = faIcon ? faIcon.split(' ').pop()?.replace('fa-', '') || '' : '';
+            const markerId = `marker-${iconName || iconFallbackText}-${backgroundColor.replace('#', '')}`;
 
             return {
                 ...feature,
                 properties: {
                     ...feature.properties,
                     backgroundColor,
-                    circleStrokeColor: MARKER_BORDER_COLOR,
-                    circleStrokeWidth: 2,
+                    isSelected,
+                    markerId,
+                    iconName,
+                    iconFallbackText,
                 },
             };
         });
 
         return { type: 'FeatureCollection' as const, features: enhancedFeatures };
-    }, [pointFeatures, assetMap]);
+    }, [pointFeatures, assetMap, selectedElementIds]);
 
-    const handleMapClick = useCallback(
-        (event: { lngLat: { lng: number; lat: number }; point: { x: number; y: number } }) => {
-            if (!mapInstance || !onElementClick) {
-                return;
-            }
+    useEffect(() => {
+        if (!mapInstance || !mapReady) {
+            return;
+        }
 
-            const map = mapInstance.getMap();
-            const featuresAtPoint = map.queryRenderedFeatures([event.point.x, event.point.y], {
-                layers: [LAYER_ID, LINE_LAYER_ID],
+        const map = mapInstance.getMap();
+
+        const generateSprites = async () => {
+            const spritesToGenerate: { markerId: string; style: MarkerStyle }[] = [];
+
+            uniqueMarkerStyles.forEach((style, markerId) => {
+                if (addedIconsRef.current.has(markerId) || map.hasImage(markerId)) {
+                    return;
+                }
+                spritesToGenerate.push({ markerId, style });
             });
 
-            if (featuresAtPoint.length === 0) {
+            if (spritesToGenerate.length > 0) {
+                onGeneratingChange?.(true);
+            }
+
+            await Promise.all(
+                spritesToGenerate.map(async ({ markerId, style }) => {
+                    try {
+                        const canvas = await generateMarkerSprite(style);
+                        const ctx = canvas.getContext('2d');
+                        if (!ctx) {
+                            return;
+                        }
+
+                        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                        if (!map.hasImage(markerId)) {
+                            map.addImage(markerId, { width: canvas.width, height: canvas.height, data: imageData.data }, { pixelRatio: 1 });
+                            addedIconsRef.current.add(markerId);
+                        }
+                    } catch (error) {
+                        console.error(`Failed to generate marker sprite for ${markerId}`, error);
+                    }
+                }),
+            );
+
+            onGeneratingChange?.(false);
+        };
+
+        generateSprites();
+    }, [mapInstance, mapReady, uniqueMarkerStyles, onGeneratingChange]);
+
+    const handleMapClick = useCallback(
+        (event: MapLayerMouseEvent) => {
+            if (!onElementClick) {
                 return;
             }
 
-            const clickedFeature = featuresAtPoint[0] as Feature;
+            const clickedFeature = event.features?.[0];
+            if (!clickedFeature) {
+                return;
+            }
+
             const clickedId = clickedFeature.properties?.id;
             if (!clickedId) {
                 return;
@@ -152,8 +297,52 @@ const AssetLayers = ({ assets, selectedElements = [], onElementClick, mapReady, 
 
             onElementClick([clickedAsset]);
         },
-        [mapInstance, onElementClick, assets],
+        [onElementClick, assets],
     );
+
+    const handleMouseMove = useCallback(
+        (event: MapLayerMouseEvent) => {
+            if (!mapInstance) {
+                return;
+            }
+
+            const map = mapInstance.getMap();
+            map.getCanvas().style.cursor = 'pointer';
+
+            const features = event.features;
+            if (!features || features.length === 0) {
+                setHoveredAsset(null);
+                setTooltipPosition(null);
+                return;
+            }
+
+            const feature = features[0];
+            const assetId = feature.properties?.id;
+            if (!assetId) {
+                setHoveredAsset(null);
+                setTooltipPosition(null);
+                return;
+            }
+
+            const asset = assetMap.get(assetId);
+            if (asset) {
+                setHoveredAsset(asset);
+                setTooltipPosition({ x: event.point.x, y: event.point.y });
+            }
+        },
+        [mapInstance, assetMap],
+    );
+
+    const handleMouseLeave = useCallback(() => {
+        if (!mapInstance) {
+            return;
+        }
+
+        const map = mapInstance.getMap();
+        map.getCanvas().style.cursor = '';
+        setHoveredAsset(null);
+        setTooltipPosition(null);
+    }, [mapInstance]);
 
     useEffect(() => {
         if (!mapInstance || !mapReady) {
@@ -161,14 +350,57 @@ const AssetLayers = ({ assets, selectedElements = [], onElementClick, mapReady, 
         }
 
         const map = mapInstance.getMap();
-        map.on('click', LAYER_ID, handleMapClick);
-        map.on('click', LINE_LAYER_ID, handleMapClick);
+        const layerIds = [ASSET_SYMBOL_LAYER_ID, `${ASSET_SYMBOL_LAYER_ID}-selected`, LINE_LAYER_ID];
+
+        layerIds.forEach((layerId) => {
+            map.on('click', layerId, handleMapClick);
+        });
 
         return () => {
-            map.off('click', LAYER_ID, handleMapClick);
-            map.off('click', LINE_LAYER_ID, handleMapClick);
+            layerIds.forEach((layerId) => {
+                map.off('click', layerId, handleMapClick);
+            });
         };
     }, [mapInstance, mapReady, handleMapClick]);
+
+    useEffect(() => {
+        if (!mapInstance || !mapReady) {
+            return;
+        }
+
+        const map = mapInstance.getMap();
+        const layerIds = [ASSET_SYMBOL_LAYER_ID, `${ASSET_SYMBOL_LAYER_ID}-selected`];
+
+        layerIds.forEach((layerId) => {
+            map.on('mousemove', layerId, handleMouseMove);
+            map.on('mouseleave', layerId, handleMouseLeave);
+        });
+
+        return () => {
+            layerIds.forEach((layerId) => {
+                map.off('mousemove', layerId, handleMouseMove);
+                map.off('mouseleave', layerId, handleMouseLeave);
+            });
+        };
+    }, [mapInstance, mapReady, handleMouseMove, handleMouseLeave]);
+
+    useEffect(() => {
+        if (!mapInstance || !mapReady) {
+            return;
+        }
+
+        const hideTooltip = () => {
+            setHoveredAsset(null);
+            setTooltipPosition(null);
+        };
+
+        const map = mapInstance.getMap();
+        map.on('move', hideTooltip);
+
+        return () => {
+            map.off('move', hideTooltip);
+        };
+    }, [mapInstance, mapReady]);
 
     if (!mapReady || (pointFeatures.length === 0 && linearFeatures.length === 0)) {
         return null;
@@ -178,38 +410,17 @@ const AssetLayers = ({ assets, selectedElements = [], onElementClick, mapReady, 
         <>
             {pointFeatures.length > 0 && (
                 <Source id={SOURCE_ID} type="geojson" data={featureCollection} generateId>
+                    <Layer id={ASSET_SYMBOL_LAYER_ID} type="symbol" filter={['!=', ['get', 'isSelected'], true]} layout={SYMBOL_LAYER_LAYOUT} />
                     <Layer
-                        id={LAYER_ID}
+                        id={ASSET_SELECTION_RING_LAYER_ID}
                         type="circle"
+                        filter={['==', ['get', 'isSelected'], true]}
                         paint={{
-                            'circle-radius': CIRCLE_RADIUS,
-                            'circle-color': ['get', 'backgroundColor'],
-                            'circle-stroke-color': ['get', 'circleStrokeColor'],
-                            'circle-stroke-width': ['get', 'circleStrokeWidth'],
-                            'circle-stroke-opacity': 1,
+                            'circle-radius': CIRCLE_RADIUS + BORDER_WIDTH + SELECTION_OUTLINE_WIDTH,
+                            'circle-color': SELECTED_STROKE_COLOR,
                         }}
                     />
-                    {pointFeatures.map((feature) => {
-                        const id = feature.properties?.id;
-                        if (!id) {
-                            return null;
-                        }
-
-                        const asset = assetMap.get(id);
-                        const iconStyles = asset?.styles;
-
-                        return (
-                            <AssetMarker
-                                key={id}
-                                feature={feature}
-                                isSelected={selectedElementIds.has(id)}
-                                iconStyles={iconStyles}
-                                asset={asset}
-                                onElementClick={onElementClick}
-                                assetCategories={assetCategories}
-                            />
-                        );
-                    })}
+                    <Layer id={`${ASSET_SYMBOL_LAYER_ID}-selected`} type="symbol" filter={['==', ['get', 'isSelected'], true]} layout={SYMBOL_LAYER_LAYOUT} />
                 </Source>
             )}
             {linearFeatures.length > 0 && (
@@ -217,6 +428,7 @@ const AssetLayers = ({ assets, selectedElements = [], onElementClick, mapReady, 
                     <Layer
                         id={LINE_LAYER_ID}
                         type="line"
+                        beforeId={pointFeatures.length > 0 ? ASSET_SYMBOL_LAYER_ID : undefined}
                         paint={{
                             'line-color': ['get', 'lineColor'],
                             'line-width': ['get', 'lineWidth'],
@@ -224,115 +436,23 @@ const AssetLayers = ({ assets, selectedElements = [], onElementClick, mapReady, 
                     />
                 </Source>
             )}
+            {hoveredAsset && tooltipPosition && (
+                <div
+                    style={{
+                        position: 'absolute',
+                        left: tooltipPosition.x,
+                        top: tooltipPosition.y,
+                        transform: 'translate(-50%, -100%)',
+                        marginTop: -22,
+                        zIndex: 1000,
+                        pointerEvents: 'none',
+                    }}
+                >
+                    <AssetTooltip element={hoveredAsset} assetCategories={assetCategories} />
+                </div>
+            )}
         </>
     );
 };
-
-type AssetMarkerProps = {
-    feature: Feature;
-    isSelected: boolean;
-    iconStyles?: Asset['styles'];
-    asset: Asset | undefined;
-    onElementClick?: (elements: Asset[]) => void;
-    assetCategories?: AssetCategory[];
-};
-
-const AssetMarker = memo(({ feature, isSelected, iconStyles: providedIconStyles, asset, onElementClick, assetCategories }: AssetMarkerProps) => {
-    const [showTooltip, setShowTooltip] = useState(false);
-    const iconStyles = providedIconStyles || asset?.styles;
-
-    const coordinates = feature.geometry.type === 'Point' ? feature.geometry.coordinates : null;
-    if (!coordinates || coordinates.length < 2) {
-        return null;
-    }
-
-    const [longitude, latitude] = coordinates;
-
-    const backgroundColor = iconStyles?.backgroundColor || DEFAULT_BACKGROUND_COLOR;
-    const color = iconStyles?.color || '#ffffff';
-    const faIcon = iconStyles?.faIcon || '';
-    const iconFallbackText = iconStyles?.iconFallbackText || '?';
-
-    const fontAwesomeIconName = faIcon ? faIcon.split(' ').pop()?.replace('fa-', '') || null : null;
-
-    const iconElement = fontAwesomeIconName ? (
-        <FontAwesomeIcon icon={['fas', fontAwesomeIconName] as never} style={{ fontSize: '12px' }} />
-    ) : (
-        <span style={{ fontSize: '10px', fontWeight: 'bold' }}>{iconFallbackText}</span>
-    );
-
-    const ariaLabel = asset?.name || 'Asset marker';
-
-    return (
-        <Marker longitude={longitude} latitude={latitude} style={{ cursor: 'pointer', zIndex: showTooltip ? 100 : 1 }}>
-            <button
-                type="button"
-                aria-label={ariaLabel}
-                style={{
-                    position: 'relative',
-                    border: 'none',
-                    background: 'transparent',
-                    padding: 0,
-                    cursor: 'pointer',
-                }}
-                onClick={(e) => {
-                    e.stopPropagation();
-                    if (asset && onElementClick) {
-                        onElementClick([asset]);
-                    }
-                }}
-                onMouseEnter={() => setShowTooltip(true)}
-                onMouseLeave={() => setShowTooltip(false)}
-                onFocus={() => setShowTooltip(true)}
-                onBlur={() => setShowTooltip(false)}
-                onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        if (asset && onElementClick) {
-                            onElementClick([asset]);
-                        }
-                    }
-                }}
-            >
-                {showTooltip && (
-                    <div
-                        style={{
-                            position: 'absolute',
-                            bottom: '100%',
-                            left: '50%',
-                            transform: 'translateX(-50%)',
-                            marginBottom: '8px',
-                            zIndex: 1000,
-                            pointerEvents: 'none',
-                        }}
-                    >
-                        {asset && <AssetTooltip element={asset} assetCategories={assetCategories} />}
-                    </div>
-                )}
-                <div
-                    style={{
-                        backgroundColor,
-                        color,
-                        borderRadius: '50%',
-                        cursor: 'pointer',
-                        borderWidth: '2px',
-                        borderStyle: 'solid',
-                        borderColor: MARKER_BORDER_COLOR,
-                        outline: isSelected ? `4px solid ${SELECTED_STROKE_COLOR}` : 'none',
-                        outlineOffset: '0',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        width: '28px',
-                        height: '28px',
-                        padding: '6px',
-                    }}
-                >
-                    {iconElement}
-                </div>
-            </button>
-        </Marker>
-    );
-});
 
 export default AssetLayers;

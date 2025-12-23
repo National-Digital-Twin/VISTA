@@ -1,6 +1,8 @@
 import { useMemo } from 'react';
 import { Layer, Source } from 'react-map-gl/maplibre';
 import type { Feature, Geometry } from 'geojson';
+
+import { ASSET_SYMBOL_LAYER_ID } from './AssetLayers';
 import { parseGeometry, getLocationFromGeometry } from '@/api/geometry-parser';
 
 const DEPENDENT_POLYGON_SOURCE_ID = 'connected-assets-dependent-polygon-source';
@@ -159,6 +161,7 @@ const ConnectedAssetsLayer = ({ selectedAsset, dependents, providers, mapReady }
                         <Layer
                             id={DEPENDENT_POLYGON_LAYER_ID}
                             type="fill"
+                            beforeId={ASSET_SYMBOL_LAYER_ID}
                             paint={{
                                 'fill-color': DEPENDENT_COLOR,
                                 'fill-opacity': 0.3,
@@ -167,6 +170,7 @@ const ConnectedAssetsLayer = ({ selectedAsset, dependents, providers, mapReady }
                         <Layer
                             id={`${DEPENDENT_POLYGON_LAYER_ID}-outline`}
                             type="line"
+                            beforeId={ASSET_SYMBOL_LAYER_ID}
                             paint={{
                                 'line-color': DEPENDENT_COLOR,
                                 'line-width': 2,
@@ -178,6 +182,7 @@ const ConnectedAssetsLayer = ({ selectedAsset, dependents, providers, mapReady }
                             <Layer
                                 id={DEPENDENT_LINE_LAYER_ID}
                                 type="line"
+                                beforeId={ASSET_SYMBOL_LAYER_ID}
                                 paint={{
                                     'line-color': DEPENDENT_COLOR,
                                     'line-width': 2,
@@ -190,6 +195,7 @@ const ConnectedAssetsLayer = ({ selectedAsset, dependents, providers, mapReady }
                             <Layer
                                 id={DEPENDENT_MARKER_LAYER_ID}
                                 type="circle"
+                                beforeId={ASSET_SYMBOL_LAYER_ID}
                                 paint={{
                                     'circle-radius': 8,
                                     'circle-color': DEPENDENT_COLOR,
@@ -207,6 +213,7 @@ const ConnectedAssetsLayer = ({ selectedAsset, dependents, providers, mapReady }
                         <Layer
                             id={PROVIDER_POLYGON_LAYER_ID}
                             type="fill"
+                            beforeId={ASSET_SYMBOL_LAYER_ID}
                             paint={{
                                 'fill-color': PROVIDER_COLOR,
                                 'fill-opacity': 0.3,
@@ -215,6 +222,7 @@ const ConnectedAssetsLayer = ({ selectedAsset, dependents, providers, mapReady }
                         <Layer
                             id={`${PROVIDER_POLYGON_LAYER_ID}-outline`}
                             type="line"
+                            beforeId={ASSET_SYMBOL_LAYER_ID}
                             paint={{
                                 'line-color': PROVIDER_COLOR,
                                 'line-width': 2,
@@ -226,6 +234,7 @@ const ConnectedAssetsLayer = ({ selectedAsset, dependents, providers, mapReady }
                             <Layer
                                 id={PROVIDER_LINE_LAYER_ID}
                                 type="line"
+                                beforeId={ASSET_SYMBOL_LAYER_ID}
                                 paint={{
                                     'line-color': PROVIDER_COLOR,
                                     'line-width': 2,
@@ -238,6 +247,7 @@ const ConnectedAssetsLayer = ({ selectedAsset, dependents, providers, mapReady }
                             <Layer
                                 id={PROVIDER_MARKER_LAYER_ID}
                                 type="circle"
+                                beforeId={ASSET_SYMBOL_LAYER_ID}
                                 paint={{
                                     'circle-radius': 8,
                                     'circle-color': PROVIDER_COLOR,
