@@ -2,7 +2,7 @@ import React from 'react';
 import PlaceholderTab from './PlaceholderTab';
 
 const AccessRequestsTab: React.FC = () => {
-    return <PlaceholderTab title="Manage access requests" description="Access request management functionality will be implemented here." />;
+    return <PlaceholderTab title="Manage access requests" description="Manage access requests functionality will be implemented here." />;
 };
 
 export default AccessRequestsTab;

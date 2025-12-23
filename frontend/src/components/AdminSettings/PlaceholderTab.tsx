@@ -10,11 +10,16 @@ const PlaceholderTab: React.FC<PlaceholderTabProps> = ({ title, description }) =
     return (
         <Box>
             <Typography variant="h5" component="h2" gutterBottom>
-                {title}
+                {title}{' '}
+                <Typography component="span" sx={{ fontStyle: 'italic' }}>
+                    (coming soon)
+                </Typography>
             </Typography>
-            <Typography variant="body1" color="text.secondary">
-                {description || 'This functionality will be implemented soon.'}
-            </Typography>
+            {description && (
+                <Typography variant="body1" color="text.secondary">
+                    {description}
+                </Typography>
+            )}
         </Box>
     );
 };
