@@ -41,6 +41,7 @@ class AssetType(models.Model):
         DataSource, related_name="types", on_delete=models.CASCADE, null=True
     )
     name = models.CharField(max_length=256)
+    icon = models.CharField(max_length=256, default="fa-tag")
 
     def __str__(self):
         """AssetType string representation."""

@@ -16,7 +16,7 @@ class AssetTypeSerializer(serializers.ModelSerializer):
         """Configuration for the `AssetTypeSerializer`."""
 
         model = AssetType
-        fields: ClassVar[list[str]] = ["id", "name"]
+        fields: ClassVar[list[str]] = ["id", "name", "icon"]
 
 
 class AssetSubCategorySerializer(serializers.ModelSerializer):
