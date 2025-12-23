@@ -10,6 +10,7 @@ class ExposureLayerType(models.Model):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255)
+    impacts_exposure_score = models.BooleanField(default=True)
 
     def __str__(self):
         """Return the string representation of the model."""
