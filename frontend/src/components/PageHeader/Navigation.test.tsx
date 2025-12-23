@@ -105,7 +105,7 @@ describe('Navigation', () => {
 
         const buttons = screen.getAllByRole('button');
         buttons.forEach((button) => {
-            expect(button).toHaveStyle({ textTransform: 'none' });
+            expect(button).toHaveStyle({ textTransform: 'uppercase' });
         });
     });
 });

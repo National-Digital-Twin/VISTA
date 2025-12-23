@@ -1,12 +1,14 @@
-import { AppBar, Box, Toolbar, useMediaQuery } from '@mui/material';
+import { AppBar, Box, Toolbar, useMediaQuery, Typography, Link } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import { useState } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Logo from './Logo';
 import MobileMenu from './MobileMenu';
 import Navigation from './Navigation';
 import Notifications from './Notifications';
 import UserMenu from './UserMenu';
+import { useActiveScenario } from '@/hooks/useActiveScenario';
+import { useUserData } from '@/hooks/useUserData';
 
 type PageHeaderProps = {
     appName: string;
@@ -18,6 +20,9 @@ const PageHeader = ({ appName }: Readonly<PageHeaderProps>) => {
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
     const [unseenNotifications] = useState(0);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const { data: activeScenario } = useActiveScenario();
+    const { getUserType } = useUserData();
+    const isAdmin = getUserType() === 'Admin';
 
     const handleMobileMenuClick = () => {
         setIsMobileMenuOpen(true);
@@ -54,6 +59,14 @@ const PageHeader = ({ appName }: Readonly<PageHeaderProps>) => {
         navigate('/privacy');
     };
 
+    const handleScenarioClick = useCallback(() => {
+        if (isAdmin) {
+            navigate('/data-room?openScenarioModal=true');
+        }
+    }, [isAdmin, navigate]);
+
+    const scenarioName = useMemo(() => activeScenario?.name || '', [activeScenario?.name]);
+
     return (
         <AppBar
             position="static"
@@ -81,6 +94,44 @@ const PageHeader = ({ appName }: Readonly<PageHeaderProps>) => {
                     </Box>
                     <Navigation onNavigationClick={handleNavigationClick} />
                 </Box>
+
+                {scenarioName && (
+                    <Box
+                        sx={{
+                            position: 'absolute',
+                            left: '50%',
+                            transform: 'translateX(-50%)',
+                        }}
+                    >
+                        {isAdmin ? (
+                            <Link
+                                component="button"
+                                onClick={handleScenarioClick}
+                                aria-label={`Change scenario: ${scenarioName}`}
+                                sx={{
+                                    'color': 'inherit',
+                                    'textDecoration': 'none',
+                                    'cursor': 'pointer',
+                                    '&:hover': {
+                                        textDecoration: 'underline',
+                                    },
+                                    'border': 'none',
+                                    'background': 'none',
+                                    'padding': 0,
+                                    'font': 'inherit',
+                                }}
+                            >
+                                <Typography variant="h6" component="span" sx={{ fontWeight: 500 }}>
+                                    {scenarioName}
+                                </Typography>
+                            </Link>
+                        ) : (
+                            <Typography variant="h6" sx={{ fontWeight: 500 }} aria-label={`Current scenario: ${scenarioName}`}>
+                                {scenarioName}
+                            </Typography>
+                        )}
+                    </Box>
+                )}
 
                 <Box display="flex" gap={1} alignItems="center">
                     <Notifications unseenCount={unseenNotifications} onClick={handleNotificationClick} />

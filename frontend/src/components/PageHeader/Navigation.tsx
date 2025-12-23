@@ -27,9 +27,9 @@ export default function Navigation({ onNavigationClick }: NavigationProps) {
                     onClick={() => handleClick(item)}
                     sx={{
                         'color': isActive(item.to) ? theme.palette.accent?.main || theme.palette.primary.light : 'white',
-                        'textTransform': 'none',
+                        'textTransform': 'uppercase',
                         'fontWeight': isActive(item.to) ? 600 : 500,
-                        'fontSize': '0.875rem',
+                        'fontSize': '1rem',
                         '&:hover': {
                             color: theme.palette.accent?.main || theme.palette.primary.light,
                             backgroundColor: 'rgba(255, 255, 255, 0.1)',

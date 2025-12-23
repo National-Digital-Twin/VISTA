@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useSearchParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
     Box,
@@ -109,6 +109,7 @@ export default function DataRoom() {
     });
     const { getUserType } = useUserData();
     const queryClient = useQueryClient();
+    const [searchParams, setSearchParams] = useSearchParams();
     const [searchTerm, setSearchTerm] = useState('');
     const [sortField, setSortField] = useState<SortField>('name');
     const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
@@ -142,6 +143,17 @@ export default function DataRoom() {
             setSelectedScenario(scenariosData[0].id);
         }
     }, [scenariosData, selectedScenario]);
+
+    useEffect(() => {
+        if (searchParams.get('openScenarioModal') === 'true') {
+            setScenarioModalOpen(true);
+            setSearchParams((prev) => {
+                const newParams = new URLSearchParams(prev);
+                newParams.delete('openScenarioModal');
+                return newParams;
+            });
+        }
+    }, [searchParams, setSearchParams]);
 
     useEffect(() => {
         if (!errorSnackbarOpen && errorQueue.length > 0) {
