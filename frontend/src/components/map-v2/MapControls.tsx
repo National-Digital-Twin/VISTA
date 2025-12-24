@@ -53,6 +53,10 @@ type MapControlsProps = {
     assets: Asset[];
     assetCategories?: AssetCategory[];
     viewState?: ViewState;
+    showCoordinates: boolean;
+    onShowCoordinatesChange: (show: boolean) => void;
+    showCpsIcons: boolean;
+    onShowCpsIconsChange: (show: boolean) => void;
 };
 
 const MapControls = ({
@@ -67,6 +71,10 @@ const MapControls = ({
     assets,
     assetCategories,
     viewState,
+    showCoordinates,
+    onShowCoordinatesChange,
+    showCpsIcons,
+    onShowCpsIconsChange,
 }: MapControlsProps) => {
     const mapStylePanelRef = useRef<HTMLDivElement>(null);
     const mapStyleButtonRef = useRef<HTMLButtonElement>(null);
@@ -152,6 +160,10 @@ const MapControls = ({
                             onStyleChange={onMapStyleChange}
                             isOpen={mapStylePanelOpen}
                             onToggle={onToggleMapStylePanel}
+                            showCoordinates={showCoordinates}
+                            onShowCoordinatesChange={onShowCoordinatesChange}
+                            showCpsIcons={showCpsIcons}
+                            onShowCpsIconsChange={onShowCpsIconsChange}
                         />
                     </Box>
                 </ControlGroup>
