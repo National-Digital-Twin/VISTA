@@ -311,13 +311,15 @@ describe('AssetLayers', () => {
     });
 
     describe('CPS Icons', () => {
+        const delay = (ms: number): Promise<void> => {
+            return new Promise<void>((resolve) => {
+                setTimeout(resolve, ms);
+            });
+        };
+
         it('generates CPS marker when showCpsIcons is true', async () => {
             renderWithAsset({ showCpsIcons: true, mapReady: true });
-            await new Promise<void>((resolve) => {
-                setTimeout(() => {
-                    resolve();
-                }, 50);
-            });
+            await delay(50);
 
             expect(mockMapInstance.addImage).toHaveBeenCalledWith(
                 'cps-marker',

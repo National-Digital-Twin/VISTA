@@ -81,12 +81,12 @@ vi.mock('./controls/panels/MapStylePanel', () => ({
                 <div ref={ref} data-testid="map-style-panel">
                     <button onClick={() => onStyleChange('streets')}>Change Style</button>
                     <button onClick={onToggle}>Close</button>
-                    <div data-testid="coordinates-toggle" data-checked={showCoordinates} onClick={() => onShowCoordinatesChange(!showCoordinates)}>
+                    <button data-testid="coordinates-toggle" data-checked={showCoordinates} onClick={() => onShowCoordinatesChange(!showCoordinates)}>
                         Coordinates
-                    </div>
-                    <div data-testid="cps-icons-toggle" data-checked={showCpsIcons} onClick={() => onShowCpsIconsChange(!showCpsIcons)}>
+                    </button>
+                    <button data-testid="cps-icons-toggle" data-checked={showCpsIcons} onClick={() => onShowCpsIconsChange(!showCpsIcons)}>
                         CPS Icons
-                    </div>
+                    </button>
                 </div>
             ) : null,
     ),

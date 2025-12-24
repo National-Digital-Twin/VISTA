@@ -16,10 +16,18 @@ describe('MapStyleButton', () => {
     };
 
     describe('Rendering', () => {
-        it('renders layers icon', () => {
+        it('renders layers icon when closed', () => {
             renderWithTheme(<MapStyleButton {...defaultProps} />);
 
-            expect(screen.getByAltText('Layers')).toBeInTheDocument();
+            const icon = screen.getByAltText('Layers');
+            expect(icon).toHaveAttribute('src', '/icons/map-v2/layers.svg');
+        });
+
+        it('renders white layers icon when open', () => {
+            renderWithTheme(<MapStyleButton {...defaultProps} isOpen={true} />);
+
+            const icon = screen.getByAltText('Layers');
+            expect(icon).toHaveAttribute('src', '/icons/map-v2/layers-white.svg');
         });
     });
 

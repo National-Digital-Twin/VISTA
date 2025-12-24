@@ -9,7 +9,7 @@ type MapStyleButtonProps = {
 const MapStyleButton = forwardRef<HTMLButtonElement, MapStyleButtonProps>(({ isOpen, onToggle }, ref) => {
     return (
         <ControlButton ref={ref} onClick={onToggle} aria-label="Change map style" tooltip="Change map style" isActive={isOpen}>
-            <img src="/icons/map-v2/layers.svg" alt="Layers" width={24} height={24} />
+            <img src={isOpen ? '/icons/map-v2/layers-white.svg' : '/icons/map-v2/layers.svg'} alt="Layers" width={24} height={24} />
         </ControlButton>
     );
 });
