@@ -30,6 +30,11 @@ const buildLayerVisibilityMap = (groups: ExposureLayerGroup[]): Record<string, b
     return ids;
 };
 
+const getLayerId = (layer: Feature): string | null => {
+    const featureId = layer.id || layer.properties?.id;
+    return featureId !== null && featureId !== undefined ? String(featureId) : null;
+};
+
 type ExposureViewProps = {
     onClose: () => void;
     scenarioId?: string;
@@ -66,8 +71,7 @@ const ExposureLayerList = React.memo(({ layers, selectedExposureLayerIds, onTogg
     return (
         <Box sx={{ pl: 2, pr: 1, pb: 1 }}>
             {layers.map((layer) => {
-                const featureId = layer.id || layer.properties?.id;
-                const layerId = featureId !== null && featureId !== undefined ? String(featureId) : null;
+                const layerId = getLayerId(layer);
                 if (!layerId) {
                     return null;
                 }
@@ -108,68 +112,108 @@ type ExposureGroupProps = {
     selectedExposureLayerIds: Record<string, boolean>;
     onToggleGroup: (groupName: string) => void;
     onToggleLayer: (layerId: string) => void;
+    onToggleAllLayers?: (layerIds: string[], allVisible: boolean) => void;
     disabled?: boolean;
 };
 
-const ExposureGroup = React.memo(({ groupName, layers, isExpanded, selectedExposureLayerIds, onToggleGroup, onToggleLayer, disabled }: ExposureGroupProps) => {
-    const handleToggle = useCallback(
-        (e: React.MouseEvent | React.KeyboardEvent) => {
-            e.stopPropagation();
-            e.preventDefault();
-            onToggleGroup(groupName);
-        },
-        [groupName, onToggleGroup],
-    );
+const ExposureGroup = React.memo(
+    ({ groupName, layers, isExpanded, selectedExposureLayerIds, onToggleGroup, onToggleLayer, onToggleAllLayers, disabled }: ExposureGroupProps) => {
+        const handleToggle = useCallback(
+            (e: React.MouseEvent | React.KeyboardEvent) => {
+                e.stopPropagation();
+                e.preventDefault();
+                onToggleGroup(groupName);
+            },
+            [groupName, onToggleGroup],
+        );
 
-    return (
-        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-            <Button
-                onClick={handleToggle}
-                fullWidth
-                sx={{
-                    'display': 'flex',
-                    'alignItems': 'center',
-                    'justifyContent': 'flex-start',
-                    'p': 1.5,
-                    'textTransform': 'none',
-                    'color': 'text.primary',
-                    '&:hover': {
-                        backgroundColor: 'action.hover',
-                    },
-                }}
-                aria-expanded={isExpanded}
-            >
+        const layerIds = useMemo(() => layers.map(getLayerId).filter((id): id is string => id !== null), [layers]);
+
+        const allLayersVisible = useMemo(() => {
+            return layerIds.length > 0 && layerIds.every((id) => selectedExposureLayerIds[id] === true);
+        }, [layerIds, selectedExposureLayerIds]);
+
+        const handleToggleAll = useCallback(
+            (e: React.MouseEvent<HTMLButtonElement> | React.KeyboardEvent<HTMLButtonElement>) => {
+                e.stopPropagation();
+                e.preventDefault();
+                onToggleAllLayers?.(layerIds, allLayersVisible);
+            },
+            [layerIds, allLayersVisible, onToggleAllLayers],
+        );
+
+        const isEnvironmentallySensitiveAreas = groupName === 'Environmentally sensitive areas';
+
+        return (
+            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                 <Box
-                    component="span"
                     sx={{
-                        display: 'inline-flex',
+                        display: 'flex',
                         alignItems: 'center',
-                        justifyContent: 'center',
-                        mr: 1,
-                        width: 24,
-                        height: 24,
+                        justifyContent: 'space-between',
                     }}
-                    aria-label={isExpanded ? 'Collapse' : 'Expand'}
                 >
-                    {isExpanded ? <ExpandLessIcon fontSize="small" /> : <ExpandMoreIcon fontSize="small" />}
+                    <Button
+                        onClick={handleToggle}
+                        sx={{
+                            'display': 'flex',
+                            'alignItems': 'center',
+                            'justifyContent': 'flex-start',
+                            'flex': 1,
+                            'p': 1.5,
+                            'textTransform': 'none',
+                            'color': 'text.primary',
+                            '&:hover': {
+                                backgroundColor: 'action.hover',
+                            },
+                        }}
+                        aria-expanded={isExpanded}
+                    >
+                        <Box
+                            component="span"
+                            sx={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                mr: 1,
+                                width: 24,
+                                height: 24,
+                            }}
+                            aria-label={isExpanded ? 'Collapse' : 'Expand'}
+                        >
+                            {isExpanded ? <ExpandLessIcon fontSize="small" /> : <ExpandMoreIcon fontSize="small" />}
+                        </Box>
+                        <Typography variant="body1" sx={{ flexGrow: 1, fontWeight: 500, textAlign: 'left' }}>
+                            {groupName}
+                        </Typography>
+                    </Button>
+                    {isEnvironmentallySensitiveAreas && onToggleAllLayers && (
+                        <Box sx={{ display: 'flex', alignItems: 'center', px: 2, flexShrink: 0 }}>
+                            <IconToggle
+                                checked={allLayersVisible}
+                                onChange={handleToggleAll}
+                                disabled={disabled}
+                                aria-label={allLayersVisible ? 'Hide all' : 'Show all'}
+                                size="small"
+                            />
+                        </Box>
+                    )}
                 </Box>
-                <Typography variant="body1" sx={{ flexGrow: 1, fontWeight: 500, textAlign: 'left' }}>
-                    {groupName}
-                </Typography>
-            </Button>
 
-            <Collapse in={isExpanded}>
-                <ExposureLayerList layers={layers} selectedExposureLayerIds={selectedExposureLayerIds} onToggle={onToggleLayer} disabled={disabled} />
-            </Collapse>
-        </Box>
-    );
-});
+                <Collapse in={isExpanded}>
+                    <ExposureLayerList layers={layers} selectedExposureLayerIds={selectedExposureLayerIds} onToggle={onToggleLayer} disabled={disabled} />
+                </Collapse>
+            </Box>
+        );
+    },
+);
 
 ExposureGroup.displayName = 'ExposureGroup';
 
 const ExposureView = ({ onClose, scenarioId, selectedFocusAreaId, onFocusAreaSelect }: ExposureViewProps) => {
     const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
     const [mutationError, setMutationError] = useState<string | null>(null);
+    const [hasInitializedExpansion, setHasInitializedExpansion] = useState(false);
     const queryClient = useQueryClient();
     const currentFocusAreaId = selectedFocusAreaId ?? null;
 
@@ -205,13 +249,22 @@ const ExposureView = ({ onClose, scenarioId, selectedFocusAreaId, onFocusAreaSel
     });
 
     useEffect(() => {
-        if (!exposureLayersData?.groups) {
+        if (!exposureLayersData?.groups || hasInitializedExpansion) {
             return;
         }
 
         const groupNamesWithActiveLayers = getGroupNamesWithActiveLayers(exposureLayersData.groups);
-        setExpandedGroups((prev) => new Set([...prev, ...groupNamesWithActiveLayers]));
-    }, [exposureLayersData]);
+        setExpandedGroups((prev) => {
+            const next = new Set(prev);
+            groupNamesWithActiveLayers.forEach((name) => {
+                if (!next.has(name)) {
+                    next.add(name);
+                }
+            });
+            return next;
+        });
+        setHasInitializedExpansion(true);
+    }, [exposureLayersData, hasInitializedExpansion]);
 
     const toggleGroup = useCallback((groupName: string) => {
         setExpandedGroups((prev) => {
@@ -228,6 +281,15 @@ const ExposureView = ({ onClose, scenarioId, selectedFocusAreaId, onFocusAreaSel
             visibilityMutation.mutate({ exposureLayerId: layerId, isActive: newState });
         },
         [exposureLayersData, visibilityMutation],
+    );
+
+    const toggleAllLayersInGroup = useCallback(
+        (layerIds: string[], allVisible: boolean) => {
+            layerIds.forEach((layerId) => {
+                visibilityMutation.mutate({ exposureLayerId: layerId, isActive: !allVisible });
+            });
+        },
+        [visibilityMutation],
     );
 
     const groupedLayers = useMemo(() => {
@@ -352,6 +414,7 @@ const ExposureView = ({ onClose, scenarioId, selectedFocusAreaId, onFocusAreaSel
                             selectedExposureLayerIds={selectedExposureLayerIds}
                             onToggleGroup={toggleGroup}
                             onToggleLayer={toggleExposureLayer}
+                            onToggleAllLayers={toggleAllLayersInGroup}
                             disabled={isMutating}
                         />
                     ))}

@@ -445,4 +445,191 @@ describe('ExposureView', () => {
             expect(onClose).toHaveBeenCalledTimes(1);
         });
     });
+
+    describe('Toggle All Functionality', () => {
+        const createEnvironmentallySensitiveAreasResponse = (options?: {
+            layers?: Array<{ id: string; name: string; isActive: boolean }>;
+        }): ExposureLayersResponse => {
+            const { layers = [] } = options || {};
+            return {
+                featureCollection: {
+                    type: 'FeatureCollection',
+                    features: layers.map((layer, index) => ({
+                        type: 'Feature',
+                        id: layer.id,
+                        geometry: index === 0 ? mockGeometry1 : mockGeometry2,
+                        properties: {
+                            name: layer.name,
+                            groupId: 'env-sensitive-1',
+                            groupName: 'Environmentally sensitive areas',
+                            isActive: layer.isActive,
+                        },
+                    })),
+                },
+                groups: [
+                    {
+                        id: 'env-sensitive-1',
+                        name: 'Environmentally sensitive areas',
+                        exposureLayers: layers.map((layer, index) => ({
+                            id: layer.id,
+                            name: layer.name,
+                            geometry: index === 0 ? mockGeometry1 : mockGeometry2,
+                            isActive: layer.isActive,
+                        })),
+                    },
+                ],
+            };
+        };
+
+        beforeEach(() => {
+            setupMocks({
+                exposureLayers: createEnvironmentallySensitiveAreasResponse({
+                    layers: [
+                        { id: 'layer-1', name: 'Protected Area 1', isActive: false },
+                        { id: 'layer-2', name: 'Protected Area 2', isActive: false },
+                        { id: 'layer-3', name: 'Protected Area 3', isActive: false },
+                    ],
+                }),
+            });
+        });
+
+        it('displays toggle all button for Environmentally sensitive areas group', async () => {
+            renderWithProviders(<ExposureView {...defaultProps} selectedFocusAreaId="map-wide-1" />);
+            await waitFor(() => {
+                expect(screen.getByText('Environmentally sensitive areas')).toBeInTheDocument();
+            });
+            await waitFor(() => {
+                expect(screen.getByLabelText('Show all')).toBeInTheDocument();
+            });
+        });
+
+        it('shows toggle all button even when group is collapsed', async () => {
+            renderWithProviders(<ExposureView {...defaultProps} selectedFocusAreaId="map-wide-1" />);
+            await waitFor(() => {
+                expect(screen.getByText('Environmentally sensitive areas')).toBeInTheDocument();
+            });
+            const groupHeader = screen.getByText('Environmentally sensitive areas');
+            const headerButton = groupHeader.closest('button');
+            expect(headerButton).toHaveAttribute('aria-expanded', 'false');
+            await waitFor(() => {
+                expect(screen.getByLabelText('Show all')).toBeInTheDocument();
+            });
+        });
+
+        it('does not show toggle all button for other groups', async () => {
+            setupMocks({
+                exposureLayers: createMockExposureLayersResponse({
+                    layers: [
+                        { id: 'layer-1', name: 'Caul Bourne', isActive: false },
+                        { id: 'layer-2', name: 'River Medina', isActive: false },
+                    ],
+                }),
+            });
+            renderWithProviders(<ExposureView {...defaultProps} selectedFocusAreaId="map-wide-1" />);
+            await waitFor(() => {
+                expect(screen.getByText(/Floods/)).toBeInTheDocument();
+            });
+            expect(screen.queryByLabelText('Show all')).not.toBeInTheDocument();
+            expect(screen.queryByLabelText('Hide all')).not.toBeInTheDocument();
+        });
+
+        it('toggles all layers when toggle all button is clicked', async () => {
+            renderWithProviders(<ExposureView {...defaultProps} selectedFocusAreaId="map-wide-1" />);
+            await waitFor(() => {
+                expect(screen.getByLabelText('Show all')).toBeInTheDocument();
+            });
+
+            const toggleAll = screen.getByLabelText('Show all');
+            fireEvent.click(toggleAll);
+
+            await waitFor(() => {
+                expect(mockedToggleExposureLayerVisibility).toHaveBeenCalledWith('scenario-1', {
+                    exposureLayerId: 'layer-1',
+                    focusAreaId: 'map-wide-1',
+                    isActive: true,
+                });
+                expect(mockedToggleExposureLayerVisibility).toHaveBeenCalledWith('scenario-1', {
+                    exposureLayerId: 'layer-2',
+                    focusAreaId: 'map-wide-1',
+                    isActive: true,
+                });
+                expect(mockedToggleExposureLayerVisibility).toHaveBeenCalledWith('scenario-1', {
+                    exposureLayerId: 'layer-3',
+                    focusAreaId: 'map-wide-1',
+                    isActive: true,
+                });
+            });
+        });
+
+        it('toggles all layers off when all are visible', async () => {
+            setupMocks({
+                exposureLayers: createEnvironmentallySensitiveAreasResponse({
+                    layers: [
+                        { id: 'layer-1', name: 'Protected Area 1', isActive: true },
+                        { id: 'layer-2', name: 'Protected Area 2', isActive: true },
+                        { id: 'layer-3', name: 'Protected Area 3', isActive: true },
+                    ],
+                }),
+            });
+            renderWithProviders(<ExposureView {...defaultProps} selectedFocusAreaId="map-wide-1" />);
+            await waitFor(() => {
+                expect(screen.getByLabelText('Hide all')).toBeInTheDocument();
+            });
+
+            const toggleAll = screen.getByLabelText('Hide all');
+            fireEvent.click(toggleAll);
+
+            await waitFor(() => {
+                expect(mockedToggleExposureLayerVisibility).toHaveBeenCalledWith('scenario-1', {
+                    exposureLayerId: 'layer-1',
+                    focusAreaId: 'map-wide-1',
+                    isActive: false,
+                });
+                expect(mockedToggleExposureLayerVisibility).toHaveBeenCalledWith('scenario-1', {
+                    exposureLayerId: 'layer-2',
+                    focusAreaId: 'map-wide-1',
+                    isActive: false,
+                });
+                expect(mockedToggleExposureLayerVisibility).toHaveBeenCalledWith('scenario-1', {
+                    exposureLayerId: 'layer-3',
+                    focusAreaId: 'map-wide-1',
+                    isActive: false,
+                });
+            });
+        });
+
+        it('does not change expansion state when toggle all is clicked', async () => {
+            renderWithProviders(<ExposureView {...defaultProps} selectedFocusAreaId="map-wide-1" />);
+            await waitFor(() => {
+                expect(screen.getByText('Environmentally sensitive areas')).toBeInTheDocument();
+            });
+
+            const groupHeader = screen.getByText('Environmentally sensitive areas');
+            const headerButton = groupHeader.closest('button');
+            expect(headerButton).toHaveAttribute('aria-expanded', 'false');
+
+            const toggleAll = screen.getByLabelText('Show all');
+            fireEvent.click(toggleAll);
+
+            await waitFor(() => {
+                expect(headerButton).toHaveAttribute('aria-expanded', 'false');
+            });
+        });
+
+        it('shows correct label when some layers are visible', async () => {
+            setupMocks({
+                exposureLayers: createEnvironmentallySensitiveAreasResponse({
+                    layers: [
+                        { id: 'layer-1', name: 'Protected Area 1', isActive: true },
+                        { id: 'layer-2', name: 'Protected Area 2', isActive: false },
+                        { id: 'layer-3', name: 'Protected Area 3', isActive: false },
+                    ],
+                }),
+            });
+            renderWithProviders(<ExposureView {...defaultProps} selectedFocusAreaId="map-wide-1" />);
+            await waitFor(() => {
+                expect(screen.getByLabelText('Show all')).toBeInTheDocument();
+            });
+        });
+    });
 });
