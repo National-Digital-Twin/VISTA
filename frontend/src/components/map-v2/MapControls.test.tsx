@@ -57,11 +57,36 @@ vi.mock('./controls/AssetInfoButton', () => ({
 
 vi.mock('./controls/panels/MapStylePanel', () => ({
     default: React.forwardRef(
-        ({ onStyleChange, isOpen, onToggle }: { onStyleChange: (s: MapStyleKey) => void; isOpen: boolean; onToggle: () => void }, ref: any) =>
+        (
+            {
+                onStyleChange,
+                isOpen,
+                onToggle,
+                showCoordinates,
+                onShowCoordinatesChange,
+                showCpsIcons,
+                onShowCpsIconsChange,
+            }: {
+                onStyleChange: (s: MapStyleKey) => void;
+                isOpen: boolean;
+                onToggle: () => void;
+                showCoordinates: boolean;
+                onShowCoordinatesChange: (show: boolean) => void;
+                showCpsIcons: boolean;
+                onShowCpsIconsChange: (show: boolean) => void;
+            },
+            ref: any,
+        ) =>
             isOpen ? (
                 <div ref={ref} data-testid="map-style-panel">
                     <button onClick={() => onStyleChange('streets')}>Change Style</button>
                     <button onClick={onToggle}>Close</button>
+                    <button data-testid="coordinates-toggle" data-checked={showCoordinates} onClick={() => onShowCoordinatesChange(!showCoordinates)}>
+                        Coordinates
+                    </button>
+                    <button data-testid="cps-icons-toggle" data-checked={showCpsIcons} onClick={() => onShowCpsIconsChange(!showCpsIcons)}>
+                        CPS Icons
+                    </button>
                 </div>
             ) : null,
     ),
@@ -94,6 +119,10 @@ describe('MapControls', () => {
         assetInfoPanelOpen: false,
         onToggleAssetInfoPanel: vi.fn(),
         assets: [],
+        showCoordinates: false,
+        onShowCoordinatesChange: vi.fn(),
+        showCpsIcons: false,
+        onShowCpsIconsChange: vi.fn(),
     };
 
     beforeEach(() => {
@@ -210,6 +239,32 @@ describe('MapControls', () => {
             fireEvent.mouseDown(document.body);
 
             expect(onClosePanels).toHaveBeenCalled();
+        });
+    });
+
+    describe('Coordinates and CPS Icons Toggles', () => {
+        it('passes showCoordinates and onShowCoordinatesChange to MapStylePanel', () => {
+            const onShowCoordinatesChange = vi.fn();
+            renderWithProviders(
+                <MapControls {...defaultProps} mapStylePanelOpen={true} showCoordinates={true} onShowCoordinatesChange={onShowCoordinatesChange} />,
+            );
+
+            const coordinatesToggle = screen.getByTestId('coordinates-toggle');
+            expect(coordinatesToggle).toHaveAttribute('data-checked', 'true');
+
+            fireEvent.click(coordinatesToggle);
+            expect(onShowCoordinatesChange).toHaveBeenCalledWith(false);
+        });
+
+        it('passes showCpsIcons and onShowCpsIconsChange to MapStylePanel', () => {
+            const onShowCpsIconsChange = vi.fn();
+            renderWithProviders(<MapControls {...defaultProps} mapStylePanelOpen={true} showCpsIcons={true} onShowCpsIconsChange={onShowCpsIconsChange} />);
+
+            const cpsIconsToggle = screen.getByTestId('cps-icons-toggle');
+            expect(cpsIconsToggle).toHaveAttribute('data-checked', 'true');
+
+            fireEvent.click(cpsIconsToggle);
+            expect(onShowCpsIconsChange).toHaveBeenCalledWith(false);
         });
     });
 });

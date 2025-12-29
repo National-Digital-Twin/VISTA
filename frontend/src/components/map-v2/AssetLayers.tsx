@@ -101,9 +101,18 @@ export type AssetLayersProps = {
     mapReady?: boolean;
     assetCategories?: AssetCategory[];
     onGeneratingChange?: (isGenerating: boolean) => void;
+    showCpsIcons?: boolean;
 };
 
-const AssetLayers = ({ assets, selectedElements = [], onElementClick, mapReady, assetCategories, onGeneratingChange }: AssetLayersProps) => {
+const AssetLayers = ({
+    assets,
+    selectedElements = [],
+    onElementClick,
+    mapReady,
+    assetCategories,
+    onGeneratingChange,
+    showCpsIcons = false,
+}: AssetLayersProps) => {
     const mapContext = useMap();
     const mapInstance = mapContext?.['map-v2'] || mapContext?.default || null;
     const addedIconsRef = useRef<Set<string>>(new Set());
@@ -125,19 +134,25 @@ const AssetLayers = ({ assets, selectedElements = [], onElementClick, mapReady, 
 
     const uniqueMarkerStyles = useMemo(() => {
         const styles = new Map<string, MarkerStyle>();
-        assetMap.forEach((asset) => {
-            const faIcon = asset.styles?.faIcon || '';
-            const iconName = faIcon ? faIcon.split(' ').pop()?.replace('fa-', '') || '' : '';
-            const iconFallbackText = asset.styles?.iconFallbackText || '?';
-            const backgroundColor = asset.styles?.backgroundColor || DEFAULT_BACKGROUND_COLOR;
-            const markerId = `marker-${iconName || iconFallbackText}-${backgroundColor.replace('#', '')}`;
 
-            if (!styles.has(markerId)) {
-                styles.set(markerId, { iconName, iconFallbackText, backgroundColor });
-            }
-        });
+        if (showCpsIcons) {
+            const markerId = 'cps-marker';
+            styles.set(markerId, { iconName: '', iconFallbackText: 'C', backgroundColor: '#000000' });
+        } else {
+            assetMap.forEach((asset) => {
+                const faIcon = asset.styles?.faIcon || '';
+                const iconName = faIcon ? faIcon.split(' ').pop()?.replace('fa-', '') || '' : '';
+                const iconFallbackText = asset.styles?.iconFallbackText || '?';
+                const backgroundColor = asset.styles?.backgroundColor || DEFAULT_BACKGROUND_COLOR;
+                const markerId = `marker-${iconName || iconFallbackText}-${backgroundColor.replace('#', '')}`;
+
+                if (!styles.has(markerId)) {
+                    styles.set(markerId, { iconName, iconFallbackText, backgroundColor });
+                }
+            });
+        }
         return styles;
-    }, [assetMap]);
+    }, [assetMap, showCpsIcons]);
 
     const pointFeaturesData = useMemo(() => {
         return assets.map((asset) => createPointFeature(asset)).filter((feature): feature is Feature => feature !== null);
@@ -204,6 +219,18 @@ const AssetLayers = ({ assets, selectedElements = [], onElementClick, mapReady, 
             const asset = assetMap.get(id);
             const isSelected = selectedElementIds.has(id);
 
+            if (showCpsIcons) {
+                return {
+                    ...feature,
+                    properties: {
+                        ...feature.properties,
+                        backgroundColor: '#000000',
+                        isSelected,
+                        markerId: 'cps-marker',
+                    },
+                };
+            }
+
             const backgroundColor = asset?.styles?.backgroundColor || DEFAULT_BACKGROUND_COLOR;
             const faIcon = asset?.styles?.faIcon || '';
             const iconFallbackText = asset?.styles?.iconFallbackText || '?';
@@ -225,7 +252,7 @@ const AssetLayers = ({ assets, selectedElements = [], onElementClick, mapReady, 
         });
 
         return { type: 'FeatureCollection' as const, features: enhancedFeatures };
-    }, [pointFeatures, assetMap, selectedElementIds]);
+    }, [pointFeatures, assetMap, selectedElementIds, showCpsIcons]);
 
     useEffect(() => {
         if (!mapInstance || !mapReady) {

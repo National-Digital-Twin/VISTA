@@ -52,6 +52,8 @@ const MapView = () => {
     const [pendingCircleCenter, setPendingCircleCenter] = useState<[number, number] | null>(null);
     const [radiusDialogOpen, setRadiusDialogOpen] = useState(false);
     const [isSpritesGenerating, setIsSpritesGenerating] = useState(false);
+    const [showCoordinates, setShowCoordinates] = useState(false);
+    const [showCpsIcons, setShowCpsIcons] = useState(false);
 
     const drawRef = useMapboxDraw(mapRef, mapReady);
     const { data: activeScenario } = useActiveScenario();
@@ -497,6 +499,7 @@ const MapView = () => {
                                 mapReady={mapReady}
                                 assetCategories={assetCategories}
                                 onGeneratingChange={setIsSpritesGenerating}
+                                showCpsIcons={showCpsIcons}
                             />
                             {selectedElement && selectedAssetDetails.data && (
                                 <ConnectedAssetsLayer
@@ -567,6 +570,26 @@ const MapView = () => {
                     )}
                 </Map>
 
+                {showCoordinates && (
+                    <Box
+                        sx={{
+                            position: 'absolute',
+                            bottom: 0,
+                            left: 0,
+                            right: 0,
+                            bgcolor: 'rgba(0, 0, 0, 0.7)',
+                            color: 'white',
+                            px: 2,
+                            py: 0.5,
+                            fontSize: '12px',
+                            fontFamily: 'monospace',
+                            zIndex: 5,
+                        }}
+                    >
+                        LAT, LNG {viewState.latitude.toFixed(11)}, {viewState.longitude.toFixed(11)}
+                    </Box>
+                )}
+
                 {(isAssetsFetching || isSpritesGenerating) && (
                     <Box
                         sx={{
@@ -598,6 +621,10 @@ const MapView = () => {
                     assets={assets}
                     assetCategories={assetCategories}
                     viewState={viewState}
+                    showCoordinates={showCoordinates}
+                    onShowCoordinatesChange={setShowCoordinates}
+                    showCpsIcons={showCpsIcons}
+                    onShowCpsIconsChange={setShowCpsIcons}
                 />
             </Box>
 

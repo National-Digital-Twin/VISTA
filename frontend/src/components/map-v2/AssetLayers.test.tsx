@@ -309,4 +309,34 @@ describe('AssetLayers', () => {
             expect(container.firstChild).toBeNull();
         });
     });
+
+    describe('CPS Icons', () => {
+        const delay = (ms: number): Promise<void> => {
+            return new Promise<void>((resolve) => {
+                setTimeout(resolve, ms);
+            });
+        };
+
+        it('generates CPS marker when showCpsIcons is true', async () => {
+            renderWithAsset({ showCpsIcons: true, mapReady: true });
+            await delay(50);
+
+            expect(mockMapInstance.addImage).toHaveBeenCalledWith(
+                'cps-marker',
+                expect.objectContaining({
+                    width: expect.any(Number),
+                    height: expect.any(Number),
+                    data: expect.any(Uint8ClampedArray),
+                }),
+                { pixelRatio: 1 },
+            );
+        });
+
+        it('uses CPS marker for all assets when showCpsIcons is true', () => {
+            const assets = [mockAsset, { ...mockAsset, id: 'asset2' }] as Asset[];
+            renderWithAsset({ assets, showCpsIcons: true, mapReady: true });
+
+            expect(screen.getByTestId('source')).toBeInTheDocument();
+        });
+    });
 });

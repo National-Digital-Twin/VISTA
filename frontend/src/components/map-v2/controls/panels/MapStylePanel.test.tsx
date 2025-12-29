@@ -24,6 +24,10 @@ describe('MapStylePanel', () => {
         onStyleChange: vi.fn(),
         isOpen: true,
         onToggle: vi.fn(),
+        showCoordinates: false,
+        onShowCoordinatesChange: vi.fn(),
+        showCpsIcons: false,
+        onShowCpsIconsChange: vi.fn(),
     };
 
     const renderWithTheme = (component: React.ReactElement) => {
@@ -98,6 +102,54 @@ describe('MapStylePanel', () => {
             fireEvent.click(osRadio);
 
             expect(onToggle).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('Toggle Controls', () => {
+        it('renders Coordinates toggle', () => {
+            renderWithTheme(<MapStylePanel {...defaultProps} />);
+
+            expect(screen.getByLabelText('Coordinates')).toBeInTheDocument();
+        });
+
+        it('renders Show CPS icons toggle', () => {
+            renderWithTheme(<MapStylePanel {...defaultProps} />);
+
+            expect(screen.getByLabelText('Show CPS icons')).toBeInTheDocument();
+        });
+
+        it('calls onShowCoordinatesChange when Coordinates toggle is clicked', () => {
+            const onShowCoordinatesChange = vi.fn();
+            renderWithTheme(<MapStylePanel {...defaultProps} showCoordinates={false} onShowCoordinatesChange={onShowCoordinatesChange} />);
+
+            const coordinatesToggle = screen.getByLabelText('Coordinates');
+            fireEvent.click(coordinatesToggle);
+
+            expect(onShowCoordinatesChange).toHaveBeenCalledWith(true);
+        });
+
+        it('calls onShowCpsIconsChange when Show CPS icons toggle is clicked', () => {
+            const onShowCpsIconsChange = vi.fn();
+            renderWithTheme(<MapStylePanel {...defaultProps} showCpsIcons={false} onShowCpsIconsChange={onShowCpsIconsChange} />);
+
+            const cpsIconsToggle = screen.getByLabelText('Show CPS icons');
+            fireEvent.click(cpsIconsToggle);
+
+            expect(onShowCpsIconsChange).toHaveBeenCalledWith(true);
+        });
+
+        it('displays Coordinates toggle as checked when showCoordinates is true', () => {
+            renderWithTheme(<MapStylePanel {...defaultProps} showCoordinates={true} />);
+
+            const coordinatesToggle = screen.getByLabelText('Coordinates') as HTMLInputElement;
+            expect(coordinatesToggle.checked).toBe(true);
+        });
+
+        it('displays Show CPS icons toggle as checked when showCpsIcons is true', () => {
+            renderWithTheme(<MapStylePanel {...defaultProps} showCpsIcons={true} />);
+
+            const cpsIconsToggle = screen.getByLabelText('Show CPS icons') as HTMLInputElement;
+            expect(cpsIconsToggle.checked).toBe(true);
         });
     });
 });
