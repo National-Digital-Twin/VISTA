@@ -12,9 +12,17 @@ class DataSourceSerializer(serializers.ModelSerializer):
 
     asset_count = serializers.IntegerField(read_only=True)
     last_updated = serializers.DateTimeField(read_only=True)
+    description = serializers.CharField(source="description_md")
 
     class Meta:
         """Configuration for the `DataSourceSerializer`."""
 
         model = DataSource
-        fields: ClassVar[list[str]] = ["id", "name", "owner", "asset_count", "last_updated"]
+        fields: ClassVar[list[str]] = [
+            "id",
+            "name",
+            "owner",
+            "description",
+            "asset_count",
+            "last_updated",
+        ]

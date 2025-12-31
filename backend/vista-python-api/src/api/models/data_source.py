@@ -9,6 +9,7 @@ class DataSource(models.Model):
     id = models.UUIDField(unique=True, primary_key=True)
     name = models.CharField(max_length=256)
     owner = models.CharField(max_length=256)
+    description_md = models.TextField(default="")
 
     def __str__(self):
         """DataSource string representation."""

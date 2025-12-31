@@ -37,6 +37,7 @@ populate-data:
 	cd backend && direnv exec . poetry run python vista-python-api/src/manage.py loaddata scenario_assets.json
 	cd backend && direnv exec . poetry run python vista-python-api/src/manage.py refresh_data
 	cd backend && direnv exec . poetry run python vista-python-api/src/manage.py refresh_dependency_data
+	cd backend && direnv exec . poetry run python vista-python-api/src/manage.py load_exposure_layers
 
 lint-backend:
 	cd backend && direnv exec . poetry run ruff format .
