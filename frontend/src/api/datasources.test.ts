@@ -28,6 +28,7 @@ describe('datasources API', () => {
                 {
                     id: 'ds1',
                     name: 'Data Source 1',
+                    description: 'ds1 description',
                     assetCount: 100,
                     lastUpdated: '2024-01-01T00:00:00Z',
                     owner: 'Owner 1',
@@ -35,6 +36,7 @@ describe('datasources API', () => {
                 {
                     id: 'ds2',
                     name: 'Data Source 2',
+                    description: 'ds2 description',
                     assetCount: 200,
                     lastUpdated: null,
                     owner: 'Owner 2',

@@ -142,6 +142,7 @@ describe('AssetsView', () => {
             {
                 id: 'ds-1',
                 name: 'OS Names',
+                description: 'ds1 description',
                 assetCount: 100,
                 lastUpdated: '2025-07-22T11:54:00Z',
                 owner: 'test-owner',

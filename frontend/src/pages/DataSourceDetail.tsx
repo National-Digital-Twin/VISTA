@@ -11,12 +11,15 @@ const MarkdownRenderer = ({ content }: { content: string }) => {
 };
 
 export default function DataSourceDetail() {
-    const { id } = useParams();
+    const { id } = useParams<{ id: string }>();
     const { getFormattedLastUpdated } = useOutletContext<DataRoomOutletContext>();
     const { data } = useQuery<DataSource, Error>({
         enabled: !!id,
         queryKey: ['data-source', id],
-        queryFn: () => fetchDataSource(id),
+        queryFn: ({ queryKey }) => {
+            const [, dataSourceId] = queryKey as ['data-source', string];
+            return fetchDataSource(dataSourceId);
+        },
         staleTime: 5 * 60 * 1000,
         gcTime: 30 * 60 * 1000,
         retry: 2,
