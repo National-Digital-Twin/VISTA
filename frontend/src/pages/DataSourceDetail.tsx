@@ -6,30 +6,28 @@ import ReactMarkdown from 'react-markdown';
 import { DataRoomOutletContext } from '@/components/DataRoom';
 import { DataSource, fetchDataSource } from '@/api/datasources';
 
+const MarkdownRenderer = ({ content }: { content: string }) => {
+    return <ReactMarkdown>{content}</ReactMarkdown>;
+};
+
 export default function DataSourceDetail() {
     const { id } = useParams();
     const { getFormattedLastUpdated } = useOutletContext<DataRoomOutletContext>();
     const { data } = useQuery<DataSource, Error>({
         enabled: !!id,
         queryKey: ['data-source', id],
-        queryFn: () => fetchDataSource(id!),
+        queryFn: () => fetchDataSource(id),
         staleTime: 5 * 60 * 1000,
         gcTime: 30 * 60 * 1000,
         retry: 2,
         retryDelay: 1000,
     });
 
-    const MarkdownRenderer = ({ content }: { content: string }) => {
-        return <ReactMarkdown>{content}</ReactMarkdown>;
-    };
-
     const navigate = useNavigate();
 
     return (
         <Box>
-            {!data ? (
-                <Typography>Loading data sources...</Typography>
-            ) : (
+            {data ? (
                 <Box>
                     <Box sx={{ px: 2, py: 2, borderBottom: '1px solid', borderColor: 'divider' }}>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -48,6 +46,8 @@ export default function DataSourceDetail() {
                         <MarkdownRenderer content={data.description} />
                     </Box>
                 </Box>
+            ) : (
+                <Typography>Loading data sources...</Typography>
             )}
         </Box>
     );
