@@ -71,6 +71,20 @@ class ExternalAssetMapper:
         return Asset.create(external_id, name, asset_type, geom)
 
     @staticmethod
+    def map_from_national_grid(record, asset_specification):
+        """Create an instance of :class:api.models.assets.Asset from a National Grid data record."""
+        ExternalAssetMapper.validate_fields(
+            record, ["SUBSTATION", "Substation", "centroid"], "national_grid"
+        )
+        external_id = record["SUBSTATION"]
+        name = record["Substation"]
+        asset_type = AssetType(id=asset_specification["type"])
+        geom = record["centroid"]
+        geos_pt = Point(geom.x, geom.y)
+
+        return Asset.create(external_id, name, asset_type, geos_pt)
+
+    @staticmethod
     def map_from_nhs(record, coords, asset_specification):
         """Create an instance of :class:api.models.assets.Asset from an NHS data record."""
         ExternalAssetMapper.validate_fields(

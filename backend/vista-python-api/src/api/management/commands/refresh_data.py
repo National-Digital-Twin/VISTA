@@ -11,6 +11,7 @@ from django.core.management.base import BaseCommand
 
 from api.models.asset import Asset
 from api.repository.external.asset_repository import fetch
+from api.repository.internal.assets_within_500m_exposure_layers_repository import refresh
 
 
 class Command(BaseCommand):
@@ -60,7 +61,7 @@ class Command(BaseCommand):
 
     async def get_assets(self):
         """Asynchronously query the data sources based on a set of asset specifications."""
-        sources = ["os-ngd", "os-names", "naptan", "cqc", "nhs"]
+        sources = ["os-ngd", "os-names", "naptan", "national-grid", "cqc", "nhs"]
         tasks = {
             create_task(
                 self.fetch_all_for_source(self.get_asset_specifications_for_source(source), source)
@@ -84,3 +85,4 @@ class Command(BaseCommand):
 
         Asset.objects.all().delete()
         Asset.objects.bulk_create(assets)
+        refresh()

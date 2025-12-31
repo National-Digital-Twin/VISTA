@@ -21,7 +21,7 @@ class CqcDataSourceHandler(DataSourceHandler):
         return [f"{self.root_url}/locations?localAuthority={self.locator}&careHome=Y&perPage=1000"]
 
     async def fetch_data_for_asset_specification(self, asset_specification, url):
-        """Fetch the OS NGD data per the specification given."""
+        """Fetch the CQC data per the specification given."""
         all_locations = []
         current_url = url
         while current_url:
