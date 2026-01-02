@@ -84,16 +84,16 @@ class NhsDataSourceHandler(DataSourceHandler):
         address_str = ", ".join([part for part in address_parts if part and part.strip()])
 
         try:
-            params = {"q": address_str, "limit": 1}
+            params = {"q": address_str, "format": "jsonv2"}
 
             self.logger.info("Geocoding address: %s", address_str)
-            response = await self.fetch_from_url("https://photon.komoot.io/api/", params=params)
+            response = await self.fetch_from_url(
+                "https://nominatim.openstreetmap.org/search", params=params
+            )
 
-            if response and "features" in response and len(response["features"]) > 0:
-                # Photon returns GeoJSON coordinates as [lon, lat]
-                coordinates = response["features"][0]["geometry"]["coordinates"]
-                lon = float(coordinates[0])
-                lat = float(coordinates[1])
+            if response and len(response) > 0:
+                lon = float(response[0]["lon"])
+                lat = float(response[0]["lat"])
                 return lat, lon
             self.logger.error(
                 "Failed to geocode address: %s with request params: %s", address_str, params

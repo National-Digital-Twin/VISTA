@@ -51,6 +51,7 @@ COPY ./entrypoint.sh .
 
 RUN chmod 600 /vista-python-api/src/core/.docker_vista_pgpass \
 && chmod +x /vista-python-api/src/api/db_setup.sh \
+&& chmod +x /vista-python-api/src/api/update_db.sh \
 && chown -R appuser:appuser /vista-python-api/src /venv ./entrypoint.sh
 
 # Switch to the non-root user
