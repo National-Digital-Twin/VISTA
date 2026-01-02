@@ -39,8 +39,8 @@ describe('useDataSources', () => {
 
         it('returns data sources when loaded', async () => {
             const mockDataSources: DataSource[] = [
-                { id: 'ds-1', name: 'OS Names', assetCount: 100, lastUpdated: '2025-01-15T10:00:00Z', owner: 'owner-1' },
-                { id: 'ds-2', name: 'CQC', assetCount: 50, lastUpdated: '2025-01-10T14:30:00Z', owner: 'owner-2' },
+                { id: 'ds-1', name: 'OS Names', description: 'OS names description', assetCount: 100, lastUpdated: '2025-01-15T10:00:00Z', owner: 'owner-1' },
+                { id: 'ds-2', name: 'CQC', description: 'CQC description', assetCount: 50, lastUpdated: '2025-01-10T14:30:00Z', owner: 'owner-2' },
             ];
 
             vi.mocked(fetchDataSources).mockResolvedValue(mockDataSources);
@@ -86,8 +86,8 @@ describe('useDataSources', () => {
 
         it('returns map with data sources by ID', async () => {
             const mockDataSources: DataSource[] = [
-                { id: 'ds-1', name: 'OS Names', assetCount: 100, lastUpdated: '2025-01-15T10:00:00Z', owner: 'owner-1' },
-                { id: 'ds-2', name: 'CQC', assetCount: 50, lastUpdated: '2025-01-10T14:30:00Z', owner: 'owner-2' },
+                { id: 'ds-1', name: 'OS Names', description: 'OS names description', assetCount: 100, lastUpdated: '2025-01-15T10:00:00Z', owner: 'owner-1' },
+                { id: 'ds-2', name: 'CQC', description: 'CQC description', assetCount: 50, lastUpdated: '2025-01-10T14:30:00Z', owner: 'owner-2' },
             ];
 
             vi.mocked(fetchDataSources).mockResolvedValue(mockDataSources);
@@ -106,7 +106,9 @@ describe('useDataSources', () => {
         });
 
         it('allows looking up data source by ID', async () => {
-            const mockDataSources: DataSource[] = [{ id: 'ds-1', name: 'OS Names', assetCount: 100, lastUpdated: '2025-01-15T10:00:00Z', owner: 'owner-1' }];
+            const mockDataSources: DataSource[] = [
+                { id: 'ds-1', name: 'OS Names', description: 'OS names description', assetCount: 100, lastUpdated: '2025-01-15T10:00:00Z', owner: 'owner-1' },
+            ];
 
             vi.mocked(fetchDataSources).mockResolvedValue(mockDataSources);
 
@@ -124,7 +126,9 @@ describe('useDataSources', () => {
         });
 
         it('returns undefined for non-existent ID', async () => {
-            const mockDataSources: DataSource[] = [{ id: 'ds-1', name: 'OS Names', assetCount: 100, lastUpdated: '2025-01-15T10:00:00Z', owner: 'owner-1' }];
+            const mockDataSources: DataSource[] = [
+                { id: 'ds-1', name: 'OS Names', description: 'OS names description', assetCount: 100, lastUpdated: '2025-01-15T10:00:00Z', owner: 'owner-1' },
+            ];
 
             vi.mocked(fetchDataSources).mockResolvedValue(mockDataSources);
 

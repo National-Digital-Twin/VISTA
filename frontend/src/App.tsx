@@ -3,9 +3,11 @@ import { fas } from '@fortawesome/free-solid-svg-icons';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 import Layout from '@/components/Layout';
+import DataRoom from '@/components/DataRoom';
 import config from '@/config/app-config';
 import AdminSettings from '@/pages/AdminSettings';
-import DataRoom from '@/pages/DataRoom';
+import DataSource from '@/pages/DataSources';
+import DataSourceDetail from '@/pages/DataSourceDetail';
 import GroupDetail from '@/pages/GroupDetail';
 import InviteNewUser from '@/pages/InviteNewUser';
 import ScenarioMap from '@/pages/ScenarioMap';
@@ -21,7 +23,14 @@ const AppWrapper = () => {
             element: <Layout />,
             children: [
                 { path: '', element: <ScenarioMap /> },
-                { path: 'data-room', element: <DataRoom /> },
+                {
+                    path: 'data-room',
+                    element: <DataRoom />,
+                    children: [
+                        { index: true, element: <DataSource /> },
+                        { path: 'data-source/:id', element: <DataSourceDetail /> },
+                    ],
+                },
                 { path: 'profile', element: <Profile /> },
                 { path: 'admin', element: <AdminSettings /> },
                 { path: 'admin/invite', element: <InviteNewUser /> },

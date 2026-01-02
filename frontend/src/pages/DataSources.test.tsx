@@ -1,11 +1,13 @@
-import { ReactNode } from 'react';
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { render, screen, fireEvent, within, waitFor } from '@testing-library/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { MemoryRouter } from 'react-router-dom';
-import DataRoom from './DataRoom';
+import { screen, fireEvent, waitFor, within } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { renderWithAppProviders } from '@/tests/renderWithAppProviders';
 import { fetchDataSources } from '@/api/datasources';
 import { fetchScenarios } from '@/api/scenarios';
+
+const mockUseUserData = vi.fn();
+vi.mock('@/hooks/useUserData', () => ({
+    useUserData: () => mockUseUserData(),
+}));
 
 vi.mock('@/api/datasources', () => ({
     fetchDataSources: vi.fn(),
@@ -15,43 +17,14 @@ vi.mock('@/api/scenarios', () => ({
     fetchScenarios: vi.fn(),
 }));
 
-const mockUseUserData = vi.fn();
-vi.mock('@/hooks/useUserData', () => ({
-    useUserData: () => mockUseUserData(),
-}));
-
 const mockedFetchDataSources = vi.mocked(fetchDataSources);
 const mockedFetchScenarios = vi.mocked(fetchScenarios);
-
-const createWrapper = (initialEntries: string[] = ['/data-room']) => {
-    const queryClient = new QueryClient({
-        defaultOptions: {
-            queries: {
-                retry: false,
-            },
-        },
-    });
-
-    return ({ children }: { children: ReactNode }) => (
-        <MemoryRouter initialEntries={initialEntries}>
-            <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-        </MemoryRouter>
-    );
-};
-
-const setup = (initialEntries: string[] = ['/data-room']) => {
-    const Wrapper = createWrapper(initialEntries);
-    return render(
-        <Wrapper>
-            <DataRoom />
-        </Wrapper>,
-    );
-};
 
 const mockDataSources = [
     {
         id: 'cqc',
         name: 'CQC API',
+        description: 'An API for CQC',
         assetCount: 63,
         lastUpdated: '2025-07-20T11:04:00Z',
         owner: 'John Doe',
@@ -59,6 +32,7 @@ const mockDataSources = [
     {
         id: 'nhs',
         name: 'NHS Open Data Portal',
+        description: 'An API for NHS',
         assetCount: 27,
         lastUpdated: '2025-07-21T09:31:00Z',
         owner: 'Jane Smith',
@@ -66,6 +40,7 @@ const mockDataSources = [
     {
         id: 'os-names',
         name: 'OS Names',
+        description: 'An API for OS Names',
         assetCount: 119,
         lastUpdated: null,
         owner: 'Bob Johnson',
@@ -95,67 +70,29 @@ beforeEach(() => {
     mockedFetchDataSources.mockResolvedValue(mockDataSources);
     mockedFetchScenarios.mockResolvedValue(mockScenarios);
     mockUseUserData.mockReturnValue({
+        getUserDisplayName: () => 'Name',
+        getUserEmailDomain: () => 'Email',
         getUserType: () => 'Admin',
     });
 
     sessionStorage.clear();
 });
 
-describe('DataRoom', () => {
-    it('renders table headers and data', async () => {
-        setup();
-
-        expect(await screen.findByPlaceholderText('Search for a data source')).toBeInTheDocument();
-        await screen.findByText('CQC API');
-        expect(screen.getByText('Data source')).toBeInTheDocument();
-        expect(screen.getByText('Owner')).toBeInTheDocument();
-        expect(screen.getByText('# of assets')).toBeInTheDocument();
-        expect(screen.getByText('Last updated')).toBeInTheDocument();
-
-        const cqcRow = screen.getByText('CQC API').closest('tr');
-        expect(cqcRow).not.toBeNull();
-        if (cqcRow) {
-            const { getByText, queryByText } = within(cqcRow);
-            expect(getByText('John Doe')).toBeInTheDocument();
-            expect(getByText('63')).toBeInTheDocument();
-            expect(queryByText('—')).not.toBeInTheDocument();
-        }
-    });
-
-    it('filters data sources based on search input', async () => {
-        setup();
-
-        const searchInput = await screen.findByPlaceholderText('Search for a data source');
-        await screen.findByText('CQC API');
-        fireEvent.change(searchInput, { target: { value: 'nhs' } });
-
-        const rows = screen.getAllByRole('row');
-        const dataRows = rows.slice(1); // exclude header row
-
-        expect(dataRows).toHaveLength(1);
-        expect(within(dataRows[0]).getByText('NHS Open Data Portal')).toBeInTheDocument();
-    });
-
-    it('clears search filters when Clear Filters is clicked', async () => {
-        setup();
-
-        const searchInput = await screen.findByPlaceholderText('Search for a data source');
-        await screen.findByText('CQC API');
-        fireEvent.change(searchInput, { target: { value: 'nhs' } });
-
-        const clearButton = screen.getByRole('button', { name: /clear filters/i });
-        fireEvent.click(clearButton);
-
-        const rows = await screen.findAllByRole('row');
-        const dataRows = rows.slice(1);
-        expect(dataRows).toHaveLength(mockDataSources.length);
+describe('DataSources', () => {
+    it('renders the menu', () => {
+        renderWithAppProviders(['/data-room']);
+        expect(screen.getByText('Scenario management')).toBeInTheDocument();
+        expect(screen.getByText('Data sources and access management')).toBeInTheDocument();
     });
 
     it('does not render load scenario for non-admin user', async () => {
         mockUseUserData.mockReturnValue({
+            getUserDisplayName: () => 'Name',
+            getUserEmailDomain: () => 'Email',
             getUserType: () => 'General',
         });
-        setup();
+        renderWithAppProviders(['/data-room']);
+        screen.debug();
         const loadScenarioButton = screen.getByRole('button', { name: /load scenario/i });
         fireEvent.click(loadScenarioButton);
 
@@ -163,29 +100,80 @@ describe('DataRoom', () => {
         expect(modalHeader).not.toBeInTheDocument();
     });
 
+    describe('DataSourcesTable', () => {
+        it('renders table headers and data', async () => {
+            renderWithAppProviders(['/data-room']);
+
+            expect(await screen.findByPlaceholderText('Search for a data source')).toBeInTheDocument();
+            await screen.findByText('CQC API');
+            expect(screen.getByText('Data source')).toBeInTheDocument();
+            expect(screen.getByText('Owner')).toBeInTheDocument();
+            expect(screen.getByText('# of assets')).toBeInTheDocument();
+            expect(screen.getByText('Last updated')).toBeInTheDocument();
+
+            const cqcRow = screen.getByText('CQC API').closest('tr');
+            expect(cqcRow).not.toBeNull();
+            if (cqcRow) {
+                const { getByText, queryByText } = within(cqcRow);
+                expect(getByText('John Doe')).toBeInTheDocument();
+                expect(getByText('63')).toBeInTheDocument();
+                expect(queryByText('—')).not.toBeInTheDocument();
+            }
+        });
+
+        it('filters data sources based on search input', async () => {
+            renderWithAppProviders(['/data-room']);
+
+            const searchInput = await screen.findByPlaceholderText('Search for a data source');
+            await screen.findByText('CQC API');
+            fireEvent.change(searchInput, { target: { value: 'nhs' } });
+
+            const rows = screen.getAllByRole('row');
+            const dataRows = rows.slice(1); // exclude header row
+
+            expect(dataRows).toHaveLength(1);
+            expect(within(dataRows[0]).getByText('NHS Open Data Portal')).toBeInTheDocument();
+        });
+
+        it('clears search filters when Clear Filters is clicked', async () => {
+            renderWithAppProviders(['/data-room']);
+
+            const searchInput = await screen.findByPlaceholderText('Search for a data source');
+            await screen.findByText('CQC API');
+            fireEvent.change(searchInput, { target: { value: 'nhs' } });
+
+            const clearButton = screen.getByRole('button', { name: /clear filters/i });
+            fireEvent.click(clearButton);
+
+            const rows = await screen.findAllByRole('row');
+            const dataRows = rows.slice(1);
+            expect(dataRows).toHaveLength(mockDataSources.length);
+        });
+    });
+
     describe('Scenario Modal', () => {
         it('does not show modal by default', async () => {
-            setup();
+            renderWithAppProviders(['/data-room']);
             await screen.findByText('CQC API');
 
             expect(screen.queryByText('Choose scenario')).not.toBeInTheDocument();
         });
 
         it('opens modal when Load scenario button is clicked', async () => {
-            setup();
+            renderWithAppProviders(['/data-room']);
             await screen.findByText('CQC API');
 
             const loadScenarioButton = screen.getByRole('button', { name: /load scenario/i });
             fireEvent.click(loadScenarioButton);
 
             expect(screen.getByText('Choose scenario')).toBeInTheDocument();
-            expect(screen.getByText('Flood in Newport')).toBeInTheDocument();
+            expect(screen.getAllByText('Flood in Newport')).toHaveLength(2);
             expect(screen.getByText('Landslide in Ventnor')).toBeInTheDocument();
             expect(screen.getByText('Wildfire in Shanklin')).toBeInTheDocument();
         });
 
         it('has "Flood in Newport" selected by default', async () => {
-            setup();
+            renderWithAppProviders(['/data-room']);
             await screen.findByText('CQC API');
 
             const loadScenarioButton = screen.getByRole('button', { name: /load scenario/i });
@@ -197,7 +185,7 @@ describe('DataRoom', () => {
 
         it('loads scenario from sessionStorage on mount', async () => {
             sessionStorage.setItem('selectedScenario', 'wildfire-shanklin');
-            setup();
+            renderWithAppProviders(['/data-room']);
             await screen.findByText('CQC API');
 
             const loadScenarioButton = screen.getByRole('button', { name: /load scenario/i });
@@ -208,7 +196,7 @@ describe('DataRoom', () => {
         });
 
         it('allows selecting different scenarios', async () => {
-            setup();
+            renderWithAppProviders(['/data-room']);
             await screen.findByText('CQC API');
 
             const loadScenarioButton = screen.getByRole('button', { name: /load scenario/i });
@@ -222,7 +210,7 @@ describe('DataRoom', () => {
         });
 
         it('closes modal when CANCEL button is clicked', async () => {
-            setup();
+            renderWithAppProviders(['/data-room']);
             await screen.findByText('CQC API');
 
             const loadScenarioButton = screen.getByRole('button', { name: /load scenario/i });
@@ -240,7 +228,7 @@ describe('DataRoom', () => {
         });
 
         it('saves selected scenario to sessionStorage when CONFIRM is clicked', async () => {
-            setup();
+            renderWithAppProviders(['/data-room']);
             await screen.findByText('CQC API');
 
             const loadScenarioButton = screen.getByRole('button', { name: /load scenario/i });
@@ -260,7 +248,7 @@ describe('DataRoom', () => {
         });
 
         it('saves default scenario to sessionStorage when CONFIRM is clicked without changing selection', async () => {
-            setup();
+            renderWithAppProviders(['/data-room']);
             await screen.findByText('CQC API');
 
             const loadScenarioButton = screen.getByRole('button', { name: /load scenario/i });
@@ -273,7 +261,7 @@ describe('DataRoom', () => {
         });
 
         it('closes modal after confirming scenario selection', async () => {
-            setup();
+            renderWithAppProviders(['/data-room']);
             await screen.findByText('CQC API');
 
             const loadScenarioButton = screen.getByRole('button', { name: /load scenario/i });
@@ -291,7 +279,7 @@ describe('DataRoom', () => {
 
     describe('Query Parameter Handling', () => {
         it('opens scenario modal when openScenarioModal query parameter is present', async () => {
-            setup(['/data-room?openScenarioModal=true']);
+            renderWithAppProviders(['/data-room?openScenarioModal=true']);
 
             await waitFor(() => {
                 expect(screen.getByText('Choose scenario')).toBeInTheDocument();
@@ -299,7 +287,7 @@ describe('DataRoom', () => {
         });
 
         it('removes openScenarioModal query parameter after opening modal', async () => {
-            setup(['/data-room?openScenarioModal=true']);
+            renderWithAppProviders(['/data-room?openScenarioModal=true']);
 
             await waitFor(() => {
                 expect(screen.getByText('Choose scenario')).toBeInTheDocument();
@@ -312,7 +300,7 @@ describe('DataRoom', () => {
         });
 
         it('does not open modal when query parameter is not present', async () => {
-            setup(['/data-room']);
+            renderWithAppProviders(['/data-room']);
 
             await screen.findByText('CQC API');
 
@@ -320,7 +308,7 @@ describe('DataRoom', () => {
         });
 
         it('does not open modal when query parameter is false', async () => {
-            setup(['/data-room?openScenarioModal=false']);
+            renderWithAppProviders(['/data-room?openScenarioModal=false']);
 
             await screen.findByText('CQC API');
 

@@ -90,8 +90,12 @@ def _create_fixture():
         id=uuid.uuid4(), name="Energy", category_id=category
     )
 
-    data_source_one = DataSource.objects.create(id=uuid.uuid4(), name="One")
-    data_source_two = DataSource.objects.create(id=uuid.uuid4(), name="Two")
+    data_source_one = DataSource.objects.create(
+        id=uuid.uuid4(), name="One", owner="Own1", description_md="Desc1"
+    )
+    data_source_two = DataSource.objects.create(
+        id=uuid.uuid4(), name="Two", owner="Own2", description_md="Desc2"
+    )
 
     station_asset_type = AssetType.objects.create(
         id=uuid.uuid4(),
