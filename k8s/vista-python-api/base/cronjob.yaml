@@ -22,12 +22,7 @@ spec:
             - name: vista-python-api-refresh-data
               image: vista-python-api-image:template
               imagePullPolicy: Always
-              command:
-                [
-                  "/venv/bin/python3",
-                  "/vista-python-api/src/manage.py",
-                  "refresh_data",
-                ]
+              command: ["/vista-python-api/src/api/update_db.sh"]
               envFrom:
                 - configMapRef:
                     name: vista-python-api-configs
