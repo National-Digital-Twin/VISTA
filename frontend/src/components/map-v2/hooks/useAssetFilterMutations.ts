@@ -43,6 +43,7 @@ const useAssetFilterMutations = ({ scenarioId, selectedFocusAreaId, selectedFilt
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['scenarioAssetTypes', scenarioId] });
             queryClient.invalidateQueries({ queryKey: ['scenarioAssets', scenarioId] });
+            queryClient.invalidateQueries({ queryKey: ['assetScoreFilters', scenarioId] });
         },
         onError: () => onError?.('Failed to clear asset type visibility'),
     });

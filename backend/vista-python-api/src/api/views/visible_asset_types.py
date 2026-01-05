@@ -5,7 +5,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from api.models import AssetType, FocusArea, Scenario, VisibleAsset
+from api.models import AssetScoreFilter, AssetType, FocusArea, Scenario, VisibleAsset
 from api.serializers import (
     VisibleAssetTypeResponseSerializer,
     VisibleAssetTypeToggleSerializer,
@@ -79,5 +79,6 @@ class VisibleAssetTypeView(APIView):
         )
 
         VisibleAsset.objects.filter(focus_area=focus_area).delete()
+        AssetScoreFilter.objects.filter(focus_area=focus_area, asset_type__isnull=False).delete()
 
         return Response({"success": True}, status=status.HTTP_200_OK)
