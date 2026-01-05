@@ -368,6 +368,34 @@ describe('ExposureView', () => {
                 expect(screen.getByLabelText('Show River Medina')).toBeInTheDocument();
             });
         });
+
+        it('invalidates exposureLayers and asset-score queries when layer is toggled', async () => {
+            const invalidateSpy = vi.spyOn(queryClient, 'invalidateQueries');
+            renderWithProviders(<ExposureView {...defaultProps} selectedFocusAreaId="map-wide-1" />);
+            await waitFor(() => {
+                expect(screen.getByText(/Floods/)).toBeInTheDocument();
+            });
+            const floodsHeader = screen.getByText(/Floods/);
+            const headerButton = floodsHeader.closest('button');
+            if (headerButton) {
+                fireEvent.click(headerButton);
+            }
+            await waitFor(() => {
+                expect(screen.getByText('Caul Bourne')).toBeInTheDocument();
+            });
+
+            const toggle = screen.getByLabelText('Show Caul Bourne');
+            fireEvent.click(toggle);
+
+            await waitFor(() => {
+                expect(mockedToggleExposureLayerVisibility).toHaveBeenCalled();
+            });
+
+            await waitFor(() => {
+                expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['exposureLayers', 'scenario-1'] });
+                expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['asset-score', 'scenario-1'] });
+            });
+        });
     });
 
     describe('Group Expansion', () => {
@@ -558,6 +586,26 @@ describe('ExposureView', () => {
                     focusAreaId: 'map-wide-1',
                     isActive: true,
                 });
+            });
+        });
+
+        it('invalidates exposureLayers and asset-score queries when toggle all is clicked', async () => {
+            const invalidateSpy = vi.spyOn(queryClient, 'invalidateQueries');
+            renderWithProviders(<ExposureView {...defaultProps} selectedFocusAreaId="map-wide-1" />);
+            await waitFor(() => {
+                expect(screen.getByLabelText('Show all')).toBeInTheDocument();
+            });
+
+            const toggleAll = screen.getByLabelText('Show all');
+            fireEvent.click(toggleAll);
+
+            await waitFor(() => {
+                expect(mockedToggleExposureLayerVisibility).toHaveBeenCalledTimes(3);
+            });
+
+            await waitFor(() => {
+                expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['exposureLayers', 'scenario-1'] });
+                expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['asset-score', 'scenario-1'] });
             });
         });
 

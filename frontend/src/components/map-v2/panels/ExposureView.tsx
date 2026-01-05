@@ -242,6 +242,7 @@ const ExposureView = ({ onClose, scenarioId, selectedFocusAreaId, onFocusAreaSel
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['exposureLayers', scenarioId] });
+            queryClient.invalidateQueries({ queryKey: ['asset-score', scenarioId] });
         },
         onError: () => {
             setMutationError('Failed to update exposure layer visibility');
