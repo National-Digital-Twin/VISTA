@@ -5,7 +5,7 @@ from decimal import Decimal
 from uuid import UUID
 
 from django.contrib.gis.geos import Polygon
-from django.db.models import Q
+from django.db.models import Exists, OuterRef, Q
 
 from api.models import AssetScoreFilter
 from api.models.asset_score import AssetScore
@@ -43,9 +43,15 @@ class AssetFilterBuilder:
 
     def _score_subquery(self, score_filter: AssetScoreFilter | None = None):
         """Build subquery for asset IDs matching score criteria."""
-        query = AssetScore.objects.filter(scenario_id=self.ctx.scenario_id).filter(
-            Q(user_id=self.ctx.user_id) | Q(user_id__isnull=True)
+        user_score_exists = AssetScore.objects.filter(
+            scenario_id=self.ctx.scenario_id,
+            user_id=self.ctx.user_id,
+            id=OuterRef("id"),
         )
+        query = AssetScore.objects.filter(scenario_id=self.ctx.scenario_id).filter(
+            Q(user_id=self.ctx.user_id) | (Q(user_id__isnull=True) & ~Exists(user_score_exists))
+        )
+
         if score_filter is not None:
             if score_filter.criticality_values is not None:
                 query = query.filter(

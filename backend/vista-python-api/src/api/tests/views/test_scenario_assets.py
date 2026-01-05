@@ -4,11 +4,20 @@
 import uuid
 
 import pytest
-from django.contrib.gis.geos import GEOSGeometry, Point
+from django.contrib.gis.geos import GEOSGeometry, Point, Polygon
 from django.db import connection
 from django.test.utils import CaptureQueriesContext
 
-from api.models import AssetScoreFilter, FocusArea, Scenario, ScenarioAsset, VisibleAsset
+from api.models import (
+    AssetScoreFilter,
+    ExposureLayer,
+    ExposureLayerType,
+    FocusArea,
+    Scenario,
+    ScenarioAsset,
+    VisibleAsset,
+    VisibleExposureLayer,
+)
 from api.models.asset import Asset
 from api.models.asset_type import AssetCategory, AssetSubCategory, AssetType, DataSource
 
@@ -1453,3 +1462,84 @@ def test_asset_types_filtered_count_with_score_filter(
 
     # Pylon has no score filter, so filteredAssetCount equals assetCount
     assert pylon_data["filteredAssetCount"] == pylon_data["assetCount"]
+
+
+@pytest.mark.django_db
+def test_exposure_filter_uses_user_specific_scores(scenario, mock_user_id, client):
+    """Test that exposure filtering uses user-specific scores over fallback null scores.
+
+    The asset_scores view contains both user-specific rows (with actual exposure scores)
+    and fallback NULL user rows (with exposure=0). This test verifies that the filter
+    prioritizes user-specific scores when they exist.
+    """
+    # Create asset type and scenario asset
+    category = AssetCategory.objects.create(id=uuid.uuid4(), name="Exposure Test Category")
+    sub_category = AssetSubCategory.objects.create(
+        id=uuid.uuid4(), name="Exposure Test SubCat", category_id=category
+    )
+    data_source = DataSource.objects.create(id=uuid.uuid4(), name="Exposure Test Source")
+    asset_type = AssetType.objects.create(
+        id=uuid.uuid4(),
+        name="Exposure Test Assets",
+        sub_category_id=sub_category,
+        data_source_id=data_source,
+    )
+    ScenarioAsset.objects.create(scenario=scenario, asset_type=asset_type, criticality_score=3)
+
+    # Create exposure layer polygon centered at origin
+    exposure_poly = Polygon(
+        ((-0.001, -0.001), (0.001, -0.001), (0.001, 0.001), (-0.001, 0.001), (-0.001, -0.001))
+    )
+    exposure_layer_type = ExposureLayerType.objects.create(name="Test Flood")
+    exposure_layer = ExposureLayer.objects.create(geometry=exposure_poly, type=exposure_layer_type)
+
+    # Create asset INSIDE exposure layer (should get exposure score = 2)
+    Asset.objects.create(
+        id=uuid.uuid4(),
+        external_id=uuid.uuid4(),
+        name="Asset Inside Exposure",
+        type=asset_type,
+        geom=Point(0.0, 0.0),  # Inside the exposure polygon
+    )
+
+    # Create asset OUTSIDE exposure layer (should get exposure score = 0)
+    Asset.objects.create(
+        id=uuid.uuid4(),
+        external_id=uuid.uuid4(),
+        name="Asset Outside Exposure",
+        type=asset_type,
+        geom=Point(1.0, 1.0),  # Well outside the exposure polygon
+    )
+
+    # Create focus area with by_score_only mode and exposure filter = [0]
+    fa = FocusArea.objects.create(
+        scenario=scenario,
+        user_id=mock_user_id,
+        name="Exposure Filter Test FA",
+        geometry=None,  # Map-wide
+        filter_mode="by_score_only",
+        is_active=True,
+        is_system=True,
+    )
+
+    # Link exposure layer to this focus area (for this user)
+    VisibleExposureLayer.objects.create(focus_area=fa, exposure_layer=exposure_layer)
+
+    # Create global score filter requiring exposure = 0 only
+    AssetScoreFilter.objects.create(focus_area=fa, asset_type=None, exposure_values=[0])
+
+    # Refresh materialized view so exposure scores are computed
+    with connection.cursor() as cursor:
+        cursor.execute("REFRESH MATERIALIZED VIEW public.assets_within_500m_exposure_layers;")
+
+    # Query assets with exposure filter
+    response = client.get(f"/api/scenarios/{scenario.id}/assets/")
+    data = response.json()
+
+    assert response.status_code == http_success_code
+
+    # Only asset_outside should be returned (exposure=0 for user with visible exposure layer)
+    # asset_inside has exposure=2 for this user (inside 1 exposure layer) and should be excluded
+    returned_names = [a["name"] for a in data]
+    assert len(data) == 1, f"Expected 1 asset, got {len(data)}: {returned_names}"
+    assert data[0]["name"] == "Asset Outside Exposure"
