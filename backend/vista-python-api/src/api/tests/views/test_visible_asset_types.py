@@ -6,7 +6,7 @@ import uuid
 import pytest
 from django.contrib.gis.geos import GEOSGeometry, Point
 
-from api.models import FocusArea, Scenario, VisibleAsset
+from api.models import AssetScoreFilter, FocusArea, Scenario, VisibleAsset
 from api.models.asset import Asset
 from api.models.asset_type import AssetCategory, AssetSubCategory, AssetType, DataSource
 
@@ -424,3 +424,39 @@ def test_delete_with_no_visible_assets(scenario, mapwide_focus_area, client):
 
     assert response.status_code == http_success_code
     assert data["success"] is True
+
+
+@pytest.mark.django_db
+def test_delete_clears_per_asset_type_score_filters(scenario, asset_type, focus_area, client):
+    """Test DELETE clears per-asset-type score filters but preserves global filter."""
+    # Create a per-asset-type score filter
+    per_type_filter = AssetScoreFilter.objects.create(
+        focus_area=focus_area,
+        asset_type=asset_type,
+        criticality_values=[1, 2],
+    )
+
+    # Create a global score filter (asset_type=NULL)
+    global_filter = AssetScoreFilter.objects.create(
+        focus_area=focus_area,
+        asset_type=None,
+        criticality_values=[3, 4],
+    )
+
+    # Create visibility
+    VisibleAsset.objects.create(
+        focus_area=focus_area,
+        asset_type=asset_type,
+    )
+
+    response = client.delete(
+        f"/api/scenarios/{scenario.id}/visible-asset-types/?focus_area_id={focus_area.id}"
+    )
+
+    assert response.status_code == http_success_code
+
+    # Per-asset-type filter should be deleted
+    assert not AssetScoreFilter.objects.filter(id=per_type_filter.id).exists()
+
+    # Global filter should still exist
+    assert AssetScoreFilter.objects.filter(id=global_filter.id).exists()
