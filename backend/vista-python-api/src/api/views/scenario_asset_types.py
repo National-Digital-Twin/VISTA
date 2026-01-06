@@ -47,8 +47,8 @@ def _build_categories_response(asset_types, visible_type_ids, builder, focus_are
 
     categories = {}
     for at in asset_types:
-        sub_cat = at.sub_category_id
-        cat = sub_cat.category_id
+        sub_cat = at.sub_category
+        cat = sub_cat.category
 
         if cat.id not in categories:
             categories[cat.id] = {"id": str(cat.id), "name": cat.name, "subCategories": {}}
@@ -69,7 +69,7 @@ def _build_categories_response(asset_types, visible_type_ids, builder, focus_are
                 "assetCount": at.asset_count,
                 "filteredAssetCount": filtered_count,
                 "isActive": at.id in visible_type_ids,
-                "datasourceId": str(at.data_source_id_id) if at.data_source_id_id else None,
+                "datasourceId": str(at.data_source) if at.data_source else None,
             }
         )
 
@@ -96,9 +96,7 @@ class ScenarioAssetTypesView(APIView):
         builder = AssetFilterBuilder(ctx)
 
         focus_area = None
-        asset_types_q = AssetType.objects.select_related(
-            "sub_category_id__category_id", "data_source_id"
-        )
+        asset_types_q = AssetType.objects.select_related("sub_category__category", "data_source")
         if focus_area_id:
             focus_area = get_object_or_404(
                 FocusArea, id=focus_area_id, scenario_id=scenario_id, user_id=user_id
@@ -114,7 +112,7 @@ class ScenarioAssetTypesView(APIView):
             asset_types_q = asset_types_q.annotate(asset_count=Count("assets", distinct=True))
 
         asset_types = asset_types_q.order_by(
-            "sub_category_id__category_id__name", "sub_category_id__name", "name"
+            "sub_category__category__name", "sub_category__name", "name"
         )
 
         result = _build_categories_response(asset_types, visible_type_ids, builder, focus_area)

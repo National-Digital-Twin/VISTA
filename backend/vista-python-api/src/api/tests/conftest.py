@@ -84,10 +84,10 @@ def dependencies():
 def _create_fixture():
     category = AssetCategory.objects.create(id=uuid.uuid4(), name="Build infrastructure")
     transport_sub_category = AssetSubCategory.objects.create(
-        id=uuid.uuid4(), name="Transport infrastructure", category_id=category
+        id=uuid.uuid4(), name="Transport infrastructure", category=category
     )
     energy_sub_category = AssetSubCategory.objects.create(
-        id=uuid.uuid4(), name="Energy", category_id=category
+        id=uuid.uuid4(), name="Energy", category=category
     )
 
     data_source_one = DataSource.objects.create(
@@ -100,14 +100,14 @@ def _create_fixture():
     station_asset_type = AssetType.objects.create(
         id=uuid.uuid4(),
         name="Rail stations",
-        sub_category_id=transport_sub_category,
-        data_source_id=data_source_one,
+        sub_category=transport_sub_category,
+        data_source=data_source_one,
     )
     pylon_asset_type = AssetType.objects.create(
         id=uuid.uuid4(),
         name="Pylon",
-        sub_category_id=energy_sub_category,
-        data_source_id=data_source_two,
+        sub_category=energy_sub_category,
+        data_source=data_source_two,
     )
     all_asset_types = [station_asset_type, pylon_asset_type]
     assets = _create_assets(all_asset_types)

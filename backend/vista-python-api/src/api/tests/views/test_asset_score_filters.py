@@ -14,21 +14,21 @@ def asset_type_setup(db):  # noqa: ARG001
     """Create test asset types."""
     category = AssetCategory.objects.create(id=uuid.uuid4(), name="Infrastructure")
     sub_category = AssetSubCategory.objects.create(
-        id=uuid.uuid4(), name="Energy", category_id=category
+        id=uuid.uuid4(), name="Energy", category=category
     )
     data_source = DataSource.objects.create(id=uuid.uuid4(), name="Test Source")
 
     station_type = AssetType.objects.create(
         id=uuid.uuid4(),
         name="Stations",
-        sub_category_id=sub_category,
-        data_source_id=data_source,
+        sub_category=sub_category,
+        data_source=data_source,
     )
     pylon_type = AssetType.objects.create(
         id=uuid.uuid4(),
         name="Pylons",
-        sub_category_id=sub_category,
-        data_source_id=data_source,
+        sub_category=sub_category,
+        data_source=data_source,
     )
 
     return {

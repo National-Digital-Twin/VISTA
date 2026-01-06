@@ -9,5 +9,5 @@ from api.serializers import AssetTypeSerializer
 class AssetTypeViewSet(viewsets.ReadOnlyModelViewSet):
     """A ModelViewSet for the Asset Type model."""
 
-    queryset = AssetType.objects.select_related("sub_category_id").all()
+    queryset = AssetType.objects.select_related("sub_category").all()
     serializer_class = AssetTypeSerializer

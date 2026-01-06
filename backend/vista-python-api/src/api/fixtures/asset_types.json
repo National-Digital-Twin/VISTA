@@ -3,7 +3,7 @@
     "model": "api.assettype",
     "pk": "c0e8f4fa-9083-4963-943a-9386309e43a5",
     "fields": {
-      "sub_category_id": "bfc5b5a8-5a8b-4a6e-9e7b-0a9df10a89e1",
+      "sub_category": "bfc5b5a8-5a8b-4a6e-9e7b-0a9df10a89e1",
       "name": "Arable farm land",
       "icon": "fa-wheat-awn"
     }
@@ -12,8 +12,8 @@
     "model": "api.assettype",
     "pk": "fbefc59e-d5de-4d35-92e5-3ed091b4b3cd",
     "fields": {
-      "sub_category_id": "bfc5b5a8-5a8b-4a6e-9e7b-0a9df10a89e1",
-      "data_source_id": "84e986cd-73dc-4324-8639-1b97d491ce25",
+      "sub_category": "bfc5b5a8-5a8b-4a6e-9e7b-0a9df10a89e1",
+      "data_source": "84e986cd-73dc-4324-8639-1b97d491ce25",
       "name": "Country park",
       "icon": "fa-bench-tree"
     }
@@ -22,8 +22,8 @@
     "model": "api.assettype",
     "pk": "4d3a6316-9393-489b-a90a-f7e7b8735944",
     "fields": {
-      "sub_category_id": "bfc5b5a8-5a8b-4a6e-9e7b-0a9df10a89e1",
-      "data_source_id": "84e986cd-73dc-4324-8639-1b97d491ce25",
+      "sub_category": "bfc5b5a8-5a8b-4a6e-9e7b-0a9df10a89e1",
+      "data_source": "84e986cd-73dc-4324-8639-1b97d491ce25",
       "name": "Farmyard"
     }
   },
@@ -31,8 +31,8 @@
     "model": "api.assettype",
     "pk": "e61b9f64-17df-4e13-9dbf-2c5a7e24a0ac",
     "fields": {
-      "sub_category_id": "bfc5b5a8-5a8b-4a6e-9e7b-0a9df10a89e1",
-      "data_source_id": "84e986cd-73dc-4324-8639-1b97d491ce25",
+      "sub_category": "bfc5b5a8-5a8b-4a6e-9e7b-0a9df10a89e1",
+      "data_source": "84e986cd-73dc-4324-8639-1b97d491ce25",
       "name": "Fishery"
     }
   },
@@ -40,8 +40,8 @@
     "model": "api.assettype",
     "pk": "b1b70277-cccb-45c4-a0de-94692b871894",
     "fields": {
-      "sub_category_id": "bfc5b5a8-5a8b-4a6e-9e7b-0a9df10a89e1",
-      "data_source_id": "84e986cd-73dc-4324-8639-1b97d491ce25",
+      "sub_category": "bfc5b5a8-5a8b-4a6e-9e7b-0a9df10a89e1",
+      "data_source": "84e986cd-73dc-4324-8639-1b97d491ce25",
       "name": "Hill",
       "icon": "fa-mound"
     }
@@ -50,8 +50,8 @@
     "model": "api.assettype",
     "pk": "9fef067f-2251-474b-9933-53089d20f7a0",
     "fields": {
-      "sub_category_id": "bfc5b5a8-5a8b-4a6e-9e7b-0a9df10a89e1",
-      "data_source_id": "84e986cd-73dc-4324-8639-1b97d491ce25",
+      "sub_category": "bfc5b5a8-5a8b-4a6e-9e7b-0a9df10a89e1",
+      "data_source": "84e986cd-73dc-4324-8639-1b97d491ce25",
       "name": "Lake"
     }
   },
@@ -59,7 +59,7 @@
     "model": "api.assettype",
     "pk": "3197ed91-480d-4c53-931f-6d3f6b367513",
     "fields": {
-      "sub_category_id": "bfc5b5a8-5a8b-4a6e-9e7b-0a9df10a89e1",
+      "sub_category": "bfc5b5a8-5a8b-4a6e-9e7b-0a9df10a89e1",
       "name": "Livestock farm land",
       "icon": "fa-sheep"
     }
@@ -68,8 +68,8 @@
     "model": "api.assettype",
     "pk": "ff232445-6a44-43dc-b58d-4d5e50ed2dd8",
     "fields": {
-      "sub_category_id": "bfc5b5a8-5a8b-4a6e-9e7b-0a9df10a89e1",
-      "data_source_id": "84e986cd-73dc-4324-8639-1b97d491ce25",
+      "sub_category": "bfc5b5a8-5a8b-4a6e-9e7b-0a9df10a89e1",
+      "data_source": "84e986cd-73dc-4324-8639-1b97d491ce25",
       "name": "Nature reserve",
       "icon": "fa-tree"
     }
@@ -78,8 +78,8 @@
     "model": "api.assettype",
     "pk": "2ef53e53-d6c5-4809-b76d-b08fc2a5f82e",
     "fields": {
-      "sub_category_id": "bfc5b5a8-5a8b-4a6e-9e7b-0a9df10a89e1",
-      "data_source_id": "84e986cd-73dc-4324-8639-1b97d491ce25",
+      "sub_category": "bfc5b5a8-5a8b-4a6e-9e7b-0a9df10a89e1",
+      "data_source": "84e986cd-73dc-4324-8639-1b97d491ce25",
       "name": "Open grassland"
     }
   },
@@ -87,8 +87,8 @@
     "model": "api.assettype",
     "pk": "b82184b3-864f-4991-8e6e-b2b8c62b2c67",
     "fields": {
-      "sub_category_id": "bfc5b5a8-5a8b-4a6e-9e7b-0a9df10a89e1",
-      "data_source_id": "84e986cd-73dc-4324-8639-1b97d491ce25",
+      "sub_category": "bfc5b5a8-5a8b-4a6e-9e7b-0a9df10a89e1",
+      "data_source": "84e986cd-73dc-4324-8639-1b97d491ce25",
       "name": "Woodland",
       "icon": "fa-tree"
     }
@@ -97,8 +97,8 @@
     "model": "api.assettype",
     "pk": "5eb80725-0c4d-4c54-8a7f-5b7cdd39d08f",
     "fields": {
-      "sub_category_id": "4f3fdc14-3b7a-4ef4-a864-d55b4296d1ad",
-      "data_source_id": "84e986cd-73dc-4324-8639-1b97d491ce25",
+      "sub_category": "4f3fdc14-3b7a-4ef4-a864-d55b4296d1ad",
+      "data_source": "84e986cd-73dc-4324-8639-1b97d491ce25",
       "name": "Crematorium",
       "icon": "fa-tombstone"
     }
@@ -107,8 +107,8 @@
     "model": "api.assettype",
     "pk": "2c0b6f61-1a45-4694-a09a-35ab65e2df60",
     "fields": {
-      "sub_category_id": "4f3fdc14-3b7a-4ef4-a864-d55b4296d1ad",
-      "data_source_id": "84e986cd-73dc-4324-8639-1b97d491ce25",
+      "sub_category": "4f3fdc14-3b7a-4ef4-a864-d55b4296d1ad",
+      "data_source": "84e986cd-73dc-4324-8639-1b97d491ce25",
       "name": "Mortuary"
     }
   },
@@ -116,8 +116,8 @@
     "model": "api.assettype",
     "pk": "93ce28ec-1c6f-4b3b-b9c1-1fdd14b14c71",
     "fields": {
-      "sub_category_id": "c0560b0a-cc7b-4d09-95b5-b31f2513142c",
-      "data_source_id": "84e986cd-73dc-4324-8639-1b97d491ce25",
+      "sub_category": "c0560b0a-cc7b-4d09-95b5-b31f2513142c",
+      "data_source": "84e986cd-73dc-4324-8639-1b97d491ce25",
       "name": "Fire brigade complex",
       "icon": "fa-fire-extinguisher"
     }
@@ -126,8 +126,8 @@
     "model": "api.assettype",
     "pk": "2bfa71aa-f1e5-4f09-a4a1-d201a1cf5bda",
     "fields": {
-      "sub_category_id": "314b2572-7755-4cb4-ae9c-60d12b27df60",
-      "data_source_id": "84e986cd-73dc-4324-8639-1b97d491ce25",
+      "sub_category": "314b2572-7755-4cb4-ae9c-60d12b27df60",
+      "data_source": "84e986cd-73dc-4324-8639-1b97d491ce25",
       "name": "Biomass power station",
       "icon": "fa-fire"
     }
@@ -136,8 +136,8 @@
     "model": "api.assettype",
     "pk": "4f5b26b5-bb30-49ad-bdc8-20d12a3edfc2",
     "fields": {
-      "sub_category_id": "314b2572-7755-4cb4-ae9c-60d12b27df60",
-      "data_source_id": "84e986cd-73dc-4324-8639-1b97d491ce25",
+      "sub_category": "314b2572-7755-4cb4-ae9c-60d12b27df60",
+      "data_source": "84e986cd-73dc-4324-8639-1b97d491ce25",
       "name": "Oil fired power generation complex",
       "icon": "fa-bolt-lightning"
     }
@@ -146,8 +146,8 @@
     "model": "api.assettype",
     "pk": "0cfdbbd6-7ff9-46d3-9cf5-c1c960a4a4ce",
     "fields": {
-      "sub_category_id": "314b2572-7755-4cb4-ae9c-60d12b27df60",
-      "data_source_id": "84e986cd-73dc-4324-8639-1b97d491ce25",
+      "sub_category": "314b2572-7755-4cb4-ae9c-60d12b27df60",
+      "data_source": "84e986cd-73dc-4324-8639-1b97d491ce25",
       "name": "Photovoltaic power generation complex",
       "icon": "fa-solar-panel"
     }
@@ -156,8 +156,8 @@
     "model": "api.assettype",
     "pk": "98ac0ed2-c86f-4eea-b236-02cf93ff5d10",
     "fields": {
-      "sub_category_id": "aa6b8a3b-2394-4e02-bc8a-b36c4b20e875",
-      "data_source_id": "d09b1db6-821b-400f-9297-e72529d5e9e3",
+      "sub_category": "aa6b8a3b-2394-4e02-bc8a-b36c4b20e875",
+      "data_source": "d09b1db6-821b-400f-9297-e72529d5e9e3",
       "name": "Hospital",
       "icon": "fa-hospital"
     }
@@ -166,8 +166,8 @@
     "model": "api.assettype",
     "pk": "6fd26d69-5f0b-4d8e-a949-57364b42e6b2",
     "fields": {
-      "sub_category_id": "aa6b8a3b-2394-4e02-bc8a-b36c4b20e875",
-      "data_source_id": "3b9b39b7-ff9a-4945-afb1-71672c89f43e",
+      "sub_category": "aa6b8a3b-2394-4e02-bc8a-b36c4b20e875",
+      "data_source": "3b9b39b7-ff9a-4945-afb1-71672c89f43e",
       "name": "Nursing home",
       "icon": "fa-person-cane"
     }
@@ -176,8 +176,8 @@
     "model": "api.assettype",
     "pk": "91f8cf4d-8f88-4cb8-bb04-efddccce95de",
     "fields": {
-      "sub_category_id": "aa6b8a3b-2394-4e02-bc8a-b36c4b20e875",
-      "data_source_id": "d71f0a80-fc1b-4206-a9f3-4d495dcd09e6",
+      "sub_category": "aa6b8a3b-2394-4e02-bc8a-b36c4b20e875",
+      "data_source": "d71f0a80-fc1b-4206-a9f3-4d495dcd09e6",
       "name": "Pharmaceutical dispensary",
       "icon": "fa-prescription-bottle-medical"
     }
@@ -186,8 +186,8 @@
     "model": "api.assettype",
     "pk": "a98e6e10-64dc-42f3-8450-09d2e2d0bc4d",
     "fields": {
-      "sub_category_id": "9f2c52b7-7d0a-4b10-8d83-5e2e8da3f621",
-      "data_source_id": "84e986cd-73dc-4324-8639-1b97d491ce25",
+      "sub_category": "9f2c52b7-7d0a-4b10-8d83-5e2e8da3f621",
+      "data_source": "84e986cd-73dc-4324-8639-1b97d491ce25",
       "name": "Industrial park",
       "icon": "fa-industry"
     }
@@ -196,8 +196,8 @@
     "model": "api.assettype",
     "pk": "3db4c594-76d8-480a-b52b-4f40d4d6b3da",
     "fields": {
-      "sub_category_id": "9f2c52b7-7d0a-4b10-8d83-5e2e8da3f621",
-      "data_source_id": "84e986cd-73dc-4324-8639-1b97d491ce25",
+      "sub_category": "9f2c52b7-7d0a-4b10-8d83-5e2e8da3f621",
+      "data_source": "84e986cd-73dc-4324-8639-1b97d491ce25",
       "name": "Industrial space",
       "icon": "fa-industry"
     }
@@ -206,8 +206,8 @@
     "model": "api.assettype",
     "pk": "49afc7ff-6126-4860-b893-6329a0cd6e49",
     "fields": {
-      "sub_category_id": "9f2c52b7-7d0a-4b10-8d83-5e2e8da3f621",
-      "data_source_id": "84e986cd-73dc-4324-8639-1b97d491ce25",
+      "sub_category": "9f2c52b7-7d0a-4b10-8d83-5e2e8da3f621",
+      "data_source": "84e986cd-73dc-4324-8639-1b97d491ce25",
       "name": "Retail kiosk"
     }
   },
@@ -215,7 +215,7 @@
     "model": "api.assettype",
     "pk": "fe2d123a-bb46-45c5-b3f4-73955e2b3fd9",
     "fields": {
-      "sub_category_id": "cd7cf4a8-22dc-4f9b-9b8b-f2e6eb9a4ef1",
+      "sub_category": "cd7cf4a8-22dc-4f9b-9b8b-f2e6eb9a4ef1",
       "name": "Further educational college",
       "icon": "fa-school"
     }
@@ -224,8 +224,8 @@
     "model": "api.assettype",
     "pk": "c0a30e0f-9f2a-4dc5-bb30-fbbafbfdbf4c",
     "fields": {
-      "sub_category_id": "cd7cf4a8-22dc-4f9b-9b8b-f2e6eb9a4ef1",
-      "data_source_id": "84e986cd-73dc-4324-8639-1b97d491ce25",
+      "sub_category": "cd7cf4a8-22dc-4f9b-9b8b-f2e6eb9a4ef1",
+      "data_source": "84e986cd-73dc-4324-8639-1b97d491ce25",
       "name": "Pre school",
       "icon": "fa-school"
     }
@@ -234,8 +234,8 @@
     "model": "api.assettype",
     "pk": "be893214-b517-45b0-92e8-362de90865cc",
     "fields": {
-      "sub_category_id": "cd7cf4a8-22dc-4f9b-9b8b-f2e6eb9a4ef1",
-      "data_source_id": "d09b1db6-821b-400f-9297-e72529d5e9e3",
+      "sub_category": "cd7cf4a8-22dc-4f9b-9b8b-f2e6eb9a4ef1",
+      "data_source": "d09b1db6-821b-400f-9297-e72529d5e9e3",
       "name": "Primary school",
       "icon": "fa-school"
     }
@@ -244,8 +244,8 @@
     "model": "api.assettype",
     "pk": "3df1452a-b1b3-4a39-9ac2-6b2a8303b6f0",
     "fields": {
-      "sub_category_id": "cd7cf4a8-22dc-4f9b-9b8b-f2e6eb9a4ef1",
-      "data_source_id": "d09b1db6-821b-400f-9297-e72529d5e9e3",
+      "sub_category": "cd7cf4a8-22dc-4f9b-9b8b-f2e6eb9a4ef1",
+      "data_source": "d09b1db6-821b-400f-9297-e72529d5e9e3",
       "name": "Secondary school",
       "icon": "fa-school-flag"
     }
@@ -254,8 +254,8 @@
     "model": "api.assettype",
     "pk": "22ec421d-d85a-48b8-9f17-ffda0ea4082d",
     "fields": {
-      "sub_category_id": "a7a17c9a-8e65-4c78-8b5c-4227de9de8e5",
-      "data_source_id": "84e986cd-73dc-4324-8639-1b97d491ce25",
+      "sub_category": "a7a17c9a-8e65-4c78-8b5c-4227de9de8e5",
+      "data_source": "84e986cd-73dc-4324-8639-1b97d491ce25",
       "name": "Pier"
     }
   },
@@ -263,8 +263,8 @@
     "model": "api.assettype",
     "pk": "27d0af04-2e76-4d26-8c5f-33899cf373ad",
     "fields": {
-      "sub_category_id": "a7a17c9a-8e65-4c78-8b5c-4227de9de8e5",
-      "data_source_id": "84e986cd-73dc-4324-8639-1b97d491ce25",
+      "sub_category": "a7a17c9a-8e65-4c78-8b5c-4227de9de8e5",
+      "data_source": "84e986cd-73dc-4324-8639-1b97d491ce25",
       "name": "Quay"
     }
   },
@@ -272,8 +272,8 @@
     "model": "api.assettype",
     "pk": "fd7ad4e5-0c77-4043-bcf7-03e244c688a5",
     "fields": {
-      "sub_category_id": "a7a17c9a-8e65-4c78-8b5c-4227de9de8e5",
-      "data_source_id": "84e986cd-73dc-4324-8639-1b97d491ce25",
+      "sub_category": "a7a17c9a-8e65-4c78-8b5c-4227de9de8e5",
+      "data_source": "84e986cd-73dc-4324-8639-1b97d491ce25",
       "name": "Slipway"
     }
   },
@@ -281,8 +281,8 @@
     "model": "api.assettype",
     "pk": "1f6d2c1e-0f6d-4b09-9a2e-3bfcf1e64b4a",
     "fields": {
-      "sub_category_id": "faed503a-bc59-4e63-bcc2-0f7e020d2063",
-      "data_source_id": "84e986cd-73dc-4324-8639-1b97d491ce25",
+      "sub_category": "faed503a-bc59-4e63-bcc2-0f7e020d2063",
+      "data_source": "84e986cd-73dc-4324-8639-1b97d491ce25",
       "name": "Motor vehicle fuelling or charging station",
       "icon": "fa-gas-pump"
     }
@@ -291,8 +291,8 @@
     "model": "api.assettype",
     "pk": "c83e79b2-1b36-4e9a-8971-4a521b45e29f",
     "fields": {
-      "sub_category_id": "aa6b8a3b-2394-4e02-bc8a-b36c4b20e875",
-      "data_source_id": "84e986cd-73dc-4324-8639-1b97d491ce25",
+      "sub_category": "aa6b8a3b-2394-4e02-bc8a-b36c4b20e875",
+      "data_source": "84e986cd-73dc-4324-8639-1b97d491ce25",
       "name": "Veterinary hospital",
       "icon": "fa-shield-dog"
     }
@@ -301,8 +301,8 @@
     "model": "api.assettype",
     "pk": "0ad824c1-d3d4-4f4b-8c72-7a5b04a7b623",
     "fields": {
-      "sub_category_id": "a22c10fd-c0cd-4722-a391-9df2a09db6ef",
-      "data_source_id": "84e986cd-73dc-4324-8639-1b97d491ce25",
+      "sub_category": "a22c10fd-c0cd-4722-a391-9df2a09db6ef",
+      "data_source": "84e986cd-73dc-4324-8639-1b97d491ce25",
       "name": "Waste disposal complex"
     }
   },
@@ -310,8 +310,8 @@
     "model": "api.assettype",
     "pk": "db10c6b5-bfb4-4d10-8c82-9296b7f123d8",
     "fields": {
-      "sub_category_id": "a4a13cc2-1b60-4b38-b7d7-d81c69c60d26",
-      "data_source_id": "84e986cd-73dc-4324-8639-1b97d491ce25",
+      "sub_category": "a4a13cc2-1b60-4b38-b7d7-d81c69c60d26",
+      "data_source": "84e986cd-73dc-4324-8639-1b97d491ce25",
       "name": "Community centre",
       "icon": "fa-school-flag"
     }
@@ -320,8 +320,8 @@
     "model": "api.assettype",
     "pk": "2ac8b7d2-5cde-4f93-8d45-65b7e8c92e09",
     "fields": {
-      "sub_category_id": "a4a13cc2-1b60-4b38-b7d7-d81c69c60d26",
-      "data_source_id": "84e986cd-73dc-4324-8639-1b97d491ce25",
+      "sub_category": "a4a13cc2-1b60-4b38-b7d7-d81c69c60d26",
+      "data_source": "84e986cd-73dc-4324-8639-1b97d491ce25",
       "name": "Outdoor sport complex"
     }
   },
@@ -329,8 +329,8 @@
     "model": "api.assettype",
     "pk": "a1efbfa2-84f1-41a5-9f06-b4a9d3c3b2a1",
     "fields": {
-      "sub_category_id": "a4a13cc2-1b60-4b38-b7d7-d81c69c60d26",
-      "data_source_id": "84e986cd-73dc-4324-8639-1b97d491ce25",
+      "sub_category": "a4a13cc2-1b60-4b38-b7d7-d81c69c60d26",
+      "data_source": "84e986cd-73dc-4324-8639-1b97d491ce25",
       "name": "Outdoor stadium"
     }
   },
@@ -338,8 +338,8 @@
     "model": "api.assettype",
     "pk": "3c1d1f99-22c6-4b5e-80c2-8c4c5b72f1bb",
     "fields": {
-      "sub_category_id": "a4a13cc2-1b60-4b38-b7d7-d81c69c60d26",
-      "data_source_id": "84e986cd-73dc-4324-8639-1b97d491ce25",
+      "sub_category": "a4a13cc2-1b60-4b38-b7d7-d81c69c60d26",
+      "data_source": "84e986cd-73dc-4324-8639-1b97d491ce25",
       "name": "Public park",
       "icon": "fa-dog"
     }
@@ -348,8 +348,8 @@
     "model": "api.assettype",
     "pk": "7f2b5a44-9f5d-44b2-8190-c1b1c8e59e7d",
     "fields": {
-      "sub_category_id": "a4a13cc2-1b60-4b38-b7d7-d81c69c60d26",
-      "data_source_id": "84e986cd-73dc-4324-8639-1b97d491ce25",
+      "sub_category": "a4a13cc2-1b60-4b38-b7d7-d81c69c60d26",
+      "data_source": "84e986cd-73dc-4324-8639-1b97d491ce25",
       "name": "Sports ground"
     }
   },
@@ -357,8 +357,8 @@
     "model": "api.assettype",
     "pk": "ea8c3b9e-7d5c-43a1-9860-9e3f9aefb4f7",
     "fields": {
-      "sub_category_id": "e0a82c52-7f31-414c-b86b-83c18a2fdb29",
-      "data_source_id": "84e986cd-73dc-4324-8639-1b97d491ce25",
+      "sub_category": "e0a82c52-7f31-414c-b86b-83c18a2fdb29",
+      "data_source": "84e986cd-73dc-4324-8639-1b97d491ce25",
       "name": "Hotel",
       "icon": "fa-square-h"
     }
@@ -367,8 +367,8 @@
     "model": "api.assettype",
     "pk": "f7c3d1b1-76a3-4b41-9e0c-2d4c2c3d5b6e",
     "fields": {
-      "sub_category_id": "c0560b0a-cc7b-4d09-95b5-b31f2513142c",
-      "data_source_id": "84e986cd-73dc-4324-8639-1b97d491ce25",
+      "sub_category": "c0560b0a-cc7b-4d09-95b5-b31f2513142c",
+      "data_source": "84e986cd-73dc-4324-8639-1b97d491ce25",
       "name": "Lifeboat station",
       "icon": "fa-life-ring"
     }
@@ -377,8 +377,8 @@
     "model": "api.assettype",
     "pk": "19b7f8c2-4a4d-4b4e-9f3c-3d3b2a4e5f6a",
     "fields": {
-      "sub_category_id": "e3a5cebb-6bc1-44ef-ae33-029f3731d7ad",
-      "data_source_id": "84e986cd-73dc-4324-8639-1b97d491ce25",
+      "sub_category": "e3a5cebb-6bc1-44ef-ae33-029f3731d7ad",
+      "data_source": "84e986cd-73dc-4324-8639-1b97d491ce25",
       "name": "Bridge"
     }
   },
@@ -386,8 +386,8 @@
     "model": "api.assettype",
     "pk": "5a6c7d8e-1234-4b56-9876-1a2b3c4d5e6f",
     "fields": {
-      "sub_category_id": "e3a5cebb-6bc1-44ef-ae33-029f3731d7ad",
-      "data_source_id": "741ad91d-d889-45f0-9d13-feaf7b134e56",
+      "sub_category": "e3a5cebb-6bc1-44ef-ae33-029f3731d7ad",
+      "data_source": "741ad91d-d889-45f0-9d13-feaf7b134e56",
       "name": "Bus station",
       "icon": "fa-bus"
     }
@@ -396,8 +396,8 @@
     "model": "api.assettype",
     "pk": "7b8c9d0e-2345-4c67-8765-2b3c4d5e6f7a",
     "fields": {
-      "sub_category_id": "e3a5cebb-6bc1-44ef-ae33-029f3731d7ad",
-      "data_source_id": "741ad91d-d889-45f0-9d13-feaf7b134e56",
+      "sub_category": "e3a5cebb-6bc1-44ef-ae33-029f3731d7ad",
+      "data_source": "741ad91d-d889-45f0-9d13-feaf7b134e56",
       "name": "Bus stop",
       "icon": "fa-bus"
     }
@@ -406,8 +406,8 @@
     "model": "api.assettype",
     "pk": "8c9d0e1f-3456-4d78-7654-3c4d5e6f7a8b",
     "fields": {
-      "sub_category_id": "e3a5cebb-6bc1-44ef-ae33-029f3731d7ad",
-      "data_source_id": "84e986cd-73dc-4324-8639-1b97d491ce25",
+      "sub_category": "e3a5cebb-6bc1-44ef-ae33-029f3731d7ad",
+      "data_source": "84e986cd-73dc-4324-8639-1b97d491ce25",
       "name": "Car park",
       "icon": "fa-square-parking"
     }
@@ -416,8 +416,8 @@
     "model": "api.assettype",
     "pk": "9d0e1f2a-4567-4e89-6543-4d5e6f7a8b9c",
     "fields": {
-      "sub_category_id": "e3a5cebb-6bc1-44ef-ae33-029f3731d7ad",
-      "data_source_id": "84e986cd-73dc-4324-8639-1b97d491ce25",
+      "sub_category": "e3a5cebb-6bc1-44ef-ae33-029f3731d7ad",
+      "data_source": "84e986cd-73dc-4324-8639-1b97d491ce25",
       "name": "Culvert"
     }
   },
@@ -425,8 +425,8 @@
     "model": "api.assettype",
     "pk": "0e1f2a3b-5678-4f9a-5432-5e6f7a8b9c0d",
     "fields": {
-      "sub_category_id": "e3a5cebb-6bc1-44ef-ae33-029f3731d7ad",
-      "data_source_id": "84e986cd-73dc-4324-8639-1b97d491ce25",
+      "sub_category": "e3a5cebb-6bc1-44ef-ae33-029f3731d7ad",
+      "data_source": "84e986cd-73dc-4324-8639-1b97d491ce25",
       "name": "Cycle track"
     }
   },
@@ -434,8 +434,8 @@
     "model": "api.assettype",
     "pk": "1f2a3b4c-6789-4a0b-4321-6f7a8b9c0d1e",
     "fields": {
-      "sub_category_id": "e3a5cebb-6bc1-44ef-ae33-029f3731d7ad",
-      "data_source_id": "741ad91d-d889-45f0-9d13-feaf7b134e56",
+      "sub_category": "e3a5cebb-6bc1-44ef-ae33-029f3731d7ad",
+      "data_source": "741ad91d-d889-45f0-9d13-feaf7b134e56",
       "name": "Ferry port",
       "icon": "fa-ship"
     }
@@ -444,8 +444,8 @@
     "model": "api.assettype",
     "pk": "2a3b4c5d-7890-4b1c-3210-7a8b9c0d1e2f",
     "fields": {
-      "sub_category_id": "e3a5cebb-6bc1-44ef-ae33-029f3731d7ad",
-      "data_source_id": "84e986cd-73dc-4324-8639-1b97d491ce25",
+      "sub_category": "e3a5cebb-6bc1-44ef-ae33-029f3731d7ad",
+      "data_source": "84e986cd-73dc-4324-8639-1b97d491ce25",
       "name": "Heavy rail complex"
     }
   },
@@ -453,8 +453,8 @@
     "model": "api.assettype",
     "pk": "3b4c5d6e-8901-4c2d-210f-8b9c0d1e2f3a",
     "fields": {
-      "sub_category_id": "e3a5cebb-6bc1-44ef-ae33-029f3731d7ad",
-      "data_source_id": "84e986cd-73dc-4324-8639-1b97d491ce25",
+      "sub_category": "e3a5cebb-6bc1-44ef-ae33-029f3731d7ad",
+      "data_source": "84e986cd-73dc-4324-8639-1b97d491ce25",
       "name": "Highway roundabout",
       "icon": "fa-circle-dashed"
     }
@@ -463,8 +463,8 @@
     "model": "api.assettype",
     "pk": "4c5d6e7f-9012-4d3e-10e0-9c0d1e2f3a4b",
     "fields": {
-      "sub_category_id": "e3a5cebb-6bc1-44ef-ae33-029f3731d7ad",
-      "data_source_id": "84e986cd-73dc-4324-8639-1b97d491ce25",
+      "sub_category": "e3a5cebb-6bc1-44ef-ae33-029f3731d7ad",
+      "data_source": "84e986cd-73dc-4324-8639-1b97d491ce25",
       "name": "Level crossing"
     }
   },
@@ -472,8 +472,8 @@
     "model": "api.assettype",
     "pk": "5d6e7f8a-0123-4e4f-0f1f-0d1e2f3a4b5c",
     "fields": {
-      "sub_category_id": "e3a5cebb-6bc1-44ef-ae33-029f3731d7ad",
-      "data_source_id": "84e986cd-73dc-4324-8639-1b97d491ce25",
+      "sub_category": "e3a5cebb-6bc1-44ef-ae33-029f3731d7ad",
+      "data_source": "84e986cd-73dc-4324-8639-1b97d491ce25",
       "name": "Low bridge"
     }
   },
@@ -481,8 +481,8 @@
     "model": "api.assettype",
     "pk": "6e7f8a9b-1234-4f50-1e2e-1e2f3a4b5c6d",
     "fields": {
-      "sub_category_id": "e3a5cebb-6bc1-44ef-ae33-029f3731d7ad",
-      "data_source_id": "84e986cd-73dc-4324-8639-1b97d491ce25",
+      "sub_category": "e3a5cebb-6bc1-44ef-ae33-029f3731d7ad",
+      "data_source": "84e986cd-73dc-4324-8639-1b97d491ce25",
       "name": "Railway junction",
       "icon": "fa-train"
     }
@@ -491,8 +491,8 @@
     "model": "api.assettype",
     "pk": "7f8a9b0c-2345-4051-2d3d-2f3a4b5c6d7e",
     "fields": {
-      "sub_category_id": "e3a5cebb-6bc1-44ef-ae33-029f3731d7ad",
-      "data_source_id": "741ad91d-d889-45f0-9d13-feaf7b134e56",
+      "sub_category": "e3a5cebb-6bc1-44ef-ae33-029f3731d7ad",
+      "data_source": "741ad91d-d889-45f0-9d13-feaf7b134e56",
       "name": "Railway station",
       "icon": "fa-train"
     }
@@ -501,8 +501,8 @@
     "model": "api.assettype",
     "pk": "8a9b0c1d-3456-4152-3c4c-3a4b5c6d7e8f",
     "fields": {
-      "sub_category_id": "e3a5cebb-6bc1-44ef-ae33-029f3731d7ad",
-      "data_source_id": "84e986cd-73dc-4324-8639-1b97d491ce25",
+      "sub_category": "e3a5cebb-6bc1-44ef-ae33-029f3731d7ad",
+      "data_source": "84e986cd-73dc-4324-8639-1b97d491ce25",
       "name": "Road"
     }
   },
@@ -510,8 +510,8 @@
     "model": "api.assettype",
     "pk": "9b0c1d2e-4567-4253-4b5b-4b5c6d7e8f9a",
     "fields": {
-      "sub_category_id": "e3a5cebb-6bc1-44ef-ae33-029f3731d7ad",
-      "data_source_id": "84e986cd-73dc-4324-8639-1b97d491ce25",
+      "sub_category": "e3a5cebb-6bc1-44ef-ae33-029f3731d7ad",
+      "data_source": "84e986cd-73dc-4324-8639-1b97d491ce25",
       "name": "Tunnel"
     }
   },
@@ -519,8 +519,8 @@
     "model": "api.assettype",
     "pk": "d1f3c5a7-8b9e-4c2a-91b2-6a3e5d4f1c2b",
     "fields": {
-      "sub_category_id": "faed503a-bc59-4e63-bcc2-0f7e020d2063",
-      "data_source_id": "84e986cd-73dc-4324-8639-1b97d491ce25",
+      "sub_category": "faed503a-bc59-4e63-bcc2-0f7e020d2063",
+      "data_source": "84e986cd-73dc-4324-8639-1b97d491ce25",
       "name": "Gas distribution complex",
       "icon": "fa-fire-flame-simple"
     }
@@ -529,8 +529,8 @@
     "model": "api.assettype",
     "pk": "a2b3c4d5-6e7f-4890-1234-56789abcdef0",
     "fields": {
-      "sub_category_id": "faed503a-bc59-4e63-bcc2-0f7e020d2063",
-      "data_source_id": "32468a38-6ec5-403f-931e-a777ac84b115",
+      "sub_category": "faed503a-bc59-4e63-bcc2-0f7e020d2063",
+      "data_source": "32468a38-6ec5-403f-931e-a777ac84b115",
       "name": "High voltage electricity substation complex",
       "icon": "fa-bolt-lightning"
     }
@@ -539,8 +539,8 @@
     "model": "api.assettype",
     "pk": "b3c4d5e6-7f80-4901-2345-6789abcdef01",
     "fields": {
-      "sub_category_id": "faed503a-bc59-4e63-bcc2-0f7e020d2063",
-      "data_source_id": "84e986cd-73dc-4324-8639-1b97d491ce25",
+      "sub_category": "faed503a-bc59-4e63-bcc2-0f7e020d2063",
+      "data_source": "84e986cd-73dc-4324-8639-1b97d491ce25",
       "name": "Liquid fuel storage complex",
       "icon": "fa-database"
     }
@@ -549,8 +549,8 @@
     "model": "api.assettype",
     "pk": "c4d5e6f7-8091-4a12-3456-789abcdef012",
     "fields": {
-      "sub_category_id": "faed503a-bc59-4e63-bcc2-0f7e020d2063",
-      "data_source_id": "84e986cd-73dc-4324-8639-1b97d491ce25",
+      "sub_category": "faed503a-bc59-4e63-bcc2-0f7e020d2063",
+      "data_source": "84e986cd-73dc-4324-8639-1b97d491ce25",
       "name": "Low voltage electricity substation complex",
       "icon": "fa-bolt-lightning"
     }
@@ -559,8 +559,8 @@
     "model": "api.assettype",
     "pk": "d5e6f708-9102-4b23-4567-89abcdef0123",
     "fields": {
-      "sub_category_id": "faed503a-bc59-4e63-bcc2-0f7e020d2063",
-      "data_source_id": "84e986cd-73dc-4324-8639-1b97d491ce25",
+      "sub_category": "faed503a-bc59-4e63-bcc2-0f7e020d2063",
+      "data_source": "84e986cd-73dc-4324-8639-1b97d491ce25",
       "name": "Minor substation",
       "icon": "fa-bolt-lightning"
     }
@@ -569,8 +569,8 @@
     "model": "api.assettype",
     "pk": "e6f70819-1023-4c34-5678-9abcdef01234",
     "fields": {
-      "sub_category_id": "faed503a-bc59-4e63-bcc2-0f7e020d2063",
-      "data_source_id": "84e986cd-73dc-4324-8639-1b97d491ce25",
+      "sub_category": "faed503a-bc59-4e63-bcc2-0f7e020d2063",
+      "data_source": "84e986cd-73dc-4324-8639-1b97d491ce25",
       "name": "Pylon",
       "icon": "fa-bolt-lightning"
     }
@@ -579,8 +579,8 @@
     "model": "api.assettype",
     "pk": "f708192a-2345-4d45-6789-abcdef012345",
     "fields": {
-      "sub_category_id": "faed503a-bc59-4e63-bcc2-0f7e020d2063",
-      "data_source_id": "84e986cd-73dc-4324-8639-1b97d491ce25",
+      "sub_category": "faed503a-bc59-4e63-bcc2-0f7e020d2063",
+      "data_source": "84e986cd-73dc-4324-8639-1b97d491ce25",
       "name": "Telecommunications complex",
       "icon": "fa-phone"
     }
@@ -589,8 +589,8 @@
     "model": "api.assettype",
     "pk": "08192a3b-3456-4e56-789a-bcdef0123456",
     "fields": {
-      "sub_category_id": "faed503a-bc59-4e63-bcc2-0f7e020d2063",
-      "data_source_id": "84e986cd-73dc-4324-8639-1b97d491ce25",
+      "sub_category": "faed503a-bc59-4e63-bcc2-0f7e020d2063",
+      "data_source": "84e986cd-73dc-4324-8639-1b97d491ce25",
       "name": "Telecommunications exchange",
       "icon": "fa-phone"
     }
@@ -599,8 +599,8 @@
     "model": "api.assettype",
     "pk": "192a3b4c-4567-4f67-89ab-cdef01234567",
     "fields": {
-      "sub_category_id": "faed503a-bc59-4e63-bcc2-0f7e020d2063",
-      "data_source_id": "84e986cd-73dc-4324-8639-1b97d491ce25",
+      "sub_category": "faed503a-bc59-4e63-bcc2-0f7e020d2063",
+      "data_source": "84e986cd-73dc-4324-8639-1b97d491ce25",
       "name": "Transmission line"
     }
   },
@@ -608,8 +608,8 @@
     "model": "api.assettype",
     "pk": "aa7ce68f-74c8-4500-a1f3-c2558366a64e",
     "fields": {
-      "sub_category_id": "faed503a-bc59-4e63-bcc2-0f7e020d2063",
-      "data_source_id": "84e986cd-73dc-4324-8639-1b97d491ce25",
+      "sub_category": "faed503a-bc59-4e63-bcc2-0f7e020d2063",
+      "data_source": "84e986cd-73dc-4324-8639-1b97d491ce25",
       "name": "Water distribution complex",
       "icon": "fa-droplet"
     }
@@ -618,8 +618,8 @@
     "model": "api.assettype",
     "pk": "600d93c1-4be0-4a28-b5d0-501b53b2953d",
     "fields": {
-      "sub_category_id": "faed503a-bc59-4e63-bcc2-0f7e020d2063",
-      "data_source_id": "84e986cd-73dc-4324-8639-1b97d491ce25",
+      "sub_category": "faed503a-bc59-4e63-bcc2-0f7e020d2063",
+      "data_source": "84e986cd-73dc-4324-8639-1b97d491ce25",
       "name": "Water extraction complex",
       "icon": "fa-tint"
     }
@@ -628,8 +628,8 @@
     "model": "api.assettype",
     "pk": "55a2567c-a127-4488-90f1-039fffe51d74",
     "fields": {
-      "sub_category_id": "faed503a-bc59-4e63-bcc2-0f7e020d2063",
-      "data_source_id": "84e986cd-73dc-4324-8639-1b97d491ce25",
+      "sub_category": "faed503a-bc59-4e63-bcc2-0f7e020d2063",
+      "data_source": "84e986cd-73dc-4324-8639-1b97d491ce25",
       "name": "Water reservoir",
       "icon": "fa-tint"
     }
@@ -638,8 +638,8 @@
     "model": "api.assettype",
     "pk": "8834842c-7034-44b6-9a16-67b7c4f5ecdd",
     "fields": {
-      "sub_category_id": "a22c10fd-c0cd-4722-a391-9df2a09db6ef",
-      "data_source_id": "84e986cd-73dc-4324-8639-1b97d491ce25",
+      "sub_category": "a22c10fd-c0cd-4722-a391-9df2a09db6ef",
+      "data_source": "84e986cd-73dc-4324-8639-1b97d491ce25",
       "name": "Wastewater collection network",
       "icon": "fa-tint"
     }
@@ -648,8 +648,8 @@
     "model": "api.assettype",
     "pk": "a13f7876-c2ea-4f6c-8ea4-1e8be6082a36",
     "fields": {
-      "sub_category_id": "a22c10fd-c0cd-4722-a391-9df2a09db6ef",
-      "data_source_id": "84e986cd-73dc-4324-8639-1b97d491ce25",
+      "sub_category": "a22c10fd-c0cd-4722-a391-9df2a09db6ef",
+      "data_source": "84e986cd-73dc-4324-8639-1b97d491ce25",
       "name": "Wastewater disposal complex",
       "icon": "fa-truck"
     }
@@ -658,8 +658,8 @@
     "model": "api.assettype",
     "pk": "23baf52b-ef94-4932-a441-1aa5f0a33fa2",
     "fields": {
-      "sub_category_id": "a22c10fd-c0cd-4722-a391-9df2a09db6ef",
-      "data_source_id": "84e986cd-73dc-4324-8639-1b97d491ce25",
+      "sub_category": "a22c10fd-c0cd-4722-a391-9df2a09db6ef",
+      "data_source": "84e986cd-73dc-4324-8639-1b97d491ce25",
       "name": "Wastewater treatment complex",
       "icon": "fa-truck-droplet"
     }

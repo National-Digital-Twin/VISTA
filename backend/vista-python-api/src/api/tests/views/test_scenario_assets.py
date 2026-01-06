@@ -41,21 +41,21 @@ def asset_type_setup(db):  # noqa: ARG001
     """Create test asset types."""
     category = AssetCategory.objects.create(id=uuid.uuid4(), name="Infrastructure")
     sub_category = AssetSubCategory.objects.create(
-        id=uuid.uuid4(), name="Energy", category_id=category
+        id=uuid.uuid4(), name="Energy", category=category
     )
     data_source = DataSource.objects.create(id=uuid.uuid4(), name="Test Source")
 
     station_type = AssetType.objects.create(
         id=uuid.uuid4(),
         name="Stations",
-        sub_category_id=sub_category,
-        data_source_id=data_source,
+        sub_category=sub_category,
+        data_source=data_source,
     )
     pylon_type = AssetType.objects.create(
         id=uuid.uuid4(),
         name="Pylons",
-        sub_category_id=sub_category,
-        data_source_id=data_source,
+        sub_category=sub_category,
+        data_source=data_source,
     )
 
     return {
@@ -92,20 +92,20 @@ def asset_types_for_scenario(db):  # noqa: ARG001
     """Create asset types for testing."""
     category = AssetCategory.objects.create(id=uuid.uuid4(), name="Test Category")
     sub_category = AssetSubCategory.objects.create(
-        id=uuid.uuid4(), name="Test SubCategory", category_id=category
+        id=uuid.uuid4(), name="Test SubCategory", category=category
     )
     data_source = DataSource.objects.create(id=uuid.uuid4(), name="Test Source")
     rail_type = AssetType.objects.create(
         id=uuid.uuid4(),
         name="Rail Stations",
-        sub_category_id=sub_category,
-        data_source_id=data_source,
+        sub_category=sub_category,
+        data_source=data_source,
     )
     hospital_type = AssetType.objects.create(
         id=uuid.uuid4(),
         name="Hospitals",
-        sub_category_id=sub_category,
-        data_source_id=data_source,
+        sub_category=sub_category,
+        data_source=data_source,
     )
     return {"rail": rail_type, "hospital": hospital_type}
 
@@ -812,27 +812,27 @@ def score_test_types(db):  # noqa: ARG001
     """Create asset types for score filtering tests."""
     category = AssetCategory.objects.create(id=uuid.uuid4(), name="Score Test Category")
     sub_category = AssetSubCategory.objects.create(
-        id=uuid.uuid4(), name="Score Test SubCategory", category_id=category
+        id=uuid.uuid4(), name="Score Test SubCategory", category=category
     )
     data_source = DataSource.objects.create(id=uuid.uuid4(), name="Score Test Source")
 
     station_type = AssetType.objects.create(
         id=uuid.uuid4(),
         name="Score Stations",
-        sub_category_id=sub_category,
-        data_source_id=data_source,
+        sub_category=sub_category,
+        data_source=data_source,
     )
     pylon_type = AssetType.objects.create(
         id=uuid.uuid4(),
         name="Score Pylons",
-        sub_category_id=sub_category,
-        data_source_id=data_source,
+        sub_category=sub_category,
+        data_source=data_source,
     )
     hospital_type = AssetType.objects.create(
         id=uuid.uuid4(),
         name="Score Hospitals",
-        sub_category_id=sub_category,
-        data_source_id=data_source,
+        sub_category=sub_category,
+        data_source=data_source,
     )
 
     return {
@@ -1176,27 +1176,27 @@ def test_complex_multi_focus_area_with_overlaps_and_filters(
     # Create asset types
     category = AssetCategory.objects.create(id=uuid.uuid4(), name="Complex Test Category")
     sub_category = AssetSubCategory.objects.create(
-        id=uuid.uuid4(), name="Complex Test SubCategory", category_id=category
+        id=uuid.uuid4(), name="Complex Test SubCategory", category=category
     )
     data_source = DataSource.objects.create(id=uuid.uuid4(), name="Complex Test Source")
 
     station_type = AssetType.objects.create(
         id=uuid.uuid4(),
         name="Complex Stations",
-        sub_category_id=sub_category,
-        data_source_id=data_source,
+        sub_category=sub_category,
+        data_source=data_source,
     )
     pylon_type = AssetType.objects.create(
         id=uuid.uuid4(),
         name="Complex Pylons",
-        sub_category_id=sub_category,
-        data_source_id=data_source,
+        sub_category=sub_category,
+        data_source=data_source,
     )
     hospital_type = AssetType.objects.create(
         id=uuid.uuid4(),
         name="Complex Hospitals",
-        sub_category_id=sub_category,
-        data_source_id=data_source,
+        sub_category=sub_category,
+        data_source=data_source,
     )
 
     # Create ScenarioAsset records for scores
@@ -1475,14 +1475,14 @@ def test_exposure_filter_uses_user_specific_scores(scenario, mock_user_id, clien
     # Create asset type and scenario asset
     category = AssetCategory.objects.create(id=uuid.uuid4(), name="Exposure Test Category")
     sub_category = AssetSubCategory.objects.create(
-        id=uuid.uuid4(), name="Exposure Test SubCat", category_id=category
+        id=uuid.uuid4(), name="Exposure Test SubCat", category=category
     )
     data_source = DataSource.objects.create(id=uuid.uuid4(), name="Exposure Test Source")
     asset_type = AssetType.objects.create(
         id=uuid.uuid4(),
         name="Exposure Test Assets",
-        sub_category_id=sub_category,
-        data_source_id=data_source,
+        sub_category=sub_category,
+        data_source=data_source,
     )
     ScenarioAsset.objects.create(scenario=scenario, asset_type=asset_type, criticality_score=3)
 

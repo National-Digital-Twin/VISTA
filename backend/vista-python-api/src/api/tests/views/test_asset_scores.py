@@ -106,12 +106,12 @@ def mock_user_id():
 def fixture(db):  # noqa: ARG001
     """Create sample scenarios."""
     cat = AssetCategory.objects.create(id=uuid.uuid4(), name="Cat")
-    sub_cat = AssetSubCategory.objects.create(category_id=cat, id=uuid.uuid4(), name="SubCat")
+    sub_cat = AssetSubCategory.objects.create(category=cat, id=uuid.uuid4(), name="SubCat")
     scenario1 = Scenario.objects.create(name="Scenario1", is_active=True)
     scenario2 = Scenario.objects.create(name="Scenario2", is_active=False)
 
     type_substation = AssetType.objects.create(
-        id=uuid.uuid4(), name="Substations", sub_category_id=sub_cat
+        id=uuid.uuid4(), name="Substations", sub_category=sub_cat
     )
     asset1 = Asset.objects.create(
         external_id=uuid.uuid4(),
@@ -121,7 +121,7 @@ def fixture(db):  # noqa: ARG001
         type=type_substation,
     )
     type_wastewater_collection = AssetType.objects.create(
-        id=uuid.uuid4(), name="Wastewater Collections", sub_category_id=sub_cat
+        id=uuid.uuid4(), name="Wastewater Collections", sub_category=sub_cat
     )
     asset2 = Asset.objects.create(
         external_id=uuid.uuid4(),
@@ -131,9 +131,7 @@ def fixture(db):  # noqa: ARG001
         type=type_wastewater_collection,
     )
 
-    type_stadium = AssetType.objects.create(
-        id=uuid.uuid4(), name="Stadiums", sub_category_id=sub_cat
-    )
+    type_stadium = AssetType.objects.create(id=uuid.uuid4(), name="Stadiums", sub_category=sub_cat)
     asset3 = Asset.objects.create(
         external_id=uuid.uuid4(),
         id=uuid.uuid4(),
