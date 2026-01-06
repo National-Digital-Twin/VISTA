@@ -3,15 +3,23 @@ import { StrictMode } from 'react';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { MapProvider } from 'react-map-gl/maplibre';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider, QueryCache, MutationCache } from '@tanstack/react-query';
 import { ApolloProvider } from '@apollo/client/react';
 import apolloClient from '@/api/apollo-client';
 import App from '@/App';
 import DevTools from '@/components/DevTools';
+import SessionMonitorProvider from '@/providers/SessionMonitorProvider';
 import theme from '@/theme';
+import { handleAuthError } from '@/utils/authErrorHandler';
 import './index.css';
 
 const queryClient = new QueryClient({
+    queryCache: new QueryCache({
+        onError: handleAuthError,
+    }),
+    mutationCache: new MutationCache({
+        onError: handleAuthError,
+    }),
     defaultOptions: {
         queries: {
             staleTime: Infinity,
@@ -35,11 +43,13 @@ root.render(
             <CssBaseline />
             <ApolloProvider client={apolloClient}>
                 <QueryClientProvider client={queryClient}>
-                    <DevTools enabled={!import.meta.env.PROD}>
-                        <MapProvider>
-                            <App />
-                        </MapProvider>
-                    </DevTools>
+                    <SessionMonitorProvider>
+                        <DevTools enabled={!import.meta.env.PROD}>
+                            <MapProvider>
+                                <App />
+                            </MapProvider>
+                        </DevTools>
+                    </SessionMonitorProvider>
                 </QueryClientProvider>
             </ApolloProvider>
         </ThemeProvider>
