@@ -30,14 +30,14 @@ def asset_type(db):  # noqa: ARG001
     """Create a sample asset type."""
     category = AssetCategory.objects.create(id=uuid.uuid4(), name="Test Category")
     sub_category = AssetSubCategory.objects.create(
-        id=uuid.uuid4(), name="Test SubCategory", category_id=category
+        id=uuid.uuid4(), name="Test SubCategory", category=category
     )
     data_source = DataSource.objects.create(id=uuid.uuid4(), name="Test Source")
     return AssetType.objects.create(
         id=uuid.uuid4(),
         name="Rail Stations",
-        sub_category_id=sub_category,
-        data_source_id=data_source,
+        sub_category=sub_category,
+        data_source=data_source,
     )
 
 
