@@ -12,91 +12,121 @@
         "cqlFilter": "description='Commercial Building' AND buildinguse='Commercial Activity: Retail'"
     },
     {
-        "description": ["Telephone Exchange"],
+        "description": [
+            "Telephone Exchange"
+        ],
         "type": "08192a3b-3456-4e56-789a-bcdef0123456",
         "source": "os_ngd",
         "collection": "bld-fts-building-4"
     },
     {
-        "description": ["Telecommunications Facility"],
+        "description": [
+            "Telecommunications Facility"
+        ],
         "type": "f708192a-2345-4d45-6789-abcdef012345",
         "source": "os_ngd",
         "collection": "bld-fts-building-4"
     },
     {
-        "description": ["Water Distribution Facility"],
+        "description": [
+            "Water Distribution Facility"
+        ],
         "type": "aa7ce68f-74c8-4500-a1f3-c2558366a64e",
         "source": "os_ngd",
         "collection": "bld-fts-building-4"
     },
     {
-        "description": ["Water Treatment Facility"],
+        "description": [
+            "Water Treatment Facility"
+        ],
         "type": "600d93c1-4be0-4a28-b5d0-501b53b2953d",
         "source": "os_ngd",
         "collection": "bld-fts-building-4"
     },
     {
-        "description": ["Waste Water Treatment Works"],
+        "description": [
+            "Waste Water Treatment Works"
+        ],
         "type": "23baf52b-ef94-4932-a441-1aa5f0a33fa2",
         "source": "os_ngd",
         "collection": "bld-fts-building-4"
     },
     {
-        "description": ["Animal Treatment Site"],
+        "description": [
+            "Animal Treatment Site"
+        ],
         "type": "c83e79b2-1b36-4e9a-8971-4a521b45e29f",
         "source": "os_ngd",
         "collection": "lus-fts-site-2"
     },
     {
-        "description": ["Solar Power Facility"],
+        "description": [
+            "Solar Power Facility"
+        ],
         "type": "0cfdbbd6-7ff9-46d3-9cf5-c1c960a4a4ce",
         "source": "os_ngd",
         "collection": "bld-fts-building-4"
     },
     {
-        "description": ["Children's Nursery"],
+        "description": [
+            "Children's Nursery"
+        ],
         "type": "c0a30e0f-9f2a-4dc5-bb30-fbbafbfdbf4c",
         "source": "os_ngd",
         "collection": "bld-fts-building-4"
     },
     {
-        "description": ["Crematorium"],
+        "description": [
+            "Crematorium"
+        ],
         "type": "5eb80725-0c4d-4c54-8a7f-5b7cdd39d08f",
         "source": "os_ngd",
         "collection": "bld-fts-building-4"
     },
     {
-        "description": ["Sports Or Exercise Facility"],
+        "description": [
+            "Sports Or Exercise Facility"
+        ],
         "type": "a1efbfa2-84f1-41a5-9f06-b4a9d3c3b2a1",
         "source": "os_ngd",
         "collection": "bld-fts-building-4"
     },
     {
-        "description": ["Sports Pavilion"],
+        "description": [
+            "Sports Pavilion"
+        ],
         "type": "7f2b5a44-9f5d-44b2-8190-c1b1c8e59e7d",
         "source": "os_ngd",
         "collection": "bld-fts-building-4"
     },
     {
-        "description": ["Community Meeting Place"],
+        "description": [
+            "Community Meeting Place"
+        ],
         "type": "db10c6b5-bfb4-4d10-8c82-9296b7f123d8",
         "source": "os_ngd",
         "collection": "bld-fts-building-4"
     },
     {
-        "description": ["Temporary Or Holiday Accommodation Building"],
+        "description": [
+            "Temporary Or Holiday Accommodation Building"
+        ],
         "type": "ea8c3b9e-7d5c-43a1-9860-9e3f9aefb4f7",
         "source": "os_ngd",
         "collection": "bld-fts-building-4"
     },
     {
-        "description": ["Lifeboat Station"],
+        "description": [
+            "Lifeboat Station"
+        ],
         "type": "f7c3d1b1-76a3-4b41-9e0c-2d4c2c3d5b6e",
         "source": "os_ngd",
         "collection": "bld-fts-building-4"
     },
     {
-        "description": ["Fire Station"],
+        "description": [
+            "Fire Station"
+        ],
         "type": "93ce28ec-1c6f-4b3b-b9c1-1fdd14b14c71",
         "source": "os_ngd",
         "collection": "bld-fts-building-4"
@@ -105,16 +135,21 @@
         "type": "8a9b0c1d-3456-4152-3c4c-3a4b5c6d7e8f",
         "source": "os_ngd",
         "collection": "trn-ntwk-street-1",
-        "classificationField": "roadclassification"
+        "classificationField": "roadclassification",
+        "nameField": "designatedname1_text"
     },
     {
-        "description": ["Roundabout"],
+        "description": [
+            "Roundabout"
+        ],
         "type": "3b4c5d6e-8901-4c2d-210f-8b9c0d1e2f3a",
         "source": "os_ngd",
         "collection": "trn-ntwk-roadlink-4"
     },
     {
-        "description": ["Bridge"],
+        "description": [
+            "Bridge"
+        ],
         "type": "19b7f8c2-4a4d-4b4e-9f3c-3d3b2a4e5f6a",
         "source": "os_ngd",
         "collection": "str-fts-compoundstructure-2"
@@ -132,13 +167,17 @@
         "classificationField": "description"
     },
     {
-        "description": ["Junction"],
+        "description": [
+            "Junction"
+        ],
         "type": "6e7f8a9b-1234-4f50-1e2e-1e2f3a4b5c6d",
         "source": "os_ngd",
         "collection": "trn-ntwk-railwaynode-1"
     },
     {
-        "description": ["Drain"],
+        "description": [
+            "Drain"
+        ],
         "type": "9d0e1f2a-4567-4e89-6543-4d5e6f7a8b9c",
         "source": "os_ngd",
         "collection": "wtr-ntwk-waterlink-1",
@@ -150,7 +189,9 @@
         ]
     },
     {
-        "description": ["Watercourse"],
+        "description": [
+            "Watercourse"
+        ],
         "type": "9d0e1f2a-4567-4e89-6543-4d5e6f7a8b9c",
         "source": "os_ngd",
         "collection": "wtr-ntwk-waterlink-1",
@@ -162,7 +203,9 @@
         ]
     },
     {
-        "description": ["Leat"],
+        "description": [
+            "Leat"
+        ],
         "type": "9d0e1f2a-4567-4e89-6543-4d5e6f7a8b9c",
         "source": "os_ngd",
         "collection": "wtr-ntwk-waterlink-1",
@@ -174,25 +217,33 @@
         ]
     },
     {
-        "description": ["Level Crossing Fully Barriered"],
+        "description": [
+            "Level Crossing Fully Barriered"
+        ],
         "type": "4c5d6e7f-9012-4d3e-10e0-9c0d1e2f3a4b",
         "source": "os_ngd",
         "collection": "trn-rami-routingstructure-1"
     },
     {
-        "description": ["Level Crossing Part Barriered"],
+        "description": [
+            "Level Crossing Part Barriered"
+        ],
         "type": "4c5d6e7f-9012-4d3e-10e0-9c0d1e2f3a4b",
         "source": "os_ngd",
         "collection": "trn-rami-routingstructure-1"
     },
     {
-        "description": ["Level Crossing Unbarriered"],
+        "description": [
+            "Level Crossing Unbarriered"
+        ],
         "type": "4c5d6e7f-9012-4d3e-10e0-9c0d1e2f3a4b",
         "source": "os_ngd",
         "collection": "trn-rami-routingstructure-1"
     },
     {
-        "description": ["Slipway"],
+        "description": [
+            "Slipway"
+        ],
         "type": "fd7ad4e5-0c77-4043-bcf7-03e244c688a5",
         "source": "os_ngd",
         "collection": "lnd-fts-land-3"
@@ -204,49 +255,66 @@
         "collection": "trn-ntwk-roadlink-4"
     },
     {
-        "description": ["Cycle Track Or Cycle Way"],
+        "description": [
+            "Cycle Track Or Cycle Way"
+        ],
         "type": "0e1f2a3b-5678-4f9a-5432-5e6f7a8b9c0d",
         "source": "os_ngd",
         "collection": "trn-rami-highwaydedication-1"
     },
     {
-        "description": ["Named Woodland Or Forest"],
+        "description": [
+            "Named Woodland Or Forest"
+        ],
         "type": "b82184b3-864f-4991-8e6e-b2b8c62b2c67",
         "source": "os_ngd",
         "collection": "gnm-fts-namedarea-1"
     },
     {
-        "description": ["Named Hill Or Mountain"],
+        "description": [
+            "Named Hill Or Mountain"
+        ],
         "type": "b1b70277-cccb-45c4-a0de-94692b871894",
         "source": "os_ngd",
         "collection": "gnm-fts-namedarea-1"
     },
     {
-        "description": ["Open Reservoir"],
+        "description": [
+            "Open Reservoir"
+        ],
         "type": "55a2567c-a127-4488-90f1-039fffe51d74",
         "source": "os_ngd",
         "collection": "wtr-fts-water-3"
     },
     {
-        "description": ["Filling Station", "Vehicle Charging Site"],
+        "description": [
+            "Filling Station",
+            "Vehicle Charging Site"
+        ],
         "type": "1f6d2c1e-0f6d-4b09-9a2e-3bfcf1e64b4a",
         "source": "os_ngd",
         "collection": "lus-fts-site-2"
     },
     {
-        "description": ["Mortuary"],
+        "description": [
+            "Mortuary"
+        ],
         "type": "2c0b6f61-1a45-4694-a09a-35ab65e2df60",
         "source": "os_ngd",
         "collection": "lus-fts-site-2"
     },
     {
-        "description": ["Marina"],
+        "description": [
+            "Marina"
+        ],
         "type": "27d0af04-2e76-4d26-8c5f-33899cf373ad",
         "source": "os_ngd",
         "collection": "lus-fts-site-2"
     },
     {
-        "description": ["Business Or Industrial Park"],
+        "description": [
+            "Business Or Industrial Park"
+        ],
         "type": "a98e6e10-64dc-42f3-8450-09d2e2d0bc4d",
         "source": "os_ngd",
         "collection": "lus-fts-site-2"
@@ -264,31 +332,41 @@
         "cqlFilter": "description='Bare Earth Or Grass' AND geometry_area_m2 > 10000"
     },
     {
-        "description": ["Biogas Power Station"],
+        "description": [
+            "Biogas Power Station"
+        ],
         "type": "2bfa71aa-f1e5-4f09-a4a1-d201a1cf5bda",
         "source": "os_ngd",
         "collection": "bld-fts-building-4"
     },
     {
-        "description": ["Pumping Station"],
+        "description": [
+            "Pumping Station"
+        ],
         "type": "8834842c-7034-44b6-9a16-67b7c4f5ecdd",
         "source": "os_ngd",
         "collection": "bld-fts-building-4"
     },
     {
-        "description": ["Waste Water Treatment Works"],
+        "description": [
+            "Waste Water Treatment Works"
+        ],
         "type": "a13f7876-c2ea-4f6c-8ea4-1e8be6082a36",
         "source": "os_ngd",
         "collection": "lus-fts-site-2"
     },
     {
-        "description": ["Public Car Park"],
+        "description": [
+            "Public Car Park"
+        ],
         "type": "8c9d0e1f-3456-4d78-7654-3c4d5e6f7a8b",
         "source": "os_ngd",
         "collection": "lus-fts-site-2"
     },
     {
-        "description": ["Roofed Storage Tank"],
+        "description": [
+            "Roofed Storage Tank"
+        ],
         "filters": [
             {
                 "filterName": "nlud_groupdescription",
@@ -312,19 +390,25 @@
         "collection": "trn-rami-restriction-1"
     },
     {
-        "description": ["Gas Distribution Or Storage Facility"],
+        "description": [
+            "Gas Distribution Or Storage Facility"
+        ],
         "type": "d1f3c5a7-8b9e-4c2a-91b2-6a3e5d4f1c2b",
         "source": "os_ngd",
         "collection": "bld-fts-building-4"
     },
     {
-        "description": ["Power Station"],
+        "description": [
+            "Power Station"
+        ],
         "type": "4f5b26b5-bb30-49ad-bdc8-20d12a3edfc2",
         "source": "os_ngd",
         "collection": "bld-fts-building-4"
     },
     {
-        "description": ["Public Park Or Garden"],
+        "description": [
+            "Public Park Or Garden"
+        ],
         "type": "3c1d1f99-22c6-4b5e-80c2-8c4c5b72f1bb",
         "source": "os_ngd",
         "collection": "lus-fts-site-2"
@@ -354,43 +438,57 @@
         "collection": "lus-fts-site-2"
     },
     {
-        "description": ["Electricity Support Pole"],
+        "description": [
+            "Electricity Support Pole"
+        ],
         "type": "e6f70819-1023-4c34-5678-9abcdef01234",
         "source": "os_ngd",
         "collection": "str-fts-structurepoint-1"
     },
     {
-        "description": ["Electricity Support Poles"],
+        "description": [
+            "Electricity Support Poles"
+        ],
         "type": "e6f70819-1023-4c34-5678-9abcdef01234",
         "source": "os_ngd",
         "collection": "str-fts-structurepoint-1"
     },
     {
-        "description": ["Electricity Pylon"],
+        "description": [
+            "Electricity Pylon"
+        ],
         "type": "e6f70819-1023-4c34-5678-9abcdef01234",
         "source": "os_ngd",
         "collection": "str-fts-structure-3"
     },
     {
-        "description": ["Electricity Transmission Lines"],
+        "description": [
+            "Electricity Transmission Lines"
+        ],
         "type": "192a3b4c-4567-4f67-89ab-cdef01234567",
         "source": "os_ngd",
         "collection": "str-fts-structureline-1"
     },
     {
-        "description": ["Electricity Sub Station"],
+        "description": [
+            "Electricity Sub Station"
+        ],
         "type": "d5e6f708-9102-4b23-4567-89abcdef0123",
         "source": "os_ngd",
         "collection": "lus-fts-site-2"
     },
     {
-        "description": ["Electricity Distribution Site"],
+        "description": [
+            "Electricity Distribution Site"
+        ],
         "type": "c4d5e6f7-8091-4a12-3456-789abcdef012",
         "source": "os_ngd",
         "collection": "lus-fts-site-2"
     },
     {
-        "description": ["Public Waste Disposal Site"],
+        "description": [
+            "Public Waste Disposal Site"
+        ],
         "type": "0ad824c1-d3d4-4f4b-8c72-7a5b04a7b623",
         "source": "os_ngd",
         "collection": "lus-fts-site-2"
