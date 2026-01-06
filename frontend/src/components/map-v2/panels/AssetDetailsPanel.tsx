@@ -113,6 +113,7 @@ const AssetDetailsPanel = ({ selectedElement, onBack, onClose, scenarioId, onCon
         enabled: elemIsAsset && !!assetId && !!scenarioId,
         queryKey: ['asset-score', scenarioId, assetId || ''],
         queryFn: () => fetchAssetScore(scenarioId!, assetId!),
+        refetchOnMount: true,
     });
 
     const handleToggleDependentsVisibility = useCallback(() => {
