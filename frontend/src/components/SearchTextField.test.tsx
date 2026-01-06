@@ -35,6 +35,16 @@ describe('SearchTextField', () => {
             const searchIcon = container.querySelector('svg');
             expect(searchIcon).toBeInTheDocument();
         });
+
+        it('renders search icon when value is empty', () => {
+            render(<SearchTextField {...defaultProps} value="" />);
+            expect(screen.getByTestId('SearchIcon')).toBeInTheDocument();
+        });
+
+        it('renders close icon when value has content', () => {
+            render(<SearchTextField {...defaultProps} value="test" />);
+            expect(screen.getByTestId('CloseIcon')).toBeInTheDocument();
+        });
     });
 
     describe('User Interaction', () => {
@@ -83,6 +93,17 @@ describe('SearchTextField', () => {
             fireEvent.change(input, { target: { value: 'test@example.com' } });
 
             expect(onChange).toHaveBeenCalledWith('test@example.com');
+        });
+
+        it('calls onChange with empty string when clear button is clicked', () => {
+            const onChange = vi.fn();
+            render(<SearchTextField {...defaultProps} value="test" onChange={onChange} />);
+
+            const clearButton = screen.getByLabelText('Clear search');
+            fireEvent.click(clearButton);
+
+            expect(onChange).toHaveBeenCalledTimes(1);
+            expect(onChange).toHaveBeenCalledWith('');
         });
     });
 

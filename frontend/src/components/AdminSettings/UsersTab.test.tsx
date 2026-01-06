@@ -95,11 +95,6 @@ describe('UsersTab', () => {
         fireEvent.change(search, { target: { value: 'bob' } });
 
         expect(screen.getByText('Bob Smith')).toBeInTheDocument();
-
-        const clear = screen.getByRole('button', { name: /clear filters/i });
-        fireEvent.click(clear);
-
-        expect(screen.getByText('Bob Smith')).toBeInTheDocument();
     });
 
     it('sorts by columns', async () => {

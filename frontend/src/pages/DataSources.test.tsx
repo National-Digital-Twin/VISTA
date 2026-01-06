@@ -134,21 +134,6 @@ describe('DataSources', () => {
             expect(dataRows).toHaveLength(1);
             expect(within(dataRows[0]).getByText('NHS Open Data Portal')).toBeInTheDocument();
         });
-
-        it('clears search filters when Clear Filters is clicked', async () => {
-            renderWithAppProviders(['/data-room']);
-
-            const searchInput = await screen.findByPlaceholderText('Search for a data source');
-            await screen.findByText('CQC API');
-            fireEvent.change(searchInput, { target: { value: 'nhs' } });
-
-            const clearButton = screen.getByRole('button', { name: /clear filters/i });
-            fireEvent.click(clearButton);
-
-            const rows = await screen.findAllByRole('row');
-            const dataRows = rows.slice(1);
-            expect(dataRows).toHaveLength(mockDataSources.length);
-        });
     });
 
     describe('Scenario Modal', () => {

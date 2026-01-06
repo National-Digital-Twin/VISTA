@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
-import { Box, Typography, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Link, Stack } from '@mui/material';
+import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Link, Stack } from '@mui/material';
 import { fetchAllUsers, UserData } from '@/api/users';
 import { SortableTableHeader } from '@/components/SortableTableHeader';
 import { SearchTextField } from '@/components/SearchTextField';
@@ -114,10 +114,6 @@ const UsersTab: React.FC = () => {
         }
     };
 
-    const handleClearFilters = () => {
-        setSearchTerm('');
-    };
-
     const handleUserClick = (userId: string) => {
         navigate(`/user/${userId}`);
     };
@@ -161,9 +157,6 @@ const UsersTab: React.FC = () => {
                 }}
             >
                 <SearchTextField placeholder="Search for user" value={searchTerm} onChange={setSearchTerm} />
-                <Button variant="outlined" onClick={handleClearFilters} disabled={!searchTerm}>
-                    CLEAR FILTERS
-                </Button>
             </Stack>
 
             <TableContainer>
