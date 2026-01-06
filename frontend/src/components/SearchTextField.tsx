@@ -1,5 +1,6 @@
-import { TextField, InputAdornment } from '@mui/material';
+import { TextField, InputAdornment, IconButton } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
+import CloseIcon from '@mui/icons-material/Close';
 
 type SearchTextFieldProps = {
     readonly placeholder: string;
@@ -38,7 +39,13 @@ export function SearchTextField({ placeholder, value, onChange, minWidth = 300, 
                 input: {
                     endAdornment: (
                         <InputAdornment position="end" sx={{ paddingRight: '8px' }}>
-                            <SearchIcon />
+                            {value ? (
+                                <IconButton size="small" onClick={() => onChange('')} aria-label="Clear search">
+                                    <CloseIcon fontSize="small" />
+                                </IconButton>
+                            ) : (
+                                <SearchIcon />
+                            )}
                         </InputAdornment>
                     ),
                 },

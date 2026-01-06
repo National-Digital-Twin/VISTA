@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { Link as RouterLink, useOutletContext } from 'react-router-dom';
-import { Box, Typography, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Link, Stack } from '@mui/material';
+import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Link, Stack } from '@mui/material';
 import { SortableTableHeader } from '@/components/SortableTableHeader';
 import { SearchTextField } from '@/components/SearchTextField';
 import { DataSource } from '@/api/datasources';
@@ -77,10 +77,6 @@ export default function DataSources() {
         }
     };
 
-    const handleClearFilters = () => {
-        setSearchTerm('');
-    };
-
     return (
         <Box
             sx={{
@@ -102,9 +98,6 @@ export default function DataSources() {
                 }}
             >
                 <SearchTextField placeholder="Search for a data source" value={searchTerm} onChange={setSearchTerm} />
-                <Button variant="outlined" onClick={handleClearFilters} disabled={!searchTerm}>
-                    CLEAR FILTERS
-                </Button>
             </Stack>
 
             {isLoading ? (
