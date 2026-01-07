@@ -4,6 +4,7 @@ export type Scenario = {
     id: string;
     name: string;
     isActive: boolean;
+    code: string;
 };
 
 export const fetchScenarios = async (): Promise<Scenario[]> => {

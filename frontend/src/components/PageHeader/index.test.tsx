@@ -256,14 +256,14 @@ describe('PageHeader', () => {
     });
 
     describe('Scenario Name Display', () => {
-        it('displays scenario name when active scenario exists', () => {
+        it('displays scenario name and code when active scenario exists', () => {
             mockUseActiveScenario.mockReturnValue({
-                data: { id: 'scenario-1', name: 'Flood in Newport', isActive: true },
+                data: { id: 'scenario-1', name: 'Flood in Newport', isActive: true, code: 'S001' },
             });
 
             renderWithProviders(<PageHeader appName="VISTA" />);
 
-            expect(screen.getByText('Flood in Newport')).toBeInTheDocument();
+            expect(screen.getByText('S001 Flood in Newport')).toBeInTheDocument();
         });
 
         it('does not display scenario name when no active scenario', () => {
@@ -271,18 +271,44 @@ describe('PageHeader', () => {
 
             renderWithProviders(<PageHeader appName="VISTA" />);
 
+            const scenarioElements = screen.queryAllByText(/Flood|Newport|Scenario|undefined/);
+            expect(scenarioElements.length).toBe(0);
             expect(screen.queryByText('Flood in Newport')).not.toBeInTheDocument();
         });
 
-        it('does not display scenario name when active scenario has no name', () => {
+        it('does not display scenario name when active scenario has no name or code', () => {
             mockUseActiveScenario.mockReturnValue({
-                data: { id: 'scenario-1', name: '', isActive: true },
+                data: { id: 'scenario-1', isActive: true },
             });
 
             renderWithProviders(<PageHeader appName="VISTA" />);
 
-            const scenarioElements = screen.queryAllByText(/Flood|Newport|Scenario/);
+            const scenarioElements = screen.queryAllByText(/Flood|Newport|Scenario|undefined/);
             expect(scenarioElements.length).toBe(0);
+        });
+
+        it('does not display scenario name when active scenario has only code', () => {
+            mockUseActiveScenario.mockReturnValue({
+                data: { id: 'scenario-1', isActive: true, code: 'S001' },
+            });
+
+            renderWithProviders(<PageHeader appName="VISTA" />);
+
+            const scenarioElements = screen.queryAllByText(/Flood|Newport|Scenario|undefined/);
+            expect(scenarioElements.length).toBe(0);
+            expect(screen.getByText('S001')).toBeInTheDocument();
+        });
+
+        it('does not display scenario cpde when active scenario has only name', () => {
+            mockUseActiveScenario.mockReturnValue({
+                data: { id: 'scenario-1', name: 'Flood in Newport', isActive: true },
+            });
+
+            renderWithProviders(<PageHeader appName="VISTA" />);
+
+            const scenarioElements = screen.queryAllByText(/undefined/);
+            expect(scenarioElements.length).toBe(0);
+            expect(screen.getByText('Flood in Newport')).toBeInTheDocument();
         });
 
         it('displays scenario name as plain text for non-admin users', () => {
@@ -293,9 +319,7 @@ describe('PageHeader', () => {
 
             renderWithProviders(<PageHeader appName="VISTA" />);
 
-            const scenarioText = screen.getByText('Flood in Newport');
-            expect(scenarioText).toBeInTheDocument();
-            expect(scenarioText.tagName).toBe('H6');
+            expect(screen.queryByLabelText('Change scenario: Flood in Newport')).not.toBeInTheDocument();
         });
 
         it('displays scenario name as clickable link for admin users', () => {

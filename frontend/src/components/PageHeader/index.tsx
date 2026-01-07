@@ -65,7 +65,15 @@ const PageHeader = ({ appName }: Readonly<PageHeaderProps>) => {
         }
     }, [isAdmin, navigate]);
 
-    const scenarioName = useMemo(() => activeScenario?.name || '', [activeScenario?.name]);
+    const scenarioName = useMemo(() => {
+        if (activeScenario) {
+            const name = activeScenario.name ? activeScenario.name : '';
+            const code = activeScenario.code ? activeScenario.code : '';
+            return `${code} ${name}`;
+        }
+
+        return '';
+    }, [activeScenario]);
 
     return (
         <AppBar
@@ -121,12 +129,12 @@ const PageHeader = ({ appName }: Readonly<PageHeaderProps>) => {
                                     'font': 'inherit',
                                 }}
                             >
-                                <Typography variant="h6" component="span" sx={{ fontWeight: 500 }}>
+                                <Typography component="span" sx={{ fontWeight: 500 }}>
                                     {scenarioName}
                                 </Typography>
                             </Link>
                         ) : (
-                            <Typography variant="h6" sx={{ fontWeight: 500 }} aria-label={`Current scenario: ${scenarioName}`}>
+                            <Typography sx={{ fontWeight: 500 }} aria-label={`Current scenario: ${scenarioName}`}>
                                 {scenarioName}
                             </Typography>
                         )}

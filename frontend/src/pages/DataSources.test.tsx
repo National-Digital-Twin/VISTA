@@ -52,16 +52,19 @@ const mockScenarios = [
         id: 'flood-newport',
         name: 'Flood in Newport',
         isActive: true,
+        code: 'F001',
     },
     {
         id: 'landslide-ventnor',
         name: 'Landslide in Ventnor',
         isActive: true,
+        code: 'L001',
     },
     {
         id: 'wildfire-shanklin',
         name: 'Wildfire in Shanklin',
         isActive: true,
+        code: 'W001',
     },
 ];
 
@@ -92,7 +95,6 @@ describe('DataSources', () => {
             getUserType: () => 'General',
         });
         renderWithAppProviders(['/data-room']);
-        screen.debug();
         const loadScenarioButton = screen.getByRole('button', { name: /load scenario/i });
         fireEvent.click(loadScenarioButton);
 
@@ -152,7 +154,7 @@ describe('DataSources', () => {
             fireEvent.click(loadScenarioButton);
 
             expect(screen.getByText('Choose scenario')).toBeInTheDocument();
-            expect(screen.getAllByText('Flood in Newport')).toHaveLength(2);
+            expect(screen.getByText('Flood in Newport')).toBeInTheDocument();
             expect(screen.getByText('Landslide in Ventnor')).toBeInTheDocument();
             expect(screen.getByText('Wildfire in Shanklin')).toBeInTheDocument();
         });
