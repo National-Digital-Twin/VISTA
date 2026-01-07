@@ -14,5 +14,5 @@ class ScenarioSerializer(serializers.ModelSerializer):
         """Configuration for the serializer."""
 
         model = Scenario
-        fields: ClassVar[list[str]] = ["id", "name", "is_active"]
+        fields: ClassVar[list[str]] = ["id", "name", "is_active", "code"]
         read_only_fields: ClassVar[list[str]] = ["id"]
