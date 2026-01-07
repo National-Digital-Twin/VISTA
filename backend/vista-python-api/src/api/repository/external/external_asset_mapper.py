@@ -16,11 +16,7 @@ class ExternalAssetMapper:
     def map_from_os_ngd(feature, asset_specification):
         """Create an instance of :class:api.models.assets.Asset from an OS NGD feature."""
         ExternalAssetMapper.validate_fields(feature, ["properties", "geometry"], "os_ngd")
-        name_field = (
-            asset_specification["nameField"]
-            if "nameField" in asset_specification is not None
-            else "name1_text"
-        )
+        name_field = asset_specification.get("nameField", "name1_text")
         name = (
             feature["properties"][name_field]
             if name_field in feature["properties"] and feature["properties"][name_field] is not None
