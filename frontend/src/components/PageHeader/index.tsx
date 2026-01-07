@@ -65,7 +65,15 @@ const PageHeader = ({ appName }: Readonly<PageHeaderProps>) => {
         }
     }, [isAdmin, navigate]);
 
-    const scenarioName = useMemo(() => (activeScenario ? `${activeScenario.code} ${activeScenario.name}` : ''), [activeScenario]);
+    const scenarioName = useMemo(() => {
+        if (activeScenario) {
+            const name = activeScenario.name ? activeScenario.name : '';
+            const code = activeScenario.code ? activeScenario.code : '';
+            return `${code} ${name}`;
+        }
+
+        return '';
+    }, [activeScenario]);
 
     return (
         <AppBar

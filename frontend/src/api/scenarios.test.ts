@@ -25,8 +25,8 @@ describe('scenarios API', () => {
     describe('fetchScenarios', () => {
         it('successfully fetches scenarios from API', async () => {
             const mockScenarios: Scenario[] = [
-                { id: 'scenario1', name: 'Flood in Newport', isActive: true },
-                { id: 'scenario2', name: 'Landslide in Ventnor', isActive: false },
+                { id: 'scenario1', name: 'Flood in Newport', isActive: true, code: 'S001' },
+                { id: 'scenario2', name: 'Landslide in Ventnor', isActive: false, code: 'S001' },
             ];
 
             fetchMock.mockResolvedValueOnce({

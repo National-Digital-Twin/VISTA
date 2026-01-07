@@ -39,9 +39,9 @@ describe('useActiveScenario', () => {
 
         it('returns the active scenario when one exists', async () => {
             const mockScenarios: Scenario[] = [
-                { id: 'scenario-1', name: 'Inactive Scenario', isActive: false },
-                { id: 'scenario-2', name: 'Active Scenario', isActive: true },
-                { id: 'scenario-3', name: 'Another Inactive', isActive: false },
+                { id: 'scenario-1', name: 'Inactive Scenario', isActive: false, code: 'S001' },
+                { id: 'scenario-2', name: 'Active Scenario', isActive: true, code: 'S002' },
+                { id: 'scenario-3', name: 'Another Inactive', isActive: false, code: 'S003' },
             ];
 
             vi.mocked(fetchScenarios).mockResolvedValue(mockScenarios);
@@ -58,13 +58,14 @@ describe('useActiveScenario', () => {
                 id: 'scenario-2',
                 name: 'Active Scenario',
                 isActive: true,
+                code: 'S002',
             });
         });
 
         it('returns undefined when no scenario is active', async () => {
             const mockScenarios: Scenario[] = [
-                { id: 'scenario-1', name: 'Scenario 1', isActive: false },
-                { id: 'scenario-2', name: 'Scenario 2', isActive: false },
+                { id: 'scenario-1', name: 'Scenario 1', isActive: false, code: 'S001' },
+                { id: 'scenario-2', name: 'Scenario 2', isActive: false, code: 'S001' },
             ];
 
             vi.mocked(fetchScenarios).mockResolvedValue(mockScenarios);
@@ -96,8 +97,8 @@ describe('useActiveScenario', () => {
 
         it('returns the first active scenario when multiple are active', async () => {
             const mockScenarios: Scenario[] = [
-                { id: 'scenario-1', name: 'First Active', isActive: true },
-                { id: 'scenario-2', name: 'Second Active', isActive: true },
+                { id: 'scenario-1', name: 'First Active', isActive: true, code: 'S001' },
+                { id: 'scenario-2', name: 'Second Active', isActive: true, code: 'S001' },
             ];
 
             vi.mocked(fetchScenarios).mockResolvedValue(mockScenarios);
