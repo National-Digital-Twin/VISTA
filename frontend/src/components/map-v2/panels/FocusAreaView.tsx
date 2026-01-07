@@ -113,6 +113,7 @@ const FocusAreaItem = ({ focusArea, scenarioId, onError, isSelected, onSelect }:
     return (
         <Box
             onClick={handleClick}
+            onDoubleClick={handleEditClick}
             sx={{
                 'display': 'flex',
                 'alignItems': 'center',
@@ -158,7 +159,7 @@ const FocusAreaItem = ({ focusArea, scenarioId, onError, isSelected, onSelect }:
                     </Typography>
                 )}
             </Box>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center' }} onDoubleClick={(e) => e.stopPropagation()}>
                 <IconButton size="small" onClick={handleEditClick} disabled={isMutating} aria-label="Edit focus area name" title="Edit name">
                     <EditNoteOutlined fontSize="small" />
                 </IconButton>

@@ -26,8 +26,9 @@ class FocusAreaSerializer(serializers.ModelSerializer):
             "filter_mode",
             "is_active",
             "is_system",
+            "created_at",
         ]
-        read_only_fields: ClassVar[list[str]] = ["id", "is_system"]
+        read_only_fields: ClassVar[list[str]] = ["id", "is_system", "created_at"]
 
 
 class FocusAreaCreateSerializer(serializers.Serializer):

@@ -31,11 +31,12 @@ class FocusArea(models.Model):
     )
     is_active = models.BooleanField(default=True)
     is_system = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         """Meta configuration."""
 
-        ordering: ClassVar[list[str]] = ["-is_system", "name"]
+        ordering: ClassVar[list[str]] = ["-is_system", "created_at"]
 
     def __str__(self):
         """Return string representation."""
