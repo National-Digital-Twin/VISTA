@@ -12,7 +12,7 @@ import { bbox, booleanPointInPolygon, point } from '@turf/turf';
 import { DEFAULT_VIEW_STATE, DEFAULT_MAP_STYLE, MAP_STYLES, MAP_VIEW_BOUNDS, type MapStyleKey } from './constants';
 import MapControls from './MapControls';
 import MapPanels from './MapPanels';
-import AssetLayers from './AssetLayers';
+import AssetLayers, { ASSET_SYMBOL_LAYER_ID } from './AssetLayers';
 import ExposureLayers from './ExposureLayers';
 import UtilitiesLayers from './UtilitiesLayers';
 import FocusAreaMask from './FocusAreaMask';
@@ -29,6 +29,8 @@ import { fetchAssetCategories } from '@/api/asset-categories';
 import { fetchAssetDetails } from '@/api/asset-details';
 import { useRoadRouteLazyQuery, type RoadRouteInputParams } from '@/api/utilities';
 import type { Asset } from '@/api/assets-by-type';
+
+const ASSET_LAYER_IDS = [ASSET_SYMBOL_LAYER_ID, `${ASSET_SYMBOL_LAYER_ID}-selected`, 'map-v2-asset-line-layer'] as const;
 
 const MapView = () => {
     const mapRef = useRef<MapRef>(null);
@@ -197,19 +199,6 @@ const MapView = () => {
         setViewState(event.viewState);
     }, []);
 
-    const handleMapClick = useCallback(
-        (event: { lngLat: { lng: number; lat: number } }) => {
-            if (positionSelectionMode === 'start') {
-                setRoadRouteStart({ lat: event.lngLat.lat, lng: event.lngLat.lng });
-                setPositionSelectionMode(null);
-            } else if (positionSelectionMode === 'end') {
-                setRoadRouteEnd({ lat: event.lngLat.lat, lng: event.lngLat.lng });
-                setPositionSelectionMode(null);
-            }
-        },
-        [positionSelectionMode],
-    );
-
     const handleStyleChange = useCallback((newStyle: MapStyleKey) => {
         setMapStyleKey(newStyle);
     }, []);
@@ -358,29 +347,81 @@ const MapView = () => {
         [selectedElement],
     );
 
-    const handleElementClick = useCallback(
-        (elements: Asset[]) => {
-            if (elements.length > 0) {
-                if (activePanelView === 'asset-details') {
-                    setSelectedElement(elements[0]);
-                    return;
-                }
-                if (activePanelView === 'assets') {
-                    handleFocusAreaSelect(null);
-                }
-                setPreviousPanelView(activePanelView);
-                setSelectedElement(elements[0]);
-                setActivePanelView('asset-details');
-            }
-        },
-        [activePanelView, handleFocusAreaSelect],
-    );
-
     const handleBackFromAssetDetails = useCallback(() => {
         setSelectedElement(null);
         setConnectedAssets({ dependents: [], providers: [] });
         setActivePanelView(previousPanelView || 'focus-area');
     }, [previousPanelView]);
+
+    const handleElementClick = useCallback(
+        (elements: Asset[]) => {
+            if (elements.length > 0) {
+                if (activePanelView === 'asset-details') {
+                    setSelectedElement(elements[0]);
+                } else {
+                    if (activePanelView === 'assets') {
+                        handleFocusAreaSelect(null);
+                    }
+                    setPreviousPanelView(activePanelView);
+                    setSelectedElement(elements[0]);
+                    setActivePanelView('asset-details');
+                }
+            }
+        },
+        [activePanelView, handleFocusAreaSelect],
+    );
+
+    const handleMapClick = useCallback(
+        (event: MapMouseEvent) => {
+            if (!mapReady || !event.point) {
+                return;
+            }
+
+            if (positionSelectionMode === 'start') {
+                setRoadRouteStart({ lat: event.lngLat.lat, lng: event.lngLat.lng });
+                setPositionSelectionMode(null);
+                return;
+            }
+
+            if (positionSelectionMode === 'end') {
+                setRoadRouteEnd({ lat: event.lngLat.lat, lng: event.lngLat.lng });
+                setPositionSelectionMode(null);
+                return;
+            }
+
+            const map = mapRef.current?.getMap();
+            if (!map) {
+                return;
+            }
+
+            const existingLayerIds = ASSET_LAYER_IDS.filter((layerId) => {
+                try {
+                    return map.getLayer(layerId) !== undefined;
+                } catch {
+                    return false;
+                }
+            });
+
+            if (existingLayerIds.length > 0) {
+                try {
+                    const clickedFeatures = map.queryRenderedFeatures(event.point, {
+                        layers: existingLayerIds,
+                    });
+
+                    if (clickedFeatures.length > 0) {
+                        return;
+                    }
+                } catch {
+                    // eslint-disable-next-line no-empty
+                }
+            }
+
+            if (activePanelView === 'asset-details') {
+                handleBackFromAssetDetails();
+            }
+        },
+        [positionSelectionMode, activePanelView, handleBackFromAssetDetails, mapReady],
+    );
 
     const handleCloseAssetDetails = useCallback(() => {
         setConnectedAssets({ dependents: [], providers: [] });

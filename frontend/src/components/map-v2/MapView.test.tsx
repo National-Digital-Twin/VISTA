@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, waitFor, act } from '@testing-library/react';
+import { render, screen, waitFor, act, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ApolloProvider } from '@apollo/client/react';
@@ -41,10 +41,13 @@ const renderWithProviders = (component: React.ReactElement, queryClient?: QueryC
     );
 };
 
-vi.mock('react-map-gl/maplibre', () => ({
-    default: React.forwardRef(({ onLoad, children, ...props }: any, ref: any) => {
-        React.useImperativeHandle(ref, () => ({
-            getMap: () => ({
+const mockGetLayer = vi.fn((_layerId: string): { id: string } | undefined => undefined);
+const mockQueryRenderedFeatures = vi.fn((): Array<{ layer?: { id?: string } }> => []);
+
+vi.mock('react-map-gl/maplibre', () => {
+    return {
+        default: React.forwardRef(({ onLoad, children, onClick, ...props }: any, ref: any) => {
+            const mockMap = {
                 on: vi.fn(),
                 off: vi.fn(),
                 easeTo: vi.fn(),
@@ -53,40 +56,71 @@ vi.mock('react-map-gl/maplibre', () => ({
                 zoomIn: vi.fn(),
                 zoomOut: vi.fn(),
                 getCanvas: vi.fn(() => ({ style: {} })),
-            }),
-        }));
-
-        React.useEffect(() => {
-            if (onLoad) {
-                setTimeout(() => onLoad(), 0);
-            }
-        }, [onLoad]);
-
-        return (
-            <div data-testid="map" {...props}>
-                {children}
-            </div>
-        );
-    }),
-    useMap: vi.fn(() => ({
-        'map-v2': {
-            getMap: () => ({
-                on: vi.fn(),
-                off: vi.fn(),
-                easeTo: vi.fn(),
-                flyTo: vi.fn(),
-                fitBounds: vi.fn(),
-                zoomIn: vi.fn(),
-                zoomOut: vi.fn(),
-                getCanvas: vi.fn(() => ({ style: {} })),
-                getLayer: vi.fn(() => true),
+                getLayer: mockGetLayer,
+                queryRenderedFeatures: mockQueryRenderedFeatures,
                 hasImage: vi.fn(() => false),
                 addImage: vi.fn(),
                 project: vi.fn(() => ({ x: 100, y: 100 })),
-            }),
-        },
-    })),
-}));
+            };
+
+            React.useImperativeHandle(ref, () => ({
+                getMap: () => mockMap,
+            }));
+
+            React.useEffect(() => {
+                if (onLoad) {
+                    setTimeout(() => onLoad(), 0);
+                }
+            }, [onLoad]);
+
+            const handleClick = (e: any) => {
+                if (onClick) {
+                    onClick({
+                        ...e,
+                        lngLat: { lat: 0, lng: 0 },
+                        point: { x: 100, y: 100 },
+                    });
+                }
+            };
+
+            const handleKeyDown = (e: React.KeyboardEvent) => {
+                if ((e.key === 'Enter' || e.key === ' ') && onClick) {
+                    e.preventDefault();
+                    onClick({
+                        ...e,
+                        lngLat: { lat: 0, lng: 0 },
+                        point: { x: 100, y: 100 },
+                    });
+                }
+            };
+
+            return (
+                <div data-testid="map" {...props} role="application" tabIndex={0} onClick={handleClick} onKeyDown={handleKeyDown}>
+                    {children}
+                </div>
+            );
+        }),
+        useMap: vi.fn(() => ({
+            'map-v2': {
+                getMap: () => ({
+                    on: vi.fn(),
+                    off: vi.fn(),
+                    easeTo: vi.fn(),
+                    flyTo: vi.fn(),
+                    fitBounds: vi.fn(),
+                    zoomIn: vi.fn(),
+                    zoomOut: vi.fn(),
+                    getCanvas: vi.fn(() => ({ style: {} })),
+                    getLayer: mockGetLayer,
+                    queryRenderedFeatures: mockQueryRenderedFeatures,
+                    hasImage: vi.fn(() => false),
+                    addImage: vi.fn(),
+                    project: vi.fn(() => ({ x: 100, y: 100 })),
+                }),
+            },
+        })),
+    };
+});
 
 vi.mock('./MapPanels', () => {
     const MockMapPanels = ({
@@ -155,6 +189,28 @@ vi.mock('./MapControls', () => ({
     ),
 }));
 
+vi.mock('./AssetLayers', () => ({
+    default: ({ onElementClick, selectedElements }: any) => (
+        <div data-testid="asset-layers">
+            <button
+                type="button"
+                onClick={() =>
+                    onElementClick?.([
+                        {
+                            id: 'asset-1',
+                        },
+                    ])
+                }
+                data-testid="select-asset"
+            >
+                Select Asset
+            </button>
+            <div data-testid="selected-elements-count">{selectedElements?.length ?? 0}</div>
+        </div>
+    ),
+    ASSET_SYMBOL_LAYER_ID: 'map-v2-asset-symbol-layer',
+}));
+
 vi.mock('./hooks/useMapboxDraw', () => ({
     default: () => ({
         current: {
@@ -220,6 +276,12 @@ describe('MapView', () => {
         mockUseAssetTypeIcons.mockReturnValue(new Map());
         mockFetchAssetCategories.mockResolvedValue([]);
         mockFetchFocusAreas.mockResolvedValue([]);
+        if (mockGetLayer) {
+            mockGetLayer.mockReturnValue(undefined);
+        }
+        if (mockQueryRenderedFeatures) {
+            mockQueryRenderedFeatures.mockReturnValue([]);
+        }
     });
 
     describe('Rendering', () => {
@@ -318,6 +380,84 @@ describe('MapView', () => {
             });
 
             expect(changeStyleButton).toBeInTheDocument();
+        });
+    });
+
+    describe('Asset deselection via map click', () => {
+        it('clears selected asset and returns to previous panel when map is clicked', async () => {
+            renderWithProviders(<MapView />);
+            await waitForElement('map');
+            await waitForElement('map-panels');
+            await waitForElement('asset-layers');
+
+            expect(screen.getByTestId('active-view')).toHaveTextContent('focus-area');
+            expect(screen.getByTestId('selected-element')).toHaveTextContent('none');
+
+            const selectAssetButton = screen.getByTestId('select-asset');
+            await act(async () => {
+                selectAssetButton.click();
+            });
+
+            await waitFor(() => {
+                expect(screen.getByTestId('active-view')).toHaveTextContent('asset-details');
+                expect(screen.getByTestId('selected-element')).toHaveTextContent('asset-1');
+            });
+
+            if (mockGetLayer) {
+                mockGetLayer.mockReturnValue(undefined);
+            }
+            if (mockQueryRenderedFeatures) {
+                mockQueryRenderedFeatures.mockReturnValue([]);
+            }
+
+            const map = screen.getByTestId('map');
+            await act(async () => {
+                fireEvent.click(map);
+            });
+
+            await waitFor(() => {
+                expect(screen.getByTestId('active-view')).toHaveTextContent('focus-area');
+                expect(screen.getByTestId('selected-element')).toHaveTextContent('none');
+            });
+        });
+
+        it('does not deselect asset when clicking on an asset layer', async () => {
+            renderWithProviders(<MapView />);
+            await waitForElement('map');
+            await waitForElement('map-panels');
+            await waitForElement('asset-layers');
+
+            const selectAssetButton = screen.getByTestId('select-asset');
+            await act(async () => {
+                selectAssetButton.click();
+            });
+
+            await waitFor(() => {
+                expect(screen.getByTestId('active-view')).toHaveTextContent('asset-details');
+                expect(screen.getByTestId('selected-element')).toHaveTextContent('asset-1');
+            });
+
+            if (mockGetLayer) {
+                mockGetLayer.mockImplementation((layerId?: string) => {
+                    if (layerId && ['map-v2-asset-symbol-layer', 'map-v2-asset-symbol-layer-selected', 'map-v2-asset-line-layer'].includes(layerId)) {
+                        return { id: layerId };
+                    }
+                    return undefined;
+                });
+            }
+            if (mockQueryRenderedFeatures) {
+                mockQueryRenderedFeatures.mockReturnValue([{ layer: { id: 'map-v2-asset-symbol-layer' } }]);
+            }
+
+            const map = screen.getByTestId('map');
+            await act(async () => {
+                fireEvent.click(map);
+            });
+
+            await waitFor(() => {
+                expect(screen.getByTestId('active-view')).toHaveTextContent('asset-details');
+                expect(screen.getByTestId('selected-element')).toHaveTextContent('asset-1');
+            });
         });
     });
 
