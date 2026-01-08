@@ -17,6 +17,25 @@ This project follows **Semantic Versioning (SemVer)** ([semver.org](https://semv
 
 ---
 
+## [0.93.0]
+
+A major redesign of VISTA, including:
+
+- introducing scenarios and scenario-specific criticality scores associated with individual assets
+- introducing focus areas that persist between sessions, where visible assets can be adjusted by type or by score
+- introducing an overall 4-dimensional VISTA score (criticality, dependency, exposure and redundancy)
+- introducing exposure layers
+- adding a nightly data refresh
+- re-introducing a complete asset dependency dataset
+
+## [0.92.7]
+
+- Remove loading of full asset data when enabling a flood layer.
+
+## [0.92.6]
+
+- Ensure draw polygon tool always shows a crosshair.
+
 ## [0.92.5]
 
 - Prevent default form submission behaviour when pressing Enter in search bar
