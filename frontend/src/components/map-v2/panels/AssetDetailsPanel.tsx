@@ -19,7 +19,7 @@ import type { Asset } from '@/api/assets-by-type';
 
 type AssetDetailsPanelProps = {
     selectedElement: Asset | null;
-    onBack: () => void;
+    onBack?: () => void;
     onClose?: () => void;
     scenarioId?: string;
     onConnectedAssetsVisibilityChange?: (
@@ -175,9 +175,11 @@ const AssetDetailsPanel = ({ selectedElement, onBack, onClose, scenarioId, onCon
 
     const renderHeader = () => (
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, p: 2, borderBottom: '1px solid', borderColor: 'divider' }}>
-            <IconButton size="small" onClick={onBack} aria-label="Back to previous panel">
-                <ArrowBackIcon fontSize="small" />
-            </IconButton>
+            {onBack && (
+                <IconButton size="small" onClick={onBack} aria-label="Back to previous panel">
+                    <ArrowBackIcon fontSize="small" />
+                </IconButton>
+            )}
             <Typography variant="h6" fontWeight={600} sx={{ flex: 1 }}>
                 {details.title || 'Asset Details'}
             </Typography>

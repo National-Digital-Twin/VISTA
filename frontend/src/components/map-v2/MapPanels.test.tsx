@@ -37,15 +37,21 @@ vi.mock('./panels/FocusAreaView', () => ({
     ),
 }));
 
-vi.mock('./panels/AssetDetailsPanel', () => ({
-    default: ({ selectedElement, onBack, onClose }: { selectedElement: any; onBack: () => void; onClose?: () => void }) => (
-        <div data-testid="asset-details-panel">
-            <div>Asset: {selectedElement?.uri || 'none'}</div>
-            <button onClick={onBack}>Back</button>
-            {onClose && (
-                <button onClick={onClose} data-testid="close-button">
-                    Close
-                </button>
+vi.mock('./panels/InspectorView', () => ({
+    default: ({ selectedElement, onBack, onClose }: { selectedElement: any; onBack?: () => void; onClose?: () => void }) => (
+        <div data-testid="inspector-view">
+            {selectedElement ? (
+                <>
+                    <div>Asset: {selectedElement?.uri || 'none'}</div>
+                    {onBack && <button onClick={onBack}>Back</button>}
+                    {onClose && (
+                        <button onClick={onClose} data-testid="close-button">
+                            Close
+                        </button>
+                    )}
+                </>
+            ) : (
+                <div>Select an asset on the map to inspect its details.</div>
             )}
         </div>
     ),
@@ -115,11 +121,18 @@ describe('MapPanels', () => {
             expect(screen.getByTestId('utilities-view')).toBeInTheDocument();
         });
 
-        it('renders AssetDetailsPanel when asset-details is active', () => {
-            const mockAsset = { uri: 'https://example.com#asset1' } as any;
-            renderWithTheme(<MapPanels {...defaultProps} activeView="asset-details" selectedElement={mockAsset} onBackFromAssetDetails={vi.fn()} />);
+        it('renders InspectorView when inspector is active', () => {
+            renderWithTheme(<MapPanels {...defaultProps} activeView="inspector" />);
 
-            expect(screen.getByTestId('asset-details-panel')).toBeInTheDocument();
+            expect(screen.getByTestId('inspector-view')).toBeInTheDocument();
+            expect(screen.getByText('Select an asset on the map to inspect its details.')).toBeInTheDocument();
+        });
+
+        it('renders InspectorView with asset when inspector is active and asset is selected', () => {
+            const mockAsset = { uri: 'https://example.com#asset1' } as any;
+            renderWithTheme(<MapPanels {...defaultProps} activeView="inspector" selectedElement={mockAsset} onBackFromInspector={vi.fn()} />);
+
+            expect(screen.getByTestId('inspector-view')).toBeInTheDocument();
             expect(screen.getByText('Asset: https://example.com#asset1')).toBeInTheDocument();
         });
     });
@@ -193,39 +206,29 @@ describe('MapPanels', () => {
         });
     });
 
-    describe('Asset Details Panel', () => {
-        it('disables assets button when asset-details is active', () => {
-            const mockAsset = { uri: 'https://example.com#asset1' } as any;
-            renderWithTheme(<MapPanels {...defaultProps} activeView="asset-details" selectedElement={mockAsset} onBackFromAssetDetails={vi.fn()} />);
+    describe('Inspector Panel', () => {
+        it('shows empty state when inspector is active with no asset', () => {
+            renderWithTheme(<MapPanels {...defaultProps} activeView="inspector" />);
 
-            const assetsButton = screen.getByText('Assets').closest('div');
-            expect(assetsButton).toBeInTheDocument();
+            expect(screen.getByText('Select an asset on the map to inspect its details.')).toBeInTheDocument();
         });
 
-        it('calls onBackFromAssetDetails when back button is clicked', () => {
+        it('calls onBackFromInspector when back button is clicked', () => {
             const mockAsset = { uri: 'https://example.com#asset1' } as any;
-            const onBackFromAssetDetails = vi.fn();
-            renderWithTheme(
-                <MapPanels {...defaultProps} activeView="asset-details" selectedElement={mockAsset} onBackFromAssetDetails={onBackFromAssetDetails} />,
-            );
+            const onBackFromInspector = vi.fn();
+            renderWithTheme(<MapPanels {...defaultProps} activeView="inspector" selectedElement={mockAsset} onBackFromInspector={onBackFromInspector} />);
 
             const backButton = screen.getByText('Back');
             fireEvent.click(backButton);
 
-            expect(onBackFromAssetDetails).toHaveBeenCalledTimes(1);
+            expect(onBackFromInspector).toHaveBeenCalledTimes(1);
         });
 
-        it('allows navigation when asset-details is active', () => {
+        it('allows navigation when inspector is active', () => {
             const mockAsset = { uri: 'https://example.com#asset1' } as any;
             const onViewChange = vi.fn();
             renderWithTheme(
-                <MapPanels
-                    {...defaultProps}
-                    activeView="asset-details"
-                    selectedElement={mockAsset}
-                    onViewChange={onViewChange}
-                    onBackFromAssetDetails={vi.fn()}
-                />,
+                <MapPanels {...defaultProps} activeView="inspector" selectedElement={mockAsset} onViewChange={onViewChange} onBackFromInspector={vi.fn()} />,
             );
 
             const exposureButton = screen.getByText('Exposure').closest('div');
@@ -236,30 +239,17 @@ describe('MapPanels', () => {
             expect(onViewChange).toHaveBeenCalledWith('exposure');
         });
 
-        it('calls onCloseFromAssetDetails when close button is clicked', () => {
-            const onCloseFromAssetDetails = vi.fn();
+        it('calls onViewChange when close button is clicked', () => {
+            const onViewChange = vi.fn();
             const mockAsset = { uri: 'https://example.com#asset1' } as any;
             renderWithTheme(
-                <MapPanels
-                    {...defaultProps}
-                    activeView="asset-details"
-                    selectedElement={mockAsset}
-                    onBackFromAssetDetails={vi.fn()}
-                    onCloseFromAssetDetails={onCloseFromAssetDetails}
-                />,
+                <MapPanels {...defaultProps} activeView="inspector" selectedElement={mockAsset} onViewChange={onViewChange} onBackFromInspector={vi.fn()} />,
             );
 
             const closeButton = screen.getByTestId('close-button');
             fireEvent.click(closeButton);
 
-            expect(onCloseFromAssetDetails).toHaveBeenCalledTimes(1);
-        });
-
-        it('does not render close button when onCloseFromAssetDetails is not provided', () => {
-            const mockAsset = { uri: 'https://example.com#asset1' } as any;
-            renderWithTheme(<MapPanels {...defaultProps} activeView="asset-details" selectedElement={mockAsset} onBackFromAssetDetails={vi.fn()} />);
-
-            expect(screen.queryByTestId('close-button')).not.toBeInTheDocument();
+            expect(onViewChange).toHaveBeenCalledWith(null);
         });
     });
 });

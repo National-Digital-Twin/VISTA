@@ -81,7 +81,7 @@ describe('AssetDetailsPanel', () => {
 
     describe('rendering', () => {
         it('returns null when selectedElement is null', () => {
-            const { container } = renderWithProviders(<AssetDetailsPanel selectedElement={null} onBack={vi.fn()} />);
+            const { container } = renderWithProviders(<AssetDetailsPanel selectedElement={null} onClose={vi.fn()} />);
             expect(container.firstChild).toBeNull();
         });
 
@@ -90,7 +90,7 @@ describe('AssetDetailsPanel', () => {
             const neverResolvingPromise = new Promise<never>(() => {});
             mockedFetchAssetDetails.mockImplementation(() => neverResolvingPromise as Promise<any>);
 
-            renderWithProviders(<AssetDetailsPanel selectedElement={asset} onBack={vi.fn()} />);
+            renderWithProviders(<AssetDetailsPanel selectedElement={asset} onClose={vi.fn()} />);
 
             expect(screen.getByRole('progressbar')).toBeInTheDocument();
         });
@@ -109,7 +109,7 @@ describe('AssetDetailsPanel', () => {
                 dependents: [],
             });
 
-            renderWithProviders(<AssetDetailsPanel selectedElement={asset} onBack={vi.fn()} />);
+            renderWithProviders(<AssetDetailsPanel selectedElement={asset} onClose={vi.fn()} />);
 
             await waitFor(() => {
                 expect(screen.getByText('Fetched Asset Name')).toBeInTheDocument();
@@ -130,7 +130,7 @@ describe('AssetDetailsPanel', () => {
                 dependents: [],
             });
 
-            renderWithProviders(<AssetDetailsPanel selectedElement={asset} onBack={vi.fn()} />);
+            renderWithProviders(<AssetDetailsPanel selectedElement={asset} onClose={vi.fn()} />);
 
             await waitFor(() => {
                 expect(screen.getByText(/type1/i)).toBeInTheDocument();
@@ -140,9 +140,9 @@ describe('AssetDetailsPanel', () => {
     });
 
     describe('back button', () => {
-        it('calls onBack when back button is clicked', async () => {
+        it('calls onClose when back button is clicked', async () => {
             const asset = createMockAsset();
-            const onBack = vi.fn();
+            const onClose = vi.fn();
             mockedFetchAssetDetails.mockResolvedValue({
                 id: 'asset1',
                 name: 'Test Asset',
@@ -155,16 +155,16 @@ describe('AssetDetailsPanel', () => {
                 dependents: [],
             });
 
-            renderWithProviders(<AssetDetailsPanel selectedElement={asset} onBack={onBack} />);
+            renderWithProviders(<AssetDetailsPanel selectedElement={asset} onClose={onClose} />);
 
             await waitFor(() => {
-                expect(screen.getByLabelText('Back to previous panel')).toBeInTheDocument();
+                expect(screen.getByLabelText('Close panel')).toBeInTheDocument();
             });
 
-            const backButton = screen.getByLabelText('Back to previous panel');
-            fireEvent.click(backButton);
+            const closeButton = screen.getByLabelText('Close panel');
+            fireEvent.click(closeButton);
 
-            expect(onBack).toHaveBeenCalledTimes(1);
+            expect(onClose).toHaveBeenCalledTimes(1);
         });
     });
 
@@ -173,7 +173,7 @@ describe('AssetDetailsPanel', () => {
             const asset = createMockAsset();
             mockedFetchAssetDetails.mockRejectedValue(new Error('Failed to fetch'));
 
-            renderWithProviders(<AssetDetailsPanel selectedElement={asset} onBack={vi.fn()} />);
+            renderWithProviders(<AssetDetailsPanel selectedElement={asset} onClose={vi.fn()} />);
 
             await waitFor(() => {
                 expect(screen.getByText(/Error fetching details/i)).toBeInTheDocument();
@@ -194,7 +194,7 @@ describe('AssetDetailsPanel', () => {
                 dependents: [],
             });
 
-            renderWithProviders(<AssetDetailsPanel selectedElement={asset} onBack={vi.fn()} />);
+            renderWithProviders(<AssetDetailsPanel selectedElement={asset} onClose={vi.fn()} />);
 
             await waitFor(() => {
                 expect(screen.getByText('asset1')).toBeInTheDocument();
@@ -217,7 +217,7 @@ describe('AssetDetailsPanel', () => {
                 dependents: [],
             });
 
-            renderWithProviders(<AssetDetailsPanel selectedElement={asset} onBack={vi.fn()} />);
+            renderWithProviders(<AssetDetailsPanel selectedElement={asset} onClose={vi.fn()} />);
 
             await waitFor(() => {
                 const streetViewLink = screen.getByRole('link', { name: '' });
@@ -240,7 +240,7 @@ describe('AssetDetailsPanel', () => {
                 dependents: [],
             });
 
-            renderWithProviders(<AssetDetailsPanel selectedElement={asset} onBack={vi.fn()} />);
+            renderWithProviders(<AssetDetailsPanel selectedElement={asset} onClose={vi.fn()} />);
 
             await waitFor(() => {
                 expect(screen.getByText('Test Asset')).toBeInTheDocument();
@@ -287,7 +287,7 @@ describe('AssetDetailsPanel', () => {
                 ],
             });
 
-            renderWithProviders(<AssetDetailsPanel selectedElement={asset} onBack={vi.fn()} />);
+            renderWithProviders(<AssetDetailsPanel selectedElement={asset} onClose={vi.fn()} />);
 
             await waitFor(() => {
                 expect(screen.getByTestId('connected-assets-section')).toBeInTheDocument();
@@ -320,7 +320,7 @@ describe('AssetDetailsPanel', () => {
                 ],
             });
 
-            renderWithProviders(<AssetDetailsPanel selectedElement={asset} onBack={vi.fn()} />);
+            renderWithProviders(<AssetDetailsPanel selectedElement={asset} onClose={vi.fn()} />);
 
             await waitFor(() => {
                 expect(screen.getByText('Dependents: 1')).toBeInTheDocument();
@@ -331,7 +331,7 @@ describe('AssetDetailsPanel', () => {
     describe('asset state handling', () => {
         it('does not fetch assetDetails when selectedElement has no id', () => {
             const asset = createMockAsset({ id: '' });
-            renderWithProviders(<AssetDetailsPanel selectedElement={asset} onBack={vi.fn()} />);
+            renderWithProviders(<AssetDetailsPanel selectedElement={asset} onClose={vi.fn()} />);
 
             expect(mockedFetchAssetDetails).not.toHaveBeenCalled();
         });
@@ -362,7 +362,7 @@ describe('AssetDetailsPanel', () => {
                 redundancyScore: '0.5',
             });
 
-            renderWithProviders(<AssetDetailsPanel selectedElement={asset} onBack={vi.fn()} scenarioId={scenarioId} />);
+            renderWithProviders(<AssetDetailsPanel selectedElement={asset} onClose={vi.fn()} scenarioId={scenarioId} />);
 
             await waitFor(() => {
                 expect(screen.getByTestId('asset-score')).toBeInTheDocument();
@@ -383,7 +383,7 @@ describe('AssetDetailsPanel', () => {
                 dependents: [],
             });
 
-            renderWithProviders(<AssetDetailsPanel selectedElement={asset} onBack={vi.fn()} />);
+            renderWithProviders(<AssetDetailsPanel selectedElement={asset} onClose={vi.fn()} />);
 
             await waitFor(() => {
                 expect(screen.getByText('Test Asset')).toBeInTheDocument();
@@ -409,7 +409,7 @@ describe('AssetDetailsPanel', () => {
                 dependents: [],
             });
 
-            renderWithProviders(<AssetDetailsPanel selectedElement={asset} onBack={vi.fn()} onClose={onClose} />);
+            renderWithProviders(<AssetDetailsPanel selectedElement={asset} onClose={onClose} />);
 
             await waitFor(() => {
                 expect(screen.getByLabelText('Close panel')).toBeInTheDocument();
@@ -431,7 +431,7 @@ describe('AssetDetailsPanel', () => {
                 dependents: [],
             });
 
-            renderWithProviders(<AssetDetailsPanel selectedElement={asset} onBack={vi.fn()} onClose={onClose} />);
+            renderWithProviders(<AssetDetailsPanel selectedElement={asset} onClose={onClose} />);
 
             await waitFor(() => {
                 expect(screen.getByLabelText('Close panel')).toBeInTheDocument();
@@ -457,7 +457,7 @@ describe('AssetDetailsPanel', () => {
                 dependents: [],
             });
 
-            renderWithProviders(<AssetDetailsPanel selectedElement={asset} onBack={vi.fn()} />);
+            renderWithProviders(<AssetDetailsPanel selectedElement={asset} />);
 
             await waitFor(() => {
                 expect(screen.getByText('Test Asset')).toBeInTheDocument();
@@ -495,7 +495,7 @@ describe('AssetDetailsPanel', () => {
             });
 
             const { rerender } = renderWithProviders(
-                <AssetDetailsPanel selectedElement={asset1} onBack={vi.fn()} onConnectedAssetsVisibilityChange={onConnectedAssetsVisibilityChange} />,
+                <AssetDetailsPanel selectedElement={asset1} onClose={vi.fn()} onConnectedAssetsVisibilityChange={onConnectedAssetsVisibilityChange} />,
             );
 
             await waitFor(() => {
@@ -523,7 +523,7 @@ describe('AssetDetailsPanel', () => {
             rerender(
                 <QueryClientProvider client={queryClient}>
                     <ThemeProvider theme={theme}>
-                        <AssetDetailsPanel selectedElement={asset2} onBack={vi.fn()} onConnectedAssetsVisibilityChange={onConnectedAssetsVisibilityChange} />
+                        <AssetDetailsPanel selectedElement={asset2} onClose={vi.fn()} onConnectedAssetsVisibilityChange={onConnectedAssetsVisibilityChange} />
                     </ThemeProvider>
                 </QueryClientProvider>,
             );
@@ -549,7 +549,7 @@ describe('AssetDetailsPanel', () => {
                 dependents: [],
             });
 
-            renderWithProviders(<AssetDetailsPanel selectedElement={asset} onBack={vi.fn()} />);
+            renderWithProviders(<AssetDetailsPanel selectedElement={asset} onClose={vi.fn()} />);
 
             await waitFor(() => {
                 expect(screen.getByText('View dependent assets')).toBeInTheDocument();
@@ -571,7 +571,7 @@ describe('AssetDetailsPanel', () => {
                 dependents: [],
             });
 
-            renderWithProviders(<AssetDetailsPanel selectedElement={asset} onBack={vi.fn()} />);
+            renderWithProviders(<AssetDetailsPanel selectedElement={asset} onClose={vi.fn()} />);
 
             await waitFor(() => {
                 expect(screen.getByText('View dependent assets')).toBeInTheDocument();
