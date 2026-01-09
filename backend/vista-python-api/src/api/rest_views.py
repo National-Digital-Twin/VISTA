@@ -49,10 +49,10 @@ def user_details_view(request):
             # Adjust this path if your data is nested
             content = data.get("content", data)
 
-            if "cognito:groups" in content:
+            if "groups" in content:
                 content["userType"] = (
                     "Admin"
-                    if settings.COGNITO_ADMIN_USER_GROUP_NAME in content["cognito:groups"]
+                    if settings.COGNITO_ADMIN_USER_GROUP_NAME in content["groups"]
                     else "General"
                 )
 
