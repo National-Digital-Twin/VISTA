@@ -4,6 +4,7 @@ import pytest
 from django.contrib.gis.geos import GEOSGeometry
 
 from api.models import ExposureLayer, ExposureLayerType
+from api.tests.conftest import buffer_geometry
 
 http_success_code = 200
 
@@ -16,9 +17,24 @@ def exposure_layers(db):  # noqa: ARG001
     geom1 = GEOSGeometry("POLYGON((0 0, 0 1, 1 1, 1 0, 0 0))")
     geom2 = GEOSGeometry("POLYGON((2 2, 2 3, 3 3, 3 2, 2 2))")
 
-    layer1 = ExposureLayer.objects.create(name="Test layer 1", geometry=geom1, type=type1)
-    layer2 = ExposureLayer.objects.create(name="Test layer 2", geometry=geom2, type=type2)
-    layer3 = ExposureLayer.objects.create(name="Test layer 3", geometry=geom2, type=type2)
+    layer1 = ExposureLayer.objects.create(
+        name="Test layer 1",
+        geometry=geom1,
+        geometry_buffered=buffer_geometry(geom1),
+        type=type1,
+    )
+    layer2 = ExposureLayer.objects.create(
+        name="Test layer 2",
+        geometry=geom2,
+        geometry_buffered=buffer_geometry(geom2),
+        type=type2,
+    )
+    layer3 = ExposureLayer.objects.create(
+        name="Test layer 3",
+        geometry=geom2,
+        geometry_buffered=buffer_geometry(geom2),
+        type=type2,
+    )
     return [layer1, layer2, layer3]
 
 

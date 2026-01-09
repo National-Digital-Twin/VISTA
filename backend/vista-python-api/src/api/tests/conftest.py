@@ -3,12 +3,19 @@
 import uuid
 
 import pytest
-from django.contrib.gis.geos import Point, Polygon
+from django.contrib.gis.geos import Point
+from django.db import connection
 
 from api.models import FocusArea, Scenario, ScenarioAsset
 from api.models.asset import Asset
 from api.models.asset_type import AssetCategory, AssetSubCategory, AssetType, DataSource
 from api.models.dependency import Dependency
+from api.utils.geometry import buffer_geometry as _buffer_geometry
+
+
+def buffer_geometry(geometry, distance=500):
+    """Buffer geometry for tests, using the default Django connection."""
+    return _buffer_geometry(connection, geometry, distance)
 
 
 @pytest.fixture

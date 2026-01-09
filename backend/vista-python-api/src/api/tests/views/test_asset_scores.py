@@ -4,9 +4,7 @@ import uuid
 from unittest.mock import patch
 
 import pytest
-from django.conf import settings
 from django.contrib.gis.geos import GEOSGeometry, Point, Polygon
-from django.db import connection
 
 from api.models import (
     Asset,
@@ -21,6 +19,7 @@ from api.models import (
     ScenarioAsset,
     VisibleExposureLayer,
 )
+from api.tests.conftest import buffer_geometry
 
 http_success_code = 200
 http_not_found = 404
@@ -147,8 +146,13 @@ def fixture(db):  # noqa: ARG001
     )
 
     exposure_layer_type = ExposureLayerType.objects.create(name="Flood")
-    ExposureLayer.objects.create(geometry=poly, type=exposure_layer_type)
-    exposure_layer = ExposureLayer.objects.create(geometry=poly, type=exposure_layer_type)
+    poly_buffered = buffer_geometry(poly)
+    ExposureLayer.objects.create(
+        geometry=poly, geometry_buffered=poly_buffered, type=exposure_layer_type
+    )
+    exposure_layer = ExposureLayer.objects.create(
+        geometry=poly, geometry_buffered=poly_buffered, type=exposure_layer_type
+    )
     focus_area = FocusArea.objects.create(
         scenario=scenario1,
         user_id=user_id,
@@ -164,8 +168,12 @@ def fixture(db):  # noqa: ARG001
     exposure_layer_type2 = ExposureLayerType.objects.create(
         name="Wildfire", impacts_exposure_score=False
     )
-    ExposureLayer.objects.create(geometry=poly, type=exposure_layer_type2)
-    exposure_layer2 = ExposureLayer.objects.create(geometry=poly, type=exposure_layer_type2)
+    ExposureLayer.objects.create(
+        geometry=poly, geometry_buffered=poly_buffered, type=exposure_layer_type2
+    )
+    exposure_layer2 = ExposureLayer.objects.create(
+        geometry=poly, geometry_buffered=poly_buffered, type=exposure_layer_type2
+    )
     vis_exposure_layer2 = VisibleExposureLayer.objects.create(
         focus_area=focus_area, exposure_layer=exposure_layer2
     )
@@ -189,9 +197,6 @@ def fixture(db):  # noqa: ARG001
     scenario_asset_6 = ScenarioAsset.objects.create(
         scenario=scenario2, asset_type=type_stadium, criticality_score=2
     )
-
-    with connection.cursor() as cursor:
-        cursor.execute("REFRESH MATERIALIZED VIEW public.assets_within_500m_exposure_layers;")
 
     return {
         "assets": [asset1, asset2, asset3],

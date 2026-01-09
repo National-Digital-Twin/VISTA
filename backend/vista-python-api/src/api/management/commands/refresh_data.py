@@ -11,7 +11,6 @@ from django.core.management.base import BaseCommand
 
 from api.models.asset import Asset
 from api.repository.external.asset_repository import fetch
-from api.repository.internal.assets_within_500m_exposure_layers_repository import refresh
 
 
 class Command(BaseCommand):
@@ -85,4 +84,3 @@ class Command(BaseCommand):
 
         Asset.objects.all().delete()
         Asset.objects.bulk_create(assets)
-        refresh()
