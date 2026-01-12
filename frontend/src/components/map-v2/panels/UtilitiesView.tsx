@@ -177,7 +177,7 @@ const RoadRouteControls = React.memo(
                             Route Summary
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
-                            Distance: {routeSummary.distance.toFixed(2)} km
+                            Distance: {(routeSummary.distance * 0.6213712).toFixed(2)} miles
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
                             Time:{' '}
