@@ -335,40 +335,39 @@ const MapView = () => {
 
     const handleViewChange = useCallback(
         (viewId: string | null) => {
-            if (viewId === 'assets' && selectedElement) {
-                setActivePanelView('asset-details');
-            } else if (viewId !== 'asset-details' && viewId !== 'assets') {
+            if (viewId !== 'inspector') {
                 setSelectedElement(null);
-                setActivePanelView(viewId);
-            } else {
-                setActivePanelView(viewId);
             }
+            if (viewId && viewId !== activePanelView) {
+                setPreviousPanelView(activePanelView);
+            }
+            setActivePanelView(viewId);
         },
-        [selectedElement],
+        [activePanelView],
     );
 
-    const handleBackFromAssetDetails = useCallback(() => {
+    const handleBackFromInspector = useCallback(() => {
         setSelectedElement(null);
         setConnectedAssets({ dependents: [], providers: [] });
-        setActivePanelView(previousPanelView || 'focus-area');
+        if (previousPanelView && previousPanelView !== 'inspector') {
+            setActivePanelView(previousPanelView);
+        }
     }, [previousPanelView]);
 
     const handleElementClick = useCallback(
         (elements: Asset[]) => {
             if (elements.length > 0) {
-                if (activePanelView === 'asset-details') {
+                if (activePanelView === 'inspector') {
+                    setPreviousPanelView('inspector');
                     setSelectedElement(elements[0]);
                 } else {
-                    if (activePanelView === 'assets') {
-                        handleFocusAreaSelect(null);
-                    }
                     setPreviousPanelView(activePanelView);
                     setSelectedElement(elements[0]);
-                    setActivePanelView('asset-details');
+                    setActivePanelView('inspector');
                 }
             }
         },
-        [activePanelView, handleFocusAreaSelect],
+        [activePanelView],
     );
 
     const handleMapClick = useCallback(
@@ -416,17 +415,14 @@ const MapView = () => {
                 }
             }
 
-            if (activePanelView === 'asset-details') {
-                handleBackFromAssetDetails();
+            if (activePanelView === 'inspector') {
+                setSelectedElement(null);
+                setConnectedAssets({ dependents: [], providers: [] });
+                setActivePanelView(previousPanelView || 'focus-area');
             }
         },
-        [positionSelectionMode, activePanelView, handleBackFromAssetDetails, mapReady],
+        [positionSelectionMode, activePanelView, previousPanelView, mapReady],
     );
-
-    const handleCloseAssetDetails = useCallback(() => {
-        setConnectedAssets({ dependents: [], providers: [] });
-        setActivePanelView(null);
-    }, []);
 
     const handleConnectedAssetsVisibilityChange = useCallback(
         (
@@ -489,8 +485,7 @@ const MapView = () => {
                 onRoadRouteVehicleChange={setRoadRouteVehicle}
                 onRequestPositionSelection={setPositionSelectionMode}
                 selectedElement={selectedElement}
-                onBackFromAssetDetails={handleBackFromAssetDetails}
-                onCloseFromAssetDetails={handleCloseAssetDetails}
+                onBackFromInspector={handleBackFromInspector}
                 scenarioId={scenarioId}
                 isDrawing={isDrawing}
                 onStartDrawing={startDrawing}

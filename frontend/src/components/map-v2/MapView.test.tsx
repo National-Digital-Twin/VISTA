@@ -127,7 +127,7 @@ vi.mock('./MapPanels', () => {
         activeView,
         onViewChange,
         selectedElement,
-        onBackFromAssetDetails,
+        onBackFromInspector,
         onUtilityToggle,
         onRoadRouteVehicleChange,
         roadRouteVehicle,
@@ -137,7 +137,7 @@ vi.mock('./MapPanels', () => {
         activeView: string | null;
         onViewChange: (view: string | null) => void;
         selectedElement?: any;
-        onBackFromAssetDetails?: () => void;
+        onBackFromInspector?: () => void;
         onUtilityToggle?: (utilityId: string, enabled: boolean) => void;
         onRoadRouteVehicleChange?: (vehicle: any) => void;
         roadRouteVehicle?: string;
@@ -168,7 +168,7 @@ vi.mock('./MapPanels', () => {
                 <div data-testid="active-view">{activeView || 'none'}</div>
                 <div data-testid="selected-element">{selectedElement?.id || 'none'}</div>
                 <div data-testid="selected-focus-area-id">{selectedFocusAreaId || 'none'}</div>
-                {onBackFromAssetDetails && <button onClick={onBackFromAssetDetails}>Back from Asset Details</button>}
+                {onBackFromInspector && <button onClick={onBackFromInspector}>Back from Inspector</button>}
             </div>
         );
     };
@@ -399,7 +399,7 @@ describe('MapView', () => {
             });
 
             await waitFor(() => {
-                expect(screen.getByTestId('active-view')).toHaveTextContent('asset-details');
+                expect(screen.getByTestId('active-view')).toHaveTextContent('inspector');
                 expect(screen.getByTestId('selected-element')).toHaveTextContent('asset-1');
             });
 
@@ -433,7 +433,7 @@ describe('MapView', () => {
             });
 
             await waitFor(() => {
-                expect(screen.getByTestId('active-view')).toHaveTextContent('asset-details');
+                expect(screen.getByTestId('active-view')).toHaveTextContent('inspector');
                 expect(screen.getByTestId('selected-element')).toHaveTextContent('asset-1');
             });
 
@@ -455,7 +455,7 @@ describe('MapView', () => {
             });
 
             await waitFor(() => {
-                expect(screen.getByTestId('active-view')).toHaveTextContent('asset-details');
+                expect(screen.getByTestId('active-view')).toHaveTextContent('inspector');
                 expect(screen.getByTestId('selected-element')).toHaveTextContent('asset-1');
             });
         });
