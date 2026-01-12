@@ -58,8 +58,8 @@ describe('UtilitiesView', () => {
                 },
                 groups: [
                     {
-                        id: 'road-routes',
-                        name: 'Road routes',
+                        id: 'route-planner',
+                        name: 'Route Planner',
                         utilities: [
                             {
                                 id: 'road-route',
@@ -114,23 +114,23 @@ describe('UtilitiesView', () => {
         it('displays utilities grouped from API', async () => {
             renderWithProviders(<UtilitiesView {...defaultProps} />);
             await waitFor(() => {
-                expect(screen.getByText(/Road routes/)).toBeInTheDocument();
+                expect(screen.getByText(/Route Planner/)).toBeInTheDocument();
             });
         });
 
         it('shows group header', async () => {
             renderWithProviders(<UtilitiesView {...defaultProps} />);
             await waitFor(() => {
-                expect(screen.getByText(/Road routes/)).toBeInTheDocument();
+                expect(screen.getByText(/Route Planner/)).toBeInTheDocument();
             });
         });
 
         it('displays utility names when group is expanded', async () => {
             renderWithProviders(<UtilitiesView {...defaultProps} />);
             await waitFor(() => {
-                expect(screen.getByText(/Road routes/)).toBeInTheDocument();
+                expect(screen.getByText(/Route Planner/)).toBeInTheDocument();
             });
-            const roadRoutesHeader = screen.getByText(/Road routes/);
+            const roadRoutesHeader = screen.getByText(/Route Planner/);
             const headerButton = roadRoutesHeader.closest('button');
             if (headerButton) {
                 fireEvent.click(headerButton);
@@ -149,9 +149,9 @@ describe('UtilitiesView', () => {
         it('expands group when clicked', async () => {
             renderWithProviders(<UtilitiesView {...defaultProps} />);
             await waitFor(() => {
-                expect(screen.getByText(/Road routes/)).toBeInTheDocument();
+                expect(screen.getByText(/Route Planner/)).toBeInTheDocument();
             });
-            const roadRoutesHeader = screen.getByText(/Road routes/);
+            const roadRoutesHeader = screen.getByText(/Route Planner/);
             const headerButton = roadRoutesHeader.closest('button');
             expect(headerButton).toHaveAttribute('aria-expanded', 'false');
             if (headerButton) {
@@ -166,9 +166,9 @@ describe('UtilitiesView', () => {
         it('collapses group when clicked again', async () => {
             renderWithProviders(<UtilitiesView {...defaultProps} />);
             await waitFor(() => {
-                expect(screen.getByText(/Road routes/)).toBeInTheDocument();
+                expect(screen.getByText(/Route Planner/)).toBeInTheDocument();
             });
-            const roadRoutesHeader = screen.getByText(/Road routes/);
+            const roadRoutesHeader = screen.getByText(/Route Planner/);
             const headerButton = roadRoutesHeader.closest('button');
             expect(headerButton).toHaveAttribute('aria-expanded', 'false');
             if (headerButton) {
@@ -196,9 +196,9 @@ describe('UtilitiesView', () => {
             const onUtilityToggle = vi.fn();
             renderWithProviders(<UtilitiesView {...defaultProps} onUtilityToggle={onUtilityToggle} />);
             await waitFor(() => {
-                expect(screen.getByText(/Road routes/)).toBeInTheDocument();
+                expect(screen.getByText(/Route Planner/)).toBeInTheDocument();
             });
-            const roadRoutesHeader = screen.getByText(/Road routes/);
+            const roadRoutesHeader = screen.getByText(/Route Planner/);
             const headerButton = roadRoutesHeader.closest('button');
             if (headerButton) {
                 fireEvent.click(headerButton);
@@ -217,9 +217,9 @@ describe('UtilitiesView', () => {
         it('reflects selected state from props', async () => {
             renderWithProviders(<UtilitiesView {...defaultProps} selectedUtilityIds={{ 'road-route': true }} onUtilityToggle={vi.fn()} />);
             await waitFor(() => {
-                expect(screen.getByText(/Road routes/)).toBeInTheDocument();
+                expect(screen.getByText(/Route Planner/)).toBeInTheDocument();
             });
-            const roadRoutesHeader = screen.getByText(/Road routes/);
+            const roadRoutesHeader = screen.getByText(/Route Planner/);
             const headerButton = roadRoutesHeader.closest('button');
             if (headerButton) {
                 fireEvent.click(headerButton);
@@ -249,9 +249,9 @@ describe('UtilitiesView', () => {
                 />,
             );
             await waitFor(() => {
-                expect(screen.getByText(/Road routes/)).toBeInTheDocument();
+                expect(screen.getByText(/Route Planner/)).toBeInTheDocument();
             });
-            const roadRoutesHeader = screen.getByText(/Road routes/);
+            const roadRoutesHeader = screen.getByText(/Route Planner/);
             const headerButton = roadRoutesHeader.closest('button');
             if (headerButton) {
                 fireEvent.click(headerButton);
@@ -281,9 +281,9 @@ describe('UtilitiesView', () => {
                 />,
             );
             await waitFor(() => {
-                expect(screen.getByText(/Road routes/)).toBeInTheDocument();
+                expect(screen.getByText(/Route Planner/)).toBeInTheDocument();
             });
-            const roadRoutesHeader = screen.getByText(/Road routes/);
+            const roadRoutesHeader = screen.getByText(/Route Planner/);
             const headerButton = roadRoutesHeader.closest('button');
             if (headerButton) {
                 fireEvent.click(headerButton);
@@ -309,9 +309,9 @@ describe('UtilitiesView', () => {
                 />,
             );
             await waitFor(() => {
-                expect(screen.getByText(/Road routes/)).toBeInTheDocument();
+                expect(screen.getByText(/Route Planner/)).toBeInTheDocument();
             });
-            const roadRoutesHeader = screen.getByText(/Road routes/);
+            const roadRoutesHeader = screen.getByText(/Route Planner/);
             const headerButton = roadRoutesHeader.closest('button');
             if (headerButton) {
                 fireEvent.click(headerButton);
@@ -338,9 +338,9 @@ describe('UtilitiesView', () => {
                 />,
             );
             await waitFor(() => {
-                expect(screen.getByText(/Road routes/)).toBeInTheDocument();
+                expect(screen.getByText(/Route Planner/)).toBeInTheDocument();
             });
-            const roadRoutesHeader = screen.getByText(/Road routes/);
+            const roadRoutesHeader = screen.getByText(/Route Planner/);
             const headerButton = roadRoutesHeader.closest('button');
             if (headerButton) {
                 fireEvent.click(headerButton);
@@ -365,9 +365,9 @@ describe('UtilitiesView', () => {
                 />,
             );
             await waitFor(() => {
-                expect(screen.getByText(/Road routes/)).toBeInTheDocument();
+                expect(screen.getByText(/Route Planner/)).toBeInTheDocument();
             });
-            const roadRoutesHeader = screen.getByText(/Road routes/);
+            const roadRoutesHeader = screen.getByText(/Route Planner/);
             const headerButton = roadRoutesHeader.closest('button');
             if (headerButton) {
                 fireEvent.click(headerButton);
@@ -391,9 +391,9 @@ describe('UtilitiesView', () => {
                 />,
             );
             await waitFor(() => {
-                expect(screen.getByText(/Road routes/)).toBeInTheDocument();
+                expect(screen.getByText(/Route Planner/)).toBeInTheDocument();
             });
-            const roadRoutesHeader = screen.getByText(/Road routes/);
+            const roadRoutesHeader = screen.getByText(/Route Planner/);
             const headerButton = roadRoutesHeader.closest('button');
             if (headerButton) {
                 fireEvent.click(headerButton);
@@ -429,9 +429,9 @@ describe('UtilitiesView', () => {
                 />,
             );
             await waitFor(() => {
-                expect(screen.getByText(/Road routes/)).toBeInTheDocument();
+                expect(screen.getByText(/Route Planner/)).toBeInTheDocument();
             });
-            const roadRoutesHeader = screen.getByText(/Road routes/);
+            const roadRoutesHeader = screen.getByText(/Route Planner/);
             const headerButton = roadRoutesHeader.closest('button');
             if (headerButton) {
                 fireEvent.click(headerButton);
