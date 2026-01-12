@@ -95,10 +95,27 @@ function SubCategoryItem({
                 aria-expanded={isExpanded}
             >
                 {isExpanded ? <KeyboardArrowUpIcon fontSize="small" sx={{ mr: 1 }} /> : <KeyboardArrowDownIcon fontSize="small" sx={{ mr: 1 }} />}
-                <Typography variant="body2">
-                    {subCategory.name}
-                    {activeCount > 0 && ` (${activeCount})`}
-                </Typography>
+                <Typography variant="body2">{subCategory.name}</Typography>
+                {activeCount > 0 && (
+                    <Box
+                        sx={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            minWidth: 20,
+                            height: 20,
+                            px: 0.75,
+                            borderRadius: '10px',
+                            bgcolor: 'grey.200',
+                            color: 'text.primary',
+                            fontSize: '0.75rem',
+                            fontWeight: 500,
+                            ml: 1,
+                        }}
+                    >
+                        {activeCount}
+                    </Box>
+                )}
             </Box>
 
             <Collapse in={isExpanded}>
