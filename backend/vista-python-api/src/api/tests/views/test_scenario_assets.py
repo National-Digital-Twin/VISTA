@@ -20,6 +20,7 @@ from api.models import (
 )
 from api.models.asset import Asset
 from api.models.asset_type import AssetCategory, AssetSubCategory, AssetType, DataSource
+from api.tests.conftest import buffer_geometry
 
 http_success_code = 200
 http_not_found = 404
@@ -1491,7 +1492,11 @@ def test_exposure_filter_uses_user_specific_scores(scenario, mock_user_id, clien
         ((-0.001, -0.001), (0.001, -0.001), (0.001, 0.001), (-0.001, 0.001), (-0.001, -0.001))
     )
     exposure_layer_type = ExposureLayerType.objects.create(name="Test Flood")
-    exposure_layer = ExposureLayer.objects.create(geometry=exposure_poly, type=exposure_layer_type)
+    exposure_layer = ExposureLayer.objects.create(
+        geometry=exposure_poly,
+        geometry_buffered=buffer_geometry(exposure_poly),
+        type=exposure_layer_type,
+    )
 
     # Create asset INSIDE exposure layer (should get exposure score = 2)
     Asset.objects.create(
@@ -1527,10 +1532,6 @@ def test_exposure_filter_uses_user_specific_scores(scenario, mock_user_id, clien
 
     # Create global score filter requiring exposure = 0 only
     AssetScoreFilter.objects.create(focus_area=fa, asset_type=None, exposure_values=[0])
-
-    # Refresh materialized view so exposure scores are computed
-    with connection.cursor() as cursor:
-        cursor.execute("REFRESH MATERIALIZED VIEW public.assets_within_500m_exposure_layers;")
 
     # Query assets with exposure filter
     response = client.get(f"/api/scenarios/{scenario.id}/assets/")

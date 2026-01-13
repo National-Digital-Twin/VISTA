@@ -9,8 +9,10 @@ import geopandas as gpd
 from django.conf import settings
 from django.contrib.gis.geos import GEOSGeometry
 from django.core.management.base import BaseCommand
+from django.db import connection
 
 from api.models import ExposureLayer, ExposureLayerType
+from api.utils.geometry import buffer_geometry
 
 
 class Command(BaseCommand):
@@ -50,6 +52,7 @@ class Command(BaseCommand):
             ExposureLayer.objects.create(
                 name=name,
                 geometry=geom,
+                geometry_buffered=buffer_geometry(connection, geom),
                 type=ExposureLayerType(id=self.environmentally_sensitive_area_type_id),
             )
 
@@ -98,6 +101,7 @@ class Command(BaseCommand):
                     id=item_id,
                     name=item["name"],
                     geometry=geos_geometry,
+                    geometry_buffered=buffer_geometry(connection, geos_geometry),
                     type=ExposureLayerType(id=self.flood_type_id),
                 )
                 loaded_count += 1
