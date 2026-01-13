@@ -3,14 +3,14 @@ import { fetchUtilities } from './utilities';
 
 describe('utilities API', () => {
     describe('fetchUtilities', () => {
-        it('returns utilities response with road routes group', async () => {
+        it('returns utilities response with route planner group', async () => {
             const result = await fetchUtilities();
 
             expect(result.featureCollection.type).toBe('FeatureCollection');
             expect(result.featureCollection.features).toHaveLength(0);
             expect(result.groups).toHaveLength(1);
-            expect(result.groups[0].id).toBe('road-routes');
-            expect(result.groups[0].name).toBe('Road routes');
+            expect(result.groups[0].id).toBe('route-planner');
+            expect(result.groups[0].name).toBe('Route Planner');
             expect(result.groups[0].utilities).toHaveLength(1);
             expect(result.groups[0].utilities[0].id).toBe('road-route');
             expect(result.groups[0].utilities[0].name).toBe('Route');

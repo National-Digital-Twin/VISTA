@@ -48,8 +48,8 @@ export const fetchUtilities = async (): Promise<UtilitiesResponse> => {
         },
         groups: [
             {
-                id: 'road-routes',
-                name: 'Road routes',
+                id: 'route-planner',
+                name: 'Route Planner',
                 utilities: [
                     {
                         id: 'road-route',
