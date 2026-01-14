@@ -7,7 +7,6 @@ import logging
 import random
 
 import httpx
-import requests
 
 
 class DataSourceHandler:
@@ -27,10 +26,9 @@ class DataSourceHandler:
         """Fetch and parse data for the given asset spec."""
         raise NotImplementedError
 
-    def fetch_csv_from_url(self, url: str):
+    async def fetch_csv_from_url(self, url: str):
         """Fetch CSV from URL."""
-        response = requests.get(url)
-        response.raise_for_status()
+        response = await self._fetch_from_url_with_retry(url)
         csv_data = io.StringIO(response.text)
         reader = csv.DictReader(csv_data)
         return list(reader)
@@ -69,6 +67,12 @@ class DataSourceHandler:
         :return: Parsed JSON response.
         :raises: Exception if all retries fail.
         """
+        response = await self._fetch_from_url_with_retry(url, retries, backoff, **kwargs)
+        return response.json()
+
+    async def _fetch_from_url_with_retry(
+        self, url: str, retries: int = 5, backoff: float = 0.5, **kwargs
+    ) -> dict | None:
         http_params = kwargs.get("params")
         headers = kwargs.get("headers")
         async with httpx.AsyncClient(timeout=10.0) as client:
@@ -76,7 +80,7 @@ class DataSourceHandler:
                 try:
                     response = await client.get(url, params=http_params, headers=headers)
                     response.raise_for_status()
-                    return response.json()
+                    return response
 
                 except Exception as err:
                     if attempt < retries:
@@ -86,7 +90,7 @@ class DataSourceHandler:
                         )
                         await asyncio.sleep(delay)
                     else:
-                        raise RuntimeError from err(
+                        raise RuntimeError(
                             f"Failed to fetch {url} after {retries + 1} attempts: {err}"
-                        )
+                        ) from err
         return None

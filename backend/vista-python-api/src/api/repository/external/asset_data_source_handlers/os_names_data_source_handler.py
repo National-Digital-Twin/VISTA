@@ -33,7 +33,7 @@ class OsNamesDataSourceHandler(DataSourceHandler):
     def _merge_entries_with_same_name_at_same_location(self, seen):
         def reduce(entries, next_entry):
             entry = next_entry["GAZETTEER_ENTRY"]
-            if not entry["NAME1"]:
+            if "NAME1" not in entry:
                 entries.append(entry)
             else:
                 location = f"{entry['NAME1']}_{entry['GEOMETRY_X']}_{entry['GEOMETRY_Y']}"

@@ -15,7 +15,7 @@ class ExternalAssetMapper:
     @staticmethod
     def map_from_os_ngd(feature, asset_specification):
         """Create an instance of :class:api.models.assets.Asset from an OS NGD feature."""
-        ExternalAssetMapper.validate_fields(feature, ["properties", "geometry"], "os_ngd")
+        ExternalAssetMapper.validate_fields(feature, ["id", "properties", "geometry"], "os_ngd")
         name_field = asset_specification.get("nameField", "name1_text")
         name = (
             feature["properties"][name_field]
