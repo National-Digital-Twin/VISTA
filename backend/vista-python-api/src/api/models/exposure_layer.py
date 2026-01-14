@@ -23,6 +23,7 @@ class ExposureLayer(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255)
     geometry = models.GeometryField()
+    geometry_buffered = models.GeometryField()
     type = models.ForeignKey(
         ExposureLayerType,
         on_delete=models.CASCADE,

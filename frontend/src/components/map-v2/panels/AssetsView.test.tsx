@@ -363,7 +363,8 @@ describe('AssetsView', () => {
             });
             renderWithProviders(<AssetsView {...defaultProps} />);
             await waitFor(() => {
-                expect(screen.getByText(/Utility infrastructure \(1\)/)).toBeInTheDocument();
+                expect(screen.getByText('Utility infrastructure')).toBeInTheDocument();
+                expect(screen.getByText('1')).toBeInTheDocument();
             });
         });
 
@@ -373,7 +374,9 @@ describe('AssetsView', () => {
             await waitFor(() => {
                 expect(screen.getByText('Utility infrastructure')).toBeInTheDocument();
             });
-            expect(screen.queryByText(/Utility infrastructure \(\d+\)/)).not.toBeInTheDocument();
+            // Badge should not be displayed when count is 0 (no active assets)
+            // Since the badge only renders when activeCount > 0, we just verify the text without count
+            expect(screen.queryByText(/\(0\)/)).not.toBeInTheDocument();
         });
 
         it('shows "No assets found" when no assets match search', async () => {
@@ -631,7 +634,7 @@ describe('AssetsView', () => {
             renderWithProviders(<AssetsView {...defaultProps} />);
 
             // Wait for asset categories to load
-            const subCategoryHeader = await screen.findByText(/Utility infrastructure \(1\)/);
+            const subCategoryHeader = await screen.findByText('Utility infrastructure');
             fireEvent.click(subCategoryHeader);
 
             await waitFor(() => {

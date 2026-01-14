@@ -5,7 +5,7 @@ import AssetsView from './panels/AssetsView';
 import ExposureView from './panels/ExposureView';
 import FocusAreaView from './panels/FocusAreaView';
 import UtilitiesView from './panels/UtilitiesView';
-import AssetDetailsPanel from './panels/AssetDetailsPanel';
+import InspectorView from './panels/InspectorView';
 import type { Asset } from '@/api/assets-by-type';
 
 const RAIL_WIDTH = 80;
@@ -34,6 +34,11 @@ const FIXED_ITEMS: readonly MapPanelItem[] = [
         icon: <img src="/icons/map-v2/exposure.svg" alt="Exposure" width={24} height={24} />,
     },
     {
+        id: 'inspector',
+        label: 'Inspector',
+        icon: <img src="/icons/map-v2/mystery.svg" alt="Inspector" width={24} height={24} />,
+    },
+    {
         id: 'utilities',
         label: 'Utilities',
         icon: <img src="/icons/map-v2/utilities.svg" alt="Utilities" width={24} height={24} />,
@@ -52,8 +57,7 @@ type MapPanelsProps = {
     selectedUtilityIds?: Record<string, boolean>;
     onUtilityToggle?: (utilityId: string, enabled: boolean) => void;
     selectedElement?: Asset | null;
-    onBackFromAssetDetails?: () => void;
-    onCloseFromAssetDetails?: () => void;
+    onBackFromInspector?: () => void;
     scenarioId?: string;
     isDrawing?: boolean;
     onStartDrawing?: (mode: 'circle' | 'polygon') => void;
@@ -80,8 +84,7 @@ const MapPanels = ({
     selectedUtilityIds,
     onUtilityToggle,
     selectedElement,
-    onBackFromAssetDetails,
-    onCloseFromAssetDetails,
+    onBackFromInspector,
     scenarioId,
     isDrawing,
     onStartDrawing,
@@ -156,15 +159,12 @@ const MapPanels = ({
                         onFocusAreaSelect={onFocusAreaSelect}
                     />
                 );
-            case 'asset-details':
-                if (!onBackFromAssetDetails) {
-                    return null;
-                }
+            case 'inspector':
                 return (
-                    <AssetDetailsPanel
+                    <InspectorView
                         selectedElement={selectedElement ?? null}
-                        onBack={onBackFromAssetDetails}
-                        onClose={onCloseFromAssetDetails}
+                        onBack={onBackFromInspector}
+                        onClose={handleClosePanel}
                         scenarioId={scenarioId}
                         onConnectedAssetsVisibilityChange={onConnectedAssetsVisibilityChange}
                     />
@@ -173,9 +173,6 @@ const MapPanels = ({
                 return null;
         }
     };
-
-    const isAssetDetailsActive = activeView === 'asset-details';
-    const isAssetsHighlighted = activeView === 'assets' || isAssetDetailsActive;
 
     return (
         <Box
@@ -203,9 +200,14 @@ const MapPanels = ({
             >
                 <Box sx={{ flex: 1, overflowY: 'auto', py: 1 }}>
                     {FIXED_ITEMS.map((item) => {
-                        const isActive = item.id === 'assets' ? isAssetsHighlighted : activeView === item.id;
                         return (
-                            <MapPanelButton key={item.id} label={item.label} icon={item.icon} isActive={isActive} onClick={() => handleItemClick(item.id)} />
+                            <MapPanelButton
+                                key={item.id}
+                                label={item.label}
+                                icon={item.icon}
+                                isActive={activeView === item.id}
+                                onClick={() => handleItemClick(item.id)}
+                            />
                         );
                     })}
                 </Box>

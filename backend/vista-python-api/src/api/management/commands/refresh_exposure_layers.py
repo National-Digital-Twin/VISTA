@@ -6,8 +6,10 @@ from pathlib import Path
 from django.conf import settings
 from django.contrib.gis.geos import GEOSGeometry
 from django.core.management.base import BaseCommand
+from django.db import connection
 
 from api.models import ExposureLayer
+from api.utils.geometry import buffer_geometry
 
 
 class Command(BaseCommand):
@@ -73,7 +75,12 @@ class Command(BaseCommand):
             try:
                 geom = GEOSGeometry(json.dumps(item["geometry"]))
 
-                obj = ExposureLayer(id=item["id"], name=item["name"], geometry=geom)
+                obj = ExposureLayer(
+                    id=item["id"],
+                    name=item["name"],
+                    geometry=geom,
+                    geometry_buffered=buffer_geometry(connection, geom),
+                )
                 objects_to_create.append(obj)
             except Exception as e:
                 msg = f"Skipping item {item.get('name', 'Unknown')}: {e!s}"

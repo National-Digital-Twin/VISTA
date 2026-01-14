@@ -6,8 +6,9 @@ import uuid
 import pytest
 from django.contrib.gis.geos import GEOSGeometry
 
-from api.models import FocusArea, Scenario, VisibleExposureLayer
+from api.models import FocusArea, VisibleExposureLayer
 from api.models.exposure_layer import ExposureLayer, ExposureLayerType
+from api.tests.conftest import buffer_geometry
 
 http_success_code = 200
 http_bad_request = 400
@@ -30,7 +31,11 @@ def exposure_layer(db):  # noqa: ARG001
     exposure_layer_type = ExposureLayerType.objects.create(id=uuid.uuid4(), name="Type 1")
     geom = GEOSGeometry("POLYGON((0 0, 0 0.5, 0.5 0.5, 0.5 0, 0 0))")
     return ExposureLayer.objects.create(
-        id=uuid.uuid4(), name="Exposure Layer 1", geometry=geom, type=exposure_layer_type
+        id=uuid.uuid4(),
+        name="Exposure Layer 1",
+        geometry=geom,
+        geometry_buffered=buffer_geometry(geom),
+        type=exposure_layer_type,
     )
 
 
@@ -338,13 +343,21 @@ def test_exposure_layers_filtered_by_focus_area_geometry(scenario, client):
     # Create exposure layer inside the focus area (0,0 to 1,1)
     inside_geom = GEOSGeometry("POLYGON((0.2 0.2, 0.2 0.8, 0.8 0.8, 0.8 0.2, 0.2 0.2))")
     inside_layer = ExposureLayer.objects.create(
-        id=uuid.uuid4(), name="Inside Layer", geometry=inside_geom, type=exposure_layer_type
+        id=uuid.uuid4(),
+        name="Inside Layer",
+        geometry=inside_geom,
+        geometry_buffered=buffer_geometry(inside_geom),
+        type=exposure_layer_type,
     )
 
     # Create exposure layer outside the focus area
     outside_geom = GEOSGeometry("POLYGON((5 5, 5 6, 6 6, 6 5, 5 5))")
     ExposureLayer.objects.create(
-        id=uuid.uuid4(), name="Outside Layer", geometry=outside_geom, type=exposure_layer_type
+        id=uuid.uuid4(),
+        name="Outside Layer",
+        geometry=outside_geom,
+        geometry_buffered=buffer_geometry(outside_geom),
+        type=exposure_layer_type,
     )
 
     # Create focus area with geometry
@@ -390,13 +403,21 @@ def test_empty_exposure_layer_types_have_empty_arrays(scenario, client):
     # Create exposure layer inside the focus area for first type
     inside_geom = GEOSGeometry("POLYGON((0.2 0.2, 0.2 0.8, 0.8 0.8, 0.8 0.2, 0.2 0.2))")
     ExposureLayer.objects.create(
-        id=uuid.uuid4(), name="Inside Layer", geometry=inside_geom, type=type_with_layers
+        id=uuid.uuid4(),
+        name="Inside Layer",
+        geometry=inside_geom,
+        geometry_buffered=buffer_geometry(inside_geom),
+        type=type_with_layers,
     )
 
     # Create exposure layer outside the focus area for second type
     outside_geom = GEOSGeometry("POLYGON((5 5, 5 6, 6 6, 6 5, 5 5))")
     ExposureLayer.objects.create(
-        id=uuid.uuid4(), name="Outside Layer", geometry=outside_geom, type=type_without_layers
+        id=uuid.uuid4(),
+        name="Outside Layer",
+        geometry=outside_geom,
+        geometry_buffered=buffer_geometry(outside_geom),
+        type=type_without_layers,
     )
 
     # Create focus area with geometry
@@ -439,12 +460,20 @@ def test_mapwide_focus_area_returns_all_exposure_layers(scenario, mapwide_focus_
     # Create two exposure layers in different locations
     layer1_geom = GEOSGeometry("POLYGON((0 0, 0 1, 1 1, 1 0, 0 0))")
     layer1 = ExposureLayer.objects.create(
-        id=uuid.uuid4(), name="Layer 1", geometry=layer1_geom, type=exposure_layer_type
+        id=uuid.uuid4(),
+        name="Layer 1",
+        geometry=layer1_geom,
+        geometry_buffered=buffer_geometry(layer1_geom),
+        type=exposure_layer_type,
     )
 
     layer2_geom = GEOSGeometry("POLYGON((10 10, 10 11, 11 11, 11 10, 10 10))")
     layer2 = ExposureLayer.objects.create(
-        id=uuid.uuid4(), name="Layer 2", geometry=layer2_geom, type=exposure_layer_type
+        id=uuid.uuid4(),
+        name="Layer 2",
+        geometry=layer2_geom,
+        geometry_buffered=buffer_geometry(layer2_geom),
+        type=exposure_layer_type,
     )
 
     response = client.get(
