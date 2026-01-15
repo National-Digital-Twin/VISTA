@@ -35,9 +35,9 @@ class Command(BaseCommand):
 
                 new_assets.extend(result)
                 self.logger.info("Fetched %s assets  in %ss", len(result), duration)
-            except Exception:
+            except Exception as e:
                 duration = time.perf_counter() - spec_start
-                self.logger.exception("Error fetching assets  in %ss", duration)
+                self.logger.exception("Error %s fetching assets  in %ss", e, duration)
 
         total_time = time.perf_counter() - start_time
         self.logger.info(
