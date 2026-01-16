@@ -7,19 +7,32 @@ from uuid import uuid4
 import pytest
 from api.management.commands.refresh_data import Command
 from api.models.asset import Asset
-from api.models.asset_type import AssetType
+from api.models.asset_type import AssetCategory, AssetSubCategory, AssetType
 from django.contrib.gis.geos import Polygon
+
+asset_type_id = uuid4()
+
+
+@pytest.fixture
+def asset_structure():  # noqa: PT004
+    """Create assets fixture."""
+    category = AssetCategory(id=uuid4())
+    category.save()
+    sub_category = AssetSubCategory(id=uuid4(), category=category)
+    sub_category.save()
+    asset_type = AssetType(id=asset_type_id, sub_category=sub_category)
+    asset_type.save()
 
 
 async def _fake_fetch(asset_specification):  # noqa: ARG001
-    asset_type = AssetType(id=uuid4())
+    asset_type = AssetType(id=asset_type_id)
     geometry = Polygon([(0, 0), (10, 0), (10, 10), (0, 10), (0, 0)])
     asset = Asset(id=uuid4(), type=asset_type, geom=geometry, external_id=uuid4())
     return [asset]
 
 
 @pytest.mark.django_db
-def test_refresh_data_command_runs_successfully(monkeypatch):
+def test_refresh_data_command_runs_successfully(asset_structure, monkeypatch):  # noqa: ARG001
     """Test that the refresh data command runs successfully."""
     command = Command()
     fake_json = '{"foo": "bar"}'

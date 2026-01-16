@@ -38,6 +38,7 @@ class TestFetchDataForAssetSpecification:
 
     async def test_fetch_data_for_one_page_one_location_is_successful(self, monkeypatch):
         handler = CqcDataSourceHandler("123")
+        monkeypatch.setattr(ExternalAssetMapper, "map_from_cqc", self.fake_map)
         client = await monkeypatch_client(
             monkeypatch,
             {

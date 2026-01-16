@@ -7,7 +7,7 @@ from uuid import uuid4
 import pytest
 from api.management.commands.refresh_dependency_data import Command
 from api.models.asset import Asset
-from api.models.asset_type import AssetType
+from api.models.asset_type import AssetCategory, AssetSubCategory, AssetType
 from api.models.dependency import Dependency
 from django.contrib.gis.geos import Polygon
 
@@ -18,7 +18,12 @@ id_two = "5678"
 @pytest.fixture
 def assets():
     """Create assets fixture."""
-    asset_type = AssetType(id=uuid4())
+    category = AssetCategory(id=uuid4())
+    category.save()
+    sub_category = AssetSubCategory(id=uuid4(), category=category)
+    sub_category.save()
+    asset_type = AssetType(id=uuid4(), sub_category=sub_category)
+    asset_type.save()
     geometry = Polygon([(0, 0), (10, 0), (10, 10), (0, 10), (0, 0)])
     asset_one = Asset(id=uuid4(), type=asset_type, geom=geometry, external_id=id_one)
     asset_two = Asset(id=uuid4(), type=asset_type, geom=geometry, external_id=id_two)
