@@ -627,7 +627,7 @@ def test_create_user_exposure_layer_requires_type_id(scenario, client):
     )
 
     assert response.status_code == http_bad_request
-    assert "type_id" in response.json().get("error", "").lower()
+    assert "typeId" in response.json()
 
 
 @pytest.mark.django_db
@@ -640,7 +640,7 @@ def test_create_user_exposure_layer_requires_geometry(scenario, user_drawn_type,
     )
 
     assert response.status_code == http_bad_request
-    assert "geometry" in response.json().get("error", "").lower()
+    assert "geometry" in response.json()
 
 
 @pytest.mark.django_db

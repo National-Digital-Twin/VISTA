@@ -12,7 +12,12 @@ from .asset_score import AssetScoreSerializer
 from .asset_score_filter import AssetScoreFilterCreateUpdateSerializer, AssetScoreFilterSerializer
 from .data_source import DataSourceSerializer
 from .dependency import DependencySerializer
-from .exposure_layer import ExposureLayerSerializer, ExposureLayerTypeSerializer
+from .exposure_layer import (
+    ExposureLayerCreateSerializer,
+    ExposureLayerSerializer,
+    ExposureLayerTypeSerializer,
+    ExposureLayerUpdateSerializer,
+)
 from .focus_area import (
     FocusAreaCreateSerializer,
     FocusAreaSerializer,
@@ -40,8 +45,10 @@ __all__ = [
     "AssetTypeSerializer",
     "DataSourceSerializer",
     "DependencySerializer",
+    "ExposureLayerCreateSerializer",
     "ExposureLayerSerializer",
     "ExposureLayerTypeSerializer",
+    "ExposureLayerUpdateSerializer",
     "FocusAreaCreateSerializer",
     "FocusAreaSerializer",
     "FocusAreaUpdateSerializer",

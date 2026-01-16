@@ -2,8 +2,6 @@
 
 import json
 
-from django.contrib.gis.gdal import GDALException
-from django.contrib.gis.geos import GEOSException, GEOSGeometry
 from django.db import connection
 from django.db.models import Case, CharField, F, Prefetch, Q, Value, When
 from django.shortcuts import get_object_or_404
@@ -13,6 +11,7 @@ from rest_framework.views import APIView
 
 from api.models import FocusArea, Scenario, VisibleExposureLayer
 from api.models.exposure_layer import ExposureLayer, ExposureLayerType
+from api.serializers import ExposureLayerCreateSerializer, ExposureLayerUpdateSerializer
 from api.utils.auth import get_user_id_from_request
 from api.utils.geometry import buffer_geometry
 
@@ -175,13 +174,10 @@ class ScenarioExposureLayersView(APIView):
         scenario = get_object_or_404(Scenario, id=scenario_id)
         user_id = get_user_id_from_request(request)
 
-        type_id = request.data.get("type_id")
-        if not type_id:
-            return Response(
-                {"error": "type_id is required"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        serializer = ExposureLayerCreateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
 
+        type_id = serializer.validated_data["type_id"]
         exposure_layer_type = ExposureLayerType.objects.filter(id=type_id).first()
         if not exposure_layer_type:
             return Response(
@@ -195,23 +191,8 @@ class ScenarioExposureLayersView(APIView):
                 status=status.HTTP_403_FORBIDDEN,
             )
 
-        geometry_data = request.data.get("geometry")
-        if not geometry_data:
-            return Response(
-                {"error": "geometry is required"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        try:
-            geom = GEOSGeometry(json.dumps(geometry_data))
-            geom.srid = 4326
-        except (GDALException, GEOSException, ValueError, TypeError):
-            return Response(
-                {"error": "Invalid geometry format"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        name = request.data.get("name")
+        geom = serializer.validated_data["geometry"]
+        name = serializer.validated_data.get("name")
         if not name:
             existing_count = ExposureLayer.objects.filter(
                 user_id=user_id, scenario_id=scenario_id
@@ -227,7 +208,7 @@ class ScenarioExposureLayersView(APIView):
             scenario=scenario,
         )
 
-        focus_area_id = request.data.get("focus_area_id")
+        focus_area_id = serializer.validated_data.get("focus_area_id")
         if focus_area_id:
             focus_area = FocusArea.objects.filter(
                 id=focus_area_id, scenario=scenario, user_id=user_id
@@ -273,20 +254,16 @@ class ScenarioExposureLayersView(APIView):
                 status=status.HTTP_403_FORBIDDEN,
             )
 
-        if "name" in request.data:
-            exposure_layer.name = request.data["name"]
+        serializer = ExposureLayerUpdateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
 
-        if "geometry" in request.data:
-            try:
-                geom = GEOSGeometry(json.dumps(request.data["geometry"]))
-                geom.srid = 4326
-                exposure_layer.geometry = geom
-                exposure_layer.geometry_buffered = buffer_geometry(connection, geom)
-            except (GDALException, GEOSException, ValueError, TypeError):
-                return Response(
-                    {"error": "Invalid geometry format"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
+        if "name" in serializer.validated_data:
+            exposure_layer.name = serializer.validated_data["name"]
+
+        if "geometry" in serializer.validated_data:
+            geom = serializer.validated_data["geometry"]
+            exposure_layer.geometry = geom
+            exposure_layer.geometry_buffered = buffer_geometry(connection, geom)
 
         exposure_layer.save()
 
