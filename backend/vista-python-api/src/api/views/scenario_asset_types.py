@@ -92,7 +92,7 @@ class ScenarioAssetTypesView(APIView):
         visible_type_ids = set(visible_q.values_list("asset_type_id", flat=True))
 
         type_filters = _get_focus_area_score_filters(focus_area_id)
-        ctx = FilterContext(scenario_id, user_id, type_filters, None)
+        ctx = FilterContext(scenario_id, user_id, focus_area_id, type_filters, None)
         builder = AssetFilterBuilder(ctx)
 
         focus_area = None

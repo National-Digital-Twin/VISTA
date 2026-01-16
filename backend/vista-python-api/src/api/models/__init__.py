@@ -5,7 +5,7 @@ This makes them available to Django as if they were in a single models.py file.
 """
 
 from .asset import Asset
-from .asset_score import AssetScore
+from .asset_score import AssetScore, VisibleExposureAssetScore
 from .asset_score_filter import AssetScoreFilter
 from .asset_type import AssetCategory, AssetSubCategory, AssetType
 from .data_source import DataSource
@@ -32,5 +32,6 @@ __all__ = [
     "Scenario",
     "ScenarioAsset",
     "VisibleAsset",
+    "VisibleExposureAssetScore",
     "VisibleExposureLayer",
 ]
