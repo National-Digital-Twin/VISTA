@@ -14,7 +14,7 @@ asset_type_id = uuid4()
 
 
 @pytest.fixture
-def asset_structure():  # noqa: PT004
+def _asset_structure():
     """Create assets fixture."""
     category = AssetCategory(id=uuid4())
     category.save()
@@ -31,8 +31,9 @@ async def _fake_fetch(asset_specification):  # noqa: ARG001
     return [asset]
 
 
+@pytest.mark.usefixtures("_asset_structure")
 @pytest.mark.django_db
-def test_refresh_data_command_runs_successfully(asset_structure, monkeypatch):  # noqa: ARG001
+def test_refresh_data_command_runs_successfully(monkeypatch):
     """Test that the refresh data command runs successfully."""
     command = Command()
     fake_json = '{"foo": "bar"}'
