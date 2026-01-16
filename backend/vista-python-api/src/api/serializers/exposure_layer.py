@@ -29,4 +29,4 @@ class ExposureLayerTypeSerializer(serializers.ModelSerializer):
         """Configuration for the `ExposureLayerTypeSerializer`."""
 
         model = ExposureLayerType
-        fields: ClassVar[list[str]] = ["id", "name", "exposure_layers"]
+        fields: ClassVar[list[str]] = ["id", "name", "exposure_layers", "is_user_editable"]

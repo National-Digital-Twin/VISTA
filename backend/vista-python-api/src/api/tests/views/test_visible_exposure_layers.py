@@ -6,7 +6,7 @@ import uuid
 import pytest
 from django.contrib.gis.geos import GEOSGeometry
 
-from api.models import FocusArea, VisibleExposureLayer
+from api.models import FocusArea, Scenario, VisibleExposureLayer
 from api.models.exposure_layer import ExposureLayer, ExposureLayerType
 from api.tests.conftest import buffer_geometry
 
@@ -192,12 +192,23 @@ def test_toggle_requires_focus_area_id(scenario, exposure_layer, client):
 
 
 @pytest.mark.django_db
-def test_scenario_exposure_layers_requires_focus_area_id(scenario, client):
-    """Test that focus_area_id query param is required for listing exposure layers."""
+def test_scenario_exposure_layers_without_focus_area_id_returns_all_active(
+    scenario,
+    exposure_layer,  # noqa: ARG001
+    focus_area,
+    client,
+):
+    """Test that without focus_area_id, returns layers for all active focus areas."""
+    # Make focus area active
+    focus_area.is_active = True
+    focus_area.save()
+
     response = client.get(f"/api/scenarios/{scenario.id}/exposure-layers/")
 
-    assert response.status_code == http_bad_request
-    assert "focus_area_id" in response.json().get("error", "")
+    assert response.status_code == 200
+    data = response.json()
+    # Should return the exposure layer types structure
+    assert isinstance(data, list)
 
 
 @pytest.mark.django_db
@@ -333,8 +344,8 @@ def test_disable_focus_area_does_not_affect_other_focus_areas(
 
 
 @pytest.mark.django_db
-def test_exposure_layers_filtered_by_focus_area_geometry(scenario, client):
-    """Test that only exposure layers intersecting focus area geometry are returned."""
+def test_exposure_layers_have_focus_area_relation(scenario, client):
+    """Test that exposure layers include focusAreaRelation indicating spatial relationship."""
     mock_user_id = uuid.UUID("00000000-0000-0000-0000-000000000001")
 
     # Create exposure layer type
@@ -352,7 +363,7 @@ def test_exposure_layers_filtered_by_focus_area_geometry(scenario, client):
 
     # Create exposure layer outside the focus area
     outside_geom = GEOSGeometry("POLYGON((5 5, 5 6, 6 6, 6 5, 5 5))")
-    ExposureLayer.objects.create(
+    outside_layer = ExposureLayer.objects.create(
         id=uuid.uuid4(),
         name="Outside Layer",
         geometry=outside_geom,
@@ -379,16 +390,14 @@ def test_exposure_layers_filtered_by_focus_area_geometry(scenario, client):
 
     assert response.status_code == http_success_code
 
-    # Should find the inside layer
+    # Should find both layers with appropriate focusAreaRelation
     inside_layer_data = find_exposure_layer_in_tree(data, inside_layer.id)
     assert inside_layer_data is not None
+    assert inside_layer_data["focusAreaRelation"] == "contained"
 
-    # Should NOT find the outside layer (filtered out by geometry)
-    all_layer_ids = [el["id"] for elt in data for el in elt.get("exposureLayers", [])]
-
-    assert str(inside_layer.id) in all_layer_ids
-    # Outside layer should not be in results - count should only include inside layer
-    assert len(all_layer_ids) == 1
+    outside_layer_data = find_exposure_layer_in_tree(data, outside_layer.id)
+    assert outside_layer_data is not None
+    assert outside_layer_data["focusAreaRelation"] == "elsewhere"
 
 
 @pytest.mark.django_db
@@ -444,11 +453,13 @@ def test_empty_exposure_layer_types_have_empty_arrays(scenario, client):
     assert "With Layers" in types_by_name
     assert "Without Layers" in types_by_name
 
-    # Type with layers inside focus area should have layers
+    # Type with layers inside focus area should have layers with "contained" relation
     assert len(types_by_name["With Layers"]["exposureLayers"]) == 1
+    assert types_by_name["With Layers"]["exposureLayers"][0]["focusAreaRelation"] == "contained"
 
-    # Type with layers outside focus area should have empty array
-    assert len(types_by_name["Without Layers"]["exposureLayers"]) == 0
+    # Type with layers outside focus area should still return layers but with "elsewhere" relation
+    assert len(types_by_name["Without Layers"]["exposureLayers"]) == 1
+    assert types_by_name["Without Layers"]["exposureLayers"][0]["focusAreaRelation"] == "elsewhere"
 
 
 @pytest.mark.django_db
@@ -489,3 +500,213 @@ def test_mapwide_focus_area_returns_all_exposure_layers(scenario, mapwide_focus_
 
     assert layer1_data is not None
     assert layer2_data is not None
+
+
+# --- Security Tests for BulkVisibleExposureLayerView ---
+
+
+@pytest.fixture
+def alternate_user_id():
+    """Return an alternate user ID for testing user isolation."""
+    return uuid.UUID("00000000-0000-0000-0000-000000000002")
+
+
+@pytest.fixture
+def alternate_scenario(db):  # noqa: ARG001
+    """Create an alternate scenario for testing scenario isolation."""
+    return Scenario.objects.create(
+        id=uuid.uuid4(),
+        name="Alternate Scenario",
+        is_active=False,  # Only one active scenario allowed
+    )
+
+
+@pytest.fixture
+def user_defined_exposure_layer(db, scenario):  # noqa: ARG001
+    """Create a user-defined exposure layer for testing."""
+    mock_user_id = uuid.UUID("00000000-0000-0000-0000-000000000001")
+    user_drawn_type = ExposureLayerType.objects.create(
+        id=uuid.uuid4(), name="User drawn Test", is_user_editable=True
+    )
+    geom = GEOSGeometry("POLYGON((0 0, 0 0.5, 0.5 0.5, 0.5 0, 0 0))")
+    return ExposureLayer.objects.create(
+        id=uuid.uuid4(),
+        name="User Layer",
+        geometry=geom,
+        geometry_buffered=buffer_geometry(geom),
+        type=user_drawn_type,
+        user_id=mock_user_id,
+        scenario=scenario,
+    )
+
+
+@pytest.fixture
+def other_user_exposure_layer(db, scenario, alternate_user_id):  # noqa: ARG001
+    """Create a user-defined exposure layer owned by another user."""
+    other_user_type = ExposureLayerType.objects.create(
+        id=uuid.uuid4(), name="Other User Type", is_user_editable=True
+    )
+    geom = GEOSGeometry("POLYGON((0 0, 0 0.5, 0.5 0.5, 0.5 0, 0 0))")
+    return ExposureLayer.objects.create(
+        id=uuid.uuid4(),
+        name="Other User Layer",
+        geometry=geom,
+        geometry_buffered=buffer_geometry(geom),
+        type=other_user_type,
+        user_id=alternate_user_id,
+        scenario=scenario,
+    )
+
+
+@pytest.fixture
+def other_scenario_exposure_layer(db, alternate_scenario):  # noqa: ARG001
+    """Create a user-defined exposure layer in another scenario."""
+    mock_user_id = uuid.UUID("00000000-0000-0000-0000-000000000001")
+    other_scenario_type = ExposureLayerType.objects.create(
+        id=uuid.uuid4(), name="Other Scenario Type", is_user_editable=True
+    )
+    geom = GEOSGeometry("POLYGON((0 0, 0 0.5, 0.5 0.5, 0.5 0, 0 0))")
+    return ExposureLayer.objects.create(
+        id=uuid.uuid4(),
+        name="Other Scenario Layer",
+        geometry=geom,
+        geometry_buffered=buffer_geometry(geom),
+        type=other_scenario_type,
+        user_id=mock_user_id,
+        scenario=alternate_scenario,
+    )
+
+
+@pytest.mark.django_db
+def test_bulk_toggle_rejects_other_users_layer(
+    scenario, focus_area, other_user_exposure_layer, client
+):
+    """Test that bulk toggle rejects exposure layers owned by another user."""
+    response = client.put(
+        f"/api/scenarios/{scenario.id}/visible-exposure-layers/bulk/",
+        data=json.dumps(
+            {
+                "exposureLayerIds": [str(other_user_exposure_layer.id)],
+                "focusAreaId": str(focus_area.id),
+                "isActive": True,
+            }
+        ),
+        content_type="application/json",
+    )
+
+    assert response.status_code == http_bad_request
+    data = response.json()
+    assert "invalid" in data.get("error", "").lower()
+
+    # Verify no visibility record was created
+    assert not VisibleExposureLayer.objects.filter(
+        focus_area=focus_area,
+        exposure_layer=other_user_exposure_layer,
+    ).exists()
+
+
+@pytest.mark.django_db
+def test_bulk_toggle_rejects_other_scenarios_layer(
+    scenario, focus_area, other_scenario_exposure_layer, client
+):
+    """Test that bulk toggle rejects exposure layers from another scenario."""
+    response = client.put(
+        f"/api/scenarios/{scenario.id}/visible-exposure-layers/bulk/",
+        data=json.dumps(
+            {
+                "exposureLayerIds": [str(other_scenario_exposure_layer.id)],
+                "focusAreaId": str(focus_area.id),
+                "isActive": True,
+            }
+        ),
+        content_type="application/json",
+    )
+
+    assert response.status_code == http_bad_request
+    data = response.json()
+    assert "invalid" in data.get("error", "").lower()
+
+    # Verify no visibility record was created
+    assert not VisibleExposureLayer.objects.filter(
+        focus_area=focus_area,
+        exposure_layer=other_scenario_exposure_layer,
+    ).exists()
+
+
+@pytest.mark.django_db
+def test_bulk_toggle_allows_system_layers(scenario, exposure_layer, focus_area, client):
+    """Test that bulk toggle allows system layers (user_id is null)."""
+    response = client.put(
+        f"/api/scenarios/{scenario.id}/visible-exposure-layers/bulk/",
+        data=json.dumps(
+            {
+                "exposureLayerIds": [str(exposure_layer.id)],
+                "focusAreaId": str(focus_area.id),
+                "isActive": True,
+            }
+        ),
+        content_type="application/json",
+    )
+
+    assert response.status_code == http_success_code
+
+    # Verify visibility record was created
+    assert VisibleExposureLayer.objects.filter(
+        focus_area=focus_area,
+        exposure_layer=exposure_layer,
+    ).exists()
+
+
+@pytest.mark.django_db
+def test_bulk_toggle_allows_own_user_defined_layer(
+    scenario, focus_area, user_defined_exposure_layer, client
+):
+    """Test that bulk toggle allows the user's own user-defined layers."""
+    response = client.put(
+        f"/api/scenarios/{scenario.id}/visible-exposure-layers/bulk/",
+        data=json.dumps(
+            {
+                "exposureLayerIds": [str(user_defined_exposure_layer.id)],
+                "focusAreaId": str(focus_area.id),
+                "isActive": True,
+            }
+        ),
+        content_type="application/json",
+    )
+
+    assert response.status_code == http_success_code
+
+    # Verify visibility record was created
+    assert VisibleExposureLayer.objects.filter(
+        focus_area=focus_area,
+        exposure_layer=user_defined_exposure_layer,
+    ).exists()
+
+
+@pytest.mark.django_db
+def test_bulk_toggle_mixed_valid_and_invalid_layers_rejected(
+    scenario, focus_area, exposure_layer, other_user_exposure_layer, client
+):
+    """Test that mixing valid and invalid layers in bulk toggle is rejected entirely."""
+    response = client.put(
+        f"/api/scenarios/{scenario.id}/visible-exposure-layers/bulk/",
+        data=json.dumps(
+            {
+                "exposureLayerIds": [
+                    str(exposure_layer.id),  # Valid (system layer)
+                    str(other_user_exposure_layer.id),  # Invalid (other user's layer)
+                ],
+                "focusAreaId": str(focus_area.id),
+                "isActive": True,
+            }
+        ),
+        content_type="application/json",
+    )
+
+    assert response.status_code == http_bad_request
+
+    # Verify no visibility records were created (atomic)
+    assert not VisibleExposureLayer.objects.filter(
+        focus_area=focus_area,
+        exposure_layer=exposure_layer,
+    ).exists()
