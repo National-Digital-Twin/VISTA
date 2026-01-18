@@ -168,10 +168,15 @@ const MapView = () => {
         return focusAreas.filter((fa) => fa.isActive).map((fa) => fa.id);
     }, [focusAreas]);
 
+    const mapWideVisible = useMemo(() => {
+        const mapWideFocusArea = focusAreas?.find((fa) => fa.isSystem);
+        return mapWideFocusArea?.isActive ?? true;
+    }, [focusAreas]);
+
     usePreloadAssetIcons(assets);
 
     const mergedUtilities = useMemo(() => {
-        if (!isRoadRouteEnabled || !roadRouteStart || !roadRouteEnd) {
+        if (!isRoadRouteEnabled || !roadRouteStart || !roadRouteEnd || !mapWideVisible) {
             return { type: 'FeatureCollection' as const, features: [] };
         }
 
@@ -193,7 +198,7 @@ const MapView = () => {
             type: 'FeatureCollection' as const,
             features: roadRouteFeatures,
         };
-    }, [roadRouteQueryData, isRoadRouteEnabled, roadRouteStart, roadRouteEnd]);
+    }, [roadRouteQueryData, isRoadRouteEnabled, roadRouteStart, roadRouteEnd, mapWideVisible]);
 
     const handleMove = useCallback((event: ViewStateChangeEvent) => {
         setViewState(event.viewState);
@@ -558,7 +563,7 @@ const MapView = () => {
                                 activeFocusAreaIds={activeFocusAreaIds}
                             />
                             <UtilitiesLayers utilities={mergedUtilities} selectedUtilityIds={selectedUtilityIds} mapReady={mapReady} />
-                            {roadRouteStart && (
+                            {mapWideVisible && roadRouteStart && (
                                 <Marker longitude={roadRouteStart.lng} latitude={roadRouteStart.lat} anchor="bottom">
                                     <Box
                                         sx={{
@@ -580,7 +585,7 @@ const MapView = () => {
                                     </Box>
                                 </Marker>
                             )}
-                            {roadRouteEnd && (
+                            {mapWideVisible && roadRouteEnd && (
                                 <Marker longitude={roadRouteEnd.lng} latitude={roadRouteEnd.lat} anchor="bottom">
                                     <Box
                                         sx={{
