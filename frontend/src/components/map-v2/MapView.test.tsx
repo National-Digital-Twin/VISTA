@@ -100,6 +100,7 @@ vi.mock('react-map-gl/maplibre', () => {
                 </div>
             );
         }),
+        Marker: ({ children, longitude, latitude }: any) => <div data-testid={`marker-${latitude}-${longitude}`}>{children}</div>,
         useMap: vi.fn(() => ({
             'map-v2': {
                 getMap: () => ({
@@ -211,6 +212,18 @@ vi.mock('./AssetLayers', () => ({
     ASSET_SYMBOL_LAYER_ID: 'map-v2-asset-symbol-layer',
 }));
 
+const mockUtilitiesLayersProps = vi.fn();
+vi.mock('./UtilitiesLayers', () => ({
+    default: (props: any) => {
+        mockUtilitiesLayersProps(props);
+        return (
+            <div data-testid="utilities-layers" data-features-count={props.utilities?.features?.length ?? 0}>
+                Utilities Layers
+            </div>
+        );
+    },
+}));
+
 vi.mock('./hooks/useMapboxDraw', () => ({
     default: () => ({
         current: {
@@ -257,6 +270,22 @@ vi.mock('@/api/focus-areas', () => ({
     createFocusArea: vi.fn().mockResolvedValue({ id: 'new-focus-area', name: 'Area 1', isActive: true }),
 }));
 
+const mockGetRoadRoute = vi.fn();
+const mockRoadRouteData = vi.fn();
+const mockRoadRouteLoading = vi.fn();
+const mockRoadRouteError = vi.fn();
+
+vi.mock('@/api/utilities', () => ({
+    useRoadRouteLazyQuery: () => [
+        mockGetRoadRoute,
+        {
+            data: mockRoadRouteData(),
+            loading: mockRoadRouteLoading(),
+            error: mockRoadRouteError(),
+        },
+    ],
+}));
+
 const waitForElement = async (testId: string) => {
     await waitFor(() => {
         expect(screen.getByTestId(testId)).toBeInTheDocument();
@@ -276,6 +305,9 @@ describe('MapView', () => {
         mockUseAssetTypeIcons.mockReturnValue(new Map());
         mockFetchAssetCategories.mockResolvedValue([]);
         mockFetchFocusAreas.mockResolvedValue([]);
+        mockRoadRouteData.mockReturnValue(undefined);
+        mockRoadRouteLoading.mockReturnValue(false);
+        mockRoadRouteError.mockReturnValue(null);
         if (mockGetLayer) {
             mockGetLayer.mockReturnValue(undefined);
         }
@@ -554,6 +586,83 @@ describe('MapView', () => {
             await waitFor(() => {
                 expect(screen.getByTestId('selected-focus-area-id')).toHaveTextContent('map-wide-id');
             });
+        });
+    });
+
+    describe('Road route visibility binding to map-wide', () => {
+        const mockRoadRouteResponse = {
+            roadRoute: {
+                routeGeojson: {
+                    type: 'FeatureCollection' as const,
+                    features: [
+                        {
+                            type: 'Feature' as const,
+                            geometry: {
+                                type: 'LineString' as const,
+                                coordinates: [
+                                    [-1.4, 50.67],
+                                    [-1.39, 50.68],
+                                ],
+                            },
+                            properties: {},
+                        },
+                    ],
+                },
+            },
+        };
+
+        beforeEach(() => {
+            mockFetchFocusAreas.mockResolvedValue([{ id: 'map-wide-id', name: 'Map-wide', isSystem: true, isActive: true }]);
+        });
+
+        it('hides road route utilities when map-wide is inactive', async () => {
+            mockFetchFocusAreas.mockResolvedValue([{ id: 'map-wide-id', name: 'Map-wide', isSystem: true, isActive: false }]);
+            mockRoadRouteData.mockReturnValue(mockRoadRouteResponse);
+            mockRoadRouteLoading.mockReturnValue(false);
+
+            const queryClient = createTestQueryClient();
+            renderWithProviders(<MapView />, queryClient);
+            await waitForElement('map');
+            await waitForElement('map-panels');
+
+            await waitFor(() => {
+                expect(mockUtilitiesLayersProps).toHaveBeenCalled();
+            });
+
+            const utilitiesCalls = mockUtilitiesLayersProps.mock.calls;
+            const lastCall = utilitiesCalls[utilitiesCalls.length - 1];
+            expect(lastCall).toBeDefined();
+            expect(lastCall[0].utilities.features).toHaveLength(0);
+        });
+
+        it('hides road route markers when map-wide is inactive', async () => {
+            mockFetchFocusAreas.mockResolvedValue([{ id: 'map-wide-id', name: 'Map-wide', isSystem: true, isActive: false }]);
+
+            const queryClient = createTestQueryClient();
+            renderWithProviders(<MapView />, queryClient);
+            await waitForElement('map');
+
+            const startMarker = screen.queryByTestId('marker-50.67--1.4');
+            const endMarker = screen.queryByTestId('marker-50.68--1.39');
+            expect(startMarker).not.toBeInTheDocument();
+            expect(endMarker).not.toBeInTheDocument();
+        });
+
+        it('shows road route utilities when map-wide is active', async () => {
+            mockFetchFocusAreas.mockResolvedValue([{ id: 'map-wide-id', name: 'Map-wide', isSystem: true, isActive: true }]);
+            mockRoadRouteData.mockReturnValue(mockRoadRouteResponse);
+            mockRoadRouteLoading.mockReturnValue(false);
+
+            const queryClient = createTestQueryClient();
+            renderWithProviders(<MapView />, queryClient);
+            await waitForElement('map');
+            await waitForElement('map-panels');
+
+            await waitFor(() => {
+                expect(mockUtilitiesLayersProps).toHaveBeenCalled();
+            });
+
+            expect(mockUtilitiesLayersProps).toHaveBeenCalled();
         });
     });
 });
