@@ -321,15 +321,10 @@ const AssetsView = ({ onClose, scenarioId, selectedFocusAreaId, onFocusAreaSelec
         clearAll();
     }, [clearAll]);
 
-    const handleFilterModeChange = useCallback(
-        (event: SelectChangeEvent<string>) => {
-            const newMode = event.target.value as FilterMode;
-            if (selectedFocusAreaId) {
-                updateFilterMode({ focusAreaId: selectedFocusAreaId, filterMode: newMode });
-            }
-        },
-        [updateFilterMode, selectedFocusAreaId],
-    );
+    const handleFilterModeChange = useCallback((event: SelectChangeEvent<string>) => {
+        const newMode = event.target.value as FilterMode;
+        setSelectedFilterMode(newMode);
+    }, []);
 
     const handleOpenScoreFilter = useCallback((assetType: ScenarioAssetType) => {
         setScoreFilterAssetType(assetType);
@@ -364,6 +359,18 @@ const AssetsView = ({ onClose, scenarioId, selectedFocusAreaId, onFocusAreaSelec
 
     const handleApplyGlobalScoreFilter = useCallback(
         (filter: ScoreFilterValues) => {
+            if (!selectedFocusAreaId) {
+                return;
+            }
+
+            const currentScope = focusAreas?.find((fa) => fa.id === selectedFocusAreaId);
+            const appliedFilterMode = currentScope?.filterMode ?? 'by_asset_type';
+
+            // If the selected filter mode differs from the applied one, update it first
+            if (selectedFilterMode !== appliedFilterMode) {
+                updateFilterMode({ focusAreaId: selectedFocusAreaId, filterMode: selectedFilterMode });
+            }
+
             if (isDefaultFilter(filter)) {
                 deleteScoreFilter({
                     focusAreaId: selectedFocusAreaId ?? null,
@@ -377,7 +384,7 @@ const AssetsView = ({ onClose, scenarioId, selectedFocusAreaId, onFocusAreaSelec
                 });
             }
         },
-        [applyScoreFilter, deleteScoreFilter, selectedFocusAreaId],
+        [applyScoreFilter, deleteScoreFilter, selectedFocusAreaId, selectedFilterMode, updateFilterMode, focusAreas],
     );
 
     const handleClearGlobalScoreFilter = useCallback(() => {

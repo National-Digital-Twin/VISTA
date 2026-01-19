@@ -8,7 +8,7 @@ import theme from '@/theme';
 import { fetchScenarioAssetTypes, toggleAssetTypeVisibility, clearAllAssetTypeVisibility } from '@/api/scenario-asset-types';
 import { fetchFocusAreas, updateFocusArea } from '@/api/focus-areas';
 import { fetchDataSources } from '@/api/datasources';
-import { fetchAssetScoreFilters } from '@/api/asset-score-filters';
+import { fetchAssetScoreFilters, putAssetScoreFilter } from '@/api/asset-score-filters';
 
 vi.mock('@/api/scenario-asset-types', () => ({
     fetchScenarioAssetTypes: vi.fn(),
@@ -30,6 +30,8 @@ vi.mock('@/api/asset-score-filters', () => ({
     putAssetScoreFilter: vi.fn(),
     deleteAssetScoreFilter: vi.fn(),
 }));
+
+const mockedPutAssetScoreFilter = vi.mocked(putAssetScoreFilter);
 
 const mockedFetchScenarioAssetTypes = vi.mocked(fetchScenarioAssetTypes);
 const mockedToggleAssetTypeVisibility = vi.mocked(toggleAssetTypeVisibility);
@@ -730,6 +732,99 @@ describe('AssetsView', () => {
                 },
                 { timeout: 2000 },
             );
+        });
+
+        it('does not call updateFocusArea when filter mode dropdown changes', async () => {
+            setupMocks();
+            renderWithProviders(<AssetsView {...defaultProps} />);
+
+            await waitFor(() => {
+                expect(screen.getByLabelText('Select filter mode')).toBeInTheDocument();
+            });
+
+            const filterModeSelect = screen.getByLabelText('Select filter mode');
+            fireEvent.mouseDown(filterModeSelect);
+
+            await waitFor(() => {
+                expect(screen.getByRole('listbox')).toBeInTheDocument();
+            });
+
+            const byScoreOption = screen.getByRole('option', { name: 'By VISTA score' });
+            fireEvent.click(byScoreOption);
+
+            await waitFor(() => {
+                expect(screen.queryByPlaceholderText('Search for an asset')).not.toBeInTheDocument();
+            });
+
+            expect(mockedUpdateFocusArea).not.toHaveBeenCalled();
+        });
+
+        it('calls updateFocusArea when APPLY is clicked in GlobalScoreFilter if filter mode changed', async () => {
+            mockedUpdateFocusArea.mockResolvedValue({} as any);
+            mockedPutAssetScoreFilter.mockResolvedValue({} as any);
+            setupMocks();
+            renderWithProviders(<AssetsView {...defaultProps} />);
+
+            await waitFor(() => {
+                expect(screen.getByLabelText('Select filter mode')).toBeInTheDocument();
+            });
+
+            const filterModeSelect = screen.getByLabelText('Select filter mode');
+            fireEvent.mouseDown(filterModeSelect);
+
+            await waitFor(() => {
+                expect(screen.getByRole('listbox')).toBeInTheDocument();
+            });
+
+            const byScoreOption = screen.getByRole('option', { name: 'By VISTA score' });
+            fireEvent.click(byScoreOption);
+
+            await waitFor(() => {
+                expect(screen.getByRole('button', { name: 'Apply' })).toBeInTheDocument();
+            });
+
+            const applyButton = screen.getByRole('button', { name: 'Apply' });
+            fireEvent.click(applyButton);
+
+            await waitFor(
+                () => {
+                    expect(mockedUpdateFocusArea).toHaveBeenCalledWith(
+                        'test-scenario-id',
+                        'map-wide-1',
+                        expect.objectContaining({
+                            filterMode: 'by_score_only',
+                        }),
+                    );
+                },
+                { timeout: 3000 },
+            );
+        });
+
+        it('does not call updateFocusArea when APPLY is clicked if filter mode has not changed', async () => {
+            setupMocks({
+                focusAreas: [
+                    {
+                        id: 'map-wide-1',
+                        name: 'Map-wide',
+                        geometry: null,
+                        filterMode: 'by_score_only',
+                        isActive: true,
+                        isSystem: true,
+                    },
+                ],
+            });
+            renderWithProviders(<AssetsView {...defaultProps} selectedFocusAreaId="map-wide-1" />);
+
+            await waitFor(() => {
+                expect(screen.getByRole('button', { name: 'Apply' })).toBeInTheDocument();
+            });
+
+            const applyButton = screen.getByRole('button', { name: 'Apply' });
+            fireEvent.click(applyButton);
+
+            await waitFor(() => {
+                expect(mockedUpdateFocusArea).not.toHaveBeenCalled();
+            });
         });
     });
 
