@@ -231,7 +231,7 @@ describe('AssetsView', () => {
 
     describe('Loading State', () => {
         it('shows loading state when categories are loading', async () => {
-            const neverResolvingPromise = new Promise<never>(() => { });
+            const neverResolvingPromise = new Promise<never>(() => {});
             mockedFetchScenarioAssetTypes.mockImplementation(() => neverResolvingPromise as Promise<any>);
             mockedFetchFocusAreas.mockResolvedValue([
                 {
