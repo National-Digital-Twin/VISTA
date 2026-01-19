@@ -228,7 +228,7 @@ def test_scenario_asset_types_with_focus_area(
     scenario, asset_type, focus_area, mapwide_focus_area, client
 ):
     """Test getting visibility for specific focus area."""
-    # Create an asset inside the focus area bounds so the asset type is returned
+    # Create an asset inside the focus area bounds
     Asset.objects.create(
         id=uuid.uuid4(),
         external_id=uuid.uuid4(),

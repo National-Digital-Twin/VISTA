@@ -3,7 +3,7 @@ import config from '@/config/app-config';
 export type ScenarioAssetType = {
     id: string;
     name: string;
-    assetCount: number;
+    assetCountInFocusArea: number;
     filteredAssetCount: number;
     isActive: boolean;
     datasourceId: string | null;

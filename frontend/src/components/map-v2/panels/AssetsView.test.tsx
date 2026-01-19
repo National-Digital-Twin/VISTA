@@ -79,7 +79,7 @@ describe('AssetsView', () => {
                 assetTypes: Array<{
                     id: string;
                     name: string;
-                    assetCount: number;
+                    assetCountInFocusArea: number;
                     filteredAssetCount?: number;
                     isActive: boolean;
                     datasourceId: string | null;
@@ -108,7 +108,7 @@ describe('AssetsView', () => {
                                 {
                                     id: '35a910f3-f611-4096-ac0b-0928c5612e32',
                                     name: 'Hospital',
-                                    assetCount: 42,
+                                    assetCountInFocusArea: 42,
                                     filteredAssetCount: 42,
                                     isActive: false,
                                     datasourceId: 'ds-1',
@@ -355,8 +355,15 @@ describe('AssetsView', () => {
                                 id: 'subcat1',
                                 name: 'Utility infrastructure',
                                 assetTypes: [
-                                    { id: 'asset-1', name: 'Hospital', assetCount: 25, filteredAssetCount: 25, isActive: true, datasourceId: 'ds-1' },
-                                    { id: 'asset-2', name: 'School', assetCount: 10, filteredAssetCount: 10, isActive: false, datasourceId: 'ds-1' },
+                                    {
+                                        id: 'asset-1',
+                                        name: 'Hospital',
+                                        assetCountInFocusArea: 25,
+                                        filteredAssetCount: 25,
+                                        isActive: true,
+                                        datasourceId: 'ds-1',
+                                    },
+                                    { id: 'asset-2', name: 'School', assetCountInFocusArea: 10, filteredAssetCount: 10, isActive: false, datasourceId: 'ds-1' },
                                 ],
                             },
                         ],
@@ -410,7 +417,7 @@ describe('AssetsView', () => {
                                     {
                                         id: 'asset-1',
                                         name: 'Hospital',
-                                        assetCount: 25,
+                                        assetCountInFocusArea: 25,
                                         filteredAssetCount: 25,
                                         isActive: true,
                                         datasourceId: 'ds-1',
@@ -424,7 +431,7 @@ describe('AssetsView', () => {
                                     {
                                         id: 'asset-2',
                                         name: 'Railway Station',
-                                        assetCount: 15,
+                                        assetCountInFocusArea: 15,
                                         filteredAssetCount: 15,
                                         isActive: false,
                                         datasourceId: 'ds-1',
@@ -466,7 +473,7 @@ describe('AssetsView', () => {
                                     {
                                         id: 'asset-1',
                                         name: 'Hospital',
-                                        assetCount: 30,
+                                        assetCountInFocusArea: 30,
                                         filteredAssetCount: 30,
                                         isActive: false,
                                         datasourceId: 'ds-1',
@@ -622,7 +629,7 @@ describe('AssetsView', () => {
                                     {
                                         id: '35a910f3-f611-4096-ac0b-0928c5612e32',
                                         name: 'Hospital',
-                                        assetCount: 50,
+                                        assetCountInFocusArea: 50,
                                         filteredAssetCount: 50,
                                         isActive: true,
                                         datasourceId: 'ds-1',
@@ -854,7 +861,7 @@ describe('AssetsView', () => {
                                 {
                                     id: 'asset-1',
                                     name: 'Hospital',
-                                    assetCount: 42,
+                                    assetCountInFocusArea: 42,
                                     filteredAssetCount: 20,
                                     isActive: false,
                                     datasourceId: 'ds-1',
