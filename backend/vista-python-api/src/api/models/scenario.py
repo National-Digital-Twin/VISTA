@@ -18,6 +18,7 @@ class Scenario(models.Model):
     class Meta:
         """Meta configuration."""
 
+        ordering: ClassVar[list[str]] = ["code", "name"]
         constraints: ClassVar = [
             models.UniqueConstraint(
                 fields=["is_active"],

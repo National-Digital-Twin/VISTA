@@ -247,6 +247,136 @@ describe('DataSources', () => {
             expect(sessionStorage.getItem('selectedScenario')).toBe('flood-newport');
         });
 
+        it('selects active scenario when no sessionStorage exists in new session', async () => {
+            mockedFetchScenarios.mockResolvedValue([
+                {
+                    id: 'flood-newport',
+                    name: 'Flood in Newport',
+                    isActive: false,
+                    code: 'F001',
+                },
+                {
+                    id: 'landslide-ventnor',
+                    name: 'Landslide in Ventnor',
+                    isActive: true,
+                    code: 'L001',
+                },
+                {
+                    id: 'wildfire-shanklin',
+                    name: 'Wildfire in Shanklin',
+                    isActive: false,
+                    code: 'W001',
+                },
+            ]);
+
+            renderWithAppProviders(['/data-room']);
+            await screen.findByText('CQC API');
+
+            const loadScenarioButton = screen.getByRole('button', { name: /load scenario/i });
+            fireEvent.click(loadScenarioButton);
+
+            const landslideOption = screen.getByRole('radio', { name: /landslide in ventnor/i });
+            expect(landslideOption).toBeChecked();
+        });
+
+        it('selects first scenario when no active scenario exists and no sessionStorage', async () => {
+            mockedFetchScenarios.mockResolvedValue([
+                {
+                    id: 'flood-newport',
+                    name: 'Flood in Newport',
+                    isActive: false,
+                    code: 'F001',
+                },
+                {
+                    id: 'landslide-ventnor',
+                    name: 'Landslide in Ventnor',
+                    isActive: false,
+                    code: 'L001',
+                },
+                {
+                    id: 'wildfire-shanklin',
+                    name: 'Wildfire in Shanklin',
+                    isActive: false,
+                    code: 'W001',
+                },
+            ]);
+
+            renderWithAppProviders(['/data-room']);
+            await screen.findByText('CQC API');
+
+            const loadScenarioButton = screen.getByRole('button', { name: /load scenario/i });
+            fireEvent.click(loadScenarioButton);
+
+            const floodOption = screen.getByRole('radio', { name: /flood in newport/i });
+            expect(floodOption).toBeChecked();
+        });
+
+        it('prioritizes sessionStorage over active scenario when sessionStorage exists', async () => {
+            sessionStorage.setItem('selectedScenario', 'wildfire-shanklin');
+            mockedFetchScenarios.mockResolvedValue([
+                {
+                    id: 'flood-newport',
+                    name: 'Flood in Newport',
+                    isActive: true,
+                    code: 'F001',
+                },
+                {
+                    id: 'landslide-ventnor',
+                    name: 'Landslide in Ventnor',
+                    isActive: false,
+                    code: 'L001',
+                },
+                {
+                    id: 'wildfire-shanklin',
+                    name: 'Wildfire in Shanklin',
+                    isActive: false,
+                    code: 'W001',
+                },
+            ]);
+
+            renderWithAppProviders(['/data-room']);
+            await screen.findByText('CQC API');
+
+            const loadScenarioButton = screen.getByRole('button', { name: /load scenario/i });
+            fireEvent.click(loadScenarioButton);
+
+            const wildfireOption = screen.getByRole('radio', { name: /wildfire in shanklin/i });
+            expect(wildfireOption).toBeChecked();
+        });
+
+        it('uses active scenario when sessionStorage value is invalid', async () => {
+            sessionStorage.setItem('selectedScenario', 'invalid-scenario-id');
+            mockedFetchScenarios.mockResolvedValue([
+                {
+                    id: 'flood-newport',
+                    name: 'Flood in Newport',
+                    isActive: false,
+                    code: 'F001',
+                },
+                {
+                    id: 'landslide-ventnor',
+                    name: 'Landslide in Ventnor',
+                    isActive: true,
+                    code: 'L001',
+                },
+                {
+                    id: 'wildfire-shanklin',
+                    name: 'Wildfire in Shanklin',
+                    isActive: false,
+                    code: 'W001',
+                },
+            ]);
+
+            renderWithAppProviders(['/data-room']);
+            await screen.findByText('CQC API');
+
+            const loadScenarioButton = screen.getByRole('button', { name: /load scenario/i });
+            fireEvent.click(loadScenarioButton);
+
+            const landslideOption = screen.getByRole('radio', { name: /landslide in ventnor/i });
+            expect(landslideOption).toBeChecked();
+        });
+
         it('closes modal after confirming scenario selection', async () => {
             renderWithAppProviders(['/data-room']);
             await screen.findByText('CQC API');
