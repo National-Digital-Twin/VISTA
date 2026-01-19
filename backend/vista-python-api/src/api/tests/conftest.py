@@ -6,7 +6,7 @@ import pytest
 from django.contrib.gis.geos import Point
 from django.db import connection
 
-from api.models import FocusArea, Scenario, ScenarioAsset
+from api.models import FocusArea, Scenario
 from api.models.asset import Asset
 from api.models.asset_type import AssetCategory, AssetSubCategory, AssetType, DataSource
 from api.models.dependency import Dependency

@@ -37,7 +37,11 @@ class OsNgdDataSourceHandler(DataSourceHandler):
         while fetch_next_page:
             offset_url = url + f"&offset={offset}"
             response = await self.fetch_from_url_with_retry(offset_url)
-            fetch_next_page = response["numberReturned"] == self.os_ngd_response_page_size
+            fetch_next_page = (
+                response["numberReturned"] == self.os_ngd_response_page_size
+                if "numberReturned" in response
+                else False
+            )
             offset += self.os_ngd_response_page_size
             filtered_assets = []
             for feature in response["features"]:
@@ -56,18 +60,15 @@ class OsNgdDataSourceHandler(DataSourceHandler):
         self, all_filters: dict[str, str], filters: list[tuple[str, str]] | None = None
     ) -> str:
         filters = [] if filters is None else filters
-        # Collect valid filters
         for key, value in all_filters.items():
             if isinstance(value, str) and key in self.filterable_fields:
                 filters.append((key, value))
 
-        # Build filter string
         filter_parts = [
             f"filter={urllib.parse.quote(key)}='{urllib.parse.quote(val)}'" for key, val in filters
         ]
         filter_str = "&".join(filter_parts)
 
-        # Handle cqlFilter override
         if all_filters.get("cqlFilter"):
             if filters:
                 warnings.warn(
@@ -76,7 +77,6 @@ class OsNgdDataSourceHandler(DataSourceHandler):
                 )
             filter_str = f"filter={urllib.parse.quote(all_filters['cqlFilter'])}"
 
-        # Build final query
         if filter_str:
             return f"?key={settings.OS_NGD_API_KEY}&bbox={self.locator}&{filter_str}"
         return f"?key={settings.OS_NGD_API_KEY}&bbox={self.locator}"
@@ -85,9 +85,8 @@ class OsNgdDataSourceHandler(DataSourceHandler):
         description = filters.get("description")
 
         if not description:
-            # No descriptions → one query string
             return [self._build_query_string(filters, [])]
-        # Ensure list
+
         if not isinstance(description, list):
             description = [description]
 
@@ -103,7 +102,7 @@ class OsNgdDataSourceHandler(DataSourceHandler):
             matches_all_filters = True
             for data_filter in data_filters:
                 if isinstance(data_filter["filterValue"], list):
-                    matches_all_filters = self._is_match_for_any_filter_value(feature, data_filters)
+                    matches_all_filters = self._is_match_for_any_filter_value(feature, data_filter)
                 else:
                     matches_all_filters = (
                         "properties" in feature
@@ -113,9 +112,8 @@ class OsNgdDataSourceHandler(DataSourceHandler):
             return matches_all_filters
         return True
 
-    def _is_match_for_any_filter_value(self, feature, data_filters):
+    def _is_match_for_any_filter_value(self, feature, data_filter):
         return any(
-            "properties" in feature
-            and feature["properties"].get(data_filters["filterName"]) == filter_value
-            for filter_value in data_filters["filterValue"]
+            "properties" in feature and feature["properties"].get(data_filter["filterName"]) == prop
+            for prop in data_filter["filterValue"]
         )

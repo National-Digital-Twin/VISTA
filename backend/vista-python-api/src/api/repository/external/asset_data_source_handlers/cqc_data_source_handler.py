@@ -25,10 +25,10 @@ class CqcDataSourceHandler(DataSourceHandler):
         all_locations = []
         current_url = url
         while current_url:
-            response = await self.fetch_from_url_with_retry(url, headers=self.headers)
+            response = await self.fetch_from_url_with_retry(current_url, headers=self.headers)
             all_locations.extend(response["locations"])
             current_url = (
-                f"{self.root_url}/{response['nextPageUri']}" if response["nextPageUri"] else None
+                f"{self.root_url}/{response['nextPageUri']}" if "nextPageUri" in response else None
             )
 
         tasks = {

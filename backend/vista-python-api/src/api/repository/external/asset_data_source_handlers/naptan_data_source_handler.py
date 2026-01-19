@@ -18,7 +18,7 @@ class NaptanDataSourceHandler(DataSourceHandler):
 
     async def fetch_data_for_asset_specification(self, asset_specification, url):
         """Fetch the OS NGD data per the specification given."""
-        stops = self.fetch_csv_from_url(url)
+        stops = await self.fetch_csv_from_url(url)
         unique_stops = reduce(self._merge_stops_with_same_name_at_same_location(set()), stops, [])
         return [
             ExternalAssetMapper.map_from_naptan(stop, asset_specification)
@@ -30,7 +30,7 @@ class NaptanDataSourceHandler(DataSourceHandler):
 
     def _merge_stops_with_same_name_at_same_location(self, seen):
         def reduce(stops, next_stop):
-            if not next_stop["CommonName"]:
+            if "CommonName" not in next_stop:
                 stops.append(next_stop)
             else:
                 location = f"{next_stop['CommonName']}_{next_stop['LocalityName']}"
