@@ -355,7 +355,6 @@ describe('AssetDetailsPanel', () => {
             mockedFetchAssetScore.mockResolvedValue({
                 id: 'score-1',
                 scenarioId,
-                userId: 'user-1',
                 criticalityScore: '3.0',
                 dependencyScore: '2.5',
                 exposureScore: '1.5',

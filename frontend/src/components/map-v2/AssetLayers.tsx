@@ -102,6 +102,7 @@ export type AssetLayersProps = {
     assetCategories?: AssetCategory[];
     onGeneratingChange?: (isGenerating: boolean) => void;
     showCpsIcons?: boolean;
+    interactionDisabled?: boolean;
 };
 
 const AssetLayers = ({
@@ -112,6 +113,7 @@ const AssetLayers = ({
     assetCategories,
     onGeneratingChange,
     showCpsIcons = false,
+    interactionDisabled = false,
 }: AssetLayersProps) => {
     const mapContext = useMap();
     const mapInstance = mapContext?.['map-v2'] || mapContext?.default || null;
@@ -303,7 +305,7 @@ const AssetLayers = ({
 
     const handleMapClick = useCallback(
         (event: MapLayerMouseEvent) => {
-            if (!onElementClick) {
+            if (!onElementClick || interactionDisabled) {
                 return;
             }
 
@@ -324,12 +326,12 @@ const AssetLayers = ({
 
             onElementClick([clickedAsset]);
         },
-        [onElementClick, assets],
+        [onElementClick, assets, interactionDisabled],
     );
 
     const handleMouseMove = useCallback(
         (event: MapLayerMouseEvent) => {
-            if (!mapInstance) {
+            if (!mapInstance || interactionDisabled) {
                 return;
             }
 
@@ -357,11 +359,11 @@ const AssetLayers = ({
                 setTooltipPosition({ x: event.point.x, y: event.point.y });
             }
         },
-        [mapInstance, assetMap],
+        [mapInstance, assetMap, interactionDisabled],
     );
 
     const handleMouseLeave = useCallback(() => {
-        if (!mapInstance) {
+        if (!mapInstance || interactionDisabled) {
             return;
         }
 
@@ -369,7 +371,7 @@ const AssetLayers = ({
         map.getCanvas().style.cursor = '';
         setHoveredAsset(null);
         setTooltipPosition(null);
-    }, [mapInstance]);
+    }, [mapInstance, interactionDisabled]);
 
     useEffect(() => {
         if (!mapInstance || !mapReady) {

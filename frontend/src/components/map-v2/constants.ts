@@ -47,3 +47,10 @@ export const MAP_VIEW_BOUNDS: [[number, number], [number, number]] = [
     [-25, 42],
     [15, 67],
 ];
+
+export const FEATURE_TYPES = {
+    FOCUS_AREA: 'focus_area',
+    EXPOSURE_LAYER: 'exposure_layer',
+} as const;
+
+export type FeatureType = (typeof FEATURE_TYPES)[keyof typeof FEATURE_TYPES];

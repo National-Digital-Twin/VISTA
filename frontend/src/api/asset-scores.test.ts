@@ -29,7 +29,6 @@ describe('asset-scores API', () => {
             const mockAssetScore: AssetScore = {
                 id: 'score-1',
                 scenarioId: mockScenarioId,
-                userId: 'user-1',
                 criticalityScore: '3.0',
                 dependencyScore: '2.5',
                 exposureScore: '1.5',
@@ -57,7 +56,6 @@ describe('asset-scores API', () => {
             const mockAssetScore: AssetScore = {
                 id: 'score-2',
                 scenarioId: mockScenarioId,
-                userId: 'user-1',
                 criticalityScore: '0',
                 dependencyScore: '0',
                 exposureScore: '0',
@@ -81,7 +79,6 @@ describe('asset-scores API', () => {
             const mockAssetScore: AssetScore = {
                 id: 'score-3',
                 scenarioId: mockScenarioId,
-                userId: 'user-1',
                 criticalityScore: '3',
                 dependencyScore: '3',
                 exposureScore: '3',
