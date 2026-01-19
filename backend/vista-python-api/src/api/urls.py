@@ -50,6 +50,11 @@ urlpatterns = [
         name="visible-exposure-layers",
     ),
     path(
+        "scenarios/<uuid:scenario_id>/visible-exposure-layers/bulk/",
+        views.BulkVisibleExposureLayerView.as_view(),
+        name="visible-exposure-layers-bulk",
+    ),
+    path(
         "scenarios/<uuid:scenario_id>/asset-types/",
         views.ScenarioAssetTypesView.as_view(),
         name="scenario-asset-types",
@@ -60,14 +65,14 @@ urlpatterns = [
         name="scenario-exposure-layers",
     ),
     path(
+        "scenarios/<uuid:scenario_id>/exposure-layers/<uuid:exposure_layer_id>/",
+        views.ScenarioExposureLayersView.as_view(),
+        name="scenario-exposure-layer-detail",
+    ),
+    path(
         "scenarios/<uuid:scenario_id>/assets/",
         views.ScenarioAssetsView.as_view(),
         name="scenario-assets",
-    ),
-    path(
-        "scenarios/<uuid:scenario_id>/assetscores/",
-        views.AssetScoreViewSet.as_view({"get": "list"}),
-        name="asset-score-list",
     ),
     path(
         "scenarios/<uuid:scenario_id>/assetscores/<uuid:pk>/",

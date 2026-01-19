@@ -215,22 +215,6 @@ def fixture(db):  # noqa: ARG001
 
 
 @pytest.mark.django_db
-def test_list_asset_scores(fixture, client):
-    """Test that all asset scores are listed."""
-    scenario = fixture["scenarios"][0]
-    response = client.get(f"/api/scenarios/{scenario.id}/assetscores/")
-    data = response.json()
-
-    assert response.status_code == http_success_code
-    expected_scores = len(fixture["asset_scores"])
-    for asset in fixture["assets"]:
-        exposure_score = _get_exposure_score_for_asset(fixture, asset.id, scenario.id)
-        if exposure_score > 0:
-            expected_scores += 1
-    assert len(data) == expected_scores
-
-
-@pytest.mark.django_db
 @pytest.mark.parametrize(
     ("asset_num", "scenario_num"), [(0, 0), (1, 0), (2, 0), (0, 1), (1, 1), (2, 1)]
 )
@@ -286,4 +270,78 @@ def test_retrieve_nonexistent_asset_score_returns_404(client):
     """Test that nonexistent asset scores return 404."""
     fake_id = uuid.uuid4()
     response = client.get(f"/api/assetscores/{fake_id}/")
+    assert response.status_code == http_not_found
+
+
+@pytest.mark.django_db
+def test_retrieve_asset_score_with_focus_area_id(fixture, client, mock_user_id):
+    """Test that exposure score is scoped to the specified focus area.
+
+    When focus_area_id is provided, exposure score should only count
+    exposure layers enabled for that specific focus area.
+    """
+    asset = fixture["assets"][0]  # asset1 at Point(0,0) - inside exposure layer
+    scenario = fixture["scenarios"][0]
+
+    # Get the focus area from fixture (has exposure layer enabled)
+    focus_area = FocusArea.objects.filter(scenario=scenario, user_id=user_id).first()
+
+    response = client.get(
+        f"/api/scenarios/{scenario.id}/assetscores/{asset.id}/?focus_area_id={focus_area.id}"
+    )
+    data = response.json()
+
+    mock_user_id.assert_called_once()
+    assert response.status_code == http_success_code
+    # Exposure score should be calculated for this focus area's visible layers
+    expected_exposure = _get_exposure_score_for_asset(fixture, asset.id, scenario.id)
+    assert data["exposureScore"] == f"{expected_exposure:.2f}"
+
+
+@pytest.mark.django_db
+def test_retrieve_asset_score_focus_area_no_exposure_layers(fixture, client, mock_user_id):
+    """Test exposure score = 0 when focus area has no exposure layers enabled."""
+    asset = fixture["assets"][0]  # asset1 at Point(0,0) - inside exposure layer
+    scenario = fixture["scenarios"][0]
+
+    # Create a new focus area with NO exposure layers
+    fa_no_layers = FocusArea.objects.create(
+        scenario=scenario,
+        user_id=user_id,
+        name="No Exposure Layers FA",
+        geometry=None,
+        is_active=True,
+    )
+
+    response = client.get(
+        f"/api/scenarios/{scenario.id}/assetscores/{asset.id}/?focus_area_id={fa_no_layers.id}"
+    )
+    data = response.json()
+
+    mock_user_id.assert_called_once()
+    assert response.status_code == http_success_code
+    # No exposure layers enabled = exposure score 0
+    assert data["exposureScore"] == "0.00"
+
+
+@pytest.mark.django_db
+def test_retrieve_asset_score_focus_area_wrong_user_returns_404(fixture, client, mock_user_id):
+    """Test that focus_area_id belonging to another user returns 404."""
+    asset = fixture["assets"][0]
+    scenario = fixture["scenarios"][0]
+
+    # Create a focus area for another user
+    fa_other_user = FocusArea.objects.create(
+        scenario=scenario,
+        user_id=other_user_id,
+        name="Other User FA",
+        geometry=None,
+        is_active=True,
+    )
+
+    response = client.get(
+        f"/api/scenarios/{scenario.id}/assetscores/{asset.id}/?focus_area_id={fa_other_user.id}"
+    )
+
+    mock_user_id.assert_called_once()
     assert response.status_code == http_not_found

@@ -7,6 +7,8 @@ import FocusAreaView from './panels/FocusAreaView';
 import UtilitiesView from './panels/UtilitiesView';
 import InspectorView from './panels/InspectorView';
 import type { Asset } from '@/api/assets-by-type';
+import type { FocusArea } from '@/api/focus-areas';
+import type { ExposureLayersResponse } from '@/api/exposure-layers';
 
 const RAIL_WIDTH = 80;
 const PANEL_WIDTH = 420;
@@ -59,8 +61,6 @@ type MapPanelsProps = {
     selectedElement?: Asset | null;
     onBackFromInspector?: () => void;
     scenarioId?: string;
-    isDrawing?: boolean;
-    onStartDrawing?: (mode: 'circle' | 'polygon') => void;
     roadRouteStart?: RoadRoutePosition;
     roadRouteEnd?: RoadRoutePosition;
     roadRouteVehicle?: 'HGV' | 'EmergencyVehicle' | 'Car';
@@ -75,6 +75,14 @@ type MapPanelsProps = {
         dependents: Array<{ id: string; geom: string; type: { name: string } }>,
         providers: Array<{ id: string; geom: string; type: { name: string } }>,
     ) => void;
+    // Focus areas data (lifted from FocusAreaView)
+    focusAreas?: FocusArea[];
+    isFocusAreasLoading?: boolean;
+    isFocusAreasError?: boolean;
+    // Exposure layers data (lifted from ExposureView)
+    exposureLayersData?: ExposureLayersResponse;
+    isExposureLayersLoading?: boolean;
+    isExposureLayersError?: boolean;
 };
 
 const MapPanels = ({
@@ -86,8 +94,6 @@ const MapPanels = ({
     selectedElement,
     onBackFromInspector,
     scenarioId,
-    isDrawing,
-    onStartDrawing,
     roadRouteStart,
     roadRouteEnd,
     roadRouteVehicle,
@@ -98,6 +104,12 @@ const MapPanels = ({
     onRequestPositionSelection,
     onFocusAreaSelect,
     onConnectedAssetsVisibilityChange,
+    focusAreas,
+    isFocusAreasLoading,
+    isFocusAreasError,
+    exposureLayersData,
+    isExposureLayersLoading,
+    isExposureLayersError,
 }: Readonly<MapPanelsProps>) => {
     const handleItemClick = (itemId: string) => {
         const newActiveView = activeView === itemId ? null : itemId;
@@ -130,6 +142,9 @@ const MapPanels = ({
                         scenarioId={scenarioId}
                         selectedFocusAreaId={selectedFocusAreaId}
                         onFocusAreaSelect={onFocusAreaSelect}
+                        exposureLayersData={exposureLayersData}
+                        isLoading={isExposureLayersLoading}
+                        isError={isExposureLayersError}
                     />
                 );
             case 'utilities':
@@ -153,10 +168,11 @@ const MapPanels = ({
                     <FocusAreaView
                         onClose={handleClosePanel}
                         scenarioId={scenarioId}
-                        isDrawing={isDrawing}
-                        onStartDrawing={onStartDrawing}
                         selectedFocusAreaId={selectedFocusAreaId}
                         onFocusAreaSelect={onFocusAreaSelect}
+                        focusAreas={focusAreas}
+                        isLoading={isFocusAreasLoading}
+                        isError={isFocusAreasError}
                     />
                 );
             case 'inspector':

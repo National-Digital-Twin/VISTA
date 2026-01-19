@@ -24,7 +24,7 @@ def _build_focus_area_q(focus_area: FocusArea, scenario_id, user_id, exclude_q=N
 
     visible_type_ids = {va.asset_type_id for va in focus_area.visible_assets.all()}
 
-    ctx = FilterContext(scenario_id, user_id, type_filters, global_filter)
+    ctx = FilterContext(scenario_id, user_id, focus_area.id, type_filters, global_filter)
     builder = AssetFilterBuilder(ctx)
 
     if focus_area.filter_mode == "by_score_only":
@@ -68,16 +68,16 @@ class ScenarioAssetsView(APIView):
             else:
                 geo_focus_areas.append(fa)
 
-        exclude_fa_q = Q()
+        geo_covered_q = Q()
         for fa in geo_focus_areas:
-            exclude_fa_q |= Q(geom__within=fa.geometry)
+            geo_covered_q |= Q(geom__within=fa.geometry)
 
         combined_q = Q()
         for fa in geo_focus_areas:
             combined_q |= _build_focus_area_q(fa, scenario_id, user_id)
 
         if map_wide_fa:
-            exclude_q = exclude_fa_q if geo_focus_areas else None
+            exclude_q = geo_covered_q if geo_focus_areas else None
             combined_q |= _build_focus_area_q(map_wide_fa, scenario_id, user_id, exclude_q)
 
         if not combined_q:

@@ -1,11 +1,14 @@
 """Views for exposure layer visibility toggling."""
 
+from django.db import transaction
+from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from api.models import ExposureLayer, FocusArea, Scenario, VisibleExposureLayer
+from api.models.exposure_layer import ExposureLayerType
 from api.serializers import (
     VisibleExposureLayerResponseSerializer,
     VisibleExposureLayerToggleSerializer,
@@ -56,5 +59,85 @@ class VisibleExposureLayerView(APIView):
             "is_active": is_active,
         }
         response_serializer = VisibleExposureLayerResponseSerializer(data=response_data)
-        response_serializer.is_valid()
+        response_serializer.is_valid(raise_exception=True)
         return Response(response_serializer.data, status=status.HTTP_200_OK)
+
+
+class BulkVisibleExposureLayerView(APIView):
+    """View for bulk toggling exposure layer visibility."""
+
+    def put(self, request, scenario_id=None):
+        """Bulk enable or disable visibility for multiple exposure layers.
+
+        Request body options:
+            1. Toggle specific layers:
+               {"exposureLayerIds": [...], "focusAreaId": "...", "isActive": true/false}
+
+            2. Toggle all layers of a type:
+               {"typeId": "...", "focusAreaId": "...", "isActive": true/false}
+        """
+        scenario = get_object_or_404(Scenario, id=scenario_id, is_active=True)
+        user_id = get_user_id_from_request(request)
+
+        focus_area_id = request.data.get("focus_area_id")
+        is_active = request.data.get("is_active")
+        if focus_area_id is None or is_active is None:
+            return Response(
+                {"error": "focus_area_id and is_active are required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        focus_area = get_object_or_404(
+            FocusArea, id=focus_area_id, scenario=scenario, user_id=user_id
+        )
+
+        exposure_layer_ids = request.data.get("exposure_layer_ids")
+        type_id = request.data.get("type_id")
+        if not exposure_layer_ids and not type_id:
+            return Response(
+                {"error": "Either exposure_layer_ids or type_id is required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if type_id:
+            exposure_layer_type = get_object_or_404(ExposureLayerType, id=type_id)
+            if exposure_layer_type.is_user_editable:
+                exposure_layers = ExposureLayer.objects.filter(
+                    type=exposure_layer_type, user_id=user_id, scenario=scenario
+                )
+            else:
+                exposure_layers = ExposureLayer.objects.filter(
+                    type=exposure_layer_type, user_id__isnull=True
+                )
+            exposure_layer_ids = list(exposure_layers.values_list("id", flat=True))
+        else:
+            exposure_layers = ExposureLayer.objects.filter(id__in=exposure_layer_ids).filter(
+                Q(user_id__isnull=True) | Q(user_id=user_id, scenario=scenario)
+            )
+            if exposure_layers.count() != len(exposure_layer_ids):
+                return Response(
+                    {"error": "One or more exposure layer IDs are invalid"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+        with transaction.atomic():
+            if is_active:
+                for layer_id in exposure_layer_ids:
+                    VisibleExposureLayer.objects.get_or_create(
+                        focus_area=focus_area,
+                        exposure_layer_id=layer_id,
+                    )
+            else:
+                VisibleExposureLayer.objects.filter(
+                    focus_area=focus_area,
+                    exposure_layer_id__in=exposure_layer_ids,
+                ).delete()
+
+        return Response(
+            {
+                "focus_area_id": str(focus_area_id),
+                "exposure_layer_ids": [str(layer_id) for layer_id in exposure_layer_ids],
+                "is_active": is_active,
+            },
+            status=status.HTTP_200_OK,
+        )

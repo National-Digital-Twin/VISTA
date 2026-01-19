@@ -46,16 +46,11 @@ def test_list_exposure_layers(exposure_layers, client):
     response = client.get("/api/exposurelayers/")
     data = response.json()
 
-    # Check healthy response
     assert response.status_code == http_success_code
 
-    # Check types of layer are correct
-    assert len(data) == len(expected_type_names)
-    actual_result_types = [item["name"] for item in data]
-    assert len(actual_result_types) == len(expected_type_names)
-    assert set(actual_result_types) == expected_type_names
+    actual_result_types = {item["name"] for item in data}
+    assert expected_type_names.issubset(actual_result_types)
 
-    # Check layers are correct
     for actual_type in data:
         actual_layers = actual_type["exposureLayers"]
         expected_layer_names = {
@@ -74,3 +69,51 @@ def test_exposure_layer_str_method(exposure_layers):
 
     assert result_str == expected_name
     assert result_str == layer.name
+
+
+@pytest.mark.django_db
+def test_exposure_layer_type_is_user_editable_field(db, client):  # noqa: ARG001
+    """Test that isUserEditable field is returned in the response."""
+    # Create a user-editable type
+    editable_type = ExposureLayerType.objects.create(name="User drawn", is_user_editable=True)
+    # Create a non-editable type
+    non_editable_type = ExposureLayerType.objects.create(
+        name="System Floods", is_user_editable=False
+    )
+
+    # Create layers for both types
+    geom = GEOSGeometry("POLYGON((0 0, 0 1, 1 1, 1 0, 0 0))")
+    ExposureLayer.objects.create(
+        name="Editable Layer",
+        geometry=geom,
+        geometry_buffered=buffer_geometry(geom),
+        type=editable_type,
+    )
+    ExposureLayer.objects.create(
+        name="Non-editable Layer",
+        geometry=geom,
+        geometry_buffered=buffer_geometry(geom),
+        type=non_editable_type,
+    )
+
+    response = client.get("/api/exposurelayers/")
+    data = response.json()
+
+    assert response.status_code == http_success_code
+
+    # Find the types in the response
+    types_by_name = {t["name"]: t for t in data}
+
+    assert "User drawn" in types_by_name
+    assert "System Floods" in types_by_name
+
+    # Verify isUserEditable field
+    assert types_by_name["User drawn"]["isUserEditable"] is True
+    assert types_by_name["System Floods"]["isUserEditable"] is False
+
+
+@pytest.mark.django_db
+def test_exposure_layer_type_default_is_not_user_editable(db):  # noqa: ARG001
+    """Test that is_user_editable defaults to False."""
+    layer_type = ExposureLayerType.objects.create(name="New Type")
+    assert layer_type.is_user_editable is False

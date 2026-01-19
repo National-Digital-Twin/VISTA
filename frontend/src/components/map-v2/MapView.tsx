@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState, useEffect } from 'react';
+import { useCallback, useMemo, useRef, useState, useEffect, type ComponentProps } from 'react';
 import { Box, CircularProgress } from '@mui/material';
 import type { MapRef, ViewStateChangeEvent } from 'react-map-gl/maplibre';
 import type { MapMouseEvent } from 'maplibre-gl';
@@ -17,20 +17,111 @@ import ExposureLayers from './ExposureLayers';
 import UtilitiesLayers from './UtilitiesLayers';
 import FocusAreaMask from './FocusAreaMask';
 import FocusAreaOutline from './FocusAreaOutline';
-import RadiusDialog from './RadiusDialog';
 import ConnectedAssetsLayer from './ConnectedAssetsLayer';
-import useMapboxDraw from './hooks/useMapboxDraw';
-import useFocusAreas from './hooks/useFocusAreas';
+import { DrawingProvider, useDrawingContext } from './context/DrawingContext';
 import { usePreloadAssetIcons } from './hooks/usePreloadAssetIcons';
 import { useAssetTypeIcons } from '@/hooks/useAssetTypeIcons';
 import { useActiveScenario } from '@/hooks/useActiveScenario';
 import { useScenarioAssets } from '@/hooks/useScenarioAssets';
 import { fetchAssetCategories } from '@/api/asset-categories';
 import { fetchAssetDetails } from '@/api/asset-details';
+import { fetchFocusAreas } from '@/api/focus-areas';
+import { fetchExposureLayers } from '@/api/exposure-layers';
 import { useRoadRouteLazyQuery, type RoadRouteInputParams } from '@/api/utilities';
 import type { Asset } from '@/api/assets-by-type';
 
 const ASSET_LAYER_IDS = [ASSET_SYMBOL_LAYER_ID, `${ASSET_SYMBOL_LAYER_ID}-selected`, 'map-v2-asset-line-layer'] as const;
+
+type MapLoadingOverlayProps = {
+    readonly isAssetsFetching: boolean;
+    readonly isSpritesGenerating: boolean;
+    readonly isFocusAreasFetching: boolean;
+    readonly isExposureLayersFetching: boolean;
+};
+
+const MapLoadingOverlay = ({ isAssetsFetching, isSpritesGenerating, isFocusAreasFetching, isExposureLayersFetching }: MapLoadingOverlayProps) => {
+    const { drawingSyncComplete, mapRef, mapReady } = useDrawingContext();
+    const [waitingForMapIdle, setWaitingForMapIdle] = useState(false);
+    const wasDataLoadingRef = useRef(false);
+
+    const isDataLoading = isAssetsFetching || isSpritesGenerating || isFocusAreasFetching || isExposureLayersFetching || !drawingSyncComplete;
+
+    // When data loading finishes, wait for map to render
+    useEffect(() => {
+        // Only start waiting for idle when data loading transitions from true to false
+        if (wasDataLoadingRef.current && !isDataLoading) {
+            setWaitingForMapIdle(true);
+        }
+        wasDataLoadingRef.current = isDataLoading;
+    }, [isDataLoading]);
+
+    // When waiting for idle and data is done loading, listen for map idle event
+    useEffect(() => {
+        if (!waitingForMapIdle || !mapReady || !mapRef.current) {
+            return;
+        }
+
+        const map = mapRef.current.getMap();
+        if (!map) {
+            setWaitingForMapIdle(false);
+            return;
+        }
+
+        const handleIdle = () => {
+            setWaitingForMapIdle(false);
+            map.off('idle', handleIdle);
+        };
+
+        // Check if map is already idle
+        const tilesLoaded = typeof map.areTilesLoaded === 'function' ? map.areTilesLoaded() : true;
+        const styleLoaded = typeof map.isStyleLoaded === 'function' ? map.isStyleLoaded() : true;
+        const isMoving = typeof map.isMoving === 'function' ? map.isMoving() : false;
+        if (tilesLoaded && styleLoaded && !isMoving) {
+            const frameId = requestAnimationFrame(() => {
+                setWaitingForMapIdle(false);
+            });
+            return () => cancelAnimationFrame(frameId);
+        }
+
+        map.on('idle', handleIdle);
+
+        return () => {
+            map.off('idle', handleIdle);
+        };
+    }, [waitingForMapIdle, mapRef, mapReady]);
+
+    const isLoading = isDataLoading || waitingForMapIdle;
+
+    return (
+        <Box
+            sx={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: 'rgba(255, 255, 255, 0.5)',
+                zIndex: 10,
+                opacity: isLoading ? 1 : 0,
+                pointerEvents: isLoading ? 'auto' : 'none',
+                transition: 'opacity 200ms ease-out',
+            }}
+        >
+            <CircularProgress size={48} />
+        </Box>
+    );
+};
+
+// Wrapper to pass drawing state to AssetLayers without coupling it to DrawingContext
+type DrawingAwareAssetLayersProps = Omit<ComponentProps<typeof AssetLayers>, 'interactionDisabled'>;
+
+const DrawingAwareAssetLayers = (props: DrawingAwareAssetLayersProps) => {
+    const { drawingMode } = useDrawingContext();
+    return <AssetLayers {...props} interactionDisabled={drawingMode !== null} />;
+};
 
 const MapView = () => {
     const mapRef = useRef<MapRef>(null);
@@ -51,29 +142,44 @@ const MapView = () => {
     const [roadRouteEnd, setRoadRouteEnd] = useState<{ lat: number; lng: number } | null>(null);
     const [roadRouteVehicle, setRoadRouteVehicle] = useState<RoadRouteInputParams['vehicle']>('Car');
     const [positionSelectionMode, setPositionSelectionMode] = useState<'start' | 'end' | null>(null);
-    const [pendingCircleCenter, setPendingCircleCenter] = useState<[number, number] | null>(null);
-    const [radiusDialogOpen, setRadiusDialogOpen] = useState(false);
     const [isSpritesGenerating, setIsSpritesGenerating] = useState(false);
     const [showCoordinates, setShowCoordinates] = useState(false);
     const [showCpsIcons, setShowCpsIcons] = useState(false);
 
-    const drawRef = useMapboxDraw(mapRef, mapReady);
+    const isInFocusAreaPanel = activePanelView === 'focus-area';
+    const isInExposurePanel = activePanelView === 'exposure';
+
     const { data: activeScenario } = useActiveScenario();
     const scenarioId = activeScenario?.id;
     const iconMap = useAssetTypeIcons();
 
-    const isInFocusAreaPanel = activePanelView === 'focus-area';
     const [selectedFocusAreaId, setSelectedFocusAreaId] = useState<string | null>(null);
 
-    const { focusAreas, isDrawing, drawingMode, startDrawing, createCircleAtPoint } = useFocusAreas({
-        scenarioId,
-        mapRef,
-        drawRef,
-        mapReady,
-        isEditable: isInFocusAreaPanel,
-        selectedFocusAreaId,
-        onFocusAreaSelect: setSelectedFocusAreaId,
+    const {
+        data: focusAreas,
+        isFetching: isFocusAreasFetching,
+        isLoading: isFocusAreasLoading,
+        isError: isFocusAreasError,
+    } = useQuery({
+        queryKey: ['focusAreas', scenarioId],
+        queryFn: () => fetchFocusAreas(scenarioId ?? ''),
+        enabled: !!scenarioId,
+        staleTime: 5 * 60 * 1000,
     });
+
+    const {
+        data: exposureLayersData,
+        isFetching: isExposureLayersFetching,
+        isLoading: isExposureLayersLoading,
+        isError: isExposureLayersError,
+    } = useQuery({
+        queryKey: ['exposureLayers', scenarioId, selectedFocusAreaId],
+        queryFn: () => fetchExposureLayers(scenarioId ?? '', selectedFocusAreaId),
+        enabled: !!scenarioId && !!selectedFocusAreaId && isInExposurePanel,
+        staleTime: 0,
+        refetchOnMount: true,
+    });
+
     const handleFocusAreaSelect = useCallback(
         (focusAreaId: string | null) => {
             setSelectedFocusAreaId(focusAreaId);
@@ -161,13 +267,6 @@ const MapView = () => {
         queryFn: () => fetchAssetDetails(selectedElement!.id),
     });
 
-    const activeFocusAreaIds = useMemo(() => {
-        if (!focusAreas) {
-            return [];
-        }
-        return focusAreas.filter((fa) => fa.isActive).map((fa) => fa.id);
-    }, [focusAreas]);
-
     const mapWideVisible = useMemo(() => {
         const mapWideFocusArea = focusAreas?.find((fa) => fa.isSystem);
         return mapWideFocusArea?.isActive ?? true;
@@ -235,6 +334,7 @@ const MapView = () => {
         setMapReady(true);
     }, []);
 
+    // Handle cursor for position selection mode
     useEffect(() => {
         const map = mapRef.current?.getMap?.();
         const canvas = map?.getCanvas?.();
@@ -243,34 +343,12 @@ const MapView = () => {
         }
 
         const previousCursor = canvas.style.cursor;
-        canvas.style.cursor = positionSelectionMode || drawingMode === 'circle' ? 'crosshair' : '';
+        canvas.style.cursor = positionSelectionMode ? 'crosshair' : '';
 
         return () => {
             canvas.style.cursor = previousCursor;
         };
-    }, [positionSelectionMode, drawingMode]);
-
-    useEffect(() => {
-        if (!mapReady || drawingMode !== 'circle') {
-            return;
-        }
-
-        const map = mapRef.current?.getMap();
-        if (!map) {
-            return;
-        }
-
-        const handleClick = (e: MapMouseEvent) => {
-            setPendingCircleCenter([e.lngLat.lng, e.lngLat.lat]);
-            setRadiusDialogOpen(true);
-        };
-
-        map.on('click', handleClick);
-
-        return () => {
-            map.off('click', handleClick);
-        };
-    }, [mapReady, drawingMode]);
+    }, [positionSelectionMode]);
 
     useEffect(() => {
         if (!mapReady || !isInFocusAreaPanel || !selectedFocusAreaId) {
@@ -454,235 +532,218 @@ const MapView = () => {
                 display: 'flex',
             }}
         >
-            <MapPanels
-                activeView={activePanelView}
-                onViewChange={handleViewChange}
-                selectedFocusAreaId={selectedFocusAreaId}
-                selectedUtilityIds={selectedUtilityIds}
-                onUtilityToggle={(utilityId, enabled) => {
-                    setSelectedUtilityIds((prev) => ({
-                        ...prev,
-                        [utilityId]: enabled,
-                    }));
-                    if (utilityId === 'road-route' && !enabled) {
-                        setRoadRouteStart(null);
-                        setRoadRouteEnd(null);
-                        setRoadRouteVehicle('Car');
-                        setPositionSelectionMode(null);
+            <DrawingProvider mapRef={mapRef} mapReady={mapReady} scenarioId={scenarioId}>
+                <MapPanels
+                    activeView={activePanelView}
+                    onViewChange={handleViewChange}
+                    selectedFocusAreaId={selectedFocusAreaId}
+                    selectedUtilityIds={selectedUtilityIds}
+                    onUtilityToggle={(utilityId, enabled) => {
+                        setSelectedUtilityIds((prev) => ({
+                            ...prev,
+                            [utilityId]: enabled,
+                        }));
+                        if (utilityId === 'road-route' && !enabled) {
+                            setRoadRouteStart(null);
+                            setRoadRouteEnd(null);
+                            setRoadRouteVehicle('Car');
+                            setPositionSelectionMode(null);
+                        }
+                    }}
+                    roadRouteStart={roadRouteStart}
+                    roadRouteEnd={roadRouteEnd}
+                    roadRouteVehicle={roadRouteVehicle}
+                    roadRouteLoading={roadRouteLoading}
+                    roadRouteError={roadRouteError}
+                    roadRouteData={
+                        roadRouteQueryData?.roadRoute
+                            ? {
+                                  routeGeojson: {
+                                      features: roadRouteQueryData.roadRoute.routeGeojson.features.map((f) => ({
+                                          properties: f.properties || {},
+                                      })),
+                                  },
+                              }
+                            : undefined
                     }
-                }}
-                roadRouteStart={roadRouteStart}
-                roadRouteEnd={roadRouteEnd}
-                roadRouteVehicle={roadRouteVehicle}
-                roadRouteLoading={roadRouteLoading}
-                roadRouteError={roadRouteError}
-                roadRouteData={
-                    roadRouteQueryData?.roadRoute
-                        ? {
-                              routeGeojson: {
-                                  features: roadRouteQueryData.roadRoute.routeGeojson.features.map((f) => ({
-                                      properties: f.properties || {},
-                                  })),
-                              },
-                          }
-                        : undefined
-                }
-                onRoadRouteVehicleChange={setRoadRouteVehicle}
-                onRequestPositionSelection={setPositionSelectionMode}
-                selectedElement={selectedElement}
-                onBackFromInspector={handleBackFromInspector}
-                scenarioId={scenarioId}
-                isDrawing={isDrawing}
-                onStartDrawing={startDrawing}
-                onFocusAreaSelect={handleFocusAreaSelect}
-                onConnectedAssetsVisibilityChange={handleConnectedAssetsVisibilityChange}
-            />
-
-            <Box
-                sx={{
-                    flex: 1,
-                    position: 'relative',
-                    ml: activePanelView ? '500px' : '80px',
-                    transition: 'marginLeft 0.2s ease-in-out',
-                }}
-            >
-                <Map
-                    id="map-v2"
-                    ref={mapRef}
-                    {...viewState}
-                    onMove={handleMove}
-                    onClick={handleMapClick}
-                    mapStyle={mapStyle}
-                    maxBounds={MAP_VIEW_BOUNDS}
-                    style={{ width: '100%', height: '100%', cursor: positionSelectionMode || drawingMode === 'circle' ? 'crosshair' : 'grab' }}
-                    onLoad={handleMapLoad}
-                    transformRequest={transformRequest}
-                    styleDiffing
-                >
-                    {mapReady && (
-                        <>
-                            {!isInFocusAreaPanel && selectedFocusAreaId && (
-                                <FocusAreaMask geometry={focusAreas?.find((fa) => fa.id === selectedFocusAreaId)?.geometry ?? null} />
-                            )}
-                            {isInFocusAreaPanel &&
-                                selectedFocusAreaId &&
-                                (() => {
-                                    const selectedFocusArea = focusAreas?.find((fa) => fa.id === selectedFocusAreaId);
-                                    if (selectedFocusArea && !selectedFocusArea.isActive && selectedFocusArea.geometry) {
-                                        return <FocusAreaOutline geometry={selectedFocusArea.geometry} lineColor="#888888" />;
-                                    }
-                                    return null;
-                                })()}
-                            <AssetLayers
-                                assets={assets}
-                                selectedElements={selectedElement ? [selectedElement] : []}
-                                onElementClick={handleElementClick}
-                                mapReady={mapReady}
-                                assetCategories={assetCategories}
-                                onGeneratingChange={setIsSpritesGenerating}
-                                showCpsIcons={showCpsIcons}
-                            />
-                            {selectedElement && selectedAssetDetails.data && (
-                                <ConnectedAssetsLayer
-                                    selectedAsset={{
-                                        id: selectedElement.id,
-                                        lat: selectedElement.lat,
-                                        lng: selectedElement.lng,
-                                        geom: selectedAssetDetails.data.geom,
-                                    }}
-                                    dependents={connectedAssets.dependents}
-                                    providers={connectedAssets.providers}
-                                    mapReady={mapReady}
-                                />
-                            )}
-                            <ExposureLayers
-                                scenarioId={scenarioId}
-                                selectedFocusAreaId={selectedFocusAreaId}
-                                mapReady={mapReady}
-                                isInFocusAreaPanel={isInFocusAreaPanel}
-                                activeFocusAreaIds={activeFocusAreaIds}
-                            />
-                            <UtilitiesLayers utilities={mergedUtilities} selectedUtilityIds={selectedUtilityIds} mapReady={mapReady} />
-                            {mapWideVisible && roadRouteStart && (
-                                <Marker longitude={roadRouteStart.lng} latitude={roadRouteStart.lat} anchor="bottom">
-                                    <Box
-                                        sx={{
-                                            width: 24,
-                                            height: 24,
-                                            borderRadius: '50%',
-                                            backgroundColor: '#4CAF50',
-                                            border: '2px solid white',
-                                            boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            color: 'white',
-                                            fontSize: '12px',
-                                            fontWeight: 'bold',
-                                        }}
-                                    >
-                                        S
-                                    </Box>
-                                </Marker>
-                            )}
-                            {mapWideVisible && roadRouteEnd && (
-                                <Marker longitude={roadRouteEnd.lng} latitude={roadRouteEnd.lat} anchor="bottom">
-                                    <Box
-                                        sx={{
-                                            width: 24,
-                                            height: 24,
-                                            borderRadius: '50%',
-                                            backgroundColor: '#F44336',
-                                            border: '2px solid white',
-                                            boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            color: 'white',
-                                            fontSize: '12px',
-                                            fontWeight: 'bold',
-                                        }}
-                                    >
-                                        E
-                                    </Box>
-                                </Marker>
-                            )}
-                        </>
-                    )}
-                </Map>
-
-                {showCoordinates && (
-                    <Box
-                        sx={{
-                            position: 'absolute',
-                            bottom: 0,
-                            left: 0,
-                            right: 0,
-                            bgcolor: 'rgba(0, 0, 0, 0.7)',
-                            color: 'white',
-                            px: 2,
-                            py: 0.5,
-                            fontSize: '12px',
-                            fontFamily: 'monospace',
-                            zIndex: 5,
-                        }}
-                    >
-                        LAT, LNG {viewState.latitude.toFixed(11)}, {viewState.longitude.toFixed(11)}
-                    </Box>
-                )}
-
-                {(isAssetsFetching || isSpritesGenerating) && (
-                    <Box
-                        sx={{
-                            position: 'absolute',
-                            top: 0,
-                            left: 0,
-                            right: 0,
-                            bottom: 0,
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            backgroundColor: 'rgba(255, 255, 255, 0.5)',
-                            zIndex: 10,
-                        }}
-                    >
-                        <CircularProgress size={48} />
-                    </Box>
-                )}
-
-                <MapControls
-                    mapRef={mapRef}
-                    onClosePanels={closePanels}
-                    mapStyleKey={mapStyleKey}
-                    onMapStyleChange={handleStyleChange}
-                    mapStylePanelOpen={mapStylePanelOpen}
-                    onToggleMapStylePanel={toggleMapStylePanel}
-                    assetInfoPanelOpen={assetInfoPanelOpen}
-                    onToggleAssetInfoPanel={toggleAssetInfoPanel}
-                    assets={assets}
-                    assetCategories={assetCategories}
-                    viewState={viewState}
-                    showCoordinates={showCoordinates}
-                    onShowCoordinatesChange={setShowCoordinates}
-                    showCpsIcons={showCpsIcons}
-                    onShowCpsIconsChange={setShowCpsIcons}
+                    onRoadRouteVehicleChange={setRoadRouteVehicle}
+                    onRequestPositionSelection={setPositionSelectionMode}
+                    selectedElement={selectedElement}
+                    onBackFromInspector={handleBackFromInspector}
+                    scenarioId={scenarioId}
+                    onFocusAreaSelect={handleFocusAreaSelect}
+                    onConnectedAssetsVisibilityChange={handleConnectedAssetsVisibilityChange}
+                    focusAreas={focusAreas}
+                    isFocusAreasLoading={isFocusAreasLoading}
+                    isFocusAreasError={isFocusAreasError}
+                    exposureLayersData={exposureLayersData}
+                    isExposureLayersLoading={isExposureLayersLoading}
+                    isExposureLayersError={isExposureLayersError}
                 />
-            </Box>
 
-            <RadiusDialog
-                open={radiusDialogOpen}
-                onClose={() => {
-                    setRadiusDialogOpen(false);
-                    setPendingCircleCenter(null);
-                }}
-                onConfirm={(radiusKm) => {
-                    if (pendingCircleCenter) {
-                        createCircleAtPoint(pendingCircleCenter, radiusKm);
-                    }
-                    setRadiusDialogOpen(false);
-                    setPendingCircleCenter(null);
-                }}
-            />
+                <Box
+                    sx={{
+                        flex: 1,
+                        position: 'relative',
+                        ml: activePanelView ? '500px' : '80px',
+                        transition: 'marginLeft 0.2s ease-in-out',
+                    }}
+                >
+                    <Map
+                        id="map-v2"
+                        ref={mapRef}
+                        {...viewState}
+                        onMove={handleMove}
+                        onClick={handleMapClick}
+                        mapStyle={mapStyle}
+                        maxBounds={MAP_VIEW_BOUNDS}
+                        style={{
+                            width: '100%',
+                            height: '100%',
+                            cursor: positionSelectionMode ? 'crosshair' : 'grab',
+                        }}
+                        onLoad={handleMapLoad}
+                        transformRequest={transformRequest}
+                        styleDiffing
+                    >
+                        {mapReady && (
+                            <>
+                                {!isInFocusAreaPanel && selectedFocusAreaId && (
+                                    <FocusAreaMask geometry={focusAreas?.find((fa) => fa.id === selectedFocusAreaId)?.geometry ?? null} />
+                                )}
+                                {isInFocusAreaPanel &&
+                                    selectedFocusAreaId &&
+                                    (() => {
+                                        const selectedFocusArea = focusAreas?.find((fa) => fa.id === selectedFocusAreaId);
+                                        if (selectedFocusArea && !selectedFocusArea.isActive && selectedFocusArea.geometry) {
+                                            return <FocusAreaOutline geometry={selectedFocusArea.geometry} lineColor="#888888" />;
+                                        }
+                                        return null;
+                                    })()}
+                                <DrawingAwareAssetLayers
+                                    assets={assets}
+                                    selectedElements={selectedElement ? [selectedElement] : []}
+                                    onElementClick={handleElementClick}
+                                    mapReady={mapReady}
+                                    assetCategories={assetCategories}
+                                    onGeneratingChange={setIsSpritesGenerating}
+                                    showCpsIcons={showCpsIcons}
+                                />
+                                {selectedElement && selectedAssetDetails.data && (
+                                    <ConnectedAssetsLayer
+                                        selectedAsset={{
+                                            id: selectedElement.id,
+                                            lat: selectedElement.lat,
+                                            lng: selectedElement.lng,
+                                            geom: selectedAssetDetails.data.geom,
+                                        }}
+                                        dependents={connectedAssets.dependents}
+                                        providers={connectedAssets.providers}
+                                        mapReady={mapReady}
+                                    />
+                                )}
+                                <ExposureLayers
+                                    scenarioId={scenarioId}
+                                    selectedFocusAreaId={selectedFocusAreaId}
+                                    mapReady={mapReady}
+                                    isInFocusAreaPanel={isInFocusAreaPanel}
+                                    excludeUserDefined={isInExposurePanel}
+                                />
+                                <UtilitiesLayers utilities={mergedUtilities} selectedUtilityIds={selectedUtilityIds} mapReady={mapReady} />
+                                {mapWideVisible && roadRouteStart && (
+                                    <Marker longitude={roadRouteStart.lng} latitude={roadRouteStart.lat} anchor="bottom">
+                                        <Box
+                                            sx={{
+                                                width: 24,
+                                                height: 24,
+                                                borderRadius: '50%',
+                                                backgroundColor: '#4CAF50',
+                                                border: '2px solid white',
+                                                boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                color: 'white',
+                                                fontSize: '12px',
+                                                fontWeight: 'bold',
+                                            }}
+                                        >
+                                            S
+                                        </Box>
+                                    </Marker>
+                                )}
+                                {mapWideVisible && roadRouteEnd && (
+                                    <Marker longitude={roadRouteEnd.lng} latitude={roadRouteEnd.lat} anchor="bottom">
+                                        <Box
+                                            sx={{
+                                                width: 24,
+                                                height: 24,
+                                                borderRadius: '50%',
+                                                backgroundColor: '#F44336',
+                                                border: '2px solid white',
+                                                boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                color: 'white',
+                                                fontSize: '12px',
+                                                fontWeight: 'bold',
+                                            }}
+                                        >
+                                            E
+                                        </Box>
+                                    </Marker>
+                                )}
+                            </>
+                        )}
+                    </Map>
+
+                    {showCoordinates && (
+                        <Box
+                            sx={{
+                                position: 'absolute',
+                                bottom: 0,
+                                left: 0,
+                                right: 0,
+                                bgcolor: 'rgba(0, 0, 0, 0.7)',
+                                color: 'white',
+                                px: 2,
+                                py: 0.5,
+                                fontSize: '12px',
+                                fontFamily: 'monospace',
+                                zIndex: 5,
+                            }}
+                        >
+                            LAT, LNG {viewState.latitude.toFixed(11)}, {viewState.longitude.toFixed(11)}
+                        </Box>
+                    )}
+
+                    <MapLoadingOverlay
+                        isAssetsFetching={isAssetsFetching}
+                        isSpritesGenerating={isSpritesGenerating}
+                        isFocusAreasFetching={isFocusAreasFetching}
+                        isExposureLayersFetching={isExposureLayersFetching}
+                    />
+
+                    <MapControls
+                        mapRef={mapRef}
+                        onClosePanels={closePanels}
+                        mapStyleKey={mapStyleKey}
+                        onMapStyleChange={handleStyleChange}
+                        mapStylePanelOpen={mapStylePanelOpen}
+                        onToggleMapStylePanel={toggleMapStylePanel}
+                        assetInfoPanelOpen={assetInfoPanelOpen}
+                        onToggleAssetInfoPanel={toggleAssetInfoPanel}
+                        assets={assets}
+                        assetCategories={assetCategories}
+                        viewState={viewState}
+                        showCoordinates={showCoordinates}
+                        onShowCoordinatesChange={setShowCoordinates}
+                        showCpsIcons={showCpsIcons}
+                        onShowCpsIconsChange={setShowCpsIcons}
+                    />
+                </Box>
+            </DrawingProvider>
         </Box>
     );
 };

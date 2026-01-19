@@ -8,45 +8,27 @@ import type { Geometry } from 'geojson';
 
 import FocusAreaView from './FocusAreaView';
 import theme from '@/theme';
-import { fetchFocusAreas, updateFocusArea, deleteFocusArea, type FocusArea } from '@/api/focus-areas';
+import { updateFocusArea, deleteFocusArea, type FocusArea } from '@/api/focus-areas';
 
 vi.mock('@/api/focus-areas', () => ({
-    fetchFocusAreas: vi.fn(),
     updateFocusArea: vi.fn(),
     deleteFocusArea: vi.fn(),
 }));
 
-const mockedFetchFocusAreas = vi.mocked(fetchFocusAreas);
+const mockStartDrawing = vi.fn();
+const mockSetDrawingConfig = vi.fn();
+vi.mock('../context/DrawingContext', () => ({
+    useDrawingContext: vi.fn(() => ({
+        setDrawingConfig: mockSetDrawingConfig,
+        drawingMode: null,
+        startDrawing: mockStartDrawing,
+    })),
+}));
+
 const mockedUpdateFocusArea = vi.mocked(updateFocusArea);
 const mockedDeleteFocusArea = vi.mocked(deleteFocusArea);
 
 describe('FocusAreaView', () => {
-    const defaultProps = {
-        onClose: vi.fn(),
-        scenarioId: 'scenario-123',
-    };
-
-    let queryClient: QueryClient;
-
-    beforeEach(() => {
-        queryClient = new QueryClient({
-            defaultOptions: {
-                queries: {
-                    retry: false,
-                },
-            },
-        });
-        vi.clearAllMocks();
-    });
-
-    const renderWithProviders = (component: React.ReactElement) => {
-        return render(
-            <QueryClientProvider client={queryClient}>
-                <ThemeProvider theme={theme}>{component}</ThemeProvider>
-            </QueryClientProvider>,
-        );
-    };
-
     const mockGeometry: Geometry = {
         type: 'Polygon',
         coordinates: [
@@ -80,12 +62,40 @@ describe('FocusAreaView', () => {
         ...overrides,
     });
 
-    const setupMocks = (options?: { focusAreas?: FocusArea[]; includeMapWide?: boolean }) => {
-        const { focusAreas = [createMockFocusArea()], includeMapWide = true } = options || {};
+    const defaultFocusAreas = [createMapWideFocusArea(), createMockFocusArea()];
 
-        const allFocusAreas = includeMapWide ? [createMapWideFocusArea(), ...focusAreas] : focusAreas;
+    const defaultProps = {
+        onClose: vi.fn(),
+        scenarioId: 'scenario-123',
+        focusAreas: defaultFocusAreas,
+        isLoading: false,
+        isError: false,
+    };
 
-        mockedFetchFocusAreas.mockResolvedValue(allFocusAreas);
+    let queryClient: QueryClient;
+
+    beforeEach(() => {
+        queryClient = new QueryClient({
+            defaultOptions: {
+                queries: {
+                    retry: false,
+                },
+            },
+        });
+        vi.clearAllMocks();
+        mockStartDrawing.mockClear();
+        mockSetDrawingConfig.mockClear();
+    });
+
+    const renderWithProviders = (component: React.ReactElement) => {
+        return render(
+            <QueryClientProvider client={queryClient}>
+                <ThemeProvider theme={theme}>{component}</ThemeProvider>
+            </QueryClientProvider>,
+        );
+    };
+
+    const setupMutationMocks = () => {
         mockedUpdateFocusArea.mockImplementation(async (_scenarioId, _focusAreaId, data) => ({
             ...createMockFocusArea(),
             ...data,
@@ -101,13 +111,13 @@ describe('FocusAreaView', () => {
 
     describe('Rendering', () => {
         it('renders title', async () => {
-            setupMocks();
+            setupMutationMocks();
             renderWithProviders(<FocusAreaView {...defaultProps} />);
             await waitForComponentReady();
         });
 
         it('renders close button', async () => {
-            setupMocks();
+            setupMutationMocks();
             renderWithProviders(<FocusAreaView {...defaultProps} />);
             await waitFor(() => {
                 expect(screen.getByLabelText('Close panel')).toBeInTheDocument();
@@ -115,7 +125,7 @@ describe('FocusAreaView', () => {
         });
 
         it('renders map-wide toggle', async () => {
-            setupMocks();
+            setupMutationMocks();
             renderWithProviders(<FocusAreaView {...defaultProps} />);
             await waitFor(() => {
                 expect(screen.getByText('Map-wide')).toBeInTheDocument();
@@ -123,7 +133,7 @@ describe('FocusAreaView', () => {
         });
 
         it('renders draw button', async () => {
-            setupMocks();
+            setupMutationMocks();
             renderWithProviders(<FocusAreaView {...defaultProps} />);
             await waitFor(() => {
                 expect(screen.getByText('Draw new focus area')).toBeInTheDocument();
@@ -133,16 +143,14 @@ describe('FocusAreaView', () => {
 
     describe('Loading State', () => {
         it('shows loading state when focus areas are loading', async () => {
-            const neverResolvingPromise = new Promise<never>(() => {});
-            mockedFetchFocusAreas.mockImplementation(() => neverResolvingPromise as Promise<FocusArea[]>);
-            renderWithProviders(<FocusAreaView {...defaultProps} />);
+            renderWithProviders(<FocusAreaView {...defaultProps} focusAreas={undefined} isLoading={true} />);
             await waitFor(() => {
                 expect(screen.getByText('Loading focus areas...')).toBeInTheDocument();
             });
         });
 
         it('hides loading state when focus areas are loaded', async () => {
-            setupMocks();
+            setupMutationMocks();
             renderWithProviders(<FocusAreaView {...defaultProps} />);
             await waitFor(() => {
                 expect(screen.queryByText('Loading focus areas...')).not.toBeInTheDocument();
@@ -169,8 +177,8 @@ describe('FocusAreaView', () => {
 
     describe('Empty State', () => {
         it('renders without focus area items when list is empty', async () => {
-            setupMocks({ focusAreas: [] });
-            renderWithProviders(<FocusAreaView {...defaultProps} />);
+            setupMutationMocks();
+            renderWithProviders(<FocusAreaView {...defaultProps} focusAreas={[createMapWideFocusArea()]} />);
             await waitFor(() => {
                 expect(screen.getByText('Focus area')).toBeInTheDocument();
             });
@@ -181,8 +189,7 @@ describe('FocusAreaView', () => {
 
     describe('Error State', () => {
         it('shows error message when fetch fails', async () => {
-            mockedFetchFocusAreas.mockRejectedValue(new Error('Network error'));
-            renderWithProviders(<FocusAreaView {...defaultProps} />);
+            renderWithProviders(<FocusAreaView {...defaultProps} focusAreas={undefined} isError={true} />);
             await waitFor(() => {
                 expect(screen.getByText('Error loading focus areas')).toBeInTheDocument();
             });
@@ -191,10 +198,13 @@ describe('FocusAreaView', () => {
 
     describe('Focus Areas Display', () => {
         it('displays focus area names', async () => {
-            setupMocks({
-                focusAreas: [createMockFocusArea({ id: '1', name: 'Area One' }), createMockFocusArea({ id: '2', name: 'Area Two' })],
-            });
-            renderWithProviders(<FocusAreaView {...defaultProps} />);
+            setupMutationMocks();
+            const focusAreas = [
+                createMapWideFocusArea(),
+                createMockFocusArea({ id: '1', name: 'Area One' }),
+                createMockFocusArea({ id: '2', name: 'Area Two' }),
+            ];
+            renderWithProviders(<FocusAreaView {...defaultProps} focusAreas={focusAreas} />);
             await waitFor(() => {
                 expect(screen.getByText('Area One')).toBeInTheDocument();
                 expect(screen.getByText('Area Two')).toBeInTheDocument();
@@ -202,20 +212,18 @@ describe('FocusAreaView', () => {
         });
 
         it('shows visibility icon for active focus areas', async () => {
-            setupMocks({
-                focusAreas: [createMockFocusArea({ id: 'fa-1', isActive: true })],
-            });
-            renderWithProviders(<FocusAreaView {...defaultProps} />);
+            setupMutationMocks();
+            const focusAreas = [createMapWideFocusArea(), createMockFocusArea({ id: 'fa-1', isActive: true })];
+            renderWithProviders(<FocusAreaView {...defaultProps} focusAreas={focusAreas} />);
             await waitFor(() => {
                 expect(screen.getByLabelText('Hide focus area')).toBeInTheDocument();
             });
         });
 
         it('shows visibility off icon for inactive focus areas', async () => {
-            setupMocks({
-                focusAreas: [createMockFocusArea({ id: 'fa-1', isActive: false })],
-            });
-            renderWithProviders(<FocusAreaView {...defaultProps} />);
+            setupMutationMocks();
+            const focusAreas = [createMapWideFocusArea(), createMockFocusArea({ id: 'fa-1', isActive: false })];
+            renderWithProviders(<FocusAreaView {...defaultProps} focusAreas={focusAreas} />);
             await waitFor(() => {
                 expect(screen.getByLabelText('Show focus area')).toBeInTheDocument();
             });
@@ -224,16 +232,18 @@ describe('FocusAreaView', () => {
 
     describe('Map-wide Toggle', () => {
         it('shows visibility icon when map-wide is visible', async () => {
-            mockedFetchFocusAreas.mockResolvedValue([createMapWideFocusArea({ isActive: true })]);
-            renderWithProviders(<FocusAreaView {...defaultProps} />);
+            setupMutationMocks();
+            const focusAreas = [createMapWideFocusArea({ isActive: true })];
+            renderWithProviders(<FocusAreaView {...defaultProps} focusAreas={focusAreas} />);
             await waitFor(() => {
                 expect(screen.getByLabelText('Hide map-wide assets')).toBeInTheDocument();
             });
         });
 
         it('shows visibility off icon when map-wide is hidden', async () => {
-            mockedFetchFocusAreas.mockResolvedValue([createMapWideFocusArea({ isActive: false })]);
-            renderWithProviders(<FocusAreaView {...defaultProps} />);
+            setupMutationMocks();
+            const focusAreas = [createMapWideFocusArea({ isActive: false })];
+            renderWithProviders(<FocusAreaView {...defaultProps} focusAreas={focusAreas} />);
             await waitFor(() => {
                 expect(screen.getByLabelText('Show map-wide assets')).toBeInTheDocument();
             });
@@ -241,8 +251,9 @@ describe('FocusAreaView', () => {
 
         it('calls updateFocusArea when map-wide toggle is clicked', async () => {
             const user = userEvent.setup();
-            setupMocks({ focusAreas: [], includeMapWide: true });
-            renderWithProviders(<FocusAreaView {...defaultProps} />);
+            setupMutationMocks();
+            const focusAreas = [createMapWideFocusArea()];
+            renderWithProviders(<FocusAreaView {...defaultProps} focusAreas={focusAreas} />);
 
             await waitFor(() => {
                 expect(screen.getByLabelText('Hide map-wide assets')).toBeInTheDocument();
@@ -258,10 +269,9 @@ describe('FocusAreaView', () => {
 
     describe('Focus Area Actions', () => {
         it('toggles focus area visibility when visibility button is clicked', async () => {
-            setupMocks({
-                focusAreas: [createMockFocusArea({ id: 'fa-1', isActive: true })],
-            });
-            renderWithProviders(<FocusAreaView {...defaultProps} />);
+            setupMutationMocks();
+            const focusAreas = [createMapWideFocusArea(), createMockFocusArea({ id: 'fa-1', isActive: true })];
+            renderWithProviders(<FocusAreaView {...defaultProps} focusAreas={focusAreas} />);
             await waitFor(() => {
                 expect(screen.getByLabelText('Hide focus area')).toBeInTheDocument();
             });
@@ -272,10 +282,9 @@ describe('FocusAreaView', () => {
         });
 
         it('deletes focus area when delete button is clicked', async () => {
-            setupMocks({
-                focusAreas: [createMockFocusArea({ id: 'fa-1' })],
-            });
-            renderWithProviders(<FocusAreaView {...defaultProps} />);
+            setupMutationMocks();
+            const focusAreas = [createMapWideFocusArea(), createMockFocusArea({ id: 'fa-1' })];
+            renderWithProviders(<FocusAreaView {...defaultProps} focusAreas={focusAreas} />);
             await waitFor(() => {
                 expect(screen.getByLabelText('Delete focus area')).toBeInTheDocument();
             });
@@ -290,10 +299,9 @@ describe('FocusAreaView', () => {
         });
 
         it('enters edit mode when edit button is clicked', async () => {
-            setupMocks({
-                focusAreas: [createMockFocusArea({ name: 'Original Name' })],
-            });
-            renderWithProviders(<FocusAreaView {...defaultProps} />);
+            setupMutationMocks();
+            const focusAreas = [createMapWideFocusArea(), createMockFocusArea({ name: 'Original Name' })];
+            renderWithProviders(<FocusAreaView {...defaultProps} focusAreas={focusAreas} />);
             await waitFor(() => {
                 expect(screen.getByText('Original Name')).toBeInTheDocument();
             });
@@ -304,10 +312,9 @@ describe('FocusAreaView', () => {
         });
 
         it('updates focus area name on blur', async () => {
-            setupMocks({
-                focusAreas: [createMockFocusArea({ id: 'fa-1', name: 'Original Name' })],
-            });
-            renderWithProviders(<FocusAreaView {...defaultProps} />);
+            setupMutationMocks();
+            const focusAreas = [createMapWideFocusArea(), createMockFocusArea({ id: 'fa-1', name: 'Original Name' })];
+            renderWithProviders(<FocusAreaView {...defaultProps} focusAreas={focusAreas} />);
             await waitFor(() => {
                 expect(screen.getByText('Original Name')).toBeInTheDocument();
             });
@@ -321,10 +328,9 @@ describe('FocusAreaView', () => {
         });
 
         it('updates focus area name on Enter key', async () => {
-            setupMocks({
-                focusAreas: [createMockFocusArea({ id: 'fa-1', name: 'Original Name' })],
-            });
-            renderWithProviders(<FocusAreaView {...defaultProps} />);
+            setupMutationMocks();
+            const focusAreas = [createMapWideFocusArea(), createMockFocusArea({ id: 'fa-1', name: 'Original Name' })];
+            renderWithProviders(<FocusAreaView {...defaultProps} focusAreas={focusAreas} />);
             await waitFor(() => {
                 expect(screen.getByText('Original Name')).toBeInTheDocument();
             });
@@ -338,10 +344,9 @@ describe('FocusAreaView', () => {
         });
 
         it('cancels edit on Escape key', async () => {
-            setupMocks({
-                focusAreas: [createMockFocusArea({ name: 'Original Name' })],
-            });
-            renderWithProviders(<FocusAreaView {...defaultProps} />);
+            setupMutationMocks();
+            const focusAreas = [createMapWideFocusArea(), createMockFocusArea({ name: 'Original Name' })];
+            renderWithProviders(<FocusAreaView {...defaultProps} focusAreas={focusAreas} />);
             await waitFor(() => {
                 expect(screen.getByText('Original Name')).toBeInTheDocument();
             });
@@ -356,10 +361,9 @@ describe('FocusAreaView', () => {
         });
 
         it('does not update if name is unchanged', async () => {
-            setupMocks({
-                focusAreas: [createMockFocusArea({ name: 'Original Name' })],
-            });
-            renderWithProviders(<FocusAreaView {...defaultProps} />);
+            setupMutationMocks();
+            const focusAreas = [createMapWideFocusArea(), createMockFocusArea({ name: 'Original Name' })];
+            renderWithProviders(<FocusAreaView {...defaultProps} focusAreas={focusAreas} />);
             await waitFor(() => {
                 expect(screen.getByText('Original Name')).toBeInTheDocument();
             });
@@ -370,10 +374,9 @@ describe('FocusAreaView', () => {
         });
 
         it('shows error when name is empty on blur', async () => {
-            setupMocks({
-                focusAreas: [createMockFocusArea({ name: 'Original Name' })],
-            });
-            renderWithProviders(<FocusAreaView {...defaultProps} />);
+            setupMutationMocks();
+            const focusAreas = [createMapWideFocusArea(), createMockFocusArea({ name: 'Original Name' })];
+            renderWithProviders(<FocusAreaView {...defaultProps} focusAreas={focusAreas} />);
             await waitFor(() => {
                 expect(screen.getByText('Original Name')).toBeInTheDocument();
             });
@@ -388,10 +391,9 @@ describe('FocusAreaView', () => {
         });
 
         it('shows error when name is only whitespace', async () => {
-            setupMocks({
-                focusAreas: [createMockFocusArea({ name: 'Original Name' })],
-            });
-            renderWithProviders(<FocusAreaView {...defaultProps} />);
+            setupMutationMocks();
+            const focusAreas = [createMapWideFocusArea(), createMockFocusArea({ name: 'Original Name' })];
+            renderWithProviders(<FocusAreaView {...defaultProps} focusAreas={focusAreas} />);
             await waitFor(() => {
                 expect(screen.getByText('Original Name')).toBeInTheDocument();
             });
@@ -406,10 +408,9 @@ describe('FocusAreaView', () => {
         });
 
         it('clears error when user types after validation error', async () => {
-            setupMocks({
-                focusAreas: [createMockFocusArea({ name: 'Original Name' })],
-            });
-            renderWithProviders(<FocusAreaView {...defaultProps} />);
+            setupMutationMocks();
+            const focusAreas = [createMapWideFocusArea(), createMockFocusArea({ name: 'Original Name' })];
+            renderWithProviders(<FocusAreaView {...defaultProps} focusAreas={focusAreas} />);
             await waitFor(() => {
                 expect(screen.getByText('Original Name')).toBeInTheDocument();
             });
@@ -427,10 +428,9 @@ describe('FocusAreaView', () => {
         });
 
         it('clears error when Escape is pressed', async () => {
-            setupMocks({
-                focusAreas: [createMockFocusArea({ name: 'Original Name' })],
-            });
-            renderWithProviders(<FocusAreaView {...defaultProps} />);
+            setupMutationMocks();
+            const focusAreas = [createMapWideFocusArea(), createMockFocusArea({ name: 'Original Name' })];
+            renderWithProviders(<FocusAreaView {...defaultProps} focusAreas={focusAreas} />);
             await waitFor(() => {
                 expect(screen.getByText('Original Name')).toBeInTheDocument();
             });
@@ -452,10 +452,10 @@ describe('FocusAreaView', () => {
             const updatePromise = new Promise<FocusArea>((resolve) => {
                 resolveUpdate = resolve;
             });
-            mockedFetchFocusAreas.mockResolvedValue([createMapWideFocusArea(), createMockFocusArea({ id: 'fa-1', name: 'Test', isActive: true })]);
             mockedUpdateFocusArea.mockReturnValue(updatePromise);
 
-            renderWithProviders(<FocusAreaView {...defaultProps} />);
+            const focusAreas = [createMapWideFocusArea(), createMockFocusArea({ id: 'fa-1', name: 'Test', isActive: true })];
+            renderWithProviders(<FocusAreaView {...defaultProps} focusAreas={focusAreas} />);
             await waitFor(() => {
                 expect(screen.getByText('Test')).toBeInTheDocument();
             });
@@ -471,10 +471,10 @@ describe('FocusAreaView', () => {
         });
 
         it('shows error snackbar when visibility update fails', async () => {
-            mockedFetchFocusAreas.mockResolvedValue([createMapWideFocusArea(), createMockFocusArea({ id: 'fa-1', name: 'Test', isActive: true })]);
             mockedUpdateFocusArea.mockRejectedValue(new Error('Network error'));
 
-            renderWithProviders(<FocusAreaView {...defaultProps} />);
+            const focusAreas = [createMapWideFocusArea(), createMockFocusArea({ id: 'fa-1', name: 'Test', isActive: true })];
+            renderWithProviders(<FocusAreaView {...defaultProps} focusAreas={focusAreas} />);
             await waitFor(() => {
                 expect(screen.getByText('Test')).toBeInTheDocument();
             });
@@ -487,10 +487,10 @@ describe('FocusAreaView', () => {
         });
 
         it('shows error snackbar when delete fails', async () => {
-            mockedFetchFocusAreas.mockResolvedValue([createMapWideFocusArea(), createMockFocusArea({ id: 'fa-1', name: 'Test', isActive: true })]);
             mockedDeleteFocusArea.mockRejectedValue(new Error('Network error'));
 
-            renderWithProviders(<FocusAreaView {...defaultProps} />);
+            const focusAreas = [createMapWideFocusArea(), createMockFocusArea({ id: 'fa-1', name: 'Test', isActive: true })];
+            renderWithProviders(<FocusAreaView {...defaultProps} focusAreas={focusAreas} />);
             await waitFor(() => {
                 expect(screen.getByText('Test')).toBeInTheDocument();
             });
@@ -509,10 +509,9 @@ describe('FocusAreaView', () => {
 
     describe('Delete Confirmation Dialog', () => {
         it('opens dialog when delete button is clicked', async () => {
-            setupMocks({
-                focusAreas: [createMockFocusArea({ id: 'fa-1', name: 'Test Area' })],
-            });
-            renderWithProviders(<FocusAreaView {...defaultProps} />);
+            setupMutationMocks();
+            const focusAreas = [createMapWideFocusArea(), createMockFocusArea({ id: 'fa-1', name: 'Test Area' })];
+            renderWithProviders(<FocusAreaView {...defaultProps} focusAreas={focusAreas} />);
             await waitFor(() => {
                 expect(screen.getByText('Test Area')).toBeInTheDocument();
             });
@@ -526,10 +525,9 @@ describe('FocusAreaView', () => {
         });
 
         it('closes dialog when cancel is clicked', async () => {
-            setupMocks({
-                focusAreas: [createMockFocusArea({ id: 'fa-1', name: 'Test Area' })],
-            });
-            renderWithProviders(<FocusAreaView {...defaultProps} />);
+            setupMutationMocks();
+            const focusAreas = [createMapWideFocusArea(), createMockFocusArea({ id: 'fa-1', name: 'Test Area' })];
+            renderWithProviders(<FocusAreaView {...defaultProps} focusAreas={focusAreas} />);
             await waitFor(() => {
                 expect(screen.getByText('Test Area')).toBeInTheDocument();
             });
@@ -548,10 +546,9 @@ describe('FocusAreaView', () => {
         });
 
         it('shows fallback name for unnamed focus area', async () => {
-            setupMocks({
-                focusAreas: [createMockFocusArea({ id: 'fa-1', name: '' })],
-            });
-            renderWithProviders(<FocusAreaView {...defaultProps} />);
+            setupMutationMocks();
+            const focusAreas = [createMapWideFocusArea(), createMockFocusArea({ id: 'fa-1', name: '' })];
+            renderWithProviders(<FocusAreaView {...defaultProps} focusAreas={focusAreas} />);
             await waitFor(() => {
                 expect(screen.getByLabelText('Delete focus area')).toBeInTheDocument();
             });
@@ -566,7 +563,7 @@ describe('FocusAreaView', () => {
 
     describe('Draw Menu', () => {
         it('opens draw menu when draw button is clicked', async () => {
-            setupMocks();
+            setupMutationMocks();
             renderWithProviders(<FocusAreaView {...defaultProps} />);
             await waitFor(() => {
                 expect(screen.getByText('Draw new focus area')).toBeInTheDocument();
@@ -578,10 +575,10 @@ describe('FocusAreaView', () => {
             });
         });
 
-        it('calls onStartDrawing with "circle" when circle option is clicked', async () => {
-            const onStartDrawing = vi.fn();
-            setupMocks();
-            renderWithProviders(<FocusAreaView {...defaultProps} onStartDrawing={onStartDrawing} />);
+        it('calls startDrawing with "circle" when circle option is clicked', async () => {
+            setupMutationMocks();
+            mockStartDrawing.mockClear();
+            renderWithProviders(<FocusAreaView {...defaultProps} />);
             await waitFor(() => {
                 expect(screen.getByText('Draw new focus area')).toBeInTheDocument();
             });
@@ -590,13 +587,13 @@ describe('FocusAreaView', () => {
                 expect(screen.getByText('Draw circle')).toBeInTheDocument();
             });
             fireEvent.click(screen.getByText('Draw circle'));
-            expect(onStartDrawing).toHaveBeenCalledWith('circle');
+            expect(mockStartDrawing).toHaveBeenCalledWith('circle');
         });
 
-        it('calls onStartDrawing with "polygon" when polygon option is clicked', async () => {
-            const onStartDrawing = vi.fn();
-            setupMocks();
-            renderWithProviders(<FocusAreaView {...defaultProps} onStartDrawing={onStartDrawing} />);
+        it('calls startDrawing with "polygon" when polygon option is clicked', async () => {
+            setupMutationMocks();
+            mockStartDrawing.mockClear();
+            renderWithProviders(<FocusAreaView {...defaultProps} />);
             await waitFor(() => {
                 expect(screen.getByText('Draw new focus area')).toBeInTheDocument();
             });
@@ -605,23 +602,38 @@ describe('FocusAreaView', () => {
                 expect(screen.getByText('Draw polygon')).toBeInTheDocument();
             });
             fireEvent.click(screen.getByText('Draw polygon'));
-            expect(onStartDrawing).toHaveBeenCalledWith('polygon');
+            expect(mockStartDrawing).toHaveBeenCalledWith('polygon');
         });
 
         it('disables draw button when isDrawing is true', async () => {
-            setupMocks();
-            renderWithProviders(<FocusAreaView {...defaultProps} isDrawing={true} />);
+            // Re-mock useDrawingContext to return drawingMode: 'polygon' for this test
+            const { useDrawingContext } = await import('../context/DrawingContext');
+            vi.mocked(useDrawingContext).mockReturnValue({
+                setDrawingConfig: mockSetDrawingConfig,
+                drawingMode: 'polygon',
+                startDrawing: mockStartDrawing,
+            } as unknown as ReturnType<typeof useDrawingContext>);
+
+            setupMutationMocks();
+            renderWithProviders(<FocusAreaView {...defaultProps} />);
             await waitFor(() => {
                 const drawButton = screen.getByText('Draw new focus area').closest('button');
                 expect(drawButton).toBeDisabled();
             });
+
+            // Reset mock
+            vi.mocked(useDrawingContext).mockReturnValue({
+                setDrawingConfig: mockSetDrawingConfig,
+                drawingMode: null,
+                startDrawing: mockStartDrawing,
+            } as unknown as ReturnType<typeof useDrawingContext>);
         });
     });
 
     describe('Close Functionality', () => {
         it('calls onClose when close button is clicked', async () => {
             const onClose = vi.fn();
-            setupMocks();
+            setupMutationMocks();
             renderWithProviders(<FocusAreaView {...defaultProps} onClose={onClose} />);
             await waitFor(() => {
                 expect(screen.getByLabelText('Close panel')).toBeInTheDocument();

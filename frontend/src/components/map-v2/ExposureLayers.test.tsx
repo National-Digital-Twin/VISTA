@@ -200,38 +200,28 @@ describe('ExposureLayers', () => {
         });
     });
 
-    describe('Focus Area Panel Aggregation', () => {
-        it('fetches data for all active focus areas when in focus area panel', async () => {
+    describe('Focus Area Panel Mode', () => {
+        it('fetches data without focus_area_id when in focus area panel (server handles all active focus areas)', async () => {
             mockedFetchExposureLayers.mockResolvedValue(createMockResponse([{ id: 'layer-1', name: 'Caul Bourne', isActive: true, geometry: mockGeometry1 }]));
 
-            renderWithProviders(
-                <ExposureLayers scenarioId="scenario-1" mapReady={true} isInFocusAreaPanel={true} activeFocusAreaIds={['map-wide-1', 'fa-1', 'fa-2']} />,
-            );
+            renderWithProviders(<ExposureLayers scenarioId="scenario-1" mapReady={true} isInFocusAreaPanel={true} />);
 
             await waitFor(() => {
-                expect(mockedFetchExposureLayers).toHaveBeenCalledWith('scenario-1', 'map-wide-1');
-                expect(mockedFetchExposureLayers).toHaveBeenCalledWith('scenario-1', 'fa-1');
-                expect(mockedFetchExposureLayers).toHaveBeenCalledWith('scenario-1', 'fa-2');
-            });
-        });
-
-        it('only fetches for provided focus area IDs', async () => {
-            mockedFetchExposureLayers.mockResolvedValue(createMockResponse([{ id: 'layer-1', name: 'Caul Bourne', isActive: true, geometry: mockGeometry1 }]));
-
-            renderWithProviders(<ExposureLayers scenarioId="scenario-1" mapReady={true} isInFocusAreaPanel={true} activeFocusAreaIds={['fa-1']} />);
-
-            await waitFor(() => {
-                expect(mockedFetchExposureLayers).toHaveBeenCalledWith('scenario-1', 'fa-1');
+                // Should call with null focus_area_id - server returns all active focus areas' layers
+                expect(mockedFetchExposureLayers).toHaveBeenCalledWith('scenario-1', null);
                 expect(mockedFetchExposureLayers).toHaveBeenCalledTimes(1);
             });
         });
 
-        it('aggregates active layers from multiple focus areas', async () => {
-            mockedFetchExposureLayers
-                .mockResolvedValueOnce(createMockResponse([{ id: 'layer-1', name: 'Caul Bourne', isActive: true, geometry: mockGeometry1 }]))
-                .mockResolvedValueOnce(createMockResponse([{ id: 'layer-2', name: 'River Medina', isActive: true, geometry: mockGeometry2 }]));
+        it('renders layers returned by server for all active focus areas', async () => {
+            mockedFetchExposureLayers.mockResolvedValue(
+                createMockResponse([
+                    { id: 'layer-1', name: 'Caul Bourne', isActive: true, geometry: mockGeometry1 },
+                    { id: 'layer-2', name: 'River Medina', isActive: true, geometry: mockGeometry2 },
+                ]),
+            );
 
-            renderWithProviders(<ExposureLayers scenarioId="scenario-1" mapReady={true} isInFocusAreaPanel={true} activeFocusAreaIds={['fa-1', 'fa-2']} />);
+            renderWithProviders(<ExposureLayers scenarioId="scenario-1" mapReady={true} isInFocusAreaPanel={true} />);
 
             await waitFor(() => {
                 const source = screen.getByTestId('source');

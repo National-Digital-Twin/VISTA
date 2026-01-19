@@ -5,13 +5,16 @@ import uuid
 from decimal import Decimal
 
 import pytest
-from django.contrib.gis.geos import Polygon
+from django.contrib.gis.geos import Point, Polygon
 from django.db.models import Q
 
 from api.filters import AssetFilterBuilder, FilterContext
-from api.models import AssetScoreFilter
+from api.models import AssetScoreFilter, FocusArea, ScenarioAsset, VisibleExposureLayer
 from api.models.asset import Asset
+from api.models.asset_score import VisibleExposureAssetScore
 from api.models.asset_type import AssetCategory, AssetSubCategory, AssetType, DataSource
+from api.models.exposure_layer import ExposureLayer, ExposureLayerType
+from api.tests.conftest import buffer_geometry
 
 
 @pytest.fixture
@@ -55,9 +58,11 @@ class TestAssetFilterBuilderSQL:
         """Visualize SQL for by_asset_type mode with one visible type, no score filter."""
         station_type = asset_type_setup["station_type"]
 
+        focus_area_id = uuid.uuid4()
         ctx = FilterContext(
             scenario_id=scenario.id,
             user_id=mock_user_id,
+            focus_area_id=focus_area_id,
             type_filters={},
             global_filter=None,
         )
@@ -83,9 +88,10 @@ class TestAssetFilterBuilderSQL:
     def test_by_asset_type_mode_with_score_filter(self, scenario, asset_type_setup, mock_user_id):
         """Visualize SQL for by_asset_type mode with score filter on a type."""
         station_type = asset_type_setup["station_type"]
+        focus_area_id = uuid.uuid4()
 
         score_filter = AssetScoreFilter(
-            focus_area_id=uuid.uuid4(),
+            focus_area_id=focus_area_id,
             asset_type=station_type,
             criticality_values=[2, 3],
             exposure_values=[0, 1],
@@ -96,6 +102,7 @@ class TestAssetFilterBuilderSQL:
         ctx = FilterContext(
             scenario_id=scenario.id,
             user_id=mock_user_id,
+            focus_area_id=focus_area_id,
             type_filters={station_type.id: score_filter},
             global_filter=None,
         )
@@ -117,7 +124,8 @@ class TestAssetFilterBuilderSQL:
 
         assert "asset_scores" in sql
         assert "criticality_score" in sql
-        assert "exposure_score" in sql
+        # exposure is now in visible_exposure_asset_scores view
+        assert "visible_exposure_asset_scores" in sql
         assert "dependency_score" in sql
 
     def test_by_asset_type_mode_multiple_types_mixed_filters(
@@ -126,9 +134,10 @@ class TestAssetFilterBuilderSQL:
         """Visualize SQL for multiple types with different filter configurations."""
         station_type = asset_type_setup["station_type"]
         pylon_type = asset_type_setup["pylon_type"]
+        focus_area_id = uuid.uuid4()
 
         station_filter = AssetScoreFilter(
-            focus_area_id=uuid.uuid4(),
+            focus_area_id=focus_area_id,
             asset_type=station_type,
             criticality_values=[3],
         )
@@ -136,6 +145,7 @@ class TestAssetFilterBuilderSQL:
         ctx = FilterContext(
             scenario_id=scenario.id,
             user_id=mock_user_id,
+            focus_area_id=focus_area_id,
             type_filters={station_type.id: station_filter},
             global_filter=None,
         )
@@ -160,9 +170,11 @@ class TestAssetFilterBuilderSQL:
 
     def test_by_score_only_mode_no_filter(self, scenario, mock_user_id):
         """Visualize SQL for by_score_only mode without any criteria."""
+        focus_area_id = uuid.uuid4()
         ctx = FilterContext(
             scenario_id=scenario.id,
             user_id=mock_user_id,
+            focus_area_id=focus_area_id,
             type_filters={},
             global_filter=None,
         )
@@ -183,8 +195,9 @@ class TestAssetFilterBuilderSQL:
 
     def test_by_score_only_mode_with_global_filter(self, scenario, mock_user_id):
         """Visualize SQL for by_score_only mode with global filter criteria."""
+        focus_area_id = uuid.uuid4()
         global_filter = AssetScoreFilter(
-            focus_area_id=uuid.uuid4(),
+            focus_area_id=focus_area_id,
             asset_type=None,
             criticality_values=[2, 3],
             redundancy_values=[3],
@@ -195,6 +208,7 @@ class TestAssetFilterBuilderSQL:
         ctx = FilterContext(
             scenario_id=scenario.id,
             user_id=mock_user_id,
+            focus_area_id=focus_area_id,
             type_filters={},
             global_filter=global_filter,
         )
@@ -220,10 +234,12 @@ class TestAssetFilterBuilderSQL:
         """Visualize SQL when geometry filter is applied."""
         station_type = asset_type_setup["station_type"]
         geometry = Polygon([(0, 0), (10, 0), (10, 10), (0, 10), (0, 0)])
+        focus_area_id = uuid.uuid4()
 
         ctx = FilterContext(
             scenario_id=scenario.id,
             user_id=mock_user_id,
+            focus_area_id=focus_area_id,
             type_filters={},
             global_filter=None,
         )
@@ -249,10 +265,12 @@ class TestAssetFilterBuilderSQL:
         """Visualize SQL when exclusion Q is applied (map-wide excluding focus areas)."""
         exclude_geometry = Polygon([(0, 0), (5, 0), (5, 5), (0, 5), (0, 0)])
         exclude_q = Q(geom__within=exclude_geometry)
+        focus_area_id = uuid.uuid4()
 
         ctx = FilterContext(
             scenario_id=scenario.id,
             user_id=mock_user_id,
+            focus_area_id=focus_area_id,
             type_filters={},
             global_filter=None,
         )
@@ -270,3 +288,253 @@ class TestAssetFilterBuilderSQL:
         print("=" * 80 + "\n")
 
         assert "NOT" in sql or "not" in sql.lower()
+
+
+@pytest.mark.django_db
+class TestAssetFilterBuilderExposureExecution:
+    """Tests that execute exposure filters and verify results."""
+
+    @pytest.fixture
+    def exposure_test_setup(self, scenario, mock_user_id):
+        """Create assets and exposure layers for testing exposure filtering."""
+        # Create asset type
+        category = AssetCategory.objects.create(id=uuid.uuid4(), name="Test Category")
+        sub_category = AssetSubCategory.objects.create(
+            id=uuid.uuid4(), name="Test Sub", category=category
+        )
+        data_source = DataSource.objects.create(id=uuid.uuid4(), name="Test Source")
+        asset_type = AssetType.objects.create(
+            id=uuid.uuid4(),
+            name="Test Assets",
+            sub_category=sub_category,
+            data_source=data_source,
+        )
+
+        # Create scenario asset for criticality scores
+        ScenarioAsset.objects.create(
+            scenario=scenario,
+            asset_type=asset_type,
+            criticality_score=Decimal("2.0"),
+        )
+
+        # Create assets at different locations
+        # Asset 1: Inside exposure layer (will have exposure score > 0)
+        asset_inside = Asset.objects.create(
+            id=uuid.uuid4(),
+            external_id=uuid.uuid4(),
+            name="Asset Inside",
+            type=asset_type,
+            geom=Point(0.5, 0.5),
+        )
+
+        # Asset 2: Far from exposure layer (will have exposure score = 0)
+        asset_outside = Asset.objects.create(
+            id=uuid.uuid4(),
+            external_id=uuid.uuid4(),
+            name="Asset Outside",
+            type=asset_type,
+            geom=Point(10.0, 10.0),
+        )
+
+        # Create focus area
+        focus_area = FocusArea.objects.create(
+            id=uuid.uuid4(),
+            scenario=scenario,
+            user_id=mock_user_id,
+            name="Test Focus Area",
+            geometry=None,  # Map-wide
+            filter_mode="by_asset_type",
+            is_active=True,
+            is_system=False,
+        )
+
+        # Create exposure layer that covers asset_inside
+        exposure_layer_type = ExposureLayerType.objects.create(
+            id=uuid.uuid4(),
+            name="Test Floods",
+            impacts_exposure_score=True,
+        )
+        exposure_geom = Polygon([(0, 0), (1, 0), (1, 1), (0, 1), (0, 0)])
+        exposure_layer = ExposureLayer.objects.create(
+            id=uuid.uuid4(),
+            name="Flood Zone",
+            geometry=exposure_geom,
+            geometry_buffered=buffer_geometry(exposure_geom),
+            type=exposure_layer_type,
+        )
+
+        # Enable the exposure layer for the focus area
+        VisibleExposureLayer.objects.create(
+            focus_area=focus_area,
+            exposure_layer=exposure_layer,
+        )
+
+        return {
+            "scenario": scenario,
+            "user_id": mock_user_id,
+            "focus_area": focus_area,
+            "asset_type": asset_type,
+            "asset_inside": asset_inside,
+            "asset_outside": asset_outside,
+            "exposure_layer": exposure_layer,
+        }
+
+    def test_exposure_filter_score_0_only(self, exposure_test_setup):
+        """Test filtering for exposure score 0 returns only assets far from exposure layers."""
+        setup = exposure_test_setup
+        focus_area_id = setup["focus_area"].id
+
+        score_filter = AssetScoreFilter(
+            focus_area_id=focus_area_id,
+            asset_type=setup["asset_type"],
+            exposure_values=[0],
+        )
+
+        ctx = FilterContext(
+            scenario_id=setup["scenario"].id,
+            user_id=setup["user_id"],
+            focus_area_id=focus_area_id,
+            type_filters={setup["asset_type"].id: score_filter},
+            global_filter=None,
+        )
+        builder = AssetFilterBuilder(ctx)
+
+        q = builder.build_by_asset_type(
+            visible_type_ids={setup["asset_type"].id},
+            geometry=None,
+        )
+
+        results = list(Asset.objects.filter(q).values_list("id", flat=True))
+
+        # Asset outside (score 0) should be included
+        assert setup["asset_outside"].id in results
+        # Asset inside (score > 0) should NOT be included
+        assert setup["asset_inside"].id not in results
+
+    def test_exposure_filter_non_zero_scores(self, exposure_test_setup):
+        """Test filtering for exposure scores 1, 2, 3 returns only assets near exposure layers."""
+        setup = exposure_test_setup
+        focus_area_id = setup["focus_area"].id
+
+        score_filter = AssetScoreFilter(
+            focus_area_id=focus_area_id,
+            asset_type=setup["asset_type"],
+            exposure_values=[1, 2, 3],
+        )
+
+        ctx = FilterContext(
+            scenario_id=setup["scenario"].id,
+            user_id=setup["user_id"],
+            focus_area_id=focus_area_id,
+            type_filters={setup["asset_type"].id: score_filter},
+            global_filter=None,
+        )
+        builder = AssetFilterBuilder(ctx)
+
+        q = builder.build_by_asset_type(
+            visible_type_ids={setup["asset_type"].id},
+            geometry=None,
+        )
+
+        results = list(Asset.objects.filter(q).values_list("id", flat=True))
+
+        # Asset inside (score > 0) should be included
+        assert setup["asset_inside"].id in results
+        # Asset outside (score 0) should NOT be included
+        assert setup["asset_outside"].id not in results
+
+    def test_exposure_filter_mixed_scores_zero_and_nonzero(self, exposure_test_setup):
+        """Test filtering for scores [0, 2] returns both inside and outside assets."""
+        setup = exposure_test_setup
+        focus_area_id = setup["focus_area"].id
+
+        score_filter = AssetScoreFilter(
+            focus_area_id=focus_area_id,
+            asset_type=setup["asset_type"],
+            exposure_values=[0, 2],
+        )
+
+        ctx = FilterContext(
+            scenario_id=setup["scenario"].id,
+            user_id=setup["user_id"],
+            focus_area_id=focus_area_id,
+            type_filters={setup["asset_type"].id: score_filter},
+            global_filter=None,
+        )
+        builder = AssetFilterBuilder(ctx)
+
+        q = builder.build_by_asset_type(
+            visible_type_ids={setup["asset_type"].id},
+            geometry=None,
+        )
+
+        results = list(Asset.objects.filter(q).values_list("id", flat=True))
+
+        # Both assets should be included
+        assert setup["asset_inside"].id in results
+        assert setup["asset_outside"].id in results
+
+    def test_exposure_filter_all_scores_returns_all(self, exposure_test_setup):
+        """Test filtering for all scores [0, 1, 2, 3] returns all assets."""
+        setup = exposure_test_setup
+        focus_area_id = setup["focus_area"].id
+
+        score_filter = AssetScoreFilter(
+            focus_area_id=focus_area_id,
+            asset_type=setup["asset_type"],
+            exposure_values=[0, 1, 2, 3],
+        )
+
+        ctx = FilterContext(
+            scenario_id=setup["scenario"].id,
+            user_id=setup["user_id"],
+            focus_area_id=focus_area_id,
+            type_filters={setup["asset_type"].id: score_filter},
+            global_filter=None,
+        )
+        builder = AssetFilterBuilder(ctx)
+
+        q = builder.build_by_asset_type(
+            visible_type_ids={setup["asset_type"].id},
+            geometry=None,
+        )
+
+        results = list(Asset.objects.filter(q).values_list("id", flat=True))
+
+        # Both assets should be included
+        assert setup["asset_inside"].id in results
+        assert setup["asset_outside"].id in results
+
+    def test_exposure_filter_combined_with_base_score(self, exposure_test_setup):
+        """Test exposure filter combined with criticality filter."""
+        setup = exposure_test_setup
+        focus_area_id = setup["focus_area"].id
+
+        # Filter for criticality 2 AND exposure 0 (should get asset outside with criticality 2)
+        score_filter = AssetScoreFilter(
+            focus_area_id=focus_area_id,
+            asset_type=setup["asset_type"],
+            criticality_values=[2],
+            exposure_values=[0],
+        )
+
+        ctx = FilterContext(
+            scenario_id=setup["scenario"].id,
+            user_id=setup["user_id"],
+            focus_area_id=focus_area_id,
+            type_filters={setup["asset_type"].id: score_filter},
+            global_filter=None,
+        )
+        builder = AssetFilterBuilder(ctx)
+
+        q = builder.build_by_asset_type(
+            visible_type_ids={setup["asset_type"].id},
+            geometry=None,
+        )
+
+        results = list(Asset.objects.filter(q).values_list("id", flat=True))
+
+        # Only asset outside should match (criticality 2 AND exposure 0)
+        assert setup["asset_outside"].id in results
+        # Asset inside has exposure > 0, so should not match
+        assert setup["asset_inside"].id not in results

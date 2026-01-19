@@ -16,13 +16,14 @@ from .scenario_assets import ScenarioAssetsView
 from .scenario_exposure_layers import ScenarioExposureLayersView
 from .scenarios import ScenarioViewSet
 from .visible_asset_types import VisibleAssetTypeView
-from .visible_exposure_layers import VisibleExposureLayerView
+from .visible_exposure_layers import BulkVisibleExposureLayerView, VisibleExposureLayerView
 
 __all__ = [
     "AssetScoreFiltersView",
     "AssetScoreViewSet",
     "AssetTypeViewSet",
     "AssetViewSet",
+    "BulkVisibleExposureLayerView",
     "DataSourceViewSet",
     "ExposureLayerViewSet",
     "FocusAreaViewSet",

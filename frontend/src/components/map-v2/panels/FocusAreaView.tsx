@@ -1,4 +1,4 @@
-import { useState, useCallback, type ChangeEvent, type KeyboardEvent, type MouseEvent } from 'react';
+import { useState, useCallback, useEffect, useLayoutEffect, useRef, type ChangeEvent, type KeyboardEvent, type MouseEvent } from 'react';
 import {
     Alert,
     Box,
@@ -18,19 +18,21 @@ import {
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
-import { useQuery } from '@tanstack/react-query';
 import { DeleteOutline, EditNoteOutlined } from '@mui/icons-material';
 import useFocusAreaMutations from '../hooks/useFocusAreaMutations';
+import { useDrawingContext } from '../context/DrawingContext';
+import { FEATURE_TYPES } from '../constants';
 import IconToggle from '@/components/IconToggle';
-import { fetchFocusAreas, type FocusArea } from '@/api/focus-areas';
+import type { FocusArea } from '@/api/focus-areas';
 
 type FocusAreaViewProps = {
     readonly onClose: () => void;
     readonly scenarioId?: string;
-    readonly isDrawing?: boolean;
-    readonly onStartDrawing?: (mode: 'circle' | 'polygon') => void;
     readonly selectedFocusAreaId?: string | null;
     readonly onFocusAreaSelect?: (focusAreaId: string | null) => void;
+    readonly focusAreas?: FocusArea[];
+    readonly isLoading?: boolean;
+    readonly isError?: boolean;
 };
 
 type FocusAreaItemProps = {
@@ -193,26 +195,69 @@ const FocusAreaItem = ({ focusArea, scenarioId, onError, isSelected, onSelect }:
     );
 };
 
-const FocusAreaView = ({ onClose, scenarioId, isDrawing, onStartDrawing, selectedFocusAreaId, onFocusAreaSelect }: FocusAreaViewProps) => {
+const FocusAreaView = ({ onClose, scenarioId, selectedFocusAreaId, onFocusAreaSelect, focusAreas, isLoading, isError }: FocusAreaViewProps) => {
     const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
     const [mutationError, setMutationError] = useState<string | null>(null);
     const menuOpen = Boolean(menuAnchorEl);
 
-    const {
-        data: focusAreas,
-        isLoading,
-        isError,
-    } = useQuery({
-        queryKey: ['focusAreas', scenarioId],
-        queryFn: () => fetchFocusAreas(scenarioId!),
-        enabled: !!scenarioId,
-        staleTime: 5 * 60 * 1000,
-    });
+    const { setDrawingConfig, drawingMode, startDrawing } = useDrawingContext();
 
-    const { updateFocusArea: updateFocusAreaMutate, isMutating } = useFocusAreaMutations({
+    const {
+        createFocusArea,
+        updateFocusArea: updateFocusAreaMutate,
+        isMutating,
+    } = useFocusAreaMutations({
         scenarioId,
         onError: setMutationError,
     });
+
+    // Keep callbacks in refs to avoid recreating config objects
+    const createFocusAreaRef = useRef(createFocusArea);
+    const updateFocusAreaMutateRef = useRef(updateFocusAreaMutate);
+    const onFocusAreaSelectRef = useRef(onFocusAreaSelect);
+    const focusAreasRef = useRef(focusAreas);
+    useEffect(() => {
+        createFocusAreaRef.current = createFocusArea;
+        updateFocusAreaMutateRef.current = updateFocusAreaMutate;
+        onFocusAreaSelectRef.current = onFocusAreaSelect;
+        focusAreasRef.current = focusAreas;
+    }, [createFocusArea, updateFocusAreaMutate, onFocusAreaSelect, focusAreas]);
+
+    // Drawing setup - register this panel's drawing config
+    // useLayoutEffect runs before paint, preventing loading flash when data changes
+    useLayoutEffect(() => {
+        if (!focusAreas) {
+            setDrawingConfig(null);
+            return;
+        }
+
+        setDrawingConfig({
+            featureType: FEATURE_TYPES.FOCUS_AREA,
+            entities: focusAreas,
+            selectedEntityId: selectedFocusAreaId,
+            getEntityId: (fa) => fa.id,
+            getEntityGeometry: (fa) => fa.geometry ?? undefined,
+            shouldRenderEntity: (fa) => fa.isActive && !!fa.geometry,
+            onCreate: (geometry) => createFocusAreaRef.current(geometry),
+            onUpdate: (focusAreaId, geometry) => updateFocusAreaMutateRef.current({ focusAreaId, data: { geometry } }),
+            onSelect: onFocusAreaSelectRef.current
+                ? (id) => {
+                      if (id && onFocusAreaSelectRef.current) {
+                          onFocusAreaSelectRef.current(id);
+                      } else if (onFocusAreaSelectRef.current) {
+                          const mapWide = focusAreasRef.current?.find((fa) => fa.isSystem);
+                          if (mapWide) {
+                              onFocusAreaSelectRef.current(mapWide.id);
+                          }
+                      }
+                  }
+                : undefined,
+        });
+
+        return () => setDrawingConfig(null);
+    }, [focusAreas, selectedFocusAreaId, setDrawingConfig]);
+
+    const isDrawing = drawingMode !== null;
 
     const mapWideFocusArea = focusAreas?.find((fa) => fa.isSystem);
     const mapWideVisible = mapWideFocusArea?.isActive ?? true;
@@ -225,13 +270,13 @@ const FocusAreaView = ({ onClose, scenarioId, isDrawing, onStartDrawing, selecte
 
     const handleDrawCircle = useCallback(() => {
         setMenuAnchorEl(null);
-        onStartDrawing?.('circle');
-    }, [onStartDrawing]);
+        startDrawing('circle');
+    }, [startDrawing]);
 
     const handleDrawPolygon = useCallback(() => {
         setMenuAnchorEl(null);
-        onStartDrawing?.('polygon');
-    }, [onStartDrawing]);
+        startDrawing('polygon');
+    }, [startDrawing]);
 
     const handleMapWideToggle = (e: MouseEvent | KeyboardEvent) => {
         e.stopPropagation();

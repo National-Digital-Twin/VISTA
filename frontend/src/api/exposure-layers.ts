@@ -1,9 +1,12 @@
 import type { Feature, FeatureCollection, Geometry } from 'geojson';
 import config from '@/config/app-config';
 
+export type FocusAreaRelation = 'contained' | 'overlaps' | 'elsewhere';
+
 export type ExposureLayerGroup = {
     id: string;
     name: string;
+    isUserEditable?: boolean;
     exposureLayers: ExposureLayer[];
 };
 
@@ -12,6 +15,9 @@ export type ExposureLayer = {
     name: string;
     geometry?: Geometry;
     isActive?: boolean;
+    isUserDefined?: boolean;
+    createdAt?: string;
+    focusAreaRelation?: FocusAreaRelation;
 };
 
 export type ExposureLayersResponse = {
@@ -25,56 +31,40 @@ export type ToggleExposureLayerVisibilityRequest = {
     isActive: boolean;
 };
 
-export const fetchExposureLayerGeometry = async (): Promise<ExposureLayerGroup[]> => {
-    const response = await fetch(`${config.services.apiBaseUrl}/exposurelayers/`, {
-        headers: { 'Content-Type': 'application/json' },
-    });
-
-    if (!response.ok) {
-        throw new Error(`Failed to retrieve exposure layer geometry: ${response.statusText}`);
-    }
-
-    return response.json();
+export type CreateExposureLayerRequest = {
+    typeId: string;
+    geometry: Geometry;
+    name?: string;
+    focusAreaId?: string;
 };
 
-export const fetchExposureLayerVisibility = async (scenarioId: string, focusAreaId: string): Promise<ExposureLayerGroup[]> => {
-    const url = `${config.services.apiBaseUrl}/scenarios/${scenarioId}/exposure-layers/?focus_area_id=${focusAreaId}`;
+export type UpdateExposureLayerRequest = {
+    name?: string;
+    geometry?: Geometry;
+};
+
+export type BulkToggleVisibilityRequest = {
+    focusAreaId: string;
+    isActive: boolean;
+    exposureLayerIds?: string[];
+    typeId?: string;
+};
+
+export const fetchExposureLayers = async (scenarioId: string, focusAreaId?: string | null): Promise<ExposureLayersResponse> => {
+    const params = focusAreaId ? `?focus_area_id=${focusAreaId}` : '';
+    const url = `${config.services.apiBaseUrl}/scenarios/${scenarioId}/exposure-layers/${params}`;
 
     const response = await fetch(url, {
         headers: { 'Content-Type': 'application/json' },
     });
 
     if (!response.ok) {
-        throw new Error(`Failed to retrieve exposure layer visibility: ${response.statusText}`);
+        throw new Error(`Failed to retrieve exposure layers: ${response.statusText}`);
     }
 
-    return response.json();
-};
+    const groups: ExposureLayerGroup[] = await response.json();
 
-export const mergeGeometryWithVisibility = (geometryData: ExposureLayerGroup[], visibilityData: ExposureLayerGroup[]): ExposureLayersResponse => {
-    // Build geometry lookup from geometryData
-    const geometryMap = new Map<string, Geometry>();
-    geometryData.forEach((group) => {
-        group.exposureLayers.forEach((layer) => {
-            if (layer.geometry) {
-                geometryMap.set(layer.id, layer.geometry);
-            }
-        });
-    });
-
-    // Use visibilityData as the source of truth for which layers to include
-    // (backend already filters by focus area geometry)
-    const mergedGroups: ExposureLayerGroup[] = visibilityData.map((group) => ({
-        id: group.id,
-        name: group.name,
-        exposureLayers: group.exposureLayers.map((layer) => ({
-            ...layer,
-            geometry: geometryMap.get(layer.id),
-            isActive: layer.isActive ?? false,
-        })),
-    }));
-
-    const features: Feature[] = mergedGroups.flatMap((group) =>
+    const features: Feature[] = groups.flatMap((group) =>
         group.exposureLayers
             .filter((layer) => layer.geometry)
             .map((layer) => ({
@@ -86,23 +76,16 @@ export const mergeGeometryWithVisibility = (geometryData: ExposureLayerGroup[], 
                     groupId: group.id,
                     groupName: group.name,
                     isActive: layer.isActive ?? false,
+                    isUserDefined: layer.isUserDefined ?? false,
+                    focusAreaRelation: layer.focusAreaRelation,
                 },
             })),
     );
 
     return {
-        featureCollection: {
-            type: 'FeatureCollection',
-            features,
-        },
-        groups: mergedGroups,
+        featureCollection: { type: 'FeatureCollection', features },
+        groups,
     };
-};
-
-export const fetchExposureLayers = async (scenarioId: string, focusAreaId: string): Promise<ExposureLayersResponse> => {
-    const [geometryData, visibilityData] = await Promise.all([fetchExposureLayerGeometry(), fetchExposureLayerVisibility(scenarioId, focusAreaId)]);
-
-    return mergeGeometryWithVisibility(geometryData, visibilityData);
 };
 
 export const toggleExposureLayerVisibility = async (scenarioId: string, data: ToggleExposureLayerVisibilityRequest): Promise<void> => {
@@ -118,5 +101,56 @@ export const toggleExposureLayerVisibility = async (scenarioId: string, data: To
 
     if (!response.ok) {
         throw new Error(`Failed to toggle exposure layer visibility: ${response.statusText}`);
+    }
+};
+
+export const bulkToggleExposureLayerVisibility = async (scenarioId: string, data: BulkToggleVisibilityRequest): Promise<void> => {
+    const response = await fetch(`${config.services.apiBaseUrl}/scenarios/${scenarioId}/visible-exposure-layers/bulk/`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+        throw new Error(`Failed to bulk toggle exposure layer visibility: ${response.statusText}`);
+    }
+};
+
+export const createExposureLayer = async (scenarioId: string, data: CreateExposureLayerRequest): Promise<ExposureLayer> => {
+    const response = await fetch(`${config.services.apiBaseUrl}/scenarios/${scenarioId}/exposure-layers/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+        throw new Error(`Failed to create exposure layer: ${response.statusText}`);
+    }
+
+    return response.json();
+};
+
+export const updateExposureLayer = async (scenarioId: string, exposureLayerId: string, data: UpdateExposureLayerRequest): Promise<ExposureLayer> => {
+    const response = await fetch(`${config.services.apiBaseUrl}/scenarios/${scenarioId}/exposure-layers/${exposureLayerId}/`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+        throw new Error(`Failed to update exposure layer: ${response.statusText}`);
+    }
+
+    return response.json();
+};
+
+export const deleteExposureLayer = async (scenarioId: string, exposureLayerId: string): Promise<void> => {
+    const response = await fetch(`${config.services.apiBaseUrl}/scenarios/${scenarioId}/exposure-layers/${exposureLayerId}/`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+    });
+
+    if (!response.ok) {
+        throw new Error(`Failed to delete exposure layer: ${response.statusText}`);
     }
 };

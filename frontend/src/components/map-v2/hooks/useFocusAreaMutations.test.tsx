@@ -225,7 +225,7 @@ describe('useFocusAreaMutations', () => {
         });
     });
 
-    it('deleteFocusArea invalidates all related queries on success', async () => {
+    it('deleteFocusArea invalidates list queries and all exposure layer queries on success', async () => {
         mockedDeleteFocusArea.mockResolvedValue();
         const invalidateSpy = vi.spyOn(queryClient, 'invalidateQueries');
 
@@ -238,10 +238,11 @@ describe('useFocusAreaMutations', () => {
         });
 
         await waitFor(() => {
+            // List queries are invalidated to refresh the list
             expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['focusAreas', 'scenario-123'] });
             expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['scenarioAssets', 'scenario-123'] });
-            expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['scenarioAssetTypes', 'scenario-123', 'fa-1'] });
-            expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['exposureLayers', 'scenario-123', 'fa-1'] });
+            // All exposure layer queries are invalidated (since active focus areas changed)
+            expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['exposureLayers', 'scenario-123'] });
         });
     });
 

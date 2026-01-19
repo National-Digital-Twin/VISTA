@@ -14,7 +14,6 @@ describe('AssetScore', () => {
     const createMockScore = (overrides: Partial<AssetScoreType> = {}): AssetScoreType => ({
         id: 'score-1',
         scenarioId: 'scenario-1',
-        userId: 'user-1',
         criticalityScore: '3.0',
         dependencyScore: '2.5',
         exposureScore: '1.5',

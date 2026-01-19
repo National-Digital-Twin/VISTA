@@ -1544,3 +1544,258 @@ def test_exposure_filter_uses_user_specific_scores(scenario, mock_user_id, clien
     returned_names = [a["name"] for a in data]
     assert len(data) == 1, f"Expected 1 asset, got {len(data)}: {returned_names}"
     assert data[0]["name"] == "Asset Outside Exposure"
+
+
+@pytest.mark.django_db
+def test_exposure_score_scoped_to_focus_area(scenario, mock_user_id, client):
+    """Exposure score should only count layers enabled for the queried focus area.
+
+    This tests the bug: when querying map-wide with no exposure layers enabled,
+    assets were incorrectly getting exposure scores from layers enabled on
+    other focus areas.
+    """
+    # Create asset type and scenario asset
+    category = AssetCategory.objects.create(id=uuid.uuid4(), name="Scoped Exposure Cat")
+    sub_category = AssetSubCategory.objects.create(
+        id=uuid.uuid4(), name="Scoped Exposure SubCat", category=category
+    )
+    data_source = DataSource.objects.create(id=uuid.uuid4(), name="Scoped Exposure Source")
+    asset_type = AssetType.objects.create(
+        id=uuid.uuid4(),
+        name="Scoped Exposure Assets",
+        sub_category=sub_category,
+        data_source=data_source,
+    )
+    ScenarioAsset.objects.create(scenario=scenario, asset_type=asset_type, criticality_score=3)
+
+    # Create exposure layer polygon
+    exposure_poly = Polygon(
+        ((-0.001, -0.001), (0.001, -0.001), (0.001, 0.001), (-0.001, 0.001), (-0.001, -0.001))
+    )
+    exposure_layer_type = ExposureLayerType.objects.create(name="Scoped Flood")
+    exposure_layer = ExposureLayer.objects.create(
+        geometry=exposure_poly,
+        geometry_buffered=buffer_geometry(exposure_poly),
+        type=exposure_layer_type,
+    )
+
+    # Create asset INSIDE exposure layer
+    Asset.objects.create(
+        id=uuid.uuid4(),
+        external_id=uuid.uuid4(),
+        name="Asset Inside Scoped",
+        type=asset_type,
+        geom=Point(0.0, 0.0),
+    )
+
+    # Create map-wide focus area with NO exposure layers enabled
+    # Filter to only show assets with exposure score = 3
+    fa_map_wide = FocusArea.objects.create(
+        scenario=scenario,
+        user_id=mock_user_id,
+        name="Map Wide No Exposure",
+        geometry=None,
+        filter_mode="by_score_only",
+        is_active=True,
+        is_system=True,
+    )
+    # This filter requires exposure score = 3, but since no exposure layers are
+    # enabled on this focus area, all assets should have exposure = 0
+    AssetScoreFilter.objects.create(focus_area=fa_map_wide, asset_type=None, exposure_values=[3])
+    # NO VisibleExposureLayer for fa_map_wide
+
+    # Create focus area B WITH exposure layer enabled
+    fa_b_geometry = Polygon(((-1, -1), (1, -1), (1, 1), (-1, 1), (-1, -1)))
+    fa_b = FocusArea.objects.create(
+        scenario=scenario,
+        user_id=mock_user_id,
+        name="Focus Area B With Exposure",
+        geometry=fa_b_geometry,
+        filter_mode="by_asset_type",
+        is_active=True,
+    )
+    VisibleExposureLayer.objects.create(focus_area=fa_b, exposure_layer=exposure_layer)
+    VisibleAsset.objects.create(focus_area=fa_b, asset_type=asset_type)
+
+    # Query map-wide: should return NO assets because:
+    # - Map-wide has no exposure layers enabled
+    # - Therefore all assets have exposure_score = 0 for map-wide
+    # - But the filter requires exposure_score = 3
+    response = client.get(f"/api/scenarios/{scenario.id}/assets/?focus_area_id={fa_map_wide.id}")
+    data = response.json()
+
+    assert response.status_code == http_success_code
+    assert (
+        len(data) == 0
+    ), f"Map-wide should return no assets when filtering exposure=3, got: {data}"
+
+
+@pytest.mark.django_db
+def test_same_asset_different_exposure_per_focus_area(scenario, mock_user_id, client):
+    """Same asset should have different exposure scores depending on which focus area is queried."""
+    # Create asset type and scenario asset
+    category = AssetCategory.objects.create(id=uuid.uuid4(), name="Multi FA Cat")
+    sub_category = AssetSubCategory.objects.create(
+        id=uuid.uuid4(), name="Multi FA SubCat", category=category
+    )
+    data_source = DataSource.objects.create(id=uuid.uuid4(), name="Multi FA Source")
+    asset_type = AssetType.objects.create(
+        id=uuid.uuid4(),
+        name="Multi FA Assets",
+        sub_category=sub_category,
+        data_source=data_source,
+    )
+    ScenarioAsset.objects.create(scenario=scenario, asset_type=asset_type, criticality_score=3)
+
+    # Create two exposure layer polygons that both contain the asset
+    exposure_poly_1 = Polygon(
+        ((-0.002, -0.002), (0.002, -0.002), (0.002, 0.002), (-0.002, 0.002), (-0.002, -0.002))
+    )
+    exposure_poly_2 = Polygon(
+        ((-0.003, -0.003), (0.003, -0.003), (0.003, 0.003), (-0.003, 0.003), (-0.003, -0.003))
+    )
+    exposure_layer_type = ExposureLayerType.objects.create(name="Multi FA Flood")
+    exposure_layer_1 = ExposureLayer.objects.create(
+        geometry=exposure_poly_1,
+        geometry_buffered=buffer_geometry(exposure_poly_1),
+        type=exposure_layer_type,
+    )
+    exposure_layer_2 = ExposureLayer.objects.create(
+        geometry=exposure_poly_2,
+        geometry_buffered=buffer_geometry(exposure_poly_2),
+        type=exposure_layer_type,
+    )
+
+    # Create asset inside both exposure layers
+    Asset.objects.create(
+        id=uuid.uuid4(),
+        external_id=uuid.uuid4(),
+        name="Asset Multi FA",
+        type=asset_type,
+        geom=Point(0.0, 0.0),
+    )
+
+    # FA A: only exposure_layer_1 enabled -> exposure score = 2 (intersects 1 layer)
+    fa_a = FocusArea.objects.create(
+        scenario=scenario,
+        user_id=mock_user_id,
+        name="FA A One Layer",
+        geometry=None,
+        filter_mode="by_score_only",
+        is_active=True,
+    )
+    VisibleExposureLayer.objects.create(focus_area=fa_a, exposure_layer=exposure_layer_1)
+    # Filter: only show assets with exposure = 2
+    AssetScoreFilter.objects.create(focus_area=fa_a, asset_type=None, exposure_values=[2])
+
+    # FA B: both exposure layers enabled -> exposure score = 3 (intersects 2+ layers)
+    fa_b = FocusArea.objects.create(
+        scenario=scenario,
+        user_id=mock_user_id,
+        name="FA B Two Layers",
+        geometry=None,
+        filter_mode="by_score_only",
+        is_active=True,
+    )
+    VisibleExposureLayer.objects.create(focus_area=fa_b, exposure_layer=exposure_layer_1)
+    VisibleExposureLayer.objects.create(focus_area=fa_b, exposure_layer=exposure_layer_2)
+    # Filter: only show assets with exposure = 3
+    AssetScoreFilter.objects.create(focus_area=fa_b, asset_type=None, exposure_values=[3])
+
+    # Query FA A with exposure=2 filter: should return asset
+    response_a = client.get(f"/api/scenarios/{scenario.id}/assets/?focus_area_id={fa_a.id}")
+    data_a = response_a.json()
+    assert response_a.status_code == http_success_code
+    assert len(data_a) == 1, f"FA A (exposure=2) should return 1 asset, got: {data_a}"
+
+    # Query FA B with exposure=3 filter: should return asset
+    response_b = client.get(f"/api/scenarios/{scenario.id}/assets/?focus_area_id={fa_b.id}")
+    data_b = response_b.json()
+    assert response_b.status_code == http_success_code
+    assert len(data_b) == 1, f"FA B (exposure=3) should return 1 asset, got: {data_b}"
+
+
+@pytest.mark.django_db
+def test_exposure_filter_with_multiple_values_including_zero(scenario, mock_user_id, client):
+    """Filter exposure_values=[0, 2] should return assets with score 0 OR 2.
+
+    This tests the OR logic in _build_exposure_filter_q when filtering for
+    both "not near any exposure layer" (score=0) and "inside one layer" (score=2).
+    """
+    # Create asset type and scenario asset
+    category = AssetCategory.objects.create(id=uuid.uuid4(), name="Multi Exposure Cat")
+    sub_category = AssetSubCategory.objects.create(
+        id=uuid.uuid4(), name="Multi Exposure SubCat", category=category
+    )
+    data_source = DataSource.objects.create(id=uuid.uuid4(), name="Multi Exposure Source")
+    asset_type = AssetType.objects.create(
+        id=uuid.uuid4(),
+        name="Multi Exposure Assets",
+        sub_category=sub_category,
+        data_source=data_source,
+    )
+    ScenarioAsset.objects.create(scenario=scenario, asset_type=asset_type, criticality_score=3)
+
+    # Create exposure layer polygon centered at origin
+    exposure_poly = Polygon(
+        ((-0.001, -0.001), (0.001, -0.001), (0.001, 0.001), (-0.001, 0.001), (-0.001, -0.001))
+    )
+    exposure_layer_type = ExposureLayerType.objects.create(name="Multi Exposure Flood")
+    exposure_layer = ExposureLayer.objects.create(
+        geometry=exposure_poly,
+        geometry_buffered=buffer_geometry(exposure_poly),
+        type=exposure_layer_type,
+    )
+
+    # Create 3 assets:
+    # 1. Inside exposure layer (score=2)
+    Asset.objects.create(
+        id=uuid.uuid4(),
+        external_id=uuid.uuid4(),
+        name="Asset Inside (score=2)",
+        type=asset_type,
+        geom=Point(0.0, 0.0),  # Inside the polygon
+    )
+    # 2. Near but not inside (score=1) - within 500m but not intersecting
+    # 0.003 degrees ≈ 333m at equator
+    Asset.objects.create(
+        id=uuid.uuid4(),
+        external_id=uuid.uuid4(),
+        name="Asset Near (score=1)",
+        type=asset_type,
+        geom=Point(0.003, 0.0),  # Near but outside
+    )
+    # 3. Far away (score=0) - not within 500m
+    Asset.objects.create(
+        id=uuid.uuid4(),
+        external_id=uuid.uuid4(),
+        name="Asset Far (score=0)",
+        type=asset_type,
+        geom=Point(1.0, 1.0),  # Far away
+    )
+
+    # Create focus area with exposure layer enabled
+    fa = FocusArea.objects.create(
+        scenario=scenario,
+        user_id=mock_user_id,
+        name="Multi Value Exposure FA",
+        geometry=None,
+        filter_mode="by_score_only",
+        is_active=True,
+    )
+    VisibleExposureLayer.objects.create(focus_area=fa, exposure_layer=exposure_layer)
+
+    # Filter: exposure_values=[0, 2] - should return assets with score 0 OR 2
+    # This means: asset_inside (score=2) and asset_far (score=0), NOT asset_near (score=1)
+    AssetScoreFilter.objects.create(focus_area=fa, asset_type=None, exposure_values=[0, 2])
+
+    # Query
+    response = client.get(f"/api/scenarios/{scenario.id}/assets/?focus_area_id={fa.id}")
+    data = response.json()
+
+    assert response.status_code == http_success_code
+    returned_names = {a["name"] for a in data}
+    assert len(data) == 2, f"Expected 2 assets, got {len(data)}: {returned_names}"
+    assert "Asset Inside (score=2)" in returned_names
+    assert "Asset Far (score=0)" in returned_names
+    assert "Asset Near (score=1)" not in returned_names

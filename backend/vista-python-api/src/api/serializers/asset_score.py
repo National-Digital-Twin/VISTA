@@ -8,7 +8,13 @@ from api.models import AssetScore
 
 
 class AssetScoreSerializer(serializers.ModelSerializer):
-    """Serializer for the AssetScore model."""
+    """Serializer for the AssetScore model.
+
+    Note: This serializer is for the simplified asset_scores view which no longer
+    includes exposure_score (now in VisibleExposureAssetScore) or user_id.
+    For the full score response including exposure, use AssetScoreViewSet.retrieve()
+    which combines data from both views.
+    """
 
     class Meta:
         """Configuration for the `AssetScoreSerializer`."""
@@ -17,9 +23,7 @@ class AssetScoreSerializer(serializers.ModelSerializer):
         fields: ClassVar[list[str]] = [
             "id",
             "scenario_id",
-            "user_id",
             "criticality_score",
             "dependency_score",
-            "exposure_score",
             "redundancy_score",
         ]
