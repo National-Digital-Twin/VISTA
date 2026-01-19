@@ -142,7 +142,7 @@ type AssetTypeListItemProps = {
 };
 
 function AssetTypeListItem({ assetType, onToggle, onOpenScoreFilter, hasFilter, disabled, dataSource }: AssetTypeListItemProps) {
-    const countDisplay = hasFilter ? `(${assetType.filteredAssetCount}/${assetType.assetCount})` : `(${assetType.assetCount})`;
+    const countDisplay = hasFilter ? `(${assetType.filteredAssetCount}/${assetType.assetCountInFocusArea})` : `(${assetType.assetCountInFocusArea})`;
 
     return (
         <ListItem

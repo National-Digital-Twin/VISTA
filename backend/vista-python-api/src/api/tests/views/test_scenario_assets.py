@@ -735,7 +735,7 @@ def test_asset_types_focus_area_invalid_returns_404(scenario, client):
 
 
 @pytest.mark.django_db
-def test_asset_types_includes_asset_count_map_wide(
+def test_asset_types_includes_asset_count_in_focus_area_map_wide(
     scenario,
     asset_types_for_scenario,  # noqa: ARG001
     assets_for_scenario,  # noqa: ARG001
@@ -753,11 +753,12 @@ def test_asset_types_includes_asset_count_map_wide(
     assert rail_type is not None
     assert hospital_type is not None
     # assets_for_scenario creates 2 assets each for rail and hospital
-    expected_count_per_type = 2
-    assert rail_type["assetCountTotal"] == expected_count_per_type
-    assert rail_type["assetCountInFocusArea"] == expected_count_per_type
-    assert hospital_type["assetCountTotal"] == expected_count_per_type
-    assert hospital_type["assetCountInFocusArea"] == expected_count_per_type
+    expected_asset_count_per_type_map_wide = 2
+    # for map-wide, total assets should equal asset count in focus area
+    assert rail_type["assetCountTotal"] == expected_asset_count_per_type_map_wide
+    assert rail_type["assetCountInFocusArea"] == expected_asset_count_per_type_map_wide
+    assert hospital_type["assetCountTotal"] == expected_asset_count_per_type_map_wide
+    assert hospital_type["assetCountInFocusArea"] == expected_asset_count_per_type_map_wide
 
 
 @pytest.mark.django_db
@@ -783,9 +784,33 @@ def test_asset_types_includes_asset_count_focus_area(
     assert hospital_type is not None
     # assets_for_scenario creates 1 inside and 1 outside for each type
     expected_count_inside = 1
-    expected_count_total = 2
     assert rail_type["assetCountInFocusArea"] == expected_count_inside
     assert hospital_type["assetCountInFocusArea"] == expected_count_inside
+
+
+@pytest.mark.django_db
+def test_asset_types_includes_total_asset_count_focus_area(
+    scenario,
+    asset_types_for_scenario,  # noqa: ARG001
+    assets_for_scenario,  # noqa: ARG001
+    focus_area,
+    client,
+):
+    """Test that focus area asset types include only assets within geometry."""
+    response = client.get(
+        f"/api/scenarios/{scenario.id}/asset-types/?focus_area_id={focus_area.id}"
+    )
+    data = response.json()
+
+    assert response.status_code == http_success_code
+
+    rail_type = find_asset_type_in_tree(data, "Rail Stations")
+    hospital_type = find_asset_type_in_tree(data, "Hospitals")
+
+    assert rail_type is not None
+    assert hospital_type is not None
+    # assets_for_scenario creates 1 inside and 1 outside for each type
+    expected_count_total = 2
     assert rail_type["assetCountTotal"] == expected_count_total
     assert hospital_type["assetCountTotal"] == expected_count_total
 
