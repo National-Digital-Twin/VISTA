@@ -231,7 +231,7 @@ describe('AssetsView', () => {
 
     describe('Loading State', () => {
         it('shows loading state when categories are loading', async () => {
-            const neverResolvingPromise = new Promise<never>(() => { });
+            const neverResolvingPromise = new Promise<never>(() => {});
             mockedFetchScenarioAssetTypes.mockImplementation(() => neverResolvingPromise as Promise<any>);
             mockedFetchFocusAreas.mockResolvedValue([
                 {
@@ -355,7 +355,14 @@ describe('AssetsView', () => {
                                 id: 'subcat1',
                                 name: 'Utility infrastructure',
                                 assetTypes: [
-                                    { id: 'asset-1', name: 'Hospital', assetCountInFocusArea: 25, filteredAssetCount: 25, isActive: true, datasourceId: 'ds-1' },
+                                    {
+                                        id: 'asset-1',
+                                        name: 'Hospital',
+                                        assetCountInFocusArea: 25,
+                                        filteredAssetCount: 25,
+                                        isActive: true,
+                                        datasourceId: 'ds-1',
+                                    },
                                     { id: 'asset-2', name: 'School', assetCountInFocusArea: 10, filteredAssetCount: 10, isActive: false, datasourceId: 'ds-1' },
                                 ],
                             },
