@@ -665,7 +665,7 @@ def test_asset_types_includes_datasource_id(
 
 
 @pytest.mark.django_db
-def test_asset_types_focus_area_filters_by_geometry(
+def test_asset_types_focus_area_does_not_filter_by_geometry(
     scenario,
     asset_types_for_scenario,
     focus_area,
@@ -699,7 +699,7 @@ def test_asset_types_focus_area_filters_by_geometry(
     assert response.status_code == http_success_code
     names = get_all_asset_type_names(data)
     assert "Rail Stations" in names
-    assert "Hospitals" not in names
+    assert "Hospitals" in names
 
 
 @pytest.mark.django_db
@@ -724,24 +724,6 @@ def test_asset_types_focus_area_returns_both_when_assets_in_area(
 
 
 @pytest.mark.django_db
-def test_asset_types_focus_area_empty_when_no_assets(
-    scenario,
-    asset_types_for_scenario,  # noqa: ARG001
-    focus_area,
-    client,
-):
-    """Test focus area returns empty when no assets in that area."""
-    # No assets created, so nothing should match
-    response = client.get(
-        f"/api/scenarios/{scenario.id}/asset-types/?focus_area_id={focus_area.id}"
-    )
-    data = response.json()
-
-    assert response.status_code == http_success_code
-    names = get_all_asset_type_names(data)
-    assert len(names) == 0
-
-
 @pytest.mark.django_db
 def test_asset_types_focus_area_invalid_returns_404(scenario, client):
     """Test that invalid focus_area_id returns 404."""
@@ -772,8 +754,10 @@ def test_asset_types_includes_asset_count_map_wide(
     assert hospital_type is not None
     # assets_for_scenario creates 2 assets each for rail and hospital
     expected_count_per_type = 2
-    assert rail_type["assetCount"] == expected_count_per_type
-    assert hospital_type["assetCount"] == expected_count_per_type
+    assert rail_type["assetCountTotal"] == expected_count_per_type
+    assert rail_type["assetCountInFocusArea"] == expected_count_per_type
+    assert hospital_type["assetCountTotal"] == expected_count_per_type
+    assert hospital_type["assetCountInFocusArea"] == expected_count_per_type
 
 
 @pytest.mark.django_db
@@ -799,8 +783,11 @@ def test_asset_types_includes_asset_count_focus_area(
     assert hospital_type is not None
     # assets_for_scenario creates 1 inside and 1 outside for each type
     expected_count_inside = 1
-    assert rail_type["assetCount"] == expected_count_inside
-    assert hospital_type["assetCount"] == expected_count_inside
+    expected_count_total = 2
+    assert rail_type["assetCountInFocusArea"] == expected_count_inside
+    assert hospital_type["assetCountInFocusArea"] == expected_count_inside
+    assert rail_type["assetCountTotal"] == expected_count_total
+    assert hospital_type["assetCountTotal"] == expected_count_total
 
 
 # =============================================================================
@@ -1404,8 +1391,8 @@ def test_asset_types_filtered_count_equals_total_without_filter(
     assert station_data is not None
     assert pylon_data is not None
     # Without score filters, filteredAssetCount should equal assetCount
-    assert station_data["filteredAssetCount"] == station_data["assetCount"]
-    assert pylon_data["filteredAssetCount"] == pylon_data["assetCount"]
+    assert station_data["filteredAssetCount"] == station_data["assetCountInFocusArea"]
+    assert pylon_data["filteredAssetCount"] == pylon_data["assetCountInFocusArea"]
 
 
 @pytest.mark.django_db
@@ -1458,11 +1445,11 @@ def test_asset_types_filtered_count_with_score_filter(
     # Station has score filter with criticality=0, but assets have criticality=3
     # So filteredAssetCount should be 0
     expected_station_asset_count = 2
-    assert station_data["assetCount"] == expected_station_asset_count
+    assert station_data["assetCountInFocusArea"] == expected_station_asset_count
     assert station_data["filteredAssetCount"] == 0
 
     # Pylon has no score filter, so filteredAssetCount equals assetCount
-    assert pylon_data["filteredAssetCount"] == pylon_data["assetCount"]
+    assert pylon_data["filteredAssetCount"] == pylon_data["assetCountInFocusArea"]
 
 
 @pytest.mark.django_db

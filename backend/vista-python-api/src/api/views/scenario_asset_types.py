@@ -60,13 +60,14 @@ def _build_categories_response(asset_types, visible_type_ids, builder, focus_are
         if at.id in type_ids_with_filters:
             filtered_count = filtered_counts.get(at.id, 0)
         else:
-            filtered_count = at.asset_count
+            filtered_count = at.asset_count_in_focus_area
 
         sub_cats[sub_cat.id]["assetTypes"].append(
             {
                 "id": str(at.id),
                 "name": at.name,
-                "assetCount": at.asset_count,
+                "assetCountInFocusArea": at.asset_count_in_focus_area,
+                "assetCountTotal": at.asset_count_total,
                 "filteredAssetCount": filtered_count,
                 "isActive": at.id in visible_type_ids,
                 "datasourceId": str(at.data_source) if at.data_source else None,
@@ -104,12 +105,16 @@ class ScenarioAssetTypesView(APIView):
 
         if focus_area and focus_area.geometry:
             asset_types_q = asset_types_q.annotate(
-                asset_count=Count(
+                asset_count_in_focus_area=Count(
                     "assets", filter=Q(assets__geom__within=focus_area.geometry), distinct=True
-                )
-            ).filter(asset_count__gt=0)
+                ),
+                asset_count_total=Count("assets", distinct=True),
+            )
         else:
-            asset_types_q = asset_types_q.annotate(asset_count=Count("assets", distinct=True))
+            asset_types_q = asset_types_q.annotate(
+                asset_count_in_focus_area=Count("assets", distinct=True),
+                asset_count_total=Count("assets", distinct=True),
+            )
 
         asset_types = asset_types_q.order_by(
             "sub_category__category__name", "sub_category__name", "name"
