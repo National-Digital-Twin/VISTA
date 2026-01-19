@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Outlet, useSearchParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
@@ -79,10 +79,9 @@ export default function DataRoom() {
     };
 
     const scenarios = scenariosData ?? [];
-    const defaultScenario = scenarios.length > 0 ? scenarios[0].id : '';
+    const hasInitializedRef = useRef(false);
     const [selectedScenario, setSelectedScenario] = useState<string>(() => {
-        const stored = sessionStorage.getItem('selectedScenario');
-        return stored ?? defaultScenario;
+        return sessionStorage.getItem('selectedScenario') ?? '';
     });
 
     useEffect(() => {
@@ -92,10 +91,21 @@ export default function DataRoom() {
     }, [isError, error]);
 
     useEffect(() => {
-        if (scenariosData && scenariosData.length > 0 && !selectedScenario) {
-            setSelectedScenario(scenariosData[0].id);
+        if (scenariosData && scenariosData.length > 0 && !hasInitializedRef.current) {
+            hasInitializedRef.current = true;
+            const stored = sessionStorage.getItem('selectedScenario');
+            const active = scenariosData.find((s) => s.isActive);
+            const storedIsValid = stored && scenariosData.some((s) => s.id === stored);
+
+            if (storedIsValid) {
+                setSelectedScenario(stored);
+            } else if (active) {
+                setSelectedScenario(active.id);
+            } else {
+                setSelectedScenario(scenariosData[0].id);
+            }
         }
-    }, [scenariosData, selectedScenario]);
+    }, [scenariosData]);
 
     useEffect(() => {
         if (searchParams.get('openScenarioModal') === 'true') {
