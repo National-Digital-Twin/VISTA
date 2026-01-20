@@ -109,11 +109,11 @@
     },
     {
         "description": [
-            "Temporary Or Holiday Accommodation Building"
+            "Hotel"
         ],
         "type": "ea8c3b9e-7d5c-43a1-9860-9e3f9aefb4f7",
         "source": "os_ngd",
-        "collection": "bld-fts-building-4"
+        "collection": "lus-fts-site-2"
     },
     {
         "description": [
