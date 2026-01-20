@@ -17,12 +17,15 @@ import ExposureLayers from './ExposureLayers';
 import UtilitiesLayers from './UtilitiesLayers';
 import FocusAreaMask from './FocusAreaMask';
 import FocusAreaOutline from './FocusAreaOutline';
+import InactiveFocusAreas from './InactiveFocusAreas';
+import ActiveFocusAreas from './ActiveFocusAreas';
 import ConnectedAssetsLayer from './ConnectedAssetsLayer';
 import { DrawingProvider, useDrawingContext } from './context/DrawingContext';
 import { usePreloadAssetIcons } from './hooks/usePreloadAssetIcons';
 import { useAssetTypeIcons } from '@/hooks/useAssetTypeIcons';
 import { useActiveScenario } from '@/hooks/useActiveScenario';
 import { useScenarioAssets } from '@/hooks/useScenarioAssets';
+import { useMultipleFocusAreaAssets } from '@/hooks/useMultipleFocusAreaAssets';
 import { fetchAssetCategories } from '@/api/asset-categories';
 import { fetchAssetDetails } from '@/api/asset-details';
 import { fetchFocusAreas } from '@/api/focus-areas';
@@ -46,16 +49,13 @@ const MapLoadingOverlay = ({ isAssetsFetching, isSpritesGenerating, isFocusAreas
 
     const isDataLoading = isAssetsFetching || isSpritesGenerating || isFocusAreasFetching || isExposureLayersFetching || !drawingSyncComplete;
 
-    // When data loading finishes, wait for map to render
     useEffect(() => {
-        // Only start waiting for idle when data loading transitions from true to false
         if (wasDataLoadingRef.current && !isDataLoading) {
             setWaitingForMapIdle(true);
         }
         wasDataLoadingRef.current = isDataLoading;
     }, [isDataLoading]);
 
-    // When waiting for idle and data is done loading, listen for map idle event
     useEffect(() => {
         if (!waitingForMapIdle || !mapReady || !mapRef.current) {
             return;
@@ -72,7 +72,6 @@ const MapLoadingOverlay = ({ isAssetsFetching, isSpritesGenerating, isFocusAreas
             map.off('idle', handleIdle);
         };
 
-        // Check if map is already idle
         const tilesLoaded = typeof map.areTilesLoaded === 'function' ? map.areTilesLoaded() : true;
         const styleLoaded = typeof map.isStyleLoaded === 'function' ? map.isStyleLoaded() : true;
         const isMoving = typeof map.isMoving === 'function' ? map.isMoving() : false;
@@ -115,7 +114,6 @@ const MapLoadingOverlay = ({ isAssetsFetching, isSpritesGenerating, isFocusAreas
     );
 };
 
-// Wrapper to pass drawing state to AssetLayers without coupling it to DrawingContext
 type DrawingAwareAssetLayersProps = Omit<ComponentProps<typeof AssetLayers>, 'interactionDisabled'>;
 
 const DrawingAwareAssetLayers = (props: DrawingAwareAssetLayersProps) => {
@@ -148,6 +146,9 @@ const MapView = () => {
 
     const isInFocusAreaPanel = activePanelView === 'focus-area';
     const isInExposurePanel = activePanelView === 'exposure';
+    const isInAssetsPanel = activePanelView === 'assets';
+    const shouldFilterByFocusArea = activePanelView === 'assets' || activePanelView === 'exposure';
+    const shouldShowAllActiveFocusAreas = shouldFilterByFocusArea;
 
     const { data: activeScenario } = useActiveScenario();
     const scenarioId = activeScenario?.id;
@@ -167,15 +168,22 @@ const MapView = () => {
         staleTime: 5 * 60 * 1000,
     });
 
+    const exposureLayersFocusAreaId = useMemo(() => {
+        if (shouldShowAllActiveFocusAreas) {
+            return null;
+        }
+        return selectedFocusAreaId;
+    }, [shouldShowAllActiveFocusAreas, selectedFocusAreaId]);
+
     const {
         data: exposureLayersData,
         isFetching: isExposureLayersFetching,
         isLoading: isExposureLayersLoading,
         isError: isExposureLayersError,
     } = useQuery({
-        queryKey: ['exposureLayers', scenarioId, selectedFocusAreaId],
-        queryFn: () => fetchExposureLayers(scenarioId ?? '', selectedFocusAreaId),
-        enabled: !!scenarioId && !!selectedFocusAreaId && isInExposurePanel,
+        queryKey: ['exposureLayers', scenarioId, exposureLayersFocusAreaId],
+        queryFn: () => fetchExposureLayers(scenarioId ?? '', exposureLayersFocusAreaId),
+        enabled: !!scenarioId && (shouldShowAllActiveFocusAreas || !!selectedFocusAreaId) && (isInExposurePanel || isInAssetsPanel),
         staleTime: 0,
         refetchOnMount: true,
     });
@@ -254,23 +262,80 @@ const MapView = () => {
         }
     }, [roadRouteStart, roadRouteEnd, roadRouteVehicle, isRoadRouteEnabled, getRoadRoute]);
 
-    const shouldFilterByFocusArea = activePanelView === 'assets' || activePanelView === 'exposure';
-    const { assets, isFetching: isAssetsFetching } = useScenarioAssets({
+    const activeFocusAreaIds = useMemo(() => {
+        if (!shouldShowAllActiveFocusAreas || !focusAreas) {
+            return [];
+        }
+        return focusAreas.filter((fa) => fa.isActive && fa.geometry !== null).map((fa) => fa.id);
+    }, [shouldShowAllActiveFocusAreas, focusAreas]);
+
+    const focusAreaIdsForAssets = useMemo(() => {
+        if (!isInAssetsPanel || !focusAreas) {
+            return activeFocusAreaIds;
+        }
+        return focusAreas.filter((fa) => fa.isActive && fa.geometry !== null).map((fa) => fa.id);
+    }, [isInAssetsPanel, focusAreas, activeFocusAreaIds]);
+
+    const mapWideFocusArea = useMemo(() => {
+        return focusAreas?.find((fa) => fa.isSystem);
+    }, [focusAreas]);
+
+    const isMapWideActive = mapWideFocusArea?.isActive ?? true;
+    const mapWideVisible = isMapWideActive;
+
+    const multipleFocusAreaAssets = useMultipleFocusAreaAssets({
         scenarioId,
-        focusAreaId: shouldFilterByFocusArea ? selectedFocusAreaId : undefined,
+        focusAreaIds: focusAreaIdsForAssets,
         iconMap,
     });
+
+    const mapWideAssets = useScenarioAssets({
+        scenarioId,
+        focusAreaId: shouldShowAllActiveFocusAreas && isMapWideActive && mapWideFocusArea ? mapWideFocusArea.id : undefined,
+        iconMap,
+    });
+
+    const singleFocusAreaAssets = useScenarioAssets({
+        scenarioId,
+        focusAreaId: shouldFilterByFocusArea && !shouldShowAllActiveFocusAreas ? selectedFocusAreaId : undefined,
+        iconMap,
+    });
+
+    const allActiveAssets = useMemo(() => {
+        if (!shouldShowAllActiveFocusAreas) {
+            return singleFocusAreaAssets.assets;
+        }
+
+        const combinedAssets: Asset[] = [];
+        const seenAssetIds = new Set<string>();
+
+        for (const asset of multipleFocusAreaAssets.assets) {
+            if (!seenAssetIds.has(asset.id)) {
+                seenAssetIds.add(asset.id);
+                combinedAssets.push(asset);
+            }
+        }
+
+        if (isMapWideActive) {
+            for (const asset of mapWideAssets.assets) {
+                if (!seenAssetIds.has(asset.id)) {
+                    seenAssetIds.add(asset.id);
+                    combinedAssets.push(asset);
+                }
+            }
+        }
+
+        return combinedAssets;
+    }, [shouldShowAllActiveFocusAreas, multipleFocusAreaAssets.assets, mapWideAssets.assets, isMapWideActive, singleFocusAreaAssets.assets]);
+
+    const assets = allActiveAssets;
+    const isAssetsFetching = shouldShowAllActiveFocusAreas ? multipleFocusAreaAssets.isFetching || mapWideAssets.isFetching : singleFocusAreaAssets.isFetching;
 
     const selectedAssetDetails = useQuery({
         enabled: !!selectedElement?.id,
         queryKey: ['asset-details', selectedElement?.id || ''],
         queryFn: () => fetchAssetDetails(selectedElement!.id),
     });
-
-    const mapWideVisible = useMemo(() => {
-        const mapWideFocusArea = focusAreas?.find((fa) => fa.isSystem);
-        return mapWideFocusArea?.isActive ?? true;
-    }, [focusAreas]);
 
     usePreloadAssetIcons(assets);
 
@@ -334,7 +399,6 @@ const MapView = () => {
         setMapReady(true);
     }, []);
 
-    // Handle cursor for position selection mode
     useEffect(() => {
         const map = mapRef.current?.getMap?.();
         const canvas = map?.getCanvas?.();
@@ -608,7 +672,13 @@ const MapView = () => {
                     >
                         {mapReady && (
                             <>
-                                {!isInFocusAreaPanel && selectedFocusAreaId && (
+                                {shouldShowAllActiveFocusAreas && focusAreas && focusAreas.length > 0 && (
+                                    <>
+                                        <ActiveFocusAreas focusAreas={focusAreas} selectedFocusAreaId={selectedFocusAreaId} showMask={false} />
+                                        <InactiveFocusAreas focusAreas={focusAreas} selectedFocusAreaId={selectedFocusAreaId} />
+                                    </>
+                                )}
+                                {!shouldShowAllActiveFocusAreas && !isInFocusAreaPanel && selectedFocusAreaId && (
                                     <FocusAreaMask geometry={focusAreas?.find((fa) => fa.id === selectedFocusAreaId)?.geometry ?? null} />
                                 )}
                                 {isInFocusAreaPanel &&
