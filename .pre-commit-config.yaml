@@ -45,12 +45,13 @@ repos:
     hooks:
       # Run the formatter.
       - id: ruff-format
-        args: [backend]
+        files: ^backend/
         types_or: [python, pyi, jupyter]
       # Run the linter.
       - id: ruff
+        files: ^backend/
         types_or: [python, pyi, jupyter]
-        args: [--fix, backend]
+        args: [--fix]
   - repo: https://github.com/Yelp/detect-secrets
     rev: v1.4.0
     hooks:

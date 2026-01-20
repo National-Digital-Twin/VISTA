@@ -37,13 +37,13 @@ def build_replacements():
             old_id = props["uri"].split("#")[1]
             replacements[old_id] = props["id"]
             replacements[f"https://www.iow.gov.uk/DigitalTwin#{old_id}"] = (
-                f"http://ndtp.co.uk/Building#{props["id"]}"
+                f"http://ndtp.co.uk/Building#{props['id']}"
             )
-            replacements[f"https://www.iow.gov.uk/DigitalTwin#{props["id"]}"] = (
-                f"http://ndtp.co.uk/Building#{props["id"]}"
+            replacements[f"https://www.iow.gov.uk/DigitalTwin#{props['id']}"] = (
+                f"http://ndtp.co.uk/Building#{props['id']}"
             )
             print(
-                f"{props["description"]} - {props["id"]} - {props["uri"]} - {props["type"]} - {props["dependent.criticalitySum"]}"
+                f"{props['description']} - {props['id']} - {props['uri']} - {props['type']} - {props['dependent.criticalitySum']}"
             )
     return replacements
 
