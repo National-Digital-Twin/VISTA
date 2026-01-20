@@ -75,7 +75,6 @@ describe('InactiveFocusAreas', () => {
 
         const source = screen.getByTestId('source');
         const data = JSON.parse(source.dataset.geometry || '{}');
-        // Should only include 2 features (fa-1 and fa-3), not fa-2
         expect(data.features).toHaveLength(2);
         expect(data.features.map((f: { properties: { id: string } }) => f.properties.id)).toEqual(['fa-1', 'fa-3']);
     });
@@ -87,7 +86,6 @@ describe('InactiveFocusAreas', () => {
 
         const source = screen.getByTestId('source');
         const data = JSON.parse(source.dataset.geometry || '{}');
-        // Should only include fa-1 (Polygon), not fa-2 (Point)
         expect(data.features).toHaveLength(1);
         expect(data.features[0].properties.id).toBe('fa-1');
     });
@@ -117,7 +115,6 @@ describe('InactiveFocusAreas', () => {
 
         const source = screen.getByTestId('source');
         const data = JSON.parse(source.dataset.geometry || '{}');
-        // Both should be rendered
         expect(data.features).toHaveLength(2);
     });
 

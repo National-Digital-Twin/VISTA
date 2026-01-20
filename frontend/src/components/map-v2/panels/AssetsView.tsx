@@ -310,16 +310,25 @@ const AssetsView = ({ onClose, scenarioId, selectedFocusAreaId, onFocusAreaSelec
         });
     }, []);
 
+    const syncFilterModeIfNeeded = useCallback(() => {
+        const currentScope = focusAreas?.find((fa) => fa.id === selectedFocusAreaId);
+        if (selectedFilterMode !== currentScope?.filterMode && selectedFocusAreaId) {
+            updateFilterMode({ focusAreaId: selectedFocusAreaId, filterMode: selectedFilterMode });
+        }
+    }, [focusAreas, selectedFocusAreaId, selectedFilterMode, updateFilterMode]);
+
     const handleToggleVisibility = useCallback(
         (assetTypeId: string, isActive: boolean) => {
+            syncFilterModeIfNeeded();
             toggleVisibility({ assetTypeId, isActive });
         },
-        [toggleVisibility],
+        [toggleVisibility, syncFilterModeIfNeeded],
     );
 
     const handleClearAll = useCallback(() => {
+        syncFilterModeIfNeeded();
         clearAll();
-    }, [clearAll]);
+    }, [clearAll, syncFilterModeIfNeeded]);
 
     const handleFilterModeChange = useCallback((event: SelectChangeEvent<string>) => {
         const newMode = event.target.value as FilterMode;
@@ -339,6 +348,7 @@ const AssetsView = ({ onClose, scenarioId, selectedFocusAreaId, onFocusAreaSelec
     const handleApplyScoreFilter = useCallback(
         (filter: ScoreFilterValues) => {
             if (scoreFilterAssetType) {
+                syncFilterModeIfNeeded();
                 if (isDefaultFilter(filter)) {
                     deleteScoreFilter({
                         focusAreaId: selectedFocusAreaId ?? null,
@@ -354,7 +364,7 @@ const AssetsView = ({ onClose, scenarioId, selectedFocusAreaId, onFocusAreaSelec
             }
             handleCloseScoreFilter();
         },
-        [applyScoreFilter, deleteScoreFilter, selectedFocusAreaId, scoreFilterAssetType, handleCloseScoreFilter],
+        [applyScoreFilter, deleteScoreFilter, selectedFocusAreaId, scoreFilterAssetType, handleCloseScoreFilter, syncFilterModeIfNeeded],
     );
 
     const handleApplyGlobalScoreFilter = useCallback(
@@ -363,13 +373,7 @@ const AssetsView = ({ onClose, scenarioId, selectedFocusAreaId, onFocusAreaSelec
                 return;
             }
 
-            const currentScope = focusAreas?.find((fa) => fa.id === selectedFocusAreaId);
-            const appliedFilterMode = currentScope?.filterMode ?? 'by_asset_type';
-
-            // If the selected filter mode differs from the applied one, update it first
-            if (selectedFilterMode !== appliedFilterMode) {
-                updateFilterMode({ focusAreaId: selectedFocusAreaId, filterMode: selectedFilterMode });
-            }
+            syncFilterModeIfNeeded();
 
             if (isDefaultFilter(filter)) {
                 deleteScoreFilter({
@@ -384,7 +388,7 @@ const AssetsView = ({ onClose, scenarioId, selectedFocusAreaId, onFocusAreaSelec
                 });
             }
         },
-        [applyScoreFilter, deleteScoreFilter, selectedFocusAreaId, selectedFilterMode, updateFilterMode, focusAreas],
+        [applyScoreFilter, deleteScoreFilter, selectedFocusAreaId, syncFilterModeIfNeeded],
     );
 
     const handleClearGlobalScoreFilter = useCallback(() => {

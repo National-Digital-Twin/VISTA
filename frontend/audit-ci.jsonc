@@ -5,6 +5,6 @@
         "GHSA-73rr-hh4g-fpgx|@jest/core>jest-config>ts-node>diff",
         "GHSA-73rr-hh4g-fpgx|jest-cli>jest-config>ts-node>diff",
         "GHSA-73rr-hh4g-fpgx|ts-jest>jest>@jest/core>jest-config>ts-node>diff",
-        "GHSA-73rr-hh4g-fpgx|ts-jest>jest>jest-cli>jest-config>ts-node>diff",
-    ],
+        "GHSA-73rr-hh4g-fpgx|ts-jest>jest>jest-cli>jest-config>ts-node>diff"
+    ]
 }
