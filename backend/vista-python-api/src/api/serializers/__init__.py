@@ -26,6 +26,8 @@ from .focus_area import (
 from .scenario import ScenarioSerializer
 from .user import IdpUserSerializer
 from .visible_asset_type import (
+    BulkVisibleAssetTypeResponseSerializer,
+    BulkVisibleAssetTypeToggleSerializer,
     VisibleAssetTypeResponseSerializer,
     VisibleAssetTypeToggleSerializer,
 )
@@ -43,6 +45,8 @@ __all__ = [
     "AssetScoreSerializer",
     "AssetSubCategorySerializer",
     "AssetTypeSerializer",
+    "BulkVisibleAssetTypeResponseSerializer",
+    "BulkVisibleAssetTypeToggleSerializer",
     "DataSourceSerializer",
     "DependencySerializer",
     "ExposureLayerCreateSerializer",

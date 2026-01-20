@@ -45,6 +45,11 @@ urlpatterns = [
         name="visible-asset-types",
     ),
     path(
+        "scenarios/<uuid:scenario_id>/visible-asset-types/bulk/",
+        views.BulkVisibleAssetTypeView.as_view(),
+        name="visible-asset-types-bulk",
+    ),
+    path(
         "scenarios/<uuid:scenario_id>/visible-exposure-layers/",
         views.VisibleExposureLayerView.as_view(),
         name="visible-exposure-layers",

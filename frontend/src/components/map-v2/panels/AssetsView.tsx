@@ -27,7 +27,7 @@ import { GlobalScoreFilter } from './GlobalScoreFilter';
 import { ScoreFilterPopup } from './ScoreFilterPopup';
 import FocusAreaSelector from './FocusAreaSelector';
 import { SearchTextField } from '@/components/SearchTextField';
-import IconToggle from '@/components/IconToggle';
+import IconToggle, { type VisibilityState } from '@/components/IconToggle';
 import { useDataSources } from '@/hooks/useDataSources';
 import { fetchFocusAreas, type FocusArea } from '@/api/focus-areas';
 import { fetchAssetScoreFilters, type AssetScoreFilter, type ScoreFilterValues } from '@/api/asset-score-filters';
@@ -48,6 +48,7 @@ type SubCategoryItemProps = {
     readonly isExpanded: boolean;
     readonly onToggleExpand: (id: string) => void;
     readonly onToggleVisibility: (assetTypeId: string, isActive: boolean) => void;
+    readonly onBulkToggleVisibility: (subCategoryId: string, isActive: boolean) => void;
     readonly onOpenScoreFilter: (assetType: ScenarioAssetType) => void;
     readonly getScoreFilter: (assetTypeId: string) => AssetScoreFilter | undefined;
     readonly isMutating: boolean;
@@ -59,63 +60,101 @@ function SubCategoryItem({
     isExpanded,
     onToggleExpand,
     onToggleVisibility,
+    onBulkToggleVisibility,
     onOpenScoreFilter,
     getScoreFilter,
     isMutating,
     dataSourceMap,
 }: SubCategoryItemProps) {
     const activeCount = subCategory.assetTypes.filter((at) => at.isActive).length;
+    const totalCount = subCategory.assetTypes.length;
 
-    const handleClick = () => onToggleExpand(subCategory.id);
+    const visibilityState: VisibilityState = useMemo(() => {
+        if (activeCount === 0) {
+            return 'hidden';
+        }
+        if (activeCount === totalCount) {
+            return 'visible';
+        }
+        return 'partial';
+    }, [activeCount, totalCount]);
 
-    const handleKeyDown = (e: React.KeyboardEvent) => {
+    const handleExpandClick = () => onToggleExpand(subCategory.id);
+
+    const handleExpandKeyDown = (e: React.KeyboardEvent) => {
         if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
             onToggleExpand(subCategory.id);
         }
     };
 
+    const handleBulkToggle = useCallback(
+        (e: React.MouseEvent<HTMLButtonElement> | React.KeyboardEvent<HTMLButtonElement>) => {
+            e.stopPropagation();
+            e.preventDefault();
+            onBulkToggleVisibility(subCategory.id, visibilityState !== 'visible');
+        },
+        [subCategory.id, visibilityState, onBulkToggleVisibility],
+    );
+
+    const getToggleAriaLabel = () => {
+        if (visibilityState === 'visible') {
+            return `Hide all ${subCategory.name}`;
+        }
+        return `Show all ${subCategory.name}`;
+    };
+
     return (
         <Box>
             <Box
-                onClick={handleClick}
-                onKeyDown={handleKeyDown}
                 sx={{
                     'display': 'flex',
                     'alignItems': 'center',
-                    'px': 2,
+                    'pl': 2,
+                    'pr': 0,
                     'py': 0.75,
-                    'cursor': 'pointer',
                     '&:hover': {
                         backgroundColor: 'action.hover',
                     },
                 }}
-                tabIndex={0}
-                role="button"
-                aria-expanded={isExpanded}
             >
-                {isExpanded ? <KeyboardArrowUpIcon fontSize="small" sx={{ mr: 1 }} /> : <KeyboardArrowDownIcon fontSize="small" sx={{ mr: 1 }} />}
-                <Typography variant="body2">{subCategory.name}</Typography>
-                {activeCount > 0 && (
-                    <Box
-                        sx={{
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            minWidth: 20,
-                            height: 20,
-                            px: 0.75,
-                            borderRadius: '10px',
-                            bgcolor: 'grey.200',
-                            color: 'text.primary',
-                            fontSize: '0.75rem',
-                            fontWeight: 500,
-                            ml: 1,
-                        }}
-                    >
-                        {activeCount}
-                    </Box>
-                )}
+                <Box
+                    onClick={handleExpandClick}
+                    onKeyDown={handleExpandKeyDown}
+                    sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        flex: 1,
+                        cursor: 'pointer',
+                    }}
+                    tabIndex={0}
+                    role="button"
+                    aria-expanded={isExpanded}
+                >
+                    {isExpanded ? <KeyboardArrowUpIcon fontSize="small" sx={{ mr: 1 }} /> : <KeyboardArrowDownIcon fontSize="small" sx={{ mr: 1 }} />}
+                    <Typography variant="body2">{subCategory.name}</Typography>
+                    {activeCount > 0 && (
+                        <Box
+                            sx={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                minWidth: 20,
+                                height: 20,
+                                px: 0.75,
+                                borderRadius: '10px',
+                                bgcolor: 'grey.200',
+                                color: 'text.primary',
+                                fontSize: '0.75rem',
+                                fontWeight: 500,
+                                ml: 1,
+                            }}
+                        >
+                            {activeCount}
+                        </Box>
+                    )}
+                </Box>
+                <IconToggle state={visibilityState} onChange={handleBulkToggle} disabled={isMutating} aria-label={getToggleAriaLabel()} size="small" />
             </Box>
 
             <Collapse in={isExpanded}>
@@ -259,12 +298,13 @@ const AssetsView = ({ onClose, scenarioId, selectedFocusAreaId, onFocusAreaSelec
         staleTime: 5 * 60 * 1000,
     });
 
-    const { toggleVisibility, clearAll, updateFilterMode, applyScoreFilter, deleteScoreFilter, isFilterModePending, isMutating } = useAssetFilterMutations({
-        scenarioId,
-        selectedFocusAreaId: currentFocusAreaId,
-        selectedFilterMode,
-        onError: setMutationError,
-    });
+    const { toggleVisibility, bulkToggleVisibility, clearAll, updateFilterMode, applyScoreFilter, deleteScoreFilter, isFilterModePending, isMutating } =
+        useAssetFilterMutations({
+            scenarioId,
+            selectedFocusAreaId: currentFocusAreaId,
+            selectedFilterMode,
+            onError: setMutationError,
+        });
 
     useEffect(() => {
         if (focusAreas) {
@@ -315,6 +355,13 @@ const AssetsView = ({ onClose, scenarioId, selectedFocusAreaId, onFocusAreaSelec
             toggleVisibility({ assetTypeId, isActive });
         },
         [toggleVisibility],
+    );
+
+    const handleBulkToggleVisibility = useCallback(
+        (subCategoryId: string, isActive: boolean) => {
+            bulkToggleVisibility({ subCategoryId, isActive });
+        },
+        [bulkToggleVisibility],
     );
 
     const handleClearAll = useCallback(() => {
@@ -506,6 +553,7 @@ const AssetsView = ({ onClose, scenarioId, selectedFocusAreaId, onFocusAreaSelec
                                 isExpanded={expandedSubCategories.has(subCategory.id)}
                                 onToggleExpand={toggleSubCategory}
                                 onToggleVisibility={handleToggleVisibility}
+                                onBulkToggleVisibility={handleBulkToggleVisibility}
                                 onOpenScoreFilter={handleOpenScoreFilter}
                                 getScoreFilter={getScoreFilterForAssetType}
                                 isMutating={isMutating}

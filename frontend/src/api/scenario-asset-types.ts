@@ -33,6 +33,14 @@ export type ToggleVisibilityResponse = {
     isActive: boolean;
 };
 
+export type BulkToggleVisibilityRequest = {
+    subCategoryId: string;
+    focusAreaId: string;
+    isActive: boolean;
+};
+
+export type BulkToggleVisibilityResponse = BulkToggleVisibilityRequest;
+
 export const fetchScenarioAssetTypes = async (scenarioId: string, focusAreaId?: string | null): Promise<ScenarioAssetCategory[]> => {
     let url = `${config.services.apiBaseUrl}/scenarios/${scenarioId}/asset-types/`;
     if (focusAreaId) {
@@ -79,4 +87,21 @@ export const clearAllAssetTypeVisibility = async (scenarioId: string, focusAreaI
     if (!response.ok) {
         throw new Error(`Failed to clear asset type visibility: ${response.statusText}`);
     }
+};
+
+export const bulkToggleAssetTypeVisibility = async (scenarioId: string, data: BulkToggleVisibilityRequest): Promise<BulkToggleVisibilityResponse> => {
+    const response = await fetch(`${config.services.apiBaseUrl}/scenarios/${scenarioId}/visible-asset-types/bulk/`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            subCategoryId: data.subCategoryId,
+            focusAreaId: data.focusAreaId,
+            isActive: data.isActive,
+        }),
+    });
+    if (!response.ok) {
+        throw new Error(`Failed to bulk toggle asset type visibility: ${response.statusText}`);
+    }
+
+    return response.json();
 };

@@ -26,6 +26,38 @@ def find_asset_type_in_tree(data, asset_type_id):
 
 
 @pytest.fixture
+def sub_category_with_types(db):  # noqa: ARG001
+    """Create a subcategory with multiple asset types for bulk toggle tests."""
+    category = AssetCategory.objects.create(id=uuid.uuid4(), name="Bulk Test Category")
+    sub_category = AssetSubCategory.objects.create(
+        id=uuid.uuid4(), name="Bulk Test SubCategory", category=category
+    )
+    data_source = DataSource.objects.create(id=uuid.uuid4(), name="Bulk Test Source")
+    asset_type_1 = AssetType.objects.create(
+        id=uuid.uuid4(),
+        name="Bulk Type 1",
+        sub_category=sub_category,
+        data_source=data_source,
+    )
+    asset_type_2 = AssetType.objects.create(
+        id=uuid.uuid4(),
+        name="Bulk Type 2",
+        sub_category=sub_category,
+        data_source=data_source,
+    )
+    asset_type_3 = AssetType.objects.create(
+        id=uuid.uuid4(),
+        name="Bulk Type 3",
+        sub_category=sub_category,
+        data_source=data_source,
+    )
+    return {
+        "sub_category": sub_category,
+        "asset_types": [asset_type_1, asset_type_2, asset_type_3],
+    }
+
+
+@pytest.fixture
 def asset_type(db):  # noqa: ARG001
     """Create a sample asset type."""
     category = AssetCategory.objects.create(id=uuid.uuid4(), name="Test Category")
@@ -460,3 +492,178 @@ def test_delete_clears_per_asset_type_score_filters(scenario, asset_type, focus_
 
     # Global filter should still exist
     assert AssetScoreFilter.objects.filter(id=global_filter.id).exists()
+
+
+# Bulk toggle tests
+
+
+@pytest.mark.django_db
+def test_bulk_enable_all_asset_types_in_subcategory(
+    scenario, sub_category_with_types, focus_area, client
+):
+    """Test bulk enabling all asset types in a subcategory."""
+    sub_category = sub_category_with_types["sub_category"]
+    asset_types = sub_category_with_types["asset_types"]
+
+    response = client.put(
+        f"/api/scenarios/{scenario.id}/visible-asset-types/bulk/",
+        data=json.dumps(
+            {
+                "subCategoryId": str(sub_category.id),
+                "focusAreaId": str(focus_area.id),
+                "isActive": True,
+            }
+        ),
+        content_type="application/json",
+    )
+    data = response.json()
+
+    assert response.status_code == http_success_code
+    assert data["subCategoryId"] == str(sub_category.id)
+    assert data["focusAreaId"] == str(focus_area.id)
+    assert data["isActive"] is True
+
+    # Verify all asset types are now visible
+    for asset_type in asset_types:
+        assert VisibleAsset.objects.filter(
+            focus_area=focus_area,
+            asset_type=asset_type,
+        ).exists()
+
+
+@pytest.mark.django_db
+def test_bulk_disable_all_asset_types_in_subcategory(
+    scenario, sub_category_with_types, focus_area, client
+):
+    """Test bulk disabling all asset types in a subcategory."""
+    sub_category = sub_category_with_types["sub_category"]
+    asset_types = sub_category_with_types["asset_types"]
+
+    # First enable all
+    for asset_type in asset_types:
+        VisibleAsset.objects.create(
+            focus_area=focus_area,
+            asset_type=asset_type,
+        )
+
+    response = client.put(
+        f"/api/scenarios/{scenario.id}/visible-asset-types/bulk/",
+        data=json.dumps(
+            {
+                "subCategoryId": str(sub_category.id),
+                "focusAreaId": str(focus_area.id),
+                "isActive": False,
+            }
+        ),
+        content_type="application/json",
+    )
+    data = response.json()
+
+    assert response.status_code == http_success_code
+    assert data["isActive"] is False
+
+    # Verify all asset types are now hidden
+    for asset_type in asset_types:
+        assert not VisibleAsset.objects.filter(
+            focus_area=focus_area,
+            asset_type=asset_type,
+        ).exists()
+
+
+@pytest.mark.django_db
+def test_bulk_enable_is_idempotent(scenario, sub_category_with_types, focus_area, client):
+    """Test that bulk enabling twice doesn't create duplicates."""
+    sub_category = sub_category_with_types["sub_category"]
+    asset_types = sub_category_with_types["asset_types"]
+
+    url = f"/api/scenarios/{scenario.id}/visible-asset-types/bulk/"
+    payload = json.dumps(
+        {
+            "subCategoryId": str(sub_category.id),
+            "focusAreaId": str(focus_area.id),
+            "isActive": True,
+        }
+    )
+
+    client.put(url, data=payload, content_type="application/json")
+    client.put(url, data=payload, content_type="application/json")
+
+    # Verify each asset type has exactly one visibility record
+    for asset_type in asset_types:
+        count = VisibleAsset.objects.filter(
+            focus_area=focus_area,
+            asset_type=asset_type,
+        ).count()
+        assert count == 1
+
+
+@pytest.mark.django_db
+def test_bulk_toggle_invalid_subcategory(scenario, focus_area, client):
+    """Test bulk toggle with invalid subcategory returns 404."""
+    fake_id = uuid.uuid4()
+
+    response = client.put(
+        f"/api/scenarios/{scenario.id}/visible-asset-types/bulk/",
+        data=json.dumps(
+            {
+                "subCategoryId": str(fake_id),
+                "focusAreaId": str(focus_area.id),
+                "isActive": True,
+            }
+        ),
+        content_type="application/json",
+    )
+
+    assert response.status_code == 404
+
+
+@pytest.mark.django_db
+def test_bulk_toggle_does_not_affect_other_subcategories(
+    scenario, sub_category_with_types, asset_type, focus_area, client
+):
+    """Test bulk toggle only affects asset types in the specified subcategory."""
+    sub_category = sub_category_with_types["sub_category"]
+
+    # Enable the asset_type from a different subcategory
+    VisibleAsset.objects.create(
+        focus_area=focus_area,
+        asset_type=asset_type,
+    )
+
+    # Bulk enable the test subcategory
+    client.put(
+        f"/api/scenarios/{scenario.id}/visible-asset-types/bulk/",
+        data=json.dumps(
+            {
+                "subCategoryId": str(sub_category.id),
+                "focusAreaId": str(focus_area.id),
+                "isActive": True,
+            }
+        ),
+        content_type="application/json",
+    )
+
+    # The other asset type should still be visible (unchanged)
+    assert VisibleAsset.objects.filter(
+        focus_area=focus_area,
+        asset_type=asset_type,
+    ).exists()
+
+    # Now bulk disable
+    client.put(
+        f"/api/scenarios/{scenario.id}/visible-asset-types/bulk/",
+        data=json.dumps(
+            {
+                "subCategoryId": str(sub_category.id),
+                "focusAreaId": str(focus_area.id),
+                "isActive": False,
+            }
+        ),
+        content_type="application/json",
+    )
+
+    # The other asset type should still be visible (unchanged)
+    assert VisibleAsset.objects.filter(
+        focus_area=focus_area,
+        asset_type=asset_type,
+    ).exists()

@@ -140,7 +140,8 @@ class TestOsNames:
         asset = ExternalAssetMapper.map_from_os_names(os_names_entry, asset_specification)
         assert asset.external_id == os_names_entry["ID"]
         assert asset.name == os_names_entry["NAME1"]
-        assert asset.geom.wkt == Point(-1.6479761079133526, 50.61917589987736).wkt
+        assert asset.geom.x == pytest.approx(-1.6479761079133526, rel=1e-10)
+        assert asset.geom.y == pytest.approx(50.61917589987736, rel=1e-10)
         assert asset.type.id == asset_specification["type"]
 
     def test_map_from_os_names_creates_asset_with_name2(self, os_names_entry, asset_specification):
