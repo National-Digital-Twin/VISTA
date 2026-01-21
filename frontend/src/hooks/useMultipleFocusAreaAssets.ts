@@ -1,0 +1,52 @@
+import { useMemo } from 'react';
+import { useQueries } from '@tanstack/react-query';
+import type { Asset } from '@/api/assets-by-type';
+import { fetchScenarioAssets } from '@/api/scenario-assets';
+
+export type UseMultipleFocusAreaAssetsOptions = {
+    scenarioId: string | undefined;
+    focusAreaIds: string[];
+    iconMap?: Map<string, string>;
+};
+
+export const useMultipleFocusAreaAssets = ({ scenarioId, focusAreaIds, iconMap }: UseMultipleFocusAreaAssetsOptions) => {
+    const queries = useQueries({
+        queries: focusAreaIds.map((focusAreaId) => ({
+            queryKey: ['scenarioAssets', scenarioId, focusAreaId],
+            queryFn: () => fetchScenarioAssets({ scenarioId: scenarioId!, focusAreaId, iconMap }),
+            enabled: !!scenarioId && focusAreaIds.length > 0,
+            staleTime: 5 * 60 * 1000,
+        })),
+    });
+
+    const assets = useMemo(() => {
+        const allAssets: Asset[] = [];
+        const seenAssetIds = new Set<string>();
+
+        for (const query of queries) {
+            if (query.data) {
+                for (const asset of query.data) {
+                    if (!seenAssetIds.has(asset.id)) {
+                        seenAssetIds.add(asset.id);
+                        allAssets.push(asset);
+                    }
+                }
+            }
+        }
+
+        return allAssets;
+    }, [queries]);
+
+    const isLoading = queries.some((query) => query.isLoading);
+    const isFetching = queries.some((query) => query.isFetching);
+    const hasError = queries.some((query) => query.isError);
+    const errors = queries.filter((query) => query.isError).map((query) => query.error);
+
+    return {
+        assets,
+        isLoading,
+        isFetching,
+        hasError,
+        errors,
+    };
+};

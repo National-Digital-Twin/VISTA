@@ -156,6 +156,15 @@ vi.mock('./MapPanels', () => {
         return (
             <div data-testid="map-panels">
                 <button onClick={() => onViewChange(activeView === 'scenario' ? null : 'scenario')}>Toggle Scenario</button>
+                <button onClick={() => onViewChange('assets')} data-testid="open-assets-panel">
+                    Open Assets
+                </button>
+                <button onClick={() => onViewChange('exposure')} data-testid="open-exposure-panel">
+                    Open Exposure
+                </button>
+                <button onClick={() => onViewChange('focus-area')} data-testid="open-focus-area-panel">
+                    Open Focus Area
+                </button>
                 <button onClick={handleToggleRoadRoute} data-testid="toggle-road-route">
                     Road Route {roadRouteEnabled ? 'On' : 'Off'}
                 </button>
@@ -286,6 +295,32 @@ vi.mock('@/api/utilities', () => ({
     ],
 }));
 
+const mockActiveFocusAreasProps = vi.fn();
+vi.mock('./ActiveFocusAreas', () => ({
+    default: (props: any) => {
+        mockActiveFocusAreasProps(props);
+        return <div data-testid="active-focus-areas">Active Focus Areas</div>;
+    },
+}));
+
+const mockInactiveFocusAreasProps = vi.fn();
+vi.mock('./InactiveFocusAreas', () => ({
+    default: (props: any) => {
+        mockInactiveFocusAreasProps(props);
+        return <div data-testid="inactive-focus-areas">Inactive Focus Areas</div>;
+    },
+}));
+
+const mockUseMultipleFocusAreaAssets = vi.fn();
+vi.mock('@/hooks/useMultipleFocusAreaAssets', () => ({
+    useMultipleFocusAreaAssets: (...args: any[]) => mockUseMultipleFocusAreaAssets(...args),
+}));
+
+const mockUseScenarioAssets = vi.fn();
+vi.mock('@/hooks/useScenarioAssets', () => ({
+    useScenarioAssets: (...args: any[]) => mockUseScenarioAssets(...args),
+}));
+
 const waitForElement = async (testId: string) => {
     await waitFor(() => {
         expect(screen.getByTestId(testId)).toBeInTheDocument();
@@ -314,6 +349,20 @@ describe('MapView', () => {
         if (mockQueryRenderedFeatures) {
             mockQueryRenderedFeatures.mockReturnValue([]);
         }
+        mockUseMultipleFocusAreaAssets.mockReturnValue({
+            assets: [],
+            isLoading: false,
+            isFetching: false,
+            hasError: false,
+            errors: [],
+        });
+        mockUseScenarioAssets.mockImplementation(() => ({
+            assets: [],
+            isLoading: false,
+            isFetching: false,
+            hasError: false,
+            errors: [],
+        }));
     });
 
     describe('Rendering', () => {
@@ -352,7 +401,6 @@ describe('MapView', () => {
                 toggleButton.click();
             });
 
-            // Clicking toggles from focus-area to scenario
             await waitFor(() => {
                 expect(screen.getByTestId('active-view')).toHaveTextContent('scenario');
             });
@@ -663,6 +711,285 @@ describe('MapView', () => {
             });
 
             expect(mockUtilitiesLayersProps).toHaveBeenCalled();
+        });
+    });
+
+    describe('Multi-focus area rendering in Assets/Exposure panels', () => {
+        const mockPolygon = {
+            type: 'Polygon' as const,
+            coordinates: [
+                [
+                    [0, 0],
+                    [1, 0],
+                    [1, 1],
+                    [0, 1],
+                    [0, 0],
+                ],
+            ],
+        };
+
+        const mockFocusAreas = [
+            { id: 'map-wide-id', name: 'Map-wide', isSystem: true, isActive: true, geometry: null, filterMode: 'by_asset_type' as const },
+            { id: 'fa-1', name: 'Focus Area 1', isSystem: false, isActive: true, geometry: mockPolygon, filterMode: 'by_asset_type' as const },
+            { id: 'fa-2', name: 'Focus Area 2', isSystem: false, isActive: false, geometry: mockPolygon, filterMode: 'by_asset_type' as const },
+            { id: 'fa-3', name: 'Focus Area 3', isSystem: false, isActive: true, geometry: mockPolygon, filterMode: 'by_asset_type' as const },
+        ];
+
+        beforeEach(() => {
+            mockFetchFocusAreas.mockResolvedValue(mockFocusAreas);
+        });
+
+        it('renders ActiveFocusAreas and InactiveFocusAreas when in Assets panel', async () => {
+            const queryClient = createTestQueryClient();
+            renderWithProviders(<MapView />, queryClient);
+            await waitForElement('map');
+            await waitForElement('map-panels');
+
+            const openAssetsButton = screen.getByTestId('open-assets-panel');
+            await act(async () => {
+                openAssetsButton.click();
+            });
+
+            await waitFor(() => {
+                expect(screen.getByTestId('active-view')).toHaveTextContent('assets');
+            });
+
+            await waitFor(() => {
+                expect(mockActiveFocusAreasProps).toHaveBeenCalled();
+            });
+
+            const activeFocusAreasCall = mockActiveFocusAreasProps.mock.calls[mockActiveFocusAreasProps.mock.calls.length - 1];
+            expect(activeFocusAreasCall[0].showMask).toBe(false);
+            expect(activeFocusAreasCall[0].focusAreas).toBeDefined();
+
+            expect(mockInactiveFocusAreasProps).toHaveBeenCalled();
+            const inactiveFocusAreasCall = mockInactiveFocusAreasProps.mock.calls[mockInactiveFocusAreasProps.mock.calls.length - 1];
+            expect(inactiveFocusAreasCall[0].focusAreas).toBeDefined();
+        });
+
+        it('renders ActiveFocusAreas and InactiveFocusAreas when in Exposure panel', async () => {
+            const queryClient = createTestQueryClient();
+            renderWithProviders(<MapView />, queryClient);
+            await waitForElement('map');
+            await waitForElement('map-panels');
+
+            const openExposureButton = screen.getByTestId('open-exposure-panel');
+            await act(async () => {
+                openExposureButton.click();
+            });
+
+            await waitFor(() => {
+                expect(screen.getByTestId('active-view')).toHaveTextContent('exposure');
+            });
+
+            await waitFor(() => {
+                expect(mockActiveFocusAreasProps).toHaveBeenCalled();
+            });
+
+            expect(mockInactiveFocusAreasProps).toHaveBeenCalled();
+        });
+
+        it('does not render ActiveFocusAreas and InactiveFocusAreas when in Focus Area panel', async () => {
+            const queryClient = createTestQueryClient();
+            renderWithProviders(<MapView />, queryClient);
+            await waitForElement('map');
+            await waitForElement('map-panels');
+
+            mockActiveFocusAreasProps.mockClear();
+            mockInactiveFocusAreasProps.mockClear();
+
+            const openFocusAreaButton = screen.getByTestId('open-focus-area-panel');
+            await act(async () => {
+                openFocusAreaButton.click();
+            });
+
+            await waitFor(() => {
+                expect(screen.getByTestId('active-view')).toHaveTextContent('focus-area');
+            });
+
+            const activeCalls = mockActiveFocusAreasProps.mock.calls.filter((call) => call[0]?.focusAreas?.length > 0);
+            const inactiveCalls = mockInactiveFocusAreasProps.mock.calls.filter((call) => call[0]?.focusAreas?.length > 0);
+
+            expect(activeCalls.length).toBe(0);
+            expect(inactiveCalls.length).toBe(0);
+        });
+
+        it('fetches assets only from active focus areas when in Assets panel', async () => {
+            const queryClient = createTestQueryClient();
+            renderWithProviders(<MapView />, queryClient);
+            await waitForElement('map');
+            await waitForElement('map-panels');
+
+            const openAssetsButton = screen.getByTestId('open-assets-panel');
+            await act(async () => {
+                openAssetsButton.click();
+            });
+
+            await waitFor(() => {
+                expect(screen.getByTestId('active-view')).toHaveTextContent('assets');
+            });
+
+            await waitFor(() => {
+                expect(mockUseMultipleFocusAreaAssets).toHaveBeenCalled();
+            });
+
+            const calls = mockUseMultipleFocusAreaAssets.mock.calls;
+            const assetsPanelCall = calls.find((call) => {
+                const focusAreaIds = call[0]?.focusAreaIds || [];
+                return focusAreaIds.length > 0 && focusAreaIds.includes('fa-1') && focusAreaIds.includes('fa-3') && !focusAreaIds.includes('fa-2');
+            });
+
+            expect(assetsPanelCall).toBeDefined();
+        });
+
+        it('fetches assets only from active focus areas when in Exposure panel', async () => {
+            const queryClient = createTestQueryClient();
+            renderWithProviders(<MapView />, queryClient);
+            await waitForElement('map');
+            await waitForElement('map-panels');
+
+            const openExposureButton = screen.getByTestId('open-exposure-panel');
+            await act(async () => {
+                openExposureButton.click();
+            });
+
+            await waitFor(() => {
+                expect(screen.getByTestId('active-view')).toHaveTextContent('exposure');
+            });
+
+            await waitFor(() => {
+                expect(mockUseMultipleFocusAreaAssets).toHaveBeenCalled();
+            });
+
+            const calls = mockUseMultipleFocusAreaAssets.mock.calls;
+            const exposurePanelCall = calls.find((call) => {
+                const focusAreaIds = call[0]?.focusAreaIds || [];
+                return focusAreaIds.length > 0 && focusAreaIds.includes('fa-1') && !focusAreaIds.includes('fa-2');
+            });
+
+            expect(exposurePanelCall).toBeDefined();
+        });
+
+        it('combines assets from multiple focus areas and map-wide correctly', async () => {
+            const mockAssets1 = [
+                {
+                    id: 'asset-1',
+                    type: 'type-1',
+                    lat: 50,
+                    lng: -1,
+                    geometry: { type: 'Point' as const, coordinates: [-1, 50] },
+                    dependent: { criticalitySum: 0 },
+                    styles: {},
+                    elementType: 'asset' as const,
+                },
+            ];
+            const mockMapWideAssets = [
+                {
+                    id: 'asset-3',
+                    type: 'type-1',
+                    lat: 52,
+                    lng: -3,
+                    geometry: { type: 'Point' as const, coordinates: [-3, 52] },
+                    dependent: { criticalitySum: 0 },
+                    styles: {},
+                    elementType: 'asset' as const,
+                },
+            ];
+
+            mockUseMultipleFocusAreaAssets.mockReturnValue({
+                assets: mockAssets1,
+                isLoading: false,
+                isFetching: false,
+                hasError: false,
+                errors: [],
+            });
+
+            mockUseScenarioAssets.mockImplementation((args: any) => {
+                if (args?.focusAreaId === 'map-wide-id') {
+                    return {
+                        assets: mockMapWideAssets,
+                        isLoading: false,
+                        isFetching: false,
+                        hasError: false,
+                        errors: [],
+                    };
+                }
+                return {
+                    assets: [],
+                    isLoading: false,
+                    isFetching: false,
+                    hasError: false,
+                    errors: [],
+                };
+            });
+
+            const queryClient = createTestQueryClient();
+            renderWithProviders(<MapView />, queryClient);
+            await waitForElement('map');
+            await waitForElement('map-panels');
+
+            const openAssetsButton = screen.getByTestId('open-assets-panel');
+            await act(async () => {
+                openAssetsButton.click();
+            });
+
+            await waitFor(() => {
+                expect(mockUseMultipleFocusAreaAssets).toHaveBeenCalled();
+            });
+        });
+
+        it('deduplicates assets when combining from multiple sources', async () => {
+            const duplicateAsset = {
+                id: 'asset-1',
+                type: 'type-1',
+                lat: 50,
+                lng: -1,
+                geometry: { type: 'Point' as const, coordinates: [-1, 50] },
+                dependent: { criticalitySum: 0 },
+                styles: {},
+                elementType: 'asset' as const,
+            };
+
+            mockUseMultipleFocusAreaAssets.mockReturnValue({
+                assets: [duplicateAsset],
+                isLoading: false,
+                isFetching: false,
+                hasError: false,
+                errors: [],
+            });
+
+            mockUseScenarioAssets.mockImplementation((args: any) => {
+                if (args?.focusAreaId === 'map-wide-id') {
+                    return {
+                        assets: [duplicateAsset],
+                        isLoading: false,
+                        isFetching: false,
+                        hasError: false,
+                        errors: [],
+                    };
+                }
+                return {
+                    assets: [],
+                    isLoading: false,
+                    isFetching: false,
+                    hasError: false,
+                    errors: [],
+                };
+            });
+
+            const queryClient = createTestQueryClient();
+            renderWithProviders(<MapView />, queryClient);
+            await waitForElement('map');
+            await waitForElement('map-panels');
+
+            const openAssetsButton = screen.getByTestId('open-assets-panel');
+            await act(async () => {
+                openAssetsButton.click();
+            });
+
+            await waitFor(() => {
+                expect(mockUseMultipleFocusAreaAssets).toHaveBeenCalled();
+            });
         });
     });
 });
