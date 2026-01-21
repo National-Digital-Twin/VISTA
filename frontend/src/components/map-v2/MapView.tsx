@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useRef, useState, useEffect, type ComponentProps } from 'react';
-import { Box, CircularProgress } from '@mui/material';
+import { Box } from '@mui/material';
 import type { MapRef, ViewStateChangeEvent } from 'react-map-gl/maplibre';
 import type { MapMouseEvent } from 'maplibre-gl';
 import Map, { Marker } from 'react-map-gl/maplibre';
@@ -20,6 +20,7 @@ import FocusAreaOutline from './FocusAreaOutline';
 import InactiveFocusAreas from './InactiveFocusAreas';
 import ActiveFocusAreas from './ActiveFocusAreas';
 import ConnectedAssetsLayer from './ConnectedAssetsLayer';
+import MapLoadingOverlay from './MapLoadingOverlay';
 import { DrawingProvider, useDrawingContext } from './context/DrawingContext';
 import { usePreloadAssetIcons } from './hooks/usePreloadAssetIcons';
 import { useAssetTypeIcons } from '@/hooks/useAssetTypeIcons';
@@ -34,85 +35,6 @@ import { useRoadRouteLazyQuery, type RoadRouteInputParams } from '@/api/utilitie
 import type { Asset } from '@/api/assets-by-type';
 
 const ASSET_LAYER_IDS = [ASSET_SYMBOL_LAYER_ID, `${ASSET_SYMBOL_LAYER_ID}-selected`, 'map-v2-asset-line-layer'] as const;
-
-type MapLoadingOverlayProps = {
-    readonly isAssetsFetching: boolean;
-    readonly isSpritesGenerating: boolean;
-    readonly isFocusAreasFetching: boolean;
-    readonly isExposureLayersFetching: boolean;
-};
-
-const MapLoadingOverlay = ({ isAssetsFetching, isSpritesGenerating, isFocusAreasFetching, isExposureLayersFetching }: MapLoadingOverlayProps) => {
-    const { drawingSyncComplete, mapRef, mapReady } = useDrawingContext();
-    const [waitingForMapIdle, setWaitingForMapIdle] = useState(false);
-    const wasDataLoadingRef = useRef(false);
-
-    const isDataLoading = isAssetsFetching || isSpritesGenerating || isFocusAreasFetching || isExposureLayersFetching || !drawingSyncComplete;
-
-    useEffect(() => {
-        if (wasDataLoadingRef.current && !isDataLoading) {
-            setWaitingForMapIdle(true);
-        }
-        wasDataLoadingRef.current = isDataLoading;
-    }, [isDataLoading]);
-
-    useEffect(() => {
-        if (!waitingForMapIdle || !mapReady || !mapRef.current) {
-            return;
-        }
-
-        const map = mapRef.current.getMap();
-        if (!map) {
-            setWaitingForMapIdle(false);
-            return;
-        }
-
-        const handleIdle = () => {
-            setWaitingForMapIdle(false);
-            map.off('idle', handleIdle);
-        };
-
-        const tilesLoaded = typeof map.areTilesLoaded === 'function' ? map.areTilesLoaded() : true;
-        const styleLoaded = typeof map.isStyleLoaded === 'function' ? map.isStyleLoaded() : true;
-        const isMoving = typeof map.isMoving === 'function' ? map.isMoving() : false;
-        if (tilesLoaded && styleLoaded && !isMoving) {
-            const frameId = requestAnimationFrame(() => {
-                setWaitingForMapIdle(false);
-            });
-            return () => cancelAnimationFrame(frameId);
-        }
-
-        map.on('idle', handleIdle);
-
-        return () => {
-            map.off('idle', handleIdle);
-        };
-    }, [waitingForMapIdle, mapRef, mapReady]);
-
-    const isLoading = isDataLoading || waitingForMapIdle;
-
-    return (
-        <Box
-            sx={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                backgroundColor: 'rgba(255, 255, 255, 0.5)',
-                zIndex: 10,
-                opacity: isLoading ? 1 : 0,
-                pointerEvents: isLoading ? 'auto' : 'none',
-                transition: 'opacity 200ms ease-out',
-            }}
-        >
-            <CircularProgress size={48} />
-        </Box>
-    );
-};
 
 type DrawingAwareAssetLayersProps = Omit<ComponentProps<typeof AssetLayers>, 'interactionDisabled'>;
 

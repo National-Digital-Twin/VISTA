@@ -92,7 +92,6 @@ export const DrawingProvider = ({ children, mapRef, mapReady, scenarioId }: Draw
         }
 
         const draw = drawRef.current;
-        const map = mapRef.current?.getMap();
 
         if (!drawingConfig) {
             loadedEntityIdsRef.current.forEach((id) => {
@@ -157,15 +156,13 @@ export const DrawingProvider = ({ children, mapRef, mapReady, scenarioId }: Draw
             }
         });
 
-        if (changedAny && map) {
-            const handleIdle = () => {
+        if (changedAny) {
+            const frameId = requestAnimationFrame(() => {
                 setDrawingSyncComplete(true);
-                map.off('idle', handleIdle);
-            };
-            map.on('idle', handleIdle);
+            });
 
             return () => {
-                map.off('idle', handleIdle);
+                cancelAnimationFrame(frameId);
             };
         } else {
             setDrawingSyncComplete(true);
