@@ -149,4 +149,49 @@ describe('IconToggle', () => {
             expect(button).not.toBeDisabled();
         });
     });
+
+    describe('Tri-state visibility (state prop)', () => {
+        it('renders VisibilityIcon when state is visible', () => {
+            renderWithTheme(<IconToggle {...defaultProps} state="visible" />);
+            const button = screen.getByRole('button');
+            const visibilityIcon = button.querySelector('svg[data-testid="VisibilityIcon"]');
+            expect(visibilityIcon).toBeInTheDocument();
+        });
+
+        it('renders VisibilityOffIcon when state is hidden', () => {
+            renderWithTheme(<IconToggle {...defaultProps} state="hidden" />);
+            const button = screen.getByRole('button');
+            const visibilityOffIcon = button.querySelector('svg[data-testid="VisibilityOffIcon"]');
+            expect(visibilityOffIcon).toBeInTheDocument();
+        });
+
+        it('renders VisibilityOutlinedIcon when state is partial', () => {
+            renderWithTheme(<IconToggle {...defaultProps} state="partial" />);
+            const button = screen.getByRole('button');
+            const visibilityOutlinedIcon = button.querySelector('svg[data-testid="VisibilityOutlinedIcon"]');
+            expect(visibilityOutlinedIcon).toBeInTheDocument();
+        });
+
+        it('applies primary color to VisibilityOutlinedIcon when state is partial', () => {
+            renderWithTheme(<IconToggle {...defaultProps} state="partial" />);
+            const button = screen.getByRole('button');
+            const visibilityOutlinedIcon = button.querySelector('svg[data-testid="VisibilityOutlinedIcon"]');
+            expect(visibilityOutlinedIcon).toBeInTheDocument();
+            expect(visibilityOutlinedIcon).toHaveStyle({ color: 'rgb(54, 112, 179)' });
+        });
+
+        it('state prop takes precedence over checked prop', () => {
+            renderWithTheme(<IconToggle {...defaultProps} checked={true} state="partial" />);
+            const button = screen.getByRole('button');
+            const visibilityOutlinedIcon = button.querySelector('svg[data-testid="VisibilityOutlinedIcon"]');
+            expect(visibilityOutlinedIcon).toBeInTheDocument();
+        });
+
+        it('falls back to checked prop when state is not provided', () => {
+            renderWithTheme(<IconToggle {...defaultProps} checked={true} />);
+            const button = screen.getByRole('button');
+            const visibilityIcon = button.querySelector('svg[data-testid="VisibilityIcon"]');
+            expect(visibilityIcon).toBeInTheDocument();
+        });
+    });
 });

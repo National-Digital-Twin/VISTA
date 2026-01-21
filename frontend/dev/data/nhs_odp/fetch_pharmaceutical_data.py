@@ -25,9 +25,7 @@ def get_package_latest_resource(package_id: str) -> str:
     Get the ID of the latest resource in the package
     """
     params = {"id": package_id}
-    response = requests.get(
-        "https://opendata.nhsbsa.net/api/3/action/package_show", params=params
-    )
+    response = requests.get("https://opendata.nhsbsa.net/api/3/action/package_show", params=params)
     response.raise_for_status()
     package_info = response.json()["result"]
 

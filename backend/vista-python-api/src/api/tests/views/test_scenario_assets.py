@@ -1637,9 +1637,9 @@ def test_exposure_score_scoped_to_focus_area(scenario, mock_user_id, client):
     data = response.json()
 
     assert response.status_code == http_success_code
-    assert (
-        len(data) == 0
-    ), f"Map-wide should return no assets when filtering exposure=3, got: {data}"
+    assert len(data) == 0, (
+        f"Map-wide should return no assets when filtering exposure=3, got: {data}"
+    )
 
 
 @pytest.mark.django_db

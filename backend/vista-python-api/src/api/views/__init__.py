@@ -15,7 +15,7 @@ from .scenario_asset_types import ScenarioAssetTypesView
 from .scenario_assets import ScenarioAssetsView
 from .scenario_exposure_layers import ScenarioExposureLayersView
 from .scenarios import ScenarioViewSet
-from .visible_asset_types import VisibleAssetTypeView
+from .visible_asset_types import BulkVisibleAssetTypeView, VisibleAssetTypeView
 from .visible_exposure_layers import BulkVisibleExposureLayerView, VisibleExposureLayerView
 
 __all__ = [
@@ -23,6 +23,7 @@ __all__ = [
     "AssetScoreViewSet",
     "AssetTypeViewSet",
     "AssetViewSet",
+    "BulkVisibleAssetTypeView",
     "BulkVisibleExposureLayerView",
     "DataSourceViewSet",
     "ExposureLayerViewSet",

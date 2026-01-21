@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { updateFocusArea } from '@/api/focus-areas';
-import { toggleAssetTypeVisibility, clearAllAssetTypeVisibility } from '@/api/scenario-asset-types';
+import { toggleAssetTypeVisibility, clearAllAssetTypeVisibility, bulkToggleAssetTypeVisibility } from '@/api/scenario-asset-types';
 import { putAssetScoreFilter, deleteAssetScoreFilter, type ScoreFilterValues } from '@/api/asset-score-filters';
 
 type FilterMode = 'by_asset_type' | 'by_score_only';
@@ -46,6 +46,24 @@ const useAssetFilterMutations = ({ scenarioId, selectedFocusAreaId, selectedFilt
             queryClient.invalidateQueries({ queryKey: ['assetScoreFilters', scenarioId] });
         },
         onError: () => onError?.('Failed to clear asset type visibility'),
+    });
+
+    const bulkVisibilityMutation = useMutation({
+        mutationFn: (data: { subCategoryId: string; isActive: boolean }) => {
+            if (!scenarioId || !selectedFocusAreaId) {
+                return Promise.reject(new Error('No scenario or focus area selected'));
+            }
+            return bulkToggleAssetTypeVisibility(scenarioId, {
+                subCategoryId: data.subCategoryId,
+                focusAreaId: selectedFocusAreaId,
+                isActive: data.isActive,
+            });
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['scenarioAssetTypes', scenarioId] });
+            queryClient.invalidateQueries({ queryKey: ['scenarioAssets', scenarioId] });
+        },
+        onError: () => onError?.('Failed to update subcategory visibility'),
     });
 
     const filterModeMutation = useMutation({
@@ -100,6 +118,7 @@ const useAssetFilterMutations = ({ scenarioId, selectedFocusAreaId, selectedFilt
 
     return {
         toggleVisibility: visibilityMutation.mutate,
+        bulkToggleVisibility: bulkVisibilityMutation.mutate,
         clearAll: clearAllMutation.mutate,
         updateFilterMode: filterModeMutation.mutate,
         applyScoreFilter: scoreFilterMutation.mutate,
@@ -107,6 +126,7 @@ const useAssetFilterMutations = ({ scenarioId, selectedFocusAreaId, selectedFilt
         isFilterModePending: filterModeMutation.isPending,
         isMutating: [
             visibilityMutation.isPending,
+            bulkVisibilityMutation.isPending,
             clearAllMutation.isPending,
             filterModeMutation.isPending,
             scoreFilterMutation.isPending,

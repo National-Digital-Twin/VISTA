@@ -2,9 +2,13 @@ import React from 'react';
 import { IconButton, useTheme } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import VisibilityOutlined from '@mui/icons-material/VisibilityOutlined';
+
+export type VisibilityState = 'visible' | 'hidden' | 'partial';
 
 export type IconToggleProps = {
-    'checked': boolean;
+    'checked'?: boolean;
+    'state'?: VisibilityState;
     'onChange': (event: React.MouseEvent<HTMLButtonElement> | React.KeyboardEvent<HTMLButtonElement>) => void;
     'disabled'?: boolean;
     'aria-label'?: string;
@@ -12,8 +16,18 @@ export type IconToggleProps = {
     'size'?: 'small' | 'medium' | 'large';
 };
 
-const IconToggle = ({ checked, onChange, disabled = false, 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledBy, size = 'medium' }: IconToggleProps) => {
+const IconToggle = ({
+    checked,
+    state,
+    onChange,
+    disabled = false,
+    'aria-label': ariaLabel,
+    'aria-labelledby': ariaLabelledBy,
+    size = 'medium',
+}: IconToggleProps) => {
     const theme = useTheme();
+
+    const visibilityState: VisibilityState = state ?? (checked ? 'visible' : 'hidden');
 
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         if (!disabled) {
@@ -25,6 +39,18 @@ const IconToggle = ({ checked, onChange, disabled = false, 'aria-label': ariaLab
         if (!disabled && (event.key === 'Enter' || event.key === ' ')) {
             event.preventDefault();
             onChange(event);
+        }
+    };
+
+    const renderIcon = () => {
+        switch (visibilityState) {
+            case 'visible':
+                return <VisibilityIcon fontSize={size} data-testid="VisibilityIcon" sx={{ color: theme.palette.primary.main }} />;
+            case 'partial':
+                return <VisibilityOutlined fontSize={size} data-testid="VisibilityOutlinedIcon" sx={{ color: theme.palette.primary.main }} />;
+            case 'hidden':
+            default:
+                return <VisibilityOffIcon fontSize={size} data-testid="VisibilityOffIcon" />;
         }
     };
 
@@ -44,17 +70,7 @@ const IconToggle = ({ checked, onChange, disabled = false, 'aria-label': ariaLab
                 },
             }}
         >
-            {checked ? (
-                <VisibilityIcon
-                    fontSize={size}
-                    data-testid="VisibilityIcon"
-                    sx={{
-                        color: theme.palette.primary.main,
-                    }}
-                />
-            ) : (
-                <VisibilityOffIcon fontSize={size} data-testid="VisibilityOffIcon" />
-            )}
+            {renderIcon()}
         </IconButton>
     );
 };

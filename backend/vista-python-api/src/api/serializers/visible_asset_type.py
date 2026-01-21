@@ -17,3 +17,19 @@ class VisibleAssetTypeResponseSerializer(serializers.Serializer):
     asset_type_id = serializers.UUIDField()
     focus_area_id = serializers.UUIDField(allow_null=True)
     is_active = serializers.BooleanField()
+
+
+class BulkVisibleAssetTypeToggleSerializer(serializers.Serializer):
+    """Serializer for bulk toggling asset type visibility by subcategory."""
+
+    sub_category_id = serializers.UUIDField()
+    focus_area_id = serializers.UUIDField()
+    is_active = serializers.BooleanField()
+
+
+class BulkVisibleAssetTypeResponseSerializer(serializers.Serializer):
+    """Serializer for the bulk visibility toggle response."""
+
+    sub_category_id = serializers.UUIDField()
+    focus_area_id = serializers.UUIDField()
+    is_active = serializers.BooleanField()

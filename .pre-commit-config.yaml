@@ -41,16 +41,17 @@ repos:
         name: Check for files larger than 5 MB
         args: ["--maxkb=5120"]
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.6.4
+    rev: v0.14.0
     hooks:
       # Run the formatter.
       - id: ruff-format
-        args: [backend]
+        files: ^backend/
         types_or: [python, pyi, jupyter]
       # Run the linter.
       - id: ruff
+        files: ^backend/
         types_or: [python, pyi, jupyter]
-        args: [--fix, backend]
+        args: [--fix]
   - repo: https://github.com/Yelp/detect-secrets
     rev: v1.4.0
     hooks:

@@ -82,9 +82,7 @@ def create_asset(record: Dict) -> Dict:
 def main():
     # Step 1: Download and extract
     dir_path = "substations"
-    download_zip(
-        "https://www.nationalgrid.com/document/81216/download", f"${dir_path}.zip"
-    )
+    download_zip("https://www.nationalgrid.com/document/81216/download", f"${dir_path}.zip")
     extract_zip(f"${dir_path}.zip", dir_path)
 
     # Step 2: Read shapefile
