@@ -231,7 +231,7 @@ describe('AssetsView', () => {
 
     describe('Loading State', () => {
         it('shows loading state when categories are loading', async () => {
-            const neverResolvingPromise = new Promise<never>(() => {});
+            const neverResolvingPromise = new Promise<never>(() => { });
             mockedFetchScenarioAssetTypes.mockImplementation(() => neverResolvingPromise as Promise<any>);
             mockedFetchFocusAreas.mockResolvedValue([
                 {
@@ -383,8 +383,6 @@ describe('AssetsView', () => {
             await waitFor(() => {
                 expect(screen.getByText('Utility infrastructure')).toBeInTheDocument();
             });
-            // Badge should not be displayed when count is 0 (no active assets)
-            // Since the badge only renders when activeCount > 0, we just verify the text without count
             expect(screen.queryByText(/\(0\)/)).not.toBeInTheDocument();
         });
 
@@ -448,14 +446,14 @@ describe('AssetsView', () => {
                 expect(screen.getByText(/Utility infrastructure/)).toBeInTheDocument();
             });
 
-            // Subcategory with visible asset should be expanded (not in collapsed state)
             await waitFor(() => {
-                const hospitalElement = screen.getByText(/Hospital \(25\)/);
+                const hospitalElement = screen.getByText('Hospital');
+                expect(screen.getByText('25 / 25')).toBeInTheDocument();
                 expect(hospitalElement.closest('.MuiCollapse-hidden')).toBeNull();
             });
 
-            // Subcategory without visible assets should be collapsed
-            const railwayElement = screen.getByText(/Railway Station \(15\)/);
+            const railwayElement = screen.getByText('Railway Station');
+            expect(screen.getByText('15 / 15')).toBeInTheDocument();
             expect(railwayElement.closest('.MuiCollapse-hidden')).not.toBeNull();
         });
 
@@ -486,25 +484,26 @@ describe('AssetsView', () => {
             });
             renderWithProviders(<AssetsView {...defaultProps} selectedFocusAreaId="map-wide-1" />);
 
-            // Wait for asset categories to load
             await screen.findByText(/Utility infrastructure/);
 
-            // Subcategory should be collapsed since no assets are visible
-            // MUI Collapse still renders children but hides them, so check for collapse state
-            const hospitalElement = screen.queryByText(/Hospital \(30\)/);
+            const hospitalElement = screen.queryByText('Hospital');
+            const pillElement = screen.queryByText('30 / 30');
             expect(hospitalElement?.closest('.MuiCollapse-hidden')).not.toBeNull();
+            if (pillElement) {
+                expect(pillElement.closest('.MuiCollapse-hidden')).not.toBeNull();
+            }
         });
 
         it('expands subcategory when clicked', async () => {
             setupMocks();
             renderWithProviders(<AssetsView {...defaultProps} />);
 
-            // Wait for asset categories to load
             const subCategoryHeader = await screen.findByText('Utility infrastructure');
             fireEvent.click(subCategoryHeader);
 
             await waitFor(() => {
-                expect(screen.getByText(/Hospital \(42\)/)).toBeInTheDocument();
+                expect(screen.getByText('Hospital')).toBeInTheDocument();
+                expect(screen.getByText('42 / 42')).toBeInTheDocument();
             });
         });
 
@@ -512,20 +511,24 @@ describe('AssetsView', () => {
             setupMocks();
             renderWithProviders(<AssetsView {...defaultProps} />);
 
-            // Wait for asset categories to load
             const subCategoryHeader = await screen.findByText('Utility infrastructure');
             fireEvent.click(subCategoryHeader);
 
             await waitFor(() => {
-                expect(screen.getByText(/Hospital \(42\)/)).toBeInTheDocument();
+                expect(screen.getByText('Hospital')).toBeInTheDocument();
+                expect(screen.getByText('42 / 42')).toBeInTheDocument();
             });
 
             fireEvent.click(subCategoryHeader);
 
             await waitFor(() => {
-                const hospitalElement = screen.queryByText(/Hospital \(42\)/);
+                const hospitalElement = screen.queryByText('Hospital');
+                const pillElement = screen.queryByText('42 / 42');
                 const isHidden = !hospitalElement || hospitalElement.closest('.MuiCollapse-hidden') !== null;
                 expect(isHidden).toBe(true);
+                if (pillElement) {
+                    expect(pillElement.closest('.MuiCollapse-hidden')).not.toBeNull();
+                }
             });
         });
     });
@@ -546,7 +549,8 @@ describe('AssetsView', () => {
             fireEvent.change(searchInput, { target: { value: 'Hospital' } });
 
             await waitFor(() => {
-                expect(screen.getByText(/Hospital \(42\)/)).toBeInTheDocument();
+                expect(screen.getByText('Hospital')).toBeInTheDocument();
+                expect(screen.getByText('42 / 42')).toBeInTheDocument();
             });
         });
 
@@ -595,12 +599,12 @@ describe('AssetsView', () => {
         it('calls toggleAssetTypeVisibility when eye icon is clicked', async () => {
             renderWithProviders(<AssetsView {...defaultProps} selectedFocusAreaId="map-wide-1" />);
 
-            // Wait for asset categories to load
             const subCategoryHeader = await screen.findByText('Utility infrastructure');
             fireEvent.click(subCategoryHeader);
 
             await waitFor(() => {
-                expect(screen.getByText(/Hospital \(42\)/)).toBeInTheDocument();
+                expect(screen.getByText('Hospital')).toBeInTheDocument();
+                expect(screen.getByText('42 / 42')).toBeInTheDocument();
             });
 
             const visibilityButton = screen.getByLabelText('Show Hospital');
@@ -642,7 +646,6 @@ describe('AssetsView', () => {
             });
             renderWithProviders(<AssetsView {...defaultProps} />);
 
-            // Wait for asset categories to load
             const subCategoryHeader = await screen.findByText('Utility infrastructure');
             fireEvent.click(subCategoryHeader);
 
@@ -732,7 +735,6 @@ describe('AssetsView', () => {
             });
             renderWithProviders(<AssetsView {...defaultProps} selectedFocusAreaId="map-wide-1" />);
 
-            // Wait for focus areas to load and filter mode to be applied
             await waitFor(
                 () => {
                     expect(screen.queryByPlaceholderText('Search for an asset')).not.toBeInTheDocument();
@@ -904,8 +906,8 @@ describe('AssetsView', () => {
             fireEvent.click(subCategoryHeader);
 
             await waitFor(() => {
-                // When filter is active, count shows filtered/total format
-                expect(screen.getByText(/Hospital \(20\/42\)/)).toBeInTheDocument();
+                expect(screen.getByText('Hospital')).toBeInTheDocument();
+                expect(screen.getByText('20 / 42')).toBeInTheDocument();
             });
         });
     });

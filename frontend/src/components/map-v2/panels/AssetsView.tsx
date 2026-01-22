@@ -28,6 +28,7 @@ import { ScoreFilterPopup } from './ScoreFilterPopup';
 import FocusAreaSelector from './FocusAreaSelector';
 import { SearchTextField } from '@/components/SearchTextField';
 import IconToggle, { type VisibilityState } from '@/components/IconToggle';
+import StatusPill from '@/components/StatusPill';
 import { useDataSources } from '@/hooks/useDataSources';
 import { fetchFocusAreas, type FocusArea } from '@/api/focus-areas';
 import { fetchAssetScoreFilters, type AssetScoreFilter, type ScoreFilterValues } from '@/api/asset-score-filters';
@@ -181,7 +182,9 @@ type AssetTypeListItemProps = {
 };
 
 function AssetTypeListItem({ assetType, onToggle, onOpenScoreFilter, hasFilter, disabled, dataSource }: AssetTypeListItemProps) {
-    const countDisplay = hasFilter ? `(${assetType.filteredAssetCount}/${assetType.assetCountInFocusArea})` : `(${assetType.assetCountInFocusArea})`;
+    const totalAssetCount = assetType.totalAssetCount ?? assetType.assetCountInFocusArea;
+    const activeCount = hasFilter ? assetType.filteredAssetCount : assetType.assetCountInFocusArea;
+    const maxCount = hasFilter ? assetType.assetCountInFocusArea : totalAssetCount;
 
     return (
         <ListItem
@@ -195,32 +198,37 @@ function AssetTypeListItem({ assetType, onToggle, onOpenScoreFilter, hasFilter, 
             }}
         >
             <Box sx={{ flex: 1, minWidth: 0 }}>
-                <Typography variant="body2" noWrap>
-                    {assetType.name} {countDisplay}
-                </Typography>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: dataSource ? 0.5 : 0 }}>
+                    <Typography variant="body2" noWrap sx={{ flex: 1 }}>
+                        {assetType.name}
+                    </Typography>
+                    <StatusPill isActive={assetType.isActive} width="100px">
+                        <Typography variant="caption" sx={{ color: 'inherit', fontWeight: 'inherit' }}>
+                            {activeCount} / {maxCount}
+                        </Typography>
+                    </StatusPill>
+                    <IconButton
+                        size="small"
+                        onClick={() => onOpenScoreFilter(assetType)}
+                        disabled={disabled || assetType.assetCountInFocusArea === 0}
+                        aria-label={`Filter ${assetType.name} by score`}
+                        sx={{ color: hasFilter ? 'primary.main' : 'inherit', ml: 0 }}
+                    >
+                        <FilterListIcon fontSize="small" />
+                    </IconButton>
+                    <IconToggle
+                        checked={assetType.isActive}
+                        onChange={() => onToggle(assetType.id, !assetType.isActive)}
+                        disabled={disabled}
+                        aria-label={assetType.isActive ? `Hide ${assetType.name}` : `Show ${assetType.name}`}
+                        size="small"
+                    />
+                </Box>
                 {dataSource && (
                     <Typography variant="caption" color="text.secondary" noWrap component="div" sx={{ cursor: 'default' }}>
                         {dataSource.name}
                     </Typography>
                 )}
-            </Box>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <IconButton
-                    size="small"
-                    onClick={() => onOpenScoreFilter(assetType)}
-                    disabled={disabled}
-                    aria-label={`Filter ${assetType.name} by score`}
-                    sx={{ color: hasFilter ? 'primary.main' : 'inherit' }}
-                >
-                    <FilterListIcon fontSize="small" />
-                </IconButton>
-                <IconToggle
-                    checked={assetType.isActive}
-                    onChange={() => onToggle(assetType.id, !assetType.isActive)}
-                    disabled={disabled}
-                    aria-label={assetType.isActive ? `Hide ${assetType.name}` : `Show ${assetType.name}`}
-                    size="small"
-                />
             </Box>
         </ListItem>
     );
@@ -238,9 +246,17 @@ type AssetTypeListProps = {
 };
 
 function AssetTypeList({ assetTypes, onToggle, onOpenScoreFilter, getScoreFilter, disabled, dataSourceMap }: AssetTypeListProps) {
+    const sortedAssetTypes = useMemo(() => {
+        return [...assetTypes].sort((a, b) => {
+            const countA = a.assetCountInFocusArea;
+            const countB = b.assetCountInFocusArea;
+            return countB - countA;
+        });
+    }, [assetTypes]);
+
     return (
         <Box sx={{ pb: 1 }}>
-            {assetTypes.map((assetType) => {
+            {sortedAssetTypes.map((assetType) => {
                 const dataSource = assetType.datasourceId ? dataSourceMap.get(assetType.datasourceId) : undefined;
                 const hasFilter = getScoreFilter(assetType.id) !== undefined;
                 return (
@@ -622,7 +638,7 @@ const AssetsView = ({ onClose, scenarioId, selectedFocusAreaId, onFocusAreaSelec
                     <FocusAreaSelector
                         scenarioId={scenarioId}
                         selectedFocusAreaId={currentFocusAreaId}
-                        onFocusAreaSelect={onFocusAreaSelect ?? (() => {})}
+                        onFocusAreaSelect={onFocusAreaSelect ?? (() => { })}
                         label="Select focus area"
                     />
                 </Box>

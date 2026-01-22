@@ -7,6 +7,7 @@ export type ScenarioAssetType = {
     filteredAssetCount: number;
     isActive: boolean;
     datasourceId: string | null;
+    totalAssetCount?: number;
 };
 
 export type ScenarioSubCategory = {
