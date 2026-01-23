@@ -8,6 +8,7 @@ from .asset import Asset
 from .asset_score import AssetScore, VisibleExposureAssetScore
 from .asset_score_filter import AssetScoreFilter
 from .asset_type import AssetCategory, AssetSubCategory, AssetType
+from .constraint_intervention import ConstraintIntervention, ConstraintInterventionType
 from .data_source import DataSource
 from .dependency import Dependency
 from .exposure_layer import ExposureLayer, ExposureLayerType
@@ -25,6 +26,8 @@ __all__ = [
     "AssetScoreFilter",
     "AssetSubCategory",
     "AssetType",
+    "ConstraintIntervention",
+    "ConstraintInterventionType",
     "DataSource",
     "Dependency",
     "ExposureLayer",

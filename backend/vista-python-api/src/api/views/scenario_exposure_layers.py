@@ -29,8 +29,6 @@ class ScenarioExposureLayersView(APIView):
 
         All exposure layers are returned regardless of spatial relationship.
 
-        For user-drawn layers, also includes geometry, createdAt, and isUserDefined.
-
         Query params:
             focus_area_id: Optional UUID. If provided, returns layers scoped to that
                 focus area with focusAreaRelation calculated. If not provided, returns
