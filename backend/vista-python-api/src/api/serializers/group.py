@@ -20,7 +20,10 @@ class GroupMembershipSerializer(serializers.ModelSerializer):
 
     def get_name(self, obj):
         """Get name of user from serializer context."""
-        return self.context["idp_user_map"].get(str(obj.user_id)).name
+        user = self.context["idp_user_map"].get(obj.user_id)
+        if user:
+            return user.name
+        return None
 
 
 class GroupSerializer(serializers.ModelSerializer):
