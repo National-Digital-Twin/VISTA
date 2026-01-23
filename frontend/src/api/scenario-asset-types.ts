@@ -4,6 +4,7 @@ export type ScenarioAssetType = {
     id: string;
     name: string;
     assetCountInFocusArea: number;
+    assetCountTotal: number;
     filteredAssetCount: number;
     isActive: boolean;
     datasourceId: string | null;

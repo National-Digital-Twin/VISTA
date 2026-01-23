@@ -182,9 +182,8 @@ type AssetTypeListItemProps = {
 };
 
 function AssetTypeListItem({ assetType, onToggle, onOpenScoreFilter, hasFilter, disabled, dataSource }: AssetTypeListItemProps) {
-    const totalAssetCount = assetType.totalAssetCount ?? assetType.assetCountInFocusArea;
     const activeCount = hasFilter ? assetType.filteredAssetCount : assetType.assetCountInFocusArea;
-    const maxCount = hasFilter ? assetType.assetCountInFocusArea : totalAssetCount;
+    const maxCount = assetType.assetCountTotal;
 
     return (
         <ListItem
@@ -638,7 +637,7 @@ const AssetsView = ({ onClose, scenarioId, selectedFocusAreaId, onFocusAreaSelec
                     <FocusAreaSelector
                         scenarioId={scenarioId}
                         selectedFocusAreaId={currentFocusAreaId}
-                        onFocusAreaSelect={onFocusAreaSelect ?? (() => { })}
+                        onFocusAreaSelect={onFocusAreaSelect ?? (() => {})}
                         label="Select focus area"
                     />
                 </Box>
