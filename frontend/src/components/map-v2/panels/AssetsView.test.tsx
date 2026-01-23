@@ -909,4 +909,118 @@ describe('AssetsView', () => {
             });
         });
     });
+
+    describe('Disabled state when focus area is inactive', () => {
+        it('disables toggles when selected focus area is not active', async () => {
+            setupMocks({
+                focusAreas: [
+                    {
+                        id: 'focus-area-1',
+                        name: 'Area 1',
+                        geometry: { type: 'Point', coordinates: [0, 0] },
+                        filterMode: 'by_asset_type',
+                        isActive: false,
+                        isSystem: false,
+                    },
+                ],
+                assetCategories: [
+                    {
+                        id: 'cat1',
+                        name: 'Built infrastructure',
+                        subCategories: [
+                            {
+                                id: 'subcat1',
+                                name: 'Utility infrastructure',
+                                assetTypes: [
+                                    {
+                                        id: 'asset-1',
+                                        name: 'Hospital',
+                                        assetCountInFocusArea: 25,
+                                        filteredAssetCount: 25,
+                                        isActive: true,
+                                        datasourceId: 'ds-1',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            });
+
+            renderWithProviders(<AssetsView {...defaultProps} selectedFocusAreaId="focus-area-1" />);
+
+            await waitFor(() => {
+                expect(screen.getByText('Utility infrastructure')).toBeInTheDocument();
+            });
+
+            const subCategoryHeader = screen.getByText('Utility infrastructure');
+            fireEvent.click(subCategoryHeader);
+
+            await waitFor(() => {
+                const toggleButton = screen.getByLabelText('Hide all Utility infrastructure');
+                expect(toggleButton).toBeDisabled();
+            });
+
+            await waitFor(() => {
+                const assetToggle = screen.getByLabelText('Hide Hospital');
+                expect(assetToggle).toBeDisabled();
+            });
+        });
+
+        it('enables toggles when selected focus area is active', async () => {
+            setupMocks({
+                focusAreas: [
+                    {
+                        id: 'focus-area-1',
+                        name: 'Area 1',
+                        geometry: { type: 'Point', coordinates: [0, 0] },
+                        filterMode: 'by_asset_type',
+                        isActive: true,
+                        isSystem: false,
+                    },
+                ],
+                assetCategories: [
+                    {
+                        id: 'cat1',
+                        name: 'Built infrastructure',
+                        subCategories: [
+                            {
+                                id: 'subcat1',
+                                name: 'Utility infrastructure',
+                                assetTypes: [
+                                    {
+                                        id: 'asset-1',
+                                        name: 'Hospital',
+                                        assetCountInFocusArea: 25,
+                                        filteredAssetCount: 25,
+                                        isActive: true,
+                                        datasourceId: 'ds-1',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            });
+
+            renderWithProviders(<AssetsView {...defaultProps} selectedFocusAreaId="focus-area-1" />);
+
+            await waitFor(() => {
+                expect(screen.getByText('Utility infrastructure')).toBeInTheDocument();
+            });
+
+            const subCategoryHeader = screen.getByText('Utility infrastructure');
+            fireEvent.click(subCategoryHeader);
+
+            await waitFor(() => {
+                const toggleButton = screen.getByLabelText('Hide all Utility infrastructure');
+                expect(toggleButton).not.toBeDisabled();
+            });
+
+            await waitFor(() => {
+                const assetToggle = screen.getByLabelText('Hide Hospital');
+                expect(assetToggle).not.toBeDisabled();
+            });
+        });
+    });
 });

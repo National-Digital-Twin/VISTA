@@ -53,6 +53,7 @@ type SubCategoryItemProps = {
     readonly getScoreFilter: (assetTypeId: string) => AssetScoreFilter | undefined;
     readonly isMutating: boolean;
     readonly dataSourceMap: Map<string, DataSource>;
+    readonly disabled?: boolean;
 };
 
 function SubCategoryItem({
@@ -65,7 +66,9 @@ function SubCategoryItem({
     getScoreFilter,
     isMutating,
     dataSourceMap,
+    disabled: externalDisabled = false,
 }: SubCategoryItemProps) {
+    const disabled = isMutating || externalDisabled;
     const activeCount = subCategory.assetTypes.filter((at) => at.isActive).length;
     const totalCount = subCategory.assetTypes.length;
 
@@ -154,14 +157,14 @@ function SubCategoryItem({
                         </Box>
                     )}
                 </Box>
-                <IconToggle state={visibilityState} onChange={handleBulkToggle} disabled={isMutating} aria-label={getToggleAriaLabel()} size="small" />
+                <IconToggle state={visibilityState} onChange={handleBulkToggle} disabled={disabled} aria-label={getToggleAriaLabel()} size="small" />
             </Box>
 
             <Collapse in={isExpanded}>
                 <AssetTypeList
                     assetTypes={subCategory.assetTypes}
                     onToggle={onToggleVisibility}
-                    disabled={isMutating}
+                    disabled={disabled}
                     dataSourceMap={dataSourceMap}
                     onOpenScoreFilter={onOpenScoreFilter}
                     getScoreFilter={getScoreFilter}
@@ -305,6 +308,14 @@ const AssetsView = ({ onClose, scenarioId, selectedFocusAreaId, onFocusAreaSelec
             selectedFilterMode,
             onError: setMutationError,
         });
+
+    const isSelectedFocusAreaActive = useMemo(() => {
+        if (!currentFocusAreaId || !focusAreas) {
+            return true;
+        }
+        const selectedFocusArea = focusAreas.find((fa) => fa.id === currentFocusAreaId);
+        return selectedFocusArea?.isActive ?? true;
+    }, [currentFocusAreaId, focusAreas]);
 
     useEffect(() => {
         if (focusAreas) {
@@ -510,7 +521,7 @@ const AssetsView = ({ onClose, scenarioId, selectedFocusAreaId, onFocusAreaSelec
                     onApply={handleApplyGlobalScoreFilter}
                     onClear={handleClearGlobalScoreFilter}
                     initialValues={globalScoreFilter}
-                    disabled={isMutating}
+                    disabled={isMutating || !isSelectedFocusAreaActive}
                 />
             );
         }
@@ -561,6 +572,7 @@ const AssetsView = ({ onClose, scenarioId, selectedFocusAreaId, onFocusAreaSelec
                                 onOpenScoreFilter={handleOpenScoreFilter}
                                 getScoreFilter={getScoreFilterForAssetType}
                                 isMutating={isMutating}
+                                disabled={!isSelectedFocusAreaActive}
                                 dataSourceMap={dataSourceMap}
                             />
                         ))}

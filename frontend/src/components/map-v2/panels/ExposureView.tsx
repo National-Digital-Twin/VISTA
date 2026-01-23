@@ -22,7 +22,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { DeleteOutline, EditNoteOutlined } from '@mui/icons-material';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { Feature } from 'geojson';
 
 import { useDrawingContext } from '../context/DrawingContext';
@@ -39,6 +39,7 @@ import {
     type ExposureLayersResponse,
     type FocusAreaRelation,
 } from '@/api/exposure-layers';
+import { fetchFocusAreas } from '@/api/focus-areas';
 import IconToggle from '@/components/IconToggle';
 
 const BADGE_CONFIG: Record<FocusAreaRelation, { label: string; bgColor: string; textColor: string }> = {
@@ -653,6 +654,21 @@ const ExposureView = ({
     const queryClient = useQueryClient();
     const currentFocusAreaId = selectedFocusAreaId ?? null;
 
+    const { data: focusAreas } = useQuery({
+        queryKey: ['focusAreas', scenarioId],
+        queryFn: () => fetchFocusAreas(scenarioId!),
+        enabled: !!scenarioId,
+        staleTime: 5 * 60 * 1000,
+    });
+
+    const isSelectedFocusAreaActive = useMemo(() => {
+        if (!currentFocusAreaId || !focusAreas) {
+            return true;
+        }
+        const selectedFocusArea = focusAreas.find((fa) => fa.id === currentFocusAreaId);
+        return selectedFocusArea?.isActive ?? true;
+    }, [currentFocusAreaId, focusAreas]);
+
     // Extract user-drawn layers for the drawing hook
     const userDrawnLayers = useMemo(() => {
         return exposureLayersData?.groups.flatMap((g) => g.exposureLayers).filter((layer) => layer.isUserDefined && layer.isActive && layer.geometry) ?? [];
@@ -863,6 +879,7 @@ const ExposureView = ({
     }, [exposureLayersData]);
 
     const isMutating = visibilityMutation.isPending || bulkVisibilityMutation.isPending || updateLayerMutation.isPending || deleteLayerMutation.isPending;
+    const disabled = isMutating || !isSelectedFocusAreaActive;
 
     if (!scenarioId) {
         return (
@@ -949,7 +966,7 @@ const ExposureView = ({
                             onToggleGroup={toggleGroup}
                             onToggleLayer={toggleExposureLayer}
                             onBulkToggle={handleBulkToggle}
-                            disabled={isMutating}
+                            disabled={disabled}
                             showBulkToggle={groupData.name === 'Environmentally sensitive areas'}
                         />
                     ))}
@@ -967,7 +984,7 @@ const ExposureView = ({
                             onUpdateLayer={handleUpdateLayer}
                             onDeleteLayer={handleDeleteLayer}
                             onStartDrawing={startDrawing}
-                            disabled={isMutating}
+                            disabled={disabled}
                             isDrawing={isDrawing}
                         />
                     )}

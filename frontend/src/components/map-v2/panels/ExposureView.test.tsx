@@ -815,4 +815,126 @@ describe('ExposureView', () => {
             expect(screen.queryByText('Not in area')).not.toBeInTheDocument();
         });
     });
+
+    describe('Disabled state when focus area is inactive', () => {
+        it('disables toggles when selected focus area is not active', async () => {
+            const mockLayersData: ExposureLayersResponse = {
+                featureCollection: {
+                    type: 'FeatureCollection',
+                    features: [
+                        {
+                            type: 'Feature',
+                            id: 'layer-1',
+                            geometry: mockGeometry1,
+                            properties: {
+                                id: 'layer-1',
+                                name: 'Test Layer',
+                                groupName: 'Floods',
+                                groupId: 'floods-group',
+                                isUserDefined: false,
+                            },
+                        },
+                    ],
+                },
+                groups: [
+                    {
+                        id: 'floods-group',
+                        name: 'Floods',
+                        isUserEditable: false,
+                        exposureLayers: [
+                            {
+                                id: 'layer-1',
+                                name: 'Test Layer',
+                                isActive: true,
+                                focusAreaRelation: 'contained',
+                                isUserDefined: false,
+                                geometry: mockGeometry1,
+                            },
+                        ],
+                    },
+                ],
+            };
+
+            mockedFetchFocusAreas.mockResolvedValue([
+                { id: 'fa-1', name: 'Focus Area 1', isActive: false, geometry: mockGeometry1, filterMode: 'by_asset_type', isSystem: false },
+            ]);
+
+            renderWithProviders(<ExposureView {...defaultProps} exposureLayersData={mockLayersData} selectedFocusAreaId="fa-1" />);
+
+            await waitFor(() => {
+                expect(screen.getByText(/Floods/)).toBeInTheDocument();
+            });
+
+            const floodsHeader = screen.getByText(/Floods/);
+            const headerButton = floodsHeader.closest('button');
+            if (headerButton) {
+                fireEvent.click(headerButton);
+            }
+
+            await waitFor(() => {
+                const layerToggle = screen.getByLabelText('Hide Test Layer');
+                expect(layerToggle).toBeDisabled();
+            });
+        });
+
+        it('enables toggles when selected focus area is active', async () => {
+            const mockLayersData: ExposureLayersResponse = {
+                featureCollection: {
+                    type: 'FeatureCollection',
+                    features: [
+                        {
+                            type: 'Feature',
+                            id: 'layer-1',
+                            geometry: mockGeometry1,
+                            properties: {
+                                id: 'layer-1',
+                                name: 'Test Layer',
+                                groupName: 'Floods',
+                                groupId: 'floods-group',
+                                isUserDefined: false,
+                            },
+                        },
+                    ],
+                },
+                groups: [
+                    {
+                        id: 'floods-group',
+                        name: 'Floods',
+                        isUserEditable: false,
+                        exposureLayers: [
+                            {
+                                id: 'layer-1',
+                                name: 'Test Layer',
+                                isActive: true,
+                                focusAreaRelation: 'contained',
+                                isUserDefined: false,
+                                geometry: mockGeometry1,
+                            },
+                        ],
+                    },
+                ],
+            };
+
+            mockedFetchFocusAreas.mockResolvedValue([
+                { id: 'fa-1', name: 'Focus Area 1', isActive: true, geometry: mockGeometry1, filterMode: 'by_asset_type', isSystem: false },
+            ]);
+
+            renderWithProviders(<ExposureView {...defaultProps} exposureLayersData={mockLayersData} selectedFocusAreaId="fa-1" />);
+
+            await waitFor(() => {
+                expect(screen.getByText(/Floods/)).toBeInTheDocument();
+            });
+
+            const floodsHeader = screen.getByText(/Floods/);
+            const headerButton = floodsHeader.closest('button');
+            if (headerButton) {
+                fireEvent.click(headerButton);
+            }
+
+            await waitFor(() => {
+                const layerToggle = screen.getByLabelText('Hide Test Layer');
+                expect(layerToggle).not.toBeDisabled();
+            });
+        });
+    });
 });
