@@ -12,6 +12,7 @@ from .data_source import DataSource
 from .dependency import Dependency
 from .exposure_layer import ExposureLayer, ExposureLayerType
 from .focus_area import FocusArea
+from .group import Group, GroupDataSourceAccess, GroupMembership
 from .scenario import Scenario
 from .scenario_asset import ScenarioAsset
 from .visible_asset import VisibleAsset
@@ -29,6 +30,9 @@ __all__ = [
     "ExposureLayer",
     "ExposureLayerType",
     "FocusArea",
+    "Group",
+    "GroupDataSourceAccess",
+    "GroupMembership",
     "Scenario",
     "ScenarioAsset",
     "VisibleAsset",
