@@ -1,4 +1,4 @@
-"""Views for Scenarios."""
+"""Views for Groups."""
 
 from typing import ClassVar
 

@@ -15,9 +15,9 @@ http_forbidden = 403
 http_not_found = 404
 email = "test@test.com"
 
-cognito_one = IdpUser(uuid4(), email, name="Alice")
-cognito_two = IdpUser(uuid4(), email, name="Bob")
-cognito_three = IdpUser(uuid4(), email, name="Charlotte")
+cognito_one = IdpUser(str(uuid4()), email, name="Alice")
+cognito_two = IdpUser(str(uuid4()), email, name="Bob")
+cognito_three = IdpUser(str(uuid4()), email, name="Charlotte")
 
 cognito_users = [cognito_one, cognito_two, cognito_three]
 
