@@ -11,17 +11,19 @@ from api.views.assets import AssetViewSet
 from api.views.data_sources import DataSourceViewSet
 from api.views.dependency import DependencyViewSet
 from api.views.graph import NoMultipartGraphQLView
+from api.views.groups import GroupViewSet
 from api.views.users import ApplicationUserViewSet
 
 router = DefaultRouter()
 router.register(r"assetcategories", AssetCategoryViewSet)
 router.register(r"assets", AssetViewSet)
 router.register(r"assettypes", AssetTypeViewSet)
-router.register(r"users", ApplicationUserViewSet, basename="user")
 router.register(r"datasources", DataSourceViewSet, basename="datasource")
 router.register(r"dependency", DependencyViewSet)
 router.register(r"exposurelayers", views.ExposureLayerViewSet, basename="exposurelayer")
+router.register(r"groups", GroupViewSet)
 router.register(r"scenarios", views.ScenarioViewSet, basename="scenario")
+router.register(r"users", ApplicationUserViewSet, basename="user")
 
 urlpatterns = [
     path("graphql/", NoMultipartGraphQLView.as_view(schema=schema), name="graphql"),

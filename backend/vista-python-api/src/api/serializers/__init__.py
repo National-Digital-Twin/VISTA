@@ -23,6 +23,7 @@ from .focus_area import (
     FocusAreaSerializer,
     FocusAreaUpdateSerializer,
 )
+from .group import GroupSerializer
 from .scenario import ScenarioSerializer
 from .user import IdpUserSerializer
 from .visible_asset_type import (
@@ -56,6 +57,7 @@ __all__ = [
     "FocusAreaCreateSerializer",
     "FocusAreaSerializer",
     "FocusAreaUpdateSerializer",
+    "GroupSerializer",
     "IdpUserSerializer",
     "ScenarioAssetSerializer",
     "ScenarioSerializer",

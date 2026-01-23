@@ -14,7 +14,7 @@ from api.serializers import ScenarioSerializer
 
 
 class ScenarioViewSet(viewsets.ModelViewSet):
-    """ViewSet for Scenario read operations."""
+    """ViewSet for Scenario operations."""
 
     http_method_names: ClassVar = ["get", "post"]
     queryset = Scenario.objects.all()
