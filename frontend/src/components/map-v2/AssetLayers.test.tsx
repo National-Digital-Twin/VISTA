@@ -18,14 +18,6 @@ vi.mock('./hooks/usePreloadAssetIcons', () => ({
     isIconPreloaded: vi.fn(() => true),
 }));
 
-vi.mock('@/hooks/useFindIcon', () => ({
-    default: vi.fn(() => ({
-        backgroundColor: '#000000',
-        color: '#ffffff',
-        iconFallbackText: 'A',
-    })),
-}));
-
 vi.mock('@/utils', () => ({
     findElement: vi.fn((elements, id) => elements.find((el: Asset) => el.id === id)),
 }));
