@@ -39,11 +39,11 @@ import {
     type ExposureLayersResponse,
     type FocusAreaRelation,
 } from '@/api/exposure-layers';
-import IconToggle from '@/components/IconToggle';
+import IconToggle, { type VisibilityState } from '@/components/IconToggle';
 
 const BADGE_CONFIG: Record<FocusAreaRelation, { label: string; bgColor: string; textColor: string }> = {
     contained: { label: 'In area', bgColor: '#7eb66d', textColor: '#000' },
-    overlaps: { label: 'Near area', bgColor: '#dfc96e', textColor: '#000' },
+    overlaps: { label: 'Partially in area', bgColor: '#dfc96e', textColor: '#000' },
     elsewhere: { label: 'Not in area', bgColor: '#929292', textColor: '#fff' },
 };
 
@@ -375,17 +375,27 @@ const ExposureGroup = React.memo(
 
         const layerIds = useMemo(() => layers.map(getLayerId).filter((id): id is string => id !== null), [layers]);
 
-        const allLayersVisible = useMemo(() => {
-            return layerIds.length > 0 && layerIds.every((id) => selectedExposureLayerIds[id] === true);
+        const visibilityState: VisibilityState = useMemo(() => {
+            if (layerIds.length === 0) {
+                return 'hidden';
+            }
+            const activeCount = layerIds.filter((id) => selectedExposureLayerIds[id] === true).length;
+            if (activeCount === 0) {
+                return 'hidden';
+            }
+            if (activeCount === layerIds.length) {
+                return 'visible';
+            }
+            return 'partial';
         }, [layerIds, selectedExposureLayerIds]);
 
         const handleToggleAll = useCallback(
             (e: React.MouseEvent<HTMLButtonElement> | React.KeyboardEvent<HTMLButtonElement>) => {
                 e.stopPropagation();
                 e.preventDefault();
-                onBulkToggle?.(groupId, !allLayersVisible);
+                onBulkToggle?.(groupId, visibilityState !== 'visible');
             },
-            [groupId, allLayersVisible, onBulkToggle],
+            [groupId, visibilityState, onBulkToggle],
         );
 
         return (
@@ -434,10 +444,10 @@ const ExposureGroup = React.memo(
                     {showBulkToggle && onBulkToggle && layerIds.length > 0 && (
                         <Box sx={{ display: 'flex', alignItems: 'center', px: 2, flexShrink: 0 }}>
                             <IconToggle
-                                checked={allLayersVisible}
+                                state={visibilityState}
                                 onChange={handleToggleAll}
                                 disabled={disabled}
-                                aria-label={allLayersVisible ? 'Hide all' : 'Show all'}
+                                aria-label={visibilityState === 'visible' ? 'Hide all' : 'Show all'}
                                 size="small"
                             />
                         </Box>
@@ -498,17 +508,27 @@ const UserDrawnGroup = React.memo(
             [onToggleGroup, groupName],
         );
 
-        const allLayersVisible = useMemo(() => {
-            return layers.length > 0 && layers.every((layer) => selectedExposureLayerIds[layer.id] === true);
+        const visibilityState: VisibilityState = useMemo(() => {
+            if (layers.length === 0) {
+                return 'hidden';
+            }
+            const activeCount = layers.filter((layer) => selectedExposureLayerIds[layer.id] === true).length;
+            if (activeCount === 0) {
+                return 'hidden';
+            }
+            if (activeCount === layers.length) {
+                return 'visible';
+            }
+            return 'partial';
         }, [layers, selectedExposureLayerIds]);
 
         const handleToggleAll = useCallback(
             (e: React.MouseEvent<HTMLButtonElement> | React.KeyboardEvent<HTMLButtonElement>) => {
                 e.stopPropagation();
                 e.preventDefault();
-                onBulkToggle?.(groupId, !allLayersVisible);
+                onBulkToggle?.(groupId, visibilityState !== 'visible');
             },
-            [groupId, allLayersVisible, onBulkToggle],
+            [groupId, visibilityState, onBulkToggle],
         );
 
         const handleDrawMenuClick = (event: MouseEvent<HTMLButtonElement>) => {
@@ -571,10 +591,10 @@ const UserDrawnGroup = React.memo(
                     {layers.length > 0 && onBulkToggle && (
                         <Box sx={{ display: 'flex', alignItems: 'center', px: 2, flexShrink: 0 }}>
                             <IconToggle
-                                checked={allLayersVisible}
+                                state={visibilityState}
                                 onChange={handleToggleAll}
                                 disabled={disabled}
-                                aria-label={allLayersVisible ? 'Hide all' : 'Show all'}
+                                aria-label={visibilityState === 'visible' ? 'Hide all' : 'Show all'}
                                 size="small"
                             />
                         </Box>

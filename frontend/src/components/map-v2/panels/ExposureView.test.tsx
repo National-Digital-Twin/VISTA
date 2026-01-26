@@ -690,6 +690,44 @@ describe('ExposureView', () => {
                 expect(screen.getByLabelText('Show all')).toBeInTheDocument();
             });
         });
+
+        it('shows partial visibility icon when some layers are visible', async () => {
+            const mixedExposureLayersData = createEnvironmentallySensitiveAreasResponse({
+                layers: [
+                    { id: 'layer-1', name: 'Protected Area 1', isActive: true },
+                    { id: 'layer-2', name: 'Protected Area 2', isActive: false },
+                    { id: 'layer-3', name: 'Protected Area 3', isActive: false },
+                ],
+            });
+            renderWithProviders(<ExposureView {...defaultProps} exposureLayersData={mixedExposureLayersData} selectedFocusAreaId="map-wide-1" />);
+            await waitFor(() => {
+                const toggleButton = screen.getByLabelText('Show all');
+                expect(toggleButton.querySelector('[data-testid="VisibilityOutlinedIcon"]')).toBeInTheDocument();
+            });
+        });
+
+        it('shows filled visibility icon when all layers are visible', async () => {
+            const allActiveExposureLayersData = createEnvironmentallySensitiveAreasResponse({
+                layers: [
+                    { id: 'layer-1', name: 'Protected Area 1', isActive: true },
+                    { id: 'layer-2', name: 'Protected Area 2', isActive: true },
+                    { id: 'layer-3', name: 'Protected Area 3', isActive: true },
+                ],
+            });
+            renderWithProviders(<ExposureView {...defaultProps} exposureLayersData={allActiveExposureLayersData} selectedFocusAreaId="map-wide-1" />);
+            await waitFor(() => {
+                const toggleButton = screen.getByLabelText('Hide all');
+                expect(toggleButton.querySelector('[data-testid="VisibilityIcon"]')).toBeInTheDocument();
+            });
+        });
+
+        it('shows visibility off icon when no layers are visible', async () => {
+            renderWithProviders(<ExposureView {...defaultProps} exposureLayersData={envSensitiveExposureLayersData} selectedFocusAreaId="map-wide-1" />);
+            await waitFor(() => {
+                const toggleButton = screen.getByLabelText('Show all');
+                expect(toggleButton.querySelector('[data-testid="VisibilityOffIcon"]')).toBeInTheDocument();
+            });
+        });
     });
 
     describe('Spatial Relation Badges', () => {
@@ -719,7 +757,7 @@ describe('ExposureView', () => {
             });
         });
 
-        it('displays "Near area" badge for overlapping layers', async () => {
+        it('displays "Partially in area" badge for overlapping layers', async () => {
             const exposureLayersData = createMockExposureLayersResponse({
                 layers: [{ id: 'layer-1', name: 'Overlapping Layer', isActive: false, focusAreaRelation: 'overlaps' }],
             });
@@ -737,7 +775,7 @@ describe('ExposureView', () => {
 
             await waitFor(() => {
                 expect(screen.getByText('Overlapping Layer')).toBeInTheDocument();
-                expect(screen.getByText('Near area')).toBeInTheDocument();
+                expect(screen.getByText('Partially in area')).toBeInTheDocument();
             });
         });
 
@@ -786,7 +824,7 @@ describe('ExposureView', () => {
                 expect(screen.getByText('Inside Layer')).toBeInTheDocument();
                 expect(screen.getByText('Partial Layer')).toBeInTheDocument();
                 expect(screen.getByText('In area')).toBeInTheDocument();
-                expect(screen.getByText('Near area')).toBeInTheDocument();
+                expect(screen.getByText('Partially in area')).toBeInTheDocument();
             });
         });
 
@@ -811,7 +849,7 @@ describe('ExposureView', () => {
             });
 
             expect(screen.queryByText('In area')).not.toBeInTheDocument();
-            expect(screen.queryByText('Near area')).not.toBeInTheDocument();
+            expect(screen.queryByText('Partially in area')).not.toBeInTheDocument();
             expect(screen.queryByText('Not in area')).not.toBeInTheDocument();
         });
     });
