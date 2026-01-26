@@ -212,7 +212,7 @@ jobs:
         run: |
           source venv/bin/activate
           cd backend
-          pytest --cov-report=term-missing  >> $GITHUB_STEP_SUMMARY
+          pytest >> $GITHUB_STEP_SUMMARY
 
   security-scanning:
     name: Security Scanning
