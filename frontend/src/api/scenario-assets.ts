@@ -1,9 +1,8 @@
 import type { Geometry } from 'geojson';
 
-import type { Asset } from './assets-by-type';
+import type { Asset, AssetIcon } from './assets-by-type';
 import { getLocationFromGeometry } from './geometry-parser';
 import config from '@/config/app-config';
-import type { FoundIcon } from '@/hooks/useFindIcon';
 
 type ScenarioAssetResponse = {
     id: string;
@@ -41,7 +40,7 @@ export const fetchScenarioAssets = async ({ scenarioId, focusAreaId, iconMap }: 
         const icon = iconMap?.get(item.type.id);
         const iconName = icon?.replace('fa-', '');
 
-        const defaultIconStyles: FoundIcon = {
+        const defaultIconStyles: AssetIcon = {
             classUri: item.type.id,
             color: '#DDDDDD',
             backgroundColor: '#121212',

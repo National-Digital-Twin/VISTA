@@ -1,7 +1,15 @@
 import type { Geometry } from 'geojson';
 import { parseGeometryWithLocation } from './geometry-parser';
 import config from '@/config/app-config';
-import type { FoundIcon } from '@/hooks/useFindIcon';
+
+export type AssetIcon = {
+    classUri: string;
+    color: string;
+    backgroundColor: string;
+    iconFallbackText: string;
+    alt: string;
+    faIcon?: string;
+};
 
 export type AssetTypeResponse = {
     id: string;
@@ -25,7 +33,7 @@ export type Asset = {
         criticalitySum: number;
     };
     description?: string;
-    styles: FoundIcon;
+    styles: AssetIcon;
     elementType: 'asset';
     state?: 'Live' | 'Static';
     classification?: string;
@@ -47,7 +55,7 @@ export const fetchAssetsByType = async (assetTypeId: string, iconMap?: Map<strin
         const icon = iconMap?.get(item.type.id);
         const iconName = icon?.replace('fa-', '');
 
-        const defaultIconStyles: FoundIcon = {
+        const defaultIconStyles: AssetIcon = {
             classUri: item.type.id,
             color: '#DDDDDD',
             backgroundColor: '#121212',
