@@ -91,11 +91,14 @@ const MapView = () => {
     });
 
     const exposureLayersFocusAreaId = useMemo(() => {
+        if (isInExposurePanel) {
+            return selectedFocusAreaId;
+        }
         if (shouldShowAllActiveFocusAreas) {
             return null;
         }
         return selectedFocusAreaId;
-    }, [shouldShowAllActiveFocusAreas, selectedFocusAreaId]);
+    }, [shouldShowAllActiveFocusAreas, selectedFocusAreaId, isInExposurePanel]);
 
     const {
         data: exposureLayersData,

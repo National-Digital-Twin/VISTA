@@ -16,6 +16,7 @@ const mockDrawGetAll = vi.fn(() => ({
         },
     ],
 }));
+const mockDrawSet = vi.fn();
 const mockMap = {
     addControl: mockAddControl,
     removeControl: mockRemoveControl,
@@ -31,7 +32,7 @@ vi.mock('@mapbox/mapbox-gl-draw', () => {
     class MockMapboxDraw {
         changeMode = vi.fn();
         getMode = vi.fn();
-        set = vi.fn();
+        set = mockDrawSet;
         add = mockDrawAdd;
         getAll = mockDrawGetAll;
         static modes = {};
@@ -113,5 +114,74 @@ describe('useMapboxDraw', () => {
         await waitFor(() => {
             expect(onDrawReady).toHaveBeenCalledWith(true);
         });
+    });
+
+    it('does not initialize draw when getMap returns null', () => {
+        const nullGetMapRef = {
+            current: {
+                getMap: () => null,
+            } as unknown as MapRef,
+        };
+
+        renderHook(() => useMapboxDraw({ mapRef: nullGetMapRef, isReady: true }));
+
+        expect(mockAddControl).not.toHaveBeenCalled();
+    });
+
+    it('recreates draw control when activeFeatureType changes', async () => {
+        const { result, rerender } = renderHook<ReturnType<typeof useMapboxDraw>, { activeFeatureType: 'focus_area' | 'exposure_layer' | null }>(
+            ({ activeFeatureType }) => useMapboxDraw({ mapRef: mockMapRef, isReady: true, activeFeatureType }),
+            {
+                initialProps: { activeFeatureType: 'focus_area' },
+            },
+        );
+
+        await waitFor(() => {
+            expect(mockAddControl).toHaveBeenCalledTimes(1);
+        });
+
+        const firstDrawInstance = result.current.current;
+        expect(firstDrawInstance).not.toBeNull();
+
+        rerender({ activeFeatureType: 'exposure_layer' });
+
+        await waitFor(() => {
+            expect(mockRemoveControl).toHaveBeenCalledWith(firstDrawInstance);
+            expect(mockAddControl).toHaveBeenCalledTimes(2);
+        });
+
+        expect(result.current.current).not.toBe(firstDrawInstance);
+    });
+
+    it('calls onDrawReady(false) when draw control is removed', async () => {
+        const onDrawReady = vi.fn();
+        const { unmount } = renderHook(() => useMapboxDraw({ mapRef: mockMapRef, isReady: true, onDrawReady }));
+
+        await waitFor(() => {
+            expect(onDrawReady).toHaveBeenCalledWith(true);
+        });
+
+        onDrawReady.mockClear();
+        unmount();
+
+        await waitFor(() => {
+            expect(onDrawReady).toHaveBeenCalledWith(false);
+        });
+    });
+
+    it('handles error when removing draw control', async () => {
+        mockRemoveControl.mockImplementation(() => {
+            throw new Error('Remove failed');
+        });
+
+        const { unmount } = renderHook(() => useMapboxDraw({ mapRef: mockMapRef, isReady: true }));
+
+        await waitFor(() => {
+            expect(mockAddControl).toHaveBeenCalled();
+        });
+
+        unmount();
+
+        expect(mockRemoveControl).toHaveBeenCalled();
     });
 });
