@@ -91,5 +91,15 @@ urlpatterns = [
         views.AssetScoreFiltersView.as_view(),
         name="asset-score-filters",
     ),
+    path(
+        "scenarios/<uuid:scenario_id>/constraint-interventions/",
+        views.ScenarioConstraintInterventionsView.as_view(),
+        name="scenario-constraint-interventions",
+    ),
+    path(
+        "scenarios/<uuid:scenario_id>/constraint-interventions/<uuid:intervention_id>/",
+        views.ScenarioConstraintInterventionsView.as_view(),
+        name="scenario-constraint-intervention-detail",
+    ),
     path("", include(router.urls)),
 ]
