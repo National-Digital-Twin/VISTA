@@ -171,7 +171,7 @@ def test_create_group_is_successful(client, monkeypatch):
     members = [cognito_one.id]
     response = client.post(
         "/api/groups/",
-        data=json.dumps({"name": group_name, "member_ids": members}),
+        data=json.dumps({"name": group_name, "memberIds": members}),
         content_type="application/json",
     )
 
@@ -194,7 +194,7 @@ def test_create_group_without_other_members_is_successful(client, monkeypatch):
     monkeypatch.setattr("api.views.groups.get_user_id_from_request", get_user_id_from_request)
     response = client.post(
         "/api/groups/",
-        data=json.dumps({"name": "Lone admin", "member_ids": []}),
+        data=json.dumps({"name": "Lone admin", "memberIds": []}),
         content_type="application/json",
     )
 
@@ -213,7 +213,7 @@ def test_create_group_requires_name(client, monkeypatch):
     monkeypatch.setattr("api.views.groups.get_user_id_from_request", get_user_id_from_request)
     response = client.post(
         "/api/groups/",
-        data=json.dumps({"member_ids": [cognito_one.id]}),
+        data=json.dumps({"memberIds": [cognito_one.id]}),
         content_type="application/json",
     )
     assert response.status_code == http_bad_request
@@ -244,7 +244,7 @@ def test_create_group_returns_403_for_general_user(client, monkeypatch):
     monkeypatch.setattr("api.views.groups.Administrator", Administrator)
     response = client.post(
         "/api/groups/",
-        data=json.dumps({"name": "Forbidden", "member_ids": [cognito_one.id]}),
+        data=json.dumps({"name": "Forbidden", "memberIds": [cognito_one.id]}),
         content_type="application/json",
     )
     assert response.status_code == http_forbidden
