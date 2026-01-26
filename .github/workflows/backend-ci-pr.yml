@@ -212,6 +212,7 @@ jobs:
         run: |
           source venv/bin/activate
           cd backend
+          pytest --cov=core --cov=api --cov-report=term:skip-covered --cov-fail-under=80 --cov-config=pyproject.toml > coverage.txt
           pytest
 
       - name: Upload coverage report

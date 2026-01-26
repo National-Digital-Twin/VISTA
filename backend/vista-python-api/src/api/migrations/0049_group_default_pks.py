@@ -10,7 +10,7 @@ class Migration(migrations.Migration):
     """Add default pk to Group entities and make name mandatory."""
 
     dependencies: ClassVar = [
-        ("api", "0048_groups"),
+        ("api", "0048_add_constraint_intervention"),
     ]
 
     operations: ClassVar = [
