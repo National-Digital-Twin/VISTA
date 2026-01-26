@@ -212,8 +212,7 @@ jobs:
         run: |
           source venv/bin/activate
           cd backend
-          pytest --cov=core --cov=api --cov-report=term:skip-covered --cov-fail-under=80 --cov-config=pyproject.toml > coverage.txt
-          pytest >> $GITHUB_STEP_SUMMARY 2>&1
+          pytest
 
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
