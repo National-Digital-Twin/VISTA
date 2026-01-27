@@ -18,8 +18,8 @@ class GroupMembershipSerializer(serializers.ModelSerializer):
         """Configuration for the `AssetSubCategorySerializer`."""
 
         model = GroupMembership
-        fields: ClassVar[list[str]] = ["id", "name", "group_id", "user_id", "created_by"]
-        read_only_fields: ClassVar[list[str]] = ["id", "created_by"]
+        fields: ClassVar[list[str]] = ["name", "group_id", "user_id", "created_by"]
+        read_only_fields: ClassVar[list[str]] = ["created_by"]
         validators: ClassVar[list[serializers.UniqueTogetherValidator]] = [
             serializers.UniqueTogetherValidator(
                 queryset=GroupMembership.objects.all(),
