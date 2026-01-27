@@ -673,12 +673,10 @@ const ExposureView = ({
     const queryClient = useQueryClient();
     const currentFocusAreaId = selectedFocusAreaId ?? null;
 
-    // Extract user-drawn layers for the drawing hook
     const userDrawnLayers = useMemo(() => {
         return exposureLayersData?.groups.flatMap((g) => g.exposureLayers).filter((layer) => layer.isUserDefined && layer.isActive && layer.geometry) ?? [];
     }, [exposureLayersData]);
 
-    // Get the user-editable type ID for creating new exposure layers
     const userEditableTypeId = useMemo(() => {
         return exposureLayersData?.groups.find((g) => g.isUserEditable)?.id;
     }, [exposureLayersData]);

@@ -44,7 +44,6 @@ export const fetchUserById = async (userId: string): Promise<UserData> => {
         throw new Error('User not found');
     }
 
-    // Normalize groups to always be objects with valid dates
     if (user.groups) {
         user.groups = user.groups.map((group) => {
             if (typeof group === 'string') {

@@ -9,7 +9,6 @@ import type { ScoreFilterValues } from '@/api/asset-score-filters';
 describe('GlobalScoreFilter', () => {
     const defaultProps = {
         onApply: vi.fn(),
-        onClear: vi.fn(),
     };
 
     beforeEach(() => {
@@ -102,8 +101,7 @@ describe('GlobalScoreFilter', () => {
             });
         });
 
-        it('calls onClear and resets to defaults when Clear button is clicked', () => {
-            const onClear = vi.fn();
+        it('resets to defaults when Clear button is clicked', () => {
             const initialValues: ScoreFilterValues = {
                 criticalityValues: [1, 2],
                 exposureValues: [0],
@@ -112,12 +110,19 @@ describe('GlobalScoreFilter', () => {
                 dependencyMax: '2.5',
             };
 
-            renderWithTheme(<GlobalScoreFilter {...defaultProps} onClear={onClear} initialValues={initialValues} />);
+            renderWithTheme(<GlobalScoreFilter {...defaultProps} initialValues={initialValues} />);
 
             const clearButton = screen.getByTitle('Clear filter');
             fireEvent.click(clearButton);
 
-            expect(onClear).toHaveBeenCalledTimes(1);
+            const checkboxes = screen.getAllByRole('checkbox');
+            checkboxes.forEach((checkbox) => {
+                expect(checkbox).toBeChecked();
+            });
+
+            const inputs = screen.getAllByRole('spinbutton');
+            expect(inputs[0]).toHaveValue(0);
+            expect(inputs[1]).toHaveValue(3);
         });
 
         it('updates state when checkbox is clicked', () => {

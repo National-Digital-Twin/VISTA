@@ -75,11 +75,9 @@ type MapPanelsProps = {
         dependents: Array<{ id: string; geom: string; type: { name: string } }>,
         providers: Array<{ id: string; geom: string; type: { name: string } }>,
     ) => void;
-    // Focus areas data (lifted from FocusAreaView)
     focusAreas?: FocusArea[];
     isFocusAreasLoading?: boolean;
     isFocusAreasError?: boolean;
-    // Exposure layers data (lifted from ExposureView)
     exposureLayersData?: ExposureLayersResponse;
     isExposureLayersLoading?: boolean;
     isExposureLayersError?: boolean;

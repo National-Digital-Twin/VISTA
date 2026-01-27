@@ -21,7 +21,6 @@ const useFocusAreaMutations = ({ scenarioId, onError }: UseFocusAreaMutationsOpt
     };
 
     const invalidateAllExposureLayers = () => {
-        // Invalidate all exposure layer queries for this scenario (including the null focus area query)
         queryClient.invalidateQueries({ queryKey: ['exposureLayers', scenarioId] });
     };
 
@@ -35,11 +34,9 @@ const useFocusAreaMutations = ({ scenarioId, onError }: UseFocusAreaMutationsOpt
         mutationFn: ({ focusAreaId, data }: { focusAreaId: string; data: UpdateFocusAreaRequest }) => updateFocusArea(scenarioId!, focusAreaId, data),
         onSuccess: (_data, variables) => {
             invalidateFocusAreaList();
-            // If geometry changed, invalidate specific focus area queries
             if (variables.data.geometry !== undefined) {
                 invalidateQueriesForFocusArea(variables.focusAreaId);
             }
-            // If isActive changed, invalidate all exposure layers (affects which layers show in focus area panel)
             if (variables.data.isActive !== undefined) {
                 invalidateAllExposureLayers();
             }
@@ -51,7 +48,6 @@ const useFocusAreaMutations = ({ scenarioId, onError }: UseFocusAreaMutationsOpt
         mutationFn: (focusAreaId: string) => deleteFocusArea(scenarioId!, focusAreaId),
         onSuccess: () => {
             invalidateFocusAreaList();
-            // Invalidate all exposure layer queries since active focus areas have changed
             invalidateAllExposureLayers();
         },
         onError: () => onError?.('Failed to delete focus area'),

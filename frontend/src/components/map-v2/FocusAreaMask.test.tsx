@@ -86,7 +86,6 @@ describe('FocusAreaMask', () => {
             expect(data.geometry.type).toBe('Polygon');
             expect(data.geometry.coordinates).toHaveLength(2);
 
-            // First ring should be world bounds
             const worldBounds = data.geometry.coordinates[0];
             expect(worldBounds[0]).toEqual([-180, -90]);
             expect(worldBounds[1]).toEqual([-180, 90]);
@@ -94,7 +93,6 @@ describe('FocusAreaMask', () => {
             expect(worldBounds[3]).toEqual([180, -90]);
             expect(worldBounds[4]).toEqual([-180, -90]);
 
-            // Second ring should be reversed focus area coordinates (hole)
             const hole = data.geometry.coordinates[1];
             expect(hole).toHaveLength(mockPolygonGeometry.coordinates[0].length);
         });
@@ -107,7 +105,6 @@ describe('FocusAreaMask', () => {
             const originalCoords = mockPolygonGeometry.coordinates[0];
             const hole = data.geometry.coordinates[1];
 
-            // Hole should be reversed coordinates
             expect(hole[0]).toEqual(originalCoords[originalCoords.length - 1]);
             expect(hole[hole.length - 1]).toEqual(originalCoords[0]);
         });

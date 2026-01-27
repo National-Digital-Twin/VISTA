@@ -211,7 +211,6 @@ const FocusAreaView = ({ onClose, scenarioId, selectedFocusAreaId, onFocusAreaSe
         onError: setMutationError,
     });
 
-    // Keep callbacks in refs to avoid recreating config objects
     const createFocusAreaRef = useRef(createFocusArea);
     const updateFocusAreaMutateRef = useRef(updateFocusAreaMutate);
     const onFocusAreaSelectRef = useRef(onFocusAreaSelect);
@@ -223,8 +222,6 @@ const FocusAreaView = ({ onClose, scenarioId, selectedFocusAreaId, onFocusAreaSe
         focusAreasRef.current = focusAreas;
     }, [createFocusArea, updateFocusAreaMutate, onFocusAreaSelect, focusAreas]);
 
-    // Drawing setup - register this panel's drawing config
-    // useLayoutEffect runs before paint, preventing loading flash when data changes
     useLayoutEffect(() => {
         if (!focusAreas) {
             setDrawingConfig(null);

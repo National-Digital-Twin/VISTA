@@ -241,7 +241,6 @@ export const DrawingProvider = ({ children, mapRef, mapReady, scenarioId }: Draw
                     onSelect(String(entityId));
                 }
             } else {
-                // Don't trigger selection fallback when in a drawing mode
                 const currentMode = draw.getMode();
                 const isInDrawingMode = currentMode !== 'simple_select' && currentMode !== 'direct_select';
                 if (!isInDrawingMode) {
