@@ -4,6 +4,15 @@ import uuid
 from typing import ClassVar
 
 from django.db import migrations, models
+from django.utils import timezone
+
+
+def set_created_at(apps, _schema_editor):
+    """Set created_at timestamps for existing groups and group memberships."""
+    Group = apps.get_model("api", "Group")
+    Group.objects.filter(created_at__isnull=True).update(created_at=timezone.now())
+    GroupMembership = apps.get_model("api", "GroupMembership")
+    GroupMembership.objects.filter(created_at__isnull=True).update(created_at=timezone.now())
 
 
 class Migration(migrations.Migration):
@@ -39,5 +48,18 @@ class Migration(migrations.Migration):
             field=models.UUIDField(
                 default=uuid.uuid4, primary_key=True, serialize=False, unique=True
             ),
+        ),
+        migrations.RunPython(set_created_at),
+        migrations.AlterField(
+            model_name="group",
+            name="created_at",
+            field=models.DateTimeField(auto_now_add=True),
+            preserve_default=False,
+        ),
+        migrations.AlterField(
+            model_name="groupmembership",
+            name="created_at",
+            field=models.DateTimeField(auto_now_add=True),
+            preserve_default=False,
         ),
     ]

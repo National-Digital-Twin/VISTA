@@ -182,6 +182,7 @@ def test_create_group_is_successful(client, monkeypatch):
 
     group = Group.objects.get(id=data["id"])
     assert group.created_by == admin_uuid
+    assert group.created_at is not None
     for member_id in members:
         member = GroupMembership.objects.get(group=data["id"], user_id=member_id)
         assert member.created_by == admin_uuid

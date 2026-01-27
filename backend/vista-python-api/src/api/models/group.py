@@ -14,7 +14,7 @@ class Group(models.Model):
 
     id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True)
     name = models.CharField(max_length=255)
-    created_at = models.DateTimeField(null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
     created_by = models.UUIDField()
 
     @classmethod
@@ -50,7 +50,7 @@ class GroupMembership(models.Model):
     id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True)
     group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name="members")
     user_id = models.UUIDField()
-    created_at = models.DateTimeField(null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
     created_by = models.UUIDField()
 
     @classmethod
