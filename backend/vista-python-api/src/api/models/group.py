@@ -1,6 +1,7 @@
 """Group model."""
 
 import uuid
+from typing import ClassVar
 from uuid import uuid4
 
 from django.contrib.gis.db import models
@@ -16,6 +17,11 @@ class Group(models.Model):
     name = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
     created_by = models.UUIDField()
+
+    class Meta:
+        """Meta configuration."""
+
+        ordering: ClassVar[list[str]] = ["created_at"]
 
     @classmethod
     def create(cls, name, created_by):
@@ -52,6 +58,17 @@ class GroupMembership(models.Model):
     user_id = models.UUIDField()
     created_at = models.DateTimeField(auto_now_add=True)
     created_by = models.UUIDField()
+
+    class Meta:
+        """Meta configuration."""
+
+        ordering: ClassVar[list[str]] = ["created_at"]
+        constraints: ClassVar = [
+            models.UniqueConstraint(
+                fields=["group", "user_id"],
+                name="unique_membership_per_user",
+            )
+        ]
 
     @classmethod
     def create(cls, group_id, user_id, created_by):

@@ -11,13 +11,28 @@ from api.models import Group, GroupMembership
 class GroupMembershipSerializer(serializers.ModelSerializer):
     """Serializer for the Asset Sub Category model."""
 
+    group_id = serializers.HiddenField(default=None)
     name = serializers.SerializerMethodField()
 
     class Meta:
         """Configuration for the `AssetSubCategorySerializer`."""
 
         model = GroupMembership
-        fields: ClassVar[list[str]] = ["name"]
+        fields: ClassVar[list[str]] = ["id", "name", "group_id", "user_id", "created_by"]
+        read_only_fields: ClassVar[list[str]] = ["id", "created_by"]
+        validators: ClassVar[list[serializers.UniqueTogetherValidator]] = [
+            serializers.UniqueTogetherValidator(
+                queryset=GroupMembership.objects.all(),
+                fields=["group_id", "user_id"],
+                message="The user is already a member of this group.",
+            )
+        ]
+
+    def __init__(self, *args, **kwargs):
+        """Initialize fields with group_id value from request context."""
+        super().__init__(*args, **kwargs)
+        if "view" in self.context:
+            self.fields["group_id"].default = self.context["view"].kwargs["group_id"]
 
     def get_name(self, obj):
         """Get name of user from serializer context."""
