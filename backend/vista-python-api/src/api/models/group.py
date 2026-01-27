@@ -1,5 +1,6 @@
 """Group model."""
 
+import uuid
 from uuid import uuid4
 
 from django.contrib.gis.db import models
@@ -11,9 +12,9 @@ from api.models.data_source import DataSource
 class Group(models.Model):
     """Group model."""
 
-    id = models.UUIDField(unique=True, primary_key=True)
-    name = models.CharField(max_length=255, blank=True)
-    created_at = models.DateTimeField(null=True)
+    id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True)
+    name = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True)
     created_by = models.UUIDField()
 
     @classmethod
@@ -34,7 +35,7 @@ class Group(models.Model):
 class GroupDataSourceAccess(models.Model):
     """Group data source access model."""
 
-    id = models.UUIDField(unique=True, primary_key=True)
+    id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True)
     data_source = models.ForeignKey(DataSource, on_delete=models.CASCADE)
     group = models.ForeignKey(Group, on_delete=models.CASCADE)
 
@@ -46,10 +47,10 @@ class GroupDataSourceAccess(models.Model):
 class GroupMembership(models.Model):
     """Group membership access model."""
 
-    id = models.UUIDField(unique=True, primary_key=True)
+    id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True)
     group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name="members")
     user_id = models.UUIDField()
-    created_at = models.DateTimeField(null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
     created_by = models.UUIDField()
 
     @classmethod

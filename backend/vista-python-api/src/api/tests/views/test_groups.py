@@ -1,5 +1,6 @@
 """Tests for the groups endpoints."""
 
+import json
 from uuid import uuid4
 
 import pytest
@@ -18,6 +19,8 @@ email = "test@test.com"
 cognito_one = IdpUser(str(uuid4()), email, name="Alice")
 cognito_two = IdpUser(str(uuid4()), email, name="Bob")
 cognito_three = IdpUser(str(uuid4()), email, name="Charlotte")
+
+admin_uuid = uuid4()
 
 cognito_users = [cognito_one, cognito_two, cognito_three]
 
@@ -68,6 +71,11 @@ class Administrator:
         return False
 
 
+def get_user_id_from_request(request):  # noqa: ARG001
+    """Mock user ID in request."""
+    return admin_uuid
+
+
 # --- GET (List) Tests ---
 
 
@@ -84,7 +92,9 @@ def test_list_groups(group, members, group_no_members, client, monkeypatch):  # 
     result = data[0]
 
     assert result["name"] == group.name
-    assert [member["name"] for member in result["members"]] == _fetch_member_names(members)
+    assert [member["name"] for member in result["members"]] == _fetch_member_names(
+        _get_member_id_list(members)
+    )
 
 
 @pytest.mark.django_db
@@ -135,7 +145,9 @@ def test_fetch_group_returns_group_and_members(group, members, client, monkeypat
 
     assert data["id"] == str(group.id)
     assert data["name"] == group.name
-    assert [member["name"] for member in data["members"]] == _fetch_member_names(members)
+    assert [member["name"] for member in data["members"]] == _fetch_member_names(
+        _get_member_id_list(members)
+    )
 
 
 @pytest.mark.django_db
@@ -147,14 +159,106 @@ def test_fetch_group_returns_403_for_general_user(group, members, client, monkey
     assert response.status_code == http_forbidden
 
 
-def _fetch_member_names(members):
+# --- POST (Create) Tests ---
+
+
+@pytest.mark.django_db
+def test_create_group_is_successful(client, monkeypatch):
+    """Test that POST with expected fields creates a group successfully."""
+    monkeypatch.setattr("api.views.groups.IdpRepository", MockIdpRepository)
+    monkeypatch.setattr("api.views.groups.get_user_id_from_request", get_user_id_from_request)
+    group_name = "Volunteers"
+    members = [cognito_one.id]
+    response = client.post(
+        "/api/groups/",
+        data=json.dumps({"name": group_name, "memberIds": members}),
+        content_type="application/json",
+    )
+
+    assert response.status_code == http_created
+    data = response.json()
+    assert data["name"] == group_name
+    assert [member["name"] for member in data["members"]] == _fetch_member_names(members)
+
+    group = Group.objects.get(id=data["id"])
+    assert group.created_by == admin_uuid
+    assert group.created_at is not None
+    for member_id in members:
+        member = GroupMembership.objects.get(group=data["id"], user_id=member_id)
+        assert member.created_by == admin_uuid
+
+
+@pytest.mark.django_db
+def test_create_group_without_other_members_is_successful(client, monkeypatch):
+    """Test that POST without populated list of members creates a group successfully."""
+    monkeypatch.setattr("api.views.groups.IdpRepository", MockIdpRepository)
+    monkeypatch.setattr("api.views.groups.get_user_id_from_request", get_user_id_from_request)
+    response = client.post(
+        "/api/groups/",
+        data=json.dumps({"name": "Lone admin", "memberIds": []}),
+        content_type="application/json",
+    )
+
+    assert response.status_code == http_created
+    data = response.json()
+    assert len(data["members"]) == 0
+
+    group = Group.objects.get(id=data["id"])
+    assert group.created_by == admin_uuid
+
+
+@pytest.mark.django_db
+def test_create_group_requires_name(client, monkeypatch):
+    """Test that POST without name field throws a 400."""
+    monkeypatch.setattr("api.views.groups.IdpRepository", MockIdpRepository)
+    monkeypatch.setattr("api.views.groups.get_user_id_from_request", get_user_id_from_request)
+    response = client.post(
+        "/api/groups/",
+        data=json.dumps({"memberIds": [cognito_one.id]}),
+        content_type="application/json",
+    )
+    assert response.status_code == http_bad_request
+    assert "name" in response.json()
+
+
+@pytest.mark.django_db
+def test_create_group_requires_member_ids(client, monkeypatch):
+    """Test that POST without member IDs field throws a 400."""
+    monkeypatch.setattr("api.views.groups.IdpRepository", MockIdpRepository)
+    monkeypatch.setattr("api.views.groups.get_user_id_from_request", get_user_id_from_request)
+    response = client.post(
+        "/api/groups/",
+        data=json.dumps(
+            {
+                "name": "No members",
+            }
+        ),
+        content_type="application/json",
+    )
+    assert response.status_code == http_bad_request
+    assert "memberIds" in response.json()
+
+
+@pytest.mark.django_db
+def test_create_group_returns_403_for_general_user(client, monkeypatch):
+    """Test that POST without privileges throws a 403."""
+    monkeypatch.setattr("api.views.groups.Administrator", Administrator)
+    response = client.post(
+        "/api/groups/",
+        data=json.dumps({"name": "Forbidden", "memberIds": [cognito_one.id]}),
+        content_type="application/json",
+    )
+    assert response.status_code == http_forbidden
+
+
+def _get_member_id_list(members):
+    return [member.user_id for member in members]
+
+
+def _fetch_member_names(member_ids):
     expected_names = []
-    for member in members:
+    for member_id in member_ids:
         expected_names.extend(
-            [
-                cognito_user.name
-                for cognito_user in cognito_users
-                if cognito_user.id == member.user_id
-            ]
+            [cognito_user.name for cognito_user in cognito_users if cognito_user.id == member_id]
         )
     return expected_names
