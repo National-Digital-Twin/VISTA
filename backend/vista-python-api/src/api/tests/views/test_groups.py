@@ -251,6 +251,53 @@ def test_create_group_returns_403_for_general_user(client, monkeypatch):
     assert response.status_code == http_forbidden
 
 
+# --- DELETE Tests ---
+
+
+@pytest.mark.django_db
+def test_delete_group_is_successful(group, client):
+    """Test that DELETE returns a 204."""
+    response = client.delete(
+        f"/api/groups/{group.id}/",
+        content_type="application/json",
+    )
+    assert response.status_code == http_no_content
+    assert not Group.objects.filter(id=group.id).exists()
+
+
+@pytest.mark.django_db
+def test_delete_group_deletes_memberships(group, members, client):  # noqa: ARG001
+    """Test that DELETE returns a 204."""
+    response = client.delete(
+        f"/api/groups/{group.id}/",
+        content_type="application/json",
+    )
+    assert response.status_code == http_no_content
+    assert not GroupMembership.objects.filter(group_id=group.id).exists()
+
+
+@pytest.mark.django_db
+def test_delete_unknown_group_returns_404(client):
+    """Test that DELETE for unknown group returns a 404."""
+    response = client.delete(
+        f"/api/groups/{uuid4()}/",
+        content_type="application/json",
+    )
+    assert response.status_code == http_not_found
+
+
+@pytest.mark.django_db
+def test_delete_group_returns_403_for_general_user(group, client, monkeypatch):
+    """Test that DELETE without privileges throws a 403."""
+    monkeypatch.setattr("api.views.groups.Administrator", Administrator)
+    response = client.delete(
+        f"/api/groups/{group.id}/",
+        content_type="application/json",
+    )
+    assert response.status_code == http_forbidden
+    assert Group.objects.filter(id=group.id).exists()
+
+
 def _get_member_id_list(members):
     return [member.user_id for member in members]
 

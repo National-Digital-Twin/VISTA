@@ -11,6 +11,7 @@ from api.views.assets import AssetViewSet
 from api.views.data_sources import DataSourceViewSet
 from api.views.dependency import DependencyViewSet
 from api.views.graph import NoMultipartGraphQLView
+from api.views.group_memberships import GroupMembershipViewSet
 from api.views.groups import GroupViewSet
 from api.views.users import ApplicationUserViewSet
 
@@ -29,6 +30,22 @@ urlpatterns = [
     path("graphql/", NoMultipartGraphQLView.as_view(schema=schema), name="graphql"),
     path("user/", rest_views.user_details_view, name="api-user"),
     path("auth/signout/", rest_views.signout_view, name="signout"),
+    path(
+        "groups/<uuid:group_id>/members/",
+        GroupMembershipViewSet.as_view(
+            {
+                "post": "create",
+            }
+        ),
+    ),
+    path(
+        "groups/<uuid:group_id>/members/<uuid:user_id>/",
+        GroupMembershipViewSet.as_view(
+            {
+                "delete": "destroy",
+            }
+        ),
+    ),
     path(
         "scenarios/<uuid:scenario_id>/focus-areas/",
         views.FocusAreaViewSet.as_view({"get": "list", "post": "create"}),

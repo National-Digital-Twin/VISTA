@@ -23,7 +23,7 @@ class IdpRepository:
     def _stub_users(self):
         return [
             {
-                "Username": "1",
+                "Username": "7b225422-5d6a-4b83-9655-4bdbe8443c5f",
                 "Attributes": [
                     {"Name": "email", "Value": "local.user@example.com"},
                     {"Name": "name", "Value": "Local User"},
@@ -32,7 +32,7 @@ class IdpRepository:
                 "UserStatus": "Confirmed",
             },
             {
-                "Username": "2",
+                "Username": "8fd4bdcb-5823-4c9b-a16d-82b680fdd05e",
                 "Attributes": [
                     {"Name": "email", "Value": "local.user2@example.com"},
                     {"Name": "name", "Value": "Local User2"},
@@ -46,7 +46,7 @@ class IdpRepository:
         """Get a list of users known to the identity provider."""
         if not settings.IS_PROD:
             return [
-                IdpUser.from_cognito(user, bool(int(user["Username"]) % 2))
+                IdpUser.from_cognito(user, bool(int(user["Username"][0]) % 2))
                 for user in self._stub_users()
             ]
         all_user_response = self.client.list_users_in_group(
