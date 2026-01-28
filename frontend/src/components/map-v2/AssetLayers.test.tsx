@@ -151,7 +151,6 @@ describe('AssetLayers', () => {
             const layers = screen.getAllByTestId('layer');
             const layerIds = layers.map((layer) => layer.dataset.layerId);
 
-            // Order matters: unselected icons, then selection ring, then selected icon on top
             expect(layerIds[0]).toBe('map-v2-asset-symbol-layer');
             expect(layerIds[1]).toBe('map-v2-asset-selection-ring-layer');
             expect(layerIds[2]).toBe('map-v2-asset-symbol-layer-selected');
@@ -175,9 +174,7 @@ describe('AssetLayers', () => {
 
             renderWithProviders(<AssetLayers {...defaultProps} assets={[asset1, asset2]} />);
 
-            // Should render one source containing all assets
             expect(screen.getAllByTestId('source').length).toBe(1);
-            // Should still have three layers regardless of asset count
             expect(screen.getAllByTestId('layer').length).toBe(3);
         });
 
@@ -213,9 +210,7 @@ describe('AssetLayers', () => {
             const layers = screen.getAllByTestId('layer');
             const layerIds = layers.map((layer) => layer.dataset.layerId);
 
-            // Selection ring layer should be present
             expect(layerIds).toContain('map-v2-asset-selection-ring-layer');
-            // Selected symbol layer should be present (renders selected asset on top)
             expect(layerIds).toContain('map-v2-asset-symbol-layer-selected');
         });
 
@@ -223,7 +218,6 @@ describe('AssetLayers', () => {
             renderWithAsset({ selectedElements: [] });
 
             expect(screen.getByTestId('source')).toBeInTheDocument();
-            // Still renders all three layers, just with filters applied
             expect(screen.getAllByTestId('layer').length).toBe(3);
         });
 
@@ -237,7 +231,6 @@ describe('AssetLayers', () => {
             const layers = screen.getAllByTestId('layer');
             const layerIds = layers.map((layer) => layer.dataset.layerId);
 
-            // Verify layer order: unselected first, then ring, then selected on top
             const unselectedIndex = layerIds.indexOf('map-v2-asset-symbol-layer');
             const ringIndex = layerIds.indexOf('map-v2-asset-selection-ring-layer');
             const selectedIndex = layerIds.indexOf('map-v2-asset-symbol-layer-selected');

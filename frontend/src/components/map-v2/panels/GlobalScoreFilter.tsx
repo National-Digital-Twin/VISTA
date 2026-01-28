@@ -7,12 +7,11 @@ import type { ScoreFilterValues } from '@/api/asset-score-filters';
 
 type GlobalScoreFilterProps = {
     readonly onApply: (filter: ScoreFilterValues) => void;
-    readonly onClear: () => void;
     readonly initialValues?: ScoreFilterValues;
     readonly disabled?: boolean;
 };
 
-export function GlobalScoreFilter({ onApply, onClear, initialValues, disabled }: GlobalScoreFilterProps) {
+export function GlobalScoreFilter({ onApply, initialValues, disabled }: GlobalScoreFilterProps) {
     const {
         criticalityValues,
         setCriticalityValues,
@@ -36,8 +35,7 @@ export function GlobalScoreFilter({ onApply, onClear, initialValues, disabled }:
 
     const handleClear = useCallback(() => {
         resetToDefaults();
-        onClear();
-    }, [resetToDefaults, onClear]);
+    }, [resetToDefaults]);
 
     return (
         <Box sx={{ p: 2 }}>

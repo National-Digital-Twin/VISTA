@@ -18,12 +18,18 @@ export type ExposureLayersProps = {
     mapReady?: boolean;
     isInFocusAreaPanel?: boolean;
     excludeUserDefined?: boolean;
+    shouldShowAllActiveFocusAreas?: boolean;
 };
 
-const ExposureLayers = ({ scenarioId, selectedFocusAreaId, mapReady, isInFocusAreaPanel = false, excludeUserDefined = false }: ExposureLayersProps) => {
-    // When in focus area panel, fetch all active focus areas (no focus_area_id param)
-    // Otherwise, fetch for the selected focus area
-    const focusAreaIdForQuery = isInFocusAreaPanel ? null : selectedFocusAreaId;
+const ExposureLayers = ({
+    scenarioId,
+    selectedFocusAreaId,
+    mapReady,
+    isInFocusAreaPanel = false,
+    excludeUserDefined = false,
+    shouldShowAllActiveFocusAreas = false,
+}: ExposureLayersProps) => {
+    const focusAreaIdForQuery = shouldShowAllActiveFocusAreas || isInFocusAreaPanel ? null : selectedFocusAreaId;
 
     const { data: exposureData, isLoading } = useQuery({
         queryKey: ['exposureLayers', scenarioId, focusAreaIdForQuery],
@@ -38,11 +44,9 @@ const ExposureLayers = ({ scenarioId, selectedFocusAreaId, mapReady, isInFocusAr
         }
 
         return exposureData.featureCollection.features.filter((feature: Feature) => {
-            // Only include active features
             if (feature.properties?.isActive !== true) {
                 return false;
             }
-            // Exclude user-defined layers when they're being rendered via MapboxDraw
             if (excludeUserDefined && feature.properties?.isUserDefined) {
                 return false;
             }

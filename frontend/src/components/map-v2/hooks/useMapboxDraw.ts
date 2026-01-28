@@ -123,8 +123,6 @@ type UseMapboxDrawOptions = {
 const useMapboxDraw = ({ mapRef, isReady, activeFeatureType = null, onDrawReady }: UseMapboxDrawOptions): RefObject<MapboxDraw | null> => {
     const drawRef = useRef<MapboxDraw | null>(null);
 
-    // Create/recreate draw control when map is ready or activeFeatureType changes
-    // This allows drawing colors to match the current panel's feature type
     useEffect(() => {
         if (!isReady || !mapRef.current) {
             return;

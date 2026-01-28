@@ -643,6 +643,7 @@ const MapView = () => {
                                     mapReady={mapReady}
                                     isInFocusAreaPanel={isInFocusAreaPanel}
                                     excludeUserDefined={isInExposurePanel}
+                                    shouldShowAllActiveFocusAreas={shouldShowAllActiveFocusAreas}
                                 />
                                 <UtilitiesLayers utilities={mergedUtilities} selectedUtilityIds={selectedUtilityIds} mapReady={mapReady} />
                                 {mapWideVisible && roadRouteStart && (

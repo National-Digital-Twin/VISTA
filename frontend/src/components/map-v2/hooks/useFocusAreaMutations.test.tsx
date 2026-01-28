@@ -238,10 +238,8 @@ describe('useFocusAreaMutations', () => {
         });
 
         await waitFor(() => {
-            // List queries are invalidated to refresh the list
             expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['focusAreas', 'scenario-123'] });
             expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['scenarioAssets', 'scenario-123'] });
-            // All exposure layer queries are invalidated (since active focus areas changed)
             expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['exposureLayers', 'scenario-123'] });
         });
     });

@@ -1,5 +1,3 @@
-// Vite fills in these environment variables for us
-
 const config = {
     map: {
         maptilerToken: import.meta.env.VITE_MAP_TILER_TOKEN,

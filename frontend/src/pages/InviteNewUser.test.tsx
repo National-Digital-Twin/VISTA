@@ -140,11 +140,9 @@ describe('InviteNewUser', () => {
             const emailInput = screen.getByPlaceholderText('Enter email address');
             fireEvent.change(emailInput, { target: { value: '  user@example.com  ' } });
 
-            // Fill in user type
             const adminRadio = screen.getByLabelText('Admin');
             fireEvent.click(adminRadio);
 
-            // Click send
             const sendButton = screen.getByText('SEND INVITE');
             fireEvent.click(sendButton);
 

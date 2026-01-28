@@ -33,7 +33,6 @@ describe('RadiusDialog', () => {
 
         it('renders helper text when no error', () => {
             render(<RadiusDialog {...defaultProps} />);
-            // Helper text shows when error is empty string (falsy)
             expect(screen.getByText('Enter the radius of the circle in kilometers')).toBeInTheDocument();
         });
 

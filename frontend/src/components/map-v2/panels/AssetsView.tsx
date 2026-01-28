@@ -453,13 +453,6 @@ const AssetsView = ({ onClose, scenarioId, selectedFocusAreaId, onFocusAreaSelec
         [applyScoreFilter, deleteScoreFilter, selectedFocusAreaId, syncFilterModeIfNeeded],
     );
 
-    const handleClearGlobalScoreFilter = useCallback(() => {
-        deleteScoreFilter({
-            focusAreaId: selectedFocusAreaId ?? null,
-            assetTypeId: null,
-        });
-    }, [deleteScoreFilter, selectedFocusAreaId]);
-
     const getScoreFilterForAssetType = useCallback(
         (assetTypeId: string): AssetScoreFilter | undefined => {
             return scoreFilters?.find((sf) => sf.focusAreaId === selectedFocusAreaId && sf.assetTypeId === assetTypeId);
@@ -520,14 +513,7 @@ const AssetsView = ({ onClose, scenarioId, selectedFocusAreaId, onFocusAreaSelec
         }
 
         if (selectedFilterMode === 'by_score_only') {
-            return (
-                <GlobalScoreFilter
-                    onApply={handleApplyGlobalScoreFilter}
-                    onClear={handleClearGlobalScoreFilter}
-                    initialValues={globalScoreFilter}
-                    disabled={isMutating}
-                />
-            );
+            return <GlobalScoreFilter onApply={handleApplyGlobalScoreFilter} initialValues={globalScoreFilter} disabled={isMutating} />;
         }
 
         return (

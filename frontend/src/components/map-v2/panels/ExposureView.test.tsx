@@ -28,7 +28,6 @@ vi.mock('@/api/focus-areas', () => ({
     fetchFocusAreas: vi.fn(),
 }));
 
-// Mock the drawing context since the component uses it directly
 const mockStartDrawing = vi.fn();
 const mockSetDrawingConfig = vi.fn();
 vi.mock('../context/DrawingContext', () => ({
@@ -39,7 +38,6 @@ vi.mock('../context/DrawingContext', () => ({
     })),
 }));
 
-// Mock the exposure layer mutations hook
 vi.mock('../hooks/useExposureLayerMutations', () => ({
     default: vi.fn(() => ({
         createExposureLayer: vi.fn(),
@@ -232,12 +230,10 @@ describe('ExposureView', () => {
                 expect(screen.getByLabelText('Focus area')).toBeInTheDocument();
             });
 
-            // Wait for focus areas to load
             await waitFor(() => {
                 expect(mockedFetchFocusAreas).toHaveBeenCalled();
             });
 
-            // Allow time for data to be processed
             await new Promise<void>((resolve) => {
                 setTimeout(resolve, 100);
             });
@@ -265,12 +261,10 @@ describe('ExposureView', () => {
                 expect(screen.getByLabelText('Focus area')).toBeInTheDocument();
             });
 
-            // Wait for focus areas to load
             await waitFor(() => {
                 expect(mockedFetchFocusAreas).toHaveBeenCalled();
             });
 
-            // Allow time for data to be processed
             await new Promise<void>((resolve) => {
                 setTimeout(resolve, 100);
             });
@@ -278,7 +272,6 @@ describe('ExposureView', () => {
             const select = screen.getByRole('combobox');
             fireEvent.mouseDown(select);
 
-            // Inactive focus areas should now be selectable (not disabled)
             await waitFor(
                 () => {
                     const inactiveOption = screen.getByRole('option', { name: 'Focus Area 2' });

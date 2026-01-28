@@ -190,7 +190,6 @@ describe('ExposureLayers', () => {
 
             const { container } = renderWithProviders(<ExposureLayers scenarioId="scenario-1" selectedFocusAreaId={null} mapReady={true} />);
 
-            // Wait a bit to ensure no fetch is triggered
             await new Promise((resolve) => {
                 setTimeout(resolve, 50);
             });
@@ -207,7 +206,6 @@ describe('ExposureLayers', () => {
             renderWithProviders(<ExposureLayers scenarioId="scenario-1" mapReady={true} isInFocusAreaPanel={true} />);
 
             await waitFor(() => {
-                // Should call with null focus_area_id - server returns all active focus areas' layers
                 expect(mockedFetchExposureLayers).toHaveBeenCalledWith('scenario-1', null);
                 expect(mockedFetchExposureLayers).toHaveBeenCalledTimes(1);
             });

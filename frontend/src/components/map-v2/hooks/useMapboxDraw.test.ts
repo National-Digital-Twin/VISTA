@@ -98,10 +98,8 @@ describe('useMapboxDraw', () => {
 
         const firstDrawInstance = result.current.current;
 
-        // Rerender - should NOT recreate draw control
         rerender({ isReady: true });
 
-        // Still only 1 call - draw control is stable
         expect(mockAddControl).toHaveBeenCalledTimes(1);
         expect(result.current.current).toBe(firstDrawInstance);
     });

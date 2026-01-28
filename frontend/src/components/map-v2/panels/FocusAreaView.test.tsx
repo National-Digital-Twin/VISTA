@@ -463,7 +463,6 @@ describe('FocusAreaView', () => {
             fireEvent.click(screen.getByLabelText('Hide focus area'));
 
             await waitFor(() => {
-                // Only the visibility toggle should be disabled during visibility mutation
                 expect(screen.getByLabelText('Hide focus area')).toBeDisabled();
             });
 
@@ -606,7 +605,6 @@ describe('FocusAreaView', () => {
         });
 
         it('disables draw button when isDrawing is true', async () => {
-            // Re-mock useDrawingContext to return drawingMode: 'polygon' for this test
             const { useDrawingContext } = await import('../context/DrawingContext');
             vi.mocked(useDrawingContext).mockReturnValue({
                 setDrawingConfig: mockSetDrawingConfig,
@@ -621,7 +619,6 @@ describe('FocusAreaView', () => {
                 expect(drawButton).toBeDisabled();
             });
 
-            // Reset mock
             vi.mocked(useDrawingContext).mockReturnValue({
                 setDrawingConfig: mockSetDrawingConfig,
                 drawingMode: null,
