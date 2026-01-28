@@ -15,7 +15,8 @@ export const useMultipleFocusAreaAssets = ({ scenarioId, focusAreaIds, iconMap }
             queryKey: ['scenarioAssets', scenarioId, focusAreaId],
             queryFn: () => fetchScenarioAssets({ scenarioId: scenarioId!, focusAreaId, iconMap }),
             enabled: !!scenarioId && focusAreaIds.length > 0,
-            staleTime: 5 * 60 * 1000,
+            staleTime: 0,
+            refetchOnMount: true,
         })),
     });
 

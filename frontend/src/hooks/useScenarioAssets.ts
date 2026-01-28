@@ -12,7 +12,8 @@ export const useScenarioAssets = ({ scenarioId, focusAreaId, iconMap }: UseScena
         queryKey: ['scenarioAssets', scenarioId, focusAreaId ?? 'all'],
         queryFn: () => fetchScenarioAssets({ scenarioId: scenarioId!, focusAreaId, iconMap }),
         enabled: !!scenarioId,
-        staleTime: 5 * 60 * 1000,
+        staleTime: 0,
+        refetchOnMount: 'always',
     });
 
     return {
