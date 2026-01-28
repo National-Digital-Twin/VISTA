@@ -16,6 +16,7 @@ const useFocusAreaMutations = ({ scenarioId, onError }: UseFocusAreaMutationsOpt
     };
 
     const invalidateQueriesForFocusArea = (focusAreaId: string) => {
+        queryClient.invalidateQueries({ queryKey: ['scenarioAssets', scenarioId, focusAreaId] });
         queryClient.invalidateQueries({ queryKey: ['scenarioAssetTypes', scenarioId, focusAreaId] });
         queryClient.invalidateQueries({ queryKey: ['exposureLayers', scenarioId, focusAreaId] });
     };
@@ -36,6 +37,7 @@ const useFocusAreaMutations = ({ scenarioId, onError }: UseFocusAreaMutationsOpt
             invalidateFocusAreaList();
             if (variables.data.geometry !== undefined) {
                 invalidateQueriesForFocusArea(variables.focusAreaId);
+                invalidateAllExposureLayers();
             }
             if (variables.data.isActive !== undefined) {
                 invalidateAllExposureLayers();

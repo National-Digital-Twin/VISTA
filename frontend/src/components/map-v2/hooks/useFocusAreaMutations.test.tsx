@@ -159,7 +159,7 @@ describe('useFocusAreaMutations', () => {
         expect(invalidateSpy).not.toHaveBeenCalledWith(expect.objectContaining({ queryKey: ['scenarioAssetTypes', 'scenario-123', 'fa-1'] }));
     });
 
-    it('updateFocusArea also invalidates scenarioAssetTypes and exposureLayers when geometry changes', async () => {
+    it('updateFocusArea also invalidates scenarioAssetTypes, scenarioAssets for focus area, and all exposure layers when geometry changes', async () => {
         mockedUpdateFocusArea.mockResolvedValue(createMockFocusArea());
         const invalidateSpy = vi.spyOn(queryClient, 'invalidateQueries');
 
@@ -187,8 +187,10 @@ describe('useFocusAreaMutations', () => {
         await waitFor(() => {
             expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['focusAreas', 'scenario-123'] });
             expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['scenarioAssets', 'scenario-123'] });
+            expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['scenarioAssets', 'scenario-123', 'fa-1'] });
             expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['scenarioAssetTypes', 'scenario-123', 'fa-1'] });
             expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['exposureLayers', 'scenario-123', 'fa-1'] });
+            expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['exposureLayers', 'scenario-123'] });
         });
     });
 
