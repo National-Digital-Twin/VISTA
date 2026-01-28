@@ -623,7 +623,7 @@ const AssetsView = ({ onClose, scenarioId, selectedFocusAreaId, onFocusAreaSelec
                     <FocusAreaSelector
                         scenarioId={scenarioId}
                         selectedFocusAreaId={currentFocusAreaId}
-                        onFocusAreaSelect={onFocusAreaSelect ?? (() => { })}
+                        onFocusAreaSelect={onFocusAreaSelect ?? (() => {})}
                         label="Select focus area"
                     />
                 </Box>
