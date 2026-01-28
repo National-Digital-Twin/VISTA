@@ -201,7 +201,7 @@ function AssetTypeListItem({ assetType, onToggle, onOpenScoreFilter, hasFilter, 
                     <Typography variant="body2" noWrap sx={{ flex: 1 }}>
                         {assetType.name}
                     </Typography>
-                    <StatusPill isActive={assetType.isActive} width="100px">
+                    <StatusPill isActive={assetType.assetCountInFocusArea > 0} width="100px">
                         <Typography variant="caption" sx={{ color: 'inherit', fontWeight: 'inherit' }}>
                             {activeCount} / {maxCount}
                         </Typography>
@@ -623,7 +623,7 @@ const AssetsView = ({ onClose, scenarioId, selectedFocusAreaId, onFocusAreaSelec
                     <FocusAreaSelector
                         scenarioId={scenarioId}
                         selectedFocusAreaId={currentFocusAreaId}
-                        onFocusAreaSelect={onFocusAreaSelect ?? (() => {})}
+                        onFocusAreaSelect={onFocusAreaSelect ?? (() => { })}
                         label="Select focus area"
                     />
                 </Box>
