@@ -151,6 +151,7 @@ indent-style = "space"
 "osmnx.py" = ["N803"]             # Let me call my graph big G.
 "resolvers.py" = ["N803", "N806"]
 "routing.py" = ["N803", "N806"]
+"**/routing/*.py" = ["N803", "N806"]
 "**/tests/**/*.py" = ["F401", "D102", "PLR2004"]
 
 ##############

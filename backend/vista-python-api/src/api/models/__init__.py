@@ -14,6 +14,14 @@ from .dependency import Dependency
 from .exposure_layer import ExposureLayer, ExposureLayerType
 from .focus_area import FocusArea
 from .group import Group, GroupDataSourceAccess, GroupMembership
+from .road_link import (
+    Directionality,
+    FormOfWay,
+    OperationalState,
+    RoadClassification,
+    RoadLink,
+    RouteHierarchy,
+)
 from .scenario import Scenario
 from .scenario_asset import ScenarioAsset
 from .visible_asset import VisibleAsset
@@ -30,12 +38,18 @@ __all__ = [
     "ConstraintInterventionType",
     "DataSource",
     "Dependency",
+    "Directionality",
     "ExposureLayer",
     "ExposureLayerType",
     "FocusArea",
+    "FormOfWay",
     "Group",
     "GroupDataSourceAccess",
     "GroupMembership",
+    "OperationalState",
+    "RoadClassification",
+    "RoadLink",
+    "RouteHierarchy",
     "Scenario",
     "ScenarioAsset",
     "VisibleAsset",

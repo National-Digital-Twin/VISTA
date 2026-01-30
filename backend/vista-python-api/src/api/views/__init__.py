@@ -15,6 +15,7 @@ from .scenario_asset_types import ScenarioAssetTypesView
 from .scenario_assets import ScenarioAssetsView
 from .scenario_constraint_interventions import ScenarioConstraintInterventionsView
 from .scenario_exposure_layers import ScenarioExposureLayersView
+from .scenario_route import ScenarioRouteView
 from .scenarios import ScenarioViewSet
 from .visible_asset_types import BulkVisibleAssetTypeView, VisibleAssetTypeView
 from .visible_exposure_layers import BulkVisibleExposureLayerView, VisibleExposureLayerView
@@ -33,6 +34,7 @@ __all__ = [
     "ScenarioAssetsView",
     "ScenarioConstraintInterventionsView",
     "ScenarioExposureLayersView",
+    "ScenarioRouteView",
     "ScenarioViewSet",
     "VisibleAssetTypeView",
     "VisibleExposureLayerView",
