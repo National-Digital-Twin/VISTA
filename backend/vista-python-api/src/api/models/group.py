@@ -74,8 +74,7 @@ class GroupMembership(models.Model):
     def create(cls, group_id, user_id, created_by):
         """Create an instance."""
         return cls(
-            id=uuid4(),
-            group=group_id,
+            group_id=group_id,
             user_id=user_id,
             created_by=created_by,
             created_at=timezone.now(),

@@ -29,7 +29,7 @@ from .focus_area import (
 )
 from .group import GroupMembershipSerializer, GroupSerializer
 from .scenario import ScenarioSerializer
-from .user import IdpUserSerializer
+from .user import IdpUserSerializer, UserCreateSerializer, UserInviteSerializer
 from .visible_asset_type import (
     BulkVisibleAssetTypeResponseSerializer,
     BulkVisibleAssetTypeToggleSerializer,
@@ -68,6 +68,8 @@ __all__ = [
     "IdpUserSerializer",
     "ScenarioAssetSerializer",
     "ScenarioSerializer",
+    "UserCreateSerializer",
+    "UserInviteSerializer",
     "VisibleAssetTypeResponseSerializer",
     "VisibleAssetTypeToggleSerializer",
     "VisibleExposureLayerResponseSerializer",
