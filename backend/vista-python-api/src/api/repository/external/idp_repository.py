@@ -79,7 +79,7 @@ class IdpRepository:
             for user in all_user_response["Users"]
         ]
 
-    def create_user(self, email, is_admin) -> None:
+    def create_user(self, email, is_admin) -> str:
         """Create a new user."""
         if not settings.IS_PROD:
             return "00000000-0000-0000-0000-000000000001"
