@@ -7,7 +7,11 @@ import uuid
 import pytest
 from rest_framework.exceptions import AuthenticationFailed
 
-from api.utils.auth import get_user_id_from_request, get_user_is_admin_from_request
+from api.utils.auth import (
+    generate_temp_password,
+    get_user_id_from_request,
+    get_user_is_admin_from_request,
+)
 
 
 def _create_jwt(payload: dict) -> str:
@@ -156,3 +160,13 @@ class TestGetUserIsAdminFromRequest:
 
         with pytest.raises(AuthenticationFailed, match="Invalid token format"):
             get_user_is_admin_from_request(request)
+
+
+def test_generate_temp_password():
+    """Test generated password contains lower, upper, digit and special char."""
+    pw = generate_temp_password(12)
+
+    assert any(c.islower() for c in pw)
+    assert any(c.isupper() for c in pw)
+    assert any(c.isdigit() for c in pw)
+    assert any(not c.isalnum() for c in pw)

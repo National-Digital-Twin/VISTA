@@ -90,7 +90,6 @@ def generate_temp_password(length: int = 16) -> str:
     digits = string.digits
     special = "!@#$%^&*()-_=+[]{}<>?"
 
-    # Ensure required characters
     password_chars = [
         secrets.choice(lowercase),
         secrets.choice(uppercase),
@@ -98,11 +97,13 @@ def generate_temp_password(length: int = 16) -> str:
         secrets.choice(special),
     ]
 
-    # Fill the rest
     all_chars = lowercase + uppercase + digits + special
+
     password_chars.extend(secrets.choice(all_chars) for _ in range(length - len(password_chars)))
 
-    # Shuffle to avoid predictable positions
-    secrets.SystemRandom().shuffle(password_chars)
+    # Fisher-Yates shuffle using secrets
+    for i in range(len(password_chars) - 1, 0, -1):
+        j = secrets.randbelow(i + 1)
+        password_chars[i], password_chars[j] = password_chars[j], password_chars[i]
 
     return "".join(password_chars)
