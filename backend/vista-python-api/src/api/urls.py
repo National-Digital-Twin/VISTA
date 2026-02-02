@@ -118,5 +118,10 @@ urlpatterns = [
         views.ScenarioConstraintInterventionsView.as_view(),
         name="scenario-constraint-intervention-detail",
     ),
+    path(
+        "scenarios/<uuid:scenario_id>/route/",
+        views.ScenarioRouteView.as_view(),
+        name="scenario-route",
+    ),
     path("", include(router.urls)),
 ]
