@@ -1,10 +1,12 @@
 """Tests for the IDP repository."""
 
+from datetime import datetime
 from unittest.mock import ANY, MagicMock, call, patch
 from uuid import UUID, uuid4
 
 import pytest
 
+from api.domain.cognito_user import IdpUser
 from api.repository.external.idp_repository import IdpRepository
 
 user_pool_name = "test-pool-id"
@@ -200,15 +202,12 @@ def test_create_user_does_not_create_user_if_user_already_exists(
     monkeypatch.setattr(
         "api.repository.external.idp_repository.generate_temp_password", generate_temp_password
     )
-    mock_boto_client.list_users.return_value = {"Users": [{"Username": str(uuid4())}]}
+    mock_boto_client.list_users.return_value = {
+        "Users": [{"Username": str(uuid4()), "UserCreateDate": datetime.now()}]  # noqa: DTZ005
+    }
     mock_boto_client.list_users_in_group.return_value = {"Users": []}
 
-    with patch("api.domain.cognito_user.IdpUser.from_cognito") as mock_from_cognito:
-        mock_from_cognito.side_effect = lambda user, is_admin: {
-            "username": user["Username"],
-            "is_admin": is_admin,
-        }
-        repository.create_user(email, False)
+    repository.create_user(email, False)
 
     assert mock_boto_client.admin_create_user.call_count == 0
     mock_boto_client.admin_create_user.assert_not_called()
@@ -224,15 +223,11 @@ def test_create_user_adds_user_to_access_group_if_user_already_exists(
     monkeypatch.setattr(
         "api.repository.external.idp_repository.generate_temp_password", generate_temp_password
     )
-    mock_boto_client.list_users.return_value = {"Users": [{"Username": str(fake_uuid)}]}
+    mock_boto_client.list_users.return_value = {
+        "Users": [{"Username": str(fake_uuid), "UserCreateDate": datetime.now()}]  # noqa: DTZ005
+    }
     mock_boto_client.list_users_in_group.return_value = {"Users": []}
-
-    with patch("api.domain.cognito_user.IdpUser.from_cognito") as mock_from_cognito:
-        mock_from_cognito.side_effect = lambda user, is_admin: {
-            "username": user["Username"],
-            "is_admin": is_admin,
-        }
-        repository.create_user(email, False)
+    repository.create_user(email, False)
 
     assert mock_boto_client.admin_add_user_to_group.call_count == 1
     mock_boto_client.admin_add_user_to_group.assert_called_with(
@@ -245,17 +240,17 @@ def test_create_general_user_adds_user_to_access_group_only(
 ):
     """Ensure general user creation adds user to only access group."""
     settings.IS_PROD = True
-    fake_uuid = UUID("12345678-1234-5678-1234-567812345678")
-    monkeypatch.setattr("api.repository.external.idp_repository.uuid4", lambda: fake_uuid)
+    username = str(uuid4())
     monkeypatch.setattr(
         "api.repository.external.idp_repository.generate_temp_password", generate_temp_password
     )
+    mock_boto_client.admin_create_user.return_value = {"User": {"Username": username}}
 
     repository.create_user("bob@test.com", False)
 
     assert mock_boto_client.admin_add_user_to_group.call_count == 1
     mock_boto_client.admin_add_user_to_group.assert_called_with(
-        UserPoolId=user_pool_name, Username=str(fake_uuid), GroupName=general_user_group_name
+        UserPoolId=user_pool_name, Username=username, GroupName=general_user_group_name
     )
 
 
@@ -264,11 +259,11 @@ def test_create_admin_user_adds_user_to_access_and_admin_groups(
 ):
     """Ensure admin user creation adds user to access and admin group."""
     settings.IS_PROD = True
-    fake_uuid = UUID("12345678-1234-5678-1234-567812345678")
-    monkeypatch.setattr("api.repository.external.idp_repository.uuid4", lambda: fake_uuid)
+    username = str(uuid4())
     monkeypatch.setattr(
         "api.repository.external.idp_repository.generate_temp_password", generate_temp_password
     )
+    mock_boto_client.admin_create_user.return_value = {"User": {"Username": username}}
 
     repository.create_user("bob@test.com", True)
 
@@ -277,12 +272,10 @@ def test_create_admin_user_adds_user_to_access_and_admin_groups(
         [
             call(
                 UserPoolId=user_pool_name,
-                Username=str(fake_uuid),
+                Username=username,
                 GroupName=general_user_group_name,
             ),
-            call(
-                UserPoolId=user_pool_name, Username=str(fake_uuid), GroupName=admin_user_group_name
-            ),
+            call(UserPoolId=user_pool_name, Username=username, GroupName=admin_user_group_name),
         ]
     )
 
