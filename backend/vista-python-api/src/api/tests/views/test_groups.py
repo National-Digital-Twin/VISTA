@@ -8,7 +8,7 @@ import pytest
 from api.domain.cognito_user import IdpUser
 from api.models.group import Group, GroupMembership
 
-http_success_code = 200
+http_ok = 200
 http_created = 201
 http_no_content = 204
 http_bad_request = 400
@@ -16,19 +16,19 @@ http_forbidden = 403
 http_not_found = 404
 email = "test@test.com"
 
-cognito_one = IdpUser(str(uuid4()), email, name="Alice")
-cognito_two = IdpUser(str(uuid4()), email, name="Bob")
-cognito_three = IdpUser(str(uuid4()), email, name="Charlotte")
 
 admin_uuid = uuid4()
+cognito_one = IdpUser(str(uuid4()), email, name="Alice")
+cognito_two = IdpUser(str(uuid4()), email, name="Bob")
+cognito_admin = IdpUser(str(admin_uuid), email, name="Charlotte")
 
-cognito_users = [cognito_one, cognito_two, cognito_three]
+cognito_users = [cognito_one, cognito_two, cognito_admin]
 
 
 @pytest.fixture
 def group(db):  # noqa: ARG001
     """Create a group for testing."""
-    group = Group.create(name="Volunteers", created_by=uuid4())
+    group = Group.create(name="Volunteers", created_by=admin_uuid)
     Group.objects.bulk_create([group])
     return group
 
@@ -63,6 +63,17 @@ class MockIdpRepository:
         return cognito_users
 
 
+class MockEmptyIdpRepository:
+    """Mockable IdpRepository class."""
+
+    def __init__(self):
+        """Construct an instance of `MockIdpRepository`."""
+
+    def list_users_in_group(self):
+        """List a set of users."""
+        return []
+
+
 class Administrator:
     """Mock administrator permission."""
 
@@ -87,14 +98,30 @@ def test_list_groups(group, members, group_no_members, client, monkeypatch):  # 
     response = client.get("/api/groups/")
     data = response.json()
 
-    assert response.status_code == http_success_code
+    assert response.status_code == http_ok
     assert len(data) == 2
     result = data[0]
 
     assert result["name"] == group.name
+    assert result["createdAt"] is not None
+    assert result["createdBy"] == cognito_admin.name
+
     assert [member["name"] for member in result["members"]] == _fetch_member_names(
         _get_member_id_list(members)
     )
+
+
+@pytest.mark.django_db
+def test_list_groups_returns_unknown_user_if_created_by_deleted(group, client, monkeypatch):  # noqa: ARG001
+    """Test that GET returns unknown user for created by if user has been deleted."""
+    monkeypatch.setattr("api.views.groups.IdpRepository", MockEmptyIdpRepository)
+
+    response = client.get("/api/groups/")
+    data = response.json()
+
+    assert response.status_code == http_ok
+    result = data[0]
+    assert result["createdBy"] == "Unknown user"
 
 
 @pytest.mark.django_db
@@ -105,7 +132,7 @@ def test_list_groups_ordered_by_created_at(group, group_no_members, client, monk
     response = client.get("/api/groups/")
     data = response.json()
 
-    assert response.status_code == http_success_code
+    assert response.status_code == http_ok
     assert data[0]["name"] == group.name
     assert data[1]["name"] == group_no_members.name
 
@@ -118,7 +145,7 @@ def test_list_groups_returns_empty_if_no_groups(client, monkeypatch):
     response = client.get("/api/groups/")
     data = response.json()
 
-    assert response.status_code == http_success_code
+    assert response.status_code == http_ok
     assert len(data) == 0
 
 
@@ -140,7 +167,7 @@ def test_fetch_group_returns_group_and_members(group, members, client, monkeypat
     monkeypatch.setattr("api.views.groups.IdpRepository", MockIdpRepository)
 
     response = client.get(f"/api/groups/{group.id}/")
-    assert response.status_code == http_success_code
+    assert response.status_code == http_ok
     data = response.json()
 
     assert data["id"] == str(group.id)
@@ -246,6 +273,52 @@ def test_create_group_returns_403_for_general_user(client, monkeypatch):
     response = client.post(
         "/api/groups/",
         data=json.dumps({"name": "Forbidden", "memberIds": [cognito_one.id]}),
+        content_type="application/json",
+    )
+    assert response.status_code == http_forbidden
+
+
+# --- PUT (rename) Tests ---
+
+
+@pytest.mark.django_db
+def test_update_group_is_successful(client, group):
+    """Test that PUT with expected fields renames a group successfully."""
+    new_group_name = "New_Volunteers"
+    response = client.put(
+        f"/api/groups/{group.id}/",
+        data=json.dumps({"name": new_group_name}),
+        content_type="application/json",
+    )
+
+    assert response.status_code == http_ok
+    data = response.json()
+    assert data["name"] == new_group_name
+
+    group = Group.objects.get(id=data["id"])
+    assert group.created_by == admin_uuid
+    assert group.created_at is not None
+
+
+@pytest.mark.django_db
+def test_update_group_requires_name(client, group):
+    """Test that POST without name field throws a 400."""
+    response = client.put(
+        f"/api/groups/{group.id}/",
+        data=json.dumps({}),
+        content_type="application/json",
+    )
+    assert response.status_code == http_bad_request
+    assert "name" in response.json()
+
+
+@pytest.mark.django_db
+def test_update_group_returns_403_for_general_user(client, group, monkeypatch):
+    """Test that POST without privileges throws a 403."""
+    monkeypatch.setattr("api.views.groups.Administrator", Administrator)
+    response = client.put(
+        f"/api/groups/{group.id}/",
+        data=json.dumps({"name": "test"}),
         content_type="application/json",
     )
     assert response.status_code == http_forbidden

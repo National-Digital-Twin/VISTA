@@ -18,8 +18,8 @@ class GroupMembershipSerializer(serializers.ModelSerializer):
         """Configuration for the `AssetSubCategorySerializer`."""
 
         model = GroupMembership
-        fields: ClassVar[list[str]] = ["name", "group_id", "user_id", "created_by"]
-        read_only_fields: ClassVar[list[str]] = ["created_by"]
+        fields: ClassVar[list[str]] = ["name", "group_id", "user_id", "created_at", "created_by"]
+        read_only_fields: ClassVar[list[str]] = ["created_at", "created_by"]
         validators: ClassVar[list[serializers.UniqueTogetherValidator]] = [
             serializers.UniqueTogetherValidator(
                 queryset=GroupMembership.objects.all(),
@@ -48,16 +48,41 @@ class GroupSerializer(serializers.ModelSerializer):
     members = GroupMembershipSerializer(many=True, read_only=True)
 
     member_ids = serializers.ListField(
-        child=serializers.CharField(),
-        write_only=True,
+        child=serializers.CharField(), write_only=True, required=False
     )
+    created_by = serializers.SerializerMethodField()
 
     class Meta:
         """Configuration for the serializer."""
 
         model = Group
-        fields: ClassVar[list[str]] = ["id", "name", "members", "member_ids"]
-        read_only_fields: ClassVar[list[str]] = ["created_by"]
+        fields: ClassVar[list[str]] = [
+            "id",
+            "name",
+            "created_at",
+            "created_by",
+            "members",
+            "member_ids",
+        ]
+        read_only_fields: ClassVar[list[str]] = ["created_at", "created_by"]
+
+    def get_created_by(self, obj):
+        """Get name of user who created group from serializer context."""
+        user = self.context["idp_user_map"].get(str(obj.created_by))
+        if user:
+            return user.name
+        return "Unknown user"
+
+    def validate(self, attrs):
+        """Validate expected request attributes are present."""
+        request = self.context.get("request")
+
+        if request and request.method == "POST" and "member_ids" not in attrs:
+            raise serializers.ValidationError(
+                {"member_ids": "This field is required when creating a group."}
+            )
+
+        return attrs
 
     @transaction.atomic
     def create(self, validated_data):

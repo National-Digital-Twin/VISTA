@@ -14,7 +14,7 @@ from api.utils.auth import get_user_id_from_request
 class GroupViewSet(viewsets.ModelViewSet):
     """ViewSet for Group operations."""
 
-    http_method_names: ClassVar = ["get", "post", "delete"]
+    http_method_names: ClassVar = ["get", "post", "put", "delete"]
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
 
