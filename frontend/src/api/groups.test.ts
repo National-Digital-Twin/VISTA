@@ -25,8 +25,15 @@ describe('groups API', () => {
 
     describe('fetchAllGroups', () => {
         const mockGroups: Group[] = [
-            { id: 'g1', name: 'Admins', members: [{ name: 'Alice' }, { name: 'Bob' }] },
-            { id: 'g2', name: 'Users', members: [{ name: 'Carol' }] },
+            {
+                id: 'g1',
+                name: 'Admins',
+                members: [
+                    { name: 'Alice', userId: 'alice-id' },
+                    { name: 'Bob', userId: 'bob-id' },
+                ],
+            },
+            { id: 'g2', name: 'Users', members: [{ name: 'Carol', userId: 'carol-id' }] },
         ];
 
         it('successfully fetches all groups', async () => {
@@ -74,7 +81,7 @@ describe('groups API', () => {
 
     describe('createGroup', () => {
         it('successfully creates a group with name and member ids', async () => {
-            const created: Group = { id: 'g-new', name: 'New Group', members: [{ name: 'Alice' }] };
+            const created: Group = { id: 'g-new', name: 'New Group', members: [{ name: 'Alice', userId: 'alice-id' }] };
             fetchMock.mockResolvedValue({
                 ok: true,
                 json: vi.fn().mockResolvedValue(created),

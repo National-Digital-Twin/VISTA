@@ -2,6 +2,8 @@ import config from '@/config/app-config';
 
 export type GroupMember = {
     name: string | null;
+    userId: string;
+    createdBy?: string;
 };
 
 export type Group = {

@@ -96,13 +96,12 @@ const compareUsers =
         return direction === 'asc' ? comparison : -comparison;
     };
 
-const getCurrentMemberIds = (group: Group | null, users: User[], adminUserIds: Set<string>): Set<string> => {
+const getCurrentMemberIds = (group: Group | null, _users: User[], adminUserIds: Set<string>): Set<string> => {
     if (!group) {
         return new Set(adminUserIds);
     }
-    const memberNames = new Set(group.members.map((m) => m.name || '').filter(Boolean));
-    const userIdsFromNames = new Set(users.filter((u) => memberNames.has(u.name)).map((u) => u.id));
-    return new Set([...userIdsFromNames, ...adminUserIds]);
+    const memberIds = new Set(group.members.map((m) => m.userId));
+    return new Set([...memberIds, ...adminUserIds]);
 };
 
 const getEmptyMessage = (hasActiveFilters: boolean, isSearchOnlyNoResults: boolean, fallbackMessage: string): string => {
@@ -666,7 +665,7 @@ const GroupsTab: React.FC = () => {
                                     fullWidth
                                     sx={{
                                         '& .MuiInput-root': {
-                                            backgroundColor: '#f5f5f5',
+                                            backgroundColor: 'neutral.main',
                                             borderRadius: 1,
                                             px: 1,
                                             py: 0.5,
