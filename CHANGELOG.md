@@ -17,6 +17,12 @@ This project follows **Semantic Versioning (SemVer)** ([semver.org](https://semv
 
 ---
 
+## [0.94.0]
+
+- Allows users to draw their own exposure layers, unique to that scenario and user.
+- Adds status pills to asset types and exposure layers indicating whether a focus area includes them.
+- Some additional minor cosmetic updates e.g. displaying focus area outlines when asset panel is active.
+
 ## [0.93.0]
 
 A major redesign of VISTA, including:
