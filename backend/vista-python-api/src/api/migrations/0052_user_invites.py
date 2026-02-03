@@ -10,7 +10,7 @@ class Migration(migrations.Migration):
     """Create user_invite relation."""
 
     dependencies: ClassVar = [
-        ("api", "0050_group_ordering_and_uniqueness"),
+        ("api", "0051_add_road_link"),
     ]
 
     operations: ClassVar = [

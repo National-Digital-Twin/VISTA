@@ -41,5 +41,5 @@ class UserInvite(models.Model):
         )
 
     def __str__(self):
-        """Group string representation."""
+        """UserInvite string representation."""
         return ""

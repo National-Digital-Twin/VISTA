@@ -155,6 +155,33 @@ def test_invite_user_request_without_user_type_is_bad_request(client):
 
 
 @pytest.mark.django_db
+def test_invite_user_request_with_wrong_email_format_is_bad_request(client):
+    """Test a 400 is returned if email format is wrong in request."""
+    response = client.post(
+        "/api/users/",
+        data=json.dumps({"email": "bob", "userType": "general", "groupIds": []}),
+        content_type="application/json",
+    )
+    assert response.status_code == http_bad_request
+    assert "email" in response.json()
+
+
+@pytest.mark.django_db
+def test_invite_user_request_with_unknown_group_id_is_bad_request(client):
+    """Test a 400 is returned if group ID is unknown."""
+    group_id = str(uuid4())
+    response = client.post(
+        "/api/users/",
+        data=json.dumps({"email": "bob@test.com", "userType": "general", "groupIds": [group_id]}),
+        content_type="application/json",
+    )
+    data = response.json()
+    assert response.status_code == http_bad_request
+    assert "groupIds" in data
+    assert group_id in data["groupIds"][0]
+
+
+@pytest.mark.django_db
 def test_invite_user_returns_403_for_general_user(client, monkeypatch):
     """Test that POST returns a 403 if not admin."""
     monkeypatch.setattr("api.views.users.Administrator", Administrator)
