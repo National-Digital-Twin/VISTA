@@ -103,6 +103,15 @@ class IdpRepository:
             self._add_user_to_admin_group(username)
         return username
 
+    def remove_user_from_vista(self, user_id: str) -> None:
+        """Remove user access to VISTA."""
+        self.client.admin_remove_user_from_group(
+            UserPoolId=self.user_pool_id, Username=user_id, GroupName=self.user_group_name
+        )
+        self.client.admin_remove_user_from_group(
+            UserPoolId=self.user_pool_id, Username=user_id, GroupName=self.admin_user_group_name
+        )
+
     def _add_user_to_user_group(self, username):
         self.client.admin_add_user_to_group(
             UserPoolId=self.user_pool_id, Username=username, GroupName=self.user_group_name

@@ -285,3 +285,25 @@ def test_create_user_in_dev_does_not_call_cognito(mock_boto_client, repository):
     repository.create_user("bob@test.com", False)
 
     mock_boto_client.admin_create_user.assert_not_called()
+
+
+def test_remove_user_from_vista_removes_user_from_access_and_admin_groups(
+    settings, mock_boto_client, repository
+):
+    """Ensure remove user from vista removes user from access and admin group."""
+    settings.IS_PROD = True
+    username = str(uuid4())
+
+    repository.remove_user_from_vista(username)
+
+    assert mock_boto_client.admin_remove_user_from_group.call_count == 2
+    mock_boto_client.admin_remove_user_from_group.assert_has_calls(
+        [
+            call(
+                UserPoolId=user_pool_name,
+                Username=username,
+                GroupName=general_user_group_name,
+            ),
+            call(UserPoolId=user_pool_name, Username=username, GroupName=admin_user_group_name),
+        ]
+    )
