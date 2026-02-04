@@ -8,7 +8,6 @@ import config from '@/config/app-config';
 import AdminSettings from '@/pages/AdminSettings';
 import DataSource from '@/pages/DataSources';
 import DataSourceDetail from '@/pages/DataSourceDetail';
-import GroupDetail from '@/pages/GroupDetail';
 import InviteNewUser from '@/pages/InviteNewUser';
 import ScenarioMap from '@/pages/ScenarioMap';
 import Notifications from '@/pages/Notifications';
@@ -37,7 +36,6 @@ const AppWrapper = () => {
                 { path: 'notifications', element: <Notifications /> },
                 { path: 'privacy', element: <PrivacyNotice /> },
                 { path: 'user/:userId', element: <Profile /> },
-                { path: 'group/:groupName', element: <GroupDetail /> },
             ],
         },
     ]);

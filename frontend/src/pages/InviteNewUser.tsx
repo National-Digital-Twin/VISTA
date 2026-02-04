@@ -26,7 +26,6 @@ import PageContainer from '@/components/PageContainer';
 import { SortableTableHeader } from '@/components/SortableTableHeader';
 import { sendInvite, InviteData } from '@/api/invites';
 
-// TODO: Replace with actual group data from API
 const AVAILABLE_GROUPS = [
     { name: 'Resilience team', id: 'resilience-team' },
     { name: 'Tywnwell team', id: 'tywnwell-team' },
@@ -55,8 +54,8 @@ export default function InviteNewUser() {
         setSelectedGroups((prev) => (prev.includes(groupId) ? prev.filter((id) => id !== groupId) : [...prev, groupId]));
     };
 
-    const handleViewGroup = (groupName: string) => {
-        navigate(`/group/${encodeURIComponent(groupName)}`);
+    const handleViewGroup = (_groupName: string) => {
+        navigate(`/admin?tab=groups`);
     };
 
     const handleGroupSort = (field: 'name') => {
