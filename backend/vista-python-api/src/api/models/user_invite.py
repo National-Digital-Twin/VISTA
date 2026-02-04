@@ -17,12 +17,12 @@ class UserInvite(models.Model):
     ]
 
     id = models.UUIDField(default=uuid4, unique=True, primary_key=True)
-    user_id = models.UUIDField()
+    user_id = models.UUIDField(unique=True)
     status = models.CharField(max_length=20, choices=USER_INVITE_STATUSES, default="pending")
     created_by = models.UUIDField()
     created_at = models.DateTimeField(auto_now_add=True)
     accepted_at = models.DateTimeField(null=True)
-    expires_at = models.DateTimeField(null=True)
+    expired_at = models.DateTimeField(null=True)
 
     class Meta:
         """Meta configuration."""

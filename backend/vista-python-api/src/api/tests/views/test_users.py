@@ -1,6 +1,8 @@
 """A set of tests for the `ApplictionUserViewSet`."""
 
 import json
+from datetime import UTC, datetime, timedelta, timezone
+from unittest.mock import patch
 from uuid import uuid4
 
 import pytest
@@ -27,15 +29,59 @@ new_user_uuid = uuid4()
 admin_uuid = uuid4()
 
 
-def get_user_id_from_request(request):  # noqa: ARG001
-    """Mock user ID in request."""
+def get_admin_user_id_from_request(request):  # noqa: ARG001
+    """Mock admin user ID in request."""
     return admin_uuid
+
+
+def get_user_id_from_request(request):  # noqa: ARG001
+    """Mock general user ID in request."""
+    return new_user_uuid
 
 
 @pytest.fixture
 def group(db):  # noqa: ARG001
     """Create a group for testing."""
     return Group.objects.create(name="Volunteers", created_by=uuid4())
+
+
+@pytest.fixture
+def user_invites(db):  # noqa: ARG001
+    """Create a user invite for testing."""
+    user_invites = []
+    user_invites.append(
+        UserInvite.objects.create(user_id=new_user_uuid, status="pending", created_by=admin_uuid)
+    )
+    user_invites.append(
+        UserInvite.objects.create(user_id=admin_uuid, status="accepted", created_by=admin_uuid)
+    )
+    return user_invites
+
+
+@pytest.fixture
+def pending_expired_user_invite(db):  # noqa: ARG001
+    """Create a pending expired user invite for testing."""
+    ten_days_ago = datetime.now(UTC) - timedelta(days=10)
+    user_invite = UserInvite.objects.create(
+        user_id=new_user_uuid, status="pending", created_by=admin_uuid
+    )
+    user_invite.created_at = ten_days_ago
+    user_invite.save()
+    return user_invite
+
+
+@pytest.fixture
+def expired_user_invite(db):  # noqa: ARG001
+    """Create an expired user invite for testing."""
+    return UserInvite.objects.create(
+        user_id=new_user_uuid,
+        status="expired",
+        expired_at=datetime.now(UTC),
+        created_by=admin_uuid,
+    )
+
+
+user_removed = False
 
 
 class MockIdpRepository:
@@ -87,7 +133,7 @@ def test_list_users_returns_403_for_general_user(client, monkeypatch):
 def test_invite_user_is_successful(client, monkeypatch):
     """Check a user invite calls external repo and saves invite."""
     monkeypatch.setattr("api.views.users.IdpRepository", MockIdpRepository)
-    monkeypatch.setattr("api.views.users.get_user_id_from_request", get_user_id_from_request)
+    monkeypatch.setattr("api.views.users.get_user_id_from_request", get_admin_user_id_from_request)
 
     response = client.post(
         "/api/users/",
@@ -104,14 +150,14 @@ def test_invite_user_is_successful(client, monkeypatch):
     assert user_invite.created_by == admin_uuid
     assert user_invite.created_at is not None
     assert user_invite.accepted_at is None
-    assert user_invite.expires_at is None
+    assert user_invite.expired_at is None
 
 
 @pytest.mark.django_db
 def test_invite_user_with_groups_creates_group_memberships(client, group, monkeypatch):
     """Check a user invite creates group membership."""
     monkeypatch.setattr("api.views.users.IdpRepository", MockIdpRepository)
-    monkeypatch.setattr("api.views.users.get_user_id_from_request", get_user_id_from_request)
+    monkeypatch.setattr("api.views.users.get_user_id_from_request", get_admin_user_id_from_request)
 
     response = client.post(
         "/api/users/",
@@ -189,3 +235,71 @@ def test_invite_user_returns_403_for_general_user(client, monkeypatch):
         content_type="application/json",
     )
     assert response.status_code == http_forbidden
+
+
+# --- POST (Resolve invite) Tests ---
+
+
+@pytest.mark.django_db
+def test_resolve_invites_successfully_resolves_pending_invite(client, user_invites, monkeypatch):  # noqa: ARG001
+    """Check a pending invite for active user is successfully accepted."""
+    monkeypatch.setattr("api.views.users.get_user_id_from_request", get_user_id_from_request)
+    response = client.post("/api/users/resolve-invites/")
+
+    assert response.status_code == http_ok
+    new_user_invite = UserInvite.objects.filter(user_id=new_user_uuid)[0]
+    assert new_user_invite.status == "accepted"
+    assert new_user_invite.accepted_at is not None
+    assert new_user_invite.expired_at is None
+
+
+@pytest.mark.django_db
+def test_resolve_invites_does_not_change_invite_already_accepted(client, user_invites, monkeypatch):
+    """Check an accepted invite for active user is not changed."""
+    monkeypatch.setattr("api.views.users.get_user_id_from_request", get_admin_user_id_from_request)
+    response = client.post("/api/users/resolve-invites/")
+
+    assert response.status_code == http_ok
+
+    fixture_invite = user_invites[1]
+    db_user_invite = UserInvite.objects.filter(user_id=admin_uuid)[0]
+    assert db_user_invite.status == "accepted"
+    assert db_user_invite.accepted_at == fixture_invite.accepted_at
+    assert db_user_invite.expired_at is None
+
+
+@pytest.mark.django_db
+def test_resolve_invites_does_not_change_invite_already_expired(
+    client, expired_user_invite, monkeypatch
+):
+    """Check an expired invite for active user is not changed."""
+    monkeypatch.setattr("api.views.users.get_user_id_from_request", get_user_id_from_request)
+    response = client.post("/api/users/resolve-invites/")
+
+    assert response.status_code == http_ok
+
+    db_user_invite = UserInvite.objects.filter(user_id=new_user_uuid)[0]
+    assert db_user_invite.status == "expired"
+    assert db_user_invite.expired_at == expired_user_invite.expired_at
+    assert db_user_invite.accepted_at is None
+
+
+@pytest.mark.django_db
+def test_resolve_invites_expires_any_pending_invite_over_7_days_and_removes_cognito_group_access(
+    client,
+    pending_expired_user_invite,  # noqa: ARG001
+    monkeypatch,
+):
+    """Check resolve invites marks any pending expired invites as expired and removes access."""
+    monkeypatch.setattr("api.views.users.get_user_id_from_request", get_admin_user_id_from_request)
+    with patch("api.views.users.IdpRepository") as mock_idp_repository:
+        instance = mock_idp_repository.return_value
+        response = client.post("/api/users/resolve-invites/")
+
+        assert response.status_code == http_ok
+        instance.remove_user_from_vista.assert_called_once_with(str(new_user_uuid))
+
+    db_user_invite = UserInvite.objects.filter(user_id=new_user_uuid)[0]
+    assert db_user_invite.status == "expired"
+    assert db_user_invite.expired_at is not None
+    assert db_user_invite.accepted_at is None
