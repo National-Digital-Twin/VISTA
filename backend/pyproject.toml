@@ -14,7 +14,7 @@ package-mode = false
 python = ">=3.12.5,<3.13"
 
 # Everything below here is alphabetically sorted
-ariadne = "^0.27.0"
+ariadne = "^0.28.0"
 ariadne-django = "^0.3.0"
 django = "5.2.11"
 osmnx = "^2.0.7"
@@ -58,7 +58,7 @@ model-bakery = "^1.23.2"
 cattrs = "^24.1.3"
 
 [tool.poetry.group.dev.dependencies]
-ruff = "0.14.14"
+ruff = "0.15.0"
 pytest-asyncio = "^1.3.0"
 
 [build-system]
