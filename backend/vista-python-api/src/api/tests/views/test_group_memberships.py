@@ -69,6 +69,7 @@ def test_add_member_to_group_is_successful(group, members, client, monkeypatch):
     assert response.status_code == http_created
     data = response.json()
     assert data["createdBy"] == str(admin_uuid)
+    assert data["createdAt"] is not None
     assert GroupMembership.objects.filter(group_id=group.id, user_id=idp_user_b.id).exists()
 
 
