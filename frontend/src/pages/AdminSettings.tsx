@@ -14,9 +14,37 @@ type TabPanelProps = {
 };
 
 function TabPanel({ children, value, index, ...other }: TabPanelProps) {
+    const isGroupsTab = index === 2;
     return (
-        <div role="tabpanel" hidden={value !== index} id={`admin-tabpanel-${index}`} aria-labelledby={`admin-tab-${index}`} {...other}>
-            {value === index && <Box sx={{ pt: 3 }}>{children}</Box>}
+        <div
+            role="tabpanel"
+            hidden={value !== index}
+            id={`admin-tabpanel-${index}`}
+            aria-labelledby={`admin-tab-${index}`}
+            {...other}
+            style={{
+                display: value === index ? 'flex' : 'none',
+                flex: '1 1',
+                width: '100%',
+                minWidth: 0,
+            }}
+        >
+            {value === index && (
+                <Box
+                    sx={{
+                        pt: 3,
+                        width: '100%',
+                        ...(isGroupsTab && {
+                            display: 'flex',
+                            flexDirection: 'column',
+                            flex: 1,
+                            minHeight: 0,
+                        }),
+                    }}
+                >
+                    {children}
+                </Box>
+            )}
         </div>
     );
 }
@@ -44,12 +72,12 @@ const AdminSettings: React.FC = () => {
     };
 
     return (
-        <PageContainer>
-            <Typography variant="h3" component="h1" gutterBottom>
+        <PageContainer sx={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0 }}>
+            <Typography variant="h3" component="h1" gutterBottom sx={{ flexShrink: 0 }}>
                 Admin settings
             </Typography>
 
-            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+            <Box sx={{ borderBottom: 1, borderColor: 'divider', flexShrink: 0 }}>
                 <Tabs
                     value={activeTab}
                     onChange={handleTabChange}
