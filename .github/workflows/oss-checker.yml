@@ -177,7 +177,7 @@ jobs:
              const reportPath = 'policy-results.json';
              writeFileSync(reportPath, JSON.stringify(report, null, 2));
              core.info(`Wrote policy summary to ${reportPath}`);
-
+             
              if (failed > 0) {
                core.setFailed('Policy checks failed for one or more files.');
              } else {
