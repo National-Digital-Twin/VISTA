@@ -31,7 +31,7 @@ def group(db):  # noqa: ARG001
 @pytest.fixture
 def members(db, group):  # noqa: ARG001
     """Create group members for testing."""
-    member_one = GroupMembership.create(group, idp_user_a.id, uuid4())
+    member_one = GroupMembership.create(group.id, idp_user_a.id, uuid4())
     members = [member_one]
 
     GroupMembership.objects.bulk_create(members)

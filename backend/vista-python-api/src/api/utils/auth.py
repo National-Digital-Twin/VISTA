@@ -2,10 +2,14 @@
 
 import base64
 import json
+import secrets
+import string
 import uuid
 
 from django.conf import settings
 from rest_framework.exceptions import AuthenticationFailed
+
+MINIMUM_PWD_LENGTH = 10
 
 
 def _decode_jwt(jwt):
@@ -74,3 +78,32 @@ def get_user_is_admin_from_request(request) -> bool:
     jwt = _validate_header_fetch_jwt(request)
     token = _decode_jwt(jwt)
     return "vista_admin" in token["cognito:groups"]
+
+
+def generate_temp_password(length: int = 16) -> str:
+    """Generate a Cognito-compatible temporary password."""
+    if length < MINIMUM_PWD_LENGTH:
+        raise ValueError("Password length must be at least 10 characters")
+
+    lowercase = string.ascii_lowercase
+    uppercase = string.ascii_uppercase
+    digits = string.digits
+    special = "!@#$%^&*()-_=+[]{}<>?"
+
+    password_chars = [
+        secrets.choice(lowercase),
+        secrets.choice(uppercase),
+        secrets.choice(digits),
+        secrets.choice(special),
+    ]
+
+    all_chars = lowercase + uppercase + digits + special
+
+    password_chars.extend(secrets.choice(all_chars) for _ in range(length - len(password_chars)))
+
+    # Fisher-Yates shuffle using secrets
+    for i in range(len(password_chars) - 1, 0, -1):
+        j = secrets.randbelow(i + 1)
+        password_chars[i], password_chars[j] = password_chars[j], password_chars[i]
+
+    return "".join(password_chars)
