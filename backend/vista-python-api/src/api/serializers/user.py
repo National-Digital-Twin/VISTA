@@ -25,7 +25,7 @@ class UserCreateSerializer(serializers.Serializer):
 
     email = serializers.EmailField()
     user_type = serializers.ChoiceField(choices=["general", "admin"], required=True)
-    group_ids = serializers.ListField(child=serializers.CharField())
+    group_ids = serializers.ListField(child=serializers.UUIDField())
 
     def validate_group_ids(self, value):
         """Validate expected request attributes are present and valid."""

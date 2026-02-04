@@ -35,9 +35,7 @@ def get_user_id_from_request(request):  # noqa: ARG001
 @pytest.fixture
 def group(db):  # noqa: ARG001
     """Create a group for testing."""
-    group = Group.create(name="Volunteers", created_by=uuid4())
-    Group.objects.bulk_create([group])
-    return group
+    return Group.objects.create(name="Volunteers", created_by=uuid4())
 
 
 class MockIdpRepository:
