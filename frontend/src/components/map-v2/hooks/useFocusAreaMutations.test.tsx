@@ -157,6 +157,25 @@ describe('useFocusAreaMutations', () => {
         });
 
         expect(invalidateSpy).not.toHaveBeenCalledWith(expect.objectContaining({ queryKey: ['scenarioAssetTypes', 'scenario-123', 'fa-1'] }));
+        expect(invalidateSpy).not.toHaveBeenCalledWith({ queryKey: ['roadRoute', 'scenario-123'] });
+    });
+
+    it('updateFocusArea invalidates roadRoute query when isActive changes', async () => {
+        mockedUpdateFocusArea.mockResolvedValue(createMockFocusArea());
+        const invalidateSpy = vi.spyOn(queryClient, 'invalidateQueries');
+
+        const { result } = renderHook(() => useFocusAreaMutations({ scenarioId: 'scenario-123' }), {
+            wrapper: createWrapper(queryClient),
+        });
+
+        act(() => {
+            result.current.updateFocusArea({ focusAreaId: 'fa-1', data: { isActive: false } });
+        });
+
+        await waitFor(() => {
+            expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['roadRoute', 'scenario-123'] });
+            expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['exposureLayers', 'scenario-123'] });
+        });
     });
 
     it('updateFocusArea also invalidates scenarioAssetTypes, scenarioAssets for focus area, and all exposure layers when geometry changes', async () => {

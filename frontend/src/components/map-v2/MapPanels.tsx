@@ -2,11 +2,13 @@ import type { ReactElement } from 'react';
 import { Box, Paper } from '@mui/material';
 import MapPanelButton from './MapPanelButton';
 import AssetsView from './panels/AssetsView';
+import ConstraintsView from './panels/ConstraintsView';
 import ExposureView from './panels/ExposureView';
 import FocusAreaView from './panels/FocusAreaView';
 import UtilitiesView from './panels/UtilitiesView';
 import InspectorView from './panels/InspectorView';
 import type { Asset } from '@/api/assets-by-type';
+import type { ConstraintInterventionType } from '@/api/constraint-interventions';
 import type { FocusArea } from '@/api/focus-areas';
 import type { ExposureLayersResponse } from '@/api/exposure-layers';
 
@@ -45,30 +47,20 @@ const FIXED_ITEMS: readonly MapPanelItem[] = [
         label: 'Utilities',
         icon: <img src="/icons/map-v2/utilities.svg" alt="Utilities" width={24} height={24} />,
     },
+    {
+        id: 'constraints',
+        label: 'Constraints',
+        icon: <img src="/icons/map-v2/constraints.svg" alt="Constraints" width={24} height={24} />,
+    },
 ];
-
-type RoadRoutePosition = {
-    readonly lat: number;
-    readonly lng: number;
-} | null;
 
 type MapPanelsProps = {
     activeView?: string | null;
     onViewChange?: (viewId: string | null) => void;
     selectedFocusAreaId?: string | null;
-    selectedUtilityIds?: Record<string, boolean>;
-    onUtilityToggle?: (utilityId: string, enabled: boolean) => void;
     selectedElement?: Asset | null;
     onBackFromInspector?: () => void;
     scenarioId?: string;
-    roadRouteStart?: RoadRoutePosition;
-    roadRouteEnd?: RoadRoutePosition;
-    roadRouteVehicle?: 'HGV' | 'EmergencyVehicle' | 'Car';
-    roadRouteLoading?: boolean;
-    roadRouteError?: Error | null;
-    roadRouteData?: { routeGeojson: { features: Array<{ properties?: { length?: number; travel_time?: number; speed_kph?: number } }> } };
-    onRoadRouteVehicleChange?: (vehicle: 'HGV' | 'EmergencyVehicle' | 'Car' | undefined) => void;
-    onRequestPositionSelection?: (type: 'start' | 'end' | null) => void;
     onFocusAreaSelect?: (focusAreaId: string | null) => void;
     onConnectedAssetsVisibilityChange?: (
         visible: boolean,
@@ -81,25 +73,18 @@ type MapPanelsProps = {
     exposureLayersData?: ExposureLayersResponse;
     isExposureLayersLoading?: boolean;
     isExposureLayersError?: boolean;
+    constraintTypes?: ConstraintInterventionType[];
+    isConstraintsLoading?: boolean;
+    isConstraintsError?: boolean;
 };
 
 const MapPanels = ({
     activeView,
     onViewChange,
     selectedFocusAreaId,
-    selectedUtilityIds,
-    onUtilityToggle,
     selectedElement,
     onBackFromInspector,
     scenarioId,
-    roadRouteStart,
-    roadRouteEnd,
-    roadRouteVehicle,
-    roadRouteLoading,
-    roadRouteError,
-    roadRouteData,
-    onRoadRouteVehicleChange,
-    onRequestPositionSelection,
     onFocusAreaSelect,
     onConnectedAssetsVisibilityChange,
     focusAreas,
@@ -108,6 +93,9 @@ const MapPanels = ({
     exposureLayersData,
     isExposureLayersLoading,
     isExposureLayersError,
+    constraintTypes,
+    isConstraintsLoading,
+    isConstraintsError,
 }: Readonly<MapPanelsProps>) => {
     const handleItemClick = (itemId: string) => {
         const newActiveView = activeView === itemId ? null : itemId;
@@ -146,21 +134,7 @@ const MapPanels = ({
                     />
                 );
             case 'utilities':
-                return (
-                    <UtilitiesView
-                        onClose={handleClosePanel}
-                        selectedUtilityIds={selectedUtilityIds}
-                        onUtilityToggle={onUtilityToggle}
-                        roadRouteStart={roadRouteStart}
-                        roadRouteEnd={roadRouteEnd}
-                        roadRouteVehicle={roadRouteVehicle}
-                        roadRouteLoading={roadRouteLoading}
-                        roadRouteError={roadRouteError}
-                        roadRouteData={roadRouteData}
-                        onRoadRouteVehicleChange={onRoadRouteVehicleChange}
-                        onRequestPositionSelection={onRequestPositionSelection}
-                    />
-                );
+                return <UtilitiesView onClose={handleClosePanel} />;
             case 'focus-area':
                 return (
                     <FocusAreaView
@@ -181,6 +155,16 @@ const MapPanels = ({
                         onClose={handleClosePanel}
                         scenarioId={scenarioId}
                         onConnectedAssetsVisibilityChange={onConnectedAssetsVisibilityChange}
+                    />
+                );
+            case 'constraints':
+                return (
+                    <ConstraintsView
+                        onClose={handleClosePanel}
+                        scenarioId={scenarioId}
+                        constraintTypes={constraintTypes}
+                        isLoading={isConstraintsLoading}
+                        isError={isConstraintsError}
                     />
                 );
             default:

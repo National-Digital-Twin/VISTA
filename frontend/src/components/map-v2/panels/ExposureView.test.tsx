@@ -428,6 +428,90 @@ describe('ExposureView', () => {
                 expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['asset-score', 'scenario-1'] });
             });
         });
+
+        it('invalidates roadRoute query when toggling a floods exposure layer', async () => {
+            const floodsTypeId = '2d373dca-1337-4e60-ba08-c8326d27042d';
+            const floodsExposureLayersData: ExposureLayersResponse = {
+                featureCollection: {
+                    type: 'FeatureCollection',
+                    features: [
+                        {
+                            type: 'Feature',
+                            id: 'flood-layer-1',
+                            geometry: mockGeometry1,
+                            properties: {
+                                name: 'Flood Zone A',
+                                groupId: floodsTypeId,
+                                groupName: 'Floods',
+                                isActive: false,
+                            },
+                        },
+                    ],
+                },
+                groups: [
+                    {
+                        id: floodsTypeId,
+                        name: 'Floods',
+                        isUserEditable: false,
+                        exposureLayers: [{ id: 'flood-layer-1', name: 'Flood Zone A', geometry: mockGeometry1, isActive: false }],
+                    },
+                    { id: 'group-user-drawn', name: 'User drawn', isUserEditable: true, exposureLayers: [] },
+                ],
+            };
+
+            const invalidateSpy = vi.spyOn(queryClient, 'invalidateQueries');
+            renderWithProviders(<ExposureView {...defaultProps} exposureLayersData={floodsExposureLayersData} selectedFocusAreaId="map-wide-1" />);
+
+            await waitFor(() => {
+                expect(screen.getByText(/Floods/)).toBeInTheDocument();
+            });
+            const floodsHeader = screen.getByText(/Floods/);
+            const headerButton = floodsHeader.closest('button');
+            if (headerButton) {
+                fireEvent.click(headerButton);
+            }
+            await waitFor(() => {
+                expect(screen.getByText('Flood Zone A')).toBeInTheDocument();
+            });
+
+            fireEvent.click(screen.getByLabelText('Show Flood Zone A'));
+
+            await waitFor(() => {
+                expect(mockedToggleExposureLayerVisibility).toHaveBeenCalled();
+            });
+
+            await waitFor(() => {
+                expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['roadRoute', 'scenario-1'] });
+            });
+        });
+
+        it('does not invalidate roadRoute query when toggling a non-floods exposure layer', async () => {
+            const invalidateSpy = vi.spyOn(queryClient, 'invalidateQueries');
+            renderWithProviders(<ExposureView {...defaultProps} selectedFocusAreaId="map-wide-1" />);
+            await waitFor(() => {
+                expect(screen.getByText(/Floods/)).toBeInTheDocument();
+            });
+            const floodsHeader = screen.getByText(/Floods/);
+            const headerButton = floodsHeader.closest('button');
+            if (headerButton) {
+                fireEvent.click(headerButton);
+            }
+            await waitFor(() => {
+                expect(screen.getByText('Caul Bourne')).toBeInTheDocument();
+            });
+
+            fireEvent.click(screen.getByLabelText('Show Caul Bourne'));
+
+            await waitFor(() => {
+                expect(mockedToggleExposureLayerVisibility).toHaveBeenCalled();
+            });
+
+            await waitFor(() => {
+                expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['exposureLayers', 'scenario-1'] });
+            });
+
+            expect(invalidateSpy).not.toHaveBeenCalledWith({ queryKey: ['roadRoute', 'scenario-1'] });
+        });
     });
 
     describe('Group Expansion', () => {

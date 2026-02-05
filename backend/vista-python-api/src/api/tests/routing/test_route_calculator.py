@@ -562,9 +562,12 @@ class TestEdgeSnappingEdgeCases:
                 f"Gap between segment {i} and {i + 1}: end={current_end}, start={next_start}"
             )
 
-    def test_blocked_edge_snaps_to_alternative(self, calculator, road_blocks_type, mock_user_id):
+    def test_blocked_edge_snaps_to_alternative(
+        self, calculator, road_blocks_type, mock_user_id, create_mapwide_focus_area
+    ):
         """When snapped edge is blocked, should find route via alternative."""
         scenario = Scenario.objects.create(name="Test Block", is_active=False)
+        create_mapwide_focus_area(scenario)
         ConstraintIntervention.objects.create(
             name="Block AB",
             geometry=Polygon(
@@ -737,9 +740,12 @@ class TestEmptyRoadNetwork:
 class TestConstraintIntegration:
     """Tests for constraint intervention integration."""
 
-    def test_polygon_constraint_blocks_route(self, calculator, road_blocks_type, mock_user_id):
+    def test_polygon_constraint_blocks_route(
+        self, calculator, road_blocks_type, mock_user_id, create_mapwide_focus_area
+    ):
         """Route should avoid edges blocked by polygon constraint."""
         scenario = Scenario.objects.create(name="Test", is_active=False)
+        create_mapwide_focus_area(scenario)
 
         ConstraintIntervention.objects.create(
             name="Block BC",
@@ -771,9 +777,12 @@ class TestConstraintIntegration:
             osids = [f["properties"]["osid"] for f in result["features"]]
             assert not any(osid == "bc" for osid in osids)
 
-    def test_inactive_constraint_does_not_block(self, calculator, road_blocks_type, mock_user_id):
-        """Inactive constraints should not affect routing."""
+    def test_inactive_constraint_still_blocks(
+        self, calculator, road_blocks_type, mock_user_id, create_mapwide_focus_area
+    ):
+        """Inactive (hidden) constraints should still affect routing."""
         scenario = Scenario.objects.create(name="Test", is_active=False)
+        create_mapwide_focus_area(scenario)
 
         ConstraintIntervention.objects.create(
             name="Block BC",
@@ -801,15 +810,17 @@ class TestConstraintIntegration:
             user_id=mock_user_id,
         )
 
-        assert len(result["features"]) == 2
-        osids = [f["properties"]["osid"] for f in result["features"]]
-        assert any(osid == "ab" for osid in osids)
-        assert any(osid == "bc" for osid in osids)
+        if result["features"]:
+            osids = [f["properties"]["osid"] for f in result["features"]]
+            assert not any(osid == "bc" for osid in osids)
 
-    def test_constraint_only_affects_owner(self, calculator, road_blocks_type, mock_user_id):
+    def test_constraint_only_affects_owner(
+        self, calculator, road_blocks_type, mock_user_id, create_mapwide_focus_area
+    ):
         """Constraints should only affect the user who created them."""
         scenario = Scenario.objects.create(name="Test", is_active=False)
         other_user_id = uuid.UUID("00000000-0000-0000-0000-000000000002")
+        create_mapwide_focus_area(scenario)
 
         ConstraintIntervention.objects.create(
             name="Block BC",
@@ -842,22 +853,56 @@ class TestConstraintIntegration:
         assert any(osid == "ab" for osid in osids)
         assert any(osid == "bc" for osid in osids)
 
+    def test_inactive_mapwide_skips_constraints(
+        self, calculator, road_blocks_type, mock_user_id, create_mapwide_focus_area
+    ):
+        """Constraints should be ignored when map-wide focus area is inactive."""
+        scenario = Scenario.objects.create(name="Test", is_active=False)
+        create_mapwide_focus_area(scenario, is_active=False)
+
+        ConstraintIntervention.objects.create(
+            name="Block BC",
+            geometry=Polygon(
+                [
+                    (-1.15, 49.95),
+                    (-1.15, 50.05),
+                    (-1.25, 50.05),
+                    (-1.25, 49.95),
+                    (-1.15, 49.95),
+                ]
+            ),
+            type=road_blocks_type,
+            user_id=mock_user_id,
+            scenario=scenario,
+            is_active=True,
+        )
+
+        routing_cache.invalidate()
+
+        result = calculator.calculate_route(
+            start=RoutePoint(lon=-1.0, lat=50.0),
+            end=RoutePoint(lon=-1.2, lat=50.0),
+            scenario_id=scenario.id,
+            user_id=mock_user_id,
+        )
+
+        assert len(result["features"]) == 2
+        osids = [f["properties"]["osid"] for f in result["features"]]
+        assert any(osid == "ab" for osid in osids)
+        assert any(osid == "bc" for osid in osids)
+
 
 @pytest.mark.django_db
 @pytest.mark.usefixtures("simple_road_network")
 class TestFloodZones:
     """Tests for flood zone handling via exposure layers."""
 
-    def test_visible_flood_layer_blocks_edges(self, calculator, flood_layer_type, mock_user_id):
-        """Visible flood layers should block intersecting edges."""
+    def test_visible_flood_layer_blocks_edges(
+        self, calculator, flood_layer_type, mock_user_id, create_mapwide_focus_area
+    ):
+        """Visible flood layers on the map-wide focus area should block intersecting edges."""
         scenario = Scenario.objects.create(name="Test", is_active=False)
-
-        focus_area = FocusArea.objects.create(
-            scenario=scenario,
-            user_id=mock_user_id,
-            name="Test Focus Area",
-            is_active=True,
-        )
+        focus_area = create_mapwide_focus_area(scenario)
 
         flood_layer = ExposureLayer.objects.create(
             name="Test Flood",
@@ -900,15 +945,16 @@ class TestFloodZones:
             osids = [f["properties"]["osid"] for f in result["features"]]
             assert not any(osid == "bc" for osid in osids)
 
-    def test_inactive_focus_area_flood_ignored(self, calculator, flood_layer_type, mock_user_id):
-        """Flood layers in inactive focus areas should not affect routing."""
+    def test_non_system_focus_area_flood_ignored(self, calculator, flood_layer_type, mock_user_id):
+        """Flood layers in non-system focus areas should not affect routing."""
         scenario = Scenario.objects.create(name="Test", is_active=False)
 
         focus_area = FocusArea.objects.create(
             scenario=scenario,
             user_id=mock_user_id,
-            name="Test Focus Area",
-            is_active=False,
+            name="User Focus Area",
+            is_active=True,
+            is_system=False,
         )
 
         flood_layer = ExposureLayer.objects.create(
@@ -953,7 +999,9 @@ class TestFloodZones:
         assert any(osid == "ab" for osid in osids)
         assert any(osid == "bc" for osid in osids)
 
-    def test_non_flood_layer_type_ignored(self, calculator, mock_user_id):
+    def test_non_flood_layer_type_ignored(
+        self, calculator, mock_user_id, create_mapwide_focus_area
+    ):
         """Non-Floods layer types should not affect routing."""
         scenario = Scenario.objects.create(name="Test", is_active=False)
 
@@ -963,12 +1011,7 @@ class TestFloodZones:
             impacts_exposure_score=True,
         )
 
-        focus_area = FocusArea.objects.create(
-            scenario=scenario,
-            user_id=mock_user_id,
-            name="Test Focus Area",
-            is_active=True,
-        )
+        focus_area = create_mapwide_focus_area(scenario)
 
         exposure_layer = ExposureLayer.objects.create(
             name="Test Erosion",
@@ -1082,9 +1125,12 @@ class TestLowBridgeRestrictions:
 class TestConstraintProviderIntegration:
     """Integration tests for ConstraintProvider with real DB."""
 
-    def test_constraint_intervention_returns_geometries(self, road_blocks_type, mock_user_id):
+    def test_constraint_intervention_returns_geometries(
+        self, road_blocks_type, mock_user_id, create_mapwide_focus_area
+    ):
         """Constraint interventions should return blocking geometries."""
         scenario = Scenario.objects.create(name="Test", is_active=False)
+        create_mapwide_focus_area(scenario)
 
         ConstraintIntervention.objects.create(
             name="Block BC",
@@ -1108,9 +1154,12 @@ class TestConstraintProviderIntegration:
 
         assert len(geometries) > 0
 
-    def test_inactive_constraint_returns_no_geometries(self, road_blocks_type, mock_user_id):
-        """Inactive constraints should not return geometries."""
+    def test_inactive_constraint_still_returns_geometries(
+        self, road_blocks_type, mock_user_id, create_mapwide_focus_area
+    ):
+        """Inactive (hidden) constraints should still return geometries for routing."""
         scenario = Scenario.objects.create(name="Test", is_active=False)
+        create_mapwide_focus_area(scenario)
 
         ConstraintIntervention.objects.create(
             name="Block BC",
@@ -1132,7 +1181,7 @@ class TestConstraintProviderIntegration:
         provider = ConstraintProvider()
         geometries = provider.get_blocked_geometries(scenario.id, mock_user_id, None)
 
-        assert len(geometries) == 0
+        assert len(geometries) == 1
 
     def test_hgv_returns_bridge_geometries(self, low_bridge_asset_type):
         """HGV vehicles should return bridge blocking geometries."""

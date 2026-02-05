@@ -31,8 +31,8 @@ type DrawingContextValue = {
     setDrawingConfig: <T>(config: DrawingConfig<T> | null) => void;
     drawingSyncComplete: boolean;
 
-    drawingMode: 'circle' | 'polygon' | null;
-    startDrawing: (mode: 'circle' | 'polygon') => void;
+    drawingMode: 'circle' | 'polygon' | 'line' | null;
+    startDrawing: (mode: 'circle' | 'polygon' | 'line') => void;
 };
 
 const DrawingContext = createContext<DrawingContextValue | null>(null);
@@ -45,7 +45,7 @@ type DrawingProviderProps = {
 };
 
 export const DrawingProvider = ({ children, mapRef, mapReady, scenarioId }: DrawingProviderProps) => {
-    const [drawingMode, setDrawingMode] = useState<'circle' | 'polygon' | null>(null);
+    const [drawingMode, setDrawingMode] = useState<'circle' | 'polygon' | 'line' | null>(null);
     const [drawReady, setDrawReady] = useState(false);
     const [pendingCircle, setPendingCircle] = useState<{ center: [number, number] } | null>(null);
 
@@ -261,12 +261,14 @@ export const DrawingProvider = ({ children, mapRef, mapReady, scenarioId }: Draw
     }, [drawReady, mapRef, drawRef, scenarioId, drawingConfig]);
 
     const startDrawing = useCallback(
-        (mode: 'circle' | 'polygon') => {
+        (mode: 'circle' | 'polygon' | 'line') => {
             if (!drawRef.current) {
                 return;
             }
             if (mode === 'circle') {
                 drawRef.current.changeMode('drag_circle');
+            } else if (mode === 'line') {
+                drawRef.current.changeMode('draw_line_string');
             } else {
                 drawRef.current.changeMode('draw_polygon');
             }

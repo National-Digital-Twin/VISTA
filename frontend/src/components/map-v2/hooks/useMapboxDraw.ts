@@ -20,6 +20,7 @@ export type ActiveFeatureType = FeatureType;
 const COLORS = {
     focus_area: { fill: '#FF0C0C', stroke: '#FF0C0C', fillOpacity: 0.2 },
     exposure_layer: { fill: '#4A90E2', stroke: '#2E5C8A', fillOpacity: 0.3 },
+    constraint: { fill: '#E67E22', stroke: '#D35400', fillOpacity: 0.2 },
 } as const;
 
 const DEFAULT_COLORS = { fill: '#333333', stroke: '#1a1a1a', fillOpacity: 0.2 };

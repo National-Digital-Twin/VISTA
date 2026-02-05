@@ -41,6 +41,8 @@ import {
 } from '@/api/exposure-layers';
 import IconToggle, { type VisibilityState } from '@/components/IconToggle';
 
+const FLOODS_EXPOSURE_LAYER_TYPE_ID = '2d373dca-1337-4e60-ba08-c8326d27042d';
+
 const BADGE_CONFIG: Record<FocusAreaRelation, { label: string; bgColor: string; textColor: string }> = {
     contained: { label: 'In area', bgColor: '#7eb66d', textColor: '#000' },
     overlaps: { label: 'Partially in area', bgColor: '#dfc96e', textColor: '#000' },
@@ -717,14 +719,20 @@ const ExposureView = ({
 
     const isDrawing = drawingMode !== null;
 
-    const invalidateQueries = useCallback(() => {
-        queryClient.invalidateQueries({ queryKey: ['exposureLayers', scenarioId] });
-        queryClient.invalidateQueries({ queryKey: ['asset-score', scenarioId] });
-        queryClient.invalidateQueries({ queryKey: ['scenarioAssets', scenarioId] });
-    }, [queryClient, scenarioId]);
+    const invalidateQueries = useCallback(
+        (typeId?: string) => {
+            queryClient.invalidateQueries({ queryKey: ['exposureLayers', scenarioId] });
+            queryClient.invalidateQueries({ queryKey: ['asset-score', scenarioId] });
+            queryClient.invalidateQueries({ queryKey: ['scenarioAssets', scenarioId] });
+            if (typeId === FLOODS_EXPOSURE_LAYER_TYPE_ID) {
+                queryClient.invalidateQueries({ queryKey: ['roadRoute', scenarioId] });
+            }
+        },
+        [queryClient, scenarioId],
+    );
 
     const visibilityMutation = useMutation({
-        mutationFn: (data: { exposureLayerId: string; isActive: boolean }) => {
+        mutationFn: (data: { exposureLayerId: string; isActive: boolean; typeId?: string }) => {
             if (!currentFocusAreaId) {
                 return Promise.reject(new Error('No focus area selected'));
             }
@@ -734,7 +742,7 @@ const ExposureView = ({
                 isActive: data.isActive,
             });
         },
-        onSuccess: invalidateQueries,
+        onSuccess: (_data, variables) => invalidateQueries(variables.typeId),
         onError: () => {
             setMutationError('Failed to update exposure layer visibility');
         },
@@ -751,7 +759,7 @@ const ExposureView = ({
                 isActive: data.isActive,
             });
         },
-        onSuccess: invalidateQueries,
+        onSuccess: (_data, variables) => invalidateQueries(variables.typeId),
         onError: () => {
             setMutationError('Failed to update exposure layer visibility');
         },
@@ -759,7 +767,7 @@ const ExposureView = ({
 
     const updateLayerMutation = useMutation({
         mutationFn: (data: { exposureLayerId: string; name: string }) => updateExposureLayer(scenarioId!, data.exposureLayerId, { name: data.name }),
-        onSuccess: invalidateQueries,
+        onSuccess: () => invalidateQueries(),
         onError: () => {
             setMutationError('Failed to update exposure layer');
         },
@@ -767,7 +775,7 @@ const ExposureView = ({
 
     const deleteLayerMutation = useMutation({
         mutationFn: (exposureLayerId: string) => deleteExposureLayer(scenarioId!, exposureLayerId),
-        onSuccess: invalidateQueries,
+        onSuccess: () => invalidateQueries(),
         onError: () => {
             setMutationError('Failed to delete exposure layer');
         },
@@ -801,9 +809,11 @@ const ExposureView = ({
 
     const toggleExposureLayer = useCallback(
         (layerId: string) => {
-            const currentState = exposureLayersData?.groups.flatMap((g) => g.exposureLayers).find((l) => l.id === layerId)?.isActive ?? false;
+            const group = exposureLayersData?.groups.find((g) => g.exposureLayers.some((l) => l.id === layerId));
+            const layer = group?.exposureLayers.find((l) => l.id === layerId);
+            const currentState = layer?.isActive ?? false;
             const newState = !currentState;
-            visibilityMutation.mutate({ exposureLayerId: layerId, isActive: newState });
+            visibilityMutation.mutate({ exposureLayerId: layerId, isActive: newState, typeId: group?.id });
         },
         [exposureLayersData, visibilityMutation],
     );

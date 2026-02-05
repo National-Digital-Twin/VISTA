@@ -41,6 +41,7 @@ const useFocusAreaMutations = ({ scenarioId, onError }: UseFocusAreaMutationsOpt
             }
             if (variables.data.isActive !== undefined) {
                 invalidateAllExposureLayers();
+                queryClient.invalidateQueries({ queryKey: ['roadRoute', scenarioId] });
             }
         },
         onError: () => onError?.('Failed to update focus area'),

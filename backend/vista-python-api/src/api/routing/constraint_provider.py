@@ -9,7 +9,7 @@ from django.contrib.gis.db.models import GeometryField
 from django.db.models.expressions import RawSQL
 from shapely import make_valid, wkb
 
-from api.models import Asset, ConstraintIntervention, ExposureLayer, FocusArea, VisibleExposureLayer
+from api.models import Asset, ConstraintIntervention, ExposureLayer, FocusArea
 
 if TYPE_CHECKING:
     from uuid import UUID
@@ -38,7 +38,7 @@ class ConstraintProvider:
         """Get all geometries that should block routing."""
         geometries: list[BaseGeometry] = []
 
-        if scenario_id and user_id:
+        if scenario_id and user_id and self._is_mapwide_active(scenario_id, user_id):
             geometries.extend(self._get_constraint_geometries(scenario_id, user_id))
             geometries.extend(self._get_flood_geometries(scenario_id, user_id))
 
@@ -46,6 +46,16 @@ class ConstraintProvider:
             geometries.extend(self._get_bridge_geometries(vehicle))
 
         return geometries
+
+    @staticmethod
+    def _is_mapwide_active(scenario_id: UUID, user_id: UUID) -> bool:
+        """Check if the map-wide focus area is active for this scenario and user."""
+        return FocusArea.objects.filter(
+            scenario_id=scenario_id,
+            user_id=user_id,
+            is_system=True,
+            is_active=True,
+        ).exists()
 
     def _get_constraint_geometries(
         self,
@@ -59,7 +69,6 @@ class ConstraintProvider:
         constraints = ConstraintIntervention.objects.filter(
             scenario_id=scenario_id,
             user_id=user_id,
-            is_active=True,
             type__impacts_routing=True,
         ).annotate(
             routing_geom=RawSQL(
@@ -82,26 +91,12 @@ class ConstraintProvider:
         scenario_id: UUID,
         user_id: UUID,
     ) -> list[BaseGeometry]:
-        """Get geometries from visible flood exposure layers."""
-        focus_area_ids = FocusArea.objects.filter(
-            scenario_id=scenario_id,
-            user_id=user_id,
-            is_active=True,
-        ).values_list("id", flat=True)
-
-        if not focus_area_ids:
-            return []
-
-        visible_layer_ids = VisibleExposureLayer.objects.filter(
-            focus_area_id__in=focus_area_ids
-        ).values_list("exposure_layer_id", flat=True)
-
-        if not visible_layer_ids:
-            return []
-
+        """Get geometries from visible flood exposure layers on the map-wide focus area."""
         flood_layers = ExposureLayer.objects.filter(
-            id__in=visible_layer_ids,
             type__name="Floods",
+            visible_in__focus_area__scenario_id=scenario_id,
+            visible_in__focus_area__user_id=user_id,
+            visible_in__focus_area__is_system=True,
         ).only("geometry")
 
         return [self._to_shapely(layer.geometry) for layer in flood_layers]
