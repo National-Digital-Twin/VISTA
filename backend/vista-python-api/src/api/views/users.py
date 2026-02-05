@@ -57,6 +57,13 @@ class ApplicationUserViewSet(ViewSet):
             status=status.HTTP_201_CREATED,
         )
 
+    def destroy(self, request, pk):  # noqa: ARG002
+        """Delete user from Cognito and user-associated entities."""
+        self.idp_repository.remove_user_from_vista(pk)
+        UserInvite.objects.filter(user_id=pk).delete()
+        GroupMembership.objects.filter(user_id=pk).delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
     @action(detail=False, methods=["post"], url_path="resolve-invites")
     def resolve_invites(self, request):
         """Resolve any pending user invites."""
