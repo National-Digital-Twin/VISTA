@@ -327,10 +327,10 @@ def test_delete_user_is_successful(client, group, members, user_invites):  # noq
         response = client.delete(f"/api/users/{new_user_uuid}/")
         assert response.status_code == http_no_content
         instance.remove_user_from_vista.assert_called_once_with(str(new_user_uuid))
-    user_invites = UserInvite.objects.filter(user_id=new_user_uuid)
-    assert not user_invites
-    group_memberships = GroupMembership.objects.filter(user_id=new_user_uuid)
-    assert not group_memberships
+    user_invites_db = UserInvite.objects.filter(user_id=new_user_uuid)
+    assert not user_invites_db
+    group_memberships_db = GroupMembership.objects.filter(user_id=new_user_uuid)
+    assert not group_memberships_db
 
 
 @pytest.mark.django_db

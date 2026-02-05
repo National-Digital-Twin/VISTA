@@ -49,7 +49,6 @@ export default function Profile() {
             navigate('/admin?tab=users');
         } catch {
             // eslint-disable-next-line no-empty
-
         } finally {
             handleCloseModal();
         }
