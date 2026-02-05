@@ -1,7 +1,10 @@
 import { Box } from '@mui/material';
 import MapView from '@/components/map-v2/MapView';
+import { RouteProvider } from '@/components/map-v2/context/RouteContext';
+import { useActiveScenario } from '@/hooks/useActiveScenario';
 
 const ScenarioMap = () => {
+    const { data: activeScenario } = useActiveScenario();
     return (
         <Box
             sx={{
@@ -11,7 +14,9 @@ const ScenarioMap = () => {
                 bgcolor: 'background.default',
             }}
         >
-            <MapView />
+            <RouteProvider scenarioId={activeScenario?.id}>
+                <MapView />
+            </RouteProvider>
         </Box>
     );
 };

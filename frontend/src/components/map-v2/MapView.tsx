@@ -2,7 +2,7 @@ import { useCallback, useMemo, useRef, useState, useEffect, type ComponentProps 
 import { Box } from '@mui/material';
 import type { MapRef, ViewStateChangeEvent } from 'react-map-gl/maplibre';
 import type { MapMouseEvent } from 'maplibre-gl';
-import Map, { Marker } from 'react-map-gl/maplibre';
+import Map from 'react-map-gl/maplibre';
 import { useQuery } from '@tanstack/react-query';
 
 import 'maplibre-gl/dist/maplibre-gl.css';
@@ -15,6 +15,7 @@ import MapPanels from './MapPanels';
 import AssetLayers, { ASSET_SYMBOL_LAYER_ID } from './AssetLayers';
 import ExposureLayers from './ExposureLayers';
 import UtilitiesLayers from './UtilitiesLayers';
+import ConstraintLayers from './ConstraintLayers';
 import FocusAreaMask from './FocusAreaMask';
 import FocusAreaOutline from './FocusAreaOutline';
 import InactiveFocusAreas from './InactiveFocusAreas';
@@ -22,6 +23,7 @@ import ActiveFocusAreas from './ActiveFocusAreas';
 import ConnectedAssetsLayer from './ConnectedAssetsLayer';
 import MapLoadingOverlay from './MapLoadingOverlay';
 import { DrawingProvider, useDrawingContext } from './context/DrawingContext';
+import { useRouteContext } from './context/RouteContext';
 import { usePreloadAssetIcons } from './hooks/usePreloadAssetIcons';
 import { useAssetTypeIcons } from '@/hooks/useAssetTypeIcons';
 import { useActiveScenario } from '@/hooks/useActiveScenario';
@@ -31,7 +33,7 @@ import { fetchAssetCategories } from '@/api/asset-categories';
 import { fetchAssetDetails } from '@/api/asset-details';
 import { fetchFocusAreas } from '@/api/focus-areas';
 import { fetchExposureLayers } from '@/api/exposure-layers';
-import { useRoadRouteLazyQuery, type RoadRouteInputParams } from '@/api/utilities';
+import { fetchConstraintInterventions } from '@/api/constraint-interventions';
 import type { Asset } from '@/api/assets-by-type';
 
 const ASSET_LAYER_IDS = [ASSET_SYMBOL_LAYER_ID, `${ASSET_SYMBOL_LAYER_ID}-selected`, 'map-v2-asset-line-layer'] as const;
@@ -40,7 +42,10 @@ type DrawingAwareAssetLayersProps = Omit<ComponentProps<typeof AssetLayers>, 'in
 
 const DrawingAwareAssetLayers = (props: DrawingAwareAssetLayersProps) => {
     const { drawingMode } = useDrawingContext();
-    return <AssetLayers {...props} interactionDisabled={drawingMode !== null} />;
+    const { positionSelectionMode } = useRouteContext();
+    const interactionDisabled = drawingMode !== null || positionSelectionMode !== null;
+
+    return <AssetLayers {...props} interactionDisabled={interactionDisabled} />;
 };
 
 const MapView = () => {
@@ -51,26 +56,26 @@ const MapView = () => {
     const [mapStylePanelOpen, setMapStylePanelOpen] = useState(false);
     const [assetInfoPanelOpen, setAssetInfoPanelOpen] = useState(false);
     const [activePanelView, setActivePanelView] = useState<string | null>('focus-area');
-    const [selectedUtilityIds, setSelectedUtilityIds] = useState<Record<string, boolean>>({});
     const [selectedElement, setSelectedElement] = useState<Asset | null>(null);
     const [previousPanelView, setPreviousPanelView] = useState<string | null>('focus-area');
     const [connectedAssets, setConnectedAssets] = useState<{
         dependents: Array<{ id: string; geom: string; type: { name: string } }>;
         providers: Array<{ id: string; geom: string; type: { name: string } }>;
     }>({ dependents: [], providers: [] });
-    const [roadRouteStart, setRoadRouteStart] = useState<{ lat: number; lng: number } | null>(null);
-    const [roadRouteEnd, setRoadRouteEnd] = useState<{ lat: number; lng: number } | null>(null);
-    const [roadRouteVehicle, setRoadRouteVehicle] = useState<RoadRouteInputParams['vehicle']>('Car');
-    const [positionSelectionMode, setPositionSelectionMode] = useState<'start' | 'end' | null>(null);
     const [isSpritesGenerating, setIsSpritesGenerating] = useState(false);
     const [showCoordinates, setShowCoordinates] = useState(false);
     const [showCpsIcons, setShowCpsIcons] = useState(false);
 
+    const route = useRouteContext();
+
     const isInFocusAreaPanel = activePanelView === 'focus-area';
     const isInExposurePanel = activePanelView === 'exposure';
     const isInAssetsPanel = activePanelView === 'assets';
+    const isInUtilitiesPanel = activePanelView === 'utilities';
+    const isInConstraintsPanel = activePanelView === 'constraints';
+    const isInMapWidePanel = activePanelView === 'utilities' || activePanelView === 'constraints';
     const shouldFilterByFocusArea = activePanelView === 'assets' || activePanelView === 'exposure';
-    const shouldShowAllActiveFocusAreas = shouldFilterByFocusArea;
+    const shouldShowAllActiveFocusAreas = shouldFilterByFocusArea || isInMapWidePanel;
 
     const { data: activeScenario } = useActiveScenario();
     const scenarioId = activeScenario?.id;
@@ -90,15 +95,38 @@ const MapView = () => {
         staleTime: 5 * 60 * 1000,
     });
 
+    const {
+        data: constraintTypes,
+        isFetching: isConstraintsFetching,
+        isLoading: isConstraintsLoading,
+        isError: isConstraintsError,
+    } = useQuery({
+        queryKey: ['constraintInterventions', scenarioId],
+        queryFn: () => fetchConstraintInterventions(scenarioId ?? ''),
+        enabled: !!scenarioId,
+        staleTime: 5 * 60 * 1000,
+    });
+
+    const mapWideFocusArea = useMemo(() => {
+        return focusAreas?.find((fa) => fa.isSystem);
+    }, [focusAreas]);
+
+    const effectiveSelectedFocusAreaId = useMemo(() => {
+        if (isInMapWidePanel) {
+            return null;
+        }
+        return selectedFocusAreaId;
+    }, [isInMapWidePanel, selectedFocusAreaId]);
+
     const exposureLayersFocusAreaId = useMemo(() => {
         if (isInExposurePanel) {
-            return selectedFocusAreaId;
+            return effectiveSelectedFocusAreaId;
         }
         if (shouldShowAllActiveFocusAreas) {
             return null;
         }
-        return selectedFocusAreaId;
-    }, [shouldShowAllActiveFocusAreas, selectedFocusAreaId, isInExposurePanel]);
+        return effectiveSelectedFocusAreaId;
+    }, [shouldShowAllActiveFocusAreas, effectiveSelectedFocusAreaId, isInExposurePanel]);
 
     const {
         data: exposureLayersData,
@@ -108,7 +136,7 @@ const MapView = () => {
     } = useQuery({
         queryKey: ['exposureLayers', scenarioId, exposureLayersFocusAreaId],
         queryFn: () => fetchExposureLayers(scenarioId ?? '', exposureLayersFocusAreaId),
-        enabled: !!scenarioId && (shouldShowAllActiveFocusAreas || !!selectedFocusAreaId) && (isInExposurePanel || isInAssetsPanel),
+        enabled: !!scenarioId && (shouldShowAllActiveFocusAreas || !!effectiveSelectedFocusAreaId) && (isInExposurePanel || isInAssetsPanel),
         staleTime: 0,
         refetchOnMount: true,
     });
@@ -169,24 +197,6 @@ const MapView = () => {
         staleTime: 5 * 60 * 1000,
     });
 
-    const [getRoadRoute, { data: roadRouteQueryData, loading: roadRouteLoading, error: roadRouteError }] = useRoadRouteLazyQuery();
-
-    const isRoadRouteEnabled = selectedUtilityIds['road-route'] ?? false;
-
-    useEffect(() => {
-        if (roadRouteStart && roadRouteEnd && isRoadRouteEnabled) {
-            getRoadRoute({
-                variables: {
-                    startLat: roadRouteStart.lat,
-                    startLon: roadRouteStart.lng,
-                    endLat: roadRouteEnd.lat,
-                    endLon: roadRouteEnd.lng,
-                    vehicle: roadRouteVehicle,
-                },
-            });
-        }
-    }, [roadRouteStart, roadRouteEnd, roadRouteVehicle, isRoadRouteEnabled, getRoadRoute]);
-
     const activeFocusAreaIds = useMemo(() => {
         if (!shouldShowAllActiveFocusAreas || !focusAreas) {
             return [];
@@ -200,10 +210,6 @@ const MapView = () => {
         }
         return focusAreas.filter((fa) => fa.isActive && fa.geometry !== null).map((fa) => fa.id);
     }, [isInAssetsPanel, focusAreas, activeFocusAreaIds]);
-
-    const mapWideFocusArea = useMemo(() => {
-        return focusAreas?.find((fa) => fa.isSystem);
-    }, [focusAreas]);
 
     const isMapWideActive = mapWideFocusArea?.isActive ?? true;
     const mapWideVisible = isMapWideActive;
@@ -222,7 +228,7 @@ const MapView = () => {
 
     const singleFocusAreaAssets = useScenarioAssets({
         scenarioId,
-        focusAreaId: shouldFilterByFocusArea && !shouldShowAllActiveFocusAreas ? selectedFocusAreaId : undefined,
+        focusAreaId: shouldFilterByFocusArea && !shouldShowAllActiveFocusAreas ? effectiveSelectedFocusAreaId : undefined,
         iconMap,
     });
 
@@ -263,31 +269,6 @@ const MapView = () => {
     });
 
     usePreloadAssetIcons(assets);
-
-    const mergedUtilities = useMemo(() => {
-        if (!isRoadRouteEnabled || !roadRouteStart || !roadRouteEnd || !mapWideVisible) {
-            return { type: 'FeatureCollection' as const, features: [] };
-        }
-
-        const routeGeojson = roadRouteQueryData?.roadRoute?.routeGeojson;
-        if (!routeGeojson?.features) {
-            return { type: 'FeatureCollection' as const, features: [] };
-        }
-
-        const roadRouteFeatures = routeGeojson.features.map((feature) => ({
-            ...feature,
-            id: 'road-route',
-            properties: {
-                ...feature.properties,
-                id: 'road-route',
-            },
-        }));
-
-        return {
-            type: 'FeatureCollection' as const,
-            features: roadRouteFeatures,
-        };
-    }, [roadRouteQueryData, isRoadRouteEnabled, roadRouteStart, roadRouteEnd, mapWideVisible]);
 
     const handleMove = useCallback((event: ViewStateChangeEvent) => {
         setViewState(event.viewState);
@@ -332,12 +313,12 @@ const MapView = () => {
         }
 
         const previousCursor = canvas.style.cursor;
-        canvas.style.cursor = positionSelectionMode ? 'crosshair' : '';
+        canvas.style.cursor = route.positionSelectionMode ? 'crosshair' : '';
 
         return () => {
             canvas.style.cursor = previousCursor;
         };
-    }, [positionSelectionMode]);
+    }, [route.positionSelectionMode]);
 
     useEffect(() => {
         if (!mapReady || !isInFocusAreaPanel || !selectedFocusAreaId) {
@@ -448,15 +429,16 @@ const MapView = () => {
                 return;
             }
 
-            if (positionSelectionMode === 'start') {
-                setRoadRouteStart({ lat: event.lngLat.lat, lng: event.lngLat.lng });
-                setPositionSelectionMode(null);
+            if (route.positionSelectionMode === 'start') {
+                route.setStart({ lat: event.lngLat.lat, lng: event.lngLat.lng });
+                // if we don't have an end yet shortcut to end selection mode
+                route.setPositionSelectionMode(route.end ? null : 'end');
                 return;
             }
 
-            if (positionSelectionMode === 'end') {
-                setRoadRouteEnd({ lat: event.lngLat.lat, lng: event.lngLat.lng });
-                setPositionSelectionMode(null);
+            if (route.positionSelectionMode === 'end') {
+                route.setEnd({ lat: event.lngLat.lat, lng: event.lngLat.lng });
+                route.setPositionSelectionMode(null);
                 return;
             }
 
@@ -493,7 +475,7 @@ const MapView = () => {
                 setActivePanelView(previousPanelView || 'focus-area');
             }
         },
-        [positionSelectionMode, activePanelView, previousPanelView, mapReady],
+        [route, activePanelView, previousPanelView, mapReady],
     );
 
     const handleConnectedAssetsVisibilityChange = useCallback(
@@ -525,38 +507,7 @@ const MapView = () => {
                 <MapPanels
                     activeView={activePanelView}
                     onViewChange={handleViewChange}
-                    selectedFocusAreaId={selectedFocusAreaId}
-                    selectedUtilityIds={selectedUtilityIds}
-                    onUtilityToggle={(utilityId, enabled) => {
-                        setSelectedUtilityIds((prev) => ({
-                            ...prev,
-                            [utilityId]: enabled,
-                        }));
-                        if (utilityId === 'road-route' && !enabled) {
-                            setRoadRouteStart(null);
-                            setRoadRouteEnd(null);
-                            setRoadRouteVehicle('Car');
-                            setPositionSelectionMode(null);
-                        }
-                    }}
-                    roadRouteStart={roadRouteStart}
-                    roadRouteEnd={roadRouteEnd}
-                    roadRouteVehicle={roadRouteVehicle}
-                    roadRouteLoading={roadRouteLoading}
-                    roadRouteError={roadRouteError}
-                    roadRouteData={
-                        roadRouteQueryData?.roadRoute
-                            ? {
-                                  routeGeojson: {
-                                      features: roadRouteQueryData.roadRoute.routeGeojson.features.map((f) => ({
-                                          properties: f.properties || {},
-                                      })),
-                                  },
-                              }
-                            : undefined
-                    }
-                    onRoadRouteVehicleChange={setRoadRouteVehicle}
-                    onRequestPositionSelection={setPositionSelectionMode}
+                    selectedFocusAreaId={effectiveSelectedFocusAreaId}
                     selectedElement={selectedElement}
                     onBackFromInspector={handleBackFromInspector}
                     scenarioId={scenarioId}
@@ -568,6 +519,9 @@ const MapView = () => {
                     exposureLayersData={exposureLayersData}
                     isExposureLayersLoading={isExposureLayersLoading}
                     isExposureLayersError={isExposureLayersError}
+                    constraintTypes={constraintTypes}
+                    isConstraintsLoading={isConstraintsLoading}
+                    isConstraintsError={isConstraintsError}
                 />
 
                 <Box
@@ -589,7 +543,7 @@ const MapView = () => {
                         style={{
                             width: '100%',
                             height: '100%',
-                            cursor: positionSelectionMode ? 'crosshair' : 'grab',
+                            cursor: route.positionSelectionMode ? 'crosshair' : 'grab',
                         }}
                         onLoad={handleMapLoad}
                         transformRequest={transformRequest}
@@ -599,17 +553,17 @@ const MapView = () => {
                             <>
                                 {shouldShowAllActiveFocusAreas && focusAreas && focusAreas.length > 0 && (
                                     <>
-                                        <ActiveFocusAreas focusAreas={focusAreas} selectedFocusAreaId={selectedFocusAreaId} showMask={false} />
-                                        <InactiveFocusAreas focusAreas={focusAreas} selectedFocusAreaId={selectedFocusAreaId} />
+                                        <ActiveFocusAreas focusAreas={focusAreas} selectedFocusAreaId={effectiveSelectedFocusAreaId} showMask={false} />
+                                        <InactiveFocusAreas focusAreas={focusAreas} selectedFocusAreaId={effectiveSelectedFocusAreaId} />
                                     </>
                                 )}
-                                {!shouldShowAllActiveFocusAreas && !isInFocusAreaPanel && selectedFocusAreaId && (
-                                    <FocusAreaMask geometry={focusAreas?.find((fa) => fa.id === selectedFocusAreaId)?.geometry ?? null} />
+                                {!shouldShowAllActiveFocusAreas && !isInFocusAreaPanel && effectiveSelectedFocusAreaId && (
+                                    <FocusAreaMask geometry={focusAreas?.find((fa) => fa.id === effectiveSelectedFocusAreaId)?.geometry ?? null} />
                                 )}
                                 {isInFocusAreaPanel &&
-                                    selectedFocusAreaId &&
+                                    effectiveSelectedFocusAreaId &&
                                     (() => {
-                                        const selectedFocusArea = focusAreas?.find((fa) => fa.id === selectedFocusAreaId);
+                                        const selectedFocusArea = focusAreas?.find((fa) => fa.id === effectiveSelectedFocusAreaId);
                                         if (selectedFocusArea && !selectedFocusArea.isActive && selectedFocusArea.geometry) {
                                             return <FocusAreaOutline geometry={selectedFocusArea.geometry} lineColor="#888888" />;
                                         }
@@ -639,57 +593,15 @@ const MapView = () => {
                                 )}
                                 <ExposureLayers
                                     scenarioId={scenarioId}
-                                    selectedFocusAreaId={selectedFocusAreaId}
+                                    selectedFocusAreaId={effectiveSelectedFocusAreaId}
                                     mapReady={mapReady}
                                     isInFocusAreaPanel={isInFocusAreaPanel}
                                     excludeUserDefined={isInExposurePanel}
                                     shouldShowAllActiveFocusAreas={shouldShowAllActiveFocusAreas}
                                 />
-                                <UtilitiesLayers utilities={mergedUtilities} selectedUtilityIds={selectedUtilityIds} mapReady={mapReady} />
-                                {mapWideVisible && roadRouteStart && (
-                                    <Marker longitude={roadRouteStart.lng} latitude={roadRouteStart.lat} anchor="bottom">
-                                        <Box
-                                            sx={{
-                                                width: 24,
-                                                height: 24,
-                                                borderRadius: '50%',
-                                                backgroundColor: '#4CAF50',
-                                                border: '2px solid white',
-                                                boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                                color: 'white',
-                                                fontSize: '12px',
-                                                fontWeight: 'bold',
-                                            }}
-                                        >
-                                            S
-                                        </Box>
-                                    </Marker>
-                                )}
-                                {mapWideVisible && roadRouteEnd && (
-                                    <Marker longitude={roadRouteEnd.lng} latitude={roadRouteEnd.lat} anchor="bottom">
-                                        <Box
-                                            sx={{
-                                                width: 24,
-                                                height: 24,
-                                                borderRadius: '50%',
-                                                backgroundColor: '#F44336',
-                                                border: '2px solid white',
-                                                boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                                color: 'white',
-                                                fontSize: '12px',
-                                                fontWeight: 'bold',
-                                            }}
-                                        >
-                                            E
-                                        </Box>
-                                    </Marker>
-                                )}
+
+                                {(mapWideVisible || isInUtilitiesPanel) && <UtilitiesLayers mapReady={mapReady} />}
+                                {mapWideVisible && !isInConstraintsPanel && <ConstraintLayers constraintTypes={constraintTypes} mapReady={mapReady} />}
                             </>
                         )}
                     </Map>
@@ -719,6 +631,7 @@ const MapView = () => {
                         isSpritesGenerating={isSpritesGenerating}
                         isFocusAreasFetching={isFocusAreasFetching}
                         isExposureLayersFetching={isExposureLayersFetching}
+                        isConstraintsFetching={isConstraintsFetching}
                     />
 
                     <MapControls

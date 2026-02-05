@@ -3,14 +3,37 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from '@mui/material/styles';
-import type { Geometry } from 'geojson';
 
 import UtilitiesView from './UtilitiesView';
 import theme from '@/theme';
-import { fetchUtilities, type UtilitiesResponse } from '@/api/utilities';
+import { fetchUtilities, type UtilitiesResponse, type RoadRouteResponse } from '@/api/utilities';
 
 vi.mock('@/api/utilities', () => ({
     fetchUtilities: vi.fn(),
+    calculateRoute: vi.fn(),
+}));
+
+const mockRouteContext = {
+    start: null as { lat: number; lng: number } | null,
+    end: null as { lat: number; lng: number } | null,
+    setStart: vi.fn(),
+    setEnd: vi.fn(),
+    vehicle: 'Car' as const,
+    setVehicle: vi.fn(),
+    positionSelectionMode: null as 'start' | 'end' | null,
+    setPositionSelectionMode: vi.fn(),
+    routeData: undefined as RoadRouteResponse | undefined,
+    isLoading: false,
+    error: null as Error | null,
+    findRoute: vi.fn(),
+    showAdditionalSummary: true,
+    setShowAdditionalSummary: vi.fn(),
+    showDirectLine: false,
+    setShowDirectLine: vi.fn(),
+};
+
+vi.mock('../context/RouteContext', () => ({
+    useRouteContext: () => mockRouteContext,
 }));
 
 const mockedFetchUtilities = vi.mocked(fetchUtilities);
@@ -31,6 +54,15 @@ describe('UtilitiesView', () => {
             },
         });
         vi.clearAllMocks();
+        mockRouteContext.start = null;
+        mockRouteContext.end = null;
+        mockRouteContext.vehicle = 'Car';
+        mockRouteContext.positionSelectionMode = null;
+        mockRouteContext.routeData = undefined;
+        mockRouteContext.isLoading = false;
+        mockRouteContext.error = null;
+        mockRouteContext.showAdditionalSummary = true;
+        mockRouteContext.showDirectLine = false;
     });
 
     const renderWithProviders = (component: React.ReactElement) => {
@@ -42,20 +74,8 @@ describe('UtilitiesView', () => {
     };
 
     const setupMocks = (options?: { utilities?: UtilitiesResponse }) => {
-        const mockGeometry: Geometry = {
-            type: 'LineString',
-            coordinates: [
-                [-1.4, 50.67],
-                [-1.39, 50.68],
-            ],
-        };
-
         const {
             utilities = {
-                featureCollection: {
-                    type: 'FeatureCollection',
-                    features: [],
-                },
                 groups: [
                     {
                         id: 'route-planner',
@@ -64,7 +84,6 @@ describe('UtilitiesView', () => {
                             {
                                 id: 'road-route',
                                 name: 'Route',
-                                geometry: mockGeometry,
                             },
                         ],
                     },
@@ -125,18 +144,11 @@ describe('UtilitiesView', () => {
             });
         });
 
-        it('displays utility names when group is expanded', async () => {
+        it('shows road route controls expanded by default', async () => {
             renderWithProviders(<UtilitiesView {...defaultProps} />);
             await waitFor(() => {
                 expect(screen.getByText(/Route Planner/)).toBeInTheDocument();
-            });
-            const roadRoutesHeader = screen.getByText(/Route Planner/);
-            const headerButton = roadRoutesHeader.closest('button');
-            if (headerButton) {
-                fireEvent.click(headerButton);
-            }
-            await waitFor(() => {
-                expect(screen.getByText('Route')).toBeInTheDocument();
+                expect(screen.getByText('FIND ROUTE')).toBeInTheDocument();
             });
         });
     });
@@ -146,37 +158,28 @@ describe('UtilitiesView', () => {
             setupMocks();
         });
 
-        it('expands group when clicked', async () => {
+        it('road route group starts expanded', async () => {
             renderWithProviders(<UtilitiesView {...defaultProps} />);
             await waitFor(() => {
                 expect(screen.getByText(/Route Planner/)).toBeInTheDocument();
             });
             const roadRoutesHeader = screen.getByText(/Route Planner/);
             const headerButton = roadRoutesHeader.closest('button');
-            expect(headerButton).toHaveAttribute('aria-expanded', 'false');
-            if (headerButton) {
-                fireEvent.click(headerButton);
-            }
             await waitFor(() => {
                 expect(headerButton).toHaveAttribute('aria-expanded', 'true');
-                expect(screen.getByText('Route')).toBeInTheDocument();
+                expect(screen.getByText('FIND ROUTE')).toBeInTheDocument();
             });
         });
 
-        it('collapses group when clicked again', async () => {
+        it('collapses group when clicked', async () => {
             renderWithProviders(<UtilitiesView {...defaultProps} />);
             await waitFor(() => {
                 expect(screen.getByText(/Route Planner/)).toBeInTheDocument();
             });
             const roadRoutesHeader = screen.getByText(/Route Planner/);
             const headerButton = roadRoutesHeader.closest('button');
-            expect(headerButton).toHaveAttribute('aria-expanded', 'false');
-            if (headerButton) {
-                fireEvent.click(headerButton);
-            }
             await waitFor(() => {
                 expect(headerButton).toHaveAttribute('aria-expanded', 'true');
-                expect(screen.getByText('Route')).toBeInTheDocument();
             });
             if (headerButton) {
                 fireEvent.click(headerButton);
@@ -187,259 +190,192 @@ describe('UtilitiesView', () => {
         });
     });
 
-    describe('Utility Toggle', () => {
-        beforeEach(() => {
-            setupMocks();
-        });
-
-        it('calls onUtilityToggle when toggle is clicked', async () => {
-            const onUtilityToggle = vi.fn();
-            renderWithProviders(<UtilitiesView {...defaultProps} onUtilityToggle={onUtilityToggle} />);
-            await waitFor(() => {
-                expect(screen.getByText(/Route Planner/)).toBeInTheDocument();
-            });
-            const roadRoutesHeader = screen.getByText(/Route Planner/);
-            const headerButton = roadRoutesHeader.closest('button');
-            if (headerButton) {
-                fireEvent.click(headerButton);
-            }
-            await waitFor(() => {
-                expect(screen.getByText('Route')).toBeInTheDocument();
-            });
-            const toggle = screen.getByLabelText('Show Route');
-            const switchElement = toggle.closest('span')?.querySelector('input[type="checkbox"]');
-            if (switchElement) {
-                fireEvent.click(switchElement);
-            }
-            expect(onUtilityToggle).toHaveBeenCalledWith('road-route', true);
-        });
-
-        it('reflects selected state from props', async () => {
-            renderWithProviders(<UtilitiesView {...defaultProps} selectedUtilityIds={{ 'road-route': true }} onUtilityToggle={vi.fn()} />);
-            await waitFor(() => {
-                expect(screen.getByText(/Route Planner/)).toBeInTheDocument();
-            });
-            const roadRoutesHeader = screen.getByText(/Route Planner/);
-            const headerButton = roadRoutesHeader.closest('button');
-            if (headerButton) {
-                fireEvent.click(headerButton);
-            }
-            await waitFor(() => {
-                expect(screen.getByText('Route')).toBeInTheDocument();
-            });
-            const toggle = screen.getByLabelText('Hide Route');
-            expect(toggle).toBeInTheDocument();
-        });
-    });
-
     describe('Road Route Controls', () => {
         beforeEach(() => {
             setupMocks();
         });
 
         it('shows road route controls when route is selected and toggle is on', async () => {
-            const onRequestPositionSelection = vi.fn();
-            renderWithProviders(
-                <UtilitiesView
-                    {...defaultProps}
-                    selectedUtilityIds={{ 'road-route': true }}
-                    roadRouteVehicle="Car"
-                    onRoadRouteVehicleChange={vi.fn()}
-                    onRequestPositionSelection={onRequestPositionSelection}
-                />,
-            );
+            renderWithProviders(<UtilitiesView {...defaultProps} />);
             await waitFor(() => {
                 expect(screen.getByText(/Route Planner/)).toBeInTheDocument();
-            });
-            const roadRoutesHeader = screen.getByText(/Route Planner/);
-            const headerButton = roadRoutesHeader.closest('button');
-            if (headerButton) {
-                fireEvent.click(headerButton);
-            }
-            await waitFor(() => {
-                expect(screen.getByText('Route')).toBeInTheDocument();
             });
             await waitFor(
                 () => {
                     expect(screen.getByLabelText('Vehicle type')).toBeInTheDocument();
                     expect(screen.getByText('Select Start Position')).toBeInTheDocument();
                     expect(screen.getByText('Select End Location')).toBeInTheDocument();
+                    expect(screen.getByText('FIND ROUTE')).toBeInTheDocument();
                 },
                 { timeout: 3000 },
             );
         });
 
-        it('calls onRequestPositionSelection when start button is clicked', async () => {
-            const onRequestPositionSelection = vi.fn();
-            renderWithProviders(
-                <UtilitiesView
-                    {...defaultProps}
-                    selectedUtilityIds={{ 'road-route': true }}
-                    roadRouteVehicle="Car"
-                    onRoadRouteVehicleChange={vi.fn()}
-                    onRequestPositionSelection={onRequestPositionSelection}
-                />,
-            );
+        it('calls setPositionSelectionMode when start button is clicked', async () => {
+            renderWithProviders(<UtilitiesView {...defaultProps} />);
             await waitFor(() => {
                 expect(screen.getByText(/Route Planner/)).toBeInTheDocument();
             });
-            const roadRoutesHeader = screen.getByText(/Route Planner/);
-            const headerButton = roadRoutesHeader.closest('button');
-            if (headerButton) {
-                fireEvent.click(headerButton);
-            }
             await waitFor(() => {
                 expect(screen.getByText('Select Start Position')).toBeInTheDocument();
             });
-            const startButton = screen.getByText('Select Start Position');
-            fireEvent.click(startButton);
-            expect(onRequestPositionSelection).toHaveBeenCalledWith('start');
+            fireEvent.click(screen.getByText('Select Start Position'));
+            expect(mockRouteContext.setPositionSelectionMode).toHaveBeenCalledWith('start');
         });
 
-        it('calls onRequestPositionSelection when end button is clicked', async () => {
-            const onRequestPositionSelection = vi.fn();
-            renderWithProviders(
-                <UtilitiesView
-                    {...defaultProps}
-                    selectedUtilityIds={{ 'road-route': true }}
-                    roadRouteStart={{ lat: 50.67, lng: -1.4 }}
-                    roadRouteVehicle="Car"
-                    onRoadRouteVehicleChange={vi.fn()}
-                    onRequestPositionSelection={onRequestPositionSelection}
-                />,
-            );
+        it('calls setPositionSelectionMode when end button is clicked', async () => {
+            mockRouteContext.start = { lat: 50.67, lng: -1.4 };
+            renderWithProviders(<UtilitiesView {...defaultProps} />);
             await waitFor(() => {
                 expect(screen.getByText(/Route Planner/)).toBeInTheDocument();
             });
-            const roadRoutesHeader = screen.getByText(/Route Planner/);
-            const headerButton = roadRoutesHeader.closest('button');
-            if (headerButton) {
-                fireEvent.click(headerButton);
-            }
             await waitFor(() => {
                 expect(screen.getByText('Select End Location')).toBeInTheDocument();
             });
-            const endButton = screen.getByText('Select End Location');
-            fireEvent.click(endButton);
-            expect(onRequestPositionSelection).toHaveBeenCalledWith('end');
+            fireEvent.click(screen.getByText('Select End Location'));
+            expect(mockRouteContext.setPositionSelectionMode).toHaveBeenCalledWith('end');
         });
 
         it('shows loading message when route is loading', async () => {
-            renderWithProviders(
-                <UtilitiesView
-                    {...defaultProps}
-                    selectedUtilityIds={{ 'road-route': true }}
-                    roadRouteStart={{ lat: 50.67, lng: -1.4 }}
-                    roadRouteEnd={{ lat: 50.68, lng: -1.39 }}
-                    roadRouteVehicle="Car"
-                    roadRouteLoading={true}
-                    onRoadRouteVehicleChange={vi.fn()}
-                    onRequestPositionSelection={vi.fn()}
-                />,
-            );
+            mockRouteContext.start = { lat: 50.67, lng: -1.4 };
+            mockRouteContext.end = { lat: 50.68, lng: -1.39 };
+            mockRouteContext.isLoading = true;
+            renderWithProviders(<UtilitiesView {...defaultProps} />);
             await waitFor(() => {
                 expect(screen.getByText(/Route Planner/)).toBeInTheDocument();
             });
-            const roadRoutesHeader = screen.getByText(/Route Planner/);
-            const headerButton = roadRoutesHeader.closest('button');
-            if (headerButton) {
-                fireEvent.click(headerButton);
-            }
             await waitFor(() => {
                 expect(screen.getByText('Loading route...')).toBeInTheDocument();
             });
         });
 
         it('shows error message when route fails to load', async () => {
-            const mockError = new Error('Route loading failed');
-            renderWithProviders(
-                <UtilitiesView
-                    {...defaultProps}
-                    selectedUtilityIds={{ 'road-route': true }}
-                    roadRouteStart={{ lat: 50.67, lng: -1.4 }}
-                    roadRouteEnd={{ lat: 50.68, lng: -1.39 }}
-                    roadRouteVehicle="Car"
-                    roadRouteError={mockError}
-                    onRoadRouteVehicleChange={vi.fn()}
-                    onRequestPositionSelection={vi.fn()}
-                />,
-            );
+            mockRouteContext.start = { lat: 50.67, lng: -1.4 };
+            mockRouteContext.end = { lat: 50.68, lng: -1.39 };
+            mockRouteContext.error = new Error('Route loading failed');
+            renderWithProviders(<UtilitiesView {...defaultProps} />);
             await waitFor(() => {
                 expect(screen.getByText(/Route Planner/)).toBeInTheDocument();
             });
-            const roadRoutesHeader = screen.getByText(/Route Planner/);
-            const headerButton = roadRoutesHeader.closest('button');
-            if (headerButton) {
-                fireEvent.click(headerButton);
-            }
             await waitFor(() => {
                 expect(screen.getByText('Route loading failed. Please try again.')).toBeInTheDocument();
             });
         });
 
-        it('shows "No route available" when route data is empty', async () => {
-            renderWithProviders(
-                <UtilitiesView
-                    {...defaultProps}
-                    selectedUtilityIds={{ 'road-route': true }}
-                    roadRouteStart={{ lat: 50.67, lng: -1.4 }}
-                    roadRouteEnd={{ lat: 50.68, lng: -1.39 }}
-                    roadRouteVehicle="Car"
-                    roadRouteData={{ routeGeojson: { features: [] } }}
-                    onRoadRouteVehicleChange={vi.fn()}
-                    onRequestPositionSelection={vi.fn()}
-                />,
-            );
+        it('shows "No route available" when route data has no route', async () => {
+            mockRouteContext.start = { lat: 50.67, lng: -1.4 };
+            mockRouteContext.end = { lat: 50.68, lng: -1.39 };
+            mockRouteContext.routeData = {
+                type: 'FeatureCollection',
+                features: [],
+                properties: { hasRoute: false },
+            };
+            renderWithProviders(<UtilitiesView {...defaultProps} />);
             await waitFor(() => {
                 expect(screen.getByText(/Route Planner/)).toBeInTheDocument();
             });
-            const roadRoutesHeader = screen.getByText(/Route Planner/);
-            const headerButton = roadRoutesHeader.closest('button');
-            if (headerButton) {
-                fireEvent.click(headerButton);
-            }
             await waitFor(() => {
                 expect(screen.getByText('No route available between these points.')).toBeInTheDocument();
             });
         });
 
         it('shows route summary when route data is available', async () => {
-            renderWithProviders(
-                <UtilitiesView
-                    {...defaultProps}
-                    selectedUtilityIds={{ 'road-route': true }}
-                    roadRouteStart={{ lat: 50.67, lng: -1.4 }}
-                    roadRouteEnd={{ lat: 50.68, lng: -1.39 }}
-                    roadRouteVehicle="Car"
-                    roadRouteData={{
-                        routeGeojson: {
-                            features: [
-                                {
-                                    properties: {
-                                        length: 1000,
-                                        travel_time: 120,
-                                        speed_kph: 30,
-                                    },
-                                },
-                            ],
-                        },
-                    }}
-                    onRoadRouteVehicleChange={vi.fn()}
-                    onRequestPositionSelection={vi.fn()}
-                />,
-            );
+            mockRouteContext.start = { lat: 50.67, lng: -1.4 };
+            mockRouteContext.end = { lat: 50.68, lng: -1.39 };
+            mockRouteContext.routeData = {
+                type: 'FeatureCollection',
+                features: [],
+                properties: {
+                    hasRoute: true,
+                    distanceMiles: 0.62,
+                    durationMinutes: 2,
+                    averageSpeedMph: 18.6,
+                    start: { name: 'Start Road', requested: { lat: 50.67, lng: -1.4 }, snapped: { lat: 50.67, lng: -1.4 }, snapDistanceFeet: 0 },
+                    end: { name: 'End Road', requested: { lat: 50.68, lng: -1.39 }, snapped: { lat: 50.68, lng: -1.39 }, snapDistanceFeet: 0 },
+                },
+            };
+            renderWithProviders(<UtilitiesView {...defaultProps} />);
             await waitFor(() => {
                 expect(screen.getByText(/Route Planner/)).toBeInTheDocument();
             });
-            const roadRoutesHeader = screen.getByText(/Route Planner/);
-            const headerButton = roadRoutesHeader.closest('button');
-            if (headerButton) {
-                fireEvent.click(headerButton);
-            }
             await waitFor(() => {
                 expect(screen.getByText('Route Summary')).toBeInTheDocument();
                 expect(screen.getByText(/Distance:/)).toBeInTheDocument();
                 expect(screen.getByText(/Time:/)).toBeInTheDocument();
+            });
+        });
+
+        it('shows find route button', async () => {
+            renderWithProviders(<UtilitiesView {...defaultProps} />);
+            await waitFor(() => {
+                expect(screen.getByText(/Route Planner/)).toBeInTheDocument();
+            });
+            await waitFor(() => {
+                expect(screen.getByText('FIND ROUTE')).toBeInTheDocument();
+            });
+        });
+
+        it('calls findRoute when find route button is clicked', async () => {
+            mockRouteContext.start = { lat: 50.67, lng: -1.4 };
+            mockRouteContext.end = { lat: 50.68, lng: -1.39 };
+            renderWithProviders(<UtilitiesView {...defaultProps} />);
+            await waitFor(() => {
+                expect(screen.getByText(/Route Planner/)).toBeInTheDocument();
+            });
+            await waitFor(() => {
+                expect(screen.getByText('FIND ROUTE')).toBeInTheDocument();
+            });
+            fireEvent.click(screen.getByText('FIND ROUTE'));
+            expect(mockRouteContext.findRoute).toHaveBeenCalled();
+        });
+
+        it('shows delete icons when positions are set', async () => {
+            mockRouteContext.start = { lat: 50.67, lng: -1.4 };
+            mockRouteContext.end = { lat: 50.68, lng: -1.39 };
+            renderWithProviders(<UtilitiesView {...defaultProps} />);
+            await waitFor(() => {
+                expect(screen.getByText(/Route Planner/)).toBeInTheDocument();
+            });
+            await waitFor(() => {
+                expect(screen.getByLabelText('Clear start position')).toBeInTheDocument();
+                expect(screen.getByLabelText('Clear end position')).toBeInTheDocument();
+            });
+        });
+
+        it('calls setStart(null) when start delete icon is clicked', async () => {
+            mockRouteContext.start = { lat: 50.67, lng: -1.4 };
+            renderWithProviders(<UtilitiesView {...defaultProps} />);
+            await waitFor(() => {
+                expect(screen.getByText(/Route Planner/)).toBeInTheDocument();
+            });
+            await waitFor(() => {
+                expect(screen.getByLabelText('Clear start position')).toBeInTheDocument();
+            });
+            fireEvent.click(screen.getByLabelText('Clear start position'));
+            expect(mockRouteContext.setStart).toHaveBeenCalledWith(null);
+        });
+
+        it('shows direct line toggle when route summary is visible', async () => {
+            mockRouteContext.start = { lat: 50.67, lng: -1.4 };
+            mockRouteContext.end = { lat: 50.68, lng: -1.39 };
+            mockRouteContext.routeData = {
+                type: 'FeatureCollection',
+                features: [],
+                properties: {
+                    hasRoute: true,
+                    distanceMiles: 0.62,
+                    durationMinutes: 2,
+                    averageSpeedMph: 18.6,
+                    start: { name: 'Start Road', requested: { lat: 50.67, lng: -1.4 }, snapped: { lat: 50.67, lng: -1.4 }, snapDistanceFeet: 0 },
+                    end: { name: 'End Road', requested: { lat: 50.68, lng: -1.39 }, snapped: { lat: 50.68, lng: -1.39 }, snapDistanceFeet: 0 },
+                },
+            };
+            renderWithProviders(<UtilitiesView {...defaultProps} />);
+            await waitFor(() => {
+                expect(screen.getByText(/Route Planner/)).toBeInTheDocument();
+            });
+            await waitFor(() => {
+                expect(screen.getByText('Show Direct Line')).toBeInTheDocument();
             });
         });
     });

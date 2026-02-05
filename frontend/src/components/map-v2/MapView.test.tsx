@@ -123,15 +123,35 @@ vi.mock('react-map-gl/maplibre', () => {
     };
 });
 
+const mockRouteContext = {
+    start: null as { lat: number; lng: number } | null,
+    end: null as { lat: number; lng: number } | null,
+    setStart: vi.fn(),
+    setEnd: vi.fn(),
+    vehicle: 'Car' as const,
+    setVehicle: vi.fn(),
+    positionSelectionMode: null as 'start' | 'end' | null,
+    setPositionSelectionMode: vi.fn(),
+    routeData: undefined as any,
+    isLoading: false,
+    error: null as Error | null,
+    findRoute: vi.fn(),
+    showAdditionalSummary: true,
+    setShowAdditionalSummary: vi.fn(),
+    showDirectLine: false,
+    setShowDirectLine: vi.fn(),
+};
+
+vi.mock('./context/RouteContext', () => ({
+    useRouteContext: () => mockRouteContext,
+}));
+
 vi.mock('./MapPanels', () => {
     const MockMapPanels = ({
         activeView,
         onViewChange,
         selectedElement,
         onBackFromInspector,
-        onUtilityToggle,
-        onRoadRouteVehicleChange,
-        roadRouteVehicle,
         selectedFocusAreaId,
         onFocusAreaSelect,
     }: {
@@ -139,20 +159,9 @@ vi.mock('./MapPanels', () => {
         onViewChange: (view: string | null) => void;
         selectedElement?: any;
         onBackFromInspector?: () => void;
-        onUtilityToggle?: (utilityId: string, enabled: boolean) => void;
-        onRoadRouteVehicleChange?: (vehicle: any) => void;
-        roadRouteVehicle?: string;
         selectedFocusAreaId?: string | null;
         onFocusAreaSelect?: (focusAreaId: string | null) => void;
     }) => {
-        const [roadRouteEnabled, setRoadRouteEnabled] = React.useState(false);
-
-        const handleToggleRoadRoute = () => {
-            const next = !roadRouteEnabled;
-            setRoadRouteEnabled(next);
-            onUtilityToggle?.('road-route', next);
-        };
-
         return (
             <div data-testid="map-panels">
                 <button onClick={() => onViewChange(activeView === 'scenario' ? null : 'scenario')}>Toggle Scenario</button>
@@ -165,16 +174,9 @@ vi.mock('./MapPanels', () => {
                 <button onClick={() => onViewChange('focus-area')} data-testid="open-focus-area-panel">
                     Open Focus Area
                 </button>
-                <button onClick={handleToggleRoadRoute} data-testid="toggle-road-route">
-                    Road Route {roadRouteEnabled ? 'On' : 'Off'}
-                </button>
-                <button onClick={() => onRoadRouteVehicleChange?.('HGV')} data-testid="set-vehicle-hgv">
-                    Set Vehicle HGV
-                </button>
                 <button onClick={() => onFocusAreaSelect?.('user-focus-area-1')} data-testid="select-user-focus-area">
                     Select User Focus Area
                 </button>
-                <div data-testid="vehicle-value">{roadRouteVehicle || 'Car'}</div>
                 <div data-testid="active-view">{activeView || 'none'}</div>
                 <div data-testid="selected-element">{selectedElement?.id || 'none'}</div>
                 <div data-testid="selected-focus-area-id">{selectedFocusAreaId || 'none'}</div>
@@ -221,16 +223,8 @@ vi.mock('./AssetLayers', () => ({
     ASSET_SYMBOL_LAYER_ID: 'map-v2-asset-symbol-layer',
 }));
 
-const mockUtilitiesLayersProps = vi.fn();
 vi.mock('./UtilitiesLayers', () => ({
-    default: (props: any) => {
-        mockUtilitiesLayersProps(props);
-        return (
-            <div data-testid="utilities-layers" data-features-count={props.utilities?.features?.length ?? 0}>
-                Utilities Layers
-            </div>
-        );
-    },
+    default: () => <div data-testid="utilities-layers">Utilities Layers</div>,
 }));
 
 vi.mock('./hooks/useMapboxDraw', () => ({
@@ -541,36 +535,6 @@ describe('MapView', () => {
         });
     });
 
-    describe('Road route form reset', () => {
-        it('resets vehicle to Car when road route is toggled off', async () => {
-            renderWithProviders(<MapView />);
-            await waitForElement('map-panels');
-
-            await waitForElement('set-vehicle-hgv');
-            const setVehicleButton = screen.getByTestId('set-vehicle-hgv');
-            act(() => {
-                setVehicleButton.click();
-            });
-
-            await waitFor(() => {
-                expect(screen.getByTestId('vehicle-value')).toHaveTextContent('HGV');
-            });
-
-            const toggleRoadRouteButton = screen.getByTestId('toggle-road-route');
-
-            act(() => {
-                toggleRoadRouteButton.click();
-            });
-            act(() => {
-                toggleRoadRouteButton.click();
-            });
-
-            await waitFor(() => {
-                expect(screen.getByTestId('vehicle-value')).toHaveTextContent('Car');
-            });
-        });
-    });
-
     describe('Panel Layout', () => {
         it('adjusts map margin when panel is active', async () => {
             const { container } = renderWithProviders(<MapView />);
@@ -638,79 +602,17 @@ describe('MapView', () => {
     });
 
     describe('Road route visibility binding to map-wide', () => {
-        const mockRoadRouteResponse = {
-            roadRoute: {
-                routeGeojson: {
-                    type: 'FeatureCollection' as const,
-                    features: [
-                        {
-                            type: 'Feature' as const,
-                            geometry: {
-                                type: 'LineString' as const,
-                                coordinates: [
-                                    [-1.4, 50.67],
-                                    [-1.39, 50.68],
-                                ],
-                            },
-                            properties: {},
-                        },
-                    ],
-                },
-            },
-        };
-
         beforeEach(() => {
             mockFetchFocusAreas.mockResolvedValue([{ id: 'map-wide-id', name: 'Map-wide', isSystem: true, isActive: true }]);
         });
 
-        it('hides road route utilities when map-wide is inactive', async () => {
-            mockFetchFocusAreas.mockResolvedValue([{ id: 'map-wide-id', name: 'Map-wide', isSystem: true, isActive: false }]);
-            mockRoadRouteData.mockReturnValue(mockRoadRouteResponse);
-            mockRoadRouteLoading.mockReturnValue(false);
-
+        it('renders utilities layers component', async () => {
             const queryClient = createTestQueryClient();
             renderWithProviders(<MapView />, queryClient);
             await waitForElement('map');
-            await waitForElement('map-panels');
+            await waitForElement('utilities-layers');
 
-            await waitFor(() => {
-                expect(mockUtilitiesLayersProps).toHaveBeenCalled();
-            });
-
-            const utilitiesCalls = mockUtilitiesLayersProps.mock.calls;
-            const lastCall = utilitiesCalls[utilitiesCalls.length - 1];
-            expect(lastCall).toBeDefined();
-            expect(lastCall[0].utilities.features).toHaveLength(0);
-        });
-
-        it('hides road route markers when map-wide is inactive', async () => {
-            mockFetchFocusAreas.mockResolvedValue([{ id: 'map-wide-id', name: 'Map-wide', isSystem: true, isActive: false }]);
-
-            const queryClient = createTestQueryClient();
-            renderWithProviders(<MapView />, queryClient);
-            await waitForElement('map');
-
-            const startMarker = screen.queryByTestId('marker-50.67--1.4');
-            const endMarker = screen.queryByTestId('marker-50.68--1.39');
-            expect(startMarker).not.toBeInTheDocument();
-            expect(endMarker).not.toBeInTheDocument();
-        });
-
-        it('shows road route utilities when map-wide is active', async () => {
-            mockFetchFocusAreas.mockResolvedValue([{ id: 'map-wide-id', name: 'Map-wide', isSystem: true, isActive: true }]);
-            mockRoadRouteData.mockReturnValue(mockRoadRouteResponse);
-            mockRoadRouteLoading.mockReturnValue(false);
-
-            const queryClient = createTestQueryClient();
-            renderWithProviders(<MapView />, queryClient);
-            await waitForElement('map');
-            await waitForElement('map-panels');
-
-            await waitFor(() => {
-                expect(mockUtilitiesLayersProps).toHaveBeenCalled();
-            });
-
-            expect(mockUtilitiesLayersProps).toHaveBeenCalled();
+            expect(screen.getByTestId('utilities-layers')).toBeInTheDocument();
         });
     });
 

@@ -1,265 +1,227 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ThemeProvider } from '@mui/material/styles';
 import type { FeatureCollection } from 'geojson';
 
 import UtilitiesLayers from './UtilitiesLayers';
-import theme from '@/theme';
 
-const mockUseMap = vi.fn();
 vi.mock('react-map-gl/maplibre', () => ({
-    useMap: () => mockUseMap(),
+    useMap: vi.fn(() => ({})),
     Source: ({ children, data }: { children: React.ReactNode; data: FeatureCollection }) => (
         <div data-testid="source" data-features-count={data.features.length}>
             {children}
         </div>
     ),
     Layer: ({ id }: { id: string }) => <div data-testid={`layer-${id}`} />,
+    Marker: ({ children, longitude, latitude }: { children: React.ReactNode; longitude: number; latitude: number }) => (
+        <div data-testid={`marker-${latitude}-${longitude}`}>{children}</div>
+    ),
 }));
 
-describe('UtilitiesLayers', () => {
-    const mockLineStringFeature: FeatureCollection = {
-        type: 'FeatureCollection',
-        features: [
+const mockRouteContext = {
+    start: null as { lat: number; lng: number } | null,
+    end: null as { lat: number; lng: number } | null,
+    setStart: vi.fn(),
+    setEnd: vi.fn(),
+    vehicle: 'Car' as const,
+    setVehicle: vi.fn(),
+    positionSelectionMode: null as 'start' | 'end' | null,
+    setPositionSelectionMode: vi.fn(),
+    routeData: undefined as any,
+    isLoading: false,
+    error: null,
+    findRoute: vi.fn(),
+    showAdditionalSummary: true,
+    setShowAdditionalSummary: vi.fn(),
+    showDirectLine: false,
+    setShowDirectLine: vi.fn(),
+};
+
+vi.mock('./context/RouteContext', () => ({
+    useRouteContext: () => mockRouteContext,
+}));
+
+const makeRouteData = (overrides?: Partial<{ hasRoute: boolean; start: any; end: any; features: any[] }>) => {
+    const start = overrides?.start ?? {
+        name: 'Start',
+        requested: { lat: 50.67, lng: -1.4 },
+        snapped: { lat: 50.671, lng: -1.401 },
+        snapDistanceFeet: 10,
+    };
+    const end = overrides?.end ?? {
+        name: 'End',
+        requested: { lat: 50.68, lng: -1.39 },
+        snapped: { lat: 50.681, lng: -1.391 },
+        snapDistanceFeet: 10,
+    };
+    return {
+        type: 'FeatureCollection' as const,
+        features: overrides?.features ?? [
             {
-                type: 'Feature',
-                id: 'road-route',
+                type: 'Feature' as const,
                 geometry: {
-                    type: 'LineString',
+                    type: 'LineString' as const,
                     coordinates: [
                         [-1.4, 50.67],
                         [-1.39, 50.68],
                     ],
                 },
-                properties: {
-                    name: 'Route 1',
-                },
-            },
-            {
-                type: 'Feature',
-                id: 'road-route',
-                geometry: {
-                    type: 'LineString',
-                    coordinates: [
-                        [-1.3, 50.66],
-                        [-1.29, 50.67],
-                    ],
-                },
-                properties: {
-                    name: 'Route 2',
-                },
+                properties: { name: 'Segment 1' },
             },
         ],
+        properties: {
+            hasRoute: overrides?.hasRoute ?? true,
+            distanceMiles: 1.5,
+            durationMinutes: 3,
+            averageSpeedMph: 30,
+            start,
+            end,
+        },
     };
+};
 
-    const defaultProps = {
-        utilities: mockLineStringFeature,
-        selectedUtilityIds: {} as Record<string, boolean>,
-        mapReady: true,
-    };
-
-    let queryClient: QueryClient;
-
+describe('UtilitiesLayers', () => {
     beforeEach(() => {
-        queryClient = new QueryClient({
-            defaultOptions: {
-                queries: {
-                    retry: false,
-                },
-            },
-        });
         vi.clearAllMocks();
-        mockUseMap.mockReturnValue({});
+        mockRouteContext.start = null;
+        mockRouteContext.end = null;
+        mockRouteContext.routeData = undefined;
+        mockRouteContext.showAdditionalSummary = true;
+        mockRouteContext.showDirectLine = false;
     });
-
-    const renderWithProviders = (component: React.ReactElement) => {
-        return render(
-            <QueryClientProvider client={queryClient}>
-                <ThemeProvider theme={theme}>{component}</ThemeProvider>
-            </QueryClientProvider>,
-        );
-    };
 
     describe('Rendering', () => {
         it('returns null when map is not ready', () => {
-            const { container } = renderWithProviders(<UtilitiesLayers {...defaultProps} mapReady={false} />);
+            const { container } = render(<UtilitiesLayers mapReady={false} />);
             expect(container.firstChild).toBeNull();
         });
 
-        it('returns null when there are no selected utilities', () => {
-            const { container } = renderWithProviders(<UtilitiesLayers {...defaultProps} />);
-            expect(container.firstChild).toBeNull();
+        it('renders nothing when no route data', () => {
+            const { container } = render(<UtilitiesLayers mapReady={true} />);
+            expect(container.innerHTML).toBe('');
         });
 
-        it('returns null when filtered features is empty', () => {
-            const { container } = renderWithProviders(<UtilitiesLayers {...defaultProps} selectedUtilityIds={{ 'non-existent-id': true }} />);
-            expect(container.firstChild).toBeNull();
-        });
-
-        it('renders Source and Layer when map is ready and utilities are selected', () => {
-            renderWithProviders(<UtilitiesLayers {...defaultProps} selectedUtilityIds={{ 'road-route': true }} />);
-            expect(screen.getByTestId('source')).toBeInTheDocument();
+        it('renders route line source and layer when route data has features', () => {
+            mockRouteContext.routeData = makeRouteData();
+            render(<UtilitiesLayers mapReady={true} />);
             expect(screen.getByTestId('layer-map-v2-utilities-layer')).toBeInTheDocument();
         });
     });
 
-    describe('Layer Filtering', () => {
-        it('filters utilities by selected utility IDs', () => {
-            renderWithProviders(<UtilitiesLayers {...defaultProps} selectedUtilityIds={{ 'road-route': true }} />);
-            const source = screen.getByTestId('source');
-            expect(source).toHaveAttribute('data-features-count', '2');
+    describe('Walk lines', () => {
+        it('renders walk lines when showAdditionalSummary is true and snap distance > 3', () => {
+            mockRouteContext.routeData = makeRouteData();
+            mockRouteContext.showAdditionalSummary = true;
+            render(<UtilitiesLayers mapReady={true} />);
+            expect(screen.getByTestId('layer-map-v2-walk-lines-layer')).toBeInTheDocument();
         });
 
-        it('renders all selected utilities', () => {
-            const multipleUtilities: FeatureCollection = {
-                type: 'FeatureCollection',
-                features: [
-                    ...mockLineStringFeature.features,
-                    {
-                        type: 'Feature',
-                        id: 'other-utility',
-                        geometry: {
-                            type: 'LineString',
-                            coordinates: [
-                                [-1.2, 50.65],
-                                [-1.19, 50.66],
-                            ],
-                        },
-                        properties: {
-                            name: 'Other Utility',
-                        },
-                    },
-                ],
-            };
-
-            renderWithProviders(
-                <UtilitiesLayers utilities={multipleUtilities} selectedUtilityIds={{ 'road-route': true, 'other-utility': true }} mapReady={true} />,
-            );
-            const source = screen.getByTestId('source');
-            expect(source).toHaveAttribute('data-features-count', '3');
+        it('hides walk lines when showAdditionalSummary is false', () => {
+            mockRouteContext.routeData = makeRouteData();
+            mockRouteContext.showAdditionalSummary = false;
+            render(<UtilitiesLayers mapReady={true} />);
+            expect(screen.queryByTestId('layer-map-v2-walk-lines-layer')).not.toBeInTheDocument();
         });
 
-        it('filters out unselected utilities', () => {
-            const multipleUtilities: FeatureCollection = {
-                type: 'FeatureCollection',
-                features: [
-                    ...mockLineStringFeature.features,
-                    {
-                        type: 'Feature',
-                        id: 'other-utility',
-                        geometry: {
-                            type: 'LineString',
-                            coordinates: [
-                                [-1.2, 50.65],
-                                [-1.19, 50.66],
-                            ],
-                        },
-                        properties: {
-                            name: 'Other Utility',
-                        },
-                    },
-                ],
-            };
-
-            renderWithProviders(<UtilitiesLayers utilities={multipleUtilities} selectedUtilityIds={{ 'road-route': true }} mapReady={true} />);
-            const source = screen.getByTestId('source');
-            expect(source).toHaveAttribute('data-features-count', '2');
+        it('hides walk lines when snap distance is <= 3', () => {
+            mockRouteContext.routeData = makeRouteData({
+                start: {
+                    name: 'Start',
+                    requested: { lat: 50.67, lng: -1.4 },
+                    snapped: { lat: 50.671, lng: -1.401 },
+                    snapDistanceFeet: 2,
+                },
+                end: {
+                    name: 'End',
+                    requested: { lat: 50.68, lng: -1.39 },
+                    snapped: { lat: 50.681, lng: -1.391 },
+                    snapDistanceFeet: 1,
+                },
+            });
+            mockRouteContext.showAdditionalSummary = true;
+            render(<UtilitiesLayers mapReady={true} />);
+            expect(screen.queryByTestId('layer-map-v2-walk-lines-layer')).not.toBeInTheDocument();
         });
     });
 
-    describe('Feature ID Handling', () => {
-        it('handles features with id property', () => {
-            renderWithProviders(<UtilitiesLayers {...defaultProps} selectedUtilityIds={{ 'road-route': true }} />);
-            expect(screen.getByTestId('source')).toBeInTheDocument();
+    describe('Direct line', () => {
+        it('renders direct line when showDirectLine is true', () => {
+            mockRouteContext.routeData = makeRouteData();
+            mockRouteContext.showDirectLine = true;
+            render(<UtilitiesLayers mapReady={true} />);
+            expect(screen.getByTestId('layer-map-v2-direct-line-layer')).toBeInTheDocument();
         });
 
-        it('handles features with id in properties', () => {
-            const featureWithPropertyId: FeatureCollection = {
-                type: 'FeatureCollection',
-                features: [
-                    {
-                        type: 'Feature',
-                        properties: {
-                            id: 'utility-from-properties',
-                            name: 'Test Utility',
-                        },
-                        geometry: {
-                            type: 'LineString',
-                            coordinates: [
-                                [-1.4, 50.67],
-                                [-1.39, 50.68],
-                            ],
-                        },
-                    },
-                ],
-            };
-
-            renderWithProviders(<UtilitiesLayers utilities={featureWithPropertyId} selectedUtilityIds={{ 'utility-from-properties': true }} mapReady={true} />);
-            expect(screen.getByTestId('source')).toBeInTheDocument();
-        });
-
-        it('filters out features without IDs', () => {
-            const featureWithoutId: FeatureCollection = {
-                type: 'FeatureCollection',
-                features: [
-                    {
-                        type: 'Feature',
-                        properties: {
-                            name: 'Test Utility',
-                        },
-                        geometry: {
-                            type: 'LineString',
-                            coordinates: [
-                                [-1.4, 50.67],
-                                [-1.39, 50.68],
-                            ],
-                        },
-                    },
-                ],
-            };
-
-            const { container } = renderWithProviders(
-                <UtilitiesLayers utilities={featureWithoutId} selectedUtilityIds={{ 'some-id': true }} mapReady={true} />,
-            );
-
-            expect(container.firstChild).toBeNull();
+        it('hides direct line when showDirectLine is false', () => {
+            mockRouteContext.routeData = makeRouteData();
+            mockRouteContext.showDirectLine = false;
+            render(<UtilitiesLayers mapReady={true} />);
+            expect(screen.queryByTestId('layer-map-v2-direct-line-layer')).not.toBeInTheDocument();
         });
     });
 
-    describe('Edge Cases', () => {
-        it('handles empty utilities', () => {
-            const emptyUtilities: FeatureCollection = {
-                type: 'FeatureCollection',
-                features: [],
-            };
-
-            const { container } = renderWithProviders(<UtilitiesLayers utilities={emptyUtilities} selectedUtilityIds={{ 'any-id': true }} mapReady={true} />);
-            expect(container.firstChild).toBeNull();
+    describe('Route markers', () => {
+        it('renders snapped S/E markers when route data exists', () => {
+            mockRouteContext.routeData = makeRouteData();
+            render(<UtilitiesLayers mapReady={true} />);
+            expect(screen.getByTestId('marker-50.671--1.401')).toBeInTheDocument();
+            expect(screen.getByTestId('marker-50.681--1.391')).toBeInTheDocument();
         });
 
-        it('handles features with empty properties', () => {
-            const featureWithEmptyProperties: FeatureCollection = {
-                type: 'FeatureCollection',
-                features: [
-                    {
-                        type: 'Feature',
-                        id: 'utility-no-props',
-                        geometry: {
-                            type: 'LineString',
-                            coordinates: [
-                                [-1.4, 50.67],
-                                [-1.39, 50.68],
-                            ],
-                        },
-                        properties: {},
-                    },
-                ],
-            };
+        it('renders clicked position markers when showAdditionalSummary and route exists', () => {
+            mockRouteContext.start = { lat: 50.67, lng: -1.4 };
+            mockRouteContext.end = { lat: 50.68, lng: -1.39 };
+            mockRouteContext.routeData = makeRouteData();
+            mockRouteContext.showAdditionalSummary = true;
+            render(<UtilitiesLayers mapReady={true} />);
+            expect(screen.getByTestId('marker-50.67--1.4')).toBeInTheDocument();
+            expect(screen.getByTestId('marker-50.68--1.39')).toBeInTheDocument();
+        });
 
-            renderWithProviders(<UtilitiesLayers utilities={featureWithEmptyProperties} selectedUtilityIds={{ 'utility-no-props': true }} mapReady={true} />);
-            expect(screen.getByTestId('source')).toBeInTheDocument();
+        it('does not render clicked position markers when snap distance <= 3', () => {
+            mockRouteContext.start = { lat: 50.5, lng: -1.5 };
+            mockRouteContext.end = { lat: 50.6, lng: -1.6 };
+            mockRouteContext.routeData = makeRouteData({
+                start: {
+                    name: 'Start',
+                    requested: { lat: 50.5, lng: -1.5 },
+                    snapped: { lat: 50.501, lng: -1.501 },
+                    snapDistanceFeet: 1,
+                },
+                end: {
+                    name: 'End',
+                    requested: { lat: 50.6, lng: -1.6 },
+                    snapped: { lat: 50.601, lng: -1.601 },
+                    snapDistanceFeet: 2,
+                },
+            });
+            mockRouteContext.showAdditionalSummary = true;
+            render(<UtilitiesLayers mapReady={true} />);
+            expect(screen.queryByTestId('marker-50.5--1.5')).not.toBeInTheDocument();
+            expect(screen.queryByTestId('marker-50.6--1.6')).not.toBeInTheDocument();
+        });
+
+        it('does not render clicked position markers when showAdditionalSummary is false', () => {
+            mockRouteContext.start = { lat: 50.67, lng: -1.4 };
+            mockRouteContext.end = { lat: 50.68, lng: -1.39 };
+            mockRouteContext.routeData = makeRouteData();
+            mockRouteContext.showAdditionalSummary = false;
+            render(<UtilitiesLayers mapReady={true} />);
+            expect(screen.queryByTestId('marker-50.67--1.4')).not.toBeInTheDocument();
+            expect(screen.queryByTestId('marker-50.68--1.39')).not.toBeInTheDocument();
+        });
+
+        it('renders fallback markers when start/end set but no route', () => {
+            mockRouteContext.start = { lat: 50.67, lng: -1.4 };
+            mockRouteContext.end = { lat: 50.68, lng: -1.39 };
+            render(<UtilitiesLayers mapReady={true} />);
+            expect(screen.getByTestId('marker-50.67--1.4')).toBeInTheDocument();
+            expect(screen.getByTestId('marker-50.68--1.39')).toBeInTheDocument();
+        });
+
+        it('does not render markers when no start/end set and no route', () => {
+            render(<UtilitiesLayers mapReady={true} />);
+            expect(screen.queryByTestId(/^marker-/)).not.toBeInTheDocument();
         });
     });
 });

@@ -5,7 +5,7 @@ import uuid
 import pytest
 from django.contrib.gis.geos import LineString, Point, Polygon
 
-from api.models import Asset, ExposureLayer, FocusArea, Scenario, VisibleExposureLayer
+from api.models import Asset, ExposureLayer, Scenario, VisibleExposureLayer
 from api.models.asset_type import AssetCategory, AssetSubCategory, AssetType, DataSource
 from api.models.constraint_intervention import ConstraintIntervention, ConstraintInterventionType
 from api.models.exposure_layer import ExposureLayerType
@@ -75,9 +75,12 @@ class TestConstraintProviderUnit:
 
         assert len(geometries) == 1
 
-    def test_line_string_constraint_is_buffered(self, road_blocks_type, mock_user_id):
+    def test_line_string_constraint_is_buffered(
+        self, road_blocks_type, mock_user_id, create_mapwide_focus_area
+    ):
         """LineString constraints should be buffered into polygons."""
         scenario = Scenario.objects.create(name="Test", is_active=False)
+        create_mapwide_focus_area(scenario)
         ConstraintIntervention.objects.create(
             name="Road closure",
             geometry=LineString([(-1.1, 50.0), (-1.2, 50.0)]),
@@ -96,9 +99,12 @@ class TestConstraintProviderUnit:
             f"LineString should be buffered to Polygon, got {geom.geom_type}"
         )
 
-    def test_polygon_constraint_not_buffered(self, road_blocks_type, mock_user_id):
+    def test_polygon_constraint_not_buffered(
+        self, road_blocks_type, mock_user_id, create_mapwide_focus_area
+    ):
         """Polygon constraints should be returned without additional buffering."""
         scenario = Scenario.objects.create(name="Test", is_active=False)
+        create_mapwide_focus_area(scenario)
         original_polygon = Polygon(
             [
                 (-1.15, 49.95),
@@ -127,8 +133,10 @@ class TestConstraintProviderUnit:
         # Area should be approximately the same (not buffered)
         assert abs(geom.area - original_polygon.area) < original_polygon.area * 0.01
 
-    def test_flood_geometry_from_multiple_focus_areas(self, flood_layer_type, mock_user_id):
-        """Flood geometries from multiple active focus areas should all be returned."""
+    def test_flood_geometry_from_mapwide_focus_area(
+        self, flood_layer_type, mock_user_id, create_mapwide_focus_area
+    ):
+        """Multiple flood layers visible on the map-wide focus area should all be returned."""
         scenario = Scenario.objects.create(name="Test", is_active=False)
 
         flood_polygon = Polygon(
@@ -154,15 +162,10 @@ class TestConstraintProviderUnit:
             type=flood_layer_type,
         )
 
-        focus_area_1 = FocusArea.objects.create(
-            scenario=scenario, user_id=mock_user_id, name="FA 1", is_active=True
-        )
-        focus_area_2 = FocusArea.objects.create(
-            scenario=scenario, user_id=mock_user_id, name="FA 2", is_active=True
-        )
+        mapwide = create_mapwide_focus_area(scenario)
 
-        VisibleExposureLayer.objects.create(focus_area=focus_area_1, exposure_layer=flood_layer_1)
-        VisibleExposureLayer.objects.create(focus_area=focus_area_2, exposure_layer=flood_layer_2)
+        VisibleExposureLayer.objects.create(focus_area=mapwide, exposure_layer=flood_layer_1)
+        VisibleExposureLayer.objects.create(focus_area=mapwide, exposure_layer=flood_layer_2)
 
         provider = ConstraintProvider()
         geometries = provider.get_blocked_geometries(scenario.id, mock_user_id, None)

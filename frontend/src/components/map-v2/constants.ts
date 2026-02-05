@@ -51,6 +51,10 @@ export const MAP_VIEW_BOUNDS: [[number, number], [number, number]] = [
 export const FEATURE_TYPES = {
     FOCUS_AREA: 'focus_area',
     EXPOSURE_LAYER: 'exposure_layer',
+    CONSTRAINT: 'constraint',
 } as const;
 
 export type FeatureType = (typeof FEATURE_TYPES)[keyof typeof FEATURE_TYPES];
+
+export const ROUTE_START_COLOR = '#4CAF50';
+export const ROUTE_END_COLOR = '#F44336';
