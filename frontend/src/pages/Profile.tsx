@@ -5,6 +5,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { useProfileData } from '@/hooks/useProfileData';
 import PageContainer from '@/components/PageContainer';
+import config from '@/config/app-config';
 
 export default function Profile() {
     const { userId } = useParams<{ userId?: string }>();
@@ -36,8 +37,7 @@ export default function Profile() {
         }
 
         try {
-            // TODO: Replace with actual DELETE endpoint
-            const response = await fetch(`/api/users/${userId}`, {
+            const response = await fetch(`${config.services.users}${userId}/`, {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
             });

@@ -26,6 +26,7 @@ user_a = {
 
 http_ok = 200
 http_created = 201
+http_no_content = 204
 http_bad_request = 400
 http_forbidden = 403
 
@@ -421,3 +422,38 @@ def test_resolve_invites_expires_any_pending_invite_over_7_days_and_removes_cogn
     assert db_user_invite.status == "expired"
     assert db_user_invite.expired_at is not None
     assert db_user_invite.accepted_at is None
+
+
+# --- DELETE Tests ---
+
+
+@pytest.mark.django_db
+def test_delete_user_is_successful(client, group, members, user_invites):  # noqa: ARG001
+    """Test that user can be successfully deleted."""
+    with patch("api.views.users.IdpRepository") as mock_idp_repository:
+        instance = mock_idp_repository.return_value
+        response = client.delete(f"/api/users/{new_user_uuid}/")
+        assert response.status_code == http_no_content
+        instance.remove_user_from_vista.assert_called_once_with(str(new_user_uuid))
+    user_invites_db = UserInvite.objects.filter(user_id=new_user_uuid)
+    assert not user_invites_db
+    group_memberships_db = GroupMembership.objects.filter(user_id=new_user_uuid)
+    assert not group_memberships_db
+
+
+@pytest.mark.django_db
+def test_delete_user_is_successful_without_user_invite_or_groups(client):
+    """Test that user can be successfully deleted without an invite or group memberships."""
+    with patch("api.views.users.IdpRepository") as mock_idp_repository:
+        instance = mock_idp_repository.return_value
+        response = client.delete(f"/api/users/{new_user_uuid}/")
+        assert response.status_code == http_no_content
+        instance.remove_user_from_vista.assert_called_once_with(str(new_user_uuid))
+
+
+@pytest.mark.django_db
+def test_delete_user_returns_403_for_general_user(client, monkeypatch):
+    """Test that DELETE returns a 403 if not admin."""
+    monkeypatch.setattr("api.views.users.Administrator", Administrator)
+    response = client.delete(f"/api/users/{new_user_uuid}/")
+    assert response.status_code == http_forbidden
