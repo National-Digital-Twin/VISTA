@@ -15,10 +15,16 @@ from .scenario_asset_types import ScenarioAssetTypesView
 from .scenario_assets import ScenarioAssetsView
 from .scenario_constraint_interventions import ScenarioConstraintInterventionsView
 from .scenario_exposure_layers import ScenarioExposureLayersView
+from .scenario_resource_interventions import (
+    ScenarioResourceInterventionActionsView,
+    ScenarioResourceInterventionLocationView,
+    ScenarioResourceInterventionsView,
+)
 from .scenario_route import ScenarioRouteView
 from .scenarios import ScenarioViewSet
 from .visible_asset_types import BulkVisibleAssetTypeView, VisibleAssetTypeView
 from .visible_exposure_layers import BulkVisibleExposureLayerView, VisibleExposureLayerView
+from .visible_resource_intervention_type import VisibleResourceInterventionTypeView
 
 __all__ = [
     "AssetScoreFiltersView",
@@ -34,8 +40,12 @@ __all__ = [
     "ScenarioAssetsView",
     "ScenarioConstraintInterventionsView",
     "ScenarioExposureLayersView",
+    "ScenarioResourceInterventionActionsView",
+    "ScenarioResourceInterventionLocationView",
+    "ScenarioResourceInterventionsView",
     "ScenarioRouteView",
     "ScenarioViewSet",
     "VisibleAssetTypeView",
     "VisibleExposureLayerView",
+    "VisibleResourceInterventionTypeView",
 ]
