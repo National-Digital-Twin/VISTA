@@ -58,7 +58,7 @@ class ApplicationUserViewSet(ViewSet):
         )
 
     def destroy(self, request, pk):  # noqa: ARG002
-        """Delete user from Cognito and user-associated entities."""
+        """Delete user from vista Cognito groups and user-associated entities."""
         self.idp_repository.remove_user_from_vista(pk)
         UserInvite.objects.filter(user_id=pk).delete()
         GroupMembership.objects.filter(user_id=pk).delete()
