@@ -10,10 +10,14 @@ from django.utils import timezone
 class UserInvite(models.Model):
     """UserInvite model."""
 
+    ACCEPTED = "accepted"
+    EXPIRED = "expired"
+    PENDING = "pending"
+
     USER_INVITE_STATUSES: ClassVar[list[tuple[str, str]]] = [
-        ("pending", "Pending"),
-        ("accepted", "Accepted"),
-        ("expired", "Expired"),
+        (PENDING, "Pending"),
+        (ACCEPTED, "Accepted"),
+        (EXPIRED, "Expired"),
     ]
 
     id = models.UUIDField(default=uuid4, unique=True, primary_key=True)

@@ -68,7 +68,11 @@ const AdminSettings: React.FC = () => {
 
     const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
         setActiveTab(newValue);
-        setSearchParams({ tab: tabNames[newValue] });
+        setSearchParams((prev) => {
+            const next = new URLSearchParams(prev);
+            next.set('tab', tabNames[newValue]);
+            return next;
+        });
     };
 
     return (

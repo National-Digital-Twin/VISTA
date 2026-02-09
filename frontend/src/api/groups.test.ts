@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { fetchAllGroups, createGroup, deleteGroup, addGroupMember, removeGroupMember, type Group } from './groups';
+import { fetchAllGroups, createGroup, updateGroup, deleteGroup, addGroupMember, removeGroupMember, type Group } from './groups';
 
 vi.mock('@/config/app-config', () => ({
     default: {
@@ -129,6 +129,50 @@ describe('groups API', () => {
             });
 
             await expect(createGroup('Test', [])).rejects.toThrow('Failed to create group');
+        });
+    });
+
+    describe('updateGroup', () => {
+        it('successfully updates a group name', async () => {
+            const updated: Group = { id: 'g1', name: 'Updated Name', members: [] };
+            fetchMock.mockResolvedValue({
+                ok: true,
+                json: vi.fn().mockResolvedValue(updated),
+            });
+
+            const result = await updateGroup('g1', { name: 'Updated Name' });
+
+            expect(fetchMock).toHaveBeenCalledWith(`${GROUPS_BASE}g1/`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name: 'Updated Name' }),
+            });
+            expect(result).toEqual(updated);
+        });
+
+        it('trims group name', async () => {
+            fetchMock.mockResolvedValue({
+                ok: true,
+                json: vi.fn().mockResolvedValue({ id: 'g1', name: 'Trimmed', members: [] }),
+            });
+
+            await updateGroup('g1', { name: '  Trimmed  ' });
+
+            expect(fetchMock).toHaveBeenCalledWith(
+                `${GROUPS_BASE}g1/`,
+                expect.objectContaining({
+                    body: JSON.stringify({ name: 'Trimmed' }),
+                }),
+            );
+        });
+
+        it('throws error when response is not ok', async () => {
+            fetchMock.mockResolvedValue({
+                ok: false,
+                text: vi.fn().mockResolvedValue('Name already exists'),
+            });
+
+            await expect(updateGroup('g1', { name: 'Duplicate' })).rejects.toThrow('Name already exists');
         });
     });
 

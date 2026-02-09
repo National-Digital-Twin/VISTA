@@ -10,6 +10,8 @@ export type Group = {
     id: string;
     name: string;
     members: GroupMember[];
+    created_at?: string;
+    created_by?: string;
 };
 
 const GROUPS_API_BASE_URL = `${config.services.apiBaseUrl}/groups/`;
@@ -34,6 +36,21 @@ export const createGroup = async (name: string, memberIds: string[]): Promise<Gr
     if (!response.ok) {
         const message = await response.text();
         throw new Error(message || `Failed to create group: ${response.statusText}`);
+    }
+
+    return response.json();
+};
+
+export const updateGroup = async (groupId: string, data: { name: string }): Promise<Group> => {
+    const response = await fetch(`${GROUPS_API_BASE_URL}${groupId}/`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: data.name.trim() }),
+    });
+
+    if (!response.ok) {
+        const message = await response.text();
+        throw new Error(message || `Failed to update group: ${response.statusText}`);
     }
 
     return response.json();

@@ -4,7 +4,7 @@ from typing import ClassVar
 
 from rest_framework import serializers
 
-from api.models.group import Group
+from api.models.group import Group, GroupMembership
 from api.models.user_invite import UserInvite
 
 
@@ -41,8 +41,40 @@ class UserCreateSerializer(serializers.Serializer):
 class UserInviteSerializer(serializers.ModelSerializer):
     """Serializer for the User Invite model."""
 
+    email_address = serializers.SerializerMethodField()
+    user_type = serializers.SerializerMethodField()
+    groups = serializers.SerializerMethodField()
+
     class Meta:
         """Configuration for the `UserInviteSerializer`."""
 
         model = UserInvite
-        fields: ClassVar[list[str]] = ["user_id", "status", "created_by"]
+        fields: ClassVar[list[str]] = [
+            "user_id",
+            "status",
+            "groups",
+            "created_at",
+            "created_by",
+            "email_address",
+            "user_type",
+        ]
+
+    def get_email_address(self, obj):
+        """Get email address of user from serializer context."""
+        user = self.context["idp_user_map"].get(str(obj.user_id))
+        if user:
+            return user.email
+        return None
+
+    def get_user_type(self, obj):
+        """Get type of user from serializer context."""
+        user = self.context["idp_user_map"].get(str(obj.user_id))
+        if user:
+            return user.user_type
+        return None
+
+    def get_groups(self, obj):
+        """Get list of group names for user."""
+        return GroupMembership.objects.filter(user_id=obj.user_id).values_list(
+            "group__name", flat=True
+        )
