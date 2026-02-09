@@ -1,3 +1,5 @@
+import config from '@/config/app-config';
+
 export type InviteData = {
     userType: 'Admin' | 'General';
     email: string;
@@ -14,25 +16,39 @@ export type Invite = {
     daysAgo: number;
 };
 
-export type InvitesListResponse = {
-    invites: Invite[];
+const calculateDaysAgo = (date: Date | string): number => {
+    const now = new Date();
+    const targetDate = typeof date === 'string' ? new Date(date) : date;
+    return Math.floor((now.getTime() - targetDate.getTime()) / (1000 * 60 * 60 * 24));
 };
 
 export const sendInvite = async (inviteData: InviteData): Promise<Invite> => {
-    // TODO: Replace with actual API endpoint
-    // const response = await fetch(`${config.services.invites}`, {
-    //     method: 'POST',
-    //     headers: { 'Content-Type': 'application/json' },
-    //     body: JSON.stringify(inviteData),
-    // });
+    const body = {
+        email: inviteData.email.trim(),
+        user_type: inviteData.userType.toLowerCase() as 'admin' | 'general',
+        group_ids: inviteData.groups,
+    };
 
-    await new Promise((resolve) => {
-        setTimeout(resolve, 1000);
+    const response = await fetch(config.services.users, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
     });
 
+    if (!response.ok) {
+        const message = await response.text();
+        throw new Error(message || `Failed to send invite: ${response.statusText}`);
+    }
+
+    const created = await response.json();
+
+    if (!created?.user_id) {
+        throw new Error('Invalid response from server: missing user_id');
+    }
+
     const invite: Invite = {
-        id: Math.random().toString(36).substring(2, 11),
-        email: inviteData.email,
+        id: created.user_id,
+        email: inviteData.email.trim(),
         userType: inviteData.userType,
         groups: inviteData.groups,
         status: 'Pending',
@@ -43,34 +59,69 @@ export const sendInvite = async (inviteData: InviteData): Promise<Invite> => {
     return invite;
 };
 
-export const fetchAllInvites = async (): Promise<Invite[]> => {
-    // TODO: Replace with actual API endpoint
-    // const response = await fetch(`${config.services.invites}`);
-
-    const response = await fetch('/data/invites.json');
-
-    if (!response.ok) {
-        throw new Error(`Failed to fetch invites: ${response.statusText}`);
-    }
-
-    const data: InvitesListResponse = await response.json();
-
-    const now = new Date();
-    return data.invites.map((invite) => ({
-        ...invite,
-        daysAgo: Math.floor((now.getTime() - new Date(invite.sentDate).getTime()) / (1000 * 60 * 60 * 24)),
-    }));
+type BackendInviteResponse = {
+    user_id: string;
+    emailAddress: string;
+    userType: 'admin' | 'general';
+    groups: string[];
+    status: 'pending' | 'expired' | 'accepted';
+    createdAt: string;
 };
 
-export const cancelInvite = async (_inviteId: string): Promise<void> => {
-    // TODO: Replace with actual API endpoint
-    // const response = await fetch(`${config.services.invites}/${inviteId}`, {
-    //     method: 'DELETE',
-    // });
+const formatUserType = (userType: 'admin' | 'general'): 'Admin' | 'General' => {
+    return userType === 'admin' ? 'Admin' : 'General';
+};
 
-    await new Promise((resolve) => {
-        setTimeout(resolve, 500);
+const formatStatus = (status: 'pending' | 'expired' | 'accepted'): 'Pending' | 'Expired' | 'Accepted' => {
+    switch (status) {
+        case 'pending':
+            return 'Pending';
+        case 'expired':
+            return 'Expired';
+        case 'accepted':
+            return 'Accepted';
+    }
+};
+
+export const fetchAllInvites = async (): Promise<Invite[]> => {
+    const response = await fetch(`${config.services.users}pending-invites/`, {
+        credentials: 'include',
     });
+
+    if (!response.ok) {
+        const message = await response.text();
+        throw new Error(message || `Failed to fetch invites: ${response.statusText}`);
+    }
+
+    const data: BackendInviteResponse[] = await response.json();
+
+    return data.map((item) => {
+        const createdAt = new Date(item.createdAt);
+        const sentDate = createdAt.toISOString().split('T')[0];
+        const daysAgo = calculateDaysAgo(createdAt);
+
+        return {
+            id: item.user_id,
+            email: item.emailAddress,
+            userType: formatUserType(item.userType),
+            groups: item.groups || [],
+            status: formatStatus(item.status),
+            sentDate,
+            daysAgo,
+        };
+    });
+};
+
+export const cancelInvite = async (userId: string): Promise<void> => {
+    const response = await fetch(`${config.services.users}${userId}/`, {
+        method: 'DELETE',
+        credentials: 'include',
+    });
+
+    if (!response.ok) {
+        const message = await response.text();
+        throw new Error(message || `Failed to cancel invite: ${response.statusText}`);
+    }
 };
 
 export const resendInvite = async (inviteId: string): Promise<Invite> => {

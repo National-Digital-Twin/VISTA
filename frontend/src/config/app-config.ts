@@ -12,6 +12,7 @@ const config = {
         user: '/ndtp-python/api/user/',
         users: '/ndtp-python/api/users/',
         signout: '/ndtp-python/api/auth/signout/',
+        resolveInvites: '/ndtp-python/api/users/resolve-invites/',
     },
     configErrors: [] as string[],
 };

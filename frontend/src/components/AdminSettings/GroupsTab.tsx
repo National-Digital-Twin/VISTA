@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect, type ChangeEvent, type KeyboardEvent, type MouseEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
     Box,
     Typography,
@@ -23,7 +23,15 @@ import EditIcon from '@mui/icons-material/Edit';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import CloseIcon from '@mui/icons-material/Close';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { addGroupMember, createGroup as createGroupApi, deleteGroup as deleteGroupApi, fetchAllGroups, removeGroupMember, type Group } from '@/api/groups';
+import {
+    addGroupMember,
+    createGroup as createGroupApi,
+    deleteGroup as deleteGroupApi,
+    fetchAllGroups,
+    removeGroupMember,
+    updateGroup as updateGroupApi,
+    type Group,
+} from '@/api/groups';
 import DeleteDialog from '@/components/DeleteDialog';
 import { GroupMembersTable } from '@/components/AdminSettings/GroupMembersTable';
 import { SearchTextField } from '@/components/SearchTextField';
@@ -96,6 +104,18 @@ const compareUsers =
         return direction === 'asc' ? comparison : -comparison;
     };
 
+const formatGroupCreated = (group: Group): string => {
+    const dateStr = group.created_at
+        ? new Date(group.created_at).toLocaleDateString(undefined, {
+              day: 'numeric',
+              month: 'short',
+              year: 'numeric',
+          })
+        : null;
+    const by = group.created_by ?? 'Unknown';
+    return dateStr ? `Created: ${dateStr} by ${by}` : `Created by ${by}`;
+};
+
 const getCurrentMemberIds = (group: Group | null, _users: User[], adminUserIds: Set<string>): Set<string> => {
     if (!group) {
         return new Set(adminUserIds);
@@ -124,6 +144,7 @@ const getRadioGroupValue = (currentField: UserSortField, targetField: UserSortFi
 // eslint-disable-next-line sonarjs/cognitive-complexity
 const GroupsTab: React.FC = () => {
     const navigate = useNavigate();
+    const [searchParams, setSearchParams] = useSearchParams();
     const queryClient = useQueryClient();
     const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null);
     const [userSearchTerm, setUserSearchTerm] = useState('');
@@ -193,6 +214,17 @@ const GroupsTab: React.FC = () => {
         },
     });
 
+    const updateGroupNameMutation = useMutation({
+        mutationFn: ({ groupId, name }: { groupId: string; name: string }) => updateGroupApi(groupId, { name }),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['groups'] }).catch(() => {});
+            setGroupNameError(null);
+        },
+        onError: (error: Error) => {
+            setGroupNameError(error.message);
+        },
+    });
+
     const createGroupMutation = useMutation({
         mutationFn: ({ name, memberIds }: { name: string; memberIds: string[] }) => createGroupApi(name.trim(), memberIds),
         onSuccess: (data) => {
@@ -232,6 +264,13 @@ const GroupsTab: React.FC = () => {
     const users = useMemo(() => usersData.map(mapUserDataToUser), [usersData]);
 
     const selectedGroup = useMemo(() => groups.find((g) => g.id === selectedGroupId) || null, [groups, selectedGroupId]);
+
+    const groupParam = searchParams.get('group');
+    useEffect(() => {
+        if (groupParam && groups.some((g) => g.id === groupParam)) {
+            setSelectedGroupId(groupParam);
+        }
+    }, [groupParam, groups]);
 
     const adminUserIds = useMemo(() => {
         return new Set(users.filter((u) => u.userType === 'Admin').map((u) => u.id));
@@ -310,6 +349,11 @@ const GroupsTab: React.FC = () => {
             return;
         }
         setSelectedGroupId(groupId);
+        setSearchParams((prev) => {
+            const next = new URLSearchParams(prev);
+            next.set('group', groupId);
+            return next;
+        });
         setUserSearchTerm('');
         setIsEditMode(false);
         setIsCreatingNewGroup(false);
@@ -484,10 +528,7 @@ const GroupsTab: React.FC = () => {
         setGroupNameError(null);
         setIsEditingGroupName(false);
         if (trimmedName !== selectedGroup.name) {
-            console.log('Updating group name...', {
-                groupId: selectedGroup.id,
-                name: trimmedName,
-            });
+            updateGroupNameMutation.mutate({ groupId: selectedGroup.id, name: trimmedName });
         }
     };
 
@@ -778,7 +819,7 @@ const GroupsTab: React.FC = () => {
                                     )}
                                 </Box>
                                 <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                                    Created: Unknown by Unknown
+                                    {formatGroupCreated(selectedGroup)}
                                 </Typography>
                                 <Link component="button" variant="body2" color="primary" sx={{ textDecoration: 'none' }}>
                                     see data room access

@@ -19,24 +19,21 @@ import {
     TableRow,
     Checkbox,
     Divider,
+    CircularProgress,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import PageContainer from '@/components/PageContainer';
 import { SortableTableHeader } from '@/components/SortableTableHeader';
 import { sendInvite, InviteData } from '@/api/invites';
-
-const AVAILABLE_GROUPS = [
-    { name: 'Resilience team', id: 'resilience-team' },
-    { name: 'Tywnwell team', id: 'tywnwell-team' },
-    { name: 'Resilience leads', id: 'resilience-leads' },
-    { name: 'Volunteers', id: 'volunteers' },
-];
+import { fetchAllGroups, type Group } from '@/api/groups';
 
 type GroupSortDirection = 'asc' | 'desc';
 
 export default function InviteNewUser() {
     const navigate = useNavigate();
+    const queryClient = useQueryClient();
     const [userType, setUserType] = useState<'Admin' | 'General' | ''>('');
     const [email, setEmail] = useState('');
     const [selectedGroups, setSelectedGroups] = useState<string[]>([]);
@@ -45,6 +42,15 @@ export default function InviteNewUser() {
     const [success, setSuccess] = useState(false);
     const [groupSortField, setGroupSortField] = useState<'name'>('name');
     const [groupSortDirection, setGroupSortDirection] = useState<GroupSortDirection>('asc');
+    const [groups, setGroups] = useState<Group[]>([]);
+    const [groupsLoading, setGroupsLoading] = useState(true);
+
+    useEffect(() => {
+        fetchAllGroups()
+            .then(setGroups)
+            .catch(() => {})
+            .finally(() => setGroupsLoading(false));
+    }, []);
 
     const handleBackClick = () => {
         navigate('/admin?tab=invites');
@@ -54,8 +60,8 @@ export default function InviteNewUser() {
         setSelectedGroups((prev) => (prev.includes(groupId) ? prev.filter((id) => id !== groupId) : [...prev, groupId]));
     };
 
-    const handleViewGroup = (_groupName: string) => {
-        navigate(`/admin?tab=groups`);
+    const handleViewGroup = (groupId: string) => {
+        navigate(`/admin?tab=groups&group=${encodeURIComponent(groupId)}`);
     };
 
     const handleGroupSort = (field: 'name') => {
@@ -67,13 +73,16 @@ export default function InviteNewUser() {
         }
     };
 
-    const compareGroups = (a: (typeof AVAILABLE_GROUPS)[0], b: (typeof AVAILABLE_GROUPS)[0]): number => {
-        const aValue = a.name;
-        const bValue = b.name;
-        return groupSortDirection === 'asc' ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
-    };
+    const compareGroups = useCallback(
+        (a: Group, b: Group): number => {
+            const aValue = a.name;
+            const bValue = b.name;
+            return groupSortDirection === 'asc' ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
+        },
+        [groupSortDirection],
+    );
 
-    const sortedGroups = [...AVAILABLE_GROUPS].sort(compareGroups);
+    const sortedGroups = useMemo(() => [...groups].sort(compareGroups), [groups, compareGroups]);
 
     const handleSendInvite = async () => {
         if (!email.trim()) {
@@ -92,6 +101,7 @@ export default function InviteNewUser() {
             };
 
             await sendInvite(inviteData);
+            await queryClient.refetchQueries({ queryKey: ['invites'] });
             setSuccess(true);
 
             setTimeout(() => {
@@ -165,61 +175,67 @@ export default function InviteNewUser() {
                             Group access <span style={{ fontWeight: 300 }}>(optional)</span>
                         </Typography>
 
-                        <TableContainer>
-                            <Table>
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell padding="checkbox">
-                                            <Checkbox
-                                                indeterminate={selectedGroups.length > 0 && selectedGroups.length < AVAILABLE_GROUPS.length}
-                                                checked={selectedGroups.length === AVAILABLE_GROUPS.length}
-                                                onChange={(e) => {
-                                                    if (e.target.checked) {
-                                                        setSelectedGroups(AVAILABLE_GROUPS.map((g) => g.id));
-                                                    } else {
-                                                        setSelectedGroups([]);
-                                                    }
-                                                }}
-                                            />
-                                        </TableCell>
-                                        <SortableTableHeader
-                                            field="name"
-                                            label="Groups"
-                                            sortField={groupSortField}
-                                            sortDirection={groupSortDirection}
-                                            onSort={handleGroupSort}
-                                        />
-                                        <TableCell align="right"></TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {sortedGroups.map((group) => (
-                                        <TableRow key={group.id}>
+                        {groupsLoading ? (
+                            <Box sx={{ display: 'flex', justifyContent: 'center', p: 3 }}>
+                                <CircularProgress size={24} />
+                            </Box>
+                        ) : (
+                            <TableContainer>
+                                <Table>
+                                    <TableHead>
+                                        <TableRow>
                                             <TableCell padding="checkbox">
-                                                <Checkbox checked={selectedGroups.includes(group.id)} onChange={() => handleGroupToggle(group.id)} />
-                                            </TableCell>
-                                            <TableCell>
-                                                <Typography variant="body2">{group.name}</Typography>
-                                            </TableCell>
-                                            <TableCell align="right">
-                                                <Link
-                                                    component="button"
-                                                    variant="body2"
-                                                    color="primary"
-                                                    onClick={() => handleViewGroup(group.name)}
-                                                    sx={{
-                                                        'textDecoration': 'none',
-                                                        '&:hover': { textDecoration: 'underline' },
+                                                <Checkbox
+                                                    indeterminate={selectedGroups.length > 0 && selectedGroups.length < groups.length}
+                                                    checked={groups.length > 0 && selectedGroups.length === groups.length}
+                                                    onChange={(e) => {
+                                                        if (e.target.checked) {
+                                                            setSelectedGroups(groups.map((g) => g.id));
+                                                        } else {
+                                                            setSelectedGroups([]);
+                                                        }
                                                     }}
-                                                >
-                                                    view group
-                                                </Link>
+                                                />
                                             </TableCell>
+                                            <SortableTableHeader
+                                                field="name"
+                                                label="Groups"
+                                                sortField={groupSortField}
+                                                sortDirection={groupSortDirection}
+                                                onSort={handleGroupSort}
+                                            />
+                                            <TableCell align="right"></TableCell>
                                         </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
+                                    </TableHead>
+                                    <TableBody>
+                                        {sortedGroups.map((group) => (
+                                            <TableRow key={group.id}>
+                                                <TableCell padding="checkbox">
+                                                    <Checkbox checked={selectedGroups.includes(group.id)} onChange={() => handleGroupToggle(group.id)} />
+                                                </TableCell>
+                                                <TableCell>
+                                                    <Typography variant="body2">{group.name}</Typography>
+                                                </TableCell>
+                                                <TableCell align="right">
+                                                    <Link
+                                                        component="button"
+                                                        variant="body2"
+                                                        color="primary"
+                                                        onClick={() => handleViewGroup(group.id)}
+                                                        sx={{
+                                                            'textDecoration': 'none',
+                                                            '&:hover': { textDecoration: 'underline' },
+                                                        }}
+                                                    >
+                                                        view group
+                                                    </Link>
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
+                        )}
                     </Box>
                 </Box>
 
