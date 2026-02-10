@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { Layer, Source } from 'react-map-gl/maplibre';
 import type { Feature, FeatureCollection, Position } from 'geojson';
+import { BELOW_ASSET_LAYER_ID } from './constants';
 import type { FocusArea } from '@/api/focus-areas';
 
 const WORLD_BOUNDS: Position[] = [
@@ -125,6 +126,7 @@ const ActiveFocusAreas = ({ focusAreas, selectedFocusAreaId, showMask = false }:
                     <Layer
                         id={MASK_LAYER_ID}
                         type="fill"
+                        beforeId={BELOW_ASSET_LAYER_ID}
                         paint={{
                             'fill-color': MASK_FILL_COLOUR,
                             'fill-opacity': MASK_FILL_OPACITY,
@@ -137,6 +139,7 @@ const ActiveFocusAreas = ({ focusAreas, selectedFocusAreaId, showMask = false }:
                     <Layer
                         id={FOCUS_FILL_LAYER_ID}
                         type="fill"
+                        beforeId={BELOW_ASSET_LAYER_ID}
                         paint={{
                             'fill-color': ['case', ['get', 'isSelected'], SELECTED_FOCUS_FILL_COLOUR, ACTIVE_FOCUS_FILL_COLOUR],
                             'fill-opacity': ['case', ['get', 'isSelected'], SELECTED_FOCUS_FILL_OPACITY, ACTIVE_FOCUS_FILL_OPACITY],
@@ -145,6 +148,7 @@ const ActiveFocusAreas = ({ focusAreas, selectedFocusAreaId, showMask = false }:
                     <Layer
                         id={FOCUS_LINE_LAYER_ID}
                         type="line"
+                        beforeId={BELOW_ASSET_LAYER_ID}
                         paint={{
                             'line-color': ['case', ['get', 'isSelected'], SELECTED_FOCUS_LINE_COLOUR, ACTIVE_FOCUS_LINE_COLOUR],
                             'line-width': ['case', ['get', 'isSelected'], SELECTED_FOCUS_LINE_WIDTH, ACTIVE_FOCUS_LINE_WIDTH],

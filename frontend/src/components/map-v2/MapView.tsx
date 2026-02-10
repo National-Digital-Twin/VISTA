@@ -2,20 +2,21 @@ import { useCallback, useMemo, useRef, useState, useEffect, type ComponentProps 
 import { Box } from '@mui/material';
 import type { MapRef, ViewStateChangeEvent } from 'react-map-gl/maplibre';
 import type { MapMouseEvent } from 'maplibre-gl';
-import Map from 'react-map-gl/maplibre';
+import Map, { Layer } from 'react-map-gl/maplibre';
 import { useQuery } from '@tanstack/react-query';
 
 import 'maplibre-gl/dist/maplibre-gl.css';
 import './mapbox-draw-maplibre.css';
 
 import { bbox, booleanPointInPolygon, point } from '@turf/turf';
-import { DEFAULT_VIEW_STATE, DEFAULT_MAP_STYLE, MAP_STYLES, MAP_VIEW_BOUNDS, type MapStyleKey } from './constants';
+import { DEFAULT_VIEW_STATE, DEFAULT_MAP_STYLE, MAP_STYLES, MAP_VIEW_BOUNDS, BELOW_ASSET_LAYER_ID, type MapStyleKey } from './constants';
 import MapControls from './MapControls';
 import MapPanels from './MapPanels';
 import AssetLayers, { ASSET_SYMBOL_LAYER_ID } from './AssetLayers';
 import ExposureLayers from './ExposureLayers';
 import UtilitiesLayers from './UtilitiesLayers';
 import ConstraintLayers from './ConstraintLayers';
+import ResourceLayers from './ResourceLayers';
 import FocusAreaMask from './FocusAreaMask';
 import FocusAreaOutline from './FocusAreaOutline';
 import InactiveFocusAreas from './InactiveFocusAreas';
@@ -34,6 +35,7 @@ import { fetchAssetDetails } from '@/api/asset-details';
 import { fetchFocusAreas } from '@/api/focus-areas';
 import { fetchExposureLayers } from '@/api/exposure-layers';
 import { fetchConstraintInterventions } from '@/api/constraint-interventions';
+import { fetchResourceInterventions } from '@/api/resources';
 import type { Asset } from '@/api/assets-by-type';
 
 const ASSET_LAYER_IDS = [ASSET_SYMBOL_LAYER_ID, `${ASSET_SYMBOL_LAYER_ID}-selected`, 'map-v2-asset-line-layer'] as const;
@@ -57,6 +59,8 @@ const MapView = () => {
     const [assetInfoPanelOpen, setAssetInfoPanelOpen] = useState(false);
     const [activePanelView, setActivePanelView] = useState<string | null>('focus-area');
     const [selectedElement, setSelectedElement] = useState<Asset | null>(null);
+    const [selectedResourceLocationId, setSelectedResourceLocationId] = useState<string | null>(null);
+    const [stockActionOpen, setStockActionOpen] = useState(false);
     const [previousPanelView, setPreviousPanelView] = useState<string | null>('focus-area');
     const [connectedAssets, setConnectedAssets] = useState<{
         dependents: Array<{ id: string; geom: string; type: { name: string } }>;
@@ -103,6 +107,18 @@ const MapView = () => {
     } = useQuery({
         queryKey: ['constraintInterventions', scenarioId],
         queryFn: () => fetchConstraintInterventions(scenarioId ?? ''),
+        enabled: !!scenarioId,
+        staleTime: 5 * 60 * 1000,
+    });
+
+    const {
+        data: resourceTypes,
+        isFetching: isResourcesFetching,
+        isLoading: isResourcesLoading,
+        isError: isResourcesError,
+    } = useQuery({
+        queryKey: ['resourceInterventions', scenarioId],
+        queryFn: () => fetchResourceInterventions(scenarioId ?? ''),
         enabled: !!scenarioId,
         staleTime: 5 * 60 * 1000,
     });
@@ -391,6 +407,10 @@ const MapView = () => {
             if (viewId !== 'inspector') {
                 setSelectedElement(null);
             }
+            if (viewId !== 'resources') {
+                setSelectedResourceLocationId(null);
+                setStockActionOpen(false);
+            }
             if (viewId && viewId !== activePanelView) {
                 setPreviousPanelView(activePanelView);
             }
@@ -410,6 +430,8 @@ const MapView = () => {
     const handleElementClick = useCallback(
         (elements: Asset[]) => {
             if (elements.length > 0) {
+                setSelectedResourceLocationId(null);
+                setStockActionOpen(false);
                 if (activePanelView === 'inspector') {
                     setPreviousPanelView('inspector');
                     setSelectedElement(elements[0]);
@@ -469,6 +491,9 @@ const MapView = () => {
                 }
             }
 
+            setSelectedResourceLocationId(null);
+            setStockActionOpen(false);
+
             if (activePanelView === 'inspector') {
                 setSelectedElement(null);
                 setConnectedAssets({ dependents: [], providers: [] });
@@ -492,6 +517,41 @@ const MapView = () => {
         },
         [],
     );
+
+    const handleResourceLocationClick = useCallback(
+        (locationId: string) => {
+            setSelectedElement(null);
+            setConnectedAssets({ dependents: [], providers: [] });
+            setSelectedResourceLocationId(locationId);
+            if (activePanelView !== 'resources') {
+                setPreviousPanelView(activePanelView);
+                setActivePanelView('resources');
+            }
+        },
+        [activePanelView],
+    );
+
+    const handleResourceLocationDoubleClick = useCallback(
+        (locationId: string) => {
+            setSelectedElement(null);
+            setConnectedAssets({ dependents: [], providers: [] });
+            setSelectedResourceLocationId(locationId);
+            setStockActionOpen(true);
+            if (activePanelView !== 'resources') {
+                setPreviousPanelView(activePanelView);
+                setActivePanelView('resources');
+            }
+        },
+        [activePanelView],
+    );
+
+    const handleResourceLocationSelect = useCallback((locationId: string) => {
+        setSelectedResourceLocationId(locationId);
+    }, []);
+
+    const handleStockActionClose = useCallback(() => {
+        setStockActionOpen(false);
+    }, []);
 
     return (
         <Box
@@ -522,6 +582,13 @@ const MapView = () => {
                     constraintTypes={constraintTypes}
                     isConstraintsLoading={isConstraintsLoading}
                     isConstraintsError={isConstraintsError}
+                    resourceTypes={resourceTypes}
+                    isResourcesLoading={isResourcesLoading}
+                    isResourcesError={isResourcesError}
+                    selectedResourceLocationId={selectedResourceLocationId}
+                    stockActionOpen={stockActionOpen}
+                    onResourceLocationSelect={handleResourceLocationSelect}
+                    onStockActionClose={handleStockActionClose}
                 />
 
                 <Box
@@ -569,6 +636,7 @@ const MapView = () => {
                                         }
                                         return null;
                                     })()}
+                                <Layer id={BELOW_ASSET_LAYER_ID} type="background" paint={{ 'background-opacity': 0 }} />
                                 <DrawingAwareAssetLayers
                                     assets={assets}
                                     selectedElements={selectedElement ? [selectedElement] : []}
@@ -602,6 +670,15 @@ const MapView = () => {
 
                                 {(mapWideVisible || isInUtilitiesPanel) && <UtilitiesLayers mapReady={mapReady} />}
                                 {mapWideVisible && !isInConstraintsPanel && <ConstraintLayers constraintTypes={constraintTypes} mapReady={mapReady} />}
+                                {mapWideVisible && (
+                                    <ResourceLayers
+                                        resourceTypes={resourceTypes}
+                                        mapReady={mapReady}
+                                        onLocationClick={handleResourceLocationClick}
+                                        onLocationDoubleClick={handleResourceLocationDoubleClick}
+                                        selectedLocationId={selectedResourceLocationId ?? undefined}
+                                    />
+                                )}
                             </>
                         )}
                     </Map>
@@ -632,6 +709,7 @@ const MapView = () => {
                         isFocusAreasFetching={isFocusAreasFetching}
                         isExposureLayersFetching={isExposureLayersFetching}
                         isConstraintsFetching={isConstraintsFetching}
+                        isResourcesFetching={isResourcesFetching}
                     />
 
                     <MapControls

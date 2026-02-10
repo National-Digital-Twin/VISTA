@@ -8,6 +8,7 @@ type MapLoadingOverlayProps = {
     readonly isFocusAreasFetching: boolean;
     readonly isExposureLayersFetching: boolean;
     readonly isConstraintsFetching: boolean;
+    readonly isResourcesFetching: boolean;
 };
 
 const MapLoadingOverlay = ({
@@ -16,13 +17,20 @@ const MapLoadingOverlay = ({
     isFocusAreasFetching,
     isExposureLayersFetching,
     isConstraintsFetching,
+    isResourcesFetching,
 }: MapLoadingOverlayProps) => {
     const { drawingSyncComplete, mapRef, mapReady } = useDrawingContext();
     const [waitingForMapIdle, setWaitingForMapIdle] = useState(false);
     const wasDataLoadingRef = useRef(false);
 
     const isDataLoading =
-        isAssetsFetching || isSpritesGenerating || isFocusAreasFetching || isExposureLayersFetching || isConstraintsFetching || !drawingSyncComplete;
+        isAssetsFetching ||
+        isSpritesGenerating ||
+        isFocusAreasFetching ||
+        isExposureLayersFetching ||
+        isConstraintsFetching ||
+        isResourcesFetching ||
+        !drawingSyncComplete;
 
     useEffect(() => {
         if (isDataLoading) {

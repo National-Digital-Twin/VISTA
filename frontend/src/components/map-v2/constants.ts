@@ -58,3 +58,5 @@ export type FeatureType = (typeof FEATURE_TYPES)[keyof typeof FEATURE_TYPES];
 
 export const ROUTE_START_COLOR = '#4CAF50';
 export const ROUTE_END_COLOR = '#F44336';
+
+export const BELOW_ASSET_LAYER_ID = 'map-v2-below-asset-slot';

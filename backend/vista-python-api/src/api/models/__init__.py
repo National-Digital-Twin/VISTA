@@ -14,6 +14,11 @@ from .dependency import Dependency
 from .exposure_layer import ExposureLayer, ExposureLayerType
 from .focus_area import FocusArea
 from .group import Group, GroupDataSourceAccess, GroupMembership
+from .resource_intervention import (
+    ResourceInterventionAction,
+    ResourceInterventionLocation,
+    ResourceInterventionType,
+)
 from .road_link import (
     Directionality,
     FormOfWay,
@@ -26,6 +31,7 @@ from .scenario import Scenario
 from .scenario_asset import ScenarioAsset
 from .visible_asset import VisibleAsset
 from .visible_exposure_layer import VisibleExposureLayer
+from .visible_resource_intervention_type import VisibleResourceInterventionType
 
 __all__ = [
     "Asset",
@@ -47,6 +53,9 @@ __all__ = [
     "GroupDataSourceAccess",
     "GroupMembership",
     "OperationalState",
+    "ResourceInterventionAction",
+    "ResourceInterventionLocation",
+    "ResourceInterventionType",
     "RoadClassification",
     "RoadLink",
     "RouteHierarchy",
@@ -55,4 +64,5 @@ __all__ = [
     "VisibleAsset",
     "VisibleExposureAssetScore",
     "VisibleExposureLayer",
+    "VisibleResourceInterventionType",
 ]

@@ -7,8 +7,9 @@ import { QueryClient, QueryClientProvider, QueryCache, MutationCache } from '@ta
 import { ApolloProvider } from '@apollo/client/react';
 import apolloClient from '@/api/apollo-client';
 import App from '@/App';
-import DevTools from '@/components/DevTools';
 import SessionMonitorProvider from '@/providers/SessionMonitorProvider';
+import DevTools from '@/components/DevTools';
+import UserStartupProvider from '@/providers/UserStartupProvider';
 import theme from '@/theme';
 import { handleAuthError } from '@/utils/authErrorHandler';
 import './index.css';
@@ -44,11 +45,13 @@ root.render(
             <ApolloProvider client={apolloClient}>
                 <QueryClientProvider client={queryClient}>
                     <SessionMonitorProvider>
-                        <DevTools enabled={!import.meta.env.PROD}>
-                            <MapProvider>
-                                <App />
-                            </MapProvider>
-                        </DevTools>
+                        <UserStartupProvider>
+                            <DevTools enabled={!import.meta.env.PROD}>
+                                <MapProvider>
+                                    <App />
+                                </MapProvider>
+                            </DevTools>
+                        </UserStartupProvider>
                     </SessionMonitorProvider>
                 </QueryClientProvider>
             </ApolloProvider>

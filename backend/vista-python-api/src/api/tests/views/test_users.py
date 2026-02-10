@@ -7,11 +7,15 @@ from uuid import uuid4
 
 import pytest
 
+from api.domain.cognito_user import IdpUser
 from api.models.group import Group, GroupMembership
 from api.models.user_invite import UserInvite
 
+new_user_uuid = uuid4()
+
+cognito_user = IdpUser(str(new_user_uuid), "test@example.com", name="Bob")
 user_a = {
-    "id": "abc",
+    "id": str(new_user_uuid),
     "email": "test@example.com",
     "name": "John Doe",
     "enabled": True,
@@ -22,10 +26,10 @@ user_a = {
 
 http_ok = 200
 http_created = 201
+http_no_content = 204
 http_bad_request = 400
 http_forbidden = 403
 
-new_user_uuid = uuid4()
 admin_uuid = uuid4()
 
 
@@ -43,6 +47,16 @@ def get_user_id_from_request(request):  # noqa: ARG001
 def group(db):  # noqa: ARG001
     """Create a group for testing."""
     return Group.objects.create(name="Volunteers", created_by=uuid4())
+
+
+@pytest.fixture
+def members(db, group):  # noqa: ARG001
+    """Create group members for testing."""
+    member_one = GroupMembership.create(group.id, cognito_user.id, uuid4())
+    members = [member_one]
+
+    GroupMembership.objects.bulk_create(members)
+    return members
 
 
 @pytest.fixture
@@ -81,6 +95,17 @@ def expired_user_invite(db):  # noqa: ARG001
     )
 
 
+@pytest.fixture
+def accepted_user_invite(db):  # noqa: ARG001
+    """Create an accepted user invite for testing."""
+    return UserInvite.objects.create(
+        user_id=new_user_uuid,
+        status="accepted",
+        expired_at=datetime.now(UTC),
+        created_by=admin_uuid,
+    )
+
+
 user_removed = False
 
 
@@ -92,7 +117,7 @@ class MockIdpRepository:
 
     def list_users_in_group(self):
         """List a set of users."""
-        return [user_a]
+        return [cognito_user]
 
     def create_user(self, email, is_admin):  # noqa: ARG002
         return new_user_uuid
@@ -106,7 +131,7 @@ class Administrator:
         return False
 
 
-# --- GET (List) Tests ---
+# --- GET (List) Tests for active users ---
 
 
 def test_list_users(client, monkeypatch):
@@ -115,7 +140,13 @@ def test_list_users(client, monkeypatch):
     response = client.get("/api/users/")
 
     assert response.status_code == http_ok
-    assert response.data == [user_a]
+    data = response.json()[0]
+
+    assert data["id"] == cognito_user.id
+    assert data["email"] == cognito_user.email
+    assert data["name"] == cognito_user.name
+    assert data["status"] == cognito_user.status
+    assert data["userType"] == cognito_user.user_type
 
 
 def test_list_users_returns_403_for_general_user(client, monkeypatch):
@@ -123,6 +154,79 @@ def test_list_users_returns_403_for_general_user(client, monkeypatch):
     monkeypatch.setattr("api.views.users.Administrator", Administrator)
 
     response = client.get("/api/users/")
+    assert response.status_code == http_forbidden
+
+
+# --- GET (List) Tests for pending user invites ---
+
+
+def test_list_pending_user_invites_returns_successfully(
+    client,
+    user_invites,
+    group,
+    members,  # noqa: ARG001
+    monkeypatch,
+):
+    """Test that the list function works as expected."""
+    monkeypatch.setattr("api.views.users.IdpRepository", MockIdpRepository)
+    response = client.get("/api/users/pending-invites/")
+    pending_invite = user_invites[0]
+
+    assert response.status_code == http_ok
+    data = response.json()
+    assert len(data) == 1
+    result = data[0]
+
+    assert result["emailAddress"] == cognito_user.email
+    assert result["userType"] == "General"
+    assert result["groups"] == [group.name]
+    assert result["status"] == "pending"
+    assert result["createdAt"] == pending_invite.created_at.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+
+
+def test_list_pending_user_invites_includes_expired_users(client, expired_user_invite, monkeypatch):  # noqa: ARG001
+    """Test that the list function works as expected."""
+    monkeypatch.setattr("api.views.users.IdpRepository", MockIdpRepository)
+    response = client.get("/api/users/pending-invites/")
+
+    assert response.status_code == http_ok
+    data = response.json()
+    result = data[0]
+
+    assert result["status"] == "expired"
+
+
+def test_list_pending_user_invites_does_not_include_accepted_invites(
+    client,
+    accepted_user_invite,  # noqa: ARG001
+    monkeypatch,
+):
+    """Test that the list function works as expected."""
+    monkeypatch.setattr("api.views.users.IdpRepository", MockIdpRepository)
+    response = client.get("/api/users/pending-invites/")
+
+    assert response.status_code == http_ok
+    data = response.json()
+    assert len(data) == 0
+
+
+def test_list_pending_user_invites_handles_no_group_membership(client, user_invites, monkeypatch):  # noqa: ARG001
+    """Test that the list function works as expected."""
+    monkeypatch.setattr("api.views.users.IdpRepository", MockIdpRepository)
+    response = client.get("/api/users/pending-invites/")
+
+    assert response.status_code == http_ok
+    data = response.json()
+    result = data[0]
+
+    assert result["groups"] == []
+
+
+def test_list_pending_user_invites_returns_403_for_general_user(client, monkeypatch):
+    """Test that GET returns a 403 if not admin."""
+    monkeypatch.setattr("api.views.users.Administrator", Administrator)
+
+    response = client.get("/api/users/pending-invites/")
     assert response.status_code == http_forbidden
 
 
@@ -172,6 +276,21 @@ def test_invite_user_with_groups_creates_group_memberships(client, group, monkey
     assert data["userId"] == str(new_user_uuid)
 
     assert GroupMembership.objects.filter(group_id=group.id, user_id=new_user_uuid).exists()
+
+
+@pytest.mark.django_db
+def test_invite_user_already_existing_is_bad_request(client, monkeypatch, user_invites):  # noqa: ARG001
+    """Check a duplicate user invite returns bad request."""
+    monkeypatch.setattr("api.views.users.IdpRepository", MockIdpRepository)
+    monkeypatch.setattr("api.views.users.get_user_id_from_request", get_admin_user_id_from_request)
+
+    response = client.post(
+        "/api/users/",
+        data=json.dumps({"email": cognito_user.email, "userType": "general", "groupIds": []}),
+        content_type="application/json",
+    )
+
+    assert response.status_code == http_bad_request
 
 
 @pytest.mark.django_db
@@ -303,3 +422,38 @@ def test_resolve_invites_expires_any_pending_invite_over_7_days_and_removes_cogn
     assert db_user_invite.status == "expired"
     assert db_user_invite.expired_at is not None
     assert db_user_invite.accepted_at is None
+
+
+# --- DELETE Tests ---
+
+
+@pytest.mark.django_db
+def test_delete_user_is_successful(client, group, members, user_invites):  # noqa: ARG001
+    """Test that user can be successfully deleted."""
+    with patch("api.views.users.IdpRepository") as mock_idp_repository:
+        instance = mock_idp_repository.return_value
+        response = client.delete(f"/api/users/{new_user_uuid}/")
+        assert response.status_code == http_no_content
+        instance.remove_user_from_vista.assert_called_once_with(str(new_user_uuid))
+    user_invites_db = UserInvite.objects.filter(user_id=new_user_uuid)
+    assert not user_invites_db
+    group_memberships_db = GroupMembership.objects.filter(user_id=new_user_uuid)
+    assert not group_memberships_db
+
+
+@pytest.mark.django_db
+def test_delete_user_is_successful_without_user_invite_or_groups(client):
+    """Test that user can be successfully deleted without an invite or group memberships."""
+    with patch("api.views.users.IdpRepository") as mock_idp_repository:
+        instance = mock_idp_repository.return_value
+        response = client.delete(f"/api/users/{new_user_uuid}/")
+        assert response.status_code == http_no_content
+        instance.remove_user_from_vista.assert_called_once_with(str(new_user_uuid))
+
+
+@pytest.mark.django_db
+def test_delete_user_returns_403_for_general_user(client, monkeypatch):
+    """Test that DELETE returns a 403 if not admin."""
+    monkeypatch.setattr("api.views.users.Administrator", Administrator)
+    response = client.delete(f"/api/users/{new_user_uuid}/")
+    assert response.status_code == http_forbidden

@@ -1,5 +1,13 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { sendInvite, fetchAllInvites, cancelInvite, resendInvite, type InviteData, type InvitesListResponse } from './invites';
+import { sendInvite, fetchAllInvites, cancelInvite, resendInvite, type InviteData } from './invites';
+
+vi.mock('@/config/app-config', () => ({
+    default: {
+        services: {
+            users: '/ndtp-python/api/users/',
+        },
+    },
+}));
 
 describe('invites API', () => {
     let fetchMock: ReturnType<typeof vi.fn>;
@@ -16,6 +24,13 @@ describe('invites API', () => {
     });
 
     describe('sendInvite', () => {
+        beforeEach(() => {
+            fetchMock.mockResolvedValue({
+                ok: true,
+                text: () => Promise.resolve(''),
+            });
+        });
+
         it('successfully sends an invite with all data', async () => {
             const inviteData: InviteData = {
                 userType: 'Admin',
@@ -23,54 +38,39 @@ describe('invites API', () => {
                 groups: ['Admin', 'Users'],
             };
 
-            const promise = sendInvite(inviteData);
-            await vi.advanceTimersByTimeAsync(1000);
-            const result = await promise;
+            await sendInvite(inviteData);
 
-            expect(result).toHaveProperty('id');
-            expect(result.email).toBe('newuser@example.com');
-            expect(result.userType).toBe('Admin');
-            expect(result.groups).toEqual(['Admin', 'Users']);
-            expect(result.status).toBe('Pending');
-            expect(result.daysAgo).toBe(0);
+            expect(fetchMock).toHaveBeenCalledWith(
+                '/ndtp-python/api/users/',
+                expect.objectContaining({
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: 'newuser@example.com',
+                        user_type: 'admin',
+                        group_ids: ['Admin', 'Users'],
+                    }),
+                }),
+            );
         });
 
         it('sends General user invite', async () => {
+            fetchMock.mockResolvedValueOnce({
+                ok: true,
+                text: () => Promise.resolve(''),
+            });
+
             const inviteData: InviteData = {
                 userType: 'General',
                 email: 'general@example.com',
                 groups: [],
             };
 
-            const promise = sendInvite(inviteData);
-            await vi.advanceTimersByTimeAsync(1000);
-            const result = await promise;
-
-            expect(result.userType).toBe('General');
-            expect(result.groups).toEqual([]);
+            await sendInvite(inviteData);
         });
 
-        it('generates unique ID for each invite', async () => {
-            const inviteData: InviteData = {
-                userType: 'General',
-                email: 'test@example.com',
-                groups: [],
-            };
-
-            const promise1 = sendInvite(inviteData);
-            await vi.advanceTimersByTimeAsync(1000);
-            const result1 = await promise1;
-
-            const promise2 = sendInvite(inviteData);
-            await vi.advanceTimersByTimeAsync(1000);
-            const result2 = await promise2;
-
-            expect(result1.id).not.toBe(result2.id);
-        });
-
-        it('sets sentDate to current date', async () => {
-            const mockDate = new Date('2024-06-15T10:00:00Z');
-            vi.setSystemTime(mockDate);
+        it('throws when response is not ok', async () => {
+            fetchMock.mockResolvedValue({ ok: false, text: () => Promise.resolve('User already exists') });
 
             const inviteData: InviteData = {
                 userType: 'Admin',
@@ -78,63 +78,37 @@ describe('invites API', () => {
                 groups: [],
             };
 
-            const promise = sendInvite(inviteData);
-            await vi.advanceTimersByTimeAsync(1000);
-            const result = await promise;
-
-            expect(result.sentDate).toBe('2024-06-15');
-        });
-
-        it('includes multiple groups in invite', async () => {
-            const inviteData: InviteData = {
-                userType: 'Admin',
-                email: 'multi@example.com',
-                groups: ['Group1', 'Group2', 'Group3'],
-            };
-
-            const promise = sendInvite(inviteData);
-            await vi.advanceTimersByTimeAsync(1000);
-            const result = await promise;
-
-            expect(result.groups).toHaveLength(3);
-            expect(result.groups).toContain('Group1');
-            expect(result.groups).toContain('Group2');
-            expect(result.groups).toContain('Group3');
+            await expect(sendInvite(inviteData)).rejects.toThrow('User already exists');
         });
     });
 
     describe('fetchAllInvites', () => {
-        const mockInvitesResponse: InvitesListResponse = {
-            invites: [
-                {
-                    id: 'invite-1',
-                    email: 'invite1@example.com',
-                    userType: 'Admin',
-                    groups: ['Admin'],
-                    status: 'Pending',
-                    sentDate: '2024-06-10',
-                    daysAgo: 0,
-                },
-                {
-                    id: 'invite-2',
-                    email: 'invite2@example.com',
-                    userType: 'General',
-                    groups: [],
-                    status: 'Accepted',
-                    sentDate: '2024-06-01',
-                    daysAgo: 0,
-                },
-                {
-                    id: 'invite-3',
-                    email: 'invite3@example.com',
-                    userType: 'General',
-                    groups: ['Users'],
-                    status: 'Expired',
-                    sentDate: '2024-05-01',
-                    daysAgo: 0,
-                },
-            ],
-        };
+        const mockBackendInvitesResponse = [
+            {
+                user_id: 'invite-1',
+                emailAddress: 'invite1@example.com',
+                userType: 'admin',
+                groups: ['Admin'],
+                status: 'pending',
+                createdAt: '2024-06-10T10:00:00.000Z',
+            },
+            {
+                user_id: 'invite-2',
+                emailAddress: 'invite2@example.com',
+                userType: 'general',
+                groups: [],
+                status: 'accepted',
+                createdAt: '2024-06-01T10:00:00.000Z',
+            },
+            {
+                user_id: 'invite-3',
+                emailAddress: 'invite3@example.com',
+                userType: 'general',
+                groups: ['Users'],
+                status: 'expired',
+                createdAt: '2024-05-01T10:00:00.000Z',
+            },
+        ];
 
         it('successfully fetches all invites', async () => {
             const mockDate = new Date('2024-06-15T10:00:00Z');
@@ -142,12 +116,14 @@ describe('invites API', () => {
 
             fetchMock.mockResolvedValue({
                 ok: true,
-                json: vi.fn().mockResolvedValue(mockInvitesResponse),
+                json: vi.fn().mockResolvedValue(mockBackendInvitesResponse),
             });
 
             const result = await fetchAllInvites();
 
-            expect(fetchMock).toHaveBeenCalledWith('/data/invites.json');
+            expect(fetchMock).toHaveBeenCalledWith('/ndtp-python/api/users/pending-invites/', {
+                credentials: 'include',
+            });
             expect(result).toHaveLength(3);
         });
 
@@ -157,7 +133,7 @@ describe('invites API', () => {
 
             fetchMock.mockResolvedValue({
                 ok: true,
-                json: vi.fn().mockResolvedValue(mockInvitesResponse),
+                json: vi.fn().mockResolvedValue(mockBackendInvitesResponse),
             });
 
             const result = await fetchAllInvites();
@@ -173,7 +149,7 @@ describe('invites API', () => {
 
             fetchMock.mockResolvedValue({
                 ok: true,
-                json: vi.fn().mockResolvedValue(mockInvitesResponse),
+                json: vi.fn().mockResolvedValue(mockBackendInvitesResponse),
             });
 
             const result = await fetchAllInvites();
@@ -191,7 +167,7 @@ describe('invites API', () => {
         it('returns empty array when no invites', async () => {
             fetchMock.mockResolvedValue({
                 ok: true,
-                json: vi.fn().mockResolvedValue({ invites: [] }),
+                json: vi.fn().mockResolvedValue([]),
             });
 
             const result = await fetchAllInvites();
@@ -199,16 +175,17 @@ describe('invites API', () => {
             expect(result).toEqual([]);
         });
 
-        it('throws error when response is not ok', async () => {
+        it('throws when response is not ok', async () => {
             fetchMock.mockResolvedValue({
                 ok: false,
                 statusText: 'Forbidden',
+                text: () => Promise.resolve(''),
             });
 
             await expect(fetchAllInvites()).rejects.toThrow('Failed to fetch invites: Forbidden');
         });
 
-        it('throws error on network failure', async () => {
+        it('throws on network failure', async () => {
             fetchMock.mockRejectedValue(new Error('Network error'));
 
             await expect(fetchAllInvites()).rejects.toThrow('Network error');
@@ -220,7 +197,7 @@ describe('invites API', () => {
 
             fetchMock.mockResolvedValue({
                 ok: true,
-                json: vi.fn().mockResolvedValue(mockInvitesResponse),
+                json: vi.fn().mockResolvedValue(mockBackendInvitesResponse),
             });
 
             const result = await fetchAllInvites();
@@ -234,19 +211,16 @@ describe('invites API', () => {
             const mockDate = new Date('2024-06-15T10:00:00Z');
             vi.setSystemTime(mockDate);
 
-            const todayInvite: InvitesListResponse = {
-                invites: [
-                    {
-                        id: 'today',
-                        email: 'today@example.com',
-                        userType: 'General',
-                        groups: [],
-                        status: 'Pending',
-                        sentDate: '2024-06-15',
-                        daysAgo: 999,
-                    },
-                ],
-            };
+            const todayInvite = [
+                {
+                    user_id: 'today',
+                    emailAddress: 'today@example.com',
+                    userType: 'general',
+                    groups: [],
+                    status: 'pending',
+                    createdAt: '2024-06-15T10:00:00.000Z',
+                },
+            ];
 
             fetchMock.mockResolvedValue({
                 ok: true,
@@ -260,36 +234,31 @@ describe('invites API', () => {
     });
 
     describe('cancelInvite', () => {
+        beforeEach(() => {
+            fetchMock.mockResolvedValue({ ok: true });
+        });
+
         it('successfully cancels an invite', async () => {
-            const promise = cancelInvite('invite-123');
-            await vi.advanceTimersByTimeAsync(500);
-            await promise;
-        });
+            await cancelInvite('user-uuid-123');
 
-        it('resolves after delay', async () => {
-            const promise = cancelInvite('invite-456');
-
-            let resolved = false;
-            promise.then(() => {
-                resolved = true;
+            expect(fetchMock).toHaveBeenCalledWith('/ndtp-python/api/users/user-uuid-123/', {
+                method: 'DELETE',
+                credentials: 'include',
             });
-
-            await vi.advanceTimersByTimeAsync(400);
-            expect(resolved).toBe(false);
-
-            await vi.advanceTimersByTimeAsync(100);
-            await promise;
-            expect(resolved).toBe(true);
         });
 
-        it('handles different invite IDs', async () => {
-            const promise1 = cancelInvite('invite-1');
-            await vi.advanceTimersByTimeAsync(500);
-            await promise1;
+        it('throws when response is not ok', async () => {
+            fetchMock.mockResolvedValue({ ok: false, statusText: 'Forbidden' });
 
-            const promise2 = cancelInvite('invite-2');
-            await vi.advanceTimersByTimeAsync(500);
-            await promise2;
+            await expect(cancelInvite('user-uuid-456')).rejects.toThrow();
+        });
+
+        it('handles different user IDs', async () => {
+            await cancelInvite('user-1');
+            await cancelInvite('user-2');
+
+            expect(fetchMock).toHaveBeenCalledWith('/ndtp-python/api/users/user-1/', expect.any(Object));
+            expect(fetchMock).toHaveBeenCalledWith('/ndtp-python/api/users/user-2/', expect.any(Object));
         });
     });
 

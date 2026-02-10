@@ -2,24 +2,38 @@ import React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import InviteNewUser from './InviteNewUser';
 import { sendInvite } from '@/api/invites';
 
-const renderWithRouter = (ui: React.ReactElement, { initialEntries = ['/'], route = '/*' }: { initialEntries?: string[]; route?: string } = {}) => {
-    const Wrapper = ({ children }: { children: React.ReactNode }) => (
-        <MemoryRouter initialEntries={initialEntries}>
-            <Routes>
-                <Route path={route} element={children} />
-            </Routes>
-        </MemoryRouter>
-    );
-
-    return render(ui, { wrapper: Wrapper });
-};
+const mockGroups = [
+    { id: 'g1', name: 'Resilience team', members: [] },
+    { id: 'g2', name: 'Tywnwell team', members: [] },
+];
 
 vi.mock('@/api/invites', () => ({
     sendInvite: vi.fn(),
 }));
+
+vi.mock('@/api/groups', () => ({
+    fetchAllGroups: vi.fn(() => Promise.resolve(mockGroups)),
+}));
+
+const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+
+const renderWithRouter = (ui: React.ReactElement, { initialEntries = ['/'], route = '/*' }: { initialEntries?: string[]; route?: string } = {}) => {
+    const Wrapper = ({ children }: { children: React.ReactNode }) => (
+        <QueryClientProvider client={queryClient}>
+            <MemoryRouter initialEntries={initialEntries}>
+                <Routes>
+                    <Route path={route} element={children} />
+                </Routes>
+            </MemoryRouter>
+        </QueryClientProvider>
+    );
+
+    return render(ui, { wrapper: Wrapper });
+};
 
 const mockNavigate = vi.fn();
 vi.mock('react-router-dom', async () => {
@@ -33,19 +47,11 @@ vi.mock('react-router-dom', async () => {
 describe('InviteNewUser', () => {
     beforeEach(() => {
         vi.clearAllMocks();
-        vi.mocked(sendInvite).mockResolvedValue({
-            id: 'test-id',
-            email: 'test@example.com',
-            userType: 'Admin',
-            groups: [],
-            status: 'Pending',
-            sentDate: '2024-01-01',
-            daysAgo: 0,
-        });
+        vi.mocked(sendInvite).mockResolvedValue();
     });
 
     describe('Rendering', () => {
-        it('renders all page elements', () => {
+        it('renders all page elements', async () => {
             renderWithRouter(<InviteNewUser />);
 
             expect(screen.getByText('Invite new user')).toBeInTheDocument();
@@ -53,7 +59,7 @@ describe('InviteNewUser', () => {
             expect(screen.getByLabelText('General')).toBeInTheDocument();
             expect(screen.getByPlaceholderText('Enter email address')).toBeInTheDocument();
             expect(screen.getByText('Group access')).toBeInTheDocument();
-            expect(screen.getByText('Resilience team')).toBeInTheDocument();
+            expect(await screen.findByText('Resilience team')).toBeInTheDocument();
             expect(screen.getByText('CANCEL')).toBeInTheDocument();
             expect(screen.getByText('SEND INVITE')).toBeInTheDocument();
         });
@@ -157,10 +163,10 @@ describe('InviteNewUser', () => {
     });
 
     describe('Group Selection', () => {
-        it('renders available groups', () => {
+        it('renders available groups', async () => {
             renderWithRouter(<InviteNewUser />);
 
-            expect(screen.getByText('Resilience team')).toBeInTheDocument();
+            expect(await screen.findByText('Resilience team')).toBeInTheDocument();
             expect(screen.getByText('Tywnwell team')).toBeInTheDocument();
         });
     });
@@ -267,10 +273,10 @@ describe('InviteNewUser', () => {
     });
 
     describe('Group Sorting', () => {
-        it('displays sortable group table', () => {
+        it('displays sortable group table', async () => {
             renderWithRouter(<InviteNewUser />);
 
-            expect(screen.getByText('Groups')).toBeInTheDocument();
+            expect(await screen.findByText('Groups')).toBeInTheDocument();
         });
     });
 });

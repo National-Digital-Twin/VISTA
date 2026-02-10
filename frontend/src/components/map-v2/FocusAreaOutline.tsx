@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { Layer, Source } from 'react-map-gl/maplibre';
 import type { Geometry, Feature, Position } from 'geojson';
+import { BELOW_ASSET_LAYER_ID } from './constants';
 
 const SOURCE_ID = 'focus-area-outline-source';
 const FILL_LAYER_ID = 'focus-area-outline-fill-layer';
@@ -43,6 +44,7 @@ const FocusAreaOutline = ({ geometry, fillColor = 'transparent', fillOpacity = 0
             <Layer
                 id={FILL_LAYER_ID}
                 type="fill"
+                beforeId={BELOW_ASSET_LAYER_ID}
                 paint={{
                     'fill-color': fillColor,
                     'fill-opacity': fillOpacity,
@@ -51,6 +53,7 @@ const FocusAreaOutline = ({ geometry, fillColor = 'transparent', fillOpacity = 0
             <Layer
                 id={LINE_LAYER_ID}
                 type="line"
+                beforeId={BELOW_ASSET_LAYER_ID}
                 paint={{
                     'line-color': lineColor,
                     'line-width': lineWidth,

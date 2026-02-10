@@ -140,5 +140,35 @@ urlpatterns = [
         views.ScenarioRouteView.as_view(),
         name="scenario-route",
     ),
+    path(
+        "scenarios/<uuid:scenario_id>/visible-resource-intervention-types/",
+        views.VisibleResourceInterventionTypeView.as_view(),
+        name="visible-resource-intervention-types",
+    ),
+    path(
+        "scenarios/<uuid:scenario_id>/resource-interventions/",
+        views.ScenarioResourceInterventionsView.as_view(),
+        name="scenario-resource-interventions",
+    ),
+    path(
+        "scenarios/<uuid:scenario_id>/resource-interventions/locations/<uuid:location_id>/",
+        views.ScenarioResourceInterventionLocationView.as_view(),
+        name="scenario-resource-intervention-location-detail",
+    ),
+    path(
+        "scenarios/<uuid:scenario_id>/resource-interventions/locations/<uuid:location_id>/<str:action_type>/",
+        views.ScenarioResourceInterventionLocationView.as_view(),
+        name="resource-intervention-location-action",
+    ),
+    path(
+        "scenarios/<uuid:scenario_id>/resource-interventions/actions/",
+        views.ScenarioResourceInterventionActionsView.as_view(),
+        name="scenario-resource-intervention-actions",
+    ),
+    path(
+        "scenarios/<uuid:scenario_id>/resource-interventions/actions/export/",
+        views.ScenarioResourceInterventionActionsExportView.as_view(),
+        name="scenario-resource-intervention-actions-export",
+    ),
     path("", include(router.urls)),
 ]

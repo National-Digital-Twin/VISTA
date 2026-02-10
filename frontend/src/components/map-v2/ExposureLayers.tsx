@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { Layer, Source } from 'react-map-gl/maplibre';
 import { useQuery } from '@tanstack/react-query';
 import type { FeatureCollection, Feature } from 'geojson';
+import { BELOW_ASSET_LAYER_ID } from './constants';
 import { fetchExposureLayers } from '@/api/exposure-layers';
 
 const SOURCE_ID = 'map-v2-exposure-source';
@@ -70,6 +71,7 @@ const ExposureLayers = ({
             <Layer
                 id={LAYER_ID}
                 type="fill"
+                beforeId={BELOW_ASSET_LAYER_ID}
                 paint={{
                     'fill-color': FILL_COLOR,
                     'fill-opacity': FILL_OPACITY,
@@ -78,6 +80,7 @@ const ExposureLayers = ({
             <Layer
                 id={`${LAYER_ID}-outline`}
                 type="line"
+                beforeId={BELOW_ASSET_LAYER_ID}
                 paint={{
                     'line-color': STROKE_COLOR,
                     'line-width': STROKE_WIDTH,
