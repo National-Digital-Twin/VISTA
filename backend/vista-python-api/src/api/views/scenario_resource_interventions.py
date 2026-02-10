@@ -1,9 +1,12 @@
 """Views for scenario-scoped resource intervention operations."""
 
+import csv
+import io
 import logging
 
 from django.db import transaction
 from django.db.models import Prefetch
+from django.http import StreamingHttpResponse
 from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.response import Response
@@ -17,6 +20,7 @@ from api.models.resource_intervention import (
 )
 from api.repository.external.idp_repository import IdpRepository
 from api.serializers import (
+    ExportParamsSerializer,
     PaginationParamsSerializer,
     ResourceInterventionActionLogSerializer,
     ResourceInterventionActionSerializer,
@@ -27,6 +31,17 @@ from api.serializers import (
 from api.utils.auth import get_user_id_from_request
 
 logger = logging.getLogger(__name__)
+
+
+def _build_user_name_map():
+    """Build a user_id -> name mapping from the identity provider."""
+    try:
+        idp = IdpRepository()
+        users = idp.list_users_in_group()
+        return {user.id: user.name for user in users}
+    except Exception:
+        logger.exception("Failed to fetch users from identity provider")
+        return {}
 
 
 class ScenarioResourceInterventionsView(APIView):
@@ -183,7 +198,7 @@ class ScenarioResourceInterventionActionsView(APIView):
         has_next = len(actions) > limit
         actions = actions[:limit]
 
-        user_name_map = self._build_user_name_map()
+        user_name_map = _build_user_name_map()
         serializer = ResourceInterventionActionLogSerializer(
             actions, many=True, context={"user_name_map": user_name_map}
         )
@@ -197,12 +212,61 @@ class ScenarioResourceInterventionActionsView(APIView):
         }
         return Response(response_data)
 
-    def _build_user_name_map(self):
-        """Build a user_id → name mapping from the identity provider."""
-        try:
-            idp = IdpRepository()
-            users = idp.list_users_in_group()
-            return {user.id: user.name for user in users}
-        except Exception:
-            logger.exception("Failed to fetch users from identity provider")
-            return {}
+
+class ScenarioResourceInterventionActionsExportView(APIView):
+    """Export resource intervention actions as CSV."""
+
+    def get(self, request, scenario_id):
+        """Stream all actions for a scenario and resource type as CSV."""
+        get_object_or_404(Scenario, id=scenario_id)
+
+        params_serializer = ExportParamsSerializer(data=request.query_params)
+        params_serializer.is_valid(raise_exception=True)
+        type_id = params_serializer.validated_data["type_id"]
+
+        resource_type = get_object_or_404(ResourceInterventionType, id=type_id)
+
+        actions_qs = (
+            ResourceInterventionAction.objects.filter(
+                location__scenario_id=scenario_id,
+                location__type_id=type_id,
+            )
+            .select_related("location", "location__type")
+            .order_by("-created_at")
+        )
+
+        user_name_map = _build_user_name_map()
+
+        filename = f"{resource_type.name}-actions-export.csv"
+        response = StreamingHttpResponse(
+            self._csv_rows(actions_qs.iterator(), user_name_map),
+            content_type="text/csv",
+        )
+        response["Content-Disposition"] = f'attachment; filename="{filename}"'
+        return response
+
+    def _csv_rows(self, actions_iterator, user_name_map):
+        """Generate CSV rows from actions queryset iterator."""
+        buf = io.StringIO()
+        writer = csv.writer(buf)
+
+        writer.writerow(["Time", "Location", "Resource Type", "Action", "Quantity", "User"])
+        yield buf.getvalue()
+        buf.seek(0)
+        buf.truncate(0)
+
+        for action in actions_iterator:
+            user_id = str(action.user_id)
+            writer.writerow(
+                [
+                    action.created_at.strftime("%Y-%m-%d %H:%M:%S"),
+                    action.location.name,
+                    action.location.type.name,
+                    action.action_type.title(),
+                    action.quantity,
+                    user_name_map.get(user_id) or user_id,
+                ]
+            )
+            yield buf.getvalue()
+            buf.seek(0)
+            buf.truncate(0)

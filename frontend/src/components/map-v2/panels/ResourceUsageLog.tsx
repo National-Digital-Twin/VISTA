@@ -20,7 +20,7 @@ import {
     Stack,
 } from '@mui/material';
 import { format } from 'date-fns';
-import { fetchResourceInterventionActions } from '@/api/resources';
+import { fetchResourceInterventionActions, getResourceInterventionActionsExportUrl } from '@/api/resources';
 
 const DEFAULT_ROWS_PER_PAGE = 10;
 const ROWS_PER_PAGE_OPTIONS = [5, 10, 25];
@@ -47,6 +47,8 @@ export const ResourceUsageLog = ({ open, onClose, scenarioId, typeId, typeName }
                 typeId,
             }),
         enabled: open && !!scenarioId,
+        staleTime: 0,
+        refetchOnMount: 'always',
     });
 
     const handleChangePage = useCallback(
@@ -75,8 +77,17 @@ export const ResourceUsageLog = ({ open, onClose, scenarioId, typeId, typeName }
         onClose();
     }, [onClose]);
 
-    // TODO: Implement CSV/PDF export
-    const handleExportCsv = () => {};
+    const handleExportCsv = useCallback(() => {
+        if (!scenarioId || !typeId) {
+            return;
+        }
+        const url = getResourceInterventionActionsExportUrl(scenarioId, typeId);
+        const link = document.createElement('a');
+        link.href = url;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }, [scenarioId, typeId]);
 
     const actions = data?.results ?? [];
     const totalCount = data?.totalCount ?? 0;
@@ -87,7 +98,7 @@ export const ResourceUsageLog = ({ open, onClose, scenarioId, typeId, typeName }
                 <Stack direction="row" justifyContent="space-between" alignItems="center">
                     <Typography variant="h6">{typeName ? `${typeName} Inventory Logs` : 'Inventory Logs'}</Typography>
                     <Stack direction="row" spacing={1}>
-                        <Button variant="outlined" size="small" onClick={handleExportCsv}>
+                        <Button variant="outlined" size="small" onClick={handleExportCsv} disabled={!scenarioId || !typeId}>
                             Export CSV
                         </Button>
                     </Stack>

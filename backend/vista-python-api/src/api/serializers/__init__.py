@@ -29,6 +29,7 @@ from .focus_area import (
 )
 from .group import GroupMembershipSerializer, GroupSerializer
 from .resource_intervention import (
+    ExportParamsSerializer,
     PaginationParamsSerializer,
     ResourceInterventionActionLogSerializer,
     ResourceInterventionActionSerializer,
@@ -66,6 +67,7 @@ __all__ = [
     "ConstraintInterventionUpdateSerializer",
     "DataSourceSerializer",
     "DependencySerializer",
+    "ExportParamsSerializer",
     "ExposureLayerCreateSerializer",
     "ExposureLayerSerializer",
     "ExposureLayerTypeSerializer",

@@ -705,3 +705,188 @@ class TestVisibleResourceInterventionType:
             ).count()
             == 1
         )
+
+
+# --- CSV Export Tests ---
+
+
+@pytest.mark.django_db
+class TestScenarioResourceInterventionActionsExportView:
+    """Tests for CSV export of resource intervention actions."""
+
+    def test_export_csv_returns_200_with_csv_content_type(
+        self, client, scenario, resource_type, resource_location, mock_user_id
+    ):
+        """Export returns 200 with text/csv content type."""
+        ResourceInterventionAction.objects.create(
+            location=resource_location,
+            user_id=mock_user_id,
+            action_type="withdraw",
+            quantity=50,
+        )
+
+        url = (
+            f"/api/scenarios/{scenario.id}/resource-interventions/actions/export/"
+            f"?type_id={resource_type.id}"
+        )
+        response = client.get(url)
+
+        assert response.status_code == status.HTTP_200_OK
+        assert response["Content-Type"] == "text/csv"
+        assert "attachment" in response["Content-Disposition"]
+        assert "Sandbags-actions-export.csv" in response["Content-Disposition"]
+
+    def test_export_csv_contains_header_and_data_rows(
+        self, client, scenario, resource_type, resource_location, mock_user_id
+    ):
+        """Export CSV contains header row followed by data rows."""
+        ResourceInterventionAction.objects.create(
+            location=resource_location,
+            user_id=mock_user_id,
+            action_type="withdraw",
+            quantity=50,
+        )
+        ResourceInterventionAction.objects.create(
+            location=resource_location,
+            user_id=mock_user_id,
+            action_type="restock",
+            quantity=75,
+        )
+
+        url = (
+            f"/api/scenarios/{scenario.id}/resource-interventions/actions/export/"
+            f"?type_id={resource_type.id}"
+        )
+        response = client.get(url)
+
+        content = b"".join(response.streaming_content).decode("utf-8")
+        lines = [line for line in content.strip().split("\n") if line]
+        assert len(lines) == 3
+        assert lines[0].strip() == "Time,Location,Resource Type,Action,Quantity,User"
+
+    def test_export_csv_empty_returns_header_only(self, client, scenario, resource_type):
+        """Export with no actions returns only the header row."""
+        url = (
+            f"/api/scenarios/{scenario.id}/resource-interventions/actions/export/"
+            f"?type_id={resource_type.id}"
+        )
+        response = client.get(url)
+
+        assert response.status_code == status.HTTP_200_OK
+        content = b"".join(response.streaming_content).decode("utf-8")
+        lines = [line for line in content.strip().split("\n") if line]
+        assert len(lines) == 1
+        assert "Time" in lines[0]
+
+    def test_export_csv_missing_type_id_returns_400(self, client, scenario):
+        """Missing type_id returns 400."""
+        url = f"/api/scenarios/{scenario.id}/resource-interventions/actions/export/"
+        response = client.get(url)
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    def test_export_csv_invalid_type_id_returns_400(self, client, scenario):
+        """Invalid type_id format returns 400."""
+        url = (
+            f"/api/scenarios/{scenario.id}/resource-interventions/actions/export/"
+            f"?type_id=not-a-uuid"
+        )
+        response = client.get(url)
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    def test_export_csv_filter_by_type_id(
+        self, client, scenario, resource_type, resource_location, mock_user_id
+    ):
+        """Export only includes actions for the specified type."""
+        other_type = ResourceInterventionType.objects.create(name="Barriers", unit="units")
+        other_location = ResourceInterventionLocation.objects.create(
+            scenario=scenario,
+            name="Ryde",
+            geometry=Point(-1.162, 50.729, srid=4326),
+            type=other_type,
+            current_stock=100,
+            max_capacity=200,
+        )
+
+        ResourceInterventionAction.objects.create(
+            location=resource_location,
+            user_id=mock_user_id,
+            action_type="withdraw",
+            quantity=10,
+        )
+        ResourceInterventionAction.objects.create(
+            location=other_location,
+            user_id=mock_user_id,
+            action_type="withdraw",
+            quantity=20,
+        )
+
+        url = (
+            f"/api/scenarios/{scenario.id}/resource-interventions/actions/export/"
+            f"?type_id={resource_type.id}"
+        )
+        response = client.get(url)
+
+        content = b"".join(response.streaming_content).decode("utf-8")
+        lines = [line for line in content.strip().split("\n") if line]
+        assert len(lines) == 2
+        assert "Newport" in lines[1]
+        assert "Ryde" not in lines[1]
+
+    def test_export_csv_no_pagination(
+        self, client, scenario, resource_type, resource_location, mock_user_id
+    ):
+        """Export returns all rows without pagination."""
+        for _ in range(60):
+            ResourceInterventionAction.objects.create(
+                location=resource_location,
+                user_id=mock_user_id,
+                action_type="withdraw",
+                quantity=1,
+            )
+
+        url = (
+            f"/api/scenarios/{scenario.id}/resource-interventions/actions/export/"
+            f"?type_id={resource_type.id}"
+        )
+        response = client.get(url)
+
+        content = b"".join(response.streaming_content).decode("utf-8")
+        lines = [line for line in content.strip().split("\n") if line]
+        assert len(lines) == 61
+
+    def test_export_csv_data_format(
+        self, client, scenario, resource_type, resource_location, mock_user_id
+    ):
+        """Verify individual CSV row data format."""
+        ResourceInterventionAction.objects.create(
+            location=resource_location,
+            user_id=mock_user_id,
+            action_type="withdraw",
+            quantity=42,
+        )
+
+        url = (
+            f"/api/scenarios/{scenario.id}/resource-interventions/actions/export/"
+            f"?type_id={resource_type.id}"
+        )
+        response = client.get(url)
+
+        content = b"".join(response.streaming_content).decode("utf-8")
+        lines = [line for line in content.strip().split("\n") if line]
+        data_row = lines[1]
+        assert "Newport" in data_row
+        assert "Sandbags" in data_row
+        assert "Withdraw" in data_row
+        assert "42" in data_row
+
+    def test_export_invalid_scenario_404(self, client):
+        """Invalid scenario returns 404."""
+        url = (
+            f"/api/scenarios/{uuid.uuid4()}/resource-interventions/actions/export/"
+            f"?type_id={uuid.uuid4()}"
+        )
+        response = client.get(url)
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND
