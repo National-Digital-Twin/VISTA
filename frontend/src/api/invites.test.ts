@@ -27,7 +27,6 @@ describe('invites API', () => {
         beforeEach(() => {
             fetchMock.mockResolvedValue({
                 ok: true,
-                json: () => Promise.resolve({ user_id: 'test-user-uuid-123' }),
                 text: () => Promise.resolve(''),
             });
         });
@@ -39,7 +38,7 @@ describe('invites API', () => {
                 groups: ['Admin', 'Users'],
             };
 
-            const result = await sendInvite(inviteData);
+            await sendInvite(inviteData);
 
             expect(fetchMock).toHaveBeenCalledWith(
                 '/ndtp-python/api/users/',
@@ -53,18 +52,11 @@ describe('invites API', () => {
                     }),
                 }),
             );
-            expect(result.id).toBe('test-user-uuid-123');
-            expect(result.email).toBe('newuser@example.com');
-            expect(result.userType).toBe('Admin');
-            expect(result.groups).toEqual(['Admin', 'Users']);
-            expect(result.status).toBe('Pending');
-            expect(result.daysAgo).toBe(0);
         });
 
         it('sends General user invite', async () => {
             fetchMock.mockResolvedValueOnce({
                 ok: true,
-                json: () => Promise.resolve({ user_id: 'test-user-uuid-456' }),
                 text: () => Promise.resolve(''),
             });
 
@@ -74,57 +66,7 @@ describe('invites API', () => {
                 groups: [],
             };
 
-            const result = await sendInvite(inviteData);
-
-            expect(result.id).toBe('test-user-uuid-456');
-            expect(result.userType).toBe('General');
-            expect(result.groups).toEqual([]);
-        });
-
-        it('throws error when API response is missing user_id', async () => {
-            fetchMock.mockResolvedValueOnce({
-                ok: true,
-                json: () => Promise.resolve({}),
-                text: () => Promise.resolve(''),
-            });
-
-            const inviteData: InviteData = {
-                userType: 'General',
-                email: 'test@example.com',
-                groups: [],
-            };
-
-            await expect(sendInvite(inviteData)).rejects.toThrow('Invalid response from server: missing user_id');
-        });
-
-        it('sets sentDate to current date', async () => {
-            const mockDate = new Date('2024-06-15T10:00:00Z');
-            vi.setSystemTime(mockDate);
-
-            const inviteData: InviteData = {
-                userType: 'Admin',
-                email: 'test@example.com',
-                groups: [],
-            };
-
-            const result = await sendInvite(inviteData);
-
-            expect(result.sentDate).toBe('2024-06-15');
-        });
-
-        it('includes multiple groups in invite', async () => {
-            const inviteData: InviteData = {
-                userType: 'Admin',
-                email: 'multi@example.com',
-                groups: ['Group1', 'Group2', 'Group3'],
-            };
-
-            const result = await sendInvite(inviteData);
-
-            expect(result.groups).toHaveLength(3);
-            expect(result.groups).toContain('Group1');
-            expect(result.groups).toContain('Group2');
-            expect(result.groups).toContain('Group3');
+            await sendInvite(inviteData);
         });
 
         it('throws when response is not ok', async () => {

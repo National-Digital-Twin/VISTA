@@ -47,15 +47,7 @@ vi.mock('react-router-dom', async () => {
 describe('InviteNewUser', () => {
     beforeEach(() => {
         vi.clearAllMocks();
-        vi.mocked(sendInvite).mockResolvedValue({
-            id: 'test-id',
-            email: 'test@example.com',
-            userType: 'Admin',
-            groups: [],
-            status: 'Pending',
-            sentDate: '2024-01-01',
-            daysAgo: 0,
-        });
+        vi.mocked(sendInvite).mockResolvedValue();
     });
 
     describe('Rendering', () => {

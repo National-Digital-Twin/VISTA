@@ -22,7 +22,7 @@ const calculateDaysAgo = (date: Date | string): number => {
     return Math.floor((now.getTime() - targetDate.getTime()) / (1000 * 60 * 60 * 24));
 };
 
-export const sendInvite = async (inviteData: InviteData): Promise<Invite> => {
+export const sendInvite = async (inviteData: InviteData): Promise<void> => {
     const body = {
         email: inviteData.email.trim(),
         user_type: inviteData.userType.toLowerCase() as 'admin' | 'general',
@@ -34,29 +34,10 @@ export const sendInvite = async (inviteData: InviteData): Promise<Invite> => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
     });
-
     if (!response.ok) {
         const message = await response.text();
         throw new Error(message || `Failed to send invite: ${response.statusText}`);
     }
-
-    const created = await response.json();
-
-    if (!created?.user_id) {
-        throw new Error('Invalid response from server: missing user_id');
-    }
-
-    const invite: Invite = {
-        id: created.user_id,
-        email: inviteData.email.trim(),
-        userType: inviteData.userType,
-        groups: inviteData.groups,
-        status: 'Pending',
-        sentDate: new Date().toISOString().split('T')[0],
-        daysAgo: 0,
-    };
-
-    return invite;
 };
 
 type BackendInviteResponse = {
