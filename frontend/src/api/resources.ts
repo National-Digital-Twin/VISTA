@@ -138,6 +138,10 @@ export const fetchResourceInterventionActions = async (
     return response.json();
 };
 
+export const getResourceInterventionActionsExportUrl = (scenarioId: string, typeId: string): string => {
+    return `${config.services.apiBaseUrl}/scenarios/${scenarioId}/resource-interventions/actions/export/?type_id=${typeId}`;
+};
+
 export const toggleResourceTypeVisibility = async (
     scenarioId: string,
     resourceTypeId: string,

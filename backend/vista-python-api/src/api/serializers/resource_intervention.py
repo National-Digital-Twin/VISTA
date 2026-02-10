@@ -79,3 +79,9 @@ class PaginationParamsSerializer(serializers.Serializer):
     cursor = serializers.DateTimeField(required=False)
     limit = serializers.IntegerField(required=False, min_value=1, max_value=100, default=50)
     type_id = serializers.UUIDField(required=False)
+
+
+class ExportParamsSerializer(serializers.Serializer):
+    """Serializer for CSV export query parameters."""
+
+    type_id = serializers.UUIDField(required=True)

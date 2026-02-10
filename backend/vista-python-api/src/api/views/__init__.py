@@ -16,6 +16,7 @@ from .scenario_assets import ScenarioAssetsView
 from .scenario_constraint_interventions import ScenarioConstraintInterventionsView
 from .scenario_exposure_layers import ScenarioExposureLayersView
 from .scenario_resource_interventions import (
+    ScenarioResourceInterventionActionsExportView,
     ScenarioResourceInterventionActionsView,
     ScenarioResourceInterventionLocationView,
     ScenarioResourceInterventionsView,
@@ -40,6 +41,7 @@ __all__ = [
     "ScenarioAssetsView",
     "ScenarioConstraintInterventionsView",
     "ScenarioExposureLayersView",
+    "ScenarioResourceInterventionActionsExportView",
     "ScenarioResourceInterventionActionsView",
     "ScenarioResourceInterventionLocationView",
     "ScenarioResourceInterventionsView",

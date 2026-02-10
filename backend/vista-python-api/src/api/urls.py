@@ -148,5 +148,10 @@ urlpatterns = [
         views.ScenarioResourceInterventionActionsView.as_view(),
         name="scenario-resource-intervention-actions",
     ),
+    path(
+        "scenarios/<uuid:scenario_id>/resource-interventions/actions/export/",
+        views.ScenarioResourceInterventionActionsExportView.as_view(),
+        name="scenario-resource-intervention-actions-export",
+    ),
     path("", include(router.urls)),
 ]

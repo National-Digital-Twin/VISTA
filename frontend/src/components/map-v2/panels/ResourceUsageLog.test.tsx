@@ -9,6 +9,7 @@ import theme from '@/theme';
 
 vi.mock('@/api/resources', () => ({
     fetchResourceInterventionActions: vi.fn(),
+    getResourceInterventionActionsExportUrl: vi.fn(() => '/test/export'),
 }));
 
 const mockedFetchActions = vi.mocked(fetchResourceInterventionActions);
@@ -142,5 +143,33 @@ describe('ResourceUsageLog', () => {
         renderWithProviders(<ResourceUsageLog {...defaultProps} />);
 
         expect(screen.getByText('Export CSV')).toBeInTheDocument();
+    });
+
+    it('Export CSV button is disabled when typeId is not provided', async () => {
+        mockedFetchActions.mockResolvedValue({ totalCount: 0, results: [], nextCursor: null });
+
+        renderWithProviders(<ResourceUsageLog {...defaultProps} typeId={undefined} />);
+
+        expect(screen.getByText('Export CSV')).toBeDisabled();
+    });
+
+    it('Export CSV button triggers download when clicked', async () => {
+        mockedFetchActions.mockResolvedValue({ totalCount: 0, results: [], nextCursor: null });
+
+        renderWithProviders(<ResourceUsageLog {...defaultProps} />);
+
+        const appendSpy = vi.spyOn(document.body, 'appendChild');
+        const removeSpy = vi.spyOn(document.body, 'removeChild');
+
+        screen.getByText('Export CSV').click();
+
+        expect(appendSpy).toHaveBeenCalled();
+        const link = appendSpy.mock.calls[0][0] as HTMLAnchorElement;
+        expect(link.tagName).toBe('A');
+        expect(link.href).toContain('export');
+        expect(removeSpy).toHaveBeenCalled();
+
+        appendSpy.mockRestore();
+        removeSpy.mockRestore();
     });
 });
