@@ -10,7 +10,7 @@ class Migration(migrations.Migration):
     """Add `created_by` to group data source access and default uuid IDs to other models."""
 
     dependencies: ClassVar = [
-        ("api", "0053_rename_user_invite_expiry_field"),
+        ("api", "0054_resource_interventions"),
     ]
 
     operations: ClassVar = [
