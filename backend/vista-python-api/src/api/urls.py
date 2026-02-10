@@ -11,6 +11,7 @@ from api.views.assets import AssetViewSet
 from api.views.data_sources import DataSourceViewSet
 from api.views.dependency import DependencyViewSet
 from api.views.graph import NoMultipartGraphQLView
+from api.views.group_data_source_access import GroupDataSourceAccessViewSet
 from api.views.group_memberships import GroupMembershipViewSet
 from api.views.groups import GroupViewSet
 from api.views.users import ApplicationUserViewSet
@@ -41,6 +42,22 @@ urlpatterns = [
     path(
         "groups/<uuid:group_id>/members/<uuid:user_id>/",
         GroupMembershipViewSet.as_view(
+            {
+                "delete": "destroy",
+            }
+        ),
+    ),
+    path(
+        "datasources/<uuid:data_source_id>/access/",
+        GroupDataSourceAccessViewSet.as_view(
+            {
+                "post": "create",
+            }
+        ),
+    ),
+    path(
+        "datasources/<uuid:data_source_id>/access/<uuid:group_id>/",
+        GroupDataSourceAccessViewSet.as_view(
             {
                 "delete": "destroy",
             }

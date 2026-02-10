@@ -14,7 +14,7 @@ from .constraint_intervention import (
     ConstraintInterventionCreateSerializer,
     ConstraintInterventionUpdateSerializer,
 )
-from .data_source import DataSourceSerializer
+from .data_source import DataSourceSerializer, GroupDataSourceAccessSerializer
 from .dependency import DependencySerializer
 from .exposure_layer import (
     ExposureLayerCreateSerializer,
@@ -64,6 +64,7 @@ __all__ = [
     "FocusAreaCreateSerializer",
     "FocusAreaSerializer",
     "FocusAreaUpdateSerializer",
+    "GroupDataSourceAccessSerializer",
     "GroupMembershipSerializer",
     "GroupSerializer",
     "IdpUserSerializer",

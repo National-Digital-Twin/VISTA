@@ -42,8 +42,11 @@ class GroupDataSourceAccess(models.Model):
     """Group data source access model."""
 
     id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True)
-    data_source = models.ForeignKey(DataSource, on_delete=models.CASCADE)
+    data_source = models.ForeignKey(
+        DataSource, on_delete=models.CASCADE, related_name="group_accesses"
+    )
     group = models.ForeignKey(Group, on_delete=models.CASCADE)
+    created_by = models.UUIDField(null=True)
 
     def __str__(self):
         """Group data source access string representation."""
