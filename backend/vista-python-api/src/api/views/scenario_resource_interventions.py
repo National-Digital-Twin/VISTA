@@ -1,5 +1,7 @@
 """Views for scenario-scoped resource intervention operations."""
 
+import logging
+
 from django.db import transaction
 from django.db.models import Prefetch
 from django.shortcuts import get_object_or_404
@@ -13,6 +15,7 @@ from api.models.resource_intervention import (
     ResourceInterventionLocation,
     ResourceInterventionType,
 )
+from api.repository.external.idp_repository import IdpRepository
 from api.serializers import (
     PaginationParamsSerializer,
     ResourceInterventionActionLogSerializer,
@@ -22,6 +25,8 @@ from api.serializers import (
     ResourceInterventionTypeWithLocationsSerializer,
 )
 from api.utils.auth import get_user_id_from_request
+
+logger = logging.getLogger(__name__)
 
 
 class ScenarioResourceInterventionsView(APIView):
@@ -178,7 +183,10 @@ class ScenarioResourceInterventionActionsView(APIView):
         has_next = len(actions) > limit
         actions = actions[:limit]
 
-        serializer = ResourceInterventionActionLogSerializer(actions, many=True)
+        user_name_map = self._build_user_name_map()
+        serializer = ResourceInterventionActionLogSerializer(
+            actions, many=True, context={"user_name_map": user_name_map}
+        )
 
         response_data = {
             "total_count": total_count,
@@ -188,3 +196,13 @@ class ScenarioResourceInterventionActionsView(APIView):
             else None,
         }
         return Response(response_data)
+
+    def _build_user_name_map(self):
+        """Build a user_id → name mapping from the identity provider."""
+        try:
+            idp = IdpRepository()
+            users = idp.list_users_in_group()
+            return {user.id: user.name for user in users}
+        except Exception:
+            logger.exception("Failed to fetch users from identity provider")
+            return {}

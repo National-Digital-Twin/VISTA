@@ -100,6 +100,8 @@ vi.mock('react-map-gl/maplibre', () => {
                 </div>
             );
         }),
+        Source: ({ children }: any) => <>{children}</>,
+        Layer: () => null,
         Marker: ({ children, longitude, latitude }: any) => <div data-testid={`marker-${latitude}-${longitude}`}>{children}</div>,
         useMap: vi.fn(() => ({
             'map-v2': {

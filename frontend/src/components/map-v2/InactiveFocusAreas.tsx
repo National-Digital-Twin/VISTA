@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { Layer, Source } from 'react-map-gl/maplibre';
 import type { Feature, FeatureCollection } from 'geojson';
+import { BELOW_ASSET_LAYER_ID } from './constants';
 import type { FocusArea } from '@/api/focus-areas';
 
 const SOURCE_ID = 'inactive-focus-areas-source';
@@ -53,6 +54,7 @@ const InactiveFocusAreas = ({ focusAreas, selectedFocusAreaId }: InactiveFocusAr
             <Layer
                 id={LINE_LAYER_ID}
                 type="line"
+                beforeId={BELOW_ASSET_LAYER_ID}
                 paint={{
                     'line-color': ['case', ['get', 'isSelected'], SELECTED_INACTIVE_LINE_COLOUR, INACTIVE_LINE_COLOUR],
                     'line-width': ['case', ['get', 'isSelected'], SELECTED_INACTIVE_LINE_WIDTH, INACTIVE_LINE_WIDTH],

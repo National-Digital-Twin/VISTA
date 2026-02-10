@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { Layer, Source } from 'react-map-gl/maplibre';
 import type { Geometry, Feature, Position } from 'geojson';
+import { BELOW_ASSET_LAYER_ID } from './constants';
 
 const MASK_SOURCE_ID = 'focus-area-mask-source';
 const MASK_LAYER_ID = 'focus-area-mask-layer';
@@ -82,6 +83,7 @@ const FocusAreaMask = ({ geometry }: FocusAreaMaskProps) => {
                 <Layer
                     id={MASK_LAYER_ID}
                     type="fill"
+                    beforeId={BELOW_ASSET_LAYER_ID}
                     paint={{
                         'fill-color': MASK_FILL_COLOUR,
                         'fill-opacity': MASK_FILL_OPACITY,
@@ -93,6 +95,7 @@ const FocusAreaMask = ({ geometry }: FocusAreaMaskProps) => {
                     <Layer
                         id={FOCUS_FILL_LAYER_ID}
                         type="fill"
+                        beforeId={BELOW_ASSET_LAYER_ID}
                         paint={{
                             'fill-color': FOCUS_FILL_COLOUR,
                             'fill-outline-color': FOCUS_LINE_COLOUR,
@@ -102,6 +105,7 @@ const FocusAreaMask = ({ geometry }: FocusAreaMaskProps) => {
                     <Layer
                         id={FOCUS_LINE_LAYER_ID}
                         type="line"
+                        beforeId={BELOW_ASSET_LAYER_ID}
                         paint={{
                             'line-color': FOCUS_LINE_COLOUR,
                             'line-width': FOCUS_LINE_WIDTH,
