@@ -128,6 +128,7 @@ def test_list_users_in_group_returns_mock_users_in_dev_mode(settings, repository
     assert result == [
         {"username": "7b225422-5d6a-4b83-9655-4bdbe8443c5f", "is_admin": True},
         {"username": "8fd4bdcb-5823-4c9b-a16d-82b680fdd05e", "is_admin": False},
+        {"username": "00000000-0000-0000-0000-000000000001", "is_admin": False},
     ]
 
 

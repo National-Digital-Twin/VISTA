@@ -41,6 +41,15 @@ class IdpRepository:
                 "UserCreateDate": datetime.now(UTC),
                 "UserStatus": "Confirmed",
             },
+            {
+                "Username": "00000000-0000-0000-0000-000000000001",
+                "Attributes": [
+                    {"Name": "email", "Value": "dev.user@example.com"},
+                    {"Name": "name", "Value": "Dev User"},
+                ],
+                "UserCreateDate": datetime.now(UTC),
+                "UserStatus": "Confirmed",
+            },
         ]
 
     def get_user_by_email(self, email) -> IdpUser | None:

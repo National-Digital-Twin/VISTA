@@ -63,8 +63,14 @@ class ResourceInterventionActionLogSerializer(serializers.Serializer):
     resource_type = serializers.CharField(source="location.type.name")
     action_type = serializers.CharField()
     quantity = serializers.IntegerField()
-    user_id = serializers.UUIDField()
+    user = serializers.SerializerMethodField()
     created_at = serializers.DateTimeField()
+
+    def get_user(self, obj):
+        """Resolve user id and name from context."""
+        user_name_map = self.context.get("user_name_map", {})
+        user_id = str(obj.user_id)
+        return {"id": user_id, "name": user_name_map.get(user_id)}
 
 
 class PaginationParamsSerializer(serializers.Serializer):

@@ -413,6 +413,42 @@ class TestScenarioResourceInterventionActionsView:
         assert results[1]["quantity"] == 50
         assert data["nextCursor"] is None
 
+    def test_action_contains_nested_user(self, client, scenario, resource_location, mock_user_id):
+        """Each action entry contains a nested user object with id and name."""
+        ResourceInterventionAction.objects.create(
+            location=resource_location,
+            user_id=mock_user_id,
+            action_type="withdraw",
+            quantity=10,
+        )
+
+        url = f"/api/scenarios/{scenario.id}/resource-interventions/actions/"
+        response = client.get(url)
+
+        assert response.status_code == status.HTTP_200_OK
+        result = response.json()["results"][0]
+        assert "user" in result
+        assert result["user"]["id"] == str(mock_user_id)
+        assert isinstance(result["user"]["name"], str | None)
+
+    def test_action_user_name_resolved_from_idp(self, client, scenario, resource_location):
+        """User name is resolved from IdP stub users."""
+        known_stub_id = "7b225422-5d6a-4b83-9655-4bdbe8443c5f"
+        ResourceInterventionAction.objects.create(
+            location=resource_location,
+            user_id=known_stub_id,
+            action_type="restock",
+            quantity=25,
+        )
+
+        url = f"/api/scenarios/{scenario.id}/resource-interventions/actions/"
+        response = client.get(url)
+
+        assert response.status_code == status.HTTP_200_OK
+        result = response.json()["results"][0]
+        assert result["user"]["id"] == known_stub_id
+        assert result["user"]["name"] == "Local User"
+
     def test_actions_show_all_users(self, client, scenario, resource_type, mock_user_id):
         """Actions log shows all users' actions for a scenario."""
         location = ResourceInterventionLocation.objects.create(

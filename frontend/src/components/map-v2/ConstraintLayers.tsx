@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { Layer, Source } from 'react-map-gl/maplibre';
 import type { Feature, FeatureCollection } from 'geojson';
+import { BELOW_ASSET_LAYER_ID } from './constants';
 import type { ConstraintInterventionType } from '@/api/constraint-interventions';
 
 const SOURCE_ID = 'constraint-interventions-source';
@@ -50,6 +51,7 @@ const ConstraintLayers = ({ constraintTypes, mapReady }: ConstraintLayersProps) 
             <Layer
                 id={FILL_LAYER_ID}
                 type="fill"
+                beforeId={BELOW_ASSET_LAYER_ID}
                 filter={['==', '$type', 'Polygon']}
                 paint={{
                     'fill-color': FILL_COLOUR,
@@ -59,6 +61,7 @@ const ConstraintLayers = ({ constraintTypes, mapReady }: ConstraintLayersProps) 
             <Layer
                 id={LINE_LAYER_ID}
                 type="line"
+                beforeId={BELOW_ASSET_LAYER_ID}
                 paint={{
                     'line-color': LINE_COLOUR,
                     'line-width': LINE_WIDTH,

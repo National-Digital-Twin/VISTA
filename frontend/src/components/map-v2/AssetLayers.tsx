@@ -1,10 +1,11 @@
-import { useCallback, useMemo, useEffect, useState, useRef } from 'react';
+import { useCallback, useMemo, useEffect, useState } from 'react';
 import { Layer, Source, useMap } from 'react-map-gl/maplibre';
 import type { Feature } from 'geojson';
 import type { MapLayerMouseEvent } from 'maplibre-gl';
 import { findIconDefinition as faIconLookup, type IconName } from '@fortawesome/fontawesome-svg-core';
 
 import AssetTooltip from './panels/AssetTooltip';
+import useSpriteRegistration from './hooks/useSpriteRegistration';
 import { findElement } from '@/utils';
 import { createPointFeature, createLinearFeature } from '@/utils/assetUtils';
 import type { Asset } from '@/api/assets-by-type';
@@ -117,7 +118,6 @@ const AssetLayers = ({
 }: AssetLayersProps) => {
     const mapContext = useMap();
     const mapInstance = mapContext?.['map-v2'] || mapContext?.default || null;
-    const addedIconsRef = useRef<Set<string>>(new Set());
 
     const [hoveredAsset, setHoveredAsset] = useState<Asset | null>(null);
     const [tooltipPosition, setTooltipPosition] = useState<{ x: number; y: number } | null>(null);
@@ -256,52 +256,7 @@ const AssetLayers = ({
         return { type: 'FeatureCollection' as const, features: enhancedFeatures };
     }, [pointFeatures, assetMap, selectedElementIds, showCpsIcons]);
 
-    useEffect(() => {
-        if (!mapInstance || !mapReady) {
-            return;
-        }
-
-        const map = mapInstance.getMap();
-
-        const generateSprites = async () => {
-            const spritesToGenerate: { markerId: string; style: MarkerStyle }[] = [];
-
-            uniqueMarkerStyles.forEach((style, markerId) => {
-                if (addedIconsRef.current.has(markerId) || map.hasImage(markerId)) {
-                    return;
-                }
-                spritesToGenerate.push({ markerId, style });
-            });
-
-            if (spritesToGenerate.length > 0) {
-                onGeneratingChange?.(true);
-            }
-
-            await Promise.all(
-                spritesToGenerate.map(async ({ markerId, style }) => {
-                    try {
-                        const canvas = await generateMarkerSprite(style);
-                        const ctx = canvas.getContext('2d');
-                        if (!ctx) {
-                            return;
-                        }
-
-                        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                        if (!map.hasImage(markerId)) {
-                            map.addImage(markerId, { width: canvas.width, height: canvas.height, data: imageData.data }, { pixelRatio: 1 });
-                            addedIconsRef.current.add(markerId);
-                        }
-                    } catch (error) {
-                        console.error(`Failed to generate marker sprite for ${markerId}`, error);
-                    }
-                }),
-            );
-
-            onGeneratingChange?.(false);
-        };
-
-        generateSprites();
-    }, [mapInstance, mapReady, uniqueMarkerStyles, onGeneratingChange]);
+    useSpriteRegistration(mapReady, uniqueMarkerStyles, generateMarkerSprite, onGeneratingChange);
 
     const handleMapClick = useCallback(
         (event: MapLayerMouseEvent) => {

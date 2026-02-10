@@ -1,5 +1,5 @@
 import type { ReactElement } from 'react';
-import { Box, Paper } from '@mui/material';
+import { Box, Divider, Paper } from '@mui/material';
 import MapPanelButton from './MapPanelButton';
 import AssetsView from './panels/AssetsView';
 import ConstraintsView from './panels/ConstraintsView';
@@ -7,47 +7,77 @@ import ExposureView from './panels/ExposureView';
 import FocusAreaView from './panels/FocusAreaView';
 import UtilitiesView from './panels/UtilitiesView';
 import InspectorView from './panels/InspectorView';
+import ResourcesView from './panels/ResourcesView';
 import type { Asset } from '@/api/assets-by-type';
 import type { ConstraintInterventionType } from '@/api/constraint-interventions';
 import type { FocusArea } from '@/api/focus-areas';
 import type { ExposureLayersResponse } from '@/api/exposure-layers';
+import type { ResourceType } from '@/api/resources';
 
 const RAIL_WIDTH = 80;
 const PANEL_WIDTH = 420;
 
 type MapPanelItem = {
+    type: 'item';
     id: string;
     label: string;
     icon: ReactElement;
 };
 
-const FIXED_ITEMS: readonly MapPanelItem[] = [
+type MapPanelSeparator = {
+    type: 'separator';
+    id: string;
+};
+
+type MapPanelEntry = MapPanelItem | MapPanelSeparator;
+
+const FIXED_ITEMS: readonly MapPanelEntry[] = [
     {
+        type: 'item',
         id: 'focus-area',
         label: 'Focus area',
         icon: <img src="/icons/map-v2/focus-area.svg" alt="Focus area" width={24} height={24} />,
     },
     {
+        type: 'separator',
+        id: 'separator-1',
+    },
+    {
+        type: 'item',
         id: 'assets',
         label: 'Assets',
         icon: <img src="/icons/map-v2/assets.svg" alt="Assets" width={24} height={24} />,
     },
     {
+        type: 'item',
         id: 'exposure',
         label: 'Exposure',
         icon: <img src="/icons/map-v2/exposure.svg" alt="Exposure" width={24} height={24} />,
     },
     {
+        type: 'item',
         id: 'inspector',
         label: 'Inspector',
         icon: <img src="/icons/map-v2/mystery.svg" alt="Inspector" width={24} height={24} />,
     },
     {
+        type: 'item',
         id: 'utilities',
         label: 'Utilities',
         icon: <img src="/icons/map-v2/utilities.svg" alt="Utilities" width={24} height={24} />,
     },
     {
+        type: 'separator',
+        id: 'separator-2',
+    },
+    {
+        type: 'item',
+        id: 'resources',
+        label: 'Resources',
+        icon: <img src="/icons/map-v2/resources.svg" alt="Resources" width={24} height={24} />,
+    },
+    {
+        type: 'item',
         id: 'constraints',
         label: 'Constraints',
         icon: <img src="/icons/map-v2/constraints.svg" alt="Constraints" width={24} height={24} />,
@@ -76,6 +106,13 @@ type MapPanelsProps = {
     constraintTypes?: ConstraintInterventionType[];
     isConstraintsLoading?: boolean;
     isConstraintsError?: boolean;
+    resourceTypes?: ResourceType[];
+    isResourcesLoading?: boolean;
+    isResourcesError?: boolean;
+    selectedResourceLocationId?: string | null;
+    stockActionOpen?: boolean;
+    onResourceLocationSelect?: (locationId: string) => void;
+    onStockActionClose?: () => void;
 };
 
 const MapPanels = ({
@@ -96,6 +133,13 @@ const MapPanels = ({
     constraintTypes,
     isConstraintsLoading,
     isConstraintsError,
+    resourceTypes,
+    isResourcesLoading,
+    isResourcesError,
+    selectedResourceLocationId,
+    stockActionOpen,
+    onResourceLocationSelect,
+    onStockActionClose,
 }: Readonly<MapPanelsProps>) => {
     const handleItemClick = (itemId: string) => {
         const newActiveView = activeView === itemId ? null : itemId;
@@ -167,6 +211,20 @@ const MapPanels = ({
                         isError={isConstraintsError}
                     />
                 );
+            case 'resources':
+                return (
+                    <ResourcesView
+                        onClose={handleClosePanel}
+                        scenarioId={scenarioId}
+                        resourceTypes={resourceTypes}
+                        isLoading={isResourcesLoading ?? false}
+                        isError={isResourcesError ?? false}
+                        selectedLocationId={selectedResourceLocationId}
+                        stockActionOpen={stockActionOpen}
+                        onLocationSelect={onResourceLocationSelect}
+                        onStockActionClose={onStockActionClose}
+                    />
+                );
             default:
                 return null;
         }
@@ -197,14 +255,18 @@ const MapPanels = ({
                 }}
             >
                 <Box sx={{ flex: 1, overflowY: 'auto', py: 1 }}>
-                    {FIXED_ITEMS.map((item) => {
+                    {FIXED_ITEMS.map((entry) => {
+                        if (entry.type === 'separator') {
+                            return <Divider key={entry.id} sx={{ my: 1, mx: 2 }} />;
+                        }
+
                         return (
                             <MapPanelButton
-                                key={item.id}
-                                label={item.label}
-                                icon={item.icon}
-                                isActive={activeView === item.id}
-                                onClick={() => handleItemClick(item.id)}
+                                key={entry.id}
+                                label={entry.label}
+                                icon={entry.icon}
+                                isActive={activeView === entry.id}
+                                onClick={() => handleItemClick(entry.id)}
                             />
                         );
                     })}

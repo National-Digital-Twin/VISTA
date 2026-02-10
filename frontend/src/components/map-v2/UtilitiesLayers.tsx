@@ -5,7 +5,7 @@ import type { FeatureCollection } from 'geojson';
 import { findIconDefinition } from '@fortawesome/fontawesome-svg-core';
 
 import { useRouteContext } from './context/RouteContext';
-import { ROUTE_START_COLOR, ROUTE_END_COLOR } from './constants';
+import { ROUTE_START_COLOR, ROUTE_END_COLOR, BELOW_ASSET_LAYER_ID } from './constants';
 import type { SuccessRouteProperties } from '@/api/utilities';
 
 const SOURCE_ID = 'map-v2-utilities-source';
@@ -141,6 +141,7 @@ const UtilitiesLayers = ({ mapReady }: UtilitiesLayersProps) => {
                     <Layer
                         id={LAYER_ID}
                         type="line"
+                        beforeId={BELOW_ASSET_LAYER_ID}
                         paint={{
                             'line-color': DEFAULT_LINE_COLOR,
                             'line-width': DEFAULT_LINE_WIDTH,
@@ -154,6 +155,7 @@ const UtilitiesLayers = ({ mapReady }: UtilitiesLayersProps) => {
                     <Layer
                         id={DIRECT_LINE_LAYER_ID}
                         type="line"
+                        beforeId={BELOW_ASSET_LAYER_ID}
                         paint={{
                             'line-color': '#666666',
                             'line-width': 2,
@@ -168,6 +170,7 @@ const UtilitiesLayers = ({ mapReady }: UtilitiesLayersProps) => {
                     <Layer
                         id={WALK_LINES_LAYER_ID}
                         type="line"
+                        beforeId={BELOW_ASSET_LAYER_ID}
                         paint={{
                             'line-color': DEFAULT_LINE_COLOR,
                             'line-width': 2,
