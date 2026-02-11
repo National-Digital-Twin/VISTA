@@ -1,4 +1,4 @@
-"""Views for Group Memberships."""
+"""Views for Group data source access."""
 
 from typing import ClassVar
 
