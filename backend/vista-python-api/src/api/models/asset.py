@@ -11,7 +11,7 @@ from .asset_type import AssetType
 class Asset(models.Model):
     """Asset model."""
 
-    id = models.UUIDField(unique=True, primary_key=True)
+    id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True)
     external_id = models.CharField(max_length=255, unique=True, blank=True, default=None)
     name = models.CharField(max_length=255, blank=True)
     type = models.ForeignKey(AssetType, related_name="assets", on_delete=models.CASCADE)
