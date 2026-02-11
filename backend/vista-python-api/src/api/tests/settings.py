@@ -15,6 +15,7 @@ DATABASES = {
     }
 }
 COGNITO_USER_POOL_ID = "test-pool-id"
+VISTA_INVITE_EMAIL = "vista-invite-email@vista.com"
 COGNITO_MAIN_USER_GROUP_NAME = "users"
 COGNITO_ADMIN_USER_GROUP_NAME = "admins"
 REGION = "eu-west-2"

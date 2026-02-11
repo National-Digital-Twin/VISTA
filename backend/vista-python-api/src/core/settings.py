@@ -34,6 +34,9 @@ OS_NAMES_API_KEY = env("OS_NAMES_API_KEY", default="replace")
 LANDING_PAGE_URL = env("LANDING_PAGE_URL", default="http://localhost:3000")
 IDENTITY_API_URL = env("IDENTITY_API_URL", default="http://localhost:3001")
 
+# Email settings
+VISTA_INVITE_EMAIL = env("VISTA_INVITE_EMAIL", default="replace")
+
 # Cognito settings
 COGNITO_USER_POOL_ID = env("COGNITO_USER_POOL_ID", default="replace")
 COGNITO_MAIN_USER_GROUP_NAME = env("COGNITO_MAIN_USER_GROUP_NAME", default="vista_access")
