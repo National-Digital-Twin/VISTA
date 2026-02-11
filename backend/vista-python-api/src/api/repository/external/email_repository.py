@@ -14,7 +14,7 @@ class EmailRepository:
 
     def __init__(self):
         """Initiate `EmailRepository`."""
-        self.ses = boto3.client("ses")
+        self.ses = boto3.client("ses", region_name=settings.REGION)
 
     def send_added_email(self, email):
         """Dispatch VISTA invite email via SES."""
