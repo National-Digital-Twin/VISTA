@@ -46,7 +46,7 @@ describe('ResourceUsageLog', () => {
 
         renderWithProviders(<ResourceUsageLog {...defaultProps} />);
 
-        expect(screen.getByText('Sandbags Inventory Logs')).toBeInTheDocument();
+        expect(screen.getByText('Sandbag Inventory Logs')).toBeInTheDocument();
     });
 
     it('renders generic title when typeName is not provided', async () => {
@@ -134,7 +134,7 @@ describe('ResourceUsageLog', () => {
     it('does not render when open is false', () => {
         renderWithProviders(<ResourceUsageLog {...defaultProps} open={false} />);
 
-        expect(screen.queryByText('Sandbags Inventory Logs')).not.toBeInTheDocument();
+        expect(screen.queryByText('Sandbag Inventory Logs')).not.toBeInTheDocument();
     });
 
     it('renders Export CSV button', async () => {

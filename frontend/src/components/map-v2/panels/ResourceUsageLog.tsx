@@ -18,9 +18,12 @@ import {
     Box,
     Button,
     Stack,
+    IconButton,
 } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 import { format } from 'date-fns';
 import { fetchResourceInterventionActions, getResourceInterventionActionsExportUrl } from '@/api/resources';
+import { singularize } from '@/utils';
 
 const DEFAULT_ROWS_PER_PAGE = 10;
 const ROWS_PER_PAGE_OPTIONS = [5, 10, 25];
@@ -94,14 +97,15 @@ export const ResourceUsageLog = ({ open, onClose, scenarioId, typeId, typeName }
 
     return (
         <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
-            <DialogTitle>
-                <Stack direction="row" justifyContent="space-between" alignItems="center">
-                    <Typography variant="h6">{typeName ? `${typeName} Inventory Logs` : 'Inventory Logs'}</Typography>
-                    <Stack direction="row" spacing={1}>
-                        <Button variant="outlined" size="small" onClick={handleExportCsv} disabled={!scenarioId || !typeId}>
-                            Export CSV
-                        </Button>
-                    </Stack>
+            <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Typography variant="h6">{typeName ? `${singularize(typeName)} Inventory Logs` : 'Inventory Logs'}</Typography>
+                <Stack direction="row" spacing={1} alignItems="center">
+                    <Button variant="outlined" size="small" onClick={handleExportCsv} disabled={!scenarioId || !typeId}>
+                        Export CSV
+                    </Button>
+                    <IconButton onClick={handleClose} size="small" aria-label="Close">
+                        <CloseIcon />
+                    </IconButton>
                 </Stack>
             </DialogTitle>
             <DialogContent>

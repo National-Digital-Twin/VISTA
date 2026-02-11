@@ -26,6 +26,7 @@ import { useDrawingContext } from '../context/DrawingContext';
 import { FEATURE_TYPES } from '../constants';
 import IconToggle from '@/components/IconToggle';
 import type { ConstraintIntervention, ConstraintInterventionType, UpdateConstraintInterventionRequest } from '@/api/constraint-interventions';
+import { singularize } from '@/utils';
 
 type UpdateConstraintParams = { interventionId: string; data: UpdateConstraintInterventionRequest };
 
@@ -187,8 +188,6 @@ const ConstraintItem = ({ intervention, onUpdate, onDelete, isMutating, isSelect
         </Box>
     );
 };
-
-const singularize = (name: string): string => name.replace(/s$/i, '');
 
 type ConstraintTypeGroupProps = {
     readonly constraintType: ConstraintInterventionType;
