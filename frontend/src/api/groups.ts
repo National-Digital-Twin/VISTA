@@ -10,8 +10,8 @@ export type Group = {
     id: string;
     name: string;
     members: GroupMember[];
-    created_at?: string;
-    created_by?: string;
+    createdAt?: string;
+    createdBy?: string;
 };
 
 const GROUPS_API_BASE_URL = `${config.services.apiBaseUrl}/groups/`;
