@@ -424,6 +424,39 @@ def test_resolve_invites_expires_any_pending_invite_over_7_days_and_removes_cogn
     assert db_user_invite.accepted_at is None
 
 
+# --- POST (Resend invite) Tests ---
+
+
+@pytest.mark.django_db
+def test_resend_invite_is_successful(client, user_invites, monkeypatch):  # noqa: ARG001
+    """Check resend user invite calls appropriate method in IDP repository."""
+    with patch("api.views.users.IdpRepository") as mock_idp_repository:
+        instance = mock_idp_repository.return_value
+        response = client.post(f"/api/users/{new_user_uuid}/resend-invite/")
+
+        assert response.status_code == http_ok
+        instance.resend_user_invite.assert_called_once_with(str(new_user_uuid))
+
+
+@pytest.mark.django_db
+def test_resend_invite_for_unknown_user_returns_4xx(client, user_invites, monkeypatch):  # noqa: ARG001
+    """Check resend user invite calls appropriate method in IDP repository."""
+    with patch("api.views.users.IdpRepository") as mock_idp_repository:
+        instance = mock_idp_repository.return_value
+        response = client.post(f"/api/users/{uuid4()}/resend-invite/")
+
+        assert response.status_code == http_bad_request
+        instance.resend_user_invite.assert_called_once_with(str(new_user_uuid))
+
+
+@pytest.mark.django_db
+def test_resend_invite_returns_403_for_general_user(client, monkeypatch):
+    """Test that POST resend invite returns a 403 if not admin."""
+    monkeypatch.setattr("api.views.users.Administrator", Administrator)
+    response = client.post(f"/api/users/{new_user_uuid}/resend-invite/")
+    assert response.status_code == http_forbidden
+
+
 # --- DELETE Tests ---
 
 

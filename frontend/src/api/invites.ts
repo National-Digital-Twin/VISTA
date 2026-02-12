@@ -105,18 +105,13 @@ export const cancelInvite = async (userId: string): Promise<void> => {
     }
 };
 
-export const resendInvite = async (inviteId: string): Promise<Invite> => {
-    // TODO: Replace with actual API endpoint
-    // const response = await fetch(`${config.services.invites}/${inviteId}/resend`, {
-    //     method: 'POST',
-    // });
-
-    await new Promise((resolve) => {
-        setTimeout(resolve, 1000);
+export const resendInvite = async (userId: string): Promise<Invite> => {
+    await fetch(`${config.services.users}${userId}/resend-invite/`, {
+        method: 'POST',
     });
 
     const invite: Invite = {
-        id: inviteId,
+        id: userId,
         email: 'example@example.com',
         userType: 'General',
         groups: [],
