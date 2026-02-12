@@ -2,10 +2,9 @@ import React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Profile from './Profile';
 import { useProfileData } from '@/hooks/useProfileData';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-
 
 let queryClient: QueryClient;
 
