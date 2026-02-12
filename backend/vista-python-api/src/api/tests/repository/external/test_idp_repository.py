@@ -15,17 +15,52 @@ admin_user_group_name = "admins"
 
 
 @pytest.fixture
-def mock_boto_client():
+def mock_boto_client_dual_list_in_group(mock_boto_paginator_all, mock_boto_paginator_admin):
     """Mock boto3 cognito-idp client."""
+    mock = MagicMock()
+    mock.get_paginator.side_effect = [
+        mock_boto_paginator_all,
+        mock_boto_paginator_admin,
+    ]
+    return mock
+
+
+@pytest.fixture
+def mock_boto_client_admin_list_in_group(mock_boto_paginator_admin):
+    """Mock boto3 cognito-idp client."""
+    mock = MagicMock()
+    mock.get_paginator.return_value = mock_boto_paginator_admin
+    return mock
+
+
+@pytest.fixture
+def mock_boto_paginator_all():
+    """Mock paginator for all users."""
     return MagicMock()
 
 
 @pytest.fixture
-def repository(mock_boto_client):
+def mock_boto_paginator_admin():
+    """Mock paginator for admin users."""
+    return MagicMock()
+
+
+@pytest.fixture
+def dual_list_in_group_repository(mock_boto_client_dual_list_in_group):
     """Create repository with mocked boto3 client."""
     with patch(
         "api.repository.external.idp_repository.boto3.client",
-        return_value=mock_boto_client,
+        return_value=mock_boto_client_dual_list_in_group,
+    ):
+        return IdpRepository()
+
+
+@pytest.fixture
+def admin_list_in_group_repository(mock_boto_client_admin_list_in_group):
+    """Create repository with mocked boto3 client."""
+    with patch(
+        "api.repository.external.idp_repository.boto3.client",
+        return_value=mock_boto_client_admin_list_in_group,
     ):
         return IdpRepository()
 
@@ -43,26 +78,66 @@ def test_repository_initializes_boto_client():
         mock_client.assert_called_once_with("cognito-idp", region_name="eu-west-2")
 
 
-def test_list_users_in_group_calls_cognito_correctly(repository, mock_boto_client, settings):
+def test_list_users_in_group_calls_cognito_correctly(
+    dual_list_in_group_repository,
+    mock_boto_client_dual_list_in_group,  # noqa: ARG001
+    mock_boto_paginator_all,
+    mock_boto_paginator_admin,
+    settings,
+):
     """Ensure both user and admin groups are queried."""
     settings.IS_PROD = True
-    mock_boto_client.list_users_in_group.side_effect = [
-        {"Users": []},
-        {"Users": []},
-    ]
+    empty_user_response = [{"Users": []}]
+    mock_boto_paginator_all.paginate.return_value = empty_user_response
+    mock_boto_paginator_admin.paginate.return_value = empty_user_response
 
-    repository.list_users_in_group()
+    dual_list_in_group_repository.list_users_in_group()
 
-    assert mock_boto_client.list_users_in_group.call_count == 2
-    mock_boto_client.list_users_in_group.assert_has_calls(
-        [
-            call(UserPoolId=user_pool_name, GroupName=general_user_group_name),
-            call(UserPoolId=user_pool_name, GroupName=admin_user_group_name),
-        ]
+    mock_boto_paginator_all.paginate.assert_called_once_with(
+        UserPoolId=user_pool_name,
+        GroupName=general_user_group_name,
+        PaginationConfig={"PageSize": 60},
+    )
+    mock_boto_paginator_admin.paginate.assert_called_once_with(
+        UserPoolId=user_pool_name,
+        GroupName=admin_user_group_name,
+        PaginationConfig={"PageSize": 60},
     )
 
 
-def test_list_users_in_group_marks_admins_correctly(repository, mock_boto_client, settings):
+def test_list_users_in_group_calls_cognito_correctly_multiple_pages(
+    dual_list_in_group_repository,
+    mock_boto_client_dual_list_in_group,  # noqa: ARG001
+    mock_boto_paginator_all,
+    mock_boto_paginator_admin,
+    settings,
+):
+    """Ensure both user and admin groups are queried."""
+    settings.IS_PROD = True
+    users = [{"Username": "user1"}]
+    admins = [
+        {"Username": "admin1"},
+    ]
+    mock_boto_paginator_all.paginate.return_value = [{"Users": users}, {"Users": admins}]
+    mock_boto_paginator_admin.paginate.return_value = [{"Users": admins}]
+
+    with patch("api.domain.cognito_user.IdpUser.from_cognito") as mock_from_cognito:
+        mock_from_cognito.side_effect = lambda user, is_admin: {
+            "username": user["Username"],
+            "is_admin": is_admin,
+        }
+
+        result = dual_list_in_group_repository.list_users_in_group()
+        assert len(result) == len(users) + len(admins)
+
+
+def test_list_users_in_group_marks_admins_correctly(
+    dual_list_in_group_repository,
+    mock_boto_client_dual_list_in_group,  # noqa: ARG001
+    mock_boto_paginator_all,
+    mock_boto_paginator_admin,
+    settings,
+):
     """Ensure users are marked admin when username is in admin group."""
     settings.IS_PROD = True
     users = [
@@ -73,10 +148,8 @@ def test_list_users_in_group_marks_admins_correctly(repository, mock_boto_client
         {"Username": "admin1"},
     ]
 
-    mock_boto_client.list_users_in_group.side_effect = [
-        {"Users": users},
-        {"Users": admins},
-    ]
+    mock_boto_paginator_all.paginate.return_value = [{"Users": users}]
+    mock_boto_paginator_admin.paginate.return_value = [{"Users": admins}]
 
     with patch("api.domain.cognito_user.IdpUser.from_cognito") as mock_from_cognito:
         mock_from_cognito.side_effect = lambda user, is_admin: {
@@ -84,7 +157,7 @@ def test_list_users_in_group_marks_admins_correctly(repository, mock_boto_client
             "is_admin": is_admin,
         }
 
-        result = repository.list_users_in_group()
+        result = dual_list_in_group_repository.list_users_in_group()
 
     assert result == [
         {"username": "user1", "is_admin": False},
@@ -99,22 +172,29 @@ def test_list_users_in_group_marks_admins_correctly(repository, mock_boto_client
     )
 
 
-def test_list_users_in_group_returns_empty_list(repository, mock_boto_client, settings):
+def test_list_users_in_group_returns_empty_list(
+    dual_list_in_group_repository,
+    mock_boto_client_dual_list_in_group,  # noqa: ARG001
+    mock_boto_paginator_all,
+    mock_boto_paginator_admin,
+    settings,
+):
     """Ensure empty Cognito responses return empty list."""
     settings.IS_PROD = True
-    mock_boto_client.list_users_in_group.side_effect = [
-        {"Users": []},
-        {"Users": []},
-    ]
+    empty_user_response = [{"Users": []}]
+    mock_boto_paginator_all.paginate.return_value = empty_user_response
+    mock_boto_paginator_admin.paginate.return_value = empty_user_response
 
     with patch("api.domain.cognito_user.IdpUser.from_cognito") as mock_from_cognito:
-        result = repository.list_users_in_group()
+        result = dual_list_in_group_repository.list_users_in_group()
 
     assert result == []
     mock_from_cognito.assert_not_called()
 
 
-def test_list_users_in_group_returns_mock_users_in_dev_mode(settings, repository):
+def test_list_users_in_group_returns_mock_users_in_dev_mode(
+    settings, dual_list_in_group_repository
+):
     """In development mode, returns a consistent mock user ID."""
     settings.IS_PROD = False
 
@@ -123,7 +203,7 @@ def test_list_users_in_group_returns_mock_users_in_dev_mode(settings, repository
             "username": user["Username"],
             "is_admin": is_admin,
         }
-        result = repository.list_users_in_group()
+        result = dual_list_in_group_repository.list_users_in_group()
 
     assert result == [
         {"username": "7b225422-5d6a-4b83-9655-4bdbe8443c5f", "is_admin": True},
@@ -132,24 +212,26 @@ def test_list_users_in_group_returns_mock_users_in_dev_mode(settings, repository
     ]
 
 
-def test_get_user_by_email_returns_user_successfully(mock_boto_client, repository):
+def test_get_user_by_email_returns_user_successfully(
+    mock_boto_client_admin_list_in_group, mock_boto_paginator_admin, admin_list_in_group_repository
+):
     """Check user is successfully returned when queried by email."""
     # mock existence of one user in admin group
     username = uuid4()
     users = [{"Username": username, "Attributes": [{"Name": "email", "Value": "bob@test.com"}]}]
     admins = [{"Username": username}]
-    mock_boto_client.list_users_in_group.return_value = {"Users": admins}
-    mock_boto_client.list_users.return_value = {"Users": users}
+    mock_boto_paginator_admin.paginate.return_value = [{"Users": admins}]
+    mock_boto_client_admin_list_in_group.list_users.return_value = {"Users": users}
 
     with patch("api.domain.cognito_user.IdpUser.from_cognito") as mock_from_cognito:
         mock_from_cognito.side_effect = lambda user, is_admin: {
             "username": user["Username"],
             "is_admin": is_admin,
         }
-        result = repository.get_user_by_email("bob@test.com")
+        result = admin_list_in_group_repository.get_user_by_email("bob@test.com")
 
-    assert mock_boto_client.list_users.call_count == 1
-    mock_boto_client.list_users.assert_called_with(
+    assert mock_boto_client_admin_list_in_group.list_users.call_count == 1
+    mock_boto_client_admin_list_in_group.list_users.assert_called_with(
         UserPoolId=user_pool_name,
         Filter=f'email = "{"bob@test.com"}"',
         Limit=1,
@@ -158,24 +240,28 @@ def test_get_user_by_email_returns_user_successfully(mock_boto_client, repositor
     assert result["is_admin"]
 
 
-def test_get_user_by_email_does_not_exist_returns_none(mock_boto_client, repository):
+def test_get_user_by_email_does_not_exist_returns_none(
+    mock_boto_client_admin_list_in_group, admin_list_in_group_repository
+):
     """Check path where user does not exist is handled correctly."""
     # mock existence of one user in admin group
-    mock_boto_client.list_users.return_value = {"Users": []}
+    mock_boto_client_admin_list_in_group.list_users.return_value = {"Users": []}
 
-    result = repository.get_user_by_email("bob@test.com")
+    result = admin_list_in_group_repository.get_user_by_email("bob@test.com")
 
-    assert mock_boto_client.list_users.call_count == 1
-    mock_boto_client.list_users.assert_called_with(
+    assert mock_boto_client_admin_list_in_group.list_users.call_count == 1
+    mock_boto_client_admin_list_in_group.list_users.assert_called_with(
         UserPoolId=user_pool_name,
         Filter=f'email = "{"bob@test.com"}"',
         Limit=1,
     )
-    mock_boto_client.list_users_in_group.assert_not_called()
+    mock_boto_client_admin_list_in_group.list_users_in_group.assert_not_called()
     assert result is None
 
 
-def test_create_user_calls_cognito_correctly(settings, mock_boto_client, repository, monkeypatch):
+def test_create_user_calls_cognito_correctly(
+    settings, mock_boto_client_dual_list_in_group, dual_list_in_group_repository, monkeypatch
+):
     """Ensure user creation SDK methods called correctly."""
     email = "bob@test.com"
     settings.IS_PROD = True
@@ -183,10 +269,10 @@ def test_create_user_calls_cognito_correctly(settings, mock_boto_client, reposit
         "api.repository.external.idp_repository.generate_temp_password", generate_temp_password
     )
 
-    repository.create_user(email, False)
+    dual_list_in_group_repository.create_user(email, False)
 
-    assert mock_boto_client.admin_create_user.call_count == 1
-    mock_boto_client.admin_create_user.assert_called_with(
+    assert mock_boto_client_dual_list_in_group.admin_create_user.call_count == 1
+    mock_boto_client_dual_list_in_group.admin_create_user.assert_called_with(
         UserPoolId=user_pool_name,
         Username=ANY,
         UserAttributes=[{"Name": "email", "Value": email}],
@@ -195,7 +281,7 @@ def test_create_user_calls_cognito_correctly(settings, mock_boto_client, reposit
 
 
 def test_create_user_does_not_create_user_if_user_already_exists(
-    settings, mock_boto_client, repository, monkeypatch
+    settings, mock_boto_client_dual_list_in_group, dual_list_in_group_repository, monkeypatch
 ):
     """Ensure user creation SDK methods called correctly."""
     email = "bob@test.com"
@@ -203,19 +289,19 @@ def test_create_user_does_not_create_user_if_user_already_exists(
     monkeypatch.setattr(
         "api.repository.external.idp_repository.generate_temp_password", generate_temp_password
     )
-    mock_boto_client.list_users.return_value = {
+    mock_boto_client_dual_list_in_group.list_users.return_value = {
         "Users": [{"Username": str(uuid4()), "UserCreateDate": datetime.now()}]  # noqa: DTZ005
     }
-    mock_boto_client.list_users_in_group.return_value = {"Users": []}
+    mock_boto_client_dual_list_in_group.list_users_in_group.return_value = {"Users": []}
 
-    repository.create_user(email, False)
+    dual_list_in_group_repository.create_user(email, False)
 
-    assert mock_boto_client.admin_create_user.call_count == 0
-    mock_boto_client.admin_create_user.assert_not_called()
+    assert mock_boto_client_dual_list_in_group.admin_create_user.call_count == 0
+    mock_boto_client_dual_list_in_group.admin_create_user.assert_not_called()
 
 
 def test_create_user_adds_user_to_access_group_if_user_already_exists(
-    settings, mock_boto_client, repository, monkeypatch
+    settings, mock_boto_client_dual_list_in_group, dual_list_in_group_repository, monkeypatch
 ):
     """Ensure user creation SDK methods called correctly."""
     email = "bob@test.com"
@@ -224,20 +310,20 @@ def test_create_user_adds_user_to_access_group_if_user_already_exists(
     monkeypatch.setattr(
         "api.repository.external.idp_repository.generate_temp_password", generate_temp_password
     )
-    mock_boto_client.list_users.return_value = {
+    mock_boto_client_dual_list_in_group.list_users.return_value = {
         "Users": [{"Username": str(fake_uuid), "UserCreateDate": datetime.now()}]  # noqa: DTZ005
     }
-    mock_boto_client.list_users_in_group.return_value = {"Users": []}
-    repository.create_user(email, False)
+    mock_boto_client_dual_list_in_group.list_users_in_group.return_value = {"Users": []}
+    dual_list_in_group_repository.create_user(email, False)
 
-    assert mock_boto_client.admin_add_user_to_group.call_count == 1
-    mock_boto_client.admin_add_user_to_group.assert_called_with(
+    assert mock_boto_client_dual_list_in_group.admin_add_user_to_group.call_count == 1
+    mock_boto_client_dual_list_in_group.admin_add_user_to_group.assert_called_with(
         UserPoolId=user_pool_name, Username=str(fake_uuid), GroupName=general_user_group_name
     )
 
 
 def test_create_general_user_adds_user_to_access_group_only(
-    settings, mock_boto_client, repository, monkeypatch
+    settings, mock_boto_client_dual_list_in_group, dual_list_in_group_repository, monkeypatch
 ):
     """Ensure general user creation adds user to only access group."""
     settings.IS_PROD = True
@@ -245,18 +331,20 @@ def test_create_general_user_adds_user_to_access_group_only(
     monkeypatch.setattr(
         "api.repository.external.idp_repository.generate_temp_password", generate_temp_password
     )
-    mock_boto_client.admin_create_user.return_value = {"User": {"Username": username}}
+    mock_boto_client_dual_list_in_group.admin_create_user.return_value = {
+        "User": {"Username": username}
+    }
 
-    repository.create_user("bob@test.com", False)
+    dual_list_in_group_repository.create_user("bob@test.com", False)
 
-    assert mock_boto_client.admin_add_user_to_group.call_count == 1
-    mock_boto_client.admin_add_user_to_group.assert_called_with(
+    assert mock_boto_client_dual_list_in_group.admin_add_user_to_group.call_count == 1
+    mock_boto_client_dual_list_in_group.admin_add_user_to_group.assert_called_with(
         UserPoolId=user_pool_name, Username=username, GroupName=general_user_group_name
     )
 
 
 def test_create_admin_user_adds_user_to_access_and_admin_groups(
-    settings, mock_boto_client, repository, monkeypatch
+    settings, mock_boto_client_dual_list_in_group, dual_list_in_group_repository, monkeypatch
 ):
     """Ensure admin user creation adds user to access and admin group."""
     settings.IS_PROD = True
@@ -264,12 +352,14 @@ def test_create_admin_user_adds_user_to_access_and_admin_groups(
     monkeypatch.setattr(
         "api.repository.external.idp_repository.generate_temp_password", generate_temp_password
     )
-    mock_boto_client.admin_create_user.return_value = {"User": {"Username": username}}
+    mock_boto_client_dual_list_in_group.admin_create_user.return_value = {
+        "User": {"Username": username}
+    }
 
-    repository.create_user("bob@test.com", True)
+    dual_list_in_group_repository.create_user("bob@test.com", True)
 
-    assert mock_boto_client.admin_add_user_to_group.call_count == 2
-    mock_boto_client.admin_add_user_to_group.assert_has_calls(
+    assert mock_boto_client_dual_list_in_group.admin_add_user_to_group.call_count == 2
+    mock_boto_client_dual_list_in_group.admin_add_user_to_group.assert_has_calls(
         [
             call(
                 UserPoolId=user_pool_name,
@@ -281,24 +371,26 @@ def test_create_admin_user_adds_user_to_access_and_admin_groups(
     )
 
 
-def test_create_user_in_dev_does_not_call_cognito(mock_boto_client, repository):
+def test_create_user_in_dev_does_not_call_cognito(
+    mock_boto_client_dual_list_in_group, dual_list_in_group_repository
+):
     """Ensure user creation SDK methods are not called in dev."""
-    repository.create_user("bob@test.com", False)
+    dual_list_in_group_repository.create_user("bob@test.com", False)
 
-    mock_boto_client.admin_create_user.assert_not_called()
+    mock_boto_client_dual_list_in_group.admin_create_user.assert_not_called()
 
 
 def test_remove_user_from_vista_removes_user_from_access_and_admin_groups(
-    settings, mock_boto_client, repository
+    settings, mock_boto_client_dual_list_in_group, dual_list_in_group_repository
 ):
     """Ensure remove user from vista removes user from access and admin group."""
     settings.IS_PROD = True
     username = str(uuid4())
 
-    repository.remove_user_from_vista(username)
+    dual_list_in_group_repository.remove_user_from_vista(username)
 
-    assert mock_boto_client.admin_remove_user_from_group.call_count == 2
-    mock_boto_client.admin_remove_user_from_group.assert_has_calls(
+    assert mock_boto_client_dual_list_in_group.admin_remove_user_from_group.call_count == 2
+    mock_boto_client_dual_list_in_group.admin_remove_user_from_group.assert_has_calls(
         [
             call(
                 UserPoolId=user_pool_name,

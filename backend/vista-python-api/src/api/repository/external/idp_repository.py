@@ -65,12 +65,24 @@ class IdpRepository:
             return IdpUser.from_cognito(user, user.get("Username") in admins)
         return None
 
+    def get_all_users_in_group(self, group_name, page_size=60):
+        """Get all users in group through pagination."""
+        paginator = self.client.get_paginator("list_users_in_group")
+
+        users = []
+        for page in paginator.paginate(
+            UserPoolId=self.user_pool_id,
+            GroupName=group_name,
+            PaginationConfig={"PageSize": page_size},
+        ):
+            users.extend(page.get("Users", []))
+
+        return users
+
     def get_admin_user_list(self):
         """Get a list of admin usernames."""
-        admin_user_response = self.client.list_users_in_group(
-            UserPoolId=self.user_pool_id, GroupName=self.admin_user_group_name
-        )
-        return [user.get("Username") for user in admin_user_response["Users"]]
+        admins = self.get_all_users_in_group(self.admin_user_group_name)
+        return [admin.get("Username") for admin in admins]
 
     def list_users_in_group(self) -> list[IdpUser]:
         """Get a list of users known to the identity provider."""
@@ -79,14 +91,9 @@ class IdpRepository:
                 IdpUser.from_cognito(user, bool(int(user["Username"][0]) % 2))
                 for user in self._stub_users()
             ]
-        all_user_response = self.client.list_users_in_group(
-            UserPoolId=self.user_pool_id, GroupName=self.user_group_name
-        )
+        all_users = self.get_all_users_in_group(self.user_group_name)
         admins = self.get_admin_user_list()
-        return [
-            IdpUser.from_cognito(user, user.get("Username") in admins)
-            for user in all_user_response["Users"]
-        ]
+        return [IdpUser.from_cognito(user, user.get("Username") in admins) for user in all_users]
 
     def create_user(self, email, is_admin) -> str:
         """Create a new user."""
