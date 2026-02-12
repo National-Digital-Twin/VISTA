@@ -17,6 +17,12 @@ This project follows **Semantic Versioning (SemVer)** ([semver.org](https://semv
 
 ---
 
+## [0.95.0]
+
+- Allows users to withdraw and restock resources at given locations.
+- Allows users to place road blocks.
+- Rebuilds the road routing functionality to use A Star algorithm and local data (road links and speed constraints). Also modifies the approach to build a routing graph on start up, rather than at run-time per request.
+
 ## [0.94.0]
 
 - Allows users to draw their own exposure layers, unique to that scenario and user.
