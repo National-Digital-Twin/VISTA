@@ -46,21 +46,41 @@ def mock_boto_paginator_admin():
 
 
 @pytest.fixture
-def dual_list_in_group_repository(mock_boto_client_dual_list_in_group):
+def mock_email_repository():
+    """Mock email repository."""
+    email_repository_mock = MagicMock()
+    email_repository_mock.send_added_email.return_value = None
+    return email_repository_mock
+
+
+@pytest.fixture
+def dual_list_in_group_repository(mock_boto_client_dual_list_in_group, mock_email_repository):
     """Create repository with mocked boto3 client."""
-    with patch(
-        "api.repository.external.idp_repository.boto3.client",
-        return_value=mock_boto_client_dual_list_in_group,
+    with (
+        patch(
+            "api.repository.external.idp_repository.boto3.client",
+            return_value=mock_boto_client_dual_list_in_group,
+        ),
+        patch(
+            "api.repository.external.idp_repository.EmailRepository",
+            return_value=mock_email_repository,
+        ),
     ):
         return IdpRepository()
 
 
 @pytest.fixture
-def admin_list_in_group_repository(mock_boto_client_admin_list_in_group):
+def admin_list_in_group_repository(mock_boto_client_admin_list_in_group, mock_email_repository):
     """Create repository with mocked boto3 client."""
-    with patch(
-        "api.repository.external.idp_repository.boto3.client",
-        return_value=mock_boto_client_admin_list_in_group,
+    with (
+        patch(
+            "api.repository.external.idp_repository.boto3.client",
+            return_value=mock_boto_client_admin_list_in_group,
+        ),
+        patch(
+            "api.repository.external.idp_repository.EmailRepository",
+            return_value=mock_email_repository,
+        ),
     ):
         return IdpRepository()
 
@@ -72,10 +92,14 @@ def generate_temp_password():
 
 def test_repository_initializes_boto_client():
     """Ensure boto3 client is created with correct arguments."""
-    with patch("api.repository.external.idp_repository.boto3.client") as mock_client:
+    with (
+        patch("api.repository.external.idp_repository.boto3.client") as mock_client,
+        patch("api.repository.external.idp_repository.EmailRepository") as mock_email_repository,
+    ):
         IdpRepository()
 
         mock_client.assert_called_once_with("cognito-idp", region_name="eu-west-2")
+        mock_email_repository.assert_called_once()
 
 
 def test_list_users_in_group_calls_cognito_correctly(
@@ -260,7 +284,11 @@ def test_get_user_by_email_does_not_exist_returns_none(
 
 
 def test_create_user_calls_cognito_correctly(
-    settings, mock_boto_client_dual_list_in_group, dual_list_in_group_repository, monkeypatch
+    settings,
+    mock_boto_client_dual_list_in_group,
+    mock_email_repository,
+    dual_list_in_group_repository,
+    monkeypatch,
 ):
     """Ensure user creation SDK methods called correctly."""
     email = "bob@test.com"
@@ -278,10 +306,15 @@ def test_create_user_calls_cognito_correctly(
         UserAttributes=[{"Name": "email", "Value": email}],
         TemporaryPassword=generate_temp_password(),
     )
+    mock_email_repository.send_added_email.assert_not_called()
 
 
 def test_create_user_does_not_create_user_if_user_already_exists(
-    settings, mock_boto_client_dual_list_in_group, dual_list_in_group_repository, monkeypatch
+    settings,
+    mock_boto_client_dual_list_in_group,
+    mock_email_repository,
+    dual_list_in_group_repository,
+    monkeypatch,
 ):
     """Ensure user creation SDK methods called correctly."""
     email = "bob@test.com"
@@ -296,12 +329,16 @@ def test_create_user_does_not_create_user_if_user_already_exists(
 
     dual_list_in_group_repository.create_user(email, False)
 
-    assert mock_boto_client_dual_list_in_group.admin_create_user.call_count == 0
     mock_boto_client_dual_list_in_group.admin_create_user.assert_not_called()
+    assert mock_email_repository.send_added_email.call_count == 1
 
 
 def test_create_user_adds_user_to_access_group_if_user_already_exists(
-    settings, mock_boto_client_dual_list_in_group, dual_list_in_group_repository, monkeypatch
+    settings,
+    mock_boto_client_dual_list_in_group,
+    mock_email_repository,
+    dual_list_in_group_repository,
+    monkeypatch,
 ):
     """Ensure user creation SDK methods called correctly."""
     email = "bob@test.com"
@@ -317,13 +354,18 @@ def test_create_user_adds_user_to_access_group_if_user_already_exists(
     dual_list_in_group_repository.create_user(email, False)
 
     assert mock_boto_client_dual_list_in_group.admin_add_user_to_group.call_count == 1
+    assert mock_email_repository.send_added_email.call_count == 1
     mock_boto_client_dual_list_in_group.admin_add_user_to_group.assert_called_with(
         UserPoolId=user_pool_name, Username=str(fake_uuid), GroupName=general_user_group_name
     )
 
 
 def test_create_general_user_adds_user_to_access_group_only(
-    settings, mock_boto_client_dual_list_in_group, dual_list_in_group_repository, monkeypatch
+    settings,
+    mock_boto_client_dual_list_in_group,
+    mock_email_repository,
+    dual_list_in_group_repository,
+    monkeypatch,
 ):
     """Ensure general user creation adds user to only access group."""
     settings.IS_PROD = True
@@ -338,13 +380,18 @@ def test_create_general_user_adds_user_to_access_group_only(
     dual_list_in_group_repository.create_user("bob@test.com", False)
 
     assert mock_boto_client_dual_list_in_group.admin_add_user_to_group.call_count == 1
+    mock_email_repository.send_added_email.assert_not_called()
     mock_boto_client_dual_list_in_group.admin_add_user_to_group.assert_called_with(
         UserPoolId=user_pool_name, Username=username, GroupName=general_user_group_name
     )
 
 
 def test_create_admin_user_adds_user_to_access_and_admin_groups(
-    settings, mock_boto_client_dual_list_in_group, dual_list_in_group_repository, monkeypatch
+    settings,
+    mock_boto_client_dual_list_in_group,
+    mock_email_repository,
+    dual_list_in_group_repository,
+    monkeypatch,
 ):
     """Ensure admin user creation adds user to access and admin group."""
     settings.IS_PROD = True
@@ -369,6 +416,7 @@ def test_create_admin_user_adds_user_to_access_and_admin_groups(
             call(UserPoolId=user_pool_name, Username=username, GroupName=admin_user_group_name),
         ]
     )
+    mock_email_repository.send_added_email.assert_not_called()
 
 
 def test_create_user_in_dev_does_not_call_cognito(

@@ -1,5 +1,6 @@
 import React, { useMemo, useState, useEffect, type ChangeEvent, type KeyboardEvent, type MouseEvent } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { format } from 'date-fns';
 import {
     Box,
     Typography,
@@ -105,15 +106,20 @@ const compareUsers =
     };
 
 const formatGroupCreated = (group: Group): string => {
-    const dateStr = group.created_at
-        ? new Date(group.created_at).toLocaleDateString(undefined, {
-              day: 'numeric',
-              month: 'short',
-              year: 'numeric',
-          })
-        : null;
-    const by = group.created_by ?? 'Unknown';
-    return dateStr ? `Created: ${dateStr} by ${by}` : `Created by ${by}`;
+    if (!group.createdAt || !group.createdBy) {
+        return group.createdBy ? `Created by ${group.createdBy}` : '';
+    }
+
+    try {
+        const date = new Date(group.createdAt);
+        if (Number.isNaN(date.getTime())) {
+            return `Created by ${group.createdBy}`;
+        }
+        const formattedDate = format(date, 'dd MMMM yyyy');
+        return `Created: ${formattedDate} by ${group.createdBy}`;
+    } catch {
+        return `Created by ${group.createdBy}`;
+    }
 };
 
 const getCurrentMemberIds = (group: Group | null, _users: User[], adminUserIds: Set<string>): Set<string> => {

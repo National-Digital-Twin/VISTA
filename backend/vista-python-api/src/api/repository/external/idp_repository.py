@@ -7,6 +7,7 @@ import boto3
 from django.conf import settings
 
 from api.domain.cognito_user import IdpUser
+from api.repository.external.email_repository import EmailRepository
 from api.utils.auth import generate_temp_password
 
 
@@ -20,6 +21,7 @@ class IdpRepository:
     def __init__(self):
         """Construct an instance."""
         self.client = boto3.client("cognito-idp", region_name=settings.REGION)
+        self.email_repository = EmailRepository()
 
     def _stub_users(self):
         return [
@@ -105,6 +107,7 @@ class IdpRepository:
 
         if existing_user:
             username = existing_user.id
+            self.email_repository.send_added_email(email)
         else:
             response = self.client.admin_create_user(
                 UserPoolId=self.user_pool_id,
