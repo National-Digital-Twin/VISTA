@@ -4,6 +4,8 @@ export type GroupMember = {
     name: string | null;
     userId: string;
     createdBy?: string;
+    organisation?: string | null;
+    userType?: string | null;
 };
 
 export type Group = {
@@ -23,7 +25,15 @@ export const fetchAllGroups = async (): Promise<Group[]> => {
         throw new Error(`Failed to fetch groups: ${response.statusText}`);
     }
 
-    return response.json();
+    const data = await response.json();
+    return data.map((group: any) => ({
+        ...group,
+        members: (group.members || []).map((member: any) => ({
+            name: member.name,
+            userId: member.userId,
+            createdBy: member.createdBy,
+        })),
+    }));
 };
 
 export const createGroup = async (name: string, memberIds: string[]): Promise<Group> => {
