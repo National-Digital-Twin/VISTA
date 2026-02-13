@@ -25,7 +25,7 @@ class AssetScoreViewSet(viewsets.ViewSet):
         user_id = get_user_id_from_request(request)
         focus_area_id = request.query_params.get("focus_area_id")
 
-        asset_score = get_object_or_404(AssetScore, id=pk, scenario_id=scenario_id)
+        asset_score = get_object_or_404(AssetScore, asset_id=pk, scenario_id=scenario_id)
 
         if focus_area_id:
             get_object_or_404(FocusArea, id=focus_area_id, scenario_id=scenario_id, user_id=user_id)
@@ -49,10 +49,10 @@ class AssetScoreViewSet(viewsets.ViewSet):
         return Response(
             {
                 "id": str(pk),
-                "scenarioId": str(scenario_id),
-                "criticalityScore": f"{Decimal(asset_score.criticality_score):.2f}",
-                "dependencyScore": f"{Decimal(asset_score.dependency_score):.2f}",
-                "exposureScore": f"{Decimal(exposure_score):.2f}",
-                "redundancyScore": f"{Decimal(asset_score.redundancy_score):.2f}",
+                "scenario_id": str(scenario_id),
+                "criticality_score": f"{Decimal(asset_score.criticality_score):.2f}",
+                "dependency_score": f"{Decimal(asset_score.dependency_score):.2f}",
+                "exposure_score": f"{Decimal(exposure_score):.2f}",
+                "redundancy_score": f"{Decimal(asset_score.redundancy_score):.2f}",
             }
         )

@@ -116,6 +116,16 @@ urlpatterns = [
         name="scenario-assets",
     ),
     path(
+        "scenarios/<uuid:scenario_id>/dataroom/assets/",
+        views.DataroomAssetsView.as_view(),
+        name="dataroom-assets",
+    ),
+    path(
+        "scenarios/<uuid:scenario_id>/dataroom/assets/criticality/",
+        views.DataroomBulkCriticalityView.as_view(),
+        name="dataroom-bulk-criticality",
+    ),
+    path(
         "scenarios/<uuid:scenario_id>/assetscores/<uuid:pk>/",
         views.AssetScoreViewSet.as_view({"get": "retrieve"}),
         name="asset-score-detail",
