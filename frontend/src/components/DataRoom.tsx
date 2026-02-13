@@ -178,14 +178,14 @@ export default function DataRoom() {
                 sx={{
                     display: 'grid',
                     gridTemplateColumns: { xs: '1fr', lg: '340px 1fr' },
-                    columnGap: { xs: 0, lg: 4 },
+                    columnGap: { xs: 0, lg: 0 },
                     rowGap: { xs: 3, lg: 0 },
                     alignItems: { xs: 'start', lg: 'start' },
                 }}
             >
                 <Box
                     sx={{
-                        pr: { lg: 4 },
+                        pr: { lg: 3 },
                         pb: { xs: 3, lg: 0 },
                         borderRight: { xs: 'none', lg: '1px solid' },
                         borderColor: 'divider',
@@ -273,7 +273,7 @@ export default function DataRoom() {
                 <Box
                     sx={{
                         pt: { xs: 0, lg: 0 },
-                        pl: { xs: 0, lg: 0 },
+                        pl: { xs: 0, lg: 3 },
                         pb: { xs: 1, lg: 3 },
                         display: 'flex',
                         flexDirection: 'column',

@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { Link as RouterLink, useOutletContext } from 'react-router-dom';
-import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Link, Stack } from '@mui/material';
+import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Link, Stack, Button } from '@mui/material';
 import { SortableTableHeader } from '@/components/SortableTableHeader';
 import { SearchTextField } from '@/components/SearchTextField';
 import { DataSource } from '@/api/datasources';
@@ -43,8 +43,11 @@ const dataSourceMatchesSearch = (dataSource: DataSource, searchLower: string, ge
     const matchesAssetCount = String(dataSource.assetCount).includes(searchLower);
     const formattedLastUpdated = getFormattedLastUpdated(dataSource.lastUpdated);
     const matchesLastUpdated = formattedLastUpdated?.toLowerCase().includes(searchLower) ?? false;
+    const accessLevel = (dataSource.globallyAvailable ?? true) ? 'available to all' : 'restricted access';
+    const matchesAccessLevel = accessLevel.includes(searchLower);
+    const matchesGroupAccess = (dataSource.groupsWithAccess ?? []).some((group) => group.name.toLowerCase().includes(searchLower));
 
-    return matchesName || matchesOwner || matchesAssetCount || matchesLastUpdated;
+    return matchesName || matchesOwner || matchesAssetCount || matchesLastUpdated || matchesAccessLevel || matchesGroupAccess;
 };
 
 export default function DataSources() {
@@ -98,6 +101,9 @@ export default function DataSources() {
                 }}
             >
                 <SearchTextField placeholder="Search for a data source" value={searchTerm} onChange={setSearchTerm} />
+                <Button variant="outlined" disabled={!searchTerm} onClick={() => setSearchTerm('')}>
+                    Clear filters
+                </Button>
             </Stack>
 
             {isLoading ? (
@@ -123,12 +129,14 @@ export default function DataSources() {
                                     sortDirection={sortDirection}
                                     onSort={handleSort}
                                 />
+                                <TableCell>Access level</TableCell>
+                                <TableCell>Group access</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
                             {sortedDataSources.length === 0 ? (
                                 <TableRow>
-                                    <TableCell colSpan={4} align="center">
+                                    <TableCell colSpan={6} align="center">
                                         <Typography color="text.secondary">
                                             {searchTerm ? 'No data sources match your search.' : 'No data sources available.'}
                                         </Typography>
@@ -150,6 +158,26 @@ export default function DataSources() {
                                         <TableCell>{source.owner}</TableCell>
                                         <TableCell>{source.assetCount}</TableCell>
                                         <TableCell>{getFormattedLastUpdated(source.lastUpdated) ?? '—'}</TableCell>
+                                        <TableCell>{(source.globallyAvailable ?? true) ? 'Available to all' : 'Restricted access'}</TableCell>
+                                        <TableCell>
+                                            {(source.groupsWithAccess ?? []).length > 0 ? (
+                                                <Stack spacing={0.25}>
+                                                    {(source.groupsWithAccess ?? []).map((group) => (
+                                                        <Link
+                                                            key={group.id}
+                                                            component={RouterLink}
+                                                            to={`/admin?tab=groups&group=${encodeURIComponent(group.id)}`}
+                                                            underline="always"
+                                                            sx={{ color: 'primary.main', cursor: 'pointer' }}
+                                                        >
+                                                            {group.name}
+                                                        </Link>
+                                                    ))}
+                                                </Stack>
+                                            ) : (
+                                                '—'
+                                            )}
+                                        </TableCell>
                                     </TableRow>
                                 ))
                             )}

@@ -28,6 +28,8 @@ const mockDataSources = [
         assetCount: 63,
         lastUpdated: '2025-07-20T11:04:00Z',
         owner: 'John Doe',
+        globallyAvailable: true,
+        groupsWithAccess: [],
     },
     {
         id: 'nhs',
@@ -36,6 +38,8 @@ const mockDataSources = [
         assetCount: 27,
         lastUpdated: '2025-07-21T09:31:00Z',
         owner: 'Jane Smith',
+        globallyAvailable: false,
+        groupsWithAccess: [{ id: 'g1', name: 'Resilience planning', members: ['m1'] }],
     },
     {
         id: 'os-names',
@@ -44,6 +48,8 @@ const mockDataSources = [
         assetCount: 119,
         lastUpdated: null,
         owner: 'Bob Johnson',
+        globallyAvailable: false,
+        groupsWithAccess: [{ id: 'g2', name: 'Twynwell team', members: ['m1', 'm2'] }],
     },
 ];
 
@@ -112,15 +118,44 @@ describe('DataSources', () => {
             expect(screen.getByText('Owner')).toBeInTheDocument();
             expect(screen.getByText('# of assets')).toBeInTheDocument();
             expect(screen.getByText('Last updated')).toBeInTheDocument();
+            expect(screen.getByText('Access level')).toBeInTheDocument();
+            expect(screen.getByText('Group access')).toBeInTheDocument();
 
             const cqcRow = screen.getByText('CQC API').closest('tr');
             expect(cqcRow).not.toBeNull();
             if (cqcRow) {
-                const { getByText, queryByText } = within(cqcRow);
+                const { getByText } = within(cqcRow);
                 expect(getByText('John Doe')).toBeInTheDocument();
                 expect(getByText('63')).toBeInTheDocument();
-                expect(queryByText('—')).not.toBeInTheDocument();
+                expect(getByText('Available to all')).toBeInTheDocument();
             }
+
+            const nhsRow = screen.getByText('NHS Open Data Portal').closest('tr');
+            expect(nhsRow).not.toBeNull();
+            if (nhsRow) {
+                const { getByText } = within(nhsRow);
+                expect(getByText('Restricted access')).toBeInTheDocument();
+                expect(getByText('Resilience planning')).toBeInTheDocument();
+            }
+        });
+
+        it('enables and clears filters via clear filters button', async () => {
+            renderWithAppProviders(['/data-room']);
+
+            const searchInput = await screen.findByPlaceholderText('Search for a data source');
+            const clearFiltersButton = screen.getByRole('button', { name: /clear filters/i });
+
+            expect(clearFiltersButton).toBeDisabled();
+
+            fireEvent.change(searchInput, { target: { value: 'nhs' } });
+            expect(clearFiltersButton).toBeEnabled();
+            expect(await screen.findByRole('link', { name: /nhs open data portal/i })).toBeInTheDocument();
+            expect(screen.queryByText('CQC API')).not.toBeInTheDocument();
+
+            fireEvent.click(clearFiltersButton);
+            expect(clearFiltersButton).toBeDisabled();
+            expect(screen.getByText('CQC API')).toBeInTheDocument();
+            expect(screen.getByText('NHS Open Data Portal')).toBeInTheDocument();
         });
 
         it('filters data sources based on search input', async () => {

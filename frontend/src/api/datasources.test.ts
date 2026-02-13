@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
-import { fetchDataSources, type DataSource } from './datasources';
+import { fetchDataSources, fetchDataSource, grantDataSourceGroupAccess, revokeDataSourceGroupAccess, type DataSource } from './datasources';
 
 vi.mock('@/config/app-config', () => ({
     default: {
@@ -32,6 +32,8 @@ describe('datasources API', () => {
                     assetCount: 100,
                     lastUpdated: '2024-01-01T00:00:00Z',
                     owner: 'Owner 1',
+                    globallyAvailable: true,
+                    groupsWithAccess: [],
                 },
                 {
                     id: 'ds2',
@@ -40,6 +42,8 @@ describe('datasources API', () => {
                     assetCount: 200,
                     lastUpdated: null,
                     owner: 'Owner 2',
+                    globallyAvailable: false,
+                    groupsWithAccess: [{ id: 'g1', name: 'Group 1', members: ['m1'] }],
                 },
             ];
 
@@ -58,7 +62,9 @@ describe('datasources API', () => {
             expect(result[0].id).toBe('ds1');
             expect(result[0].name).toBe('Data Source 1');
             expect(result[0].assetCount).toBe(100);
+            expect(result[0].globallyAvailable).toBe(true);
             expect(result[1].lastUpdated).toBeNull();
+            expect(result[1].groupsWithAccess).toHaveLength(1);
         });
 
         it('handles empty response', async () => {
@@ -95,6 +101,89 @@ describe('datasources API', () => {
             });
 
             await expect(fetchDataSources()).rejects.toThrow('Invalid JSON');
+        });
+    });
+
+    describe('fetchDataSource', () => {
+        it('successfully fetches a data source detail', async () => {
+            const mockDataSource: DataSource = {
+                id: 'ds1',
+                name: 'Data Source 1',
+                description: 'ds1 description',
+                assetCount: 100,
+                lastUpdated: '2024-01-01T00:00:00Z',
+                owner: 'Owner 1',
+                globallyAvailable: false,
+                groupsWithAccess: [{ id: 'g1', name: 'Group 1', members: ['m1'] }],
+            };
+
+            fetchMock.mockResolvedValue({
+                ok: true,
+                json: vi.fn().mockResolvedValue(mockDataSource),
+            });
+
+            const result = await fetchDataSource('ds1');
+
+            expect(fetchMock).toHaveBeenCalledWith('/ndtp-python/api/datasources/ds1/', {
+                headers: { 'Content-Type': 'application/json' },
+            });
+            expect(result).toEqual(mockDataSource);
+        });
+
+        it('throws error when detail response is not ok', async () => {
+            fetchMock.mockResolvedValue({
+                ok: false,
+                statusText: 'Not Found',
+            });
+
+            await expect(fetchDataSource('missing')).rejects.toThrow('Failed to fetch data sources: Not Found');
+        });
+    });
+
+    describe('grantDataSourceGroupAccess', () => {
+        it('grants group access successfully', async () => {
+            fetchMock.mockResolvedValue({ ok: true });
+
+            await grantDataSourceGroupAccess('ds1', 'g1');
+
+            expect(fetchMock).toHaveBeenCalledWith('/ndtp-python/api/datasources/ds1/access/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ group: 'g1' }),
+            });
+        });
+
+        it('throws on grant access failure', async () => {
+            fetchMock.mockResolvedValue({
+                ok: false,
+                statusText: 'Bad Request',
+                text: vi.fn().mockResolvedValue('Invalid group'),
+            });
+
+            await expect(grantDataSourceGroupAccess('ds1', 'bad')).rejects.toThrow('Invalid group');
+        });
+    });
+
+    describe('revokeDataSourceGroupAccess', () => {
+        it('revokes group access successfully', async () => {
+            fetchMock.mockResolvedValue({ ok: true });
+
+            await revokeDataSourceGroupAccess('ds1', 'g1');
+
+            expect(fetchMock).toHaveBeenCalledWith('/ndtp-python/api/datasources/ds1/access/g1/', {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+            });
+        });
+
+        it('throws on revoke access failure', async () => {
+            fetchMock.mockResolvedValue({
+                ok: false,
+                statusText: 'Not Found',
+                text: vi.fn().mockResolvedValue('Access not found'),
+            });
+
+            await expect(revokeDataSourceGroupAccess('ds1', 'g1')).rejects.toThrow('Access not found');
         });
     });
 });
