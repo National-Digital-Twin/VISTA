@@ -14,7 +14,7 @@ from api.tests.conftest import buffer_geometry
 SAMPLE_POLYGON = [[[0.1, 0.1], [0.1, 0.5], [0.5, 0.5], [0.5, 0.1], [0.1, 0.1]]]
 SAMPLE_POLYGON_2 = [[[0.4, 0.4], [0.4, 0.6], [0.6, 0.6], [0.6, 0.4], [0.4, 0.4]]]
 
-http_success_code = 200
+http_ok = 200
 http_created = 201
 http_no_content = 204
 http_bad_request = 400
@@ -100,7 +100,7 @@ def test_list_exposure_layers_includes_user_drawn(
     )
     data = response.json()
 
-    assert response.status_code == http_success_code
+    assert response.status_code == http_ok
 
     user_drawn_type_data = find_type_by_name(data, "Test User Editable")
     assert user_drawn_type_data is not None
@@ -237,7 +237,7 @@ def test_list_exposure_layers_returns_is_user_editable(scenario, focus_area, cli
     )
     data = response.json()
 
-    assert response.status_code == http_success_code
+    assert response.status_code == http_ok
 
     system_type_data = find_type_by_name(data, "System Floods")
     assert system_type_data is not None
@@ -266,7 +266,7 @@ def test_get_exposure_layers_no_active_focus_areas(scenario, mock_user_id, clien
     response = client.get(f"/api/scenarios/{scenario.id}/exposure-layers/")
     data = response.json()
 
-    assert response.status_code == http_success_code
+    assert response.status_code == http_ok
     test_type = find_type_by_name(data, "Test Type")
     assert test_type is not None
     for layer in test_type["exposureLayers"]:
@@ -314,7 +314,7 @@ def test_exposure_layers_returns_all_layers_not_just_intersecting(scenario, mock
     )
     data = response.json()
 
-    assert response.status_code == http_success_code
+    assert response.status_code == http_ok
 
     inside_layer_data = find_exposure_layer_in_tree(data, inside_layer.id)
     outside_layer_data = find_exposure_layer_in_tree(data, outside_layer.id)
@@ -514,7 +514,7 @@ def test_all_active_focus_areas_no_spatial_relation(scenario, mock_user_id, clie
     assert elsewhere_data["focusAreaRelation"] is None
 
 
-# --- POST Tests ---
+# --- POST (create) Tests ---
 
 
 @pytest.mark.django_db
@@ -690,6 +690,103 @@ def test_create_user_exposure_layer_non_editable_type_forbidden(
     assert response.status_code == http_forbidden
 
 
+# --- POST (publish) Tests ---
+
+
+@pytest.mark.django_db
+def test_user_can_publish_exposure_layer(client, mock_user_id, scenario, user_drawn_type):
+    """Test that POST publish layer is successful."""
+    geom = GEOSGeometry("POLYGON((0.2 0.2, 0.2 0.3, 0.3 0.3, 0.3 0.2, 0.2 0.2))")
+    user_layer = ExposureLayer.objects.create(
+        name="My User Layer",
+        geometry=geom,
+        geometry_buffered=buffer_geometry(geom),
+        type=user_drawn_type,
+        user_id=mock_user_id,
+        scenario=scenario,
+        status=ExposureLayer.UNPUBLISHED,
+    )
+
+    response = client.post(f"/api/scenarios/{scenario.id}/exposure-layers/{user_layer.id}/publish/")
+    assert response.status_code == http_ok
+
+    db_layer = ExposureLayer.objects.get(id=user_layer.id)
+    assert db_layer.status == ExposureLayer.PENDING
+
+
+@pytest.mark.django_db
+def test_user_cannot_publish_exposure_layer_of_another_user(client, scenario, user_drawn_type):
+    """Test that a user cannot publish a layer belonging to another user."""
+    geom = GEOSGeometry("POLYGON((0.2 0.2, 0.2 0.3,a 0.3 0.3, 0.3 0.2, 0.2 0.2))")
+    user_layer = ExposureLayer.objects.create(
+        name="My User Layer",
+        geometry=geom,
+        geometry_buffered=buffer_geometry(geom),
+        type=user_drawn_type,
+        user_id=uuid.uuid4(),
+        scenario=scenario,
+        status=ExposureLayer.UNPUBLISHED,
+    )
+
+    response = client.post(f"/api/scenarios/{scenario.id}/exposure-layers/{user_layer.id}/publish/")
+    assert response.status_code == http_not_found
+
+
+@pytest.mark.django_db
+def test_user_cannot_publish_exposure_layer_non_editable_type(client, scenario, non_editable_type):
+    """Test that a user cannot publish a layer with a non-editable type."""
+    geom = GEOSGeometry("POLYGON((0.2 0.2, 0.2 0.3, 0.3 0.3, 0.3 0.2, 0.2 0.2))")
+    layer = ExposureLayer.objects.create(
+        name="System Layer",
+        geometry=geom,
+        geometry_buffered=buffer_geometry(geom),
+        type=non_editable_type,
+    )
+
+    response = client.post(f"/api/scenarios/{scenario.id}/exposure-layers/{layer.id}/publish/")
+    assert response.status_code == http_not_found
+
+
+@pytest.mark.django_db
+def test_user_cannot_publish_exposure_layer_pending(
+    client, mock_user_id, scenario, user_drawn_type
+):
+    """Test that POST publish layer is successful."""
+    geom = GEOSGeometry("POLYGON((0.2 0.2, 0.2 0.3, 0.3 0.3, 0.3 0.2, 0.2 0.2))")
+    user_layer = ExposureLayer.objects.create(
+        name="My User Layer",
+        geometry=geom,
+        geometry_buffered=buffer_geometry(geom),
+        type=user_drawn_type,
+        user_id=mock_user_id,
+        scenario=scenario,
+        status=ExposureLayer.PENDING,
+    )
+
+    response = client.post(f"/api/scenarios/{scenario.id}/exposure-layers/{user_layer.id}/publish/")
+    assert response.status_code == http_bad_request
+
+
+@pytest.mark.django_db
+def test_user_cannot_publish_exposure_layer_approved(
+    client, mock_user_id, scenario, user_drawn_type
+):
+    """Test that POST publish layer is successful."""
+    geom = GEOSGeometry("POLYGON((0.2 0.2, 0.2 0.3, 0.3 0.3, 0.3 0.2, 0.2 0.2))")
+    user_layer = ExposureLayer.objects.create(
+        name="My User Layer",
+        geometry=geom,
+        geometry_buffered=buffer_geometry(geom),
+        type=user_drawn_type,
+        user_id=mock_user_id,
+        scenario=scenario,
+        status=ExposureLayer.ACCEPTED,
+    )
+
+    response = client.post(f"/api/scenarios/{scenario.id}/exposure-layers/{user_layer.id}/publish/")
+    assert response.status_code == http_bad_request
+
+
 # --- PATCH Tests ---
 
 
@@ -713,7 +810,7 @@ def test_update_user_exposure_layer_name(scenario, mock_user_id, user_drawn_type
     )
     data = response.json()
 
-    assert response.status_code == http_success_code
+    assert response.status_code == http_ok
     assert data["name"] == "New Name"
 
     layer.refresh_from_db()
@@ -742,7 +839,7 @@ def test_update_user_exposure_layer_geometry(scenario, mock_user_id, user_drawn_
     )
     data = response.json()
 
-    assert response.status_code == http_success_code
+    assert response.status_code == http_ok
     assert data["geometry"] == new_geometry
 
 
@@ -937,7 +1034,7 @@ def test_bulk_enable_exposure_layers_by_ids(
     )
     data = response.json()
 
-    assert response.status_code == http_success_code, f"Got: {data}"
+    assert response.status_code == http_ok, f"Got: {data}"
     assert data["isActive"] is True
     assert len(data["exposureLayerIds"]) == 2
 
@@ -988,7 +1085,7 @@ def test_bulk_disable_exposure_layers_by_type_id(
     )
     data = response.json()
 
-    assert response.status_code == http_success_code, f"Got: {data}"
+    assert response.status_code == http_ok, f"Got: {data}"
     assert data["isActive"] is False
 
     assert not VisibleExposureLayer.objects.filter(

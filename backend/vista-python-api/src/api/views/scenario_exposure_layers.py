@@ -5,9 +5,9 @@ import json
 from django.db import connection
 from django.db.models import Case, CharField, F, Prefetch, Q, Value, When
 from django.shortcuts import get_object_or_404
-from rest_framework import status
+from rest_framework import status, viewsets
+from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.views import APIView
 
 from api.models import FocusArea, Scenario, VisibleExposureLayer
 from api.models.exposure_layer import ExposureLayer, ExposureLayerType
@@ -16,10 +16,10 @@ from api.utils.auth import get_user_id_from_request
 from api.utils.geometry import buffer_geometry
 
 
-class ScenarioExposureLayersView(APIView):
+class ScenarioExposureLayersView(viewsets.ViewSet):
     """View for listing and managing exposure layers for a scenario."""
 
-    def get(self, request, scenario_id):
+    def list(self, request, scenario_id):
         """List all exposure layer types with nested exposure layers.
 
         Each exposure layer includes:
@@ -160,7 +160,7 @@ class ScenarioExposureLayersView(APIView):
 
         return Response(result)
 
-    def post(self, request, scenario_id):
+    def create(self, request, scenario_id):
         """Create a new user-drawn exposure layer.
 
         Request body:
@@ -229,7 +229,7 @@ class ScenarioExposureLayersView(APIView):
             status=status.HTTP_201_CREATED,
         )
 
-    def patch(self, request, scenario_id, exposure_layer_id):
+    def partial_update(self, request, scenario_id, exposure_layer_id):
         """Update a user-drawn exposure layer (rename or update geometry).
 
         Request body:
@@ -277,7 +277,7 @@ class ScenarioExposureLayersView(APIView):
             }
         )
 
-    def delete(self, request, scenario_id, exposure_layer_id):
+    def destroy(self, request, scenario_id, exposure_layer_id):
         """Delete a user-drawn exposure layer."""
         scenario = get_object_or_404(Scenario, id=scenario_id)
         user_id = get_user_id_from_request(request)
@@ -297,3 +297,26 @@ class ScenarioExposureLayersView(APIView):
 
         exposure_layer.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @action(detail=True, methods=["post"], url_path="publish")
+    def publish(self, request, scenario_id, exposure_layer_id):
+        """Publish editable exposure layer."""
+        scenario = get_object_or_404(Scenario, id=scenario_id)
+        user_id = get_user_id_from_request(request)
+
+        exposure_layer = get_object_or_404(
+            ExposureLayer,
+            id=exposure_layer_id,
+            user_id=user_id,
+            scenario=scenario,
+        )
+
+        if not exposure_layer.is_editable:
+            return Response(
+                {"error": "Cannot publish a non-editable layer."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        exposure_layer.status = ExposureLayer.PENDING
+        exposure_layer.save()
+        return Response(status=status.HTTP_200_OK)
