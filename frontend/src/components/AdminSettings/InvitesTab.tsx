@@ -58,7 +58,7 @@ const InvitesTab = () => {
         const { invite } = menuAnchor;
         handleCloseMenu();
         try {
-            await cancelInvite(invite.id);
+            await cancelInvite(invite.userId);
             refetch();
             setSuccess('Invite removed successfully');
         } catch {
@@ -73,7 +73,7 @@ const InvitesTab = () => {
         const { invite } = menuAnchor;
         handleCloseMenu();
         try {
-            await resendInvite(invite.id);
+            await resendInvite(invite.userId);
             refetch();
             setSuccess('User re-invited successfully');
         } catch {
@@ -179,9 +179,9 @@ const InvitesTab = () => {
                             </TableRow>
                         ) : (
                             sortedInvites.map((invite) => {
-                                const isMenuOpen = Boolean(menuAnchor) && menuAnchor?.invite.id === invite.id;
+                                const isMenuOpen = Boolean(menuAnchor) && menuAnchor?.invite.userId === invite.userId;
                                 return (
-                                    <TableRow key={invite.id}>
+                                    <TableRow key={invite.userId}>
                                         <TableCell>
                                             <Typography variant="body2" fontWeight="medium">
                                                 {invite.email}

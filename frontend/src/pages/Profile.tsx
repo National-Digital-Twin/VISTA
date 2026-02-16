@@ -3,6 +3,7 @@ import { Box, Button, Divider, IconButton, Typography, Dialog, DialogTitle, Dial
 import CloseIcon from '@mui/icons-material/Close';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { useProfileData } from '@/hooks/useProfileData';
 import PageContainer from '@/components/PageContainer';
 import config from '@/config/app-config';
@@ -13,6 +14,7 @@ export default function Profile() {
     const { getUserDisplayName, getUserOrganisation, getUserMemberSince, getUserAddedBy, getUserType, getUserEmail, loading, error } = useProfileData(userId);
     const [showRemoveModal, setShowRemoveModal] = useState(false);
     const [confirmText, setConfirmText] = useState('');
+    const queryClient = useQueryClient();
 
     const handleBackClick = () => {
         if (userId) {
@@ -46,6 +48,7 @@ export default function Profile() {
                 throw new Error('Failed to remove user');
             }
 
+            await queryClient.refetchQueries({ queryKey: ['invites'] });
             navigate('/admin?tab=users');
         } catch {
             // eslint-disable-next-line no-empty
