@@ -15,6 +15,7 @@ class DataroomAssetListSerializer(serializers.ModelSerializer):
     asset_type_name = serializers.CharField(source="type.name")
     sub_category_name = serializers.CharField(source="type.sub_category.name")
     category_name = serializers.CharField(source="type.sub_category.category.name")
+    asset_type_id = serializers.UUIDField(source="type_id")
     criticality_score = serializers.IntegerField()
     criticality_is_overridden = serializers.BooleanField()
 
@@ -26,6 +27,7 @@ class DataroomAssetListSerializer(serializers.ModelSerializer):
             "id",
             "name",
             "geometry",
+            "asset_type_id",
             "asset_type_name",
             "sub_category_name",
             "category_name",
