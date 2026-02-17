@@ -139,24 +139,9 @@ class ScenarioExposureLayersView(viewsets.ViewSet):
         for exposure_layer_type in exposure_layer_types:
             layers_data = []
             for exposure_layer in exposure_layer_type.exposure_layers.all():
-                layer_data = {
-                    "id": str(exposure_layer.id),
-                    "name": exposure_layer.name,
-                    "isActive": exposure_layer.id in visible_exposure_layer_ids,
-                    "isUserDefined": exposure_layer.is_user_defined,
-                    "focusAreaRelation": getattr(exposure_layer, "focus_area_relation", None),
-                    "geometry": (
-                        json.loads(exposure_layer.geometry.json)
-                        if exposure_layer.geometry
-                        else None
-                    ),
-                    "status": exposure_layer.status
-                    if exposure_layer_type.is_user_editable
-                    else None,
-                    "createdAt": (
-                        exposure_layer.created_at.isoformat() if exposure_layer.created_at else None
-                    ),
-                }
+                layer_data = self._build_layer_data_response(
+                    exposure_layer, visible_exposure_layer_ids, exposure_layer_type
+                )
                 layers_data.append(layer_data)
 
             result.append(
@@ -169,6 +154,24 @@ class ScenarioExposureLayersView(viewsets.ViewSet):
             )
 
         return Response(result)
+
+    def _build_layer_data_response(
+        self, exposure_layer, visible_exposure_layer_ids, exposure_layer_type
+    ):
+        return {
+            "id": str(exposure_layer.id),
+            "name": exposure_layer.name,
+            "isActive": exposure_layer.id in visible_exposure_layer_ids,
+            "isUserDefined": exposure_layer.is_user_defined,
+            "focusAreaRelation": getattr(exposure_layer, "focus_area_relation", None),
+            "geometry": (
+                json.loads(exposure_layer.geometry.json) if exposure_layer.geometry else None
+            ),
+            "status": exposure_layer.status if exposure_layer_type.is_user_editable else None,
+            "createdAt": (
+                exposure_layer.created_at.isoformat() if exposure_layer.created_at else None
+            ),
+        }
 
     def create(self, request, scenario_id):
         """Create a new user-drawn exposure layer.
