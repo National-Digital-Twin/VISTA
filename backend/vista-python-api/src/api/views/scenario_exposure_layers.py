@@ -11,6 +11,7 @@ from rest_framework.response import Response
 
 from api.models import FocusArea, Scenario, VisibleExposureLayer
 from api.models.exposure_layer import ExposureLayer, ExposureLayerType
+from api.permissions import Administrator
 from api.serializers import ExposureLayerCreateSerializer, ExposureLayerUpdateSerializer
 from api.utils.auth import get_user_id_from_request
 from api.utils.geometry import buffer_geometry
@@ -18,6 +19,12 @@ from api.utils.geometry import buffer_geometry
 
 class ScenarioExposureLayersView(viewsets.ViewSet):
     """View for listing and managing exposure layers for a scenario."""
+
+    def get_permissions(self):
+        """Get permissions for action within viewset."""
+        if self.action in ["approve", "reject", "remove"]:
+            return [Administrator()]
+        return super().get_permissions()
 
     def list(self, request, scenario_id):
         """List all exposure layer types with nested exposure layers.
@@ -143,6 +150,9 @@ class ScenarioExposureLayersView(viewsets.ViewSet):
                         if exposure_layer.geometry
                         else None
                     ),
+                    "status": exposure_layer.status
+                    if exposure_layer_type.is_user_editable
+                    else None,
                     "createdAt": (
                         exposure_layer.created_at.isoformat() if exposure_layer.created_at else None
                     ),
@@ -224,6 +234,7 @@ class ScenarioExposureLayersView(viewsets.ViewSet):
                 "geometry": json.loads(exposure_layer.geometry.json),
                 "isActive": focus_area_id is not None,
                 "isUserDefined": True,
+                "status": exposure_layer.status if exposure_layer_type.is_user_editable else None,
                 "createdAt": exposure_layer.created_at.isoformat(),
             },
             status=status.HTTP_201_CREATED,
@@ -318,5 +329,74 @@ class ScenarioExposureLayersView(viewsets.ViewSet):
             )
 
         exposure_layer.status = ExposureLayer.PENDING
+        exposure_layer.save()
+        return Response(status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=["post"], url_path="approve")
+    def approve(self, request, scenario_id, exposure_layer_id):
+        """Approve editable exposure layer."""
+        scenario = get_object_or_404(Scenario, id=scenario_id)
+        user_id = get_user_id_from_request(request)
+
+        exposure_layer = get_object_or_404(
+            ExposureLayer,
+            id=exposure_layer_id,
+            scenario=scenario,
+        )
+
+        if not exposure_layer.is_ready_for_admin_review:
+            return Response(
+                {"error": "Cannot approve a non-editable layer."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        exposure_layer.status = ExposureLayer.APPROVED
+        exposure_layer.approved_by = user_id
+        exposure_layer.save()
+        return Response(status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=["post"], url_path="reject")
+    def reject(self, request, scenario_id, exposure_layer_id):
+        """Reject editable exposure layer."""
+        scenario = get_object_or_404(Scenario, id=scenario_id)
+        user_id = get_user_id_from_request(request)
+
+        exposure_layer = get_object_or_404(
+            ExposureLayer,
+            id=exposure_layer_id,
+            scenario=scenario,
+        )
+
+        if not exposure_layer.is_ready_for_admin_review:
+            return Response(
+                {"error": "Cannot reject a non-editable layer."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        exposure_layer.status = ExposureLayer.UNPUBLISHED
+        exposure_layer.rejected_by = user_id
+        exposure_layer.save()
+        return Response(status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=["post"], url_path="remove")
+    def remove(self, request, scenario_id, exposure_layer_id):
+        """Remove editable exposure layer."""
+        scenario = get_object_or_404(Scenario, id=scenario_id)
+        user_id = get_user_id_from_request(request)
+
+        exposure_layer = get_object_or_404(
+            ExposureLayer,
+            id=exposure_layer_id,
+            scenario=scenario,
+        )
+
+        if not exposure_layer.is_ready_for_admin_removal:
+            return Response(
+                {"error": "Cannot remove a non-editable layer."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        exposure_layer.status = ExposureLayer.UNPUBLISHED
+        exposure_layer.removed_by = user_id
         exposure_layer.save()
         return Response(status=status.HTTP_200_OK)

@@ -77,6 +77,14 @@ def find_type_by_name(data, name):
     return None
 
 
+class Administrator:
+    """Mock administrator permission."""
+
+    def has_permission(self, request, view):  # noqa: ARG002
+        """Return whether user has permission."""
+        return False
+
+
 # --- GET (List) Tests ---
 
 
@@ -110,8 +118,32 @@ def test_list_exposure_layers_includes_user_drawn(
     assert user_layer_data is not None
     assert user_layer_data["name"] == "My User Layer"
     assert user_layer_data["isUserDefined"] is True
+    assert user_layer_data["status"] == ExposureLayer.UNPUBLISHED
     assert "geometry" in user_layer_data
     assert "createdAt" in user_layer_data
+
+
+@pytest.mark.django_db
+def test_list_exposure_layers_gives_correct_status_for_non_editable_layer_type(
+    scenario, non_editable_type, client
+):
+    """Test that GET returns user-drawn layers in 'User drawn' type."""
+    geom = GEOSGeometry("POLYGON((0.2 0.2, 0.2 0.3, 0.3 0.3, 0.3 0.2, 0.2 0.2))")
+    layer = ExposureLayer.objects.create(
+        name="System Layer",
+        geometry=geom,
+        geometry_buffered=buffer_geometry(geom),
+        type=non_editable_type,
+    )
+
+    response = client.get(f"/api/scenarios/{scenario.id}/exposure-layers/")
+    data = response.json()
+
+    assert response.status_code == http_ok
+
+    user_layer_data = find_exposure_layer_in_tree(data, layer.id)
+    assert user_layer_data is not None
+    assert user_layer_data["status"] is None
 
 
 @pytest.mark.django_db
@@ -539,6 +571,7 @@ def test_create_user_exposure_layer_with_polygon(scenario, user_drawn_type, clie
     assert data["name"] == "My Custom Layer"
     assert data["geometry"] == geometry
     assert data["isUserDefined"] is True
+    assert data["status"] == ExposureLayer.UNPUBLISHED
     assert "id" in data
     assert "createdAt" in data
 
@@ -717,7 +750,7 @@ def test_user_can_publish_exposure_layer(client, mock_user_id, scenario, user_dr
 @pytest.mark.django_db
 def test_user_cannot_publish_exposure_layer_of_another_user(client, scenario, user_drawn_type):
     """Test that a user cannot publish a layer belonging to another user."""
-    geom = GEOSGeometry("POLYGON((0.2 0.2, 0.2 0.3,a 0.3 0.3, 0.3 0.2, 0.2 0.2))")
+    geom = GEOSGeometry("POLYGON((0.2 0.2, 0.2 0.3, 0.3 0.3, 0.3 0.2, 0.2 0.2))")
     user_layer = ExposureLayer.objects.create(
         name="My User Layer",
         geometry=geom,
@@ -780,11 +813,301 @@ def test_user_cannot_publish_exposure_layer_approved(
         type=user_drawn_type,
         user_id=mock_user_id,
         scenario=scenario,
-        status=ExposureLayer.ACCEPTED,
+        status=ExposureLayer.APPROVED,
     )
 
     response = client.post(f"/api/scenarios/{scenario.id}/exposure-layers/{user_layer.id}/publish/")
     assert response.status_code == http_bad_request
+
+
+# --- POST (approve) Tests ---
+
+
+@pytest.mark.django_db
+def test_admin_user_can_approve_exposure_layer(client, mock_user_id, scenario, user_drawn_type):
+    """Test that POST approve layer is successful."""
+    geom = GEOSGeometry("POLYGON((0.2 0.2, 0.2 0.3, 0.3 0.3, 0.3 0.2, 0.2 0.2))")
+    user_layer = ExposureLayer.objects.create(
+        name="My User Layer",
+        geometry=geom,
+        geometry_buffered=buffer_geometry(geom),
+        type=user_drawn_type,
+        user_id=uuid.uuid4(),
+        scenario=scenario,
+        status=ExposureLayer.PENDING,
+    )
+
+    response = client.post(f"/api/scenarios/{scenario.id}/exposure-layers/{user_layer.id}/approve/")
+    assert response.status_code == http_ok
+
+    db_layer = ExposureLayer.objects.get(id=user_layer.id)
+    assert db_layer.status == ExposureLayer.APPROVED
+    assert db_layer.approved_by == mock_user_id
+
+
+@pytest.mark.django_db
+def test_admin_user_cannot_approve_exposure_layer_non_editable_type(
+    client, scenario, non_editable_type
+):
+    """Test that an admin cannot approve a layer with a non-editable type."""
+    geom = GEOSGeometry("POLYGON((0.2 0.2, 0.2 0.3, 0.3 0.3, 0.3 0.2, 0.2 0.2))")
+    layer = ExposureLayer.objects.create(
+        name="System Layer",
+        geometry=geom,
+        geometry_buffered=buffer_geometry(geom),
+        type=non_editable_type,
+    )
+
+    response = client.post(f"/api/scenarios/{scenario.id}/exposure-layers/{layer.id}/approve/")
+    assert response.status_code == http_not_found
+
+
+@pytest.mark.django_db
+def test_admin_user_cannot_approve_exposure_layer_unpublished(
+    client,
+    mock_user_id,  # noqa: ARG001
+    scenario,
+    user_drawn_type,
+):
+    """Test that admin user cannot approve unpublished layer."""
+    geom = GEOSGeometry("POLYGON((0.2 0.2, 0.2 0.3, 0.3 0.3, 0.3 0.2, 0.2 0.2))")
+    user_layer = ExposureLayer.objects.create(
+        name="My User Layer",
+        geometry=geom,
+        geometry_buffered=buffer_geometry(geom),
+        type=user_drawn_type,
+        user_id=uuid.uuid4(),
+        scenario=scenario,
+        status=ExposureLayer.UNPUBLISHED,
+    )
+
+    response = client.post(f"/api/scenarios/{scenario.id}/exposure-layers/{user_layer.id}/approve/")
+    assert response.status_code == http_bad_request
+
+    db_layer = ExposureLayer.objects.get(id=user_layer.id)
+    assert db_layer.status == ExposureLayer.UNPUBLISHED
+
+
+@pytest.mark.django_db
+def test_admin_user_cannot_approve_exposure_layer_approved(
+    client,
+    mock_user_id,  # noqa: ARG001
+    scenario,
+    user_drawn_type,
+):
+    """Test that admin user cannot approve already-approved layer."""
+    geom = GEOSGeometry("POLYGON((0.2 0.2, 0.2 0.3, 0.3 0.3, 0.3 0.2, 0.2 0.2))")
+    user_layer = ExposureLayer.objects.create(
+        name="My User Layer",
+        geometry=geom,
+        geometry_buffered=buffer_geometry(geom),
+        type=user_drawn_type,
+        user_id=uuid.uuid4(),
+        scenario=scenario,
+        status=ExposureLayer.APPROVED,
+    )
+
+    response = client.post(f"/api/scenarios/{scenario.id}/exposure-layers/{user_layer.id}/approve/")
+    assert response.status_code == http_bad_request
+
+
+@pytest.mark.django_db
+def test_general_user_cannot_approve_exposure_layer(client, monkeypatch, scenario):
+    """Test general user receives 403 when attempting to approve a layer."""
+    monkeypatch.setattr("api.views.scenario_exposure_layers.Administrator", Administrator)
+
+    response = client.post(f"/api/scenarios/{scenario.id}/exposure-layers/{uuid.uuid4()}/approve/")
+    assert response.status_code == http_forbidden
+
+
+# --- POST (reject) Tests ---
+
+
+@pytest.mark.django_db
+def test_admin_user_can_reject_exposure_layer(client, mock_user_id, scenario, user_drawn_type):
+    """Test that POST reject layer is successful."""
+    geom = GEOSGeometry("POLYGON((0.2 0.2, 0.2 0.3, 0.3 0.3, 0.3 0.2, 0.2 0.2))")
+    user_layer = ExposureLayer.objects.create(
+        name="My User Layer",
+        geometry=geom,
+        geometry_buffered=buffer_geometry(geom),
+        type=user_drawn_type,
+        user_id=uuid.uuid4(),
+        scenario=scenario,
+        status=ExposureLayer.PENDING,
+    )
+
+    response = client.post(f"/api/scenarios/{scenario.id}/exposure-layers/{user_layer.id}/reject/")
+    assert response.status_code == http_ok
+
+    db_layer = ExposureLayer.objects.get(id=user_layer.id)
+    assert db_layer.status == ExposureLayer.UNPUBLISHED
+    assert db_layer.rejected_by == mock_user_id
+
+
+@pytest.mark.django_db
+def test_admin_user_cannot_reject_exposure_layer_non_editable_type(
+    client, scenario, non_editable_type
+):
+    """Test that an admin cannot reject a layer with a non-editable type."""
+    geom = GEOSGeometry("POLYGON((0.2 0.2, 0.2 0.3, 0.3 0.3, 0.3 0.2, 0.2 0.2))")
+    layer = ExposureLayer.objects.create(
+        name="System Layer",
+        geometry=geom,
+        geometry_buffered=buffer_geometry(geom),
+        type=non_editable_type,
+    )
+
+    response = client.post(f"/api/scenarios/{scenario.id}/exposure-layers/{layer.id}/reject/")
+    assert response.status_code == http_not_found
+
+
+@pytest.mark.django_db
+def test_admin_user_cannot_reject_exposure_layer_unpublished(
+    client,
+    mock_user_id,  # noqa: ARG001
+    scenario,
+    user_drawn_type,
+):
+    """Test that admin user cannot reject unpublished layer."""
+    geom = GEOSGeometry("POLYGON((0.2 0.2, 0.2 0.3, 0.3 0.3, 0.3 0.2, 0.2 0.2))")
+    user_layer = ExposureLayer.objects.create(
+        name="My User Layer",
+        geometry=geom,
+        geometry_buffered=buffer_geometry(geom),
+        type=user_drawn_type,
+        user_id=uuid.uuid4(),
+        scenario=scenario,
+        status=ExposureLayer.UNPUBLISHED,
+    )
+
+    response = client.post(f"/api/scenarios/{scenario.id}/exposure-layers/{user_layer.id}/reject/")
+    assert response.status_code == http_bad_request
+
+    db_layer = ExposureLayer.objects.get(id=user_layer.id)
+    assert db_layer.status == ExposureLayer.UNPUBLISHED
+
+
+@pytest.mark.django_db
+def test_admin_user_cannot_reject_exposure_layer_approved(
+    client,
+    mock_user_id,  # noqa: ARG001
+    scenario,
+    user_drawn_type,
+):
+    """Test that admin user cannot approve already-approved layer."""
+    geom = GEOSGeometry("POLYGON((0.2 0.2, 0.2 0.3, 0.3 0.3, 0.3 0.2, 0.2 0.2))")
+    user_layer = ExposureLayer.objects.create(
+        name="My User Layer",
+        geometry=geom,
+        geometry_buffered=buffer_geometry(geom),
+        type=user_drawn_type,
+        user_id=uuid.uuid4(),
+        scenario=scenario,
+        status=ExposureLayer.APPROVED,
+    )
+
+    response = client.post(f"/api/scenarios/{scenario.id}/exposure-layers/{user_layer.id}/reject/")
+    assert response.status_code == http_bad_request
+
+
+@pytest.mark.django_db
+def test_general_user_cannot_reject_exposure_layer(client, monkeypatch, scenario):
+    """Test general user receives 403 when attempting to reject a layer."""
+    monkeypatch.setattr("api.views.scenario_exposure_layers.Administrator", Administrator)
+
+    response = client.post(f"/api/scenarios/{scenario.id}/exposure-layers/{uuid.uuid4()}/reject/")
+    assert response.status_code == http_forbidden
+
+
+# --- POST (remove) Tests ---
+
+
+@pytest.mark.django_db
+def test_admin_user_can_remove_exposure_layer(client, mock_user_id, scenario, user_drawn_type):
+    """Test that POST remove layer is successful."""
+    geom = GEOSGeometry("POLYGON((0.2 0.2, 0.2 0.3, 0.3 0.3, 0.3 0.2, 0.2 0.2))")
+    user_layer = ExposureLayer.objects.create(
+        name="My User Layer",
+        geometry=geom,
+        geometry_buffered=buffer_geometry(geom),
+        type=user_drawn_type,
+        user_id=uuid.uuid4(),
+        scenario=scenario,
+        status=ExposureLayer.APPROVED,
+    )
+
+    response = client.post(f"/api/scenarios/{scenario.id}/exposure-layers/{user_layer.id}/remove/")
+    assert response.status_code == http_ok
+
+    db_layer = ExposureLayer.objects.get(id=user_layer.id)
+    assert db_layer.status == ExposureLayer.UNPUBLISHED
+    assert db_layer.removed_by == mock_user_id
+
+
+@pytest.mark.django_db
+def test_admin_user_cannot_remove_exposure_layer_non_editable_type(
+    client, scenario, non_editable_type
+):
+    """Test that an admin cannot remove a layer with a non-editable type."""
+    geom = GEOSGeometry("POLYGON((0.2 0.2, 0.2 0.3, 0.3 0.3, 0.3 0.2, 0.2 0.2))")
+    layer = ExposureLayer.objects.create(
+        name="System Layer",
+        geometry=geom,
+        geometry_buffered=buffer_geometry(geom),
+        type=non_editable_type,
+    )
+
+    response = client.post(f"/api/scenarios/{scenario.id}/exposure-layers/{layer.id}/remove/")
+    assert response.status_code == http_not_found
+
+
+@pytest.mark.django_db
+def test_admin_user_cannot_remove_exposure_layer_unpublished(client, scenario, user_drawn_type):
+    """Test that admin user cannot remove unpublished layer."""
+    geom = GEOSGeometry("POLYGON((0.2 0.2, 0.2 0.3, 0.3 0.3, 0.3 0.2, 0.2 0.2))")
+    user_layer = ExposureLayer.objects.create(
+        name="My User Layer",
+        geometry=geom,
+        geometry_buffered=buffer_geometry(geom),
+        type=user_drawn_type,
+        user_id=uuid.uuid4(),
+        scenario=scenario,
+        status=ExposureLayer.UNPUBLISHED,
+    )
+
+    response = client.post(f"/api/scenarios/{scenario.id}/exposure-layers/{user_layer.id}/remove/")
+    assert response.status_code == http_bad_request
+
+    db_layer = ExposureLayer.objects.get(id=user_layer.id)
+    assert db_layer.status == ExposureLayer.UNPUBLISHED
+
+
+@pytest.mark.django_db
+def test_admin_user_cannot_remove_exposure_layer_pending(client, scenario, user_drawn_type):
+    """Test that admin user cannot remove a pending layer."""
+    geom = GEOSGeometry("POLYGON((0.2 0.2, 0.2 0.3, 0.3 0.3, 0.3 0.2, 0.2 0.2))")
+    user_layer = ExposureLayer.objects.create(
+        name="My User Layer",
+        geometry=geom,
+        geometry_buffered=buffer_geometry(geom),
+        type=user_drawn_type,
+        user_id=uuid.uuid4(),
+        scenario=scenario,
+        status=ExposureLayer.PENDING,
+    )
+
+    response = client.post(f"/api/scenarios/{scenario.id}/exposure-layers/{user_layer.id}/remove/")
+    assert response.status_code == http_bad_request
+
+
+@pytest.mark.django_db
+def test_general_user_cannot_remove_exposure_layer(client, monkeypatch, scenario):
+    """Test general user receives 403 when attempting to remove a layer."""
+    monkeypatch.setattr("api.views.scenario_exposure_layers.Administrator", Administrator)
+
+    response = client.post(f"/api/scenarios/{scenario.id}/exposure-layers/{uuid.uuid4()}/remove/")
+    assert response.status_code == http_forbidden
 
 
 # --- PATCH Tests ---

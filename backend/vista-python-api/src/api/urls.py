@@ -116,6 +116,21 @@ urlpatterns = [
         name="scenario-exposure-layer-publish",
     ),
     path(
+        "scenarios/<uuid:scenario_id>/exposure-layers/<uuid:exposure_layer_id>/approve/",
+        views.ScenarioExposureLayersView.as_view({"post": "approve"}),
+        name="scenario-exposure-layer-approve",
+    ),
+    path(
+        "scenarios/<uuid:scenario_id>/exposure-layers/<uuid:exposure_layer_id>/reject/",
+        views.ScenarioExposureLayersView.as_view({"post": "reject"}),
+        name="scenario-exposure-layer-reject",
+    ),
+    path(
+        "scenarios/<uuid:scenario_id>/exposure-layers/<uuid:exposure_layer_id>/remove/",
+        views.ScenarioExposureLayersView.as_view({"post": "remove"}),
+        name="scenario-exposure-layer-remove",
+    ),
+    path(
         "scenarios/<uuid:scenario_id>/assets/",
         views.ScenarioAssetsView.as_view(),
         name="scenario-assets",

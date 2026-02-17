@@ -25,5 +25,20 @@ class Migration(migrations.Migration):
                 default="unpublished",
                 max_length=20,
             ),
-        )
+        ),
+        migrations.AddField(
+            model_name="exposurelayer",
+            name="approved_by",
+            field=models.UUIDField(blank=True, null=True),
+        ),
+        migrations.AddField(
+            model_name="exposurelayer",
+            name="rejected_by",
+            field=models.UUIDField(blank=True, null=True),
+        ),
+        migrations.AddField(
+            model_name="exposurelayer",
+            name="removed_by",
+            field=models.UUIDField(blank=True, null=True),
+        ),
     ]
