@@ -1,17 +1,20 @@
 CREATE VIEW public.asset_scores AS
-    SELECT a.id,
-        s_a.scenario_id,
-        s_a.criticality_score,
-        COALESCE(avg(dep_score.score), 0::numeric) AS dependency_score,
-        3 AS redundancy_score
+WITH effective_criticality AS (
+    SELECT a.id AS asset_id, a.external_id, s_a.scenario_id,
+           COALESCE(aco.criticality_score, s_a.criticality_score) AS criticality_score,
+           aco.id IS NOT NULL AS criticality_is_overridden
     FROM api_scenarioasset s_a
-        LEFT JOIN api_asset a ON a.type_id = s_a.asset_type_id
-        LEFT JOIN (
-            SELECT a_d.provider_asset_id AS id,
-                s_a_1.criticality_score AS score,
-                s_a_1.scenario_id AS scenario_id
-            FROM api_dependency a_d
-                LEFT JOIN api_asset a_1 ON a_d.dependent_asset_id = a_1.external_id
-                LEFT JOIN api_scenarioasset s_a_1 ON s_a_1.asset_type_id = a_1.type_id
-        ) dep_score ON dep_score.id = a.external_id AND dep_score.scenario_id = s_a.scenario_id
-    GROUP BY a.id, s_a.scenario_id, s_a.criticality_score;
+        JOIN api_asset a ON a.type_id = s_a.asset_type_id
+        LEFT JOIN api_assetcriticalityoverride aco
+            ON aco.asset_id = a.id AND aco.scenario_id = s_a.scenario_id
+)
+SELECT ec.asset_id AS id, ec.scenario_id, ec.criticality_score,
+       COALESCE(avg(dep_ec.criticality_score), 0::numeric) AS dependency_score,
+       3 AS redundancy_score,
+       ec.criticality_is_overridden
+FROM effective_criticality ec
+    LEFT JOIN api_dependency a_d ON a_d.provider_asset_id = ec.external_id
+    LEFT JOIN effective_criticality dep_ec
+        ON dep_ec.external_id = a_d.dependent_asset_id
+        AND dep_ec.scenario_id = ec.scenario_id
+GROUP BY ec.asset_id, ec.scenario_id, ec.criticality_score, ec.criticality_is_overridden;

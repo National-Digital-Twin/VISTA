@@ -41,13 +41,6 @@ export default defineConfig({
                 rewrite: (path) => path.replace(/^\/ndtp-python/, ''),
                 secure: false,
             },
-            // Ontology proxy
-            '/vista': {
-                target: 'http://localhost:4001',
-                changeOrigin: true,
-                rewrite: (path) => path.replace(/^\/vista/, ''),
-                secure: false,
-            },
         },
     },
 });

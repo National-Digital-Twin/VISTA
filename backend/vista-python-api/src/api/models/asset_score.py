@@ -2,6 +2,8 @@
 
 from django.contrib.gis.db import models
 
+from api.models.asset import Asset
+
 
 class AssetScore(models.Model):
     """Asset score model (criticality, dependency, redundancy only).
@@ -10,11 +12,18 @@ class AssetScore(models.Model):
     Query VisibleExposureAssetScore separately with a focus_area_id filter.
     """
 
-    id = models.UUIDField(primary_key=True)
+    asset = models.OneToOneField(
+        Asset,
+        primary_key=True,
+        db_column="id",
+        on_delete=models.DO_NOTHING,
+        related_name="asset_scores_view",
+    )
     scenario_id = models.UUIDField()
     criticality_score = models.DecimalField(max_digits=10, decimal_places=2)
     dependency_score = models.DecimalField(max_digits=10, decimal_places=2)
     redundancy_score = models.DecimalField(max_digits=10, decimal_places=2)
+    criticality_is_overridden = models.BooleanField()
 
     class Meta:
         """Meta configuration."""

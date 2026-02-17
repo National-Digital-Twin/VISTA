@@ -13,6 +13,9 @@ from api.models import (
     ExposureLayer,
     ExposureLayerType,
     FocusArea,
+    Group,
+    GroupDataSourceAccess,
+    GroupMembership,
     Scenario,
     ScenarioAsset,
     VisibleAsset,
@@ -24,6 +27,13 @@ from api.tests.conftest import buffer_geometry
 
 http_success_code = 200
 http_not_found = 404
+
+user_id_limited_access = uuid.uuid4()
+
+
+def get_user_id_from_request(request):  # noqa: ARG001
+    """Mock user ID in request."""
+    return user_id_limited_access
 
 
 def print_sql(test_name: str, queries: list[dict]) -> None:
@@ -89,24 +99,40 @@ def scenario_assets(scenario, asset_type_setup):
 
 
 @pytest.fixture
-def asset_types_for_scenario(db):  # noqa: ARG001
+def limited_rail_data_source(db):  # noqa: ARG001
+    """Create data source intended for limited access use cases."""
+    return DataSource.objects.create(id=uuid.uuid4(), name="Test Source")
+
+
+@pytest.fixture
+def data_source_access(db, limited_rail_data_source):  # noqa: ARG001
+    """Create access to data source."""
+    group = Group.objects.create(name="Limited Access", created_by=uuid.uuid4())
+    GroupMembership.objects.create(
+        group=group, user_id=user_id_limited_access, created_by=uuid.uuid4()
+    )
+    return GroupDataSourceAccess.objects.create(data_source=limited_rail_data_source, group=group)
+
+
+@pytest.fixture
+def asset_types_for_scenario(db, limited_rail_data_source):  # noqa: ARG001
     """Create asset types for testing."""
     category = AssetCategory.objects.create(id=uuid.uuid4(), name="Test Category")
     sub_category = AssetSubCategory.objects.create(
         id=uuid.uuid4(), name="Test SubCategory", category=category
     )
-    data_source = DataSource.objects.create(id=uuid.uuid4(), name="Test Source")
     rail_type = AssetType.objects.create(
         id=uuid.uuid4(),
         name="Rail Stations",
         sub_category=sub_category,
-        data_source=data_source,
+        data_source=limited_rail_data_source,
     )
+    hospital_data_source = DataSource.objects.create(id=uuid.uuid4(), name="Test Source")
     hospital_type = AssetType.objects.create(
         id=uuid.uuid4(),
         name="Hospitals",
         sub_category=sub_category,
-        data_source=data_source,
+        data_source=hospital_data_source,
     )
     return {"rail": rail_type, "hospital": hospital_type}
 
@@ -647,6 +673,48 @@ def test_asset_types_map_wide_returns_all(
 
 
 @pytest.mark.django_db
+def test_asset_types_map_wide_does_not_include_data_source_user_cannot_access(  # noqa: PLR0913
+    scenario,
+    limited_rail_data_source,  # noqa: ARG001
+    asset_types_for_scenario,  # noqa: ARG001
+    assets_for_scenario,  # noqa: ARG001
+    data_source_access,  # noqa: ARG001
+    client,
+):
+    """Test only asset types user has access to are returned."""
+    response = client.get(f"/api/scenarios/{scenario.id}/asset-types/")
+    data = response.json()
+
+    assert response.status_code == http_success_code
+    names = get_all_asset_type_names(data)
+    assert "Rail Stations" not in names
+    assert "Hospitals" in names
+
+
+@pytest.mark.django_db
+def test_asset_types_map_wide_includes_data_source_user_can_access_via_group(  # noqa: PLR0913
+    scenario,
+    limited_rail_data_source,  # noqa: ARG001
+    asset_types_for_scenario,  # noqa: ARG001
+    assets_for_scenario,  # noqa: ARG001
+    data_source_access,  # noqa: ARG001
+    client,
+    monkeypatch,
+):
+    """Test only asset types user has access to are returned."""
+    monkeypatch.setattr(
+        "api.views.scenario_asset_types.get_user_id_from_request", get_user_id_from_request
+    )
+    response = client.get(f"/api/scenarios/{scenario.id}/asset-types/")
+    data = response.json()
+
+    assert response.status_code == http_success_code
+    names = get_all_asset_type_names(data)
+    assert "Rail Stations" in names
+    assert "Hospitals" in names
+
+
+@pytest.mark.django_db
 def test_asset_types_includes_datasource_id(
     scenario,
     asset_types_for_scenario,  # noqa: ARG001
@@ -723,7 +791,6 @@ def test_asset_types_focus_area_returns_both_when_assets_in_area(
     assert "Hospitals" in names
 
 
-@pytest.mark.django_db
 @pytest.mark.django_db
 def test_asset_types_focus_area_invalid_returns_404(scenario, client):
     """Test that invalid focus_area_id returns 404."""

@@ -5,6 +5,7 @@ This makes them available to Django as if they were in a single models.py file.
 """
 
 from .asset import Asset
+from .asset_criticality_override import AssetCriticalityOverride
 from .asset_score import AssetScore, VisibleExposureAssetScore
 from .asset_score_filter import AssetScoreFilter
 from .asset_type import AssetCategory, AssetSubCategory, AssetType
@@ -36,6 +37,7 @@ from .visible_resource_intervention_type import VisibleResourceInterventionType
 __all__ = [
     "Asset",
     "AssetCategory",
+    "AssetCriticalityOverride",
     "AssetScore",
     "AssetScoreFilter",
     "AssetSubCategory",

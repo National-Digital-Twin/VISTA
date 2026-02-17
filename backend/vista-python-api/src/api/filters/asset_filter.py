@@ -62,7 +62,7 @@ class AssetFilterBuilder:
                 query = query.filter(dependency_score__gte=score_filter.dependency_min)
             if score_filter.dependency_max is not None:
                 query = query.filter(dependency_score__lte=score_filter.dependency_max)
-        return query.values("id")
+        return query.values("asset_id")
 
     def _build_exposure_q(self, exposure_values: list[int]) -> Q:
         """Build Q filter for exposure score criteria.

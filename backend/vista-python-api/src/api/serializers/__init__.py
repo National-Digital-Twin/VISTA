@@ -15,6 +15,10 @@ from .constraint_intervention import (
     ConstraintInterventionUpdateSerializer,
 )
 from .data_source import DataSourceSerializer, GroupDataSourceAccessSerializer
+from .dataroom_asset import (
+    BulkCriticalityUpdateSerializer,
+    DataroomAssetListSerializer,
+)
 from .dependency import DependencySerializer
 from .exposure_layer import (
     ExposureLayerCreateSerializer,
@@ -61,11 +65,13 @@ __all__ = [
     "AssetScoreSerializer",
     "AssetSubCategorySerializer",
     "AssetTypeSerializer",
+    "BulkCriticalityUpdateSerializer",
     "BulkVisibleAssetTypeResponseSerializer",
     "BulkVisibleAssetTypeToggleSerializer",
     "ConstraintInterventionCreateSerializer",
     "ConstraintInterventionUpdateSerializer",
     "DataSourceSerializer",
+    "DataroomAssetListSerializer",
     "DependencySerializer",
     "ExportParamsSerializer",
     "ExposureLayerCreateSerializer",

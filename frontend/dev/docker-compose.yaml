@@ -55,16 +55,6 @@ services:
                 condition: service_healthy
         volumes:
             - ./data/ontology.ttl:/work/ontology.ttl
-    # api:
-    #     container_name: smart-cache-vista-api
-    #     image: smart-cache-vista-api
-    #     ports:
-    #         - 4001:4001
-    #     environment:
-    #         JENA_URL: secure-agent-graph
-    #         JENA_PORT: 3030
-    #         PORT: 4001
-    #         JENA_DATASET: knowledge
     transparent-proxy:
         container_name: vista-transparent-proxy
         image: vista-transparent-proxy

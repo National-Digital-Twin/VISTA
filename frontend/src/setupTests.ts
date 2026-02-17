@@ -11,9 +11,6 @@ vi.mock('./config/app-config', () => ({
         map: {
             maptilerToken: '',
         },
-        api: {
-            url: '/vista',
-        },
         services: {
             ontology: '/transparent-proxy',
             user: '/ndtp-python/api/user/',
