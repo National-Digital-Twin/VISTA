@@ -9,6 +9,7 @@ from django.contrib.gis.geos import GEOSGeometry, Point, Polygon
 from api.models import (
     Asset,
     AssetCategory,
+    AssetCriticalityOverride,
     AssetSubCategory,
     AssetType,
     Dependency,
@@ -345,3 +346,25 @@ def test_retrieve_asset_score_focus_area_wrong_user_returns_404(fixture, client,
 
     mock_user_id.assert_called_once()
     assert response.status_code == http_not_found
+
+
+@pytest.mark.django_db
+def test_retrieve_asset_score_reflects_criticality_override(fixture, client, mock_user_id):
+    """Test that a per-asset criticality override is reflected in the score endpoint."""
+    asset = fixture["assets"][0]  # Substation1, type-level criticality = 3
+    scenario = fixture["scenarios"][0]
+
+    AssetCriticalityOverride.objects.create(
+        scenario=scenario,
+        asset=asset,
+        criticality_score=1,
+        created_by=uuid.uuid4(),
+        updated_by=uuid.uuid4(),
+    )
+
+    response = client.get(f"/api/scenarios/{scenario.id}/assetscores/{asset.id}/")
+    data = response.json()
+
+    mock_user_id.assert_called_once()
+    assert response.status_code == http_success_code
+    assert data["criticalityScore"] == "1.00"
