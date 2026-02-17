@@ -127,7 +127,7 @@ def test_list_exposure_layers_includes_user_drawn(
 def test_list_exposure_layers_gives_correct_status_for_non_editable_layer_type(
     scenario, non_editable_type, client
 ):
-    """Test that GET returns user-drawn layers in 'User drawn' type."""
+    """Test that GET returns correct status (null) for non-editable layer."""
     geom = GEOSGeometry("POLYGON((0.2 0.2, 0.2 0.3, 0.3 0.3, 0.3 0.2, 0.2 0.2))")
     layer = ExposureLayer.objects.create(
         name="System Layer",
@@ -784,7 +784,7 @@ def test_user_cannot_publish_exposure_layer_non_editable_type(client, scenario, 
 def test_user_cannot_publish_exposure_layer_pending(
     client, mock_user_id, scenario, user_drawn_type
 ):
-    """Test that POST publish layer is successful."""
+    """Test user can't publish an exposure layer which is already pending."""
     geom = GEOSGeometry("POLYGON((0.2 0.2, 0.2 0.3, 0.3 0.3, 0.3 0.2, 0.2 0.2))")
     user_layer = ExposureLayer.objects.create(
         name="My User Layer",
