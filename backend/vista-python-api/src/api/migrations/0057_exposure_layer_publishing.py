@@ -9,7 +9,7 @@ class Migration(migrations.Migration):
     """Add status to exposure layer model."""
 
     dependencies: ClassVar = [
-        ("api", "0055_data_source_access"),
+        ("api", "0056_asset_criticality_override"),
     ]
 
     operations: ClassVar = [
