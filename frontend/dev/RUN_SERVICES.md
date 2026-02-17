@@ -3,7 +3,6 @@
 The following services are required by Paralog to run:
 
 - Secure agent graph
-- Smart cache paralog API
 - Paralog python API
 - Transparent proxy
 
@@ -19,8 +18,6 @@ You will then need to populate the secure agent graph with data. You can find da
 curl -X POST -H "Content-Type: text/turtle" --data-binary "@iow.ttl" http://localhost:3030/knowledge/upload
 curl -X POST -H "Content-Type: text/turtle" --data-binary "@ontology.ttl" http://localhost:3030/ontology/upload
 ```
-
-The Smart cache paralog API can be found [here](https://github.com/National-Digital-Twin/smart-cache-paralog-api) and needs to be built with the tag `smart-cache-vista-api`.
 
 The Paralog python API is a Django graphQL API contained in the backend folder of this repository. This needs to be built with the tag `vista-python-api`.
 
