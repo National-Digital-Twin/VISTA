@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
             name="status",
             field=models.CharField(
                 choices=[
-                    ("accepted", "Accepted"),
+                    ("approved", "Approved"),
                     ("pending", "Pending"),
                     ("unpublished", "Unpublished"),
                 ],
