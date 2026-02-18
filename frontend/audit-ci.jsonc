@@ -1,5 +1,7 @@
 {
     "$schema": "https://github.com/IBM/audit-ci/raw/main/docs/schema.json",
     "low": true,
-    "allowlist": [],
+    "allowlist": [
+        "GHSA-2g4f-4pwh-qvx6" // no fix available 18.02.26
+    ],
 }
