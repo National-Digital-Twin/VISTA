@@ -1,6 +1,7 @@
 """Models for geographic exposure layers."""
 
 import uuid
+from typing import ClassVar
 
 from django.contrib.gis.db import models
 
@@ -21,10 +22,21 @@ class ExposureLayerType(models.Model):
 class ExposureLayer(models.Model):
     """Represents a geographic exposure layer, such as a water body."""
 
+    APPROVED = "approved"
+    PENDING = "pending"
+    UNPUBLISHED = "unpublished"
+
+    EXPOSURE_LAYER_STATUSES: ClassVar[list[tuple[str, str]]] = [
+        (APPROVED, "Approved"),
+        (PENDING, "Pending"),
+        (UNPUBLISHED, "Unpublished"),
+    ]
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255)
     geometry = models.GeometryField()
     geometry_buffered = models.GeometryField()
+    status = models.CharField(max_length=20, choices=EXPOSURE_LAYER_STATUSES, default=UNPUBLISHED)
     type = models.ForeignKey(
         ExposureLayerType,
         on_delete=models.CASCADE,
@@ -41,6 +53,9 @@ class ExposureLayer(models.Model):
         related_name="user_exposure_layers",
     )
     created_at = models.DateTimeField(auto_now_add=True, null=True)
+    approved_by = models.UUIDField(null=True, blank=True)
+    rejected_by = models.UUIDField(null=True, blank=True)
+    removed_by = models.UUIDField(null=True, blank=True)
 
     def __str__(self):
         """Return the string representation of the model."""
@@ -50,3 +65,18 @@ class ExposureLayer(models.Model):
     def is_user_defined(self):
         """Return True if this is a user-defined exposure layer."""
         return self.user_id is not None
+
+    @property
+    def is_editable(self):
+        """Return True if layer is editable."""
+        return self.type.is_user_editable and self.status == self.UNPUBLISHED
+
+    @property
+    def is_ready_for_admin_review(self):
+        """Return True if layer is ready for approval or rejection."""
+        return self.type.is_user_editable and self.status == self.PENDING
+
+    @property
+    def is_ready_for_admin_removal(self):
+        """Return True if layer is ready for removal."""
+        return self.type.is_user_editable and self.status == self.APPROVED
