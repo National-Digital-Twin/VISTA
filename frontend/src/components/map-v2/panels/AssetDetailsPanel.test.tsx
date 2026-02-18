@@ -583,11 +583,7 @@ describe('AssetDetailsPanel', () => {
             });
 
             renderWithProviders(
-                <AssetDetailsPanel
-                    selectedElement={asset}
-                    onClose={vi.fn()}
-                    onConnectedAssetsVisibilityChange={onConnectedAssetsVisibilityChange}
-                />,
+                <AssetDetailsPanel selectedElement={asset} onClose={vi.fn()} onConnectedAssetsVisibilityChange={onConnectedAssetsVisibilityChange} />,
             );
 
             await waitFor(() => {
