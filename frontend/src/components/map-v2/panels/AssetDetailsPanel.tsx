@@ -124,6 +124,11 @@ const AssetDetailsPanel = ({ selectedElement, onBack, onClose, scenarioId, onCon
         setProvidersVisible((prev) => !prev);
     }, []);
 
+    const handleNavigateToDependents = useCallback(() => {
+        setDependentsVisible(true);
+        setView('connected');
+    }, []);
+
     const filteredDependents = useMemo(() => assetDetails.data?.dependents?.map(transformConnectedAsset) || [], [assetDetails.data?.dependents]);
     const filteredProviders = useMemo(() => assetDetails.data?.providers?.map(transformConnectedAsset) || [], [assetDetails.data?.providers]);
 
@@ -252,7 +257,7 @@ const AssetDetailsPanel = ({ selectedElement, onBack, onClose, scenarioId, onCon
                         label="View dependent assets"
                         isVisible={dependentsVisible}
                         onToggleVisibility={handleToggleDependentsVisibility}
-                        onNavigate={() => setView('connected')}
+                        onNavigate={handleNavigateToDependents}
                     />
                     <ConnectedAssetLink
                         label="View provider assets"

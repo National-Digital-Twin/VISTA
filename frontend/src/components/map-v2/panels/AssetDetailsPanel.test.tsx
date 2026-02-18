@@ -556,8 +556,20 @@ describe('AssetDetailsPanel', () => {
             });
         });
 
-        it('navigates to connected assets view when link is clicked', async () => {
+        it('navigates to connected assets view and shows dependent assets when link is clicked', async () => {
             const asset = createMockAsset();
+            const onConnectedAssetsVisibilityChange = vi.fn();
+            const dependents = [
+                {
+                    id: 'dep1',
+                    name: 'Dependent 1',
+                    geom: 'POINT(-0.1278 51.5074)',
+                    type: {
+                        id: 'type1',
+                        name: 'Type1',
+                    },
+                },
+            ];
             mockedFetchAssetDetails.mockResolvedValue({
                 id: 'asset1',
                 name: 'Test Asset',
@@ -567,10 +579,12 @@ describe('AssetDetailsPanel', () => {
                     name: 'Type1',
                 },
                 providers: [],
-                dependents: [],
+                dependents,
             });
 
-            renderWithProviders(<AssetDetailsPanel selectedElement={asset} onClose={vi.fn()} />);
+            renderWithProviders(
+                <AssetDetailsPanel selectedElement={asset} onClose={vi.fn()} onConnectedAssetsVisibilityChange={onConnectedAssetsVisibilityChange} />,
+            );
 
             await waitFor(() => {
                 expect(screen.getByText('View dependent assets')).toBeInTheDocument();
@@ -581,6 +595,7 @@ describe('AssetDetailsPanel', () => {
 
             await waitFor(() => {
                 expect(screen.getByText('Connected Assets')).toBeInTheDocument();
+                expect(onConnectedAssetsVisibilityChange).toHaveBeenCalledWith(true, dependents, []);
             });
         });
     });
