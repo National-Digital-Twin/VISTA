@@ -33,7 +33,6 @@ Copy over the `.env-local` to the `.env` file and populate the following config 
 - OS_NGD_API_KEY
 - ADMIRALTY_API_KEY
 - REALTIME_TRAINS_API_KEY
-- IA_URL
 
 ## Spinning up containers for the different services
 
