@@ -8,7 +8,10 @@ import config from '@/config/app-config';
 import AdminSettings from '@/pages/AdminSettings';
 import DataSource from '@/pages/DataSources';
 import DataSourceDetail from '@/pages/DataSourceDetail';
+import EditScenario from '@/pages/EditScenario';
 import InviteNewUser from '@/pages/InviteNewUser';
+import ManageScenario from '@/pages/ManageScenario';
+import ManageScenarios from '@/pages/ManageScenarios';
 import ScenarioMap from '@/pages/ScenarioMap';
 import Notifications from '@/pages/Notifications';
 import PrivacyNotice from '@/pages/PrivacyNotice';
@@ -28,6 +31,9 @@ const AppWrapper = () => {
                     children: [
                         { index: true, element: <DataSource /> },
                         { path: 'data-source/:id', element: <DataSourceDetail /> },
+                        { path: 'scenarios', element: <ManageScenarios /> },
+                        { path: 'scenarios/:id', element: <ManageScenario /> },
+                        { path: 'scenarios/:id/edit', element: <EditScenario /> },
                     ],
                 },
                 { path: 'profile', element: <Profile /> },

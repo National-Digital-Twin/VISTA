@@ -82,6 +82,7 @@ beforeEach(() => {
         getUserDisplayName: () => 'Name',
         getUserEmailDomain: () => 'Email',
         getUserType: () => 'Admin',
+        isAdmin: true,
     });
 
     sessionStorage.clear();
@@ -99,6 +100,7 @@ describe('DataSources', () => {
             getUserDisplayName: () => 'Name',
             getUserEmailDomain: () => 'Email',
             getUserType: () => 'General',
+            isAdmin: false,
         });
         renderWithAppProviders(['/data-room']);
         const loadScenarioButton = screen.getByRole('button', { name: /load scenario/i });

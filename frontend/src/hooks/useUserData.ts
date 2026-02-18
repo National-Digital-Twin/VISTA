@@ -23,6 +23,7 @@ type UseUserDataReturn = {
     getUserMemberSince: () => string;
     getUserAddedBy: () => string;
     getUserType: () => string;
+    isAdmin: boolean;
     getUserGroups: () => Array<{ name: string; memberSince: string }>;
 };
 
@@ -114,6 +115,8 @@ export function useUserData(): UseUserDataReturn {
         return user?.userType || 'General';
     };
 
+    const isAdmin = getUserType() === 'Admin';
+
     const getUserGroups = () => {
         const groups = user?.groups || [
             { name: 'Resilience team', memberSince: '2025-06-02T12:00:00Z' },
@@ -146,6 +149,7 @@ export function useUserData(): UseUserDataReturn {
         getUserMemberSince,
         getUserAddedBy,
         getUserType,
+        isAdmin,
         getUserGroups,
     };
 }
