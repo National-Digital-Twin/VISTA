@@ -46,7 +46,7 @@ describe('SearchControl', () => {
 
         expect(searchContainer).toHaveAttribute('data-active', 'true');
         expect(searchContainer).toHaveStyle({ width: '28rem' });
-        expect(searchBar).toHaveStyle({ opacity: '1' });
+        expect(searchBar).toHaveStyle({ opacity: '0.8' });
     });
 
     it('collapses again on blur', () => {

@@ -23,7 +23,7 @@ const SearchWrapper = styled(Box, {
 
 const SearchContainer = styled(Box, {
     shouldForwardProp: (prop) => prop !== 'isActive',
-})<{ isActive: boolean }>(({ theme, isActive }) => ({
+})<{ isActive: boolean }>(({ theme }) => ({
     alignItems: 'center',
     backgroundColor: alpha(theme.palette.background.paper, 1),
     borderRadius: theme.shape.borderRadius,
@@ -33,7 +33,7 @@ const SearchContainer = styled(Box, {
     height: '3rem',
     gap: '0.375rem',
     padding: '0 0.75rem',
-    opacity: isActive ? 1 : 0.8,
+    opacity: 0.8,
     transition: 'opacity 220ms ease',
     width: '100%',
 }));
@@ -257,7 +257,7 @@ const SearchControl = ({ onResultSelect }: SearchControlProps) => {
                     onFocus={() => setIsActive(true)}
                     onBlur={handleInputBlur}
                     onKeyDown={handleKeyDown}
-                    placeholder="Search for a location"
+                    placeholder="Search VISTA"
                     inputProps={{ 'aria-label': 'Search map' }}
                 />
             </SearchContainer>

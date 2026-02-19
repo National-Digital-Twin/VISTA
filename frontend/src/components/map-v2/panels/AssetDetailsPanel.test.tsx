@@ -137,6 +137,38 @@ describe('AssetDetailsPanel', () => {
                 expect(screen.getByText(/Asset ID:/)).toBeInTheDocument();
             });
         });
+
+        it('copies asset id and shows copied indicator', async () => {
+            const asset = createMockAsset();
+            const writeText = vi.fn().mockResolvedValue(undefined);
+            Object.assign(navigator, {
+                clipboard: {
+                    writeText,
+                },
+            });
+
+            mockedFetchAssetDetails.mockResolvedValue({
+                id: 'asset1',
+                name: 'Test Asset',
+                geom: 'POINT(-0.1278 51.5074)',
+                type: {
+                    id: 'type1',
+                    name: 'Type1',
+                },
+                providers: [],
+                dependents: [],
+            });
+
+            renderWithProviders(<AssetDetailsPanel selectedElement={asset} onClose={vi.fn()} />);
+
+            const copyButton = await screen.findByRole('button', { name: 'Copy asset ID' });
+            fireEvent.click(copyButton);
+
+            await waitFor(() => {
+                expect(writeText).toHaveBeenCalledWith('asset1');
+            });
+            expect(screen.getByText('Copied')).toBeInTheDocument();
+        });
     });
 
     describe('back button', () => {
@@ -197,7 +229,7 @@ describe('AssetDetailsPanel', () => {
             renderWithProviders(<AssetDetailsPanel selectedElement={asset} onClose={vi.fn()} />);
 
             await waitFor(() => {
-                expect(screen.getByText('asset1')).toBeInTheDocument();
+                expect(screen.getByRole('heading', { name: 'asset1' })).toBeInTheDocument();
             });
         });
     });
