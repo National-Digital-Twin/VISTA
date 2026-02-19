@@ -143,8 +143,8 @@ const AssetDetailsPanel = ({ selectedElement, onBack, onClose, scenarioId, onCon
         if (copyStatus === 'idle') {
             return;
         }
-        const timeoutId = window.setTimeout(() => setCopyStatus('idle'), 1800);
-        return () => window.clearTimeout(timeoutId);
+        const timeoutId = globalThis.setTimeout(() => setCopyStatus('idle'), 1800);
+        return () => globalThis.clearTimeout(timeoutId);
     }, [copyStatus]);
 
     const handleCopyAssetId = useCallback(() => {
