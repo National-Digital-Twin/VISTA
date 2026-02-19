@@ -141,7 +141,7 @@ class ApplicationUserViewSet(ModelViewSet):
             all_invited_user_ids.append(str(invite.user_id))
 
         return [
-            user.id
+            user
             for user in users
             if user.id in accepted_user_ids or user.id not in all_invited_user_ids
         ]
