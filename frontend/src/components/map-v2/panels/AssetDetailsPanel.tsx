@@ -99,6 +99,7 @@ const AssetDetailsPanel = ({ selectedElement, onBack, onClose, scenarioId, onCon
     const [view, setView] = useState<'scores' | 'connected'>('scores');
     const [dependentsVisible, setDependentsVisible] = useState(false);
     const [providersVisible, setProvidersVisible] = useState(false);
+    const [copyStatus, setCopyStatus] = useState<'idle' | 'copied' | 'failed'>('idle');
 
     const elemIsAsset = isAsset(selectedElement ?? undefined);
     const assetId = elemIsAsset ? (selectedElement as Asset)?.id : null;
@@ -135,7 +136,28 @@ const AssetDetailsPanel = ({ selectedElement, onBack, onClose, scenarioId, onCon
     useEffect(() => {
         setDependentsVisible(false);
         setProvidersVisible(false);
+        setCopyStatus('idle');
     }, [assetId]);
+
+    useEffect(() => {
+        if (copyStatus === 'idle') {
+            return;
+        }
+        const timeoutId = globalThis.setTimeout(() => setCopyStatus('idle'), 1800);
+        return () => globalThis.clearTimeout(timeoutId);
+    }, [copyStatus]);
+
+    const handleCopyAssetId = useCallback(() => {
+        if (!selectedElement?.id || !navigator.clipboard?.writeText) {
+            setCopyStatus('failed');
+            return;
+        }
+
+        navigator.clipboard
+            .writeText(selectedElement.id)
+            .then(() => setCopyStatus('copied'))
+            .catch(() => setCopyStatus('failed'));
+    }, [selectedElement?.id]);
 
     useEffect(() => {
         if (assetDetails.data && onConnectedAssetsVisibilityChange) {
@@ -230,9 +252,31 @@ const AssetDetailsPanel = ({ selectedElement, onBack, onClose, scenarioId, onCon
                         </Link>
                     )}
                 </Box>
-                <Typography variant="caption" color="text.secondary">
-                    Asset ID: {selectedElement?.id || 'N/A'}
-                </Typography>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography variant="caption" color="text.secondary">
+                        Asset ID:
+                    </Typography>
+                    <Link
+                        component="button"
+                        variant="caption"
+                        underline="hover"
+                        onClick={handleCopyAssetId}
+                        aria-label="Copy asset ID"
+                        sx={{ fontFamily: 'monospace' }}
+                    >
+                        {selectedElement?.id || 'N/A'}
+                    </Link>
+                    {copyStatus === 'copied' && (
+                        <Typography variant="caption" color="success.main">
+                            Copied
+                        </Typography>
+                    )}
+                    {copyStatus === 'failed' && (
+                        <Typography variant="caption" color="error.main">
+                            Copy failed
+                        </Typography>
+                    )}
+                </Box>
             </Box>
         );
     };
