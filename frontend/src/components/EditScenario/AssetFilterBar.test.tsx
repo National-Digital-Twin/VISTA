@@ -71,7 +71,7 @@ describe('AssetFilterBar', () => {
         const onChange = vi.fn();
         renderWithProviders(defaultFilters, onChange);
 
-        expect(screen.getByPlaceholderText('ID, Asset, Asset type, Sub category...')).toBeInTheDocument();
+        expect(screen.getByPlaceholderText('Search...')).toBeInTheDocument();
     });
 
     it('renders category, sub category, and asset type dropdowns', () => {
@@ -86,7 +86,7 @@ describe('AssetFilterBar', () => {
         const onChange = vi.fn();
         renderWithProviders(defaultFilters, onChange);
 
-        const input = screen.getByPlaceholderText('ID, Asset, Asset type, Sub category...');
+        const input = screen.getByPlaceholderText('Search...');
         fireEvent.change(input, { target: { value: 'hospital' } });
 
         expect(onChange).toHaveBeenCalledWith({ ...defaultFilters, search: 'hospital' });

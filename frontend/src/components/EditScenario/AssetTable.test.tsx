@@ -14,7 +14,7 @@ const mockAssets: DataroomAsset[] = [
         assetTypeName: 'Hospital',
         subCategoryName: 'Healthcare',
         categoryName: 'Health',
-        criticalityScore: 8,
+        criticalityScore: 3,
         criticalityIsOverridden: false,
     },
     {
@@ -25,7 +25,7 @@ const mockAssets: DataroomAsset[] = [
         assetTypeName: 'School',
         subCategoryName: 'Education',
         categoryName: 'Services',
-        criticalityScore: 5,
+        criticalityScore: 1,
         criticalityIsOverridden: false,
     },
     {
@@ -36,7 +36,7 @@ const mockAssets: DataroomAsset[] = [
         assetTypeName: 'Fire Station',
         subCategoryName: 'Emergency',
         categoryName: 'Services',
-        criticalityScore: 9,
+        criticalityScore: 2,
         criticalityIsOverridden: false,
     },
 ];
@@ -46,7 +46,7 @@ const renderAssetTable = (props?: Partial<Parameters<typeof AssetTable>[0]>) => 
         assets: mockAssets,
         selectedIds: new Set<string>(),
         onSelectionChange: vi.fn(),
-        isLoading: false,
+        isFetching: false,
     };
 
     return render(
@@ -57,10 +57,12 @@ const renderAssetTable = (props?: Partial<Parameters<typeof AssetTable>[0]>) => 
 };
 
 describe('AssetTable', () => {
-    it('renders loading state', () => {
-        renderAssetTable({ isLoading: true });
+    it('renders loading state with skeleton rows and spinner', () => {
+        renderAssetTable({ isFetching: true, assets: [] });
 
-        expect(screen.getByText('Loading assets...')).toBeInTheDocument();
+        expect(screen.getByRole('progressbar')).toBeInTheDocument();
+        expect(screen.getByText('ID')).toBeInTheDocument();
+        expect(screen.queryByText('No assets found.')).not.toBeInTheDocument();
     });
 
     it('renders table headers', () => {
@@ -91,7 +93,7 @@ describe('AssetTable', () => {
         expect(getByText('Hospital')).toBeInTheDocument();
         expect(getByText('Healthcare')).toBeInTheDocument();
         expect(getByText('Health')).toBeInTheDocument();
-        expect(getByText('8')).toBeInTheDocument();
+        expect(getByText('3')).toBeInTheDocument();
     });
 
     it('shows empty state when no assets', () => {
@@ -163,5 +165,57 @@ describe('AssetTable', () => {
         renderAssetTable();
 
         expect(screen.getByText('Rows per page:')).toBeInTheDocument();
+    });
+
+    it('enters inline edit mode on double-click of criticality cell', () => {
+        renderAssetTable();
+
+        const row = screen.getByText('Hospital A').closest('tr')!;
+        const criticalityCell = within(row).getByText('3');
+        fireEvent.doubleClick(criticalityCell);
+
+        expect(screen.getByDisplayValue('')).toBeInTheDocument();
+    });
+
+    it('commits inline edit on Enter key', () => {
+        const onCriticalityEdit = vi.fn();
+        renderAssetTable({ onCriticalityEdit });
+
+        const row = screen.getByText('Hospital A').closest('tr')!;
+        const criticalityCell = within(row).getByText('3');
+        fireEvent.doubleClick(criticalityCell);
+
+        const input = screen.getByDisplayValue('');
+        fireEvent.change(input, { target: { value: '2' } });
+        fireEvent.keyDown(input, { key: 'Enter' });
+
+        expect(onCriticalityEdit).toHaveBeenCalledWith('asset-1', 2);
+    });
+
+    it('cancels inline edit on Escape key', () => {
+        const onCriticalityEdit = vi.fn();
+        renderAssetTable({ onCriticalityEdit });
+
+        const row = screen.getByText('Hospital A').closest('tr')!;
+        const criticalityCell = within(row).getByText('3');
+        fireEvent.doubleClick(criticalityCell);
+
+        const input = screen.getByDisplayValue('');
+        fireEvent.change(input, { target: { value: '1' } });
+        fireEvent.keyDown(input, { key: 'Escape' });
+
+        expect(onCriticalityEdit).not.toHaveBeenCalled();
+        expect(screen.queryByDisplayValue('1')).not.toBeInTheDocument();
+    });
+
+    it('does not toggle row selection on double-click of criticality cell', () => {
+        const onSelectionChange = vi.fn();
+        renderAssetTable({ onSelectionChange });
+
+        const row = screen.getByText('Hospital A').closest('tr')!;
+        const criticalityCell = within(row).getByText('3');
+        fireEvent.doubleClick(criticalityCell);
+
+        expect(onSelectionChange).not.toHaveBeenCalled();
     });
 });

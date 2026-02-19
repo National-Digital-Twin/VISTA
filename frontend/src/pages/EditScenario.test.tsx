@@ -1,9 +1,9 @@
 import type { ReactNode } from 'react';
-import { screen, waitFor } from '@testing-library/react';
+import { screen, waitFor, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderWithAppProviders } from '@/tests/renderWithAppProviders';
 import { fetchScenarios } from '@/api/scenarios';
-import { fetchDataroomAssets } from '@/api/dataroom-assets';
+import { fetchDataroomAssets, updateBulkCriticality } from '@/api/dataroom-assets';
 
 const mockUseUserData = vi.fn();
 vi.mock('@/hooks/useUserData', () => ({
@@ -14,9 +14,14 @@ vi.mock('@/api/scenarios', () => ({
     fetchScenarios: vi.fn(),
 }));
 
-vi.mock('@/api/dataroom-assets', () => ({
-    fetchDataroomAssets: vi.fn(),
-}));
+vi.mock('@/api/dataroom-assets', async (importOriginal) => {
+    const actual = await importOriginal<typeof import('@/api/dataroom-assets')>();
+    return {
+        ...actual,
+        fetchDataroomAssets: vi.fn(),
+        updateBulkCriticality: vi.fn(),
+    };
+});
 
 vi.mock('@/api/datasources', () => ({
     fetchDataSources: vi.fn().mockResolvedValue([]),
@@ -40,6 +45,7 @@ vi.mock('@/components/map-v2/AssetLayers', () => ({
 
 const mockedFetchScenarios = vi.mocked(fetchScenarios);
 const mockedFetchDataroomAssets = vi.mocked(fetchDataroomAssets);
+const mockedUpdateBulkCriticality = vi.mocked(updateBulkCriticality);
 
 const mockScenarios = [
     { id: 'flood-newport', name: 'Flood in Newport', isActive: true, code: 'F001' },
@@ -55,7 +61,7 @@ const mockAssets = [
         assetTypeName: 'Hospital',
         subCategoryName: 'Healthcare',
         categoryName: 'Health',
-        criticalityScore: 8,
+        criticalityScore: 3,
         criticalityIsOverridden: false,
     },
     {
@@ -66,7 +72,7 @@ const mockAssets = [
         assetTypeName: 'School',
         subCategoryName: 'Education',
         categoryName: 'Services',
-        criticalityScore: 5,
+        criticalityScore: 1,
         criticalityIsOverridden: false,
     },
 ];
@@ -163,6 +169,63 @@ describe('EditScenario', () => {
 
         await waitFor(() => {
             expect(screen.getByText('Asset error')).toBeInTheDocument();
+        });
+    });
+
+    it('shows EDIT ALL button when all assets are selected', async () => {
+        renderWithAppProviders(['/data-room/scenarios/flood-newport/edit']);
+        await screen.findByText('Hospital A');
+
+        const headerCheckbox = screen.getAllByRole('checkbox')[0];
+        fireEvent.click(headerCheckbox);
+
+        expect(await screen.findByRole('button', { name: /edit all/i })).toBeInTheDocument();
+    });
+
+    it('shows EDIT SELECTED button when assets are selected', async () => {
+        renderWithAppProviders(['/data-room/scenarios/flood-newport/edit']);
+        await screen.findByText('Hospital A');
+
+        const row = screen.getByText('Hospital A').closest('tr')!;
+        fireEvent.click(row);
+
+        expect(await screen.findByRole('button', { name: /edit 1 selected/i })).toBeInTheDocument();
+    });
+
+    it('opens edit dialog when EDIT SELECTED button is clicked', async () => {
+        renderWithAppProviders(['/data-room/scenarios/flood-newport/edit']);
+        await screen.findByText('Hospital A');
+
+        const row = screen.getByText('Hospital A').closest('tr')!;
+        fireEvent.click(row);
+
+        const editButton = await screen.findByRole('button', { name: /edit 1 selected/i });
+        fireEvent.click(editButton);
+
+        expect(await screen.findByText('Edit 1 item')).toBeInTheDocument();
+        expect(screen.getByLabelText('Criticality score')).toBeInTheDocument();
+    });
+
+    it('calls bulk update API when dialog is confirmed', async () => {
+        mockedUpdateBulkCriticality.mockResolvedValue({ updatedCount: 1 });
+        renderWithAppProviders(['/data-room/scenarios/flood-newport/edit']);
+        await screen.findByText('Hospital A');
+
+        const row = screen.getByText('Hospital A').closest('tr')!;
+        fireEvent.click(row);
+
+        const editButton = await screen.findByRole('button', { name: /edit 1 selected/i });
+        fireEvent.click(editButton);
+
+        const input = screen.getByLabelText('Criticality score');
+        fireEvent.change(input, { target: { value: '2' } });
+        fireEvent.click(screen.getByRole('button', { name: 'CONFIRM' }));
+
+        await waitFor(() => {
+            expect(mockedUpdateBulkCriticality).toHaveBeenCalledWith('flood-newport', {
+                assetIds: ['asset-1'],
+                criticalityScore: 2,
+            });
         });
     });
 });

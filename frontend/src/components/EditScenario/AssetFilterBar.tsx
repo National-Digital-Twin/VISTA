@@ -63,13 +63,14 @@ export default function AssetFilterBar({ filters, onFiltersChange }: Readonly<As
     return (
         <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', flexWrap: 'wrap' }}>
             <SearchTextField
-                placeholder="ID, Asset, Asset type, Sub category..."
+                size="small"
+                placeholder="Search..."
                 value={filters.search}
                 onChange={(value) => onFiltersChange({ ...filters, search: value })}
-                minWidth={350}
+                minWidth={200}
             />
 
-            <FormControl size="small" sx={{ minWidth: 180 }}>
+            <FormControl size="small" sx={{ minWidth: 150 }}>
                 <InputLabel>Category</InputLabel>
                 <Select value={filters.categoryId} onChange={handleCategoryChange} label="Category">
                     <MenuItem value="">All</MenuItem>
@@ -81,7 +82,7 @@ export default function AssetFilterBar({ filters, onFiltersChange }: Readonly<As
                 </Select>
             </FormControl>
 
-            <FormControl size="small" sx={{ minWidth: 180 }}>
+            <FormControl size="small" sx={{ minWidth: 150 }}>
                 <InputLabel>Sub category</InputLabel>
                 <Select value={filters.subCategoryId} onChange={handleSubCategoryChange} label="Sub category">
                     <MenuItem value="">All</MenuItem>
@@ -93,7 +94,7 @@ export default function AssetFilterBar({ filters, onFiltersChange }: Readonly<As
                 </Select>
             </FormControl>
 
-            <FormControl size="small" sx={{ minWidth: 180 }}>
+            <FormControl size="small" sx={{ minWidth: 150 }}>
                 <InputLabel>Asset type</InputLabel>
                 <Select value={filters.assetTypeId} onChange={handleAssetTypeChange} label="Asset type">
                     <MenuItem value="">All</MenuItem>
