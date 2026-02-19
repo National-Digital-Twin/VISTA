@@ -33,17 +33,6 @@ from api.utils.auth import get_user_id_from_request
 logger = logging.getLogger(__name__)
 
 
-def _build_user_name_map():
-    """Build a user_id -> name mapping from the identity provider."""
-    try:
-        idp = IdpRepository()
-        users = idp.list_users_in_group()
-        return {user.id: user.name for user in users}
-    except Exception:
-        logger.exception("Failed to fetch users from identity provider")
-        return {}
-
-
 class ScenarioResourceInterventionsView(APIView):
     """View for listing resource intervention types with nested locations."""
 
@@ -198,7 +187,7 @@ class ScenarioResourceInterventionActionsView(APIView):
         has_next = len(actions) > limit
         actions = actions[:limit]
 
-        user_name_map = _build_user_name_map()
+        user_name_map = IdpRepository().get_user_name_map()
         serializer = ResourceInterventionActionLogSerializer(
             actions, many=True, context={"user_name_map": user_name_map}
         )
@@ -235,7 +224,7 @@ class ScenarioResourceInterventionActionsExportView(APIView):
             .order_by("-created_at")
         )
 
-        user_name_map = _build_user_name_map()
+        user_name_map = IdpRepository().get_user_name_map()
 
         filename = f"{resource_type.name}-actions-export.csv"
         response = StreamingHttpResponse(

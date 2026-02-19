@@ -1,5 +1,6 @@
 """An identity provider repository."""
 
+import logging
 from datetime import UTC, datetime
 from typing import ClassVar
 
@@ -9,6 +10,8 @@ from django.conf import settings
 from api.domain.cognito_user import IdpUser
 from api.repository.external.email_repository import EmailRepository
 from api.utils.auth import generate_temp_password
+
+logger = logging.getLogger(__name__)
 
 
 class IdpRepository:
@@ -96,6 +99,15 @@ class IdpRepository:
         all_users = self.get_all_users_in_group(self.user_group_name)
         admins = self.get_admin_user_list()
         return [IdpUser.from_cognito(user, user.get("Username") in admins) for user in all_users]
+
+    def get_user_name_map(self) -> dict[str, str]:
+        """Return a user_id -> name mapping for all users."""
+        try:
+            users = self.list_users_in_group()
+            return {user.id: user.name for user in users}
+        except Exception:
+            logger.exception("Failed to fetch users from identity provider")
+            return {}
 
     def create_user(self, email, is_admin) -> str:
         """Create a new user."""
