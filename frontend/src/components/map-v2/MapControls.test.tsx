@@ -39,6 +39,10 @@ vi.mock('./controls/ZoomOutButton', () => ({
     default: () => <button data-testid="zoom-out-button">Zoom Out</button>,
 }));
 
+vi.mock('./controls/SearchControl', () => ({
+    default: () => <div data-testid="search-control">Search</div>,
+}));
+
 vi.mock('./controls/MapStyleButton', () => ({
     default: React.forwardRef(({ isOpen, onToggle }: { isOpen: boolean; onToggle: () => void }, ref: any) => (
         <button ref={ref} data-testid="map-style-button" onClick={onToggle}>
@@ -123,6 +127,7 @@ describe('MapControls', () => {
         onShowCoordinatesChange: vi.fn(),
         showCpsIcons: false,
         onShowCpsIconsChange: vi.fn(),
+        onSearchResultSelect: vi.fn(),
     };
 
     beforeEach(() => {
@@ -134,6 +139,7 @@ describe('MapControls', () => {
             renderWithProviders(<MapControls {...defaultProps} />);
 
             expect(screen.getByTestId('compass-button')).toBeInTheDocument();
+            expect(screen.getByTestId('search-control')).toBeInTheDocument();
             expect(screen.getByTestId('zoom-in-button')).toBeInTheDocument();
             expect(screen.getByTestId('zoom-out-button')).toBeInTheDocument();
             expect(screen.getByTestId('map-style-button')).toBeInTheDocument();
