@@ -2,6 +2,7 @@
     "$schema": "https://github.com/IBM/audit-ci/raw/main/docs/schema.json",
     "low": true,
     "allowlist": [
-        "GHSA-2g4f-4pwh-qvx6" // no fix available 18.02.26
-    ],
+        "GHSA-2g4f-4pwh-qvx6", // ajv ReDoS - fix is 8.18.0 but eslint requires 6.x, dev-only
+        "GHSA-3ppc-4f35-3m26" // minimatch ReDoS - dev-only deps (eslint, jest), no backport for 3.x/9.x
+    ]
 }
