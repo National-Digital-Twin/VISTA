@@ -62,17 +62,17 @@ const SearchResultsPanel = styled(Box)(({ theme }) => ({
 }));
 
 const SearchResultButton = styled('button')(({ theme }) => ({
-    alignItems: 'center',
-    background: 'transparent',
-    border: 'none',
-    color: theme.palette.text.primary,
-    cursor: 'pointer',
-    display: 'flex',
-    font: 'inherit',
-    gap: '0.5rem',
-    padding: '0.6rem 0.75rem',
-    textAlign: 'left',
-    width: '100%',
+    'alignItems': 'center',
+    'background': 'transparent',
+    'border': 'none',
+    'color': theme.palette.text.primary,
+    'cursor': 'pointer',
+    'display': 'flex',
+    'font': 'inherit',
+    'gap': '0.5rem',
+    'padding': '0.6rem 0.75rem',
+    'textAlign': 'left',
+    'width': '100%',
     '&:hover': {
         backgroundColor: theme.palette.action.hover,
     },
@@ -139,55 +139,58 @@ const SearchControl = ({ onResultSelect }: SearchControlProps) => {
         setShowNoResults(false);
     }, []);
 
-    const handleSearch = useCallback(async (query: string, options?: { force?: boolean }) => {
-        const trimmedQuery = query.trim();
-        const isForced = options?.force === true;
-        if (!trimmedQuery || isSearching || (!isForced && trimmedQuery === lastAttemptedQuery.current)) {
-            return;
-        }
-
-        lastAttemptedQuery.current = trimmedQuery;
-        setShowNoResults(false);
-        setIsSearching(true);
-        try {
-            if (isGuid(trimmedQuery)) {
-                const asset = await fetchAssetById(trimmedQuery);
-                if (!asset) {
-                    setResults([]);
-                    setShowNoResults(true);
-                    return;
-                }
-
-                setResults([
-                    {
-                        kind: 'asset',
-                        id: asset.id,
-                        label: `${asset.name || asset.id} (${asset.type.name})`,
-                        icon: 'asset',
-                        data: asset,
-                    },
-                ]);
+    const handleSearch = useCallback(
+        async (query: string, options?: { force?: boolean }) => {
+            const trimmedQuery = query.trim();
+            const isForced = options?.force === true;
+            if (!trimmedQuery || isSearching || (!isForced && trimmedQuery === lastAttemptedQuery.current)) {
                 return;
             }
 
-            const nextResults = await searchOsNamesLocations(trimmedQuery);
-            const mappedResults = nextResults.slice(0, MAX_RESULTS).map((result) => ({
-                kind: 'location' as const,
-                id: `${result.name}-${result.lng}-${result.lat}`,
-                label: result.label,
-                icon: 'location' as const,
-                data: result,
-            }));
-            setResults(mappedResults);
-            setShowNoResults(mappedResults.length === 0);
-        } catch {
-            // Keep the control responsive if upstream search fails.
-            setResults([]);
+            lastAttemptedQuery.current = trimmedQuery;
             setShowNoResults(false);
-        } finally {
-            setIsSearching(false);
-        }
-    }, [isSearching]);
+            setIsSearching(true);
+            try {
+                if (isGuid(trimmedQuery)) {
+                    const asset = await fetchAssetById(trimmedQuery);
+                    if (!asset) {
+                        setResults([]);
+                        setShowNoResults(true);
+                        return;
+                    }
+
+                    setResults([
+                        {
+                            kind: 'asset',
+                            id: asset.id,
+                            label: `${asset.name || asset.id} (${asset.type.name})`,
+                            icon: 'asset',
+                            data: asset,
+                        },
+                    ]);
+                    return;
+                }
+
+                const nextResults = await searchOsNamesLocations(trimmedQuery);
+                const mappedResults = nextResults.slice(0, MAX_RESULTS).map((result) => ({
+                    kind: 'location' as const,
+                    id: `${result.name}-${result.lng}-${result.lat}`,
+                    label: result.label,
+                    icon: 'location' as const,
+                    data: result,
+                }));
+                setResults(mappedResults);
+                setShowNoResults(mappedResults.length === 0);
+            } catch {
+                // Keep the control responsive if upstream search fails.
+                setResults([]);
+                setShowNoResults(false);
+            } finally {
+                setIsSearching(false);
+            }
+        },
+        [isSearching],
+    );
 
     useEffect(() => {
         const trimmedQuery = searchText.trim();
@@ -199,7 +202,7 @@ const SearchControl = ({ onResultSelect }: SearchControlProps) => {
         }
 
         const timeoutId = setTimeout(() => {
-            void handleSearch(trimmedQuery);
+            handleSearch(trimmedQuery).catch(() => undefined);
         }, SEARCH_DEBOUNCE_MS);
 
         return () => {
@@ -214,37 +217,34 @@ const SearchControl = ({ onResultSelect }: SearchControlProps) => {
             }
 
             event.preventDefault();
-            void handleSearch(searchText, { force: true });
+            handleSearch(searchText, { force: true }).catch(() => undefined);
         },
         [handleSearch, searchText],
     );
 
-    const handleSelectResult = useCallback((result: SearchResultItem) => {
-        setSearchText(result.kind === 'asset' ? result.data.id : result.data.name);
-        setResults([]);
-        setShowNoResults(false);
-        setIsActive(false);
-        if (result.kind === 'asset') {
-            onResultSelect?.({ kind: 'asset', asset: result.data });
-            return;
-        }
+    const handleSelectResult = useCallback(
+        (result: SearchResultItem) => {
+            setSearchText(result.kind === 'asset' ? result.data.id : result.data.name);
+            setResults([]);
+            setShowNoResults(false);
+            setIsActive(false);
+            if (result.kind === 'asset') {
+                onResultSelect?.({ kind: 'asset', asset: result.data });
+                return;
+            }
 
-        onResultSelect?.({
-            kind: 'location',
-            lng: result.data.lng,
-            lat: result.data.lat,
-            bounds: result.data.bounds,
-        });
-    }, [onResultSelect]);
+            onResultSelect?.({
+                kind: 'location',
+                lng: result.data.lng,
+                lat: result.data.lat,
+                bounds: result.data.bounds,
+            });
+        },
+        [onResultSelect],
+    );
 
     return (
-        <SearchWrapper
-            ref={searchWrapperRef}
-            role="search"
-            aria-label="Map search"
-            isActive={isActive}
-            data-active={isActive ? 'true' : 'false'}
-        >
+        <SearchWrapper ref={searchWrapperRef} role="search" aria-label="Map search" isActive={isActive} data-active={isActive ? 'true' : 'false'}>
             <SearchContainer isActive={isActive} onClick={activateControl} data-testid="map-search-container">
                 <SearchIcon fontSize="small" />
                 <SearchInput

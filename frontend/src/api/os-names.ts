@@ -117,9 +117,10 @@ export const searchOsNamesLocations = async (query: string): Promise<OsNamesLoca
                           ] as [[number, number], [number, number]])
                         : undefined;
                 const resolvedName = entry.NAME1 ?? entry.NAME2 ?? query;
+                const localTypeSuffix = entry.LOCAL_TYPE ? ` (${entry.LOCAL_TYPE})` : '';
                 return {
                     name: resolvedName,
-                    label: `${resolvedName}${entry.LOCAL_TYPE ? ` (${entry.LOCAL_TYPE})` : ''}`,
+                    label: `${resolvedName}${localTypeSuffix}`,
                     lng,
                     lat,
                     _index: index,
@@ -130,13 +131,12 @@ export const searchOsNamesLocations = async (query: string): Promise<OsNamesLoca
             })
             .filter((item): item is OsNamesLocation & { _index: number; _score: number } => item !== null) ?? [];
 
-    return mappedResults
-        .sort((a, b) => {
-            if (b._score !== a._score) {
-                return b._score - a._score;
-            }
-            return a._index - b._index;
-        })
-        .slice(0, MAX_CLIENT_RESULTS)
-        .map(({ _index, _score, ...result }) => result);
+    const sortedResults = [...mappedResults].sort((a, b) => {
+        if (b._score !== a._score) {
+            return b._score - a._score;
+        }
+        return a._index - b._index;
+    });
+
+    return sortedResults.slice(0, MAX_CLIENT_RESULTS).map(({ _index, _score, ...result }) => result);
 };

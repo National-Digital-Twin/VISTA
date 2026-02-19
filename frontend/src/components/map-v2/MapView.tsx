@@ -471,7 +471,9 @@ const MapView = () => {
                     if (clickedFeatures.length > 0) {
                         return;
                     }
-                } catch { /* empty */ }
+                } catch {
+                    /* empty */
+                }
             }
 
             setSelectedResourceLocationId(null);
@@ -536,89 +538,95 @@ const MapView = () => {
         setStockActionOpen(false);
     }, []);
 
-    const buildSearchSelectedAsset = useCallback((assetDetails: AssetDetailsResponse): Asset => {
-        const { lat, lng, geometry } = parseGeometryWithLocation(assetDetails.geom);
-        const icon = iconMap.get(assetDetails.type.id);
-        const iconName = icon?.replace('fa-', '');
-        return {
-            id: assetDetails.id,
-            type: assetDetails.type.id,
-            name: assetDetails.name,
-            lat,
-            lng,
-            geometry,
-            dependent: {
-                count: assetDetails.dependents.length,
-                criticalitySum: 0,
-            },
-            styles: {
-                classUri: assetDetails.type.id,
-                color: '#DDDDDD',
-                backgroundColor: '#121212',
-                faIcon: icon,
-                iconFallbackText: iconName || '?',
-                alt: assetDetails.type.name,
-            },
-            elementType: 'asset',
-        };
-    }, [iconMap]);
+    const buildSearchSelectedAsset = useCallback(
+        (assetDetails: AssetDetailsResponse): Asset => {
+            const { lat, lng, geometry } = parseGeometryWithLocation(assetDetails.geom);
+            const icon = iconMap.get(assetDetails.type.id);
+            const iconName = icon?.replace('fa-', '');
+            return {
+                id: assetDetails.id,
+                type: assetDetails.type.id,
+                name: assetDetails.name,
+                lat,
+                lng,
+                geometry,
+                dependent: {
+                    count: assetDetails.dependents.length,
+                    criticalitySum: 0,
+                },
+                styles: {
+                    classUri: assetDetails.type.id,
+                    color: '#DDDDDD',
+                    backgroundColor: '#121212',
+                    faIcon: icon,
+                    iconFallbackText: iconName || '?',
+                    alt: assetDetails.type.name,
+                },
+                elementType: 'asset',
+            };
+        },
+        [iconMap],
+    );
 
-    const handleSearchResultSelect = useCallback((result: SearchSelection) => {
-        const map = mapRef.current?.getMap();
-        if (!map) {
-            return;
-        }
-
-        if (result.kind === 'asset') {
-            const asset = buildSearchSelectedAsset(result.asset);
-            setSelectedResourceLocationId(null);
-            setStockActionOpen(false);
-            setConnectedAssets({ dependents: [], providers: [] });
-            if (activePanelView !== 'inspector') {
-                setPreviousPanelView(activePanelView);
+    const handleSearchResultSelect = useCallback(
+        (result: SearchSelection) => {
+            const map = mapRef.current?.getMap();
+            if (!map) {
+                return;
             }
-            setSelectedElement(asset);
-            setActivePanelView('inspector');
 
-            if (asset.geometry.type === 'Point' && asset.lng !== undefined && asset.lat !== undefined) {
-                map.flyTo({
-                    center: [asset.lng, asset.lat],
-                    zoom: Math.max(viewState.zoom, 13),
+            if (result.kind === 'asset') {
+                const asset = buildSearchSelectedAsset(result.asset);
+                setSelectedResourceLocationId(null);
+                setStockActionOpen(false);
+                setConnectedAssets({ dependents: [], providers: [] });
+                if (activePanelView !== 'inspector') {
+                    setPreviousPanelView(activePanelView);
+                }
+                setSelectedElement(asset);
+                setActivePanelView('inspector');
+
+                if (asset.geometry.type === 'Point' && asset.lng !== undefined && asset.lat !== undefined) {
+                    map.flyTo({
+                        center: [asset.lng, asset.lat],
+                        zoom: Math.max(viewState.zoom, 13),
+                        duration: 1000,
+                    });
+                    return;
+                }
+
+                const geometryBounds = bbox({ type: 'Feature', geometry: asset.geometry, properties: {} });
+                map.fitBounds(
+                    [
+                        [geometryBounds[0], geometryBounds[1]],
+                        [geometryBounds[2], geometryBounds[3]],
+                    ],
+                    {
+                        padding: 80,
+                        duration: 1000,
+                        maxZoom: 16,
+                    },
+                );
+                return;
+            }
+
+            if (result.bounds) {
+                map.fitBounds(result.bounds, {
+                    padding: 80,
                     duration: 1000,
+                    maxZoom: 15,
                 });
                 return;
             }
 
-            const geometryBounds = bbox({ type: 'Feature', geometry: asset.geometry, properties: {} });
-            map.fitBounds(
-                [
-                    [geometryBounds[0], geometryBounds[1]],
-                    [geometryBounds[2], geometryBounds[3]],
-                ],
-                {
-                    padding: 80,
-                    duration: 1000,
-                    maxZoom: 16,
-                },
-            );
-            return;
-        }
-
-        if (result.bounds) {
-            map.fitBounds(result.bounds, {
-                padding: 80,
+            map.flyTo({
+                center: [result.lng, result.lat],
+                zoom: Math.max(viewState.zoom, 12),
                 duration: 1000,
-                maxZoom: 15,
             });
-            return;
-        }
-
-        map.flyTo({
-            center: [result.lng, result.lat],
-            zoom: Math.max(viewState.zoom, 12),
-            duration: 1000,
-        });
-    }, [activePanelView, buildSearchSelectedAsset, viewState.zoom]);
+        },
+        [activePanelView, buildSearchSelectedAsset, viewState.zoom],
+    );
 
     return (
         <Box
