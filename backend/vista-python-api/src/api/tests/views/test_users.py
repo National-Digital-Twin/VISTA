@@ -134,6 +134,7 @@ class Administrator:
 # --- GET (List) Tests for active users ---
 
 
+@pytest.mark.django_db
 def test_list_users(client, monkeypatch):
     """Test that the list function works as expected."""
     monkeypatch.setattr("api.views.users.IdpRepository", MockIdpRepository)
@@ -147,6 +148,18 @@ def test_list_users(client, monkeypatch):
     assert data["name"] == cognito_user.name
     assert data["status"] == cognito_user.status
     assert data["userType"] == cognito_user.user_type
+
+
+@pytest.mark.django_db
+def test_list_users_excludes_pending_invites(client, monkeypatch, user_invites):  # noqa: ARG001
+    """Test that the list function does not include users with pending invites."""
+    monkeypatch.setattr("api.views.users.IdpRepository", MockIdpRepository)
+    response = client.get("/api/users/")
+
+    assert response.status_code == http_ok
+    data = response.json()
+
+    assert not data
 
 
 def test_list_users_returns_403_for_general_user(client, monkeypatch):
