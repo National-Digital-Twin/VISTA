@@ -26,6 +26,7 @@ import MapLoadingOverlay from './MapLoadingOverlay';
 import { DrawingProvider, useDrawingContext } from './context/DrawingContext';
 import { useRouteContext } from './context/RouteContext';
 import { usePreloadAssetIcons } from './hooks/usePreloadAssetIcons';
+import type { SearchSelection } from './controls/SearchControl';
 import { transformMapRequest } from '@/utils/mapRequest';
 import { useAssetTypeIcons } from '@/hooks/useAssetTypeIcons';
 import { useActiveScenario } from '@/hooks/useActiveScenario';
@@ -38,6 +39,8 @@ import { fetchExposureLayers } from '@/api/exposure-layers';
 import { fetchConstraintInterventions } from '@/api/constraint-interventions';
 import { fetchResourceInterventions } from '@/api/resources';
 import type { Asset } from '@/api/assets-by-type';
+import type { AssetDetailsResponse } from '@/api/asset-details';
+import { parseGeometryWithLocation } from '@/api/geometry-parser';
 
 const ASSET_LAYER_IDS = [ASSET_SYMBOL_LAYER_ID, `${ASSET_SYMBOL_LAYER_ID}-selected`, 'map-v2-asset-line-layer'] as const;
 
@@ -276,7 +279,15 @@ const MapView = () => {
         return combinedAssets;
     }, [shouldShowAllActiveFocusAreas, multipleFocusAreaAssets.assets, mapWideAssets.assets, isMapWideActive, singleFocusAreaAssets.assets]);
 
-    const assets = allActiveAssets;
+    const assets = useMemo(() => {
+        if (!selectedElement) {
+            return allActiveAssets;
+        }
+        if (allActiveAssets.some((asset) => asset.id === selectedElement.id)) {
+            return allActiveAssets;
+        }
+        return [selectedElement, ...allActiveAssets];
+    }, [allActiveAssets, selectedElement]);
     const isAssetsFetching = shouldShowAllActiveFocusAreas ? multipleFocusAreaAssets.isFetching || mapWideAssets.isFetching : singleFocusAreaAssets.isFetching;
 
     const selectedAssetDetails = useQuery({
@@ -461,7 +472,7 @@ const MapView = () => {
                         return;
                     }
                 } catch {
-                    // eslint-disable-next-line no-empty
+                    /* empty */
                 }
             }
 
@@ -526,6 +537,96 @@ const MapView = () => {
     const handleStockActionClose = useCallback(() => {
         setStockActionOpen(false);
     }, []);
+
+    const buildSearchSelectedAsset = useCallback(
+        (assetDetails: AssetDetailsResponse): Asset => {
+            const { lat, lng, geometry } = parseGeometryWithLocation(assetDetails.geom);
+            const icon = iconMap.get(assetDetails.type.id);
+            const iconName = icon?.replace('fa-', '');
+            return {
+                id: assetDetails.id,
+                type: assetDetails.type.id,
+                name: assetDetails.name,
+                lat,
+                lng,
+                geometry,
+                dependent: {
+                    count: assetDetails.dependents.length,
+                    criticalitySum: 0,
+                },
+                styles: {
+                    classUri: assetDetails.type.id,
+                    color: '#DDDDDD',
+                    backgroundColor: '#121212',
+                    faIcon: icon,
+                    iconFallbackText: iconName || '?',
+                    alt: assetDetails.type.name,
+                },
+                elementType: 'asset',
+            };
+        },
+        [iconMap],
+    );
+
+    const handleSearchResultSelect = useCallback(
+        (result: SearchSelection) => {
+            const map = mapRef.current?.getMap();
+            if (!map) {
+                return;
+            }
+
+            if (result.kind === 'asset') {
+                const asset = buildSearchSelectedAsset(result.asset);
+                setSelectedResourceLocationId(null);
+                setStockActionOpen(false);
+                setConnectedAssets({ dependents: [], providers: [] });
+                if (activePanelView !== 'inspector') {
+                    setPreviousPanelView(activePanelView);
+                }
+                setSelectedElement(asset);
+                setActivePanelView('inspector');
+
+                if (asset.geometry.type === 'Point' && asset.lng !== undefined && asset.lat !== undefined) {
+                    map.flyTo({
+                        center: [asset.lng, asset.lat],
+                        zoom: Math.max(viewState.zoom, 13),
+                        duration: 1000,
+                    });
+                    return;
+                }
+
+                const geometryBounds = bbox({ type: 'Feature', geometry: asset.geometry, properties: {} });
+                map.fitBounds(
+                    [
+                        [geometryBounds[0], geometryBounds[1]],
+                        [geometryBounds[2], geometryBounds[3]],
+                    ],
+                    {
+                        padding: 80,
+                        duration: 1000,
+                        maxZoom: 16,
+                    },
+                );
+                return;
+            }
+
+            if (result.bounds) {
+                map.fitBounds(result.bounds, {
+                    padding: 80,
+                    duration: 1000,
+                    maxZoom: 15,
+                });
+                return;
+            }
+
+            map.flyTo({
+                center: [result.lng, result.lat],
+                zoom: Math.max(viewState.zoom, 12),
+                duration: 1000,
+            });
+        },
+        [activePanelView, buildSearchSelectedAsset, viewState.zoom],
+    );
 
     return (
         <Box
@@ -702,6 +803,7 @@ const MapView = () => {
                         onShowCoordinatesChange={setShowCoordinates}
                         showCpsIcons={showCpsIcons}
                         onShowCpsIconsChange={setShowCpsIcons}
+                        onSearchResultSelect={handleSearchResultSelect}
                     />
                 </Box>
             </DrawingProvider>
