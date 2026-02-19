@@ -8,6 +8,7 @@ import '@/components/map-v2/mapbox-draw-maplibre.css';
 
 import DataroomMapControls from './DataroomMapControls';
 import useMapDrawing from './useMapDrawing';
+import LoadingOverlay from '@/components/LoadingOverlay';
 import { DEFAULT_VIEW_STATE, DEFAULT_MAP_STYLE, MAP_STYLES, MAP_VIEW_BOUNDS, BELOW_ASSET_LAYER_ID } from '@/components/map-v2/constants';
 import { transformMapRequest } from '@/utils/mapRequest';
 
@@ -23,6 +24,7 @@ type DataroomMapProps = {
         tooltip: string;
     };
     onDrawingChange?: (isDrawing: boolean) => void;
+    isLoading?: boolean;
 };
 
 const DataroomMap = ({
@@ -33,6 +35,7 @@ const DataroomMap = ({
     onClearDrawnArea,
     visibilityToggle,
     onDrawingChange,
+    isLoading = false,
 }: Readonly<DataroomMapProps>) => {
     const mapRef = useRef<MapRef | null>(null);
     const [viewState, setViewState] = useState(DEFAULT_VIEW_STATE);
@@ -78,6 +81,7 @@ const DataroomMap = ({
             </Map>
 
             <DataroomMapControls drawing={drawingEnabled ? { onDraw: handleDraw } : undefined} visibilityToggle={visibilityToggle} />
+            <LoadingOverlay isLoading={isLoading} />
         </Box>
     );
 };

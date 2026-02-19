@@ -1,6 +1,8 @@
 import type { Geometry } from 'geojson';
 import config from '@/config/app-config';
 
+export const MAX_CRITICALITY_SCORE = 3;
+
 export type DataroomAsset = {
     id: string;
     name: string;

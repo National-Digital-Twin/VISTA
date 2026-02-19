@@ -1,17 +1,18 @@
 import { useCallback, useMemo, useState, useEffect } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Alert, Box, Button, IconButton, Snackbar, Typography } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import EditIcon from '@mui/icons-material/Edit';
 import type { Geometry } from 'geojson';
 import { fetchScenarios, type Scenario } from '@/api/scenarios';
-import { fetchDataroomAssets, type DataroomAsset } from '@/api/dataroom-assets';
+import { fetchDataroomAssets, updateBulkCriticality, type DataroomAsset } from '@/api/dataroom-assets';
 import { useAssetTypeIcons } from '@/hooks/useAssetTypeIcons';
 import DataroomMap from '@/components/DataroomMap';
 import AssetLayers from '@/components/map-v2/AssetLayers';
 import AssetFilterBar, { type AssetFilters } from '@/components/EditScenario/AssetFilterBar';
 import AssetTable from '@/components/EditScenario/AssetTable';
+import EditCriticalityDialog from '@/components/EditScenario/EditCriticalityDialog';
 import { getLocationFromGeometry } from '@/api/geometry-parser';
 import type { Asset } from '@/api/assets-by-type';
 import { useUserData } from '@/hooks/useUserData';
@@ -25,8 +26,8 @@ export default function EditScenario() {
     const {
         data: scenarios,
         isLoading: scenariosLoading,
-        isError: scenariosError,
-        error: scenariosErrorObj,
+        isError: isScenariosError,
+        error: scenariosError,
     } = useQuery<Scenario[], Error>({
         queryKey: ['scenarios'],
         queryFn: fetchScenarios,
@@ -45,6 +46,27 @@ export default function EditScenario() {
     const [assetsVisible, setAssetsVisible] = useState(true);
     const [isDrawing, setIsDrawing] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [editDialogOpen, setEditDialogOpen] = useState(false);
+
+    const queryClient = useQueryClient();
+    const criticalityMutation = useMutation({
+        mutationFn: (data: { assetIds: string[]; criticalityScore: number }) => {
+            if (!scenario?.id) {
+                throw new Error('Scenario is not set');
+            }
+            return updateBulkCriticality(scenario.id, data);
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['dataroom-assets'] });
+            queryClient.invalidateQueries({ queryKey: ['asset-score', scenario?.id] });
+            queryClient.invalidateQueries({ queryKey: ['scenarioAssets', scenario?.id] });
+            setSelectedIds(new Set());
+            setEditDialogOpen(false);
+        },
+        onError: (err: Error) => {
+            setErrorMessage(err.message || 'Failed to update criticality scores');
+        },
+    });
 
     const assetParams = {
         scenarioId: scenario?.id ?? '',
@@ -56,9 +78,9 @@ export default function EditScenario() {
 
     const {
         data: assets,
-        isLoading: assetsLoading,
-        isError: assetsError,
-        error: assetsErrorObj,
+        isFetching: assetsFetching,
+        isError: isAssetsError,
+        error: assetsError,
     } = useQuery<DataroomAsset[], Error>({
         queryKey: ['dataroom-assets', assetParams],
         queryFn: () => fetchDataroomAssets(assetParams),
@@ -66,16 +88,16 @@ export default function EditScenario() {
     });
 
     useEffect(() => {
-        if (scenariosError) {
-            setErrorMessage(scenariosErrorObj?.message ?? 'Failed to fetch scenarios');
+        if (isScenariosError) {
+            setErrorMessage(scenariosError?.message ?? 'Failed to fetch scenarios');
         }
-    }, [scenariosError, scenariosErrorObj]);
+    }, [isScenariosError, scenariosError]);
 
     useEffect(() => {
-        if (assetsError) {
-            setErrorMessage(assetsErrorObj?.message ?? 'Failed to fetch assets');
+        if (isAssetsError) {
+            setErrorMessage(assetsError?.message ?? 'Failed to fetch assets');
         }
-    }, [assetsError, assetsErrorObj]);
+    }, [isAssetsError, assetsError]);
 
     useEffect(() => {
         if (!assets) {
@@ -166,6 +188,20 @@ export default function EditScenario() {
         setFilterGeometry(null);
     }, []);
 
+    const handleBulkConfirm = useCallback(
+        (score: number) => {
+            criticalityMutation.mutate({ assetIds: Array.from(selectedIds), criticalityScore: score });
+        },
+        [criticalityMutation, selectedIds],
+    );
+
+    const handleInlineEdit = useCallback(
+        (assetId: string, score: number) => {
+            criticalityMutation.mutate({ assetIds: [assetId], criticalityScore: score });
+        },
+        [criticalityMutation],
+    );
+
     const handleSave = () => {
         navigate(`/data-room/scenarios/${scenarioId}`);
     };
@@ -215,6 +251,7 @@ export default function EditScenario() {
                         onToggle: () => setAssetsVisible((prev) => !prev),
                         tooltip: assetsVisible ? 'Hide assets' : 'Show assets',
                     }}
+                    isLoading={assetsFetching}
                 >
                     <AssetLayers
                         assets={mapAssets}
@@ -229,13 +266,27 @@ export default function EditScenario() {
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                 <AssetFilterBar filters={filters} onFiltersChange={setFilters} />
                 {selectedIds.size > 0 && (
-                    <Button variant="contained" startIcon={<EditIcon />} sx={{ ml: 'auto', whiteSpace: 'nowrap' }}>
-                        EDIT {selectedIds.size} SELECTED
+                    <Button variant="contained" startIcon={<EditIcon />} sx={{ ml: 'auto', whiteSpace: 'nowrap' }} onClick={() => setEditDialogOpen(true)}>
+                        {selectedIds.size === tableAssets.length ? 'EDIT ALL' : `EDIT ${selectedIds.size} SELECTED`}
                     </Button>
                 )}
             </Box>
 
-            <AssetTable assets={tableAssets} selectedIds={selectedIds} onSelectionChange={setSelectedIds} isLoading={assetsLoading} />
+            <AssetTable
+                assets={tableAssets}
+                selectedIds={selectedIds}
+                onSelectionChange={setSelectedIds}
+                onCriticalityEdit={handleInlineEdit}
+                isFetching={assetsFetching}
+            />
+
+            <EditCriticalityDialog
+                open={editDialogOpen}
+                count={selectedIds.size}
+                onClose={() => setEditDialogOpen(false)}
+                onConfirm={handleBulkConfirm}
+                isPending={criticalityMutation.isPending}
+            />
 
             <Snackbar
                 open={!!errorMessage}
