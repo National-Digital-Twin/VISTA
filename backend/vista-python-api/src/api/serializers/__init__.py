@@ -19,6 +19,7 @@ from .dataroom_asset import (
     BulkCriticalityUpdateSerializer,
     DataroomAssetListSerializer,
 )
+from .dataroom_exposure_layer import DataroomExposureLayerSerializer
 from .dependency import DependencySerializer
 from .exposure_layer import (
     ExposureLayerCreateSerializer,
@@ -72,6 +73,7 @@ __all__ = [
     "ConstraintInterventionUpdateSerializer",
     "DataSourceSerializer",
     "DataroomAssetListSerializer",
+    "DataroomExposureLayerSerializer",
     "DependencySerializer",
     "ExportParamsSerializer",
     "ExposureLayerCreateSerializer",
