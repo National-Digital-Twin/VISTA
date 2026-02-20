@@ -99,20 +99,21 @@ class BulkVisibleExposureLayerView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        accessible_layers_filter = (
+            Q(user_id__isnull=True)  # System layers
+            | Q(user_id=user_id, scenario=scenario)  # User layers
+            | Q(scenario=scenario, status=ExposureLayer.APPROVED)  # Approved layers
+        )
+
         if type_id:
             exposure_layer_type = get_object_or_404(ExposureLayerType, id=type_id)
-            if exposure_layer_type.is_user_editable:
-                exposure_layers = ExposureLayer.objects.filter(
-                    type=exposure_layer_type, user_id=user_id, scenario=scenario
-                )
-            else:
-                exposure_layers = ExposureLayer.objects.filter(
-                    type=exposure_layer_type, user_id__isnull=True
-                )
+            exposure_layers = ExposureLayer.objects.filter(
+                accessible_layers_filter, type=exposure_layer_type
+            )
             exposure_layer_ids = list(exposure_layers.values_list("id", flat=True))
         else:
-            exposure_layers = ExposureLayer.objects.filter(id__in=exposure_layer_ids).filter(
-                Q(user_id__isnull=True) | Q(user_id=user_id, scenario=scenario)
+            exposure_layers = ExposureLayer.objects.filter(
+                accessible_layers_filter, id__in=exposure_layer_ids
             )
             if exposure_layers.count() != len(exposure_layer_ids):
                 return Response(
