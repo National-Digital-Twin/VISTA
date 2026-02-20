@@ -437,6 +437,22 @@ def test_resolve_invites_expires_any_pending_invite_over_7_days_and_removes_cogn
     assert db_user_invite.accepted_at is None
 
 
+@pytest.mark.django_db
+def test_resolve_invites_is_permitted_for_general_user(
+    client,
+    pending_expired_user_invite,  # noqa: ARG001
+    monkeypatch,
+):
+    """Test that POST returns successfully if not admin."""
+    monkeypatch.setattr("api.views.users.Administrator", Administrator)
+    with patch("api.views.users.IdpRepository") as mock_idp_repository:
+        instance = mock_idp_repository.return_value
+        response = client.post("/api/users/resolve-invites/")
+
+        assert response.status_code == http_ok
+        instance.remove_user_from_vista.assert_called_once_with(str(new_user_uuid))
+
+
 # --- DELETE Tests ---
 
 

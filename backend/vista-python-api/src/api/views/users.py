@@ -5,6 +5,7 @@ from datetime import UTC, datetime, timedelta
 
 from rest_framework import status
 from rest_framework.decorators import action
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
@@ -28,6 +29,8 @@ class ApplicationUserViewSet(ModelViewSet):
 
     def get_permissions(self):
         """Get permissions for viewset methods."""
+        if self.action == "resolve_invites":
+            return [AllowAny()]
         return [Administrator()]
 
     def get_serializer_class(self):
