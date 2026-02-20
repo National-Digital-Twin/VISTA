@@ -70,6 +70,19 @@ class IdpRepository:
             return IdpUser.from_cognito(user, user.get("Username") in admins)
         return None
 
+    def get_user_by_id(self, user_id) -> IdpUser | None:
+        """Get a user by their user ID, if they exist."""
+        response = self.client.list_users(
+            UserPoolId=self.user_pool_id,
+            Filter=f'sub = "{user_id}"',
+            Limit=1,
+        )
+        if len(response["Users"]):
+            user = response["Users"][0]
+            admins = self.get_admin_user_list()
+            return IdpUser.from_cognito(user, user.get("Username") in admins)
+        return None
+
     def get_all_users_in_group(self, group_name, page_size=60):
         """Get all users in group through pagination."""
         paginator = self.client.get_paginator("list_users_in_group")
@@ -133,6 +146,11 @@ class IdpRepository:
         if is_admin:
             self._add_user_to_admin_group(username)
         return username
+
+    def resend_user_invite(self, user_id: str) -> None:
+        """Resend a user invite."""
+        user = self.get_user_by_id(user_id)
+        self.email_repository.send_added_email(user.email)
 
     def remove_user_from_vista(self, user_id: str) -> None:
         """Remove user access to VISTA."""

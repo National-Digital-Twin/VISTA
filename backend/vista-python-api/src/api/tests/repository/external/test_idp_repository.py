@@ -283,6 +283,54 @@ def test_get_user_by_email_does_not_exist_returns_none(
     assert result is None
 
 
+def test_get_user_by_id_returns_user_successfully(
+    admin_list_in_group_repository, mock_boto_client_admin_list_in_group, mock_boto_paginator_admin
+):
+    """Check user is successfully returned when queried by id."""
+    # mock existence of one user in admin group
+    username = uuid4()
+    users = [{"Username": username, "Attributes": [{"Name": "email", "Value": "bob@test.com"}]}]
+    admins = [{"Username": username}]
+
+    mock_boto_client_admin_list_in_group.list_users.return_value = {"Users": users}
+    mock_boto_paginator_admin.paginate.return_value = [{"Users": admins}]
+
+    with patch("api.domain.cognito_user.IdpUser.from_cognito") as mock_from_cognito:
+        mock_from_cognito.side_effect = lambda user, is_admin: {
+            "username": user["Username"],
+            "is_admin": is_admin,
+        }
+        result = admin_list_in_group_repository.get_user_by_id(str(username))
+
+    assert mock_boto_client_admin_list_in_group.list_users.call_count == 1
+    mock_boto_client_admin_list_in_group.list_users.assert_called_with(
+        UserPoolId=user_pool_name,
+        Filter=f'sub = "{username!s}"',
+        Limit=1,
+    )
+    assert result["username"] == username
+    assert result["is_admin"]
+
+
+def test_get_user_by_id_does_not_exist_returns_none(
+    mock_boto_client_admin_list_in_group, admin_list_in_group_repository
+):
+    """Check path where user does not exist is handled correctly."""
+    mock_boto_client_admin_list_in_group.list_users.return_value = {"Users": []}
+    user_id = str(uuid4())
+
+    result = admin_list_in_group_repository.get_user_by_id(user_id)
+
+    assert mock_boto_client_admin_list_in_group.list_users.call_count == 1
+    mock_boto_client_admin_list_in_group.list_users.assert_called_with(
+        UserPoolId=user_pool_name,
+        Filter=f'sub = "{user_id}"',
+        Limit=1,
+    )
+    mock_boto_client_admin_list_in_group.list_users_in_group.assert_not_called()
+    assert result is None
+
+
 def test_create_user_calls_cognito_correctly(
     settings,
     mock_boto_client_dual_list_in_group,
@@ -426,6 +474,26 @@ def test_create_user_in_dev_does_not_call_cognito(
     dual_list_in_group_repository.create_user("bob@test.com", False)
 
     mock_boto_client_dual_list_in_group.admin_create_user.assert_not_called()
+
+
+def test_resend_user_invite_calls_cognito_and_email_repository(
+    admin_list_in_group_repository,
+    mock_boto_client_admin_list_in_group,
+    mock_boto_paginator_admin,
+    mock_email_repository,
+):
+    """Test resending an invite fetches user from Cognito and sends email."""
+    user_id = str(uuid4())
+    email = "bob@test.com"
+    users = [{"Username": user_id, "Attributes": [{"Name": "email", "Value": email}]}]
+    mock_boto_paginator_admin.paginate.return_value = [{"Users": []}]
+    mock_boto_client_admin_list_in_group.list_users.return_value = {"Users": users}
+
+    with patch("api.domain.cognito_user.IdpUser.from_cognito") as mock_from_cognito:
+        mock_from_cognito.side_effect = [IdpUser(id=user_id, email=email)]
+        admin_list_in_group_repository.resend_user_invite(user_id)
+
+    mock_email_repository.send_added_email.assert_called_once_with(email)
 
 
 def test_remove_user_from_vista_removes_user_from_access_and_admin_groups(

@@ -94,6 +94,12 @@ class ApplicationUserViewSet(ModelViewSet):
         self._check_all_pending_invites_for_expiry()
         return Response(status=status.HTTP_200_OK)
 
+    @action(detail=True, methods=["post"], url_path="resend-invite")
+    def resend_invite(self, request, pk):  # noqa: ARG002
+        """Resend a pending user invite."""
+        self.idp_repository.resend_user_invite(pk)
+        return Response(status=status.HTTP_200_OK)
+
     @action(detail=False, methods=["get"], url_path="pending-invites")
     def list_invites(self, request):  # noqa: ARG002
         """Fetch any pending or expired user invites."""
