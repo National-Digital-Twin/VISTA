@@ -7,6 +7,7 @@ import {
     Collapse,
     Button,
     Alert,
+    AlertTitle,
     Portal,
     Snackbar,
     Menu,
@@ -21,8 +22,8 @@ import CloseIcon from '@mui/icons-material/Close';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
-import { DeleteOutline, EditNoteOutlined } from '@mui/icons-material';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { CheckCircleOutlineOutlined, DeleteOutline, EditNoteOutlined } from '@mui/icons-material';
+import { useIsFetching, useMutation, useQueryClient } from '@tanstack/react-query';
 import type { Feature } from 'geojson';
 
 import { useDrawingContext } from '../context/DrawingContext';
@@ -34,6 +35,7 @@ import {
     bulkToggleExposureLayerVisibility,
     updateExposureLayer,
     deleteExposureLayer,
+    publishExposureLayer,
     type ExposureLayerGroup,
     type ExposureLayer,
     type ExposureLayersResponse,
@@ -71,7 +73,6 @@ const SpatialRelationBadge = React.memo(({ relation }: SpatialRelationBadgeProps
                 color: config.textColor,
                 fontSize: '0.7rem',
                 whiteSpace: 'nowrap',
-                ml: 1,
             }}
         >
             {config.label}
@@ -196,14 +197,19 @@ type UserDrawnLayerItemProps = {
     onToggle: (layerId: string) => void;
     onUpdate: (layerId: string, name: string) => void;
     onDelete: (layerId: string) => void;
+    onPublish: (layerId: string) => void;
     disabled?: boolean;
 };
 
-const UserDrawnLayerItem = React.memo(({ layer, isVisible, onToggle, onUpdate, onDelete, disabled }: UserDrawnLayerItemProps) => {
+const UserDrawnLayerItem = React.memo(({ layer, isVisible, onToggle, onUpdate, onDelete, onPublish, disabled }: UserDrawnLayerItemProps) => {
     const [isEditing, setIsEditing] = useState(false);
     const [editName, setEditName] = useState(layer.name);
     const [nameError, setNameError] = useState<string | null>(null);
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+    const [publishDialogOpen, setPublishDialogOpen] = useState(false);
+
+    const isUnpublished = !layer.status || layer.status === 'unpublished';
+    const isPending = layer.status === 'pending';
 
     const handleEditClick = (e: MouseEvent) => {
         e.stopPropagation();
@@ -257,12 +263,27 @@ const UserDrawnLayerItem = React.memo(({ layer, isVisible, onToggle, onUpdate, o
         setDeleteDialogOpen(false);
     };
 
+    const handlePublishClick = (e: MouseEvent) => {
+        e.stopPropagation();
+        setPublishDialogOpen(true);
+    };
+
+    const handlePublishConfirm = (e: MouseEvent) => {
+        e.stopPropagation();
+        setPublishDialogOpen(false);
+        onPublish(layer.id);
+    };
+
+    const handlePublishCancel = () => {
+        setPublishDialogOpen(false);
+    };
+
     return (
         <Box
-            onDoubleClick={handleEditClick}
+            onDoubleClick={isUnpublished ? handleEditClick : undefined}
             sx={{
                 'display': 'flex',
-                'alignItems': 'center',
+                'alignItems': 'flex-start',
                 'justifyContent': 'space-between',
                 'py': 0.5,
                 'px': 1,
@@ -299,18 +320,26 @@ const UserDrawnLayerItem = React.memo(({ layer, isVisible, onToggle, onUpdate, o
                             whiteSpace: 'nowrap',
                         }}
                     >
-                        {layer.name}
+                        {layer.publishedId ? `${layer.publishedId} ${layer.name}` : layer.name}
                     </Typography>
                 )}
+                <SpatialRelationBadge relation={layer.focusAreaRelation} />
             </Box>
             <Box sx={{ display: 'flex', alignItems: 'center', flexShrink: 0 }} onDoubleClick={(e) => e.stopPropagation()}>
-                <SpatialRelationBadge relation={layer.focusAreaRelation} />
-                <IconButton size="small" onClick={handleEditClick} disabled={disabled} aria-label="Edit layer name" title="Edit name">
-                    <EditNoteOutlined fontSize="small" />
-                </IconButton>
-                <IconButton size="small" onClick={handleDeleteClick} disabled={disabled} aria-label="Delete layer" title="Delete">
-                    <DeleteOutline fontSize="small" />
-                </IconButton>
+                {isUnpublished && (
+                    <>
+                        <IconButton size="small" onClick={handlePublishClick} disabled={disabled} aria-label="Send to Data Room" title="Send to Data Room">
+                            <img src="/icons/map-v2/dataroom-send.svg" alt="Send to Data Room" width={18} height={18} />
+                        </IconButton>
+                        <IconButton size="small" onClick={handleEditClick} disabled={disabled} aria-label="Edit layer name" title="Edit name">
+                            <EditNoteOutlined fontSize="small" />
+                        </IconButton>
+                        <IconButton size="small" onClick={handleDeleteClick} disabled={disabled} aria-label="Delete layer" title="Delete">
+                            <DeleteOutline fontSize="small" />
+                        </IconButton>
+                    </>
+                )}
+                {isPending && <CheckCircleOutlineOutlined fontSize="small" sx={{ color: 'action.active', ml: 0.5, mr: 0.5 }} titleAccess="Sent to Data Room" />}
                 <IconToggle
                     checked={isVisible}
                     onChange={() => onToggle(layer.id)}
@@ -331,6 +360,28 @@ const UserDrawnLayerItem = React.memo(({ layer, isVisible, onToggle, onUpdate, o
                     </Button>
                     <Button onClick={handleDeleteConfirm} variant="contained" color="error">
                         DELETE
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            <Dialog open={publishDialogOpen} onClose={handlePublishCancel} maxWidth="xs" fullWidth>
+                <DialogTitle>Send exposure layer to Data Room</DialogTitle>
+                <DialogContent>
+                    <Typography variant="body1" sx={{ mb: 2 }}>
+                        Sending this exposure layer to the Data Room will submit it for admin review.
+                    </Typography>
+                    <Typography variant="body1">If approved, "{layer.name || 'Unnamed layer'}" will be available to all users in this scenario.</Typography>
+                </DialogContent>
+                <DialogActions sx={{ p: 2 }}>
+                    <Button onClick={handlePublishCancel} variant="outlined">
+                        CANCEL
+                    </Button>
+                    <Button
+                        onClick={handlePublishConfirm}
+                        variant="contained"
+                        startIcon={<img src="/icons/map-v2/dataroom-send.svg" alt="" width={18} height={18} style={{ filter: 'brightness(0) invert(1)' }} />}
+                    >
+                        SEND
                     </Button>
                 </DialogActions>
             </Dialog>
@@ -477,6 +528,7 @@ type UserDrawnGroupProps = {
     onBulkToggle?: (groupId: string, isActive: boolean) => void;
     onUpdateLayer: (layerId: string, name: string) => void;
     onDeleteLayer: (layerId: string) => void;
+    onPublishLayer: (layerId: string) => void;
     onStartDrawing?: (mode: 'circle' | 'polygon') => void;
     disabled?: boolean;
     isDrawing?: boolean;
@@ -494,6 +546,7 @@ const UserDrawnGroup = React.memo(
         onBulkToggle,
         onUpdateLayer,
         onDeleteLayer,
+        onPublishLayer,
         onStartDrawing,
         disabled,
         isDrawing,
@@ -613,6 +666,7 @@ const UserDrawnGroup = React.memo(
                                 onToggle={onToggleLayer}
                                 onUpdate={onUpdateLayer}
                                 onDelete={onDeleteLayer}
+                                onPublish={onPublishLayer}
                                 disabled={disabled}
                             />
                         ))}
@@ -671,12 +725,17 @@ const ExposureView = ({
 }: ExposureViewProps) => {
     const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
     const [mutationError, setMutationError] = useState<string | null>(null);
+    const [successMessage, setSuccessMessage] = useState<{ title: string; subtitle: string } | null>(null);
     const [hasInitializedExpansion, setHasInitializedExpansion] = useState(false);
     const queryClient = useQueryClient();
     const currentFocusAreaId = selectedFocusAreaId ?? null;
 
-    const userDrawnLayers = useMemo(() => {
-        return exposureLayersData?.groups.flatMap((g) => g.exposureLayers).filter((layer) => layer.isUserDefined && layer.isActive && layer.geometry) ?? [];
+    const editableUserDrawnLayers = useMemo(() => {
+        return (
+            exposureLayersData?.groups
+                .flatMap((g) => g.exposureLayers)
+                .filter((layer) => layer.isUserDefined && layer.isActive && layer.geometry && layer.status === 'unpublished') ?? []
+        );
     }, [exposureLayersData]);
 
     const userEditableTypeId = useMemo(() => {
@@ -699,14 +758,14 @@ const ExposureView = ({
     }, [createExposureLayer, updateExposureLayerMutate]);
 
     useLayoutEffect(() => {
-        if (!userDrawnLayers || !userEditableTypeId) {
+        if (!editableUserDrawnLayers || !userEditableTypeId) {
             setDrawingConfig(null);
             return;
         }
 
         setDrawingConfig({
             featureType: FEATURE_TYPES.EXPOSURE_LAYER,
-            entities: userDrawnLayers,
+            entities: editableUserDrawnLayers,
             getEntityId: (layer) => layer.id,
             getEntityGeometry: (layer) => layer.geometry ?? undefined,
             shouldRenderEntity: (layer) => !!layer.geometry,
@@ -715,7 +774,7 @@ const ExposureView = ({
         });
 
         return () => setDrawingConfig(null);
-    }, [userDrawnLayers, userEditableTypeId, setDrawingConfig]);
+    }, [editableUserDrawnLayers, userEditableTypeId, setDrawingConfig]);
 
     const isDrawing = drawingMode !== null;
 
@@ -781,6 +840,21 @@ const ExposureView = ({
         },
     });
 
+    const publishLayerMutation = useMutation({
+        mutationFn: (exposureLayerId: string) => publishExposureLayer(scenarioId!, exposureLayerId),
+        onSuccess: (_data, exposureLayerId) => {
+            const layer = exposureLayersData?.groups.flatMap((g) => g.exposureLayers).find((l) => l.id === exposureLayerId);
+            setSuccessMessage({
+                title: 'Exposure layer sent to Data Room',
+                subtitle: `${layer?.name ?? 'Layer'} sent for Admin approval`,
+            });
+            invalidateQueries();
+        },
+        onError: () => {
+            setMutationError('Failed to send exposure layer to Data Room');
+        },
+    });
+
     useEffect(() => {
         if (!exposureLayersData?.groups || hasInitializedExpansion) {
             return;
@@ -839,6 +913,13 @@ const ExposureView = ({
         [deleteLayerMutation],
     );
 
+    const handlePublishLayer = useCallback(
+        (layerId: string) => {
+            publishLayerMutation.mutate(layerId);
+        },
+        [publishLayerMutation],
+    );
+
     const { systemGroups, userDrawnGroup } = useMemo((): {
         systemGroups: Record<string, { id: string; name: string; layers: Feature[] }>;
         userDrawnGroup: { id: string; name: string; layers: ExposureLayer[] } | null;
@@ -890,7 +971,15 @@ const ExposureView = ({
         return buildLayerVisibilityMap(exposureLayersData.groups);
     }, [exposureLayersData]);
 
-    const isMutating = visibilityMutation.isPending || bulkVisibilityMutation.isPending || updateLayerMutation.isPending || deleteLayerMutation.isPending;
+    const isFetchingExposureLayers = useIsFetching({ queryKey: ['exposureLayers', scenarioId] }) > 0;
+
+    const isMutating =
+        visibilityMutation.isPending ||
+        bulkVisibilityMutation.isPending ||
+        updateLayerMutation.isPending ||
+        deleteLayerMutation.isPending ||
+        publishLayerMutation.isPending ||
+        isFetchingExposureLayers;
 
     if (!scenarioId) {
         return (
@@ -994,6 +1083,7 @@ const ExposureView = ({
                             onBulkToggle={handleBulkToggle}
                             onUpdateLayer={handleUpdateLayer}
                             onDeleteLayer={handleDeleteLayer}
+                            onPublishLayer={handlePublishLayer}
                             onStartDrawing={startDrawing}
                             disabled={isMutating}
                             isDrawing={isDrawing}
@@ -1010,6 +1100,18 @@ const ExposureView = ({
                 >
                     <Alert onClose={() => setMutationError(null)} severity="error" sx={{ width: '100%' }}>
                         {mutationError}
+                    </Alert>
+                </Snackbar>
+                <Snackbar
+                    open={!!successMessage}
+                    autoHideDuration={6000}
+                    onClose={() => setSuccessMessage(null)}
+                    anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+                    sx={{ marginTop: '36px' }}
+                >
+                    <Alert onClose={() => setSuccessMessage(null)} severity="success" sx={{ width: '100%' }}>
+                        <AlertTitle>{successMessage?.title}</AlertTitle>
+                        {successMessage?.subtitle}
                     </Alert>
                 </Snackbar>
             </Portal>

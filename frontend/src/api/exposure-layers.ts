@@ -3,6 +3,8 @@ import config from '@/config/app-config';
 
 export type FocusAreaRelation = 'contained' | 'overlaps' | 'elsewhere';
 
+export type ExposureLayerStatus = 'unpublished' | 'pending' | 'approved';
+
 export type ExposureLayerGroup = {
     id: string;
     name: string;
@@ -18,6 +20,8 @@ export type ExposureLayer = {
     isUserDefined?: boolean;
     createdAt?: string;
     focusAreaRelation?: FocusAreaRelation;
+    status?: ExposureLayerStatus | null;
+    publishedId?: string | null;
 };
 
 export type ExposureLayersResponse = {
@@ -64,6 +68,15 @@ export const fetchExposureLayers = async (scenarioId: string, focusAreaId?: stri
 
     const groups: ExposureLayerGroup[] = await response.json();
 
+    // TODO: remove once the publishedId is added to the response
+    for (const group of groups) {
+        for (const layer of group.exposureLayers) {
+            if (layer.status === 'approved' && !layer.publishedId) {
+                layer.publishedId = `UD.${layer.id.slice(-4).toUpperCase()}`;
+            }
+        }
+    }
+
     const features: Feature[] = groups.flatMap((group) =>
         group.exposureLayers
             .filter((layer) => layer.geometry)
@@ -78,6 +91,8 @@ export const fetchExposureLayers = async (scenarioId: string, focusAreaId?: stri
                     isActive: layer.isActive ?? false,
                     isUserDefined: layer.isUserDefined ?? false,
                     focusAreaRelation: layer.focusAreaRelation,
+                    status: layer.status,
+                    publishedId: layer.publishedId,
                 },
             })),
     );
@@ -152,5 +167,16 @@ export const deleteExposureLayer = async (scenarioId: string, exposureLayerId: s
 
     if (!response.ok) {
         throw new Error(`Failed to delete exposure layer: ${response.statusText}`);
+    }
+};
+
+export const publishExposureLayer = async (scenarioId: string, exposureLayerId: string): Promise<void> => {
+    const response = await fetch(`${config.services.apiBaseUrl}/scenarios/${scenarioId}/exposure-layers/${exposureLayerId}/publish/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+    });
+
+    if (!response.ok) {
+        throw new Error(`Failed to publish exposure layer: ${response.statusText}`);
     }
 };
