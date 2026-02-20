@@ -46,7 +46,8 @@ class ApplicationUserViewSet(ModelViewSet):
     def list(self, _request):
         """Return a list of all users."""
         users = self.idp_repository.list_users_in_group()
-        serializer = IdpUserSerializer(users, many=True)
+        accepted_users = self._filter_users_with_pending_or_expired_invites(users)
+        serializer = IdpUserSerializer(accepted_users, many=True)
         return Response(serializer.data)
 
     def create(self, request):
@@ -129,3 +130,18 @@ class ApplicationUserViewSet(ModelViewSet):
             memberships.append(membership)
 
         GroupMembership.objects.bulk_create(memberships)
+
+    def _filter_users_with_pending_or_expired_invites(self, users):
+        all_invites = UserInvite.objects.all()
+        accepted_user_ids = []
+        all_invited_user_ids = []
+        for invite in all_invites:
+            if invite.status == UserInvite.ACCEPTED:
+                accepted_user_ids.append(str(invite.user_id))
+            all_invited_user_ids.append(str(invite.user_id))
+
+        return [
+            user
+            for user in users
+            if user.id in accepted_user_ids or user.id not in all_invited_user_ids
+        ]
