@@ -112,8 +112,12 @@ class ScenarioExposureLayersView(viewsets.ViewSet):
             scenario: The scenario object
             focus_area: Optional focus area. If provided, spatial relation is calculated.
         """
-        ownership_filter = Q(user_id__isnull=True) | Q(user_id=user_id, scenario=scenario)
-        exposure_layers_qs = ExposureLayer.objects.filter(ownership_filter)
+        accessible_layers_filter = (
+            Q(user_id__isnull=True)  # System layers
+            | Q(user_id=user_id, scenario=scenario)  # User layers
+            | Q(scenario=scenario, status=ExposureLayer.APPROVED)  # Approved layers
+        )
+        exposure_layers_qs = ExposureLayer.objects.filter(accessible_layers_filter)
         exposure_layers_qs = exposure_layers_qs.order_by(F("created_at").asc(nulls_first=True))
 
         if focus_area and focus_area.geometry:
@@ -260,9 +264,9 @@ class ScenarioExposureLayersView(viewsets.ViewSet):
             scenario=scenario,
         )
 
-        if not exposure_layer.type.is_user_editable:
+        if not exposure_layer.is_editable:
             return Response(
-                {"error": "Cannot edit layers of this type"},
+                {"error": "Cannot edit this layer"},
                 status=status.HTTP_403_FORBIDDEN,
             )
 
@@ -303,9 +307,9 @@ class ScenarioExposureLayersView(viewsets.ViewSet):
             scenario=scenario,
         )
 
-        if not exposure_layer.type.is_user_editable:
+        if not exposure_layer.is_editable:
             return Response(
-                {"error": "Cannot delete layers of this type"},
+                {"error": "Cannot delete this layer"},
                 status=status.HTTP_403_FORBIDDEN,
             )
 
