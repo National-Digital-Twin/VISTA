@@ -263,11 +263,17 @@ describe('invites API', () => {
     });
 
     describe('resendInvite', () => {
+        beforeEach(() => {
+            fetchMock.mockResolvedValue({ ok: true });
+        });
+
         it('successfully resends an invite', async () => {
             const promise = resendInvite('invite-789');
-            await vi.advanceTimersByTimeAsync(1000);
             const result = await promise;
 
+            expect(fetchMock).toHaveBeenCalledWith('/ndtp-python/api/users/invite-789/resend-invite/', {
+                method: 'POST',
+            });
             expect(result.userId).toBe('invite-789');
             expect(result.status).toBe('Pending');
             expect(result.daysAgo).toBe(0);
@@ -278,15 +284,12 @@ describe('invites API', () => {
             vi.setSystemTime(mockDate);
 
             const promise = resendInvite('invite-abc');
-            await vi.advanceTimersByTimeAsync(1000);
             const result = await promise;
-
             expect(result.sentDate).toBe('2024-07-01');
         });
 
         it('returns default invite data', async () => {
             const promise = resendInvite('any-id');
-            await vi.advanceTimersByTimeAsync(1000);
             const result = await promise;
 
             expect(result).toMatchObject({
@@ -304,22 +307,6 @@ describe('invites API', () => {
             const result = await promise;
 
             expect(result.userId).toBe(inviteId);
-        });
-
-        it('resolves after specified delay', async () => {
-            const promise = resendInvite('invite-xyz');
-
-            let resolved = false;
-            promise.then(() => {
-                resolved = true;
-            });
-
-            await vi.advanceTimersByTimeAsync(900);
-            expect(resolved).toBe(false);
-
-            await vi.advanceTimersByTimeAsync(100);
-            await promise;
-            expect(resolved).toBe(true);
         });
     });
 });
