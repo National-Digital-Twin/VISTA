@@ -34,16 +34,6 @@ spec:
               number: 80
     - match:
         - uri:
-            prefix: /vista/
-      rewrite:
-        uri: "/"
-      route:
-        - destination:
-            host: smart-cache-vista-api
-            port:
-              number: 80
-    - match:
-        - uri:
             prefix: /transparent-proxy/
       rewrite:
         uri: "/"

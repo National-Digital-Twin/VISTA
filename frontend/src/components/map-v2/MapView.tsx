@@ -26,6 +26,7 @@ import MapLoadingOverlay from './MapLoadingOverlay';
 import { DrawingProvider, useDrawingContext } from './context/DrawingContext';
 import { useRouteContext } from './context/RouteContext';
 import { usePreloadAssetIcons } from './hooks/usePreloadAssetIcons';
+import { transformMapRequest } from '@/utils/mapRequest';
 import { useAssetTypeIcons } from '@/hooks/useAssetTypeIcons';
 import { useActiveScenario } from '@/hooks/useActiveScenario';
 import { useScenarioAssets } from '@/hooks/useScenarioAssets';
@@ -373,34 +374,7 @@ const MapView = () => {
         };
     }, [mapReady, isInFocusAreaPanel, selectedFocusAreaId, focusAreas]);
 
-    const transformRequest = useCallback((url: string) => {
-        let transformedUrl = url;
-        const headers: Record<string, string> = {};
-
-        if (transformedUrl.includes('api.os.uk')) {
-            const urlParts = transformedUrl.split('api.os.uk');
-            const routeParams = urlParts.at(-1) ?? '';
-
-            if (routeParams.startsWith('/')) {
-                transformedUrl = `${globalThis.location.origin}/transparent-proxy/os/${routeParams.substring(1)}`;
-            } else {
-                transformedUrl = `${globalThis.location.origin}/transparent-proxy/os/${routeParams}`;
-            }
-
-            const fontMatch = /fonts\/(.*?)\//.exec(routeParams);
-            if (fontMatch) {
-                const requestedFont = fontMatch[1];
-                const encodedRequestedFont = encodeURIComponent(requestedFont);
-
-                transformedUrl += `&fonts=${encodedRequestedFont}`;
-                transformedUrl = transformedUrl.replace(`/${requestedFont}/`, '/');
-            }
-
-            transformedUrl = transformedUrl.replace(/\?key=[^&]+&/, '?');
-        }
-
-        return { url: transformedUrl, headers };
-    }, []);
+    const transformRequest = useCallback(transformMapRequest, []);
 
     const handleViewChange = useCallback(
         (viewId: string | null) => {

@@ -49,6 +49,9 @@ type User = {
 
 type UserSortField = 'name' | 'organisation' | 'userType' | 'memberSince';
 type SortDirection = 'asc' | 'desc';
+type GroupCreationErrorMessage = {
+    name: string[];
+};
 
 const mapUserDataToUser = (userData: UserData): User => {
     const organisation = getUserOrganisation(userData);
@@ -181,8 +184,8 @@ const GroupsTab: React.FC = () => {
     const [newGroupName, setNewGroupName] = useState('');
     const [createSelectedUserIds, setCreateSelectedUserIds] = useState<Set<string>>(new Set());
     const [createSuccessSnackbarOpen, setCreateSuccessSnackbarOpen] = useState(false);
-    const [createErrorSnackbarOpen, setCreateErrorSnackbarOpen] = useState(false);
-    const [createErrorMessage, setCreateErrorMessage] = useState<string | null>(null);
+    const [isCreateError, setIsCreateError] = useState(false);
+    const [createErrorMessage, setCreateErrorMessage] = useState<GroupCreationErrorMessage | null>(null);
 
     const {
         data: groups = [],
@@ -244,10 +247,13 @@ const GroupsTab: React.FC = () => {
             setUserSortField('name');
             setUserSortDirection('asc');
             setCreateSuccessSnackbarOpen(true);
+            setIsCreateError(false);
+            setCreateErrorMessage(null);
         },
         onError: (error: Error) => {
-            setCreateErrorMessage(error.message);
-            setCreateErrorSnackbarOpen(true);
+            const groupError = JSON.parse(error.message);
+            setCreateErrorMessage(groupError);
+            setIsCreateError(true);
         },
     });
 
@@ -709,6 +715,8 @@ const GroupsTab: React.FC = () => {
                                     onChange={(e) => setNewGroupName(e.target.value)}
                                     placeholder="Enter group name"
                                     size="small"
+                                    error={isCreateError}
+                                    helperText={createErrorMessage?.name}
                                     fullWidth
                                     sx={{
                                         '& .MuiInput-root': {
@@ -1068,17 +1076,6 @@ const GroupsTab: React.FC = () => {
             >
                 <Alert severity="success" onClose={() => setCreateSuccessSnackbarOpen(false)} sx={{ width: '100%' }}>
                     Group created
-                </Alert>
-            </Snackbar>
-
-            <Snackbar
-                open={createErrorSnackbarOpen}
-                autoHideDuration={6000}
-                onClose={() => setCreateErrorSnackbarOpen(false)}
-                anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-            >
-                <Alert severity="error" onClose={() => setCreateErrorSnackbarOpen(false)} sx={{ width: '100%' }}>
-                    {createErrorMessage}
                 </Alert>
             </Snackbar>
         </Box>

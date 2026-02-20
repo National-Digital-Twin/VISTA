@@ -9,6 +9,7 @@ from .asset_scores import AssetScoreViewSet
 from .asset_types import AssetTypeViewSet
 from .assets import AssetViewSet
 from .data_sources import DataSourceViewSet
+from .dataroom_assets import DataroomAssetsView, DataroomBulkCriticalityView
 from .exposure_layer import ExposureLayerViewSet
 from .focus_areas import FocusAreaViewSet
 from .scenario_asset_types import ScenarioAssetTypesView
@@ -35,6 +36,8 @@ __all__ = [
     "BulkVisibleAssetTypeView",
     "BulkVisibleExposureLayerView",
     "DataSourceViewSet",
+    "DataroomAssetsView",
+    "DataroomBulkCriticalityView",
     "ExposureLayerViewSet",
     "FocusAreaViewSet",
     "ScenarioAssetTypesView",

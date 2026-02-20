@@ -85,7 +85,7 @@ describe('invites API', () => {
     describe('fetchAllInvites', () => {
         const mockBackendInvitesResponse = [
             {
-                user_id: 'invite-1',
+                userId: 'invite-1',
                 emailAddress: 'invite1@example.com',
                 userType: 'admin',
                 groups: ['Admin'],
@@ -93,7 +93,7 @@ describe('invites API', () => {
                 createdAt: '2024-06-10T10:00:00.000Z',
             },
             {
-                user_id: 'invite-2',
+                userId: 'invite-2',
                 emailAddress: 'invite2@example.com',
                 userType: 'general',
                 groups: [],
@@ -101,7 +101,7 @@ describe('invites API', () => {
                 createdAt: '2024-06-01T10:00:00.000Z',
             },
             {
-                user_id: 'invite-3',
+                userId: 'invite-3',
                 emailAddress: 'invite3@example.com',
                 userType: 'general',
                 groups: ['Users'],
@@ -155,7 +155,7 @@ describe('invites API', () => {
             const result = await fetchAllInvites();
 
             expect(result[0]).toMatchObject({
-                id: 'invite-1',
+                userId: 'invite-1',
                 email: 'invite1@example.com',
                 userType: 'Admin',
                 groups: ['Admin'],
@@ -274,7 +274,7 @@ describe('invites API', () => {
             expect(fetchMock).toHaveBeenCalledWith('/ndtp-python/api/users/invite-789/resend-invite/', {
                 method: 'POST',
             });
-            expect(result.id).toBe('invite-789');
+            expect(result.userId).toBe('invite-789');
             expect(result.status).toBe('Pending');
             expect(result.daysAgo).toBe(0);
         });
@@ -306,7 +306,7 @@ describe('invites API', () => {
             await vi.advanceTimersByTimeAsync(1000);
             const result = await promise;
 
-            expect(result.id).toBe(inviteId);
+            expect(result.userId).toBe(inviteId);
         });
     });
 });

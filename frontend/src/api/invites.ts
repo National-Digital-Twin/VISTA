@@ -7,7 +7,7 @@ export type InviteData = {
 };
 
 export type Invite = {
-    id: string;
+    userId: string;
     email: string;
     userType: 'Admin' | 'General';
     groups: string[];
@@ -41,7 +41,7 @@ export const sendInvite = async (inviteData: InviteData): Promise<void> => {
 };
 
 type BackendInviteResponse = {
-    user_id: string;
+    userId: string;
     emailAddress: string;
     userType: 'admin' | 'general';
     groups: string[];
@@ -82,7 +82,7 @@ export const fetchAllInvites = async (): Promise<Invite[]> => {
         const daysAgo = calculateDaysAgo(createdAt);
 
         return {
-            id: item.user_id,
+            userId: item.userId,
             email: item.emailAddress,
             userType: formatUserType(item.userType),
             groups: item.groups || [],
@@ -111,7 +111,7 @@ export const resendInvite = async (userId: string): Promise<Invite> => {
     });
 
     const invite: Invite = {
-        id: userId,
+        userId: userId,
         email: 'example@example.com',
         userType: 'General',
         groups: [],

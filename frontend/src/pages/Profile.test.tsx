@@ -2,16 +2,21 @@ import React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Profile from './Profile';
 import { useProfileData } from '@/hooks/useProfileData';
 
+let queryClient: QueryClient;
+
 const renderWithDynamicRoute = (ui: React.ReactElement, { path, initialEntries }: { path: string; initialEntries: string[] }) => {
     const Wrapper = ({ children }: { children: React.ReactNode }) => (
-        <MemoryRouter initialEntries={initialEntries}>
-            <Routes>
-                <Route path={path} element={children} />
-            </Routes>
-        </MemoryRouter>
+        <QueryClientProvider client={queryClient}>
+            <MemoryRouter initialEntries={initialEntries}>
+                <Routes>
+                    <Route path={path} element={children} />
+                </Routes>
+            </MemoryRouter>
+        </QueryClientProvider>
     );
 
     return render(ui, { wrapper: Wrapper });
@@ -60,6 +65,13 @@ describe('Profile', () => {
     };
 
     beforeEach(() => {
+        queryClient = new QueryClient({
+            defaultOptions: {
+                queries: {
+                    retry: false,
+                },
+            },
+        });
         vi.clearAllMocks();
         vi.mocked(useProfileData).mockReturnValue(mockProfileData);
     });

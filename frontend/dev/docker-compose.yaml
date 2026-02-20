@@ -1,70 +1,4 @@
 services:
-    zookeeper:
-        container_name: vista-zookeeper
-        image: 'bitnamilegacy/zookeeper:3.9.0'
-        ports:
-            - '2181:2181'
-        environment:
-            - ALLOW_ANONYMOUS_LOGIN=yes
-    kafka:
-        container_name: vista-kafka
-        image: 'bitnamilegacy/kafka:3.9.0'
-        depends_on:
-            - zookeeper
-        ports:
-            - '9092:9092'
-        volumes:
-            - ./kafka/server.properties:/bitnami/kafka/config/server.properties
-        environment:
-            - BITNAMI_DEBUG=true
-    secure-agent-graph:
-        container_name: vista-sag
-        environment:
-            JAVA_OPTIONS: '-XX:MaxRAMPercentage=40.0'
-            JWKS_URL: 'disabled'
-        command:
-            - --config
-            - /fuseki/config/config.ttl
-        image: vista/secure-agent-graph
-        build:
-            context: .
-            dockerfile: Dockerfile
-        depends_on:
-            - kafka
-        healthcheck:
-            test: ['CMD', 'curl', '-f', 'http://localhost:3030/$/ping']
-            interval: 30s
-            timeout: 10s
-            retries: 5
-        ports:
-            - 3030:3030
-    curl-knowledge:
-        image: curlimages/curl
-        command: ['curl', '-X', 'POST', '-H', 'Content-Type: text/turtle', '--data-binary', '@/work/iow.ttl', 'http://secure-agent-graph:3030/knowledge/upload']
-        depends_on:
-            secure-agent-graph:
-                condition: service_healthy
-        volumes:
-            - ./data/iow.ttl:/work/iow.ttl
-    curl-ontology:
-        image: curlimages/curl
-        command:
-            ['curl', '-X', 'POST', '-H', 'Content-Type: text/turtle', '--data-binary', '@/work/ontology.ttl', 'http://secure-agent-graph:3030/ontology/upload']
-        depends_on:
-            secure-agent-graph:
-                condition: service_healthy
-        volumes:
-            - ./data/ontology.ttl:/work/ontology.ttl
-    # api:
-    #     container_name: smart-cache-vista-api
-    #     image: smart-cache-vista-api
-    #     ports:
-    #         - 4001:4001
-    #     environment:
-    #         JENA_URL: secure-agent-graph
-    #         JENA_PORT: 3030
-    #         PORT: 4001
-    #         JENA_DATASET: knowledge
     transparent-proxy:
         container_name: vista-transparent-proxy
         image: vista-transparent-proxy
@@ -75,8 +9,6 @@ services:
             - 5013:8080
         env_file:
             - '../.env'
-        depends_on:
-            - secure-agent-graph
     postgres:
         image: postgis/postgis:16-3.4
         container_name: postgis

@@ -8,3 +8,4 @@ export type { AssetDetails } from './assetUtils';
 
 export const percentage = (value: number, total: number): number => (total > 0 ? (value / total) * 100 : 0);
 export const singularize = (name: string): string => name.replace(/s$/i, '');
+export const pluralize = (name: string, count: number): string => (count === 1 ? name : `${name}s`);

@@ -102,18 +102,48 @@ urlpatterns = [
     ),
     path(
         "scenarios/<uuid:scenario_id>/exposure-layers/",
-        views.ScenarioExposureLayersView.as_view(),
+        views.ScenarioExposureLayersView.as_view({"get": "list", "post": "create"}),
         name="scenario-exposure-layers",
     ),
     path(
         "scenarios/<uuid:scenario_id>/exposure-layers/<uuid:exposure_layer_id>/",
-        views.ScenarioExposureLayersView.as_view(),
+        views.ScenarioExposureLayersView.as_view({"delete": "destroy", "patch": "partial_update"}),
         name="scenario-exposure-layer-detail",
+    ),
+    path(
+        "scenarios/<uuid:scenario_id>/exposure-layers/<uuid:exposure_layer_id>/publish/",
+        views.ScenarioExposureLayersView.as_view({"post": "publish"}),
+        name="scenario-exposure-layer-publish",
+    ),
+    path(
+        "scenarios/<uuid:scenario_id>/exposure-layers/<uuid:exposure_layer_id>/approve/",
+        views.ScenarioExposureLayersView.as_view({"post": "approve"}),
+        name="scenario-exposure-layer-approve",
+    ),
+    path(
+        "scenarios/<uuid:scenario_id>/exposure-layers/<uuid:exposure_layer_id>/reject/",
+        views.ScenarioExposureLayersView.as_view({"post": "reject"}),
+        name="scenario-exposure-layer-reject",
+    ),
+    path(
+        "scenarios/<uuid:scenario_id>/exposure-layers/<uuid:exposure_layer_id>/remove/",
+        views.ScenarioExposureLayersView.as_view({"post": "remove"}),
+        name="scenario-exposure-layer-remove",
     ),
     path(
         "scenarios/<uuid:scenario_id>/assets/",
         views.ScenarioAssetsView.as_view(),
         name="scenario-assets",
+    ),
+    path(
+        "scenarios/<uuid:scenario_id>/dataroom/assets/",
+        views.DataroomAssetsView.as_view(),
+        name="dataroom-assets",
+    ),
+    path(
+        "scenarios/<uuid:scenario_id>/dataroom/assets/criticality/",
+        views.DataroomBulkCriticalityView.as_view(),
+        name="dataroom-bulk-criticality",
     ),
     path(
         "scenarios/<uuid:scenario_id>/assetscores/<uuid:pk>/",

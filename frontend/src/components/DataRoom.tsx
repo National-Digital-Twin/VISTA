@@ -1,8 +1,9 @@
-import { useState, useEffect, useRef } from 'react';
-import { Outlet, useSearchParams } from 'react-router-dom';
+import { type ReactNode, useState, useEffect, useRef } from 'react';
+import { Link, Outlet, useLocation, useSearchParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
     Box,
+    Container,
     Typography,
     Button,
     Stack,
@@ -18,11 +19,11 @@ import {
     Radio,
 } from '@mui/material';
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
+import EditNoteIcon from '@mui/icons-material/EditNote';
 import InputIcon from '@mui/icons-material/Input';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
-import { alpha } from '@mui/material/styles';
+import { alpha, type Theme } from '@mui/material/styles';
 import { format } from 'date-fns';
-import PageContainer from '@/components/PageContainer';
 import { fetchDataSources, DataSource } from '@/api/datasources';
 import { fetchScenarios, Scenario, setActiveScenario } from '@/api/scenarios';
 import { useUserData } from '@/hooks/useUserData';
@@ -33,7 +34,66 @@ export interface DataRoomOutletContext {
     getFormattedLastUpdated: (value: string | null) => string;
 }
 
+type SidebarButtonProps = {
+    icon: ReactNode;
+    active?: boolean;
+    disabled?: boolean;
+    to?: string;
+    onClick?: () => void;
+    children: ReactNode;
+};
+
+function SidebarButton({ icon, active, disabled, to, onClick, children }: Readonly<SidebarButtonProps>) {
+    const baseProps = {
+        disableRipple: true,
+        disabled,
+        variant: 'text' as const,
+        startIcon: icon,
+        sx: {
+            justifyContent: 'flex-start',
+            paddingY: 0.75,
+            paddingX: 1,
+            minHeight: 'unset',
+            textTransform: 'none',
+            ...(active
+                ? {
+                      'borderRadius': 2,
+                      'color': 'primary.main',
+                      'backgroundColor': (theme: Theme) => alpha(theme.palette.primary.main, 0.12),
+                      '&:hover': {
+                          backgroundColor: (theme: Theme) => alpha(theme.palette.primary.main, 0.18),
+                      },
+                  }
+                : {
+                      'color': disabled ? 'text.disabled' : 'text.primary',
+                      '&:hover': {
+                          backgroundColor: 'transparent',
+                          color: 'primary.main',
+                      },
+                  }),
+        },
+    };
+
+    if (to) {
+        return (
+            <Button component={Link} to={to} {...baseProps}>
+                {children}
+            </Button>
+        );
+    }
+
+    return (
+        <Button onClick={onClick} {...baseProps}>
+            {children}
+        </Button>
+    );
+}
+
 export default function DataRoom() {
+    const location = useLocation();
+    const isManageScenariosActive = location.pathname.startsWith('/data-room/scenarios');
+    const isDataSourcesActive = location.pathname === '/data-room';
+
     const { data, isLoading, isError, error } = useQuery<DataSource[], Error>({
         queryKey: ['data-sources'],
         queryFn: fetchDataSources,
@@ -50,7 +110,7 @@ export default function DataRoom() {
         retry: 2,
         retryDelay: 1000,
     });
-    const { getUserType } = useUserData();
+    const { isAdmin } = useUserData();
     const queryClient = useQueryClient();
     const [searchParams, setSearchParams] = useSearchParams();
     const [scenarioModalOpen, setScenarioModalOpen] = useState(false);
@@ -173,19 +233,19 @@ export default function DataRoom() {
     };
 
     return (
-        <PageContainer>
+        <Container maxWidth={false} sx={{ py: 4, px: 3, pl: 0 }}>
             <Box
                 sx={{
                     display: 'grid',
                     gridTemplateColumns: { xs: '1fr', lg: '340px 1fr' },
-                    columnGap: { xs: 0, lg: 4 },
+                    columnGap: { xs: 0, lg: 0 },
                     rowGap: { xs: 3, lg: 0 },
                     alignItems: { xs: 'start', lg: 'start' },
                 }}
             >
                 <Box
                     sx={{
-                        pr: { lg: 4 },
+                        pr: { lg: 3 },
                         pb: { xs: 3, lg: 0 },
                         borderRight: { xs: 'none', lg: '1px solid' },
                         borderColor: 'divider',
@@ -200,41 +260,20 @@ export default function DataRoom() {
                             Scenario management
                         </Typography>
                         <Stack spacing={1}>
-                            <Button
-                                disableRipple
-                                disabled={getUserType() !== 'Admin'}
-                                variant="text"
-                                startIcon={<AccountTreeIcon fontSize="small" />}
-                                onClick={handleLoadScenarioClick}
-                                sx={{
-                                    'justifyContent': 'flex-start',
-                                    'padding': 0,
-                                    'minHeight': 'unset',
-                                    'textTransform': 'none',
-                                    'color': 'text.primary',
-                                    '&:hover': {
-                                        backgroundColor: 'transparent',
-                                        color: 'primary.main',
-                                    },
-                                }}
-                            >
+                            <SidebarButton icon={<AccountTreeIcon fontSize="small" />} disabled={!isAdmin} onClick={handleLoadScenarioClick}>
                                 Load scenario
-                            </Button>
-                            <Button
-                                disableRipple
-                                variant="text"
-                                startIcon={<AddCircleOutlineOutlinedIcon fontSize="small" />}
-                                disabled
-                                sx={{
-                                    justifyContent: 'flex-start',
-                                    padding: 0,
-                                    minHeight: 'unset',
-                                    textTransform: 'none',
-                                    color: 'text.disabled',
-                                }}
+                            </SidebarButton>
+                            <SidebarButton
+                                icon={<EditNoteIcon fontSize="small" />}
+                                disabled={!isAdmin}
+                                to="/data-room/scenarios"
+                                active={isManageScenariosActive}
                             >
+                                Manage scenario
+                            </SidebarButton>
+                            <SidebarButton icon={<AddCircleOutlineOutlinedIcon fontSize="small" />} disabled>
                                 Create new scenario
-                            </Button>
+                            </SidebarButton>
                         </Stack>
                     </Box>
 
@@ -245,27 +284,9 @@ export default function DataRoom() {
                             Data sources and access management
                         </Typography>
                         <Stack spacing={1}>
-                            <Button
-                                disableRipple
-                                variant="text"
-                                startIcon={<InputIcon fontSize="small" />}
-                                sx={{
-                                    'justifyContent': 'flex-start',
-                                    'textTransform': 'none',
-                                    'paddingY': 1,
-                                    'paddingX': 1.5,
-                                    'borderRadius': 2,
-                                    'color': 'primary.main',
-                                    'backgroundColor': (theme) => alpha(theme.palette.primary.main, 0.12),
-                                    '&:hover': {
-                                        backgroundColor: (theme) => alpha(theme.palette.primary.main, 0.18),
-                                    },
-                                }}
-                            >
-                                <Typography component="span" sx={{ fontSize: 14, fontWeight: 600, color: 'inherit' }}>
-                                    Data sources ({totalDataSources})
-                                </Typography>
-                            </Button>
+                            <SidebarButton icon={<InputIcon fontSize="small" />} to="/data-room" active={isDataSourcesActive}>
+                                Data sources ({totalDataSources})
+                            </SidebarButton>
                         </Stack>
                     </Box>
                 </Box>
@@ -273,7 +294,7 @@ export default function DataRoom() {
                 <Box
                     sx={{
                         pt: { xs: 0, lg: 0 },
-                        pl: { xs: 0, lg: 0 },
+                        pl: { xs: 0, lg: 3 },
                         pb: { xs: 1, lg: 3 },
                         display: 'flex',
                         flexDirection: 'column',
@@ -323,6 +344,6 @@ export default function DataRoom() {
                     {errorMessage}
                 </Alert>
             </Snackbar>
-        </PageContainer>
+        </Container>
     );
 }

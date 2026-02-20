@@ -57,10 +57,7 @@ See [RUN_SERVICES.md](./dev/RUN_SERVICES.md) for instructions.
 
 ## Related repositories
 
-- [Smart Cache Paralog (SCP)
-  API](https://github.com/National-Digital-Twin/smart-cache-vista-api) is a REST API
-  used by Paralog to get data from the IES Triplestore.
 - [RDF Libraries](https://github.com/National-Digital-Twin/rdf-libraries), specifically
   the Ontology Service is used to provide the ontology iconography to Paralog.
 - [Secure Agent Graph (SAG) API](https://github.com/National-Digital-Twin/secure-agent-graph)
-  is used as a datastore for SCP and RDF Libraries.
+  is used as a datastore for RDF Libraries.

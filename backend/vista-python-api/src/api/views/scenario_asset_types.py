@@ -2,14 +2,14 @@
 
 from uuid import UUID
 
-from django.db.models import Count, Q
+from django.db.models import Count, Exists, OuterRef, Q
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from api.filters import AssetFilterBuilder, FilterContext
 from api.filters.asset_filter import has_criteria
-from api.models import AssetScoreFilter, FocusArea, Scenario, VisibleAsset
+from api.models import AssetScoreFilter, FocusArea, GroupDataSourceAccess, Scenario, VisibleAsset
 from api.models.asset import Asset
 from api.models.asset_type import AssetType
 from api.utils.auth import get_user_id_from_request
@@ -97,28 +97,50 @@ class ScenarioAssetTypesView(APIView):
         builder = AssetFilterBuilder(ctx)
 
         focus_area = None
-        asset_types_q = AssetType.objects.select_related("sub_category__category", "data_source")
         if focus_area_id:
             focus_area = get_object_or_404(
                 FocusArea, id=focus_area_id, scenario_id=scenario_id, user_id=user_id
             )
 
-        if focus_area and focus_area.geometry:
-            asset_types_q = asset_types_q.annotate(
-                asset_count_in_focus_area=Count(
-                    "assets", filter=Q(assets__geom__within=focus_area.geometry), distinct=True
-                ),
-                asset_count_total=Count("assets", distinct=True),
-            )
-        else:
-            asset_types_q = asset_types_q.annotate(
-                asset_count_in_focus_area=Count("assets", distinct=True),
-                asset_count_total=Count("assets", distinct=True),
-            )
-
+        asset_types_q = self._get_initial_asset_type_query(user_id)
+        asset_types_q = self._update_asset_type_query_with_counts(focus_area, asset_types_q)
         asset_types = asset_types_q.order_by(
             "sub_category__category__name", "sub_category__name", "name"
         )
 
         result = _build_categories_response(asset_types, visible_type_ids, builder, focus_area)
         return Response(result)
+
+    def _get_initial_asset_type_query(self, user_id):
+        """Fetch asset type query filtering based on group access."""
+        data_source_has_any_group_access = GroupDataSourceAccess.objects.filter(
+            data_source=OuterRef("data_source")
+        )
+
+        data_source_has_user_membership = GroupDataSourceAccess.objects.filter(
+            data_source=OuterRef("data_source"),
+            group__members__user_id=user_id,
+        )
+
+        return (
+            AssetType.objects.select_related("sub_category__category", "data_source")
+            .annotate(
+                has_any_group_access=Exists(data_source_has_any_group_access),
+                has_user_membership=Exists(data_source_has_user_membership),
+            )
+            .filter(Q(has_any_group_access=False) | Q(has_user_membership=True))
+        )
+
+    def _update_asset_type_query_with_counts(self, focus_area, asset_types_q):
+        """Update asset type query with annotations for counts of assets."""
+        if focus_area and focus_area.geometry:
+            return asset_types_q.annotate(
+                asset_count_in_focus_area=Count(
+                    "assets", filter=Q(assets__geom__within=focus_area.geometry), distinct=True
+                ),
+                asset_count_total=Count("assets", distinct=True),
+            )
+        return asset_types_q.annotate(
+            asset_count_in_focus_area=Count("assets", distinct=True),
+            asset_count_total=Count("assets", distinct=True),
+        )

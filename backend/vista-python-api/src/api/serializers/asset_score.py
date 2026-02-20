@@ -16,6 +16,8 @@ class AssetScoreSerializer(serializers.ModelSerializer):
     which combines data from both views.
     """
 
+    id = serializers.UUIDField(source="asset_id")
+
     class Meta:
         """Configuration for the `AssetScoreSerializer`."""
 
