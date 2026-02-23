@@ -65,6 +65,7 @@ class TestAssetFilterBuilderSQL:
             focus_area_id=focus_area_id,
             type_filters={},
             global_filter=None,
+            disallowed_type_ids=set(),
         )
         builder = AssetFilterBuilder(ctx)
 
@@ -105,6 +106,7 @@ class TestAssetFilterBuilderSQL:
             focus_area_id=focus_area_id,
             type_filters={station_type.id: score_filter},
             global_filter=None,
+            disallowed_type_ids=set(),
         )
         builder = AssetFilterBuilder(ctx)
 
@@ -148,6 +150,7 @@ class TestAssetFilterBuilderSQL:
             focus_area_id=focus_area_id,
             type_filters={station_type.id: station_filter},
             global_filter=None,
+            disallowed_type_ids=set(),
         )
         builder = AssetFilterBuilder(ctx)
 
@@ -177,6 +180,7 @@ class TestAssetFilterBuilderSQL:
             focus_area_id=focus_area_id,
             type_filters={},
             global_filter=None,
+            disallowed_type_ids=set(),
         )
         builder = AssetFilterBuilder(ctx)
 
@@ -211,6 +215,7 @@ class TestAssetFilterBuilderSQL:
             focus_area_id=focus_area_id,
             type_filters={},
             global_filter=global_filter,
+            disallowed_type_ids=set(),
         )
         builder = AssetFilterBuilder(ctx)
 
@@ -242,6 +247,7 @@ class TestAssetFilterBuilderSQL:
             focus_area_id=focus_area_id,
             type_filters={},
             global_filter=None,
+            disallowed_type_ids=set(),
         )
         builder = AssetFilterBuilder(ctx)
 
@@ -273,6 +279,7 @@ class TestAssetFilterBuilderSQL:
             focus_area_id=focus_area_id,
             type_filters={},
             global_filter=None,
+            disallowed_type_ids=set(),
         )
         builder = AssetFilterBuilder(ctx)
 
@@ -287,6 +294,35 @@ class TestAssetFilterBuilderSQL:
         print(sql)
         print("=" * 80 + "\n")
 
+        assert "NOT" in sql or "not" in sql.lower()
+
+    def test_with_permission_exclusion_q(self, scenario, mock_user_id, asset_type_setup):
+        """Visualize SQL when permission exclusion Q is applied (data source access)."""
+        focus_area_id = uuid.uuid4()
+        excluded_type = asset_type_setup["station_type"].id
+
+        ctx = FilterContext(
+            scenario_id=scenario.id,
+            user_id=mock_user_id,
+            focus_area_id=focus_area_id,
+            type_filters={},
+            global_filter=None,
+            disallowed_type_ids={excluded_type},
+        )
+        builder = AssetFilterBuilder(ctx)
+
+        q = builder.build_by_score_only(geometry=None)
+
+        queryset = Asset.objects.filter(q)
+        sql = str(queryset.query)
+
+        print("\n" + "=" * 80)
+        print("by_score_only mode - with permission exclusion Q")
+        print("=" * 80)
+        print(sql)
+        print("=" * 80 + "\n")
+
+        assert str(excluded_type) in sql
         assert "NOT" in sql or "not" in sql.lower()
 
 
@@ -396,6 +432,7 @@ class TestAssetFilterBuilderExposureExecution:
             focus_area_id=focus_area_id,
             type_filters={setup["asset_type"].id: score_filter},
             global_filter=None,
+            disallowed_type_ids=set(),
         )
         builder = AssetFilterBuilder(ctx)
 
@@ -428,6 +465,7 @@ class TestAssetFilterBuilderExposureExecution:
             focus_area_id=focus_area_id,
             type_filters={setup["asset_type"].id: score_filter},
             global_filter=None,
+            disallowed_type_ids=set(),
         )
         builder = AssetFilterBuilder(ctx)
 
@@ -460,6 +498,7 @@ class TestAssetFilterBuilderExposureExecution:
             focus_area_id=focus_area_id,
             type_filters={setup["asset_type"].id: score_filter},
             global_filter=None,
+            disallowed_type_ids=set(),
         )
         builder = AssetFilterBuilder(ctx)
 
@@ -491,6 +530,7 @@ class TestAssetFilterBuilderExposureExecution:
             focus_area_id=focus_area_id,
             type_filters={setup["asset_type"].id: score_filter},
             global_filter=None,
+            disallowed_type_ids=set(),
         )
         builder = AssetFilterBuilder(ctx)
 
@@ -524,6 +564,7 @@ class TestAssetFilterBuilderExposureExecution:
             focus_area_id=focus_area_id,
             type_filters={setup["asset_type"].id: score_filter},
             global_filter=None,
+            disallowed_type_ids=set(),
         )
         builder = AssetFilterBuilder(ctx)
 

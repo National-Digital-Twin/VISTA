@@ -12,17 +12,22 @@ from api.models import (
     AssetCriticalityOverride,
     AssetSubCategory,
     AssetType,
+    DataSource,
     Dependency,
     ExposureLayer,
     ExposureLayerType,
     FocusArea,
+    Group,
+    GroupDataSourceAccess,
+    GroupMembership,
     Scenario,
     ScenarioAsset,
     VisibleExposureLayer,
 )
 from api.tests.conftest import buffer_geometry
 
-http_success_code = 200
+http_ok = 200
+http_forbidden = 403
 http_not_found = 404
 user_id = uuid.uuid4()
 other_user_id = uuid.uuid4()
@@ -103,6 +108,15 @@ def mock_user_id():
 
 
 @pytest.fixture
+def user_group_membership(fixture, db):  # noqa: ARG001
+    """Mock limited access to data source for user."""
+    group = Group.objects.create(name="Limited Access", created_by=uuid.uuid4())
+    GroupMembership.objects.create(group=group, user_id=other_user_id, created_by=uuid.uuid4())
+    data_source_grid = fixture["data_sources"][0]
+    return GroupDataSourceAccess.objects.create(data_source=data_source_grid, group=group)
+
+
+@pytest.fixture
 def fixture(db):  # noqa: ARG001
     """Create sample scenarios."""
     cat = AssetCategory.objects.create(id=uuid.uuid4(), name="Cat")
@@ -110,8 +124,11 @@ def fixture(db):  # noqa: ARG001
     scenario1 = Scenario.objects.create(name="Scenario1", is_active=True)
     scenario2 = Scenario.objects.create(name="Scenario2", is_active=False)
 
+    data_source_grid = DataSource.objects.create(name="Grid")
+    data_source_ngd = DataSource.objects.create(name="NGD")
+
     type_substation = AssetType.objects.create(
-        id=uuid.uuid4(), name="Substations", sub_category=sub_cat
+        id=uuid.uuid4(), name="Substations", sub_category=sub_cat, data_source=data_source_grid
     )
     asset1 = Asset.objects.create(
         external_id=uuid.uuid4(),
@@ -121,7 +138,10 @@ def fixture(db):  # noqa: ARG001
         type=type_substation,
     )
     type_wastewater_collection = AssetType.objects.create(
-        id=uuid.uuid4(), name="Wastewater Collections", sub_category=sub_cat
+        id=uuid.uuid4(),
+        name="Wastewater Collections",
+        sub_category=sub_cat,
+        data_source=data_source_ngd,
     )
     asset2 = Asset.objects.create(
         external_id=uuid.uuid4(),
@@ -131,7 +151,9 @@ def fixture(db):  # noqa: ARG001
         type=type_wastewater_collection,
     )
 
-    type_stadium = AssetType.objects.create(id=uuid.uuid4(), name="Stadiums", sub_category=sub_cat)
+    type_stadium = AssetType.objects.create(
+        id=uuid.uuid4(), name="Stadiums", sub_category=sub_cat, data_source=data_source_ngd
+    )
     asset3 = Asset.objects.create(
         external_id=uuid.uuid4(),
         id=uuid.uuid4(),
@@ -209,6 +231,7 @@ def fixture(db):  # noqa: ARG001
             scenario_asset_5,
             scenario_asset_6,
         ],
+        "data_sources": [data_source_grid, data_source_ngd],
         "dependencies": [dep1, dep2],
         "exposure_layers": [vis_exposure_layer, vis_exposure_layer2],
         "scenarios": [scenario1, scenario2],
@@ -227,7 +250,7 @@ def test_retrieve_asset_score(fixture, client, asset_num, scenario_num, mock_use
     data = response.json()
 
     mock_user_id.assert_called_once()
-    assert response.status_code == http_success_code
+    assert response.status_code == http_ok
     assert (
         data["criticalityScore"]
         == f"{_get_criticality_score_for_asset(fixture, asset.id, scenario.id):.2f}"
@@ -253,7 +276,7 @@ def test_retrieve_asset_score_for_alternate_user(fixture, client, asset_num, moc
     data = response.json()
 
     mock_other_user_id.assert_called_once()
-    assert response.status_code == http_success_code
+    assert response.status_code == http_ok
     assert (
         data["criticalityScore"]
         == f"{_get_criticality_score_for_asset(fixture, asset.id, scenario.id):.2f}"
@@ -293,7 +316,7 @@ def test_retrieve_asset_score_with_focus_area_id(fixture, client, mock_user_id):
     data = response.json()
 
     mock_user_id.assert_called_once()
-    assert response.status_code == http_success_code
+    assert response.status_code == http_ok
     # Exposure score should be calculated for this focus area's visible layers
     expected_exposure = _get_exposure_score_for_asset(fixture, asset.id, scenario.id)
     assert data["exposureScore"] == f"{expected_exposure:.2f}"
@@ -320,7 +343,7 @@ def test_retrieve_asset_score_focus_area_no_exposure_layers(fixture, client, moc
     data = response.json()
 
     mock_user_id.assert_called_once()
-    assert response.status_code == http_success_code
+    assert response.status_code == http_ok
     # No exposure layers enabled = exposure score 0
     assert data["exposureScore"] == "0.00"
 
@@ -366,5 +389,21 @@ def test_retrieve_asset_score_reflects_criticality_override(fixture, client, moc
     data = response.json()
 
     mock_user_id.assert_called_once()
-    assert response.status_code == http_success_code
+    assert response.status_code == http_ok
     assert data["criticalityScore"] == "1.00"
+
+
+def test_retrieve_asset_score_for_no_access_data_source_is_forbidden(
+    fixture,
+    client,
+    mock_user_id,
+    user_group_membership,  # noqa: ARG001
+):
+    """Check that user attempting to access asset score without permission receives 403."""
+    asset = fixture["assets"][0]  # Substation1, type-level criticality = 3
+    scenario = fixture["scenarios"][0]
+
+    response = client.get(f"/api/scenarios/{scenario.id}/assetscores/{asset.id}/")
+
+    mock_user_id.assert_called_once()
+    assert response.status_code == http_forbidden
