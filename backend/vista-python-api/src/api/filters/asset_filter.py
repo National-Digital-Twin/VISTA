@@ -33,6 +33,7 @@ class FilterContext:
     focus_area_id: UUID
     type_filters: dict[UUID, AssetScoreFilter]
     global_filter: AssetScoreFilter | None
+    disallowed_type_ids: set[UUID]
 
 
 class AssetFilterBuilder:
@@ -121,6 +122,11 @@ class AssetFilterBuilder:
             base_q &= self._build_score_filter_q(score_filter)
         return base_q
 
+    def _permission_exclusion_q(self) -> Q:
+        if not self.ctx.disallowed_type_ids:
+            return Q()
+        return Q(type_id__in=self.ctx.disallowed_type_ids)
+
     def _build_score_filter_q(self, score_filter: AssetScoreFilter) -> Q:
         """Build Q filter for score criteria, handling base and exposure separately."""
         result = Q()
@@ -153,6 +159,7 @@ class AssetFilterBuilder:
             result |= self.type_filter(type_id, geometry)
         if exclude_q:
             result &= ~exclude_q
+        result &= ~self._permission_exclusion_q()
         return result
 
     def build_by_score_only(self, geometry: Polygon | None = None, exclude_q: Q | None = None) -> Q:
@@ -165,4 +172,5 @@ class AssetFilterBuilder:
             result &= Q(geom__within=geometry)
         if exclude_q:
             result &= ~exclude_q
+        result &= ~self._permission_exclusion_q()
         return result

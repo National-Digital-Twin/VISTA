@@ -12,6 +12,7 @@ from api.filters.asset_filter import has_criteria
 from api.models import AssetScoreFilter, FocusArea, GroupDataSourceAccess, Scenario, VisibleAsset
 from api.models.asset import Asset
 from api.models.asset_type import AssetType
+from api.services.data_source_access_service import get_asset_types_user_cannot_access
 from api.utils.auth import get_user_id_from_request
 
 
@@ -91,9 +92,12 @@ class ScenarioAssetTypesView(APIView):
 
         visible_q = VisibleAsset.objects.filter(focus_area_id=focus_area_id)
         visible_type_ids = set(visible_q.values_list("asset_type_id", flat=True))
+        disallowed_type_ids = get_asset_types_user_cannot_access(user_id)
 
         type_filters = _get_focus_area_score_filters(focus_area_id)
-        ctx = FilterContext(scenario_id, user_id, focus_area_id, type_filters, None)
+        ctx = FilterContext(
+            scenario_id, user_id, focus_area_id, type_filters, None, disallowed_type_ids
+        )
         builder = AssetFilterBuilder(ctx)
 
         focus_area = None

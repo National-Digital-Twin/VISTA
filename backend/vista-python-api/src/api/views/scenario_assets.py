@@ -9,6 +9,7 @@ from api.filters import AssetFilterBuilder, FilterContext
 from api.models import FocusArea, Scenario
 from api.models.asset import Asset
 from api.serializers import ScenarioAssetSerializer
+from api.services.data_source_access_service import get_asset_types_user_cannot_access
 from api.utils.auth import get_user_id_from_request
 
 
@@ -23,8 +24,11 @@ def _build_focus_area_q(focus_area: FocusArea, scenario_id, user_id, exclude_q=N
             type_filters[sf.asset_type_id] = sf
 
     visible_type_ids = {va.asset_type_id for va in focus_area.visible_assets.all()}
+    disallowed_type_ids = get_asset_types_user_cannot_access(user_id)
 
-    ctx = FilterContext(scenario_id, user_id, focus_area.id, type_filters, global_filter)
+    ctx = FilterContext(
+        scenario_id, user_id, focus_area.id, type_filters, global_filter, disallowed_type_ids
+    )
     builder = AssetFilterBuilder(ctx)
 
     if focus_area.filter_mode == "by_score_only":

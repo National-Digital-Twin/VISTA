@@ -888,7 +888,7 @@ def test_asset_types_includes_total_asset_count_focus_area(
 
 
 @pytest.fixture
-def score_test_types(db):  # noqa: ARG001
+def score_test_types(db, limited_rail_data_source):  # noqa: ARG001
     """Create asset types for score filtering tests."""
     category = AssetCategory.objects.create(id=uuid.uuid4(), name="Score Test Category")
     sub_category = AssetSubCategory.objects.create(
@@ -900,7 +900,7 @@ def score_test_types(db):  # noqa: ARG001
         id=uuid.uuid4(),
         name="Score Stations",
         sub_category=sub_category,
-        data_source=data_source,
+        data_source=limited_rail_data_source,
     )
     pylon_type = AssetType.objects.create(
         id=uuid.uuid4(),
@@ -978,6 +978,40 @@ def test_by_score_only_mode_returns_all_scored_assets(
     assert len(data) == 2
     names = [a["name"] for a in data]
     assert score_test_assets["station"].name in names
+    assert score_test_assets["pylon"].name in names
+
+
+@pytest.mark.django_db
+def test_by_score_only_mode_excludes_assets_without_permission_to_view(  # noqa: PLR0913
+    scenario,
+    limited_rail_data_source,  # noqa: ARG001
+    score_test_types,
+    score_test_assets,
+    mapwide_focus_area,
+    data_source_access,  # noqa: ARG001
+    client,
+):
+    """Test that by_score_only mode returns all assets that have scores."""
+    station_type = score_test_types["station"]
+    pylon_type = score_test_types["pylon"]
+
+    # Create ScenarioAsset records (populates asset_scores view)
+    ScenarioAsset.objects.create(scenario=scenario, asset_type=station_type, criticality_score=3)
+    ScenarioAsset.objects.create(scenario=scenario, asset_type=pylon_type, criticality_score=1)
+
+    # Set map-wide to by_score_only mode
+    mapwide_focus_area.filter_mode = "by_score_only"
+    mapwide_focus_area.save()
+
+    with CaptureQueriesContext(connection) as ctx:
+        response = client.get(f"/api/scenarios/{scenario.id}/assets/")
+    data = response.json()
+    print_sql("by_score_only_mode_returns_all_scored_assets", ctx.captured_queries)
+
+    assert response.status_code == http_success_code
+    assert len(data) == 1
+    names = [a["name"] for a in data]
+    assert score_test_assets["station"].name not in names
     assert score_test_assets["pylon"].name in names
 
 
