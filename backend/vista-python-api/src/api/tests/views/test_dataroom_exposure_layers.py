@@ -75,6 +75,7 @@ def approved_layer(scenario, user_drawn_type):
         user_id=uuid.uuid4(),
         scenario=scenario,
         status=ExposureLayer.APPROVED,
+        published_id_int=1,
     )
 
 
@@ -224,6 +225,26 @@ def test_get_returns_geometry(scenario, system_layer, client):
     layer = next(d for d in data if d["id"] == str(system_layer.id))
     assert layer["geometry"] is not None
     assert layer["geometry"]["type"] == "Polygon"
+
+
+@pytest.mark.django_db
+def test_get_returns_published_id(scenario, approved_layer, client):
+    """Test GET returns published ID."""
+    response = client.get(f"/api/scenarios/{scenario.id}/dataroom/exposure-layers/")
+    data = response.json()
+
+    layer = next(d for d in data if d["id"] == str(approved_layer.id))
+    assert layer["publishedId"] == approved_layer.published_id
+
+
+@pytest.mark.django_db
+@pytest.mark.usefixtures("system_layer", "pending_layer")
+def test_get_does_not_return_published_id_for_unapproved_layers(scenario, client):
+    """Test GET does not return published ID for layers that are not approved or system."""
+    response = client.get(f"/api/scenarios/{scenario.id}/dataroom/exposure-layers/")
+    data = response.json()
+    for layer in data:
+        assert layer["publishedId"] is None
 
 
 @pytest.mark.django_db
