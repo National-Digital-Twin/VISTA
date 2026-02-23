@@ -1728,3 +1728,54 @@ def test_bulk_toggle_other_users_approved_layers_by_type(
     assert VisibleExposureLayer.objects.filter(
         focus_area=focus_area, exposure_layer=other_approved
     ).exists()
+
+
+@pytest.mark.django_db
+def test_remove_cleans_up_non_owner_visibility_records(
+    scenario, mock_user_id, user_drawn_type, client
+):
+    """Test that removing a layer removes visibility records for non-owners."""
+    owner_id = uuid.uuid4()
+    layer = ExposureLayer.objects.create(
+        name="Approved Layer",
+        geometry=GEOSGeometry("POLYGON((0.2 0.2, 0.2 0.3, 0.3 0.3, 0.3 0.2, 0.2 0.2))"),
+        geometry_buffered=buffer_geometry(
+            GEOSGeometry("POLYGON((0.2 0.2, 0.2 0.3, 0.3 0.3, 0.3 0.2, 0.2 0.2))")
+        ),
+        type=user_drawn_type,
+        user_id=owner_id,
+        scenario=scenario,
+        status=ExposureLayer.APPROVED,
+    )
+
+    owner_focus_area = FocusArea.objects.create(
+        scenario=scenario,
+        user_id=owner_id,
+        name="Owner Area",
+        geometry=GEOSGeometry("POLYGON((0 0, 0 1, 1 1, 1 0, 0 0))"),
+        filter_mode="by_asset_type",
+        is_active=True,
+        is_system=False,
+    )
+    other_focus_area = FocusArea.objects.create(
+        scenario=scenario,
+        user_id=mock_user_id,
+        name="Other Area",
+        geometry=GEOSGeometry("POLYGON((0 0, 0 1, 1 1, 1 0, 0 0))"),
+        filter_mode="by_asset_type",
+        is_active=True,
+        is_system=False,
+    )
+
+    VisibleExposureLayer.objects.create(focus_area=owner_focus_area, exposure_layer=layer)
+    VisibleExposureLayer.objects.create(focus_area=other_focus_area, exposure_layer=layer)
+
+    response = client.post(f"/api/scenarios/{scenario.id}/exposure-layers/{layer.id}/remove/")
+    assert response.status_code == http_ok
+
+    assert VisibleExposureLayer.objects.filter(
+        focus_area=owner_focus_area, exposure_layer=layer
+    ).exists()
+    assert not VisibleExposureLayer.objects.filter(
+        focus_area=other_focus_area, exposure_layer=layer
+    ).exists()

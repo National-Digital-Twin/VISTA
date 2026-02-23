@@ -2,7 +2,7 @@
 
 import json
 
-from django.db import connection
+from django.db import connection, transaction
 from django.db.models import Case, CharField, F, Prefetch, Q, Value, When
 from django.shortcuts import get_object_or_404
 from rest_framework import status, viewsets
@@ -403,7 +403,15 @@ class ScenarioExposureLayersView(viewsets.ViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        exposure_layer.status = ExposureLayer.UNPUBLISHED
-        exposure_layer.removed_by = user_id
-        exposure_layer.save()
+        with transaction.atomic():
+            exposure_layer.status = ExposureLayer.UNPUBLISHED
+            exposure_layer.removed_by = user_id
+            exposure_layer.save()
+
+            VisibleExposureLayer.objects.filter(
+                exposure_layer=exposure_layer,
+            ).exclude(
+                focus_area__user_id=exposure_layer.user_id,
+            ).delete()
+
         return Response(status=status.HTTP_200_OK)
