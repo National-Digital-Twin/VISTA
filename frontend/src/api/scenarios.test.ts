@@ -44,6 +44,23 @@ describe('scenarios API', () => {
             expect(result[0].isActive).toBe(true);
         });
 
+        it('returns scenarios with optional pendingExposureCount', async () => {
+            const mockScenarios = [
+                { id: 's1', name: 'Scenario 1', isActive: true, code: 'S1', pendingExposureCount: 2 },
+                { id: 's2', name: 'Scenario 2', isActive: false, code: 'S2', pendingExposureCount: 0 },
+            ];
+
+            fetchMock.mockResolvedValueOnce({
+                ok: true,
+                json: vi.fn().mockResolvedValue(mockScenarios),
+            });
+
+            const result = await fetchScenarios();
+
+            expect(result[0].pendingExposureCount).toBe(2);
+            expect(result[1].pendingExposureCount).toBe(0);
+        });
+
         it('throws error when API call fails', async () => {
             fetchMock.mockResolvedValueOnce({
                 ok: false,

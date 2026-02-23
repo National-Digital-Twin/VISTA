@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { Alert, Box, Snackbar, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, Chip } from '@mui/material';
+import { Alert, Badge, Box, Snackbar, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, Chip } from '@mui/material';
 import { fetchScenarios, type Scenario } from '@/api/scenarios';
 import { SortableTableHeader } from '@/components/SortableTableHeader';
 import { SearchTextField } from '@/components/SearchTextField';
@@ -82,6 +82,7 @@ export default function ManageScenarios() {
                 <Table>
                     <TableHead>
                         <TableRow>
+                            <TableCell sx={{ width: 48, paddingX: 1 }} />
                             <SortableTableHeader field="code" label="Scenario ID" sortField={sortField} sortDirection={sortDirection} onSort={handleSort} />
                             <SortableTableHeader field="name" label="Incident type" sortField={sortField} sortDirection={sortDirection} onSort={handleSort} />
                             <SortableTableHeader field="isActive" label="Status" sortField={sortField} sortDirection={sortDirection} onSort={handleSort} />
@@ -90,6 +91,9 @@ export default function ManageScenarios() {
                     <TableBody>
                         {filteredScenarios.map((scenario) => (
                             <TableRow key={scenario.id} hover sx={{ cursor: 'pointer' }} onClick={() => navigate(`/data-room/scenarios/${scenario.id}`)}>
+                                <TableCell sx={{ width: 48, paddingX: 1 }} align="center">
+                                    {(scenario.pendingExposureCount ?? 0) > 0 ? <Badge badgeContent={scenario.pendingExposureCount} color="error" /> : null}
+                                </TableCell>
                                 <TableCell>
                                     <Typography sx={{ color: 'primary.main', fontWeight: 500 }}>{scenario.code || scenario.id}</Typography>
                                 </TableCell>
@@ -105,7 +109,7 @@ export default function ManageScenarios() {
                         ))}
                         {filteredScenarios.length === 0 && (
                             <TableRow>
-                                <TableCell colSpan={3} align="center">
+                                <TableCell colSpan={4} align="center">
                                     <Typography color="text.secondary">No scenarios found.</Typography>
                                 </TableCell>
                             </TableRow>

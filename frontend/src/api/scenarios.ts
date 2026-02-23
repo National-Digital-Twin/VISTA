@@ -5,6 +5,7 @@ export type Scenario = {
     name: string;
     isActive: boolean;
     code: string;
+    pendingExposureCount?: number;
 };
 
 export const fetchScenarios = async (): Promise<Scenario[]> => {

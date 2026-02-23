@@ -18,9 +18,8 @@ const UserStartupProvider = ({ children }: UserStartupProviderProps) => {
                     method: 'POST',
                     credentials: 'include',
                 });
-            } catch {
                 // eslint-disable-next-line no-empty
-            }
+            } catch {}
         };
 
         void resolveInvites();

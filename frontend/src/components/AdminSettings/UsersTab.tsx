@@ -84,8 +84,8 @@ const UsersTab: React.FC = () => {
             try {
                 const data: UserData[] = await fetchAllUsers();
                 setUsers(data.map(mapUserDataToUser));
-            } catch {
                 // eslint-disable-next-line no-empty
+            } catch {
             } finally {
                 setLoading(false);
             }

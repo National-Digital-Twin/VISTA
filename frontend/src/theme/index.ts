@@ -23,6 +23,7 @@ const theme = createTheme({
         border: {
             main: '#c2c2c2',
         },
+        divider: 'rgba(0, 0, 0, 0.12)',
         chip: {
             main: '#D4E3FF',
         },

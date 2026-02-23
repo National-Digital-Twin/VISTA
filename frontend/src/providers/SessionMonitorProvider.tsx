@@ -34,9 +34,8 @@ const SessionMonitorProvider = ({ children, enabled = true }: SessionMonitorProv
                     await signout();
                     return;
                 }
-            } catch {
                 // eslint-disable-next-line no-empty
-            }
+            } catch {}
         };
 
         ping();

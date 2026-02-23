@@ -2,11 +2,11 @@ import { type ReactNode, useState, useEffect, useRef } from 'react';
 import { Link, Outlet, useLocation, useSearchParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
+    Badge,
     Box,
     Container,
     Typography,
     Button,
-    Stack,
     Divider,
     Alert,
     Snackbar,
@@ -22,7 +22,6 @@ import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOu
 import EditNoteIcon from '@mui/icons-material/EditNote';
 import InputIcon from '@mui/icons-material/Input';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
-import { alpha, type Theme } from '@mui/material/styles';
 import { format } from 'date-fns';
 import { fetchDataSources, DataSource } from '@/api/datasources';
 import { fetchScenarios, Scenario, setActiveScenario } from '@/api/scenarios';
@@ -34,65 +33,85 @@ export interface DataRoomOutletContext {
     getFormattedLastUpdated: (value: string | null) => string;
 }
 
-type SidebarButtonProps = {
+type SidebarItemProps = {
     icon: ReactNode;
     active?: boolean;
     disabled?: boolean;
     to?: string;
     onClick?: () => void;
+    badgeContent?: number;
     children: ReactNode;
 };
 
-function SidebarButton({ icon, active, disabled, to, onClick, children }: Readonly<SidebarButtonProps>) {
-    const baseProps = {
-        disableRipple: true,
-        disabled,
-        variant: 'text' as const,
-        startIcon: icon,
-        sx: {
-            justifyContent: 'flex-start',
-            paddingY: 0.75,
-            paddingX: 1,
-            minHeight: 'unset',
-            textTransform: 'none',
-            ...(active
-                ? {
-                      'borderRadius': 2,
-                      'color': 'primary.main',
-                      'backgroundColor': (theme: Theme) => alpha(theme.palette.primary.main, 0.12),
-                      '&:hover': {
-                          backgroundColor: (theme: Theme) => alpha(theme.palette.primary.main, 0.18),
-                      },
-                  }
-                : {
-                      'color': disabled ? 'text.disabled' : 'text.primary',
-                      '&:hover': {
-                          backgroundColor: 'transparent',
-                          color: 'primary.main',
-                      },
-                  }),
-        },
+function SidebarItem({ icon, active, disabled, to, onClick, badgeContent, children }: Readonly<SidebarItemProps>) {
+    let rowColor: 'text.disabled' | 'primary.main' | 'text.primary' = 'text.primary';
+    if (disabled) {
+        rowColor = 'text.disabled';
+    } else if (active) {
+        rowColor = 'primary.main';
+    }
+    const rowSx = {
+        'display': 'flex',
+        'alignItems': 'center',
+        'justifyContent': 'space-between',
+        'p': 1.5,
+        'pr': 2,
+        'cursor': disabled ? 'default' : 'pointer',
+        'borderRadius': 1,
+        'backgroundColor': active ? 'chip.main' : 'transparent',
+        'color': rowColor,
+        'textDecoration': 'none',
+        '&:hover': disabled
+            ? undefined
+            : {
+                  backgroundColor: active ? 'chip.main' : 'action.hover',
+              },
     };
 
-    if (to) {
-        return (
-            <Button component={Link} to={to} {...baseProps}>
+    const left = (
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: 0 }}>
+            {icon}
+            <Typography variant="body1" component="span" sx={{ textTransform: 'none' }}>
                 {children}
-            </Button>
+            </Typography>
+        </Box>
+    );
+
+    const right =
+        badgeContent !== null && badgeContent !== undefined && badgeContent > 0 ? (
+            <Badge badgeContent={badgeContent} color="error" sx={{ flexShrink: 0 }} />
+        ) : null;
+
+    if (to && !disabled) {
+        return (
+            <Box component={Link} to={to} sx={rowSx}>
+                {left}
+                {right}
+            </Box>
+        );
+    }
+
+    if (onClick && !disabled) {
+        return (
+            <Box component="button" type="button" onClick={onClick} sx={{ ...rowSx, border: 0, width: '100%', font: 'inherit', textAlign: 'left' }}>
+                {left}
+                {right}
+            </Box>
         );
     }
 
     return (
-        <Button onClick={onClick} {...baseProps}>
-            {children}
-        </Button>
+        <Box sx={rowSx} aria-disabled={disabled}>
+            {left}
+            {right}
+        </Box>
     );
 }
 
 export default function DataRoom() {
     const location = useLocation();
     const isManageScenariosActive = location.pathname.startsWith('/data-room/scenarios');
-    const isDataSourcesActive = location.pathname === '/data-room';
+    const isDataSourcesActive = location.pathname === '/data-room' || location.pathname.startsWith('/data-room/data-source');
 
     const { data, isLoading, isError, error } = useQuery<DataSource[], Error>({
         queryKey: ['data-sources'],
@@ -199,6 +218,7 @@ export default function DataRoom() {
     });
 
     const totalDataSources = data?.length ?? 0;
+    const totalPendingExposure = scenarios.reduce((sum, s) => sum + (s.pendingExposureCount ?? 0), 0);
 
     const handleLoadScenarioClick = () => {
         setScenarioModalOpen(true);
@@ -248,46 +268,47 @@ export default function DataRoom() {
                         pr: { lg: 3 },
                         pb: { xs: 3, lg: 0 },
                         borderRight: { xs: 'none', lg: '1px solid' },
-                        borderColor: 'divider',
+                        borderColor: { lg: 'divider' },
                         display: 'flex',
                         flexDirection: 'column',
                         gap: 2,
                         height: '100%',
                     }}
                 >
-                    <Box>
-                        <Typography variant="body2" sx={{ color: 'text.secondary', mb: 1.5 }}>
+                    <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                        <Typography variant="subtitle1" component="h3" sx={{ mb: 2, fontWeight: 500 }}>
                             Scenario management
                         </Typography>
-                        <Stack spacing={1}>
-                            <SidebarButton icon={<AccountTreeIcon fontSize="small" />} disabled={!isAdmin} onClick={handleLoadScenarioClick}>
+                        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                            <SidebarItem icon={<AccountTreeIcon fontSize="small" />} disabled={!isAdmin} onClick={handleLoadScenarioClick}>
                                 Load scenario
-                            </SidebarButton>
-                            <SidebarButton
+                            </SidebarItem>
+                            <SidebarItem
                                 icon={<EditNoteIcon fontSize="small" />}
                                 disabled={!isAdmin}
                                 to="/data-room/scenarios"
                                 active={isManageScenariosActive}
+                                badgeContent={totalPendingExposure > 0 ? totalPendingExposure : undefined}
                             >
                                 Manage scenario
-                            </SidebarButton>
-                            <SidebarButton icon={<AddCircleOutlineOutlinedIcon fontSize="small" />} disabled>
+                            </SidebarItem>
+                            <SidebarItem icon={<AddCircleOutlineOutlinedIcon fontSize="small" />} disabled>
                                 Create new scenario
-                            </SidebarButton>
-                        </Stack>
+                            </SidebarItem>
+                        </Box>
                     </Box>
 
                     <Divider />
 
-                    <Box>
-                        <Typography variant="body2" sx={{ color: 'text.secondary', mb: 1.5 }}>
+                    <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                        <Typography variant="subtitle1" component="h3" sx={{ mb: 2, fontWeight: 500 }}>
                             Data sources and access management
                         </Typography>
-                        <Stack spacing={1}>
-                            <SidebarButton icon={<InputIcon fontSize="small" />} to="/data-room" active={isDataSourcesActive}>
+                        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                            <SidebarItem icon={<InputIcon fontSize="small" />} to="/data-room" active={isDataSourcesActive}>
                                 Data sources ({totalDataSources})
-                            </SidebarButton>
-                        </Stack>
+                            </SidebarItem>
+                        </Box>
                     </Box>
                 </Box>
 

@@ -17,7 +17,7 @@ export const useNavigation = () => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
-    const isActive = (path: string) => pathname === path;
+    const isActive = (path: string) => (path === '/' ? pathname === '/' : pathname === path || pathname.startsWith(`${path}/`));
 
     const handleLink = () => {
         document.documentElement.scrollTo(0, 0);

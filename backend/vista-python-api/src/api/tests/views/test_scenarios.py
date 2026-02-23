@@ -33,9 +33,22 @@ def test_list_scenarios(scenarios, client):
 
 
 @pytest.mark.django_db
+def test_list_scenarios_includes_pending_exposure_count(scenarios, client):  # noqa: ARG001
+    """Test that each scenario in the list includes pendingExposureCount."""
+    response = client.get("/api/scenarios/")
+    data = response.json()
+
+    assert response.status_code == status.HTTP_200_OK
+    for scenario_data in data:
+        assert "pendingExposureCount" in scenario_data
+        assert isinstance(scenario_data["pendingExposureCount"], int)
+        assert scenario_data["pendingExposureCount"] >= 0
+
+
+@pytest.mark.django_db
 def test_retrieve_scenario(scenarios, client):
     """Test retrieving a single scenario."""
-    scenario = scenarios[1]  # The active scenario
+    scenario = scenarios[1]
     response = client.get(f"/api/scenarios/{scenario.id}/")
     data = response.json()
 

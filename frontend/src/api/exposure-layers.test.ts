@@ -8,6 +8,10 @@ import {
     createExposureLayer,
     updateExposureLayer,
     deleteExposureLayer,
+    fetchDataroomExposureLayers,
+    approveExposureLayer,
+    rejectExposureLayer,
+    removeExposureLayer,
 } from './exposure-layers';
 
 vi.mock('@/config/app-config', () => ({
@@ -387,6 +391,102 @@ describe('exposure-layers API', () => {
             });
 
             await expect(deleteExposureLayer('scenario-1', 'layer-1')).rejects.toThrow('Failed to delete exposure layer: Forbidden');
+        });
+    });
+
+    describe('fetchDataroomExposureLayers', () => {
+        it('fetches dataroom exposure layers from scenario endpoint', async () => {
+            const mockLayers = [{ id: 'layer-1', name: 'Pending Layer', status: 'pending', isUserDefined: true, geometry: mockGeometry }];
+            fetchMock.mockResolvedValue({
+                ok: true,
+                json: vi.fn().mockResolvedValue(mockLayers),
+            });
+
+            const result = await fetchDataroomExposureLayers('scenario-1');
+
+            expect(fetchMock).toHaveBeenCalledWith('/ndtp-python/api/scenarios/scenario-1/dataroom/exposure-layers/', {
+                headers: { 'Content-Type': 'application/json' },
+            });
+            expect(result).toEqual(mockLayers);
+            expect(result).toHaveLength(1);
+        });
+
+        it('throws error when fetch fails', async () => {
+            fetchMock.mockResolvedValue({
+                ok: false,
+                statusText: 'Not Found',
+            });
+
+            await expect(fetchDataroomExposureLayers('scenario-1')).rejects.toThrow('Failed to fetch dataroom exposure layers: Not Found');
+        });
+    });
+
+    describe('approveExposureLayer', () => {
+        it('sends POST request to approve endpoint', async () => {
+            fetchMock.mockResolvedValue({ ok: true });
+
+            await approveExposureLayer('scenario-1', 'layer-1');
+
+            expect(fetchMock).toHaveBeenCalledWith('/ndtp-python/api/scenarios/scenario-1/exposure-layers/layer-1/approve/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+            });
+        });
+
+        it('throws error with response text when not ok', async () => {
+            fetchMock.mockResolvedValue({
+                ok: false,
+                statusText: 'Forbidden',
+                text: vi.fn().mockResolvedValue('Not allowed'),
+            });
+
+            await expect(approveExposureLayer('scenario-1', 'layer-1')).rejects.toThrow('Not allowed');
+        });
+    });
+
+    describe('rejectExposureLayer', () => {
+        it('sends POST request to reject endpoint', async () => {
+            fetchMock.mockResolvedValue({ ok: true });
+
+            await rejectExposureLayer('scenario-1', 'layer-1');
+
+            expect(fetchMock).toHaveBeenCalledWith('/ndtp-python/api/scenarios/scenario-1/exposure-layers/layer-1/reject/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+            });
+        });
+
+        it('throws error when response is not ok', async () => {
+            fetchMock.mockResolvedValue({
+                ok: false,
+                statusText: 'Bad Request',
+                text: vi.fn().mockResolvedValue(''),
+            });
+
+            await expect(rejectExposureLayer('scenario-1', 'layer-1')).rejects.toThrow('Failed to reject exposure layer: Bad Request');
+        });
+    });
+
+    describe('removeExposureLayer', () => {
+        it('sends POST request to remove endpoint', async () => {
+            fetchMock.mockResolvedValue({ ok: true });
+
+            await removeExposureLayer('scenario-1', 'layer-1');
+
+            expect(fetchMock).toHaveBeenCalledWith('/ndtp-python/api/scenarios/scenario-1/exposure-layers/layer-1/remove/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+            });
+        });
+
+        it('throws error when response is not ok', async () => {
+            fetchMock.mockResolvedValue({
+                ok: false,
+                statusText: 'Forbidden',
+                text: vi.fn().mockResolvedValue(''),
+            });
+
+            await expect(removeExposureLayer('scenario-1', 'layer-1')).rejects.toThrow('Failed to remove exposure layer: Forbidden');
         });
     });
 });

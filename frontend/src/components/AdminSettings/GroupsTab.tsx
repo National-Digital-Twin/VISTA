@@ -150,7 +150,6 @@ const getRadioGroupValue = (currentField: UserSortField, targetField: UserSortFi
     return currentDirection;
 };
 
-// eslint-disable-next-line sonarjs/cognitive-complexity
 const GroupsTab: React.FC = () => {
     const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
