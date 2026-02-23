@@ -121,6 +121,7 @@ def test_list_exposure_layers_includes_user_drawn(
     assert user_layer_data["status"] == ExposureLayer.UNPUBLISHED
     assert "geometry" in user_layer_data
     assert "createdAt" in user_layer_data
+    assert "publishedId" in user_layer_data
 
 
 @pytest.mark.django_db
@@ -206,6 +207,7 @@ def test_list_exposure_layers_shows_other_users_approved_layers(
         user_id=other_user_id,
         scenario=scenario,
         status=ExposureLayer.APPROVED,
+        published_id_int=1,
     )
 
     response = client.get(
@@ -218,6 +220,7 @@ def test_list_exposure_layers_shows_other_users_approved_layers(
     assert layer_data["name"] == "Other Approved"
     assert layer_data["isUserDefined"] is True
     assert layer_data["status"] == ExposureLayer.APPROVED
+    assert layer_data["publishedId"] == "UD.1"
 
 
 @pytest.mark.django_db
@@ -880,6 +883,7 @@ def test_admin_user_can_approve_exposure_layer(client, mock_user_id, scenario, u
     db_layer = ExposureLayer.objects.get(id=user_layer.id)
     assert db_layer.status == ExposureLayer.APPROVED
     assert db_layer.approved_by == mock_user_id
+    assert db_layer.published_id == "UD.1"
 
 
 @pytest.mark.django_db

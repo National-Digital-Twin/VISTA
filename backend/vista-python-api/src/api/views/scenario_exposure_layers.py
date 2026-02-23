@@ -175,6 +175,7 @@ class ScenarioExposureLayersView(viewsets.ViewSet):
             "createdAt": (
                 exposure_layer.created_at.isoformat() if exposure_layer.created_at else None
             ),
+            "publishedId": exposure_layer.published_id,
         }
 
     def create(self, request, scenario_id):
@@ -360,6 +361,9 @@ class ScenarioExposureLayersView(viewsets.ViewSet):
         exposure_layer.status = ExposureLayer.APPROVED
         exposure_layer.approved_by = user_id
         exposure_layer.save()
+
+        self._assign_published_id(exposure_layer)
+
         return Response(status=status.HTTP_200_OK)
 
     @action(detail=True, methods=["post"], url_path="reject")
@@ -407,3 +411,14 @@ class ScenarioExposureLayersView(viewsets.ViewSet):
         exposure_layer.removed_by = user_id
         exposure_layer.save()
         return Response(status=status.HTTP_200_OK)
+
+    def _assign_published_id(self, layer: ExposureLayer):
+        if layer.published_id_int is not None:
+            return layer
+
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT nextval('published_id_seq')")
+            layer.published_id_int = cursor.fetchone()[0]
+
+        layer.save(update_fields=["published_id_int"])
+        return layer

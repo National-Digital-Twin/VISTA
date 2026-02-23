@@ -56,27 +56,37 @@ class ExposureLayer(models.Model):
     approved_by = models.UUIDField(null=True, blank=True)
     rejected_by = models.UUIDField(null=True, blank=True)
     removed_by = models.UUIDField(null=True, blank=True)
+    published_id_int = models.IntegerField(null=True, blank=True, unique=True)
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Return the string representation of the model."""
         return self.name
 
     @property
-    def is_user_defined(self):
+    def is_user_defined(self) -> bool:
         """Return True if this is a user-defined exposure layer."""
         return self.user_id is not None
 
     @property
-    def is_editable(self):
+    def is_editable(self) -> bool:
         """Return True if layer is editable."""
         return self.type.is_user_editable and self.status == self.UNPUBLISHED
 
     @property
-    def is_ready_for_admin_review(self):
+    def is_ready_for_admin_review(self) -> bool:
         """Return True if layer is ready for approval or rejection."""
         return self.type.is_user_editable and self.status == self.PENDING
 
     @property
-    def is_ready_for_admin_removal(self):
+    def is_ready_for_admin_removal(self) -> bool:
         """Return True if layer is ready for removal."""
         return self.type.is_user_editable and self.status == self.APPROVED
+
+    @property
+    def published_id(self) -> str | None:
+        """Return True if this is a user-defined exposure layer."""
+        return (
+            f"UD.{self.published_id_int}"
+            if self.published_id_int and self.is_ready_for_admin_removal
+            else None
+        )

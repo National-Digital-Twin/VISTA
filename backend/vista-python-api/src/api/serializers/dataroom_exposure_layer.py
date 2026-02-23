@@ -42,6 +42,7 @@ class DataroomExposureLayerSerializer(serializers.ModelSerializer):
             "updated_at",
             "user",
             "type",
+            "published_id",
         ]
 
     def get_geometry(self, obj):
