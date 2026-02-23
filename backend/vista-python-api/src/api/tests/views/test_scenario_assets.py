@@ -949,6 +949,21 @@ def score_test_assets(db, score_test_types):  # noqa: ARG001
     }
 
 
+@pytest.fixture
+def mapwide_focus_area_limited_user(scenario):
+    """Create map-wide focus area."""
+    return FocusArea.objects.create(
+        id=uuid.uuid4(),
+        scenario=scenario,
+        user_id=user_id_limited_access,
+        name="Map-wide",
+        geometry=None,
+        filter_mode="by_asset_type",
+        is_active=True,
+        is_system=True,
+    )
+
+
 @pytest.mark.django_db
 def test_by_score_only_mode_returns_all_scored_assets(
     scenario,
@@ -991,7 +1006,7 @@ def test_by_score_only_mode_excludes_assets_without_permission_to_view(  # noqa:
     data_source_access,  # noqa: ARG001
     client,
 ):
-    """Test that by_score_only mode returns all assets that have scores."""
+    """Test that by_score_only mode excludes assets user does not have permission to view."""
     station_type = score_test_types["station"]
     pylon_type = score_test_types["pylon"]
 
@@ -1012,6 +1027,44 @@ def test_by_score_only_mode_excludes_assets_without_permission_to_view(  # noqa:
     assert len(data) == 1
     names = [a["name"] for a in data]
     assert score_test_assets["station"].name not in names
+    assert score_test_assets["pylon"].name in names
+
+
+@pytest.mark.django_db
+def test_by_score_only_mode_includes_assets_with_permission_to_view(  # noqa: PLR0913
+    scenario,
+    limited_rail_data_source,  # noqa: ARG001
+    score_test_types,
+    score_test_assets,
+    mapwide_focus_area_limited_user,
+    data_source_access,  # noqa: ARG001
+    client,
+    monkeypatch,
+):
+    """Test that by_score_only mode includes assets user does have permission to view."""
+    monkeypatch.setattr(
+        "api.views.scenario_assets.get_user_id_from_request", get_user_id_from_request
+    )
+    station_type = score_test_types["station"]
+    pylon_type = score_test_types["pylon"]
+
+    # Create ScenarioAsset records (populates asset_scores view)
+    ScenarioAsset.objects.create(scenario=scenario, asset_type=station_type, criticality_score=3)
+    ScenarioAsset.objects.create(scenario=scenario, asset_type=pylon_type, criticality_score=1)
+
+    # Set map-wide to by_score_only mode
+    mapwide_focus_area_limited_user.filter_mode = "by_score_only"
+    mapwide_focus_area_limited_user.save()
+
+    with CaptureQueriesContext(connection) as ctx:
+        response = client.get(f"/api/scenarios/{scenario.id}/assets/")
+    data = response.json()
+    print_sql("by_score_only_mode_returns_all_scored_assets", ctx.captured_queries)
+
+    assert response.status_code == http_success_code
+    assert len(data) == 2
+    names = [a["name"] for a in data]
+    assert score_test_assets["station"].name in names
     assert score_test_assets["pylon"].name in names
 
 

@@ -317,7 +317,7 @@ class TestAssetFilterBuilderSQL:
         sql = str(queryset.query)
 
         print("\n" + "=" * 80)
-        print("by_score_only mode - with exclusion Q (NOT ST_Within)")
+        print("by_score_only mode - with permission exclusion Q")
         print("=" * 80)
         print(sql)
         print("=" * 80 + "\n")
