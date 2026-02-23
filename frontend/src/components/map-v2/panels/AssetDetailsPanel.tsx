@@ -147,17 +147,19 @@ const AssetDetailsPanel = ({ selectedElement, onBack, onClose, scenarioId, onCon
         return () => globalThis.clearTimeout(timeoutId);
     }, [copyStatus]);
 
+    const resolvedAssetId = assetDetails.data?.externalId || selectedElement?.id || null;
+
     const handleCopyAssetId = useCallback(() => {
-        if (!selectedElement?.id || !navigator.clipboard?.writeText) {
+        if (!resolvedAssetId || !navigator.clipboard?.writeText) {
             setCopyStatus('failed');
             return;
         }
 
         navigator.clipboard
-            .writeText(selectedElement.id)
+            .writeText(resolvedAssetId)
             .then(() => setCopyStatus('copied'))
             .catch(() => setCopyStatus('failed'));
-    }, [selectedElement?.id]);
+    }, [resolvedAssetId]);
 
     useEffect(() => {
         if (assetDetails.data && onConnectedAssetsVisibilityChange) {
@@ -264,7 +266,7 @@ const AssetDetailsPanel = ({ selectedElement, onBack, onClose, scenarioId, onCon
                         aria-label="Copy asset ID"
                         sx={{ fontFamily: 'monospace' }}
                     >
-                        {selectedElement?.id || 'N/A'}
+                        {resolvedAssetId || 'N/A'}
                     </Link>
                     {copyStatus === 'copied' && (
                         <Typography variant="caption" color="success.main">

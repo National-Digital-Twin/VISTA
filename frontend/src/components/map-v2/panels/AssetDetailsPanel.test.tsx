@@ -120,6 +120,7 @@ describe('AssetDetailsPanel', () => {
             const asset = createMockAsset();
             mockedFetchAssetDetails.mockResolvedValue({
                 id: 'asset1',
+                externalId: 'ext-asset-1',
                 name: 'Test Asset',
                 geom: 'POINT(-0.1278 51.5074)',
                 type: {
@@ -149,6 +150,7 @@ describe('AssetDetailsPanel', () => {
 
             mockedFetchAssetDetails.mockResolvedValue({
                 id: 'asset1',
+                externalId: 'ext-asset-1',
                 name: 'Test Asset',
                 geom: 'POINT(-0.1278 51.5074)',
                 type: {
@@ -165,7 +167,7 @@ describe('AssetDetailsPanel', () => {
             fireEvent.click(copyButton);
 
             await waitFor(() => {
-                expect(writeText).toHaveBeenCalledWith('asset1');
+                expect(writeText).toHaveBeenCalledWith('ext-asset-1');
             });
             expect(screen.getByText('Copied')).toBeInTheDocument();
         });

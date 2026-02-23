@@ -4,14 +4,13 @@ import LayersOutlinedIcon from '@mui/icons-material/LayersOutlined';
 import { Box, InputBase, alpha, styled } from '@mui/material';
 import { useCallback, useEffect, useRef, useState, type FocusEventHandler, type KeyboardEvent } from 'react';
 import { searchOsNamesLocations, type OsNamesLocation } from '@/api/os-names';
-import { fetchAssetById } from '@/api/asset-search';
+import { fetchAssetByExternalId, fetchAssetById } from '@/api/asset-search';
 import type { AssetDetailsResponse } from '@/api/asset-details';
 
 const EXPANDED_WIDTH = '28rem';
 const COLLAPSED_WIDTH = '14rem';
 const SEARCH_DEBOUNCE_MS = 700;
 const MAX_RESULTS = 8;
-const GUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 const SearchWrapper = styled(Box, {
     shouldForwardProp: (prop) => prop !== 'isActive',
@@ -109,8 +108,6 @@ export type SearchSelection =
     | { kind: 'location'; lng: number; lat: number; bounds?: [[number, number], [number, number]] }
     | { kind: 'asset'; asset: AssetDetailsResponse };
 
-const isGuid = (value: string): boolean => GUID_REGEX.test(value);
-
 const SearchControl = ({ onResultSelect }: SearchControlProps) => {
     const [isActive, setIsActive] = useState(false);
     const [searchText, setSearchText] = useState('');
@@ -151,24 +148,27 @@ const SearchControl = ({ onResultSelect }: SearchControlProps) => {
             setShowNoResults(false);
             setIsSearching(true);
             try {
-                if (isGuid(trimmedQuery)) {
-                    const asset = await fetchAssetById(trimmedQuery);
-                    if (!asset) {
-                        setResults([]);
-                        setShowNoResults(true);
+                if (trimmedQuery.length >= 3) {
+                    const resolvedAsset = await fetchAssetByExternalId(trimmedQuery);
+                    if (resolvedAsset) {
+                        const asset = await fetchAssetById(resolvedAsset.id);
+                        if (!asset) {
+                            setResults([]);
+                            setShowNoResults(true);
+                            return;
+                        }
+
+                        setResults([
+                            {
+                                kind: 'asset',
+                                id: asset.id,
+                                label: `${asset.name || resolvedAsset.name || asset.id} (${asset.type.name})`,
+                                icon: 'asset',
+                                data: asset,
+                            },
+                        ]);
                         return;
                     }
-
-                    setResults([
-                        {
-                            kind: 'asset',
-                            id: asset.id,
-                            label: `${asset.name || asset.id} (${asset.type.name})`,
-                            icon: 'asset',
-                            data: asset,
-                        },
-                    ]);
-                    return;
                 }
 
                 const nextResults = await searchOsNamesLocations(trimmedQuery);
@@ -224,7 +224,7 @@ const SearchControl = ({ onResultSelect }: SearchControlProps) => {
 
     const handleSelectResult = useCallback(
         (result: SearchResultItem) => {
-            setSearchText(result.kind === 'asset' ? result.data.id : result.data.name);
+            setSearchText(result.kind === 'asset' ? result.data.externalId ?? result.data.id : result.data.name);
             setResults([]);
             setShowNoResults(false);
             setIsActive(false);

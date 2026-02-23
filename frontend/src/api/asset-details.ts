@@ -2,6 +2,7 @@ import config from '@/config/app-config';
 
 export type AssetDetailsResponse = {
     id: string;
+    externalId?: string;
     name: string;
     geom: string;
     type: {
@@ -35,5 +36,5 @@ export const fetchAssetDetails = async (assetId: string): Promise<AssetDetailsRe
     if (!response.ok) {
         throw new Error(`Failed to retrieve asset details for ${assetId}`);
     }
-    return response.json();
+    return (await response.json()) as AssetDetailsResponse;
 };
