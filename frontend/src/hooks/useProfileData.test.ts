@@ -332,6 +332,7 @@ describe('useProfileData', () => {
         it('checks if viewing own user by ID', async () => {
             const currentUser = { id: 'user-123', email: 'me@example.com' };
 
+            vi.mocked(fetchCurrentUser).mockResolvedValue(currentUser);
             vi.mocked(fetchUserById).mockResolvedValue(currentUser);
 
             const { result } = renderHook(() => useProfileData('user-123'));
@@ -340,7 +341,8 @@ describe('useProfileData', () => {
                 expect(result.current.loading).toBe(false);
             });
 
-            expect(result.current.isOwnProfile).toBe(false);
+            expect(result.current.isOwnProfile).toBe(true);
+            expect(result.current.currentUserId).toBe('user-123');
         });
     });
 

@@ -7,6 +7,7 @@ type ProfileData = {
     loading: boolean;
     error: string | null;
     isOwnProfile: boolean;
+    currentUserId: string | null;
     getUserDisplayName: () => string;
     getUserEmail: () => string;
     getUserOrganisation: () => string;
@@ -64,7 +65,8 @@ export function useProfileData(userId?: string): ProfileData {
 
                     setUser(userWithMockData);
                 } else {
-                    const foundUser = await fetchUserById(userId);
+                    const [foundUser, currentUser] = await Promise.all([fetchUserById(userId), fetchCurrentUser().catch(() => null)]);
+                    setCurrentUserId(currentUser?.id ?? currentUser?.email ?? null);
 
                     const transformedUser: UserData = {
                         ...foundUser,
@@ -170,6 +172,7 @@ export function useProfileData(userId?: string): ProfileData {
         loading,
         error,
         isOwnProfile,
+        currentUserId,
         getUserDisplayName,
         getUserEmail,
         getUserOrganisation,

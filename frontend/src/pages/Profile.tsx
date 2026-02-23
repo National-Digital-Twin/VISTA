@@ -1,9 +1,10 @@
 import { ArrowBack, Edit } from '@mui/icons-material';
-import { Box, Button, Divider, IconButton, Typography, Dialog, DialogTitle, DialogContent, DialogActions, TextField } from '@mui/material';
+import { Alert, Box, Button, Divider, IconButton, Snackbar, Typography, Dialog, DialogTitle, DialogContent, DialogActions, TextField } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
+import { signout } from '@/api/auth';
 import { useProfileData } from '@/hooks/useProfileData';
 import PageContainer from '@/components/PageContainer';
 import config from '@/config/app-config';
@@ -11,9 +12,11 @@ import config from '@/config/app-config';
 export default function Profile() {
     const { userId } = useParams<{ userId?: string }>();
     const navigate = useNavigate();
-    const { getUserDisplayName, getUserOrganisation, getUserMemberSince, getUserAddedBy, getUserType, getUserEmail, loading, error } = useProfileData(userId);
+    const { getUserDisplayName, getUserOrganisation, getUserMemberSince, getUserAddedBy, getUserType, getUserEmail, loading, error, currentUserId } =
+        useProfileData(userId);
     const [showRemoveModal, setShowRemoveModal] = useState(false);
     const [confirmText, setConfirmText] = useState('');
+    const [successMessage, setSuccessMessage] = useState<string | null>(null);
     const queryClient = useQueryClient();
 
     const handleBackClick = () => {
@@ -48,11 +51,20 @@ export default function Profile() {
                 throw new Error('Failed to remove user');
             }
 
+            handleCloseModal();
             await queryClient.refetchQueries({ queryKey: ['invites'] });
-            navigate('/admin?tab=users');
-            // eslint-disable-next-line no-empty
+            await queryClient.refetchQueries({ queryKey: ['users'] });
+
+            if (currentUserId && userId === currentUserId) {
+                await signout();
+                return;
+            }
+
+            setSuccessMessage('User removed');
+            setTimeout(() => {
+                navigate('/admin?tab=users');
+            }, 1500);
         } catch {
-        } finally {
             handleCloseModal();
         }
     };
@@ -225,6 +237,16 @@ export default function Profile() {
                     </Button>
                 </DialogActions>
             </Dialog>
+            <Snackbar
+                open={!!successMessage}
+                autoHideDuration={5000}
+                onClose={() => setSuccessMessage(null)}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+            >
+                <Alert severity="success" onClose={() => setSuccessMessage(null)}>
+                    {successMessage}
+                </Alert>
+            </Snackbar>
         </PageContainer>
     );
 }
