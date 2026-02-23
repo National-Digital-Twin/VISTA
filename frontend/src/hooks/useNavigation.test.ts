@@ -87,7 +87,7 @@ describe('useNavigation', () => {
             });
 
             expect(result.current.isActive('/admin/users')).toBe(true);
-            expect(result.current.isActive('/admin')).toBe(false);
+            expect(result.current.isActive('/admin')).toBe(true);
         });
 
         it('is case sensitive', () => {

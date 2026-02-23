@@ -13,14 +13,12 @@ import {
     CircularProgress,
     Snackbar,
     Alert,
-    IconButton,
-    Menu,
     MenuItem,
     ListItemText,
 } from '@mui/material';
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { useQuery } from '@tanstack/react-query';
 import { fetchAllInvites, Invite, cancelInvite, resendInvite } from '@/api/invites';
+import { TableRowMenu, TableRowMenuButton } from '@/components/TableRowMenu';
 import { SortableTableHeader } from '@/components/SortableTableHeader';
 
 type SortField = 'email' | 'userType' | 'groups' | 'status' | 'daysAgo';
@@ -200,23 +198,14 @@ const InvitesTab = () => {
                                             <Typography variant="body2">{formatInviteSent(invite.daysAgo)}</Typography>
                                         </TableCell>
                                         <TableCell padding="none" align="right">
-                                            <IconButton
-                                                size="small"
+                                            <TableRowMenuButton
                                                 aria-label="Invite actions"
+                                                open={isMenuOpen}
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                     setMenuAnchor({ el: e.currentTarget, invite });
                                                 }}
-                                                sx={{
-                                                    'backgroundColor': isMenuOpen ? 'rgba(0, 0, 0, 0.12)' : 'rgba(0, 0, 0, 0.04)',
-                                                    'borderRadius': '4px',
-                                                    '&:hover': {
-                                                        backgroundColor: 'rgba(0, 0, 0, 0.08)',
-                                                    },
-                                                }}
-                                            >
-                                                <MoreHorizIcon fontSize="small" />
-                                            </IconButton>
+                                            />
                                         </TableCell>
                                     </TableRow>
                                 );
@@ -226,21 +215,7 @@ const InvitesTab = () => {
                 </Table>
             </TableContainer>
 
-            <Menu
-                anchorEl={menuAnchor?.el ?? null}
-                open={Boolean(menuAnchor)}
-                onClose={handleCloseMenu}
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-                slotProps={{
-                    paper: {
-                        sx: {
-                            minWidth: 180,
-                            mt: 0.5,
-                        },
-                    },
-                }}
-            >
+            <TableRowMenu anchorEl={menuAnchor?.el ?? null} open={Boolean(menuAnchor)} onClose={handleCloseMenu}>
                 {menuAnchor?.invite.status === 'Pending' && (
                     <>
                         <MenuItem onClick={handleReinvite}>
@@ -256,7 +231,7 @@ const InvitesTab = () => {
                         <ListItemText>Re-invite user</ListItemText>
                     </MenuItem>
                 )}
-            </Menu>
+            </TableRowMenu>
 
             <Snackbar open={!!success} autoHideDuration={3000} onClose={() => setSuccess(null)} anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
                 <Alert severity="success" onClose={() => setSuccess(null)}>

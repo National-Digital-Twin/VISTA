@@ -180,3 +180,63 @@ export const publishExposureLayer = async (scenarioId: string, exposureLayerId: 
         throw new Error(`Failed to publish exposure layer: ${response.statusText}`);
     }
 };
+
+export type DataroomExposureLayer = {
+    id: string;
+    name: string;
+    geometry?: Geometry;
+    status: 'pending' | 'approved' | 'unpublished' | null;
+    isUserDefined?: boolean;
+    createdAt?: string;
+    updatedAt?: string;
+    user?: { id: string; name: string | null };
+    type?: { id: string; name: string };
+};
+
+export const fetchDataroomExposureLayers = async (scenarioId: string): Promise<DataroomExposureLayer[]> => {
+    const response = await fetch(`${config.services.apiBaseUrl}/scenarios/${scenarioId}/dataroom/exposure-layers/`, {
+        headers: { 'Content-Type': 'application/json' },
+    });
+
+    if (!response.ok) {
+        throw new Error(`Failed to fetch dataroom exposure layers: ${response.statusText}`);
+    }
+
+    return response.json();
+};
+
+export const approveExposureLayer = async (scenarioId: string, exposureLayerId: string): Promise<void> => {
+    const response = await fetch(`${config.services.apiBaseUrl}/scenarios/${scenarioId}/exposure-layers/${exposureLayerId}/approve/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+    });
+
+    if (!response.ok) {
+        const message = await response.text();
+        throw new Error(message || `Failed to approve exposure layer: ${response.statusText}`);
+    }
+};
+
+export const rejectExposureLayer = async (scenarioId: string, exposureLayerId: string): Promise<void> => {
+    const response = await fetch(`${config.services.apiBaseUrl}/scenarios/${scenarioId}/exposure-layers/${exposureLayerId}/reject/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+    });
+
+    if (!response.ok) {
+        const message = await response.text();
+        throw new Error(message || `Failed to reject exposure layer: ${response.statusText}`);
+    }
+};
+
+export const removeExposureLayer = async (scenarioId: string, exposureLayerId: string): Promise<void> => {
+    const response = await fetch(`${config.services.apiBaseUrl}/scenarios/${scenarioId}/exposure-layers/${exposureLayerId}/remove/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+    });
+
+    if (!response.ok) {
+        const message = await response.text();
+        throw new Error(message || `Failed to remove exposure layer: ${response.statusText}`);
+    }
+};

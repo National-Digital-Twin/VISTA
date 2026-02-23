@@ -1,11 +1,12 @@
-import { Box, Button, useTheme } from '@mui/material';
+import { Badge, Box, Button, useTheme } from '@mui/material';
 import { useNavigation } from '@/hooks/useNavigation';
 
 type NavigationProps = {
     readonly onNavigationClick?: (item: string) => void;
+    readonly dataRoomPendingCount?: number;
 };
 
-export default function Navigation({ onNavigationClick }: NavigationProps) {
+export default function Navigation({ onNavigationClick, dataRoomPendingCount = 0 }: NavigationProps) {
     const theme = useTheme();
     const { navigationItems, isActive, handleNavigationClick, isMobile } = useNavigation();
 
@@ -20,25 +21,42 @@ export default function Navigation({ onNavigationClick }: NavigationProps) {
 
     return (
         <Box display="flex" gap={2}>
-            {navigationItems.map((item) => (
-                <Button
-                    key={item.to}
-                    variant="text"
-                    onClick={() => handleClick(item)}
-                    sx={{
-                        'color': isActive(item.to) ? theme.palette.accent?.main || theme.palette.primary.light : 'white',
-                        'textTransform': 'uppercase',
-                        'fontWeight': isActive(item.to) ? 600 : 500,
-                        'fontSize': '1rem',
-                        '&:hover': {
-                            color: theme.palette.accent?.main || theme.palette.primary.light,
-                            backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                        },
-                    }}
-                >
-                    {item.label}
-                </Button>
-            ))}
+            {navigationItems.map((item) => {
+                const showBadge = item.to === '/data-room' && dataRoomPendingCount > 0;
+                const button = (
+                    <Button
+                        key={item.to}
+                        variant="text"
+                        onClick={() => handleClick(item)}
+                        sx={{
+                            'color': isActive(item.to) ? theme.palette.accent?.main || theme.palette.primary.light : 'white',
+                            'textTransform': 'uppercase',
+                            'fontWeight': isActive(item.to) ? 600 : 500,
+                            'fontSize': '1rem',
+                            '&:hover': {
+                                color: theme.palette.accent?.main || theme.palette.primary.light,
+                                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                            },
+                        }}
+                    >
+                        {item.label}
+                    </Button>
+                );
+                return showBadge ? (
+                    <Badge
+                        key={item.to}
+                        badgeContent={dataRoomPendingCount}
+                        color="error"
+                        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+                        overlap="rectangular"
+                        sx={{ 'display': 'inline-flex', '& .MuiBadge-badge': { top: 6, right: 6 } }}
+                    >
+                        {button}
+                    </Badge>
+                ) : (
+                    button
+                );
+            })}
         </Box>
     );
 }

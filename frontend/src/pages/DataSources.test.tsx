@@ -95,7 +95,7 @@ describe('DataSources', () => {
         expect(screen.getByText('Data sources and access management')).toBeInTheDocument();
     });
 
-    it('does not render load scenario for non-admin user', async () => {
+    it('does not render load scenario button for non-admin user', () => {
         mockUseUserData.mockReturnValue({
             getUserDisplayName: () => 'Name',
             getUserEmailDomain: () => 'Email',
@@ -103,11 +103,8 @@ describe('DataSources', () => {
             isAdmin: false,
         });
         renderWithAppProviders(['/data-room']);
-        const loadScenarioButton = screen.getByRole('button', { name: /load scenario/i });
-        fireEvent.click(loadScenarioButton);
 
-        const modalHeader = screen.queryByText('Choose scenario');
-        expect(modalHeader).not.toBeInTheDocument();
+        expect(screen.queryByRole('button', { name: /load scenario/i })).not.toBeInTheDocument();
     });
 
     describe('DataSourcesTable', () => {
@@ -168,7 +165,7 @@ describe('DataSources', () => {
             fireEvent.change(searchInput, { target: { value: 'nhs' } });
 
             const rows = screen.getAllByRole('row');
-            const dataRows = rows.slice(1); // exclude header row
+            const dataRows = rows.slice(1);
 
             expect(dataRows).toHaveLength(1);
             expect(within(dataRows[0]).getByText('NHS Open Data Portal')).toBeInTheDocument();

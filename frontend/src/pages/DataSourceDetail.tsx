@@ -331,7 +331,7 @@ export default function DataSourceDetail() {
                                 py: 3,
                                 borderLeft: { xs: 'none', lg: '1px solid' },
                                 borderTop: { xs: '1px solid', lg: 'none' },
-                                borderColor: 'divider',
+                                borderColor: { lg: 'divider' },
                             }}
                         >
                             <MarkdownRenderer content={data.description} />

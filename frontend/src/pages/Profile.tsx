@@ -50,8 +50,8 @@ export default function Profile() {
 
             await queryClient.refetchQueries({ queryKey: ['invites'] });
             navigate('/admin?tab=users');
-        } catch {
             // eslint-disable-next-line no-empty
+        } catch {
         } finally {
             handleCloseModal();
         }
@@ -167,7 +167,6 @@ export default function Profile() {
                 </Box>
             </Box>
 
-            {/* Remove User Confirmation Modal */}
             <Dialog open={showRemoveModal} onClose={handleCloseModal} maxWidth="xs" fullWidth>
                 <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     Are you sure?

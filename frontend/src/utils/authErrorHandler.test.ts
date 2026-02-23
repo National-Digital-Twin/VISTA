@@ -45,9 +45,8 @@ describe('authErrorHandler', () => {
                     queryKey: ['test'],
                     queryFn,
                 });
-            } catch {
                 // eslint-disable-next-line no-empty
-            }
+            } catch {}
 
             await delay(50);
 
@@ -66,9 +65,8 @@ describe('authErrorHandler', () => {
                     queryKey: ['test'],
                     queryFn,
                 });
-            } catch {
                 // eslint-disable-next-line no-empty
-            }
+            } catch {}
 
             await delay(50);
 
@@ -86,9 +84,8 @@ describe('authErrorHandler', () => {
                     queryKey: ['test'],
                     queryFn,
                 });
-            } catch {
                 // eslint-disable-next-line no-empty
-            }
+            } catch {}
 
             await delay(10);
 
@@ -109,9 +106,8 @@ describe('authErrorHandler', () => {
                     queryKey: ['test'],
                     queryFn,
                 });
-            } catch {
                 // eslint-disable-next-line no-empty
-            }
+            } catch {}
 
             await delay(50);
 
@@ -130,9 +126,8 @@ describe('authErrorHandler', () => {
                     queryKey: ['test'],
                     queryFn,
                 });
-            } catch {
                 // eslint-disable-next-line no-empty
-            }
+            } catch {}
 
             await delay(50);
 
@@ -153,9 +148,8 @@ describe('authErrorHandler', () => {
                     queryKey: ['test'],
                     queryFn,
                 });
-            } catch {
                 // eslint-disable-next-line no-empty
-            }
+            } catch {}
 
             await delay(50);
 
@@ -174,9 +168,8 @@ describe('authErrorHandler', () => {
                     queryKey: ['test'],
                     queryFn,
                 });
-            } catch {
                 // eslint-disable-next-line no-empty
-            }
+            } catch {}
 
             await delay(50);
 
@@ -197,9 +190,8 @@ describe('authErrorHandler', () => {
                     queryKey: ['test'],
                     queryFn,
                 });
-            } catch {
                 // eslint-disable-next-line no-empty
-            }
+            } catch {}
 
             await delay(10);
 
@@ -218,9 +210,8 @@ describe('authErrorHandler', () => {
                     queryKey: ['test'],
                     queryFn,
                 });
-            } catch {
                 // eslint-disable-next-line no-empty
-            }
+            } catch {}
 
             await delay(10);
 
@@ -243,9 +234,8 @@ describe('authErrorHandler', () => {
                         mutationFn,
                     })
                     .execute(undefined);
-            } catch {
                 // eslint-disable-next-line no-empty
-            }
+            } catch {}
 
             await delay(50);
 

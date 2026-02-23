@@ -2,11 +2,13 @@ import { AppBar, Box, Toolbar, useMediaQuery, Typography, Link } from '@mui/mate
 import { useTheme } from '@mui/material/styles';
 import { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import Logo from './Logo';
 import MobileMenu from './MobileMenu';
 import Navigation from './Navigation';
 import Notifications from './Notifications';
 import UserMenu from './UserMenu';
+import { fetchScenarios } from '@/api/scenarios';
 import { useActiveScenario } from '@/hooks/useActiveScenario';
 import { useUserData } from '@/hooks/useUserData';
 
@@ -23,6 +25,13 @@ const PageHeader = ({ appName }: Readonly<PageHeaderProps>) => {
     const { data: activeScenario } = useActiveScenario();
     const { getUserType } = useUserData();
     const isAdmin = getUserType() === 'Admin';
+    const { data: scenarios = [] } = useQuery({
+        queryKey: ['scenarios'],
+        queryFn: fetchScenarios,
+        staleTime: 5 * 60 * 1000,
+        enabled: isAdmin,
+    });
+    const dataRoomPendingCount = useMemo(() => scenarios.reduce((sum, s) => sum + (s.pendingExposureCount ?? 0), 0), [scenarios]);
 
     const handleMobileMenuClick = () => {
         setIsMobileMenuOpen(true);
@@ -100,7 +109,7 @@ const PageHeader = ({ appName }: Readonly<PageHeaderProps>) => {
                     <Box display="flex" alignItems="center" gap={1}>
                         <Logo appName={appName} onMobileMenuClick={handleMobileMenuClick} />
                     </Box>
-                    <Navigation onNavigationClick={handleNavigationClick} />
+                    <Navigation onNavigationClick={handleNavigationClick} dataRoomPendingCount={dataRoomPendingCount} />
                 </Box>
 
                 {scenarioName && (
@@ -147,7 +156,15 @@ const PageHeader = ({ appName }: Readonly<PageHeaderProps>) => {
                 </Box>
             </Toolbar>
 
-            {isMobile && <MobileMenu isOpen={isMobileMenuOpen} onClose={handleMobileMenuClose} onNavigationClick={handleNavigationClick} appName={appName} />}
+            {isMobile && (
+                <MobileMenu
+                    isOpen={isMobileMenuOpen}
+                    onClose={handleMobileMenuClose}
+                    onNavigationClick={handleNavigationClick}
+                    appName={appName}
+                    dataRoomPendingCount={dataRoomPendingCount}
+                />
+            )}
         </AppBar>
     );
 };
