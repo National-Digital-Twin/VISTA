@@ -12,7 +12,9 @@ import {
     bulkToggleExposureLayerVisibility,
     updateExposureLayer,
     deleteExposureLayer,
+    publishExposureLayer,
     type ExposureLayersResponse,
+    type ExposureLayerStatus,
     type FocusAreaRelation,
 } from '@/api/exposure-layers';
 import { fetchFocusAreas, type FocusArea } from '@/api/focus-areas';
@@ -22,6 +24,7 @@ vi.mock('@/api/exposure-layers', () => ({
     bulkToggleExposureLayerVisibility: vi.fn(),
     updateExposureLayer: vi.fn(),
     deleteExposureLayer: vi.fn(),
+    publishExposureLayer: vi.fn(),
 }));
 
 vi.mock('@/api/focus-areas', () => ({
@@ -49,6 +52,7 @@ const mockedToggleExposureLayerVisibility = vi.mocked(toggleExposureLayerVisibil
 const mockedBulkToggleExposureLayerVisibility = vi.mocked(bulkToggleExposureLayerVisibility);
 const mockedUpdateExposureLayer = vi.mocked(updateExposureLayer);
 const mockedDeleteExposureLayer = vi.mocked(deleteExposureLayer);
+const mockedPublishExposureLayer = vi.mocked(publishExposureLayer);
 const mockedFetchFocusAreas = vi.mocked(fetchFocusAreas);
 
 describe('ExposureView', () => {
@@ -171,6 +175,31 @@ describe('ExposureView', () => {
         mockedBulkToggleExposureLayerVisibility.mockResolvedValue(undefined);
         mockedUpdateExposureLayer.mockResolvedValue({ id: '', name: '' });
         mockedDeleteExposureLayer.mockResolvedValue(undefined);
+        mockedPublishExposureLayer.mockResolvedValue(undefined);
+    };
+
+    const createUserDrawnExposureLayersResponse = (options: {
+        layers: Array<{ id: string; name: string; isActive: boolean; status?: ExposureLayerStatus }>;
+    }): ExposureLayersResponse => {
+        const { layers } = options;
+        return {
+            featureCollection: { type: 'FeatureCollection', features: [] },
+            groups: [
+                {
+                    id: 'group-user-drawn',
+                    name: 'User drawn',
+                    isUserEditable: true,
+                    exposureLayers: layers.map((layer, index) => ({
+                        id: layer.id,
+                        name: layer.name,
+                        geometry: index === 0 ? mockGeometry1 : mockGeometry2,
+                        isActive: layer.isActive,
+                        isUserDefined: true,
+                        status: layer.status ?? 'unpublished',
+                    })),
+                },
+            ],
+        };
     };
 
     describe('Rendering', () => {
@@ -928,6 +957,343 @@ describe('ExposureView', () => {
             expect(screen.queryByText('In area')).not.toBeInTheDocument();
             expect(screen.queryByText('Partially in area')).not.toBeInTheDocument();
             expect(screen.queryByText('Not in area')).not.toBeInTheDocument();
+        });
+    });
+
+    describe('Send to Data Room', () => {
+        const expandUserDrawnGroup = async () => {
+            const header = screen.getByText('User drawn');
+            const headerButton = header.closest('button');
+            if (headerButton) {
+                fireEvent.click(headerButton);
+            }
+        };
+
+        beforeEach(() => {
+            setupMutationMocks();
+        });
+
+        it('shows Send to Data Room button for unpublished user-drawn layers', async () => {
+            const data = createUserDrawnExposureLayersResponse({
+                layers: [{ id: 'ud-1', name: 'My Layer', isActive: false, status: 'unpublished' }],
+            });
+            renderWithProviders(<ExposureView {...defaultProps} exposureLayersData={data} selectedFocusAreaId="map-wide-1" />);
+            await waitFor(() => {
+                expect(screen.getByText('User drawn')).toBeInTheDocument();
+            });
+            await expandUserDrawnGroup();
+            await waitFor(() => {
+                expect(screen.getByLabelText('Send to Data Room')).toBeInTheDocument();
+                expect(screen.getByLabelText('Edit layer name')).toBeInTheDocument();
+                expect(screen.getByLabelText('Delete layer')).toBeInTheDocument();
+            });
+        });
+
+        it('shows checkmark icon and hides edit/delete/send for pending layers', async () => {
+            const data = createUserDrawnExposureLayersResponse({
+                layers: [{ id: 'ud-1', name: 'Pending Layer', isActive: false, status: 'pending' }],
+            });
+            renderWithProviders(<ExposureView {...defaultProps} exposureLayersData={data} selectedFocusAreaId="map-wide-1" />);
+            await waitFor(() => {
+                expect(screen.getByText('User drawn')).toBeInTheDocument();
+            });
+            await expandUserDrawnGroup();
+            await waitFor(() => {
+                expect(screen.getByText('Pending Layer')).toBeInTheDocument();
+                expect(screen.getByTitle('Sent to Data Room')).toBeInTheDocument();
+            });
+            expect(screen.queryByLabelText('Send to Data Room')).not.toBeInTheDocument();
+            expect(screen.queryByLabelText('Edit layer name')).not.toBeInTheDocument();
+            expect(screen.queryByLabelText('Delete layer')).not.toBeInTheDocument();
+        });
+
+        it('shows only visibility toggle for approved layers', async () => {
+            const data = createUserDrawnExposureLayersResponse({
+                layers: [{ id: 'ud-1', name: 'UD.1 Approved Layer', isActive: false, status: 'approved' }],
+            });
+            renderWithProviders(<ExposureView {...defaultProps} exposureLayersData={data} selectedFocusAreaId="map-wide-1" />);
+            await waitFor(() => {
+                expect(screen.getByText('User drawn')).toBeInTheDocument();
+            });
+            await expandUserDrawnGroup();
+            await waitFor(() => {
+                expect(screen.getByText('UD.1 Approved Layer')).toBeInTheDocument();
+            });
+            expect(screen.queryByLabelText('Send to Data Room')).not.toBeInTheDocument();
+            expect(screen.queryByLabelText('Edit layer name')).not.toBeInTheDocument();
+            expect(screen.queryByLabelText('Delete layer')).not.toBeInTheDocument();
+            expect(screen.queryByTitle('Sent to Data Room')).not.toBeInTheDocument();
+            expect(screen.getByLabelText('Show layer')).toBeInTheDocument();
+        });
+
+        it('opens confirmation dialog when Send to Data Room is clicked', async () => {
+            const data = createUserDrawnExposureLayersResponse({
+                layers: [{ id: 'ud-1', name: 'Newport', isActive: false, status: 'unpublished' }],
+            });
+            renderWithProviders(<ExposureView {...defaultProps} exposureLayersData={data} selectedFocusAreaId="map-wide-1" />);
+            await waitFor(() => {
+                expect(screen.getByText('User drawn')).toBeInTheDocument();
+            });
+            await expandUserDrawnGroup();
+            await waitFor(() => {
+                expect(screen.getByLabelText('Send to Data Room')).toBeInTheDocument();
+            });
+
+            fireEvent.click(screen.getByLabelText('Send to Data Room'));
+
+            await waitFor(() => {
+                expect(screen.getByText('Send exposure layer to Data Room')).toBeInTheDocument();
+                expect(screen.getByText(/submit it for admin review/)).toBeInTheDocument();
+                expect(screen.getByText(/will be available to all users/)).toBeInTheDocument();
+            });
+        });
+
+        it('closes confirmation dialog when cancel is clicked', async () => {
+            const data = createUserDrawnExposureLayersResponse({
+                layers: [{ id: 'ud-1', name: 'Newport', isActive: false, status: 'unpublished' }],
+            });
+            renderWithProviders(<ExposureView {...defaultProps} exposureLayersData={data} selectedFocusAreaId="map-wide-1" />);
+            await waitFor(() => {
+                expect(screen.getByText('User drawn')).toBeInTheDocument();
+            });
+            await expandUserDrawnGroup();
+            await waitFor(() => {
+                expect(screen.getByLabelText('Send to Data Room')).toBeInTheDocument();
+            });
+
+            fireEvent.click(screen.getByLabelText('Send to Data Room'));
+            await waitFor(() => {
+                expect(screen.getByText('Send exposure layer to Data Room')).toBeInTheDocument();
+            });
+
+            fireEvent.click(screen.getByText('CANCEL'));
+            await waitFor(() => {
+                expect(screen.queryByText('Send exposure layer to Data Room')).not.toBeInTheDocument();
+            });
+        });
+
+        it('calls publishExposureLayer when send is confirmed', async () => {
+            const data = createUserDrawnExposureLayersResponse({
+                layers: [{ id: 'ud-1', name: 'Newport', isActive: false, status: 'unpublished' }],
+            });
+            renderWithProviders(<ExposureView {...defaultProps} exposureLayersData={data} selectedFocusAreaId="map-wide-1" />);
+            await waitFor(() => {
+                expect(screen.getByText('User drawn')).toBeInTheDocument();
+            });
+            await expandUserDrawnGroup();
+            await waitFor(() => {
+                expect(screen.getByLabelText('Send to Data Room')).toBeInTheDocument();
+            });
+
+            fireEvent.click(screen.getByLabelText('Send to Data Room'));
+            await waitFor(() => {
+                expect(screen.getByText('Send exposure layer to Data Room')).toBeInTheDocument();
+            });
+
+            fireEvent.click(screen.getByText('SEND'));
+
+            await waitFor(() => {
+                expect(mockedPublishExposureLayer).toHaveBeenCalledWith('scenario-1', 'ud-1');
+            });
+        });
+
+        it('shows success snackbar after successful publish', async () => {
+            const data = createUserDrawnExposureLayersResponse({
+                layers: [{ id: 'ud-1', name: 'Newport', isActive: false, status: 'unpublished' }],
+            });
+            renderWithProviders(<ExposureView {...defaultProps} exposureLayersData={data} selectedFocusAreaId="map-wide-1" />);
+            await waitFor(() => {
+                expect(screen.getByText('User drawn')).toBeInTheDocument();
+            });
+            await expandUserDrawnGroup();
+            await waitFor(() => {
+                expect(screen.getByLabelText('Send to Data Room')).toBeInTheDocument();
+            });
+
+            fireEvent.click(screen.getByLabelText('Send to Data Room'));
+            await waitFor(() => {
+                expect(screen.getByText('Send exposure layer to Data Room')).toBeInTheDocument();
+            });
+
+            fireEvent.click(screen.getByText('SEND'));
+
+            await waitFor(() => {
+                expect(screen.getByText('Exposure layer sent to Data Room')).toBeInTheDocument();
+                expect(screen.getByText('Newport sent for Admin approval')).toBeInTheDocument();
+            });
+        });
+
+        it('shows error snackbar when publish fails', async () => {
+            mockedPublishExposureLayer.mockRejectedValueOnce(new Error('Server error'));
+            const data = createUserDrawnExposureLayersResponse({
+                layers: [{ id: 'ud-1', name: 'Newport', isActive: false, status: 'unpublished' }],
+            });
+            renderWithProviders(<ExposureView {...defaultProps} exposureLayersData={data} selectedFocusAreaId="map-wide-1" />);
+            await waitFor(() => {
+                expect(screen.getByText('User drawn')).toBeInTheDocument();
+            });
+            await expandUserDrawnGroup();
+            await waitFor(() => {
+                expect(screen.getByLabelText('Send to Data Room')).toBeInTheDocument();
+            });
+
+            fireEvent.click(screen.getByLabelText('Send to Data Room'));
+            await waitFor(() => {
+                expect(screen.getByText('Send exposure layer to Data Room')).toBeInTheDocument();
+            });
+
+            fireEvent.click(screen.getByText('SEND'));
+
+            await waitFor(() => {
+                expect(screen.getByText('Failed to send exposure layer to Data Room')).toBeInTheDocument();
+            });
+        });
+
+        it('displays publishedId prefix for approved layers', async () => {
+            const data = createUserDrawnExposureLayersResponse({
+                layers: [{ id: 'ud-1', name: 'Approved Layer', isActive: false, status: 'approved' }],
+            });
+            data.groups[0].exposureLayers[0].publishedId = 'UD.ABCD';
+            renderWithProviders(<ExposureView {...defaultProps} exposureLayersData={data} selectedFocusAreaId="map-wide-1" />);
+            await waitFor(() => {
+                expect(screen.getByText('User drawn')).toBeInTheDocument();
+            });
+            await expandUserDrawnGroup();
+            await waitFor(() => {
+                expect(screen.getByText('UD.ABCD Approved Layer')).toBeInTheDocument();
+            });
+        });
+
+        it('opens delete confirmation dialog and calls deleteExposureLayer on confirm', async () => {
+            const data = createUserDrawnExposureLayersResponse({
+                layers: [{ id: 'ud-1', name: 'My Layer', isActive: false, status: 'unpublished' }],
+            });
+            renderWithProviders(<ExposureView {...defaultProps} exposureLayersData={data} selectedFocusAreaId="map-wide-1" />);
+            await waitFor(() => {
+                expect(screen.getByText('User drawn')).toBeInTheDocument();
+            });
+            await expandUserDrawnGroup();
+            await waitFor(() => {
+                expect(screen.getByLabelText('Delete layer')).toBeInTheDocument();
+            });
+
+            fireEvent.click(screen.getByLabelText('Delete layer'));
+
+            await waitFor(() => {
+                expect(screen.getByText('Delete exposure layer')).toBeInTheDocument();
+                expect(screen.getByText(/Are you sure you want to delete "My Layer"/)).toBeInTheDocument();
+            });
+
+            fireEvent.click(screen.getByText('DELETE'));
+
+            await waitFor(() => {
+                expect(mockedDeleteExposureLayer).toHaveBeenCalledWith('scenario-1', 'ud-1');
+            });
+        });
+
+        it('closes delete dialog on cancel without calling API', async () => {
+            const data = createUserDrawnExposureLayersResponse({
+                layers: [{ id: 'ud-1', name: 'My Layer', isActive: false, status: 'unpublished' }],
+            });
+            renderWithProviders(<ExposureView {...defaultProps} exposureLayersData={data} selectedFocusAreaId="map-wide-1" />);
+            await waitFor(() => {
+                expect(screen.getByText('User drawn')).toBeInTheDocument();
+            });
+            await expandUserDrawnGroup();
+
+            fireEvent.click(screen.getByLabelText('Delete layer'));
+            await waitFor(() => {
+                expect(screen.getByText('Delete exposure layer')).toBeInTheDocument();
+            });
+
+            fireEvent.click(screen.getByText('CANCEL'));
+            await waitFor(() => {
+                expect(screen.queryByText('Delete exposure layer')).not.toBeInTheDocument();
+            });
+            expect(mockedDeleteExposureLayer).not.toHaveBeenCalled();
+        });
+
+        it('renames layer via inline edit on double-click', async () => {
+            const data = createUserDrawnExposureLayersResponse({
+                layers: [{ id: 'ud-1', name: 'Old Name', isActive: false, status: 'unpublished' }],
+            });
+            renderWithProviders(<ExposureView {...defaultProps} exposureLayersData={data} selectedFocusAreaId="map-wide-1" />);
+            await waitFor(() => {
+                expect(screen.getByText('User drawn')).toBeInTheDocument();
+            });
+            await expandUserDrawnGroup();
+            await waitFor(() => {
+                expect(screen.getByText('Old Name')).toBeInTheDocument();
+            });
+
+            fireEvent.doubleClick(screen.getByText('Old Name'));
+
+            const textbox = screen.getByRole('textbox');
+            expect(textbox).toBeInTheDocument();
+
+            fireEvent.change(textbox, { target: { value: 'New Name' } });
+            fireEvent.blur(textbox);
+
+            await waitFor(() => {
+                expect(mockedUpdateExposureLayer).toHaveBeenCalledWith('scenario-1', 'ud-1', { name: 'New Name' });
+            });
+        });
+
+        it('does not call update when name is unchanged after edit', async () => {
+            const data = createUserDrawnExposureLayersResponse({
+                layers: [{ id: 'ud-1', name: 'Same Name', isActive: false, status: 'unpublished' }],
+            });
+            renderWithProviders(<ExposureView {...defaultProps} exposureLayersData={data} selectedFocusAreaId="map-wide-1" />);
+            await waitFor(() => {
+                expect(screen.getByText('User drawn')).toBeInTheDocument();
+            });
+            await expandUserDrawnGroup();
+            await waitFor(() => {
+                expect(screen.getByText('Same Name')).toBeInTheDocument();
+            });
+
+            fireEvent.doubleClick(screen.getByText('Same Name'));
+
+            const textbox = screen.getByRole('textbox');
+            fireEvent.blur(textbox);
+
+            expect(mockedUpdateExposureLayer).not.toHaveBeenCalled();
+        });
+
+        it('does not open edit mode on double-click for pending layers', async () => {
+            const data = createUserDrawnExposureLayersResponse({
+                layers: [{ id: 'ud-1', name: 'Pending Layer', isActive: false, status: 'pending' }],
+            });
+            renderWithProviders(<ExposureView {...defaultProps} exposureLayersData={data} selectedFocusAreaId="map-wide-1" />);
+            await waitFor(() => {
+                expect(screen.getByText('User drawn')).toBeInTheDocument();
+            });
+            await expandUserDrawnGroup();
+            await waitFor(() => {
+                expect(screen.getByText('Pending Layer')).toBeInTheDocument();
+            });
+
+            fireEvent.doubleClick(screen.getByText('Pending Layer'));
+
+            expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+        });
+
+        it('does not open edit mode on double-click for approved layers', async () => {
+            const data = createUserDrawnExposureLayersResponse({
+                layers: [{ id: 'ud-1', name: 'UD.1 Approved', isActive: false, status: 'approved' }],
+            });
+            renderWithProviders(<ExposureView {...defaultProps} exposureLayersData={data} selectedFocusAreaId="map-wide-1" />);
+            await waitFor(() => {
+                expect(screen.getByText('User drawn')).toBeInTheDocument();
+            });
+            await expandUserDrawnGroup();
+            await waitFor(() => {
+                expect(screen.getByText('UD.1 Approved')).toBeInTheDocument();
+            });
+
+            fireEvent.doubleClick(screen.getByText('UD.1 Approved'));
+
+            expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
         });
     });
 });

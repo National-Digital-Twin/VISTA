@@ -48,7 +48,7 @@ const ExposureLayers = ({
             if (feature.properties?.isActive !== true) {
                 return false;
             }
-            if (excludeUserDefined && feature.properties?.isUserDefined) {
+            if (excludeUserDefined && feature.properties?.isUserDefined && feature.properties?.status === 'unpublished') {
                 return false;
             }
             return true;
