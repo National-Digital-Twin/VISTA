@@ -79,7 +79,15 @@ class AssetDetailSerializer(serializers.ModelSerializer):
         """Configuration for the `AssetSerializer`."""
 
         model = Asset
-        fields: ClassVar[list[str]] = ["id", "external_id", "name", "geom", "type", "providers", "dependents"]
+        fields: ClassVar[list[str]] = [
+            "id",
+            "external_id",
+            "name",
+            "geom",
+            "type",
+            "providers",
+            "dependents",
+        ]
 
     def get_providers(self, obj):
         """Get providers for asset."""

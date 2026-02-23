@@ -224,7 +224,7 @@ const SearchControl = ({ onResultSelect }: SearchControlProps) => {
 
     const handleSelectResult = useCallback(
         (result: SearchResultItem) => {
-            setSearchText(result.kind === 'asset' ? result.data.externalId ?? result.data.id : result.data.name);
+            setSearchText(result.kind === 'asset' ? (result.data.externalId ?? result.data.id) : result.data.name);
             setResults([]);
             setShowNoResults(false);
             setIsActive(false);
