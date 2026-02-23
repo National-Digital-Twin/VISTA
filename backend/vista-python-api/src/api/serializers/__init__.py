@@ -3,6 +3,7 @@
 from .asset import (
     AssetCategorySerializer,
     AssetDetailSerializer,
+    AssetExternalIdLookupSerializer,
     AssetListSerializer,
     AssetSubCategorySerializer,
     AssetTypeSerializer,
@@ -60,6 +61,7 @@ from .visible_resource_intervention_type import VisibleResourceInterventionTypeT
 __all__ = [
     "AssetCategorySerializer",
     "AssetDetailSerializer",
+    "AssetExternalIdLookupSerializer",
     "AssetListSerializer",
     "AssetScoreFilterCreateUpdateSerializer",
     "AssetScoreFilterSerializer",

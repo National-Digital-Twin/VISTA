@@ -79,7 +79,15 @@ class AssetDetailSerializer(serializers.ModelSerializer):
         """Configuration for the `AssetSerializer`."""
 
         model = Asset
-        fields: ClassVar[list[str]] = ["id", "name", "geom", "type", "providers", "dependents"]
+        fields: ClassVar[list[str]] = [
+            "id",
+            "external_id",
+            "name",
+            "geom",
+            "type",
+            "providers",
+            "dependents",
+        ]
 
     def get_providers(self, obj):
         """Get providers for asset."""
@@ -90,3 +98,13 @@ class AssetDetailSerializer(serializers.ModelSerializer):
         """Get dependents of asset."""
         deps = obj.provider.all()
         return AssetListSerializer((d.dependent_asset for d in deps), many=True).data
+
+
+class AssetExternalIdLookupSerializer(serializers.ModelSerializer):
+    """Serializer used for resolving assets by external ID."""
+
+    class Meta:
+        """Configuration for the `AssetExternalIdLookupSerializer`."""
+
+        model = Asset
+        fields: ClassVar[list[str]] = ["id", "name"]

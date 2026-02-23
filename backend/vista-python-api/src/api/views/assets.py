@@ -1,10 +1,16 @@
 """Views relating to Assets."""
 
-from rest_framework import viewsets
+from django.shortcuts import get_object_or_404
+from rest_framework import status, viewsets
 from rest_framework.decorators import action
+from rest_framework.response import Response
 
 from api.models.asset import Asset
-from api.serializers import AssetDetailSerializer, AssetListSerializer
+from api.serializers import (
+    AssetDetailSerializer,
+    AssetExternalIdLookupSerializer,
+    AssetListSerializer,
+)
 
 
 class AssetViewSet(viewsets.ReadOnlyModelViewSet):
@@ -33,3 +39,17 @@ class AssetViewSet(viewsets.ReadOnlyModelViewSet):
     def list_by_asset_type(self, asset_type: str) -> list[Asset]:
         """List assets by asset type."""
         return Asset.objects.filter(type=asset_type)
+
+    @action(detail=False, methods=["get"], url_path="resolve-external-id")
+    def resolve_external_id(self, request):
+        """Resolve an external asset ID to internal asset details."""
+        external_id = request.query_params.get("external_id")
+        if not external_id:
+            return Response(
+                {"detail": "external_id query parameter is required."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        asset = get_object_or_404(Asset, external_id=external_id)
+        serializer = AssetExternalIdLookupSerializer(asset)
+        return Response(serializer.data, status=status.HTTP_200_OK)

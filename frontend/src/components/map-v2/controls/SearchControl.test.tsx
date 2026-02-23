@@ -5,12 +5,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import SearchControl from './SearchControl';
 import theme from '@/theme';
 import { searchOsNamesLocations } from '@/api/os-names';
-import { fetchAssetById } from '@/api/asset-search';
+import { fetchAssetByExternalId, fetchAssetById } from '@/api/asset-search';
 
 vi.mock('@/api/os-names', () => ({
     searchOsNamesLocations: vi.fn(),
 }));
 vi.mock('@/api/asset-search', () => ({
+    fetchAssetByExternalId: vi.fn(),
     fetchAssetById: vi.fn(),
 }));
 
@@ -66,6 +67,7 @@ describe('SearchControl', () => {
     });
 
     it('calls OS Names search on Enter and shows results', async () => {
+        vi.mocked(fetchAssetByExternalId).mockResolvedValueOnce(null);
         vi.mocked(searchOsNamesLocations).mockResolvedValueOnce([{ name: 'Newport', label: 'Newport (Town)', lng: -1.3, lat: 50.7 }]);
         renderWithTheme(<SearchControl />);
 
@@ -74,14 +76,15 @@ describe('SearchControl', () => {
         fireEvent.change(input, { target: { value: 'newport' } });
         fireEvent.keyDown(input, { key: 'Enter' });
 
-        expect(searchOsNamesLocations).toHaveBeenCalledWith('newport');
         await waitFor(() => {
+            expect(searchOsNamesLocations).toHaveBeenCalledWith('newport');
             expect(screen.getByText('Newport (Town)')).toBeInTheDocument();
         });
     });
 
     it('runs search after debounce delay when typing', async () => {
         vi.useFakeTimers();
+        vi.mocked(fetchAssetByExternalId).mockResolvedValueOnce(null);
         vi.mocked(searchOsNamesLocations).mockResolvedValueOnce([{ name: 'Newport', label: 'Newport (Town)', lng: -1.3, lat: 50.7 }]);
         renderWithTheme(<SearchControl />);
 
@@ -103,6 +106,7 @@ describe('SearchControl', () => {
 
     it('does not auto-retry the same failed query after debounce', async () => {
         vi.useFakeTimers();
+        vi.mocked(fetchAssetByExternalId).mockResolvedValueOnce(null);
         vi.mocked(searchOsNamesLocations).mockRejectedValue(new Error('request failed'));
         renderWithTheme(<SearchControl />);
 
@@ -124,6 +128,7 @@ describe('SearchControl', () => {
 
     it('allows searching the same query again after reactivating search', async () => {
         vi.useFakeTimers();
+        vi.mocked(fetchAssetByExternalId).mockResolvedValue(null);
         vi.mocked(searchOsNamesLocations).mockResolvedValue([]);
         renderWithTheme(<SearchControl />);
 
@@ -152,6 +157,7 @@ describe('SearchControl', () => {
 
     it('emits location selection when a location result is clicked', async () => {
         const onResultSelect = vi.fn();
+        vi.mocked(fetchAssetByExternalId).mockResolvedValueOnce(null);
         vi.mocked(searchOsNamesLocations).mockResolvedValueOnce([
             {
                 name: 'Newport',
@@ -185,10 +191,49 @@ describe('SearchControl', () => {
         });
     });
 
+    it('shows no results when external asset lookup returns 404 and location search is empty', async () => {
+        vi.mocked(fetchAssetByExternalId).mockResolvedValueOnce(null);
+        vi.mocked(searchOsNamesLocations).mockResolvedValueOnce([]);
+        renderWithTheme(<SearchControl />);
+
+        const input = screen.getByLabelText('Search map');
+        fireEvent.focus(input);
+        fireEvent.change(input, { target: { value: '123e4567-e89b-12d3-a456-426614174000' } });
+        fireEvent.keyDown(input, { key: 'Enter' });
+
+        await waitFor(() => {
+            expect(screen.getByText('No Results Found')).toBeInTheDocument();
+        });
+        expect(searchOsNamesLocations).toHaveBeenCalledWith('123e4567-e89b-12d3-a456-426614174000');
+    });
+
+    it('shows no results when resolved internal asset lookup returns 404', async () => {
+        vi.mocked(fetchAssetByExternalId).mockResolvedValueOnce({
+            id: 'internal-id-1',
+            name: 'Test Asset',
+        });
+        vi.mocked(fetchAssetById).mockResolvedValueOnce(null);
+        renderWithTheme(<SearchControl />);
+
+        const input = screen.getByLabelText('Search map');
+        fireEvent.focus(input);
+        fireEvent.change(input, { target: { value: '123e4567-e89b-12d3-a456-426614174000' } });
+        fireEvent.keyDown(input, { key: 'Enter' });
+
+        await waitFor(() => {
+            expect(screen.getByText('No Results Found')).toBeInTheDocument();
+        });
+    });
+
     it('uses GUID mode and emits asset selection', async () => {
         const onResultSelect = vi.fn();
+        vi.mocked(fetchAssetByExternalId).mockResolvedValueOnce({
+            id: 'internal-id-1',
+            name: 'Test Asset',
+        });
         vi.mocked(fetchAssetById).mockResolvedValueOnce({
-            id: '123e4567-e89b-12d3-a456-426614174000',
+            id: 'internal-id-1',
+            externalId: 'external-id-1',
             name: 'Test Asset',
             geom: 'POINT(-1.3 50.7)',
             type: { id: 'type-1', name: 'Substation' },
@@ -204,13 +249,16 @@ describe('SearchControl', () => {
 
         const option = await screen.findByRole('button', { name: /test asset \(substation\)/i });
         fireEvent.click(option);
+        expect(input).toHaveValue('external-id-1');
 
-        expect(fetchAssetById).toHaveBeenCalledWith('123e4567-e89b-12d3-a456-426614174000');
+        expect(fetchAssetByExternalId).toHaveBeenCalledWith('123e4567-e89b-12d3-a456-426614174000');
+        expect(fetchAssetById).toHaveBeenCalledWith('internal-id-1');
         expect(searchOsNamesLocations).not.toHaveBeenCalled();
         expect(onResultSelect).toHaveBeenCalledWith({
             kind: 'asset',
             asset: {
-                id: '123e4567-e89b-12d3-a456-426614174000',
+                id: 'internal-id-1',
+                externalId: 'external-id-1',
                 name: 'Test Asset',
                 geom: 'POINT(-1.3 50.7)',
                 type: { id: 'type-1', name: 'Substation' },
@@ -221,26 +269,13 @@ describe('SearchControl', () => {
     });
 
     it('shows no results when location search returns empty', async () => {
+        vi.mocked(fetchAssetByExternalId).mockResolvedValueOnce(null);
         vi.mocked(searchOsNamesLocations).mockResolvedValueOnce([]);
         renderWithTheme(<SearchControl />);
 
         const input = screen.getByLabelText('Search map');
         fireEvent.focus(input);
         fireEvent.change(input, { target: { value: 'zzzzzz' } });
-        fireEvent.keyDown(input, { key: 'Enter' });
-
-        await waitFor(() => {
-            expect(screen.getByText('No Results Found')).toBeInTheDocument();
-        });
-    });
-
-    it('shows no results when GUID asset lookup returns 404', async () => {
-        vi.mocked(fetchAssetById).mockResolvedValueOnce(null);
-        renderWithTheme(<SearchControl />);
-
-        const input = screen.getByLabelText('Search map');
-        fireEvent.focus(input);
-        fireEvent.change(input, { target: { value: '123e4567-e89b-12d3-a456-426614174000' } });
         fireEvent.keyDown(input, { key: 'Enter' });
 
         await waitFor(() => {

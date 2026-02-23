@@ -63,3 +63,32 @@ def test_get_assets(full_data, client):
 def _check_asset(expected, result):
     assert expected.name == result["name"]
     assert expected.geom == result["geom"]
+
+
+@pytest.mark.django_db
+def test_resolve_external_id(assets, client):
+    """Test resolving assets by external ID."""
+    asset = assets[0]
+
+    response = client.get(f"/api/assets/resolve-external-id/?external_id={asset.external_id}")
+    data = response.json()
+
+    assert response.status_code == http_success_code
+    assert data["id"] == str(asset.id)
+    assert data["name"] == asset.name
+
+
+@pytest.mark.django_db
+def test_resolve_external_id_not_found(client):
+    """Test resolve endpoint returns 404 for unknown external ID."""
+    response = client.get("/api/assets/resolve-external-id/?external_id=missing-id")
+
+    assert response.status_code == 404
+
+
+@pytest.mark.django_db
+def test_resolve_external_id_requires_query_param(client):
+    """Test resolve endpoint validates required query parameter."""
+    response = client.get("/api/assets/resolve-external-id/")
+
+    assert response.status_code == 400
