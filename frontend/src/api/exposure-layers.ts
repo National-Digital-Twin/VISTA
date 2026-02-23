@@ -68,15 +68,6 @@ export const fetchExposureLayers = async (scenarioId: string, focusAreaId?: stri
 
     const groups: ExposureLayerGroup[] = await response.json();
 
-    // TODO: remove once the publishedId is added to the response
-    for (const group of groups) {
-        for (const layer of group.exposureLayers) {
-            if (layer.status === 'approved' && !layer.publishedId) {
-                layer.publishedId = `UD.${layer.id.slice(-4).toUpperCase()}`;
-            }
-        }
-    }
-
     const features: Feature[] = groups.flatMap((group) =>
         group.exposureLayers
             .filter((layer) => layer.geometry)

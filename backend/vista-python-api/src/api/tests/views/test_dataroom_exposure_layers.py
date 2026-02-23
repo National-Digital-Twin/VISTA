@@ -229,7 +229,7 @@ def test_get_returns_geometry(scenario, system_layer, client):
 
 @pytest.mark.django_db
 def test_get_returns_published_id(scenario, approved_layer, client):
-    """Test GET returns geometry as GeoJSON."""
+    """Test GET returns published ID."""
     response = client.get(f"/api/scenarios/{scenario.id}/dataroom/exposure-layers/")
     data = response.json()
 
@@ -239,8 +239,8 @@ def test_get_returns_published_id(scenario, approved_layer, client):
 
 @pytest.mark.django_db
 @pytest.mark.usefixtures("system_layer", "pending_layer")
-def test_get_does_notreturns_published_id_for_unapproved_layers(scenario, client):
-    """Test GET returns geometry as GeoJSON."""
+def test_get_does_not_return_published_id_for_unapproved_layers(scenario, client):
+    """Test GET does not return published ID for layers that are not approved or system."""
     response = client.get(f"/api/scenarios/{scenario.id}/dataroom/exposure-layers/")
     data = response.json()
     for layer in data:
