@@ -1,10 +1,13 @@
 import React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Profile from './Profile';
 import { useProfileData } from '@/hooks/useProfileData';
+import { signout } from '@/api/auth';
+
+vi.mock('@/api/auth', () => ({ signout: vi.fn().mockResolvedValue(undefined) }));
 
 let queryClient: QueryClient;
 
@@ -55,6 +58,7 @@ describe('Profile', () => {
         loading: false,
         error: null,
         isOwnProfile: false,
+        currentUserId: 'admin-id',
         getUserDisplayName: () => 'John Doe',
         getUserEmail: () => 'john.doe@example.com',
         getUserOrganisation: () => 'Test Org',
@@ -155,6 +159,47 @@ describe('Profile', () => {
             fireEvent.click(removeButton);
 
             expect(screen.getByText('Are you sure?')).toBeInTheDocument();
+        });
+
+        it('shows "User removed" and navigates to users tab after confirming removal', async () => {
+            globalThis.fetch = vi.fn().mockResolvedValue({ ok: true });
+
+            renderWithUserId('other-user');
+
+            fireEvent.click(screen.getByText('REMOVE USER'));
+            const confirmInput = screen.getByRole('textbox');
+            fireEvent.change(confirmInput, { target: { value: 'delete' } });
+            fireEvent.click(screen.getByText('CONFIRM REMOVAL'));
+
+            await waitFor(() => {
+                expect(screen.getByText('User removed')).toBeInTheDocument();
+            });
+            await waitFor(
+                () => {
+                    expect(mockNavigate).toHaveBeenCalledWith('/admin?tab=users');
+                },
+                { timeout: 2000 },
+            );
+        });
+
+        it('calls signout when removing the current user (self)', async () => {
+            vi.mocked(useProfileData).mockReturnValue({
+                ...mockProfileData,
+                currentUserId: 'user-123',
+            });
+            globalThis.fetch = vi.fn().mockResolvedValue({ ok: true });
+
+            renderWithUserId('user-123');
+
+            fireEvent.click(screen.getByText('REMOVE USER'));
+            const confirmInput = screen.getByRole('textbox');
+            fireEvent.change(confirmInput, { target: { value: 'delete' } });
+            fireEvent.click(screen.getByText('CONFIRM REMOVAL'));
+
+            await waitFor(() => {
+                expect(signout).toHaveBeenCalled();
+            });
+            expect(mockNavigate).not.toHaveBeenCalled();
         });
     });
 
