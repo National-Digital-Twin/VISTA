@@ -83,6 +83,19 @@ class IdpRepository:
             return IdpUser.from_cognito(user, user.get("Username") in admins)
         return None
 
+    def get_all_users(self, page_size=60):
+        """Get all users in pool through pagination."""
+        paginator = self.client.get_paginator("list_users")
+
+        users = []
+        for page in paginator.paginate(
+            UserPoolId=self.user_pool_id,
+            PaginationConfig={"PageSize": page_size},
+        ):
+            users.extend(page.get("Users", []))
+
+        return users
+
     def get_all_users_in_group(self, group_name, page_size=60):
         """Get all users in group through pagination."""
         paginator = self.client.get_paginator("list_users_in_group")
@@ -103,13 +116,24 @@ class IdpRepository:
         return [admin.get("Username") for admin in admins]
 
     def list_users_in_group(self) -> list[IdpUser]:
-        """Get a list of users known to the identity provider."""
+        """Get a list of users known to the identity provider for the application group."""
         if not settings.IS_PROD:
             return [
                 IdpUser.from_cognito(user, bool(int(user["Username"][0]) % 2))
                 for user in self._stub_users()
             ]
         all_users = self.get_all_users_in_group(self.user_group_name)
+        admins = self.get_admin_user_list()
+        return [IdpUser.from_cognito(user, user.get("Username") in admins) for user in all_users]
+
+    def list_all_users(self) -> list[IdpUser]:
+        """Get a list of all users known to the identity provider."""
+        if not settings.IS_PROD:
+            return [
+                IdpUser.from_cognito(user, bool(int(user["Username"][0]) % 2))
+                for user in self._stub_users()
+            ]
+        all_users = self.get_all_users()
         admins = self.get_admin_user_list()
         return [IdpUser.from_cognito(user, user.get("Username") in admins) for user in all_users]
 

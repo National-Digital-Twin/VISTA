@@ -3,6 +3,7 @@
 import logging
 from datetime import UTC, datetime, timedelta
 
+from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny
@@ -42,7 +43,7 @@ class ApplicationUserViewSet(ModelViewSet):
     def get_serializer_context(self):
         """Get external user context for serializer."""
         context = super().get_serializer_context()
-        idp_users = self.idp_repository.list_users_in_group()
+        idp_users = self.idp_repository.list_all_users()
         context["idp_user_map"] = {idp_user.id: idp_user for idp_user in idp_users}
         return context
 
@@ -105,9 +106,25 @@ class ApplicationUserViewSet(ModelViewSet):
         """Fetch any pending or expired user invites."""
         user_invites = UserInvite.objects.filter(
             status__in=[UserInvite.PENDING, UserInvite.EXPIRED]
-        )
+        ).order_by("-status", "-created_at")
         serializer = self.get_serializer(user_invites, many=True)
         return Response(serializer.data)
+
+    @action(
+        detail=False,
+        methods=["delete"],
+        url_path=r"pending-invites/(?P<invite_id>[^/.]+)",
+    )
+    def destroy_expired_invite(self, request, invite_id):  # noqa: ARG002
+        """Delete an expired invite."""
+        invite = get_object_or_404(UserInvite, id=invite_id)
+        if invite.status == UserInvite.EXPIRED:
+            invite.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(
+            {"error": "Cannot delete a pending or accepted user invite"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     def _check_accept_current_user_invite(self, user_id):
         try:

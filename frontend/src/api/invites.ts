@@ -7,6 +7,7 @@ export type InviteData = {
 };
 
 export type Invite = {
+    id: string;
     userId: string;
     email: string;
     userType: 'Admin' | 'General';
@@ -41,6 +42,7 @@ export const sendInvite = async (inviteData: InviteData): Promise<void> => {
 };
 
 type BackendInviteResponse = {
+    id: string;
     userId: string;
     emailAddress: string;
     userType: 'admin' | 'general';
@@ -82,6 +84,7 @@ export const fetchAllInvites = async (): Promise<Invite[]> => {
         const daysAgo = calculateDaysAgo(createdAt);
 
         return {
+            id: item.id,
             userId: item.userId,
             email: item.emailAddress,
             userType: formatUserType(item.userType),
@@ -111,6 +114,7 @@ export const resendInvite = async (userId: string): Promise<Invite> => {
     });
 
     const invite: Invite = {
+        id: '123',
         userId: userId,
         email: 'example@example.com',
         userType: 'General',
@@ -121,4 +125,16 @@ export const resendInvite = async (userId: string): Promise<Invite> => {
     };
 
     return invite;
+};
+
+export const removeExpiredInvite = async (inviteId: string): Promise<void> => {
+    const response = await fetch(`${config.services.users}pending-invites/${inviteId}/`, {
+        method: 'DELETE',
+        credentials: 'include',
+    });
+
+    if (!response.ok) {
+        const message = await response.text();
+        throw new Error(message || `Failed to remove invite: ${response.statusText}`);
+    }
 };
