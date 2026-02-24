@@ -36,8 +36,14 @@ class DataroomAssetListSerializer(serializers.ModelSerializer):
         ]
 
 
+class CriticalityUpdateItemSerializer(serializers.Serializer):
+    """Serializer for a single asset criticality update."""
+
+    asset_id = serializers.UUIDField()
+    criticality_score = serializers.IntegerField(min_value=0, max_value=3)
+
+
 class BulkCriticalityUpdateSerializer(serializers.Serializer):
     """Serializer for bulk criticality update requests."""
 
-    asset_ids = serializers.ListField(child=serializers.UUIDField(), allow_empty=False)
-    criticality_score = serializers.IntegerField(min_value=0, max_value=3)
+    updates = CriticalityUpdateItemSerializer(many=True, allow_empty=False)

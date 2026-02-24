@@ -15,9 +15,13 @@ export type DataroomAsset = {
     criticalityIsOverridden: boolean;
 };
 
-export type BulkCriticalityRequest = {
-    assetIds: string[];
+export type CriticalityUpdateItem = {
+    assetId: string;
     criticalityScore: number;
+};
+
+export type BulkCriticalityRequest = {
+    updates: CriticalityUpdateItem[];
 };
 
 export type BulkCriticalityResponse = {

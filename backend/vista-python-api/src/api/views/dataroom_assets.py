@@ -82,14 +82,13 @@ class DataroomBulkCriticalityView(APIView):
         return [Administrator()]
 
     def put(self, request, scenario_id):
-        """Upsert criticality overrides for the given asset IDs."""
+        """Upsert per-asset criticality overrides for the given scenario."""
         scenario = get_object_or_404(Scenario, id=scenario_id)
 
         serializer = BulkCriticalityUpdateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        asset_ids = serializer.validated_data["asset_ids"]
-        criticality_score = serializer.validated_data["criticality_score"]
+        updates = serializer.validated_data["updates"]
         user_id = get_user_id_from_request(request)
         now = timezone.now()
 
@@ -98,14 +97,14 @@ class DataroomBulkCriticalityView(APIView):
                 [
                     AssetCriticalityOverride(
                         scenario=scenario,
-                        asset_id=aid,
-                        criticality_score=criticality_score,
+                        asset_id=item["asset_id"],
+                        criticality_score=item["criticality_score"],
                         created_by=user_id,
                         updated_by=user_id,
                         created_at=now,
                         updated_at=now,
                     )
-                    for aid in asset_ids
+                    for item in updates
                 ],
                 update_conflicts=True,
                 unique_fields=["scenario", "asset"],
@@ -117,4 +116,4 @@ class DataroomBulkCriticalityView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        return Response({"updated_count": len(asset_ids)}, status=status.HTTP_200_OK)
+        return Response({"updated_count": len(updates)}, status=status.HTTP_200_OK)

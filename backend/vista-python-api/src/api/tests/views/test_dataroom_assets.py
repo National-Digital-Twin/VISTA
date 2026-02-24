@@ -259,10 +259,13 @@ def test_get_dataroom_assets_returns_403_for_non_admin(scenario, client, monkeyp
 @pytest.mark.django_db
 def test_put_creates_criticality_overrides(scenario, dataroom_data, client):
     """Test PUT creates new override records."""
-    asset_ids = [str(dataroom_data["asset_1"].id), str(dataroom_data["asset_2"].id)]
+    updates = [
+        {"assetId": str(dataroom_data["asset_1"].id), "criticalityScore": 3},
+        {"assetId": str(dataroom_data["asset_2"].id), "criticalityScore": 3},
+    ]
     response = client.put(
         f"/api/scenarios/{scenario.id}/dataroom/assets/criticality/",
-        data=json.dumps({"assetIds": asset_ids, "criticalityScore": 3}),
+        data=json.dumps({"updates": updates}),
         content_type="application/json",
     )
     data = response.json()
@@ -285,9 +288,10 @@ def test_put_updates_existing_overrides(scenario, dataroom_data, client):
         updated_by=uuid.uuid4(),
     )
 
+    updates = [{"assetId": str(dataroom_data["asset_1"].id), "criticalityScore": 3}]
     response = client.put(
         f"/api/scenarios/{scenario.id}/dataroom/assets/criticality/",
-        data=json.dumps({"assetIds": [str(dataroom_data["asset_1"].id)], "criticalityScore": 3}),
+        data=json.dumps({"updates": updates}),
         content_type="application/json",
     )
 
@@ -313,9 +317,10 @@ def test_put_preserves_created_fields_on_update(scenario, dataroom_data, client)
     original_created_at = override.created_at
     original_updated_at = override.updated_at
 
+    updates = [{"assetId": str(dataroom_data["asset_1"].id), "criticalityScore": 3}]
     response = client.put(
         f"/api/scenarios/{scenario.id}/dataroom/assets/criticality/",
-        data=json.dumps({"assetIds": [str(dataroom_data["asset_1"].id)], "criticalityScore": 3}),
+        data=json.dumps({"updates": updates}),
         content_type="application/json",
     )
 
@@ -340,10 +345,13 @@ def test_put_mixed_create_and_update(scenario, dataroom_data, client):
         updated_by=uuid.uuid4(),
     )
 
-    asset_ids = [str(dataroom_data["asset_1"].id), str(dataroom_data["asset_2"].id)]
+    updates = [
+        {"assetId": str(dataroom_data["asset_1"].id), "criticalityScore": 0},
+        {"assetId": str(dataroom_data["asset_2"].id), "criticalityScore": 0},
+    ]
     response = client.put(
         f"/api/scenarios/{scenario.id}/dataroom/assets/criticality/",
-        data=json.dumps({"assetIds": asset_ids, "criticalityScore": 0}),
+        data=json.dumps({"updates": updates}),
         content_type="application/json",
     )
 
@@ -356,32 +364,60 @@ def test_put_mixed_create_and_update(scenario, dataroom_data, client):
 @pytest.mark.django_db
 def test_put_validates_criticality_range(scenario, dataroom_data, client):
     """Test PUT rejects criticality_score outside 0-3."""
+    updates = [{"assetId": str(dataroom_data["asset_1"].id), "criticalityScore": 5}]
     response = client.put(
         f"/api/scenarios/{scenario.id}/dataroom/assets/criticality/",
-        data=json.dumps({"assetIds": [str(dataroom_data["asset_1"].id)], "criticalityScore": 5}),
+        data=json.dumps({"updates": updates}),
         content_type="application/json",
     )
     assert response.status_code == http_bad_request
 
 
 @pytest.mark.django_db
-def test_put_validates_empty_asset_ids(scenario, client):
-    """Test PUT rejects empty asset_ids list."""
+def test_put_validates_empty_updates(scenario, client):
+    """Test PUT rejects empty updates list."""
     response = client.put(
         f"/api/scenarios/{scenario.id}/dataroom/assets/criticality/",
-        data=json.dumps({"assetIds": [], "criticalityScore": 1}),
+        data=json.dumps({"updates": []}),
         content_type="application/json",
     )
     assert response.status_code == http_bad_request
+
+
+@pytest.mark.django_db
+def test_put_different_scores_per_asset(scenario, dataroom_data, client):
+    """Test PUT applies different scores to different assets in the same request."""
+    updates = [
+        {"assetId": str(dataroom_data["asset_1"].id), "criticalityScore": 3},
+        {"assetId": str(dataroom_data["asset_2"].id), "criticalityScore": 1},
+    ]
+    response = client.put(
+        f"/api/scenarios/{scenario.id}/dataroom/assets/criticality/",
+        data=json.dumps({"updates": updates}),
+        content_type="application/json",
+    )
+
+    assert response.status_code == http_ok
+    assert response.json()["updatedCount"] == 2
+
+    override_1 = AssetCriticalityOverride.objects.get(
+        scenario=scenario, asset=dataroom_data["asset_1"]
+    )
+    override_2 = AssetCriticalityOverride.objects.get(
+        scenario=scenario, asset=dataroom_data["asset_2"]
+    )
+    assert override_1.criticality_score == 3
+    assert override_2.criticality_score == 1
 
 
 @pytest.mark.django_db
 def test_put_invalid_scenario_returns_404(client):
     """Test PUT with invalid scenario returns 404."""
     fake_id = uuid.uuid4()
+    updates = [{"assetId": str(uuid.uuid4()), "criticalityScore": 1}]
     response = client.put(
         f"/api/scenarios/{fake_id}/dataroom/assets/criticality/",
-        data=json.dumps({"assetIds": [str(uuid.uuid4())], "criticalityScore": 1}),
+        data=json.dumps({"updates": updates}),
         content_type="application/json",
     )
     assert response.status_code == http_not_found
@@ -391,9 +427,10 @@ def test_put_invalid_scenario_returns_404(client):
 def test_put_returns_403_for_non_admin(scenario, client, monkeypatch):
     """Test PUT returns 403 when user is not admin."""
     monkeypatch.setattr("api.views.dataroom_assets.Administrator", Administrator)
+    updates = [{"assetId": str(uuid.uuid4()), "criticalityScore": 1}]
     response = client.put(
         f"/api/scenarios/{scenario.id}/dataroom/assets/criticality/",
-        data=json.dumps({"assetIds": [str(uuid.uuid4())], "criticalityScore": 1}),
+        data=json.dumps({"updates": updates}),
         content_type="application/json",
     )
     assert response.status_code == http_forbidden

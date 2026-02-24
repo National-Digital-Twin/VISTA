@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState, useEffect } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Alert, Box, Button, IconButton, Snackbar, Typography } from '@mui/material';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { Alert, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Snackbar, Typography } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import EditIcon from '@mui/icons-material/Edit';
 import type { Geometry } from 'geojson';
@@ -16,6 +16,7 @@ import EditCriticalityDialog from '@/components/EditScenario/EditCriticalityDial
 import { getLocationFromGeometry } from '@/api/geometry-parser';
 import type { Asset } from '@/api/assets-by-type';
 import { useUserData } from '@/hooks/useUserData';
+import { pluralize } from '@/utils';
 
 export default function EditScenario() {
     const { id: scenarioId } = useParams<{ id: string }>();
@@ -47,26 +48,14 @@ export default function EditScenario() {
     const [isDrawing, setIsDrawing] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [editDialogOpen, setEditDialogOpen] = useState(false);
+    const [pendingEdits, setPendingEdits] = useState<Map<string, number>>(new Map());
+    const [discardDialogOpen, setDiscardDialogOpen] = useState(false);
+    const [saveDialogOpen, setSaveDialogOpen] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
 
+    const hasPendingEdits = pendingEdits.size > 0;
+    const pendingEditIds = useMemo(() => new Set(pendingEdits.keys()), [pendingEdits]);
     const queryClient = useQueryClient();
-    const criticalityMutation = useMutation({
-        mutationFn: (data: { assetIds: string[]; criticalityScore: number }) => {
-            if (!scenario?.id) {
-                throw new Error('Scenario is not set');
-            }
-            return updateBulkCriticality(scenario.id, data);
-        },
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['dataroom-assets'] });
-            queryClient.invalidateQueries({ queryKey: ['asset-score', scenario?.id] });
-            queryClient.invalidateQueries({ queryKey: ['scenarioAssets', scenario?.id] });
-            setSelectedIds(new Set());
-            setEditDialogOpen(false);
-        },
-        onError: (err: Error) => {
-            setErrorMessage(err.message || 'Failed to update criticality scores');
-        },
-    });
 
     const assetParams = {
         scenarioId: scenario?.id ?? '',
@@ -113,29 +102,53 @@ export default function EditScenario() {
         });
     }, [assets]);
 
+    const originalScores = useMemo(() => {
+        const map = new Map<string, number>();
+        if (assets) {
+            for (const a of assets) {
+                map.set(a.id, a.criticalityScore);
+            }
+        }
+        return map;
+    }, [assets]);
+
+    const applyPendingEdits = useCallback(
+        (list: DataroomAsset[]): DataroomAsset[] => {
+            if (pendingEdits.size === 0) {
+                return list;
+            }
+            return list.map((a) => {
+                const pendingScore = pendingEdits.get(a.id);
+                return pendingScore === undefined ? a : { ...a, criticalityScore: pendingScore };
+            });
+        },
+        [pendingEdits],
+    );
+
     const tableAssets = useMemo(() => {
         if (!assets) {
             return [];
         }
-        if (!filters.search) {
-            return assets;
+        let filtered = assets;
+        if (filters.search) {
+            const lower = filters.search.toLowerCase();
+            filtered = assets.filter(
+                (a) =>
+                    a.id.toLowerCase().includes(lower) ||
+                    a.name.toLowerCase().includes(lower) ||
+                    a.assetTypeName.toLowerCase().includes(lower) ||
+                    a.subCategoryName.toLowerCase().includes(lower) ||
+                    a.categoryName.toLowerCase().includes(lower),
+            );
         }
-        const lower = filters.search.toLowerCase();
-        return assets.filter(
-            (a) =>
-                a.id.toLowerCase().includes(lower) ||
-                a.name.toLowerCase().includes(lower) ||
-                a.assetTypeName.toLowerCase().includes(lower) ||
-                a.subCategoryName.toLowerCase().includes(lower) ||
-                a.categoryName.toLowerCase().includes(lower),
-        );
-    }, [assets, filters.search]);
+        return applyPendingEdits(filtered);
+    }, [assets, filters.search, applyPendingEdits]);
 
     const mapAssets: Asset[] = useMemo(() => {
         if (!assets || !assetsVisible) {
             return [];
         }
-        return assets.map((a) => {
+        return applyPendingEdits(assets).map((a) => {
             const location = getLocationFromGeometry(a.geometry);
             const icon = iconMap.get(a.assetTypeId);
             const iconName = icon?.replace('fa-', '');
@@ -158,7 +171,7 @@ export default function EditScenario() {
                 elementType: 'asset' as const,
             };
         });
-    }, [assets, iconMap, assetsVisible]);
+    }, [assets, iconMap, assetsVisible, applyPendingEdits]);
 
     const selectedAssets: Asset[] = useMemo(() => {
         return mapAssets.filter((a) => selectedIds.has(a.id));
@@ -190,21 +203,68 @@ export default function EditScenario() {
 
     const handleBulkConfirm = useCallback(
         (score: number) => {
-            criticalityMutation.mutate({ assetIds: Array.from(selectedIds), criticalityScore: score });
+            setPendingEdits((prev) => {
+                const next = new Map(prev);
+                for (const id of selectedIds) {
+                    if (originalScores.get(id) === score) {
+                        next.delete(id);
+                    } else {
+                        next.set(id, score);
+                    }
+                }
+                return next;
+            });
+            setSelectedIds(new Set());
+            setEditDialogOpen(false);
         },
-        [criticalityMutation, selectedIds],
+        [selectedIds, originalScores],
     );
 
     const handleInlineEdit = useCallback(
         (assetId: string, score: number) => {
-            criticalityMutation.mutate({ assetIds: [assetId], criticalityScore: score });
+            setPendingEdits((prev) => {
+                const next = new Map(prev);
+                if (originalScores.get(assetId) === score) {
+                    next.delete(assetId);
+                } else {
+                    next.set(assetId, score);
+                }
+                return next;
+            });
         },
-        [criticalityMutation],
+        [originalScores],
     );
 
-    const handleSave = () => {
-        navigate(`/data-room/scenarios/${scenarioId}`);
-    };
+    const handleBack = useCallback(() => {
+        if (hasPendingEdits) {
+            setDiscardDialogOpen(true);
+        } else {
+            navigate(`/data-room/scenarios/${scenarioId}`);
+        }
+    }, [hasPendingEdits, navigate, scenarioId]);
+
+    const handleSave = useCallback(async () => {
+        if (!scenario || pendingEdits.size === 0) {
+            return;
+        }
+        setSaveDialogOpen(false);
+        const updates = Array.from(pendingEdits.entries()).map(([assetId, criticalityScore]) => ({
+            assetId,
+            criticalityScore,
+        }));
+        setIsSaving(true);
+        try {
+            await updateBulkCriticality(scenario.id, { updates });
+            queryClient.invalidateQueries({ queryKey: ['dataroom-assets'] });
+            queryClient.invalidateQueries({ queryKey: ['asset-score', scenario.id] });
+            queryClient.invalidateQueries({ queryKey: ['scenarioAssets', scenario.id] });
+            setPendingEdits(new Map());
+        } catch (err) {
+            setErrorMessage(err instanceof Error ? err.message : 'Failed to save criticality scores');
+        } finally {
+            setIsSaving(false);
+        }
+    }, [scenario, pendingEdits, queryClient]);
 
     if (userLoading || scenariosLoading) {
         return <Typography>Loading...</Typography>;
@@ -222,7 +282,7 @@ export default function EditScenario() {
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <IconButton onClick={() => navigate(`/data-room/scenarios/${scenarioId}`)} size="small">
+                    <IconButton onClick={handleBack} size="small">
                         <ArrowBackIcon />
                     </IconButton>
                     <Box>
@@ -234,8 +294,8 @@ export default function EditScenario() {
                         </Typography>
                     </Box>
                 </Box>
-                <Button variant="contained" onClick={handleSave}>
-                    SAVE
+                <Button variant="contained" onClick={() => setSaveDialogOpen(true)} disabled={!hasPendingEdits || isSaving}>
+                    {isSaving ? 'SAVING...' : 'SAVE'}
                 </Button>
             </Box>
 
@@ -278,15 +338,42 @@ export default function EditScenario() {
                 onSelectionChange={setSelectedIds}
                 onCriticalityEdit={handleInlineEdit}
                 isFetching={assetsFetching}
+                pendingEditIds={pendingEditIds}
             />
 
-            <EditCriticalityDialog
-                open={editDialogOpen}
-                count={selectedIds.size}
-                onClose={() => setEditDialogOpen(false)}
-                onConfirm={handleBulkConfirm}
-                isPending={criticalityMutation.isPending}
-            />
+            <EditCriticalityDialog open={editDialogOpen} count={selectedIds.size} onClose={() => setEditDialogOpen(false)} onConfirm={handleBulkConfirm} />
+
+            <Dialog open={saveDialogOpen} onClose={() => setSaveDialogOpen(false)} maxWidth="xs" fullWidth>
+                <DialogTitle>{`Save ${pendingEdits.size} ${pluralize('item', pendingEdits.size)}`}</DialogTitle>
+                <DialogContent>
+                    <Typography variant="body1">
+                        {`You are saving criticality score changes for ${pendingEdits.size} ${pluralize('item', pendingEdits.size)}.`}
+                    </Typography>
+                </DialogContent>
+                <DialogActions sx={{ p: 2 }}>
+                    <Button onClick={() => setSaveDialogOpen(false)} variant="outlined">
+                        CANCEL
+                    </Button>
+                    <Button onClick={handleSave} variant="contained">
+                        SAVE
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            <Dialog open={discardDialogOpen} onClose={() => setDiscardDialogOpen(false)} maxWidth="xs" fullWidth>
+                <DialogTitle>Discard changes?</DialogTitle>
+                <DialogContent>
+                    <Typography>You have unsaved changes. Going back will discard all pending edits.</Typography>
+                </DialogContent>
+                <DialogActions sx={{ p: 2 }}>
+                    <Button onClick={() => setDiscardDialogOpen(false)} variant="outlined">
+                        CANCEL
+                    </Button>
+                    <Button onClick={() => navigate(`/data-room/scenarios/${scenarioId}`)} variant="contained" color="error">
+                        DISCARD
+                    </Button>
+                </DialogActions>
+            </Dialog>
 
             <Snackbar
                 open={!!errorMessage}

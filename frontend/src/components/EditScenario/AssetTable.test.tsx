@@ -218,4 +218,22 @@ describe('AssetTable', () => {
 
         expect(onSelectionChange).not.toHaveBeenCalled();
     });
+
+    it('highlights row for assets with pending edits', () => {
+        renderAssetTable({ pendingEditIds: new Set(['asset-1']) });
+
+        const row = screen.getByText('Hospital A').closest('tr')!;
+        const styles = globalThis.getComputedStyle(row);
+
+        expect(styles.borderLeft).toContain('3px');
+    });
+
+    it('does not highlight row for assets without pending edits', () => {
+        renderAssetTable({ pendingEditIds: new Set(['asset-1']) });
+
+        const row = screen.getByText('School B').closest('tr')!;
+        const styles = globalThis.getComputedStyle(row);
+
+        expect(styles.borderLeft).not.toContain('3px');
+    });
 });

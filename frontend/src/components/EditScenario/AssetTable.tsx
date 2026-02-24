@@ -1,6 +1,7 @@
 import type { MouseEvent } from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Box, Checkbox, Skeleton, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Typography } from '@mui/material';
+import { alpha } from '@mui/material/styles';
 import InlineCriticalityInput from './InlineCriticalityInput';
 import LoadingOverlay from '@/components/LoadingOverlay';
 import { SortableTableHeader } from '@/components/SortableTableHeader';
@@ -15,9 +16,10 @@ type AssetTableProps = {
     onSelectionChange: (ids: Set<string>) => void;
     onCriticalityEdit?: (assetId: string, score: number) => void;
     isFetching?: boolean;
+    pendingEditIds?: Set<string>;
 };
 
-export default function AssetTable({ assets, selectedIds, onSelectionChange, onCriticalityEdit, isFetching }: Readonly<AssetTableProps>) {
+export default function AssetTable({ assets, selectedIds, onSelectionChange, onCriticalityEdit, isFetching, pendingEditIds }: Readonly<AssetTableProps>) {
     const [sortField, setSortField] = useState<SortField>('id');
     const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
     const [page, setPage] = useState(0);
@@ -55,7 +57,7 @@ export default function AssetTable({ assets, selectedIds, onSelectionChange, onC
     useEffect(() => {
         setPage(0);
         setEditingId(null);
-    }, [assets]);
+    }, [assets.length]);
 
     const allSelected = assets.length > 0 && assets.every((a) => selectedIds.has(a.id));
     const someSelected = assets.some((a) => selectedIds.has(a.id));
@@ -139,8 +141,21 @@ export default function AssetTable({ assets, selectedIds, onSelectionChange, onC
                     <TableBody>
                         {paginatedAssets.map((asset) => {
                             const isSelected = selectedIds.has(asset.id);
+                            const isPending = pendingEditIds?.has(asset.id);
                             return (
-                                <TableRow key={asset.id} hover selected={isSelected} sx={{ cursor: 'pointer' }} onClick={() => handleToggle(asset.id)}>
+                                <TableRow
+                                    key={asset.id}
+                                    hover
+                                    selected={isSelected}
+                                    sx={{
+                                        cursor: 'pointer',
+                                        ...(isPending && {
+                                            backgroundColor: (theme) => alpha(theme.palette.warning.main, 0.06),
+                                            borderLeft: (theme) => `3px solid ${theme.palette.warning.main}`,
+                                        }),
+                                    }}
+                                    onClick={() => handleToggle(asset.id)}
+                                >
                                     <TableCell padding="checkbox">
                                         <Checkbox checked={isSelected} />
                                     </TableCell>
