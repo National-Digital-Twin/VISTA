@@ -120,6 +120,10 @@ class MockIdpRepository:
         """List a set of users."""
         return [cognito_user]
 
+    def list_all_users(self):
+        """List a set of users."""
+        return [cognito_user]
+
     def create_user(self, email, is_admin):  # noqa: ARG002
         return new_user_uuid
 
