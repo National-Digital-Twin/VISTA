@@ -206,8 +206,7 @@ describe('EditScenario', () => {
         expect(screen.getByLabelText('Criticality score')).toBeInTheDocument();
     });
 
-    it('calls bulk update API when dialog is confirmed', async () => {
-        mockedUpdateBulkCriticality.mockResolvedValue({ updatedCount: 1 });
+    it('stores pending edit locally when dialog is confirmed without calling API', async () => {
         renderWithAppProviders(['/data-room/scenarios/flood-newport/edit']);
         await screen.findByText('Hospital A');
 
@@ -222,10 +221,188 @@ describe('EditScenario', () => {
         fireEvent.click(screen.getByRole('button', { name: 'CONFIRM' }));
 
         await waitFor(() => {
+            const hospitalRow = screen.getByText('Hospital A').closest('tr')!;
+            expect(hospitalRow).toHaveTextContent('2');
+        });
+        expect(mockedUpdateBulkCriticality).not.toHaveBeenCalled();
+    });
+
+    it('shows discard dialog when clicking back with pending edits', async () => {
+        renderWithAppProviders(['/data-room/scenarios/flood-newport/edit']);
+        await screen.findByText('Hospital A');
+
+        const hospitalRow = screen.getByText('Hospital A').closest('tr')!;
+        fireEvent.click(hospitalRow);
+
+        const editButton = await screen.findByRole('button', { name: /edit 1 selected/i });
+        fireEvent.click(editButton);
+
+        const input = screen.getByLabelText('Criticality score');
+        fireEvent.change(input, { target: { value: '2' } });
+        fireEvent.click(screen.getByRole('button', { name: 'CONFIRM' }));
+
+        await waitFor(() => {
+            expect(screen.getByText('Hospital A').closest('tr')).toHaveTextContent('2');
+        });
+
+        const backButton = screen.getByTestId('ArrowBackIcon').closest('button')!;
+        fireEvent.click(backButton);
+
+        expect(await screen.findByText('Discard changes?')).toBeInTheDocument();
+    });
+
+    it('navigates directly when clicking back with no pending edits', async () => {
+        renderWithAppProviders(['/data-room/scenarios/flood-newport/edit']);
+        await screen.findByText('F001');
+
+        const backButton = screen.getByTestId('ArrowBackIcon').closest('button')!;
+        fireEvent.click(backButton);
+
+        expect(screen.queryByText('Discard changes?')).not.toBeInTheDocument();
+    });
+
+    it('SAVE button is disabled when there are no pending edits', async () => {
+        renderWithAppProviders(['/data-room/scenarios/flood-newport/edit']);
+        await screen.findByText('F001');
+
+        expect(screen.getByRole('button', { name: /save/i })).toBeDisabled();
+    });
+
+    it('shows save confirmation dialog with item count when SAVE is clicked', async () => {
+        renderWithAppProviders(['/data-room/scenarios/flood-newport/edit']);
+        await screen.findByText('Hospital A');
+
+        const hospitalRow = screen.getByText('Hospital A').closest('tr')!;
+        fireEvent.click(hospitalRow);
+
+        const editButton = await screen.findByRole('button', { name: /edit 1 selected/i });
+        fireEvent.click(editButton);
+
+        const input = screen.getByLabelText('Criticality score');
+        fireEvent.change(input, { target: { value: '2' } });
+        fireEvent.click(screen.getByRole('button', { name: 'CONFIRM' }));
+
+        await waitFor(() => {
+            expect(screen.getByRole('button', { name: /save/i })).toBeEnabled();
+        });
+
+        fireEvent.click(screen.getByRole('button', { name: /save/i }));
+
+        expect(await screen.findByText('Save 1 item')).toBeInTheDocument();
+        expect(screen.getByText(/saving criticality score changes for 1 item/i)).toBeInTheDocument();
+    });
+
+    it('calls API on save with pending edits and clears them on success', async () => {
+        mockedUpdateBulkCriticality.mockResolvedValue({ updatedCount: 1 });
+        renderWithAppProviders(['/data-room/scenarios/flood-newport/edit']);
+        await screen.findByText('Hospital A');
+
+        const hospitalRow = screen.getByText('Hospital A').closest('tr')!;
+        fireEvent.click(hospitalRow);
+
+        const editButton = await screen.findByRole('button', { name: /edit 1 selected/i });
+        fireEvent.click(editButton);
+
+        const input = screen.getByLabelText('Criticality score');
+        fireEvent.change(input, { target: { value: '2' } });
+        fireEvent.click(screen.getByRole('button', { name: 'CONFIRM' }));
+
+        await waitFor(() => {
+            expect(screen.getByRole('button', { name: /save/i })).toBeEnabled();
+        });
+
+        fireEvent.click(screen.getByRole('button', { name: /save/i }));
+        await screen.findByText('Save 1 item');
+        fireEvent.click(screen.getByRole('button', { name: 'SAVE' }));
+
+        await waitFor(() => {
             expect(mockedUpdateBulkCriticality).toHaveBeenCalledWith('flood-newport', {
-                assetIds: ['asset-1'],
-                criticalityScore: 2,
+                updates: [{ assetId: 'asset-1', criticalityScore: 2 }],
             });
+        });
+
+        await waitFor(() => {
+            expect(screen.getByRole('button', { name: /save/i })).toBeDisabled();
+        });
+    });
+
+    it('saves multiple assets with different scores in a single request', async () => {
+        mockedUpdateBulkCriticality.mockResolvedValue({ updatedCount: 2 });
+        renderWithAppProviders(['/data-room/scenarios/flood-newport/edit']);
+        await screen.findByText('Hospital A');
+
+        const hospitalRow = screen.getByText('Hospital A').closest('tr');
+        expect(hospitalRow).toBeInTheDocument();
+        if (!hospitalRow) {
+            return;
+        }
+        fireEvent.click(hospitalRow);
+        fireEvent.click(await screen.findByRole('button', { name: /edit 1 selected/i }));
+        fireEvent.change(screen.getByLabelText('Criticality score'), { target: { value: '0' } });
+        fireEvent.click(screen.getByRole('button', { name: 'CONFIRM' }));
+
+        await waitFor(() => {
+            expect(screen.getByText('Hospital A').closest('tr')).toHaveTextContent('0');
+        });
+
+        const schoolRow = screen.getByText('School B').closest('tr');
+        expect(schoolRow).toBeInTheDocument();
+        if (!schoolRow) {
+            return;
+        }
+        fireEvent.click(schoolRow);
+        fireEvent.click(await screen.findByRole('button', { name: /edit 1 selected/i }));
+        fireEvent.change(screen.getByLabelText('Criticality score'), { target: { value: '2' } });
+        fireEvent.click(screen.getByRole('button', { name: 'CONFIRM' }));
+
+        await waitFor(() => {
+            expect(screen.getByText('School B').closest('tr')).toHaveTextContent('2');
+        });
+
+        const saveButton = await screen.findByRole('button', { name: /save/i });
+        fireEvent.click(saveButton);
+        await screen.findByText('Save 2 items');
+        fireEvent.click(screen.getByRole('button', { name: 'SAVE' }));
+
+        await waitFor(() => {
+            expect(mockedUpdateBulkCriticality).toHaveBeenCalledWith('flood-newport', {
+                updates: expect.arrayContaining([
+                    { assetId: 'asset-1', criticalityScore: 0 },
+                    { assetId: 'asset-2', criticalityScore: 2 },
+                ]),
+            });
+        });
+    });
+
+    it('shows error snackbar on save failure and keeps pending edits', async () => {
+        mockedUpdateBulkCriticality.mockRejectedValue(new Error('Save failed'));
+        renderWithAppProviders(['/data-room/scenarios/flood-newport/edit']);
+        await screen.findByText('Hospital A');
+
+        const hospitalRow = screen.getByText('Hospital A').closest('tr')!;
+        fireEvent.click(hospitalRow);
+
+        const editButton = await screen.findByRole('button', { name: /edit 1 selected/i });
+        fireEvent.click(editButton);
+
+        const input = screen.getByLabelText('Criticality score');
+        fireEvent.change(input, { target: { value: '2' } });
+        fireEvent.click(screen.getByRole('button', { name: 'CONFIRM' }));
+
+        await waitFor(() => {
+            expect(screen.getByRole('button', { name: /save/i })).toBeEnabled();
+        });
+
+        fireEvent.click(screen.getByRole('button', { name: /save/i }));
+        await screen.findByText('Save 1 item');
+        fireEvent.click(screen.getByRole('button', { name: 'SAVE' }));
+
+        await waitFor(() => {
+            expect(screen.getByText('Save failed')).toBeInTheDocument();
+        });
+
+        await waitFor(() => {
+            expect(screen.getByRole('button', { name: /save/i })).toBeEnabled();
         });
     });
 });

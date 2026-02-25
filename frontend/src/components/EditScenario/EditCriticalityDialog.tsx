@@ -8,10 +8,9 @@ type EditCriticalityDialogProps = {
     count: number;
     onClose: () => void;
     onConfirm: (score: number) => void;
-    isPending?: boolean;
 };
 
-export default function EditCriticalityDialog({ open, count, onClose, onConfirm, isPending }: Readonly<EditCriticalityDialogProps>) {
+export default function EditCriticalityDialog({ open, count, onClose, onConfirm }: Readonly<EditCriticalityDialogProps>) {
     const [value, setValue] = useState('');
     const inputRef = useRef<HTMLInputElement>(null);
 
@@ -64,7 +63,7 @@ export default function EditCriticalityDialog({ open, count, onClose, onConfirm,
                 <Button onClick={handleClose} variant="outlined">
                     CANCEL
                 </Button>
-                <Button onClick={handleConfirm} variant="contained" disabled={value === '' || hasError || isPending}>
+                <Button onClick={handleConfirm} variant="contained" disabled={value === '' || hasError}>
                     CONFIRM
                 </Button>
             </DialogActions>

@@ -69,13 +69,6 @@ describe('EditCriticalityDialog', () => {
         expect(screen.getByRole('button', { name: 'CONFIRM' })).toBeDisabled();
     });
 
-    it('disables CONFIRM when isPending is true', () => {
-        renderDialog({ isPending: true });
-
-        fireEvent.change(screen.getByLabelText('Criticality score'), { target: { value: '2' } });
-        expect(screen.getByRole('button', { name: 'CONFIRM' })).toBeDisabled();
-    });
-
     it('does not render when closed', () => {
         renderDialog({ open: false });
         expect(screen.queryByText('Edit 5 items')).not.toBeInTheDocument();
