@@ -78,7 +78,7 @@ def is_user_authenticated(request) -> bool:
     jwt = _validate_header_fetch_jwt(request)
     token = _decode_jwt(jwt)
     try:
-        return "vista_access" in token["cognito:groups"]
+        return "cognito:groups" in token and "vista_access" in token["cognito:groups"]
     except (IndexError, KeyError, ValueError) as e:
         raise AuthenticationFailed(f"Invalid token format: {e}") from e
 

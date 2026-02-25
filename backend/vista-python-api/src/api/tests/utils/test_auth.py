@@ -220,14 +220,13 @@ class TestIsUserAuthenticated:
         with pytest.raises(AuthenticationFailed, match="Invalid token format"):
             is_user_authenticated(request)
 
-    def test_raises_error_when_sub_claim_missing(self, settings):
-        """Raises AuthenticationFailed when sub claim is not in token."""
+    def test_returns_false_when_group_claim_missing(self, settings):
+        """Returns false when groups are not in token."""
         settings.IS_PROD = True
         token = _create_jwt({"exp": 9999999999})
         request = MockRequest({"X-Auth-Request-Access-Token": token})
 
-        with pytest.raises(AuthenticationFailed, match="Invalid token format"):
-            is_user_authenticated(request)
+        assert not is_user_authenticated(request)
 
 
 def test_generate_temp_password():
