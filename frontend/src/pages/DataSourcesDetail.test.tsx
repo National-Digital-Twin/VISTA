@@ -101,6 +101,17 @@ describe('DataSourceDetail', () => {
         expect(screen.getByPlaceholderText('Search for group')).toBeInTheDocument();
     });
 
+    it('disables save when restricted mode is chosen but no groups are selected', async () => {
+        const dataSource = mockDataSources[0];
+        mockedFetchDataSource.mockResolvedValue(dataSource);
+        renderWithAppProviders([`/data-room/data-source/${dataSource.id}`]);
+
+        fireEvent.click(await screen.findByRole('radio', { name: 'No' }));
+
+        const saveButton = screen.getByRole('button', { name: 'SAVE' });
+        expect(saveButton).toBeDisabled();
+    });
+
     it('saves selected group access when restricted mode is chosen', async () => {
         const dataSource = mockDataSources[0];
         mockedFetchDataSource.mockResolvedValue(dataSource);
