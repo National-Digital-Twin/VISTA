@@ -55,6 +55,34 @@ def get_user_id_from_request(request) -> uuid.UUID:
         raise AuthenticationFailed(f"Invalid token format: {e}") from e
 
 
+def is_user_authenticated(request) -> bool:
+    """
+    Determine whether the user is authenticated.
+
+    The token is already validated by the gateway (Istio), so we just
+    decode the JWT payload to extract the subject claim.
+
+    In development, returns true.
+
+    Args:
+        request: The HTTP request object
+
+    Returns:
+        boolean: true if user is authenticated
+
+    Raises:
+        AuthenticationFailed: If user is not authenticated
+    """
+    if not settings.IS_PROD:
+        return True
+    jwt = _validate_header_fetch_jwt(request)
+    token = _decode_jwt(jwt)
+    try:
+        return "vista_access" in token["cognito:groups"]
+    except (IndexError, KeyError, ValueError) as e:
+        raise AuthenticationFailed(f"Invalid token format: {e}") from e
+
+
 def get_user_is_admin_from_request(request) -> bool:
     """
     Extract whether the user is an admin from the authentication token.
