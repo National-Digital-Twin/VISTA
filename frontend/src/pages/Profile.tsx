@@ -14,7 +14,7 @@ export default function Profile() {
     const navigate = useNavigate();
     const { getUserDisplayName, getUserOrganisation, getUserMemberSince, getUserAddedBy, getUserType, getUserEmail, loading, error, currentUserId } =
         useProfileData(userId);
-    const [showRemoveModal, setShowRemoveModal] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [confirmText, setConfirmText] = useState('');
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
     const queryClient = useQueryClient();
@@ -27,16 +27,16 @@ export default function Profile() {
         }
     };
 
-    const handleRemoveUser = () => {
-        setShowRemoveModal(true);
+    const handleDeleteUser = () => {
+        setShowDeleteModal(true);
     };
 
     const handleCloseModal = () => {
-        setShowRemoveModal(false);
+        setShowDeleteModal(false);
         setConfirmText('');
     };
 
-    const handleConfirmRemove = async () => {
+    const handleConfirmDelete = async () => {
         if (confirmText !== 'delete' || !userId) {
             return;
         }
@@ -48,7 +48,7 @@ export default function Profile() {
             });
 
             if (!response.ok) {
-                throw new Error('Failed to remove user');
+                throw new Error('Failed to delete user');
             }
 
             handleCloseModal();
@@ -60,7 +60,7 @@ export default function Profile() {
                 return;
             }
 
-            setSuccessMessage('User removed');
+            setSuccessMessage('User deleted');
             setTimeout(() => {
                 navigate('/admin?tab=users');
             }, 1500);
@@ -129,7 +129,7 @@ export default function Profile() {
                         <Button
                             variant="contained"
                             color="error"
-                            onClick={handleRemoveUser}
+                            onClick={handleDeleteUser}
                             sx={{
                                 'boxShadow': 'none',
                                 '&:hover': {
@@ -137,7 +137,7 @@ export default function Profile() {
                                 },
                             }}
                         >
-                            REMOVE USER
+                            DELETE USER
                         </Button>
                     )}
                 </Box>
@@ -179,7 +179,7 @@ export default function Profile() {
                 </Box>
             </Box>
 
-            <Dialog open={showRemoveModal} onClose={handleCloseModal} maxWidth="xs" fullWidth>
+            <Dialog open={showDeleteModal} onClose={handleCloseModal} maxWidth="xs" fullWidth>
                 <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     Are you sure?
                     <IconButton onClick={handleCloseModal} size="small">
@@ -188,7 +188,7 @@ export default function Profile() {
                 </DialogTitle>
                 <DialogContent>
                     <Typography variant="body1" sx={{ mb: 2 }}>
-                        Removing this user will result in them losing access to VISTA.
+                        Deleting this user will result in them losing access to VISTA.
                     </Typography>
                     <Typography variant="body2" sx={{ mb: 1 }}>
                         Type delete to confirm
@@ -223,7 +223,7 @@ export default function Profile() {
                         CANCEL
                     </Button>
                     <Button
-                        onClick={handleConfirmRemove}
+                        onClick={handleConfirmDelete}
                         variant="contained"
                         color="error"
                         disabled={confirmText !== 'delete'}
@@ -233,7 +233,7 @@ export default function Profile() {
                             borderRadius: 1,
                         }}
                     >
-                        CONFIRM REMOVAL
+                        CONFIRM DELETION
                     </Button>
                 </DialogActions>
             </Dialog>

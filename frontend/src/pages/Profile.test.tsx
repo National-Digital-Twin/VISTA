@@ -134,20 +134,20 @@ describe('Profile', () => {
         });
     });
 
-    describe('Remove User Functionality', () => {
-        it('renders remove user button when viewing other user', () => {
+    describe('Delete User Functionality', () => {
+        it('renders delete user button when viewing other user', () => {
             renderWithUserId('other-user');
 
-            expect(screen.getByText('REMOVE USER')).toBeInTheDocument();
+            expect(screen.getByText('DELETE USER')).toBeInTheDocument();
         });
 
-        it('does not render remove user button when viewing own profile', () => {
+        it('does not render delete user button when viewing own profile', () => {
             renderWithUserId(undefined);
 
-            expect(screen.queryByText('REMOVE USER')).not.toBeInTheDocument();
+            expect(screen.queryByText('DELETE USER')).not.toBeInTheDocument();
         });
 
-        it('opens confirmation modal when remove user is clicked', () => {
+        it('opens confirmation modal when delete user is clicked', () => {
             globalThis.fetch = vi.fn().mockResolvedValue({
                 ok: true,
                 json: async () => ({}),
@@ -155,24 +155,24 @@ describe('Profile', () => {
 
             renderWithUserId('other-user');
 
-            const removeButton = screen.getByText('REMOVE USER');
-            fireEvent.click(removeButton);
+            const deleteButton = screen.getByText('DELETE USER');
+            fireEvent.click(deleteButton);
 
             expect(screen.getByText('Are you sure?')).toBeInTheDocument();
         });
 
-        it('shows "User removed" and navigates to users tab after confirming removal', async () => {
+        it('shows "User deleted" and navigates to users tab after confirming deletion', async () => {
             globalThis.fetch = vi.fn().mockResolvedValue({ ok: true });
 
             renderWithUserId('other-user');
 
-            fireEvent.click(screen.getByText('REMOVE USER'));
+            fireEvent.click(screen.getByText('DELETE USER'));
             const confirmInput = screen.getByRole('textbox');
             fireEvent.change(confirmInput, { target: { value: 'delete' } });
-            fireEvent.click(screen.getByText('CONFIRM REMOVAL'));
+            fireEvent.click(screen.getByText('CONFIRM DELETION'));
 
             await waitFor(() => {
-                expect(screen.getByText('User removed')).toBeInTheDocument();
+                expect(screen.getByText('User deleted')).toBeInTheDocument();
             });
             await waitFor(
                 () => {
@@ -182,7 +182,7 @@ describe('Profile', () => {
             );
         });
 
-        it('calls signout when removing the current user (self)', async () => {
+        it('calls signout when deleting the current user (self)', async () => {
             vi.mocked(useProfileData).mockReturnValue({
                 ...mockProfileData,
                 currentUserId: 'user-123',
@@ -191,10 +191,10 @@ describe('Profile', () => {
 
             renderWithUserId('user-123');
 
-            fireEvent.click(screen.getByText('REMOVE USER'));
+            fireEvent.click(screen.getByText('DELETE USER'));
             const confirmInput = screen.getByRole('textbox');
             fireEvent.change(confirmInput, { target: { value: 'delete' } });
-            fireEvent.click(screen.getByText('CONFIRM REMOVAL'));
+            fireEvent.click(screen.getByText('CONFIRM DELETION'));
 
             await waitFor(() => {
                 expect(signout).toHaveBeenCalled();
