@@ -2,7 +2,7 @@
 
 from django.db.models import Exists, OuterRef, Q
 
-from api.models import Asset, AssetType, GroupDataSourceAccess
+from api.models import Asset, AssetType, GroupDataSourceAccess, VisibleAsset
 
 
 def user_can_access_asset(user_id, asset: Asset) -> bool:
@@ -43,3 +43,24 @@ def _get_data_source_has_user_membership(user_id):
         data_source=OuterRef("data_source"),
         group__members__user_id=user_id,
     )
+
+
+def cleanup_stale_visible_assets(user_ids):
+    """Remove VisibleAsset records for asset types the given users can no longer access."""
+    if not user_ids:
+        return 0
+
+    data_source_is_restricted = GroupDataSourceAccess.objects.filter(
+        data_source=OuterRef("asset_type__data_source"),
+    )
+    user_has_access = GroupDataSourceAccess.objects.filter(
+        data_source=OuterRef("asset_type__data_source"),
+        group__members__user_id=OuterRef("focus_area__user_id"),
+    )
+    deleted_count, _ = (
+        VisibleAsset.objects.filter(focus_area__user_id__in=user_ids)
+        .filter(Exists(data_source_is_restricted))
+        .exclude(Exists(user_has_access))
+        .delete()
+    )
+    return deleted_count

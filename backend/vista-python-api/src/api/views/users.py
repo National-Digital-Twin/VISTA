@@ -15,6 +15,7 @@ from api.models.user_invite import UserInvite
 from api.permissions import Administrator
 from api.repository.external.idp_repository import IdpRepository
 from api.serializers import IdpUserSerializer, UserCreateSerializer, UserInviteSerializer
+from api.services.data_source_access_service import cleanup_stale_visible_assets
 from api.utils.auth import get_user_id_from_request
 
 
@@ -85,6 +86,7 @@ class ApplicationUserViewSet(ModelViewSet):
         self.idp_repository.remove_user_from_vista(pk)
         UserInvite.objects.filter(user_id=pk).delete()
         GroupMembership.objects.filter(user_id=pk).delete()
+        cleanup_stale_visible_assets([pk])
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=False, methods=["post"], url_path="resolve-invites")
