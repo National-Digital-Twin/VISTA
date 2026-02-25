@@ -10,6 +10,7 @@ from django.conf import settings
 from rest_framework.exceptions import AuthenticationFailed
 
 MINIMUM_PWD_LENGTH = 10
+cognito_group_attr = "cognito:groups"
 
 
 def _decode_jwt(jwt):
@@ -78,7 +79,7 @@ def is_user_authenticated(request) -> bool:
     jwt = _validate_header_fetch_jwt(request)
     token = _decode_jwt(jwt)
     try:
-        return "cognito:groups" in token and "vista_access" in token["cognito:groups"]
+        return cognito_group_attr in token and "vista_access" in token[cognito_group_attr]
     except (IndexError, KeyError, ValueError) as e:
         raise AuthenticationFailed(f"Invalid token format: {e}") from e
 
@@ -105,7 +106,7 @@ def get_user_is_admin_from_request(request) -> bool:
         return True
     jwt = _validate_header_fetch_jwt(request)
     token = _decode_jwt(jwt)
-    return "vista_admin" in token["cognito:groups"]
+    return "vista_admin" in token[cognito_group_attr]
 
 
 def generate_temp_password(length: int = 16) -> str:
