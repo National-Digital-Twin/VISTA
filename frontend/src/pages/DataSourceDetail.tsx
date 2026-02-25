@@ -105,6 +105,8 @@ export default function DataSourceDetail() {
         return false;
     }, [availability, currentGroupIds, data, selectedGroupIds]);
 
+    const isValid = availability === 'yes' || selectedGroupIds.size > 0;
+
     const handleToggleGroup = (groupId: string) => {
         setSelectedGroupIds((prev) => {
             const next = new Set(prev);
@@ -319,7 +321,7 @@ export default function DataSourceDetail() {
                                 <Button variant="outlined" onClick={handleCancel} disabled={isSaving}>
                                     CANCEL
                                 </Button>
-                                <Button variant="contained" onClick={handleSave} disabled={isSaving || !isDirty}>
+                                <Button variant="contained" onClick={handleSave} disabled={isSaving || !isDirty || !isValid}>
                                     SAVE
                                 </Button>
                             </Box>
