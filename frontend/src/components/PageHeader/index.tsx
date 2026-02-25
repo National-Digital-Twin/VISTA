@@ -109,7 +109,7 @@ const PageHeader = ({ appName }: Readonly<PageHeaderProps>) => {
                     <Box display="flex" alignItems="center" gap={1}>
                         <Logo appName={appName} onMobileMenuClick={handleMobileMenuClick} />
                     </Box>
-                    <Navigation onNavigationClick={handleNavigationClick} dataRoomPendingCount={dataRoomPendingCount} />
+                    <Navigation onNavigationClick={handleNavigationClick} dataRoomPendingCount={isAdmin ? dataRoomPendingCount : 0} />
                 </Box>
 
                 {scenarioName && (
@@ -162,7 +162,7 @@ const PageHeader = ({ appName }: Readonly<PageHeaderProps>) => {
                     onClose={handleMobileMenuClose}
                     onNavigationClick={handleNavigationClick}
                     appName={appName}
-                    dataRoomPendingCount={dataRoomPendingCount}
+                    dataRoomPendingCount={isAdmin ? dataRoomPendingCount : 0}
                 />
             )}
         </AppBar>

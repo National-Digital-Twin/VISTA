@@ -14,6 +14,9 @@ export const fetchAssetById = async (assetId: string): Promise<AssetDetailsRespo
     if (response.status === 404) {
         return null;
     }
+    if (response.status === 403) {
+        return null;
+    }
 
     if (!response.ok) {
         throw new Error(`Failed to retrieve asset details for ${assetId}`);
@@ -30,7 +33,7 @@ export const fetchAssetByExternalId = async (externalId: string): Promise<AssetE
         headers: { 'Content-Type': 'application/json' },
     });
 
-    if (response.status === 404) {
+    if (response.status === 404 || response.status === 403) {
         return null;
     }
 

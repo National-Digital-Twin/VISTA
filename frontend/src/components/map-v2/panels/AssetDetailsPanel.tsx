@@ -43,11 +43,18 @@ const renderLoadingState = () => (
     </Box>
 );
 
-const renderErrorState = (assetId: string | null) => (
-    <Box sx={{ p: 2 }}>
-        <Alert severity="error">Error fetching details for {assetId || 'this asset'}</Alert>
-    </Box>
-);
+const ACCESS_DENIED_MESSAGE = 'You do not have permission to view this asset.';
+
+const renderErrorState = (assetId: string | null, errorMessage?: string | null) => {
+    const isAccessDenied = errorMessage?.includes('do not have permission') || errorMessage === ACCESS_DENIED_MESSAGE;
+    return (
+        <Box sx={{ p: 2 }}>
+            <Alert severity={isAccessDenied ? 'warning' : 'error'}>
+                {isAccessDenied ? (errorMessage ?? ACCESS_DENIED_MESSAGE) : `Error fetching details for ${assetId || 'this asset'}`}
+            </Alert>
+        </Box>
+    );
+};
 
 const renderWarningState = () => (
     <Box sx={{ p: 2 }}>
@@ -95,6 +102,7 @@ const ConnectedAssetLink = ({ label, isVisible, onToggleVisibility, onNavigate }
     </Box>
 );
 
+// eslint-disable-next-line sonarjs/cognitive-complexity
 const AssetDetailsPanel = ({ selectedElement, onBack, onClose, scenarioId, onConnectedAssetsVisibilityChange }: AssetDetailsPanelProps) => {
     const [view, setView] = useState<'scores' | 'connected'>('scores');
     const [dependentsVisible, setDependentsVisible] = useState(false);
@@ -176,12 +184,13 @@ const AssetDetailsPanel = ({ selectedElement, onBack, onClose, scenarioId, onCon
         return null;
     }
 
-    if (assetDetails.isLoading) {
+    if (assetDetails.isLoading || assetDetails.isFetching) {
         return renderLoadingState();
     }
 
     if (assetDetails.isError) {
-        return renderErrorState(selectedElement?.id || null);
+        const message = assetDetails.error instanceof Error ? assetDetails.error.message : null;
+        return renderErrorState(assetId, message);
     }
 
     const assetInfoData = assetDetails.data

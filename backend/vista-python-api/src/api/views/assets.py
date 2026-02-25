@@ -11,6 +11,8 @@ from api.serializers import (
     AssetExternalIdLookupSerializer,
     AssetListSerializer,
 )
+from api.services.data_source_access_service import user_can_access_asset
+from api.utils.auth import get_user_id_from_request
 
 
 class AssetViewSet(viewsets.ReadOnlyModelViewSet):
@@ -32,8 +34,20 @@ class AssetViewSet(viewsets.ReadOnlyModelViewSet):
 
         if self.action == "retrieve":
             # Prefetch reverse relationships only for the detail view
-            return Asset.objects.prefetch_related("provider", "dependent")
+            return Asset.objects.select_related("type").prefetch_related("provider", "dependent")
         return super().get_queryset()
+
+    def retrieve(self, request, *_args, **_kwargs):
+        """Return asset details only if the user has access to its data source."""
+        instance = self.get_object()
+        user_id = get_user_id_from_request(request)
+        if not user_can_access_asset(user_id, instance):
+            return Response(
+                {"detail": "You do not have permission to view this asset."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
 
     @action(detail=False, methods=["get"], url_path="")
     def list_by_asset_type(self, asset_type: str) -> list[Asset]:
@@ -50,6 +64,12 @@ class AssetViewSet(viewsets.ReadOnlyModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        asset = get_object_or_404(Asset, external_id=external_id)
+        asset = get_object_or_404(Asset.objects.select_related("type"), external_id=external_id)
+        user_id = get_user_id_from_request(request)
+        if not user_can_access_asset(user_id, asset):
+            return Response(
+                {"detail": "You do not have permission to view this asset."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         serializer = AssetExternalIdLookupSerializer(asset)
         return Response(serializer.data, status=status.HTTP_200_OK)

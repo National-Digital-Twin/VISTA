@@ -33,6 +33,10 @@ export const fetchAssetDetails = async (assetId: string): Promise<AssetDetailsRe
     const response = await fetch(`${config.services.apiBaseUrl}/assets/${assetId}/`, {
         headers: { 'Content-Type': 'application/json' },
     });
+    if (response.status === 403) {
+        const data = (await response.json().catch(() => ({}))) as { detail?: string };
+        throw new Error(data.detail ?? 'You do not have permission to view this asset.');
+    }
     if (!response.ok) {
         throw new Error(`Failed to retrieve asset details for ${assetId}`);
     }
