@@ -2,7 +2,12 @@
 
 from django.db.models import Exists, OuterRef, Q
 
-from api.models import AssetType, GroupDataSourceAccess
+from api.models import Asset, AssetType, GroupDataSourceAccess
+
+
+def user_can_access_asset(user_id, asset: Asset) -> bool:
+    """Return True if the user has access to the asset's type's data source."""
+    return not get_asset_types_user_cannot_access(user_id).filter(id=asset.type_id).exists()
 
 
 def get_asset_types_user_can_access(user_id):

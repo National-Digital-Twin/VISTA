@@ -288,7 +288,7 @@ export default function DataRoom() {
                                 disabled={!isAdmin}
                                 to="/data-room/scenarios"
                                 active={isManageScenariosActive}
-                                badgeContent={totalPendingExposure > 0 ? totalPendingExposure : undefined}
+                                badgeContent={isAdmin && totalPendingExposure > 0 ? totalPendingExposure : undefined}
                             >
                                 Manage scenario
                             </SidebarItem>

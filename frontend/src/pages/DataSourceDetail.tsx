@@ -23,6 +23,7 @@ import ReactMarkdown from 'react-markdown';
 import { fetchAllGroups, type Group } from '@/api/groups';
 import { DataRoomOutletContext } from '@/components/DataRoom';
 import { DataSource, fetchDataSource, grantDataSourceGroupAccess, revokeDataSourceGroupAccess } from '@/api/datasources';
+import { useUserData } from '@/hooks/useUserData';
 
 const MarkdownRenderer = ({ content }: { content: string }) => {
     return <ReactMarkdown>{content}</ReactMarkdown>;
@@ -31,6 +32,7 @@ const MarkdownRenderer = ({ content }: { content: string }) => {
 export default function DataSourceDetail() {
     const { id } = useParams<{ id: string }>();
     const { getFormattedLastUpdated } = useOutletContext<DataRoomOutletContext>();
+    const { isAdmin } = useUserData();
     const queryClient = useQueryClient();
     const navigate = useNavigate();
     const { data, isLoading } = useQuery<DataSource, Error>({
@@ -150,6 +152,11 @@ export default function DataSourceDetail() {
 
     const handleSave = async () => {
         if (!id || !data || !isDirty) {
+            return;
+        }
+
+        if (!isAdmin) {
+            setErrorMessage('You do not have permission to change Group Access.');
             return;
         }
 

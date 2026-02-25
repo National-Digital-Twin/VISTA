@@ -73,6 +73,7 @@ beforeEach(() => {
         getUserDisplayName: () => 'Name',
         getUserEmailDomain: () => 'Email',
         getUserType: () => 'Admin',
+        isAdmin: true,
     });
 
     sessionStorage.clear();
@@ -117,5 +118,30 @@ describe('DataSourceDetail', () => {
         await waitFor(() => {
             expect(mockedGrantDataSourceGroupAccess).toHaveBeenCalled();
         });
+    });
+
+    it('shows permission error when General user tries to save group access', async () => {
+        mockUseUserData.mockReturnValue({
+            getUserDisplayName: () => 'Name',
+            getUserEmailDomain: () => 'Email',
+            getUserType: () => 'General',
+            isAdmin: false,
+        });
+        const dataSource = mockDataSources[0];
+        mockedFetchDataSource.mockResolvedValue(dataSource);
+        renderWithAppProviders([`/data-room/data-source/${dataSource.id}`]);
+
+        fireEvent.click(await screen.findByRole('radio', { name: 'No' }));
+        const checkboxes = await screen.findAllByRole('checkbox');
+        fireEvent.click(checkboxes[0]);
+
+        const saveButton = screen.getByRole('button', { name: 'SAVE' });
+        fireEvent.click(saveButton);
+
+        await waitFor(() => {
+            expect(screen.getByText('You do not have permission to change Group Access.')).toBeInTheDocument();
+        });
+        expect(mockedGrantDataSourceGroupAccess).not.toHaveBeenCalled();
+        expect(mockedRevokeDataSourceGroupAccess).not.toHaveBeenCalled();
     });
 });

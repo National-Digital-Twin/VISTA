@@ -1,10 +1,17 @@
 """Tests for the assets endpoints."""
 
-import pytest
+import uuid
 
-from api.urls import router
+import pytest
+from django.contrib.gis.geos import Point
+
+from api.models.asset import Asset
+from api.models.asset_type import AssetCategory, AssetSubCategory, AssetType
+from api.models.data_source import DataSource
+from api.models.group import Group, GroupDataSourceAccess, GroupMembership
 
 http_success_code = 200
+http_forbidden = 403
 
 
 @pytest.mark.django_db
@@ -92,3 +99,72 @@ def test_resolve_external_id_requires_query_param(client):
     response = client.get("/api/assets/resolve-external-id/")
 
     assert response.status_code == 400
+
+
+@pytest.fixture
+def restricted_asset_with_group_access(db):  # noqa: ARG001
+    """Asset with type's data source restricted to a group; returns asset and user IDs."""
+    allowed_user_id = uuid.uuid4()
+    data_source = DataSource.objects.create(name="Restricted Source", owner="Owner")
+    group = Group.objects.create(name="Allowed Group", created_by=allowed_user_id)
+    GroupMembership.objects.create(group=group, user_id=allowed_user_id, created_by=allowed_user_id)
+    GroupDataSourceAccess.objects.create(data_source=data_source, group=group)
+
+    category = AssetCategory.objects.create(name="Cat")
+    sub_category = AssetSubCategory.objects.create(name="Sub", category=category)
+    asset_type = AssetType.objects.create(
+        name="Restricted Type", data_source=data_source, sub_category=sub_category
+    )
+    asset = Asset.objects.create(
+        name="Restricted Asset",
+        external_id=uuid.uuid4(),
+        geom=Point(0.5, 0.5),
+        type=asset_type,
+    )
+    return {
+        "asset": asset,
+        "allowed_user_id": allowed_user_id,
+        "disallowed_user_id": uuid.uuid4(),
+    }
+
+
+@pytest.mark.django_db
+def test_retrieve_returns_403_when_user_lacks_data_source_access(
+    restricted_asset_with_group_access, client, monkeypatch
+):
+    """Asset detail returns 403 when data source is restricted and user not in allowed group."""
+    asset = restricted_asset_with_group_access["asset"]
+    disallowed_user_id = restricted_asset_with_group_access["disallowed_user_id"]
+
+    monkeypatch.setattr(
+        "api.views.assets.get_user_id_from_request",
+        lambda _request: disallowed_user_id,
+    )
+
+    response = client.get(f"/api/assets/{asset.id}/")
+
+    assert response.status_code == http_forbidden
+    data = response.json()
+    assert "detail" in data
+    assert "do not have permission" in data["detail"].lower()
+
+
+@pytest.mark.django_db
+def test_resolve_external_id_returns_403_when_user_lacks_data_source_access(
+    restricted_asset_with_group_access, client, monkeypatch
+):
+    """Resolve external ID returns 403 when data source restricted and user not in allowed group."""
+    asset = restricted_asset_with_group_access["asset"]
+    disallowed_user_id = restricted_asset_with_group_access["disallowed_user_id"]
+
+    monkeypatch.setattr(
+        "api.views.assets.get_user_id_from_request",
+        lambda _request: disallowed_user_id,
+    )
+
+    response = client.get(f"/api/assets/resolve-external-id/?external_id={asset.external_id}")
+
+    assert response.status_code == http_forbidden
+    data = response.json()
+    assert "detail" in data
+    assert "do not have permission" in data["detail"].lower()
