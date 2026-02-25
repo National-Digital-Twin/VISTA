@@ -18,10 +18,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 
-from core.views import ping
+from core.views import health, ping
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/", include("api.urls")),
+    path("health/", health, name="health"),
     path("ping/", ping, name="ping"),
 ]

@@ -271,7 +271,7 @@ jobs:
       - name: Ping App
         run: |
           #!/bin/bash
-          status_code=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8000/ping/)
+          status_code=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8000/health/)
           if [[ "$status_code" == "200" ]]; then
             echo "Ping successful (200 OK)"  >> $GITHUB_STEP_SUMMARY
           else

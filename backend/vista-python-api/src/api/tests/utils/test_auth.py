@@ -11,6 +11,7 @@ from api.utils.auth import (
     generate_temp_password,
     get_user_id_from_request,
     get_user_is_admin_from_request,
+    is_user_authenticated,
 )
 
 
@@ -45,6 +46,12 @@ def _base_token(user_id, groups):
         "exp": 9999999999,
         "iat": 1700000000,
     }
+
+
+@pytest.fixture
+def valid_token_no_access(user_id):
+    """Create a valid JWT token without Cognito claims."""
+    return _create_jwt(_base_token(user_id, []))
 
 
 @pytest.fixture
@@ -160,6 +167,67 @@ class TestGetUserIsAdminFromRequest:
 
         with pytest.raises(AuthenticationFailed, match="Invalid token format"):
             get_user_is_admin_from_request(request)
+
+
+class TestIsUserAuthenticated:
+    """Tests for is_user_authenticated function."""
+
+    def test_returns_true_in_dev_mode(self, settings):
+        """In development mode, returns true."""
+        settings.IS_PROD = False
+        request = MockRequest()
+
+        result = is_user_authenticated(request)
+
+        assert result
+
+    def test_returns_true_if_user_has_required_claim(self, settings, valid_token, user_id):  # noqa: ARG002
+        """Returns true if user has required claim from a valid JWT token."""
+        settings.IS_PROD = True
+        request = MockRequest({"X-Auth-Request-Access-Token": valid_token})
+
+        result = is_user_authenticated(request)
+
+        assert result
+
+    def test_returns_false_if_user_does_not_have_required_claims(
+        self,
+        settings,
+        valid_token_no_access,
+        user_id,  # noqa: ARG002
+    ):
+        """Returns true if user has required claim from a valid JWT token."""
+        settings.IS_PROD = True
+        request = MockRequest({"X-Auth-Request-Access-Token": valid_token_no_access})
+
+        result = is_user_authenticated(request)
+
+        assert not result
+
+    def test_raises_error_when_token_missing(self, settings):
+        """Raises AuthenticationFailed when token header is missing."""
+        settings.IS_PROD = True
+        request = MockRequest()
+
+        with pytest.raises(AuthenticationFailed, match="Missing X-Auth-Request-Access-Token"):
+            is_user_authenticated(request)
+
+    def test_raises_error_for_malformed_token(self, settings):
+        """Raises AuthenticationFailed when token is not a valid JWT."""
+        settings.IS_PROD = True
+        request = MockRequest({"X-Auth-Request-Access-Token": "not-a-jwt"})
+
+        with pytest.raises(AuthenticationFailed, match="Invalid token format"):
+            is_user_authenticated(request)
+
+    def test_raises_error_when_sub_claim_missing(self, settings):
+        """Raises AuthenticationFailed when sub claim is not in token."""
+        settings.IS_PROD = True
+        token = _create_jwt({"exp": 9999999999})
+        request = MockRequest({"X-Auth-Request-Access-Token": token})
+
+        with pytest.raises(AuthenticationFailed, match="Invalid token format"):
+            is_user_authenticated(request)
 
 
 def test_generate_temp_password():
