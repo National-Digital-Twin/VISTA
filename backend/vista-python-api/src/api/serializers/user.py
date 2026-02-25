@@ -50,6 +50,7 @@ class UserInviteSerializer(serializers.ModelSerializer):
 
         model = UserInvite
         fields: ClassVar[list[str]] = [
+            "id",
             "user_id",
             "status",
             "groups",

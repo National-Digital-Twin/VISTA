@@ -28,6 +28,7 @@ http_ok = 200
 http_created = 201
 http_no_content = 204
 http_bad_request = 400
+http_not_found = 404
 http_forbidden = 403
 
 admin_uuid = uuid4()
@@ -116,6 +117,10 @@ class MockIdpRepository:
         """Construct an instance of `MockIdpRepository`."""
 
     def list_users_in_group(self):
+        """List a set of users."""
+        return [cognito_user]
+
+    def list_all_users(self):
         """List a set of users."""
         return [cognito_user]
 
@@ -475,7 +480,7 @@ def test_resend_invite_returns_403_for_general_user(client, monkeypatch):
     assert response.status_code == http_forbidden
 
 
-# --- DELETE Tests ---
+# --- DELETE user tests ---
 
 
 @pytest.mark.django_db
@@ -504,7 +509,51 @@ def test_delete_user_is_successful_without_user_invite_or_groups(client):
 
 @pytest.mark.django_db
 def test_delete_user_returns_403_for_general_user(client, monkeypatch):
-    """Test that DELETE returns a 403 if not admin."""
+    """Test that DELETE user returns a 403 if not admin."""
     monkeypatch.setattr("api.views.users.Administrator", Administrator)
     response = client.delete(f"/api/users/{new_user_uuid}/")
+    assert response.status_code == http_forbidden
+
+
+# --- DELETE expired user invite tests ---
+
+
+@pytest.mark.django_db
+def test_expired_user_invite_is_removed_successfully(client, expired_user_invite):
+    """Test that DELETE invite returns a 204 on success."""
+    invite_id = expired_user_invite.id
+    response = client.delete(f"/api/users/pending-invites/{invite_id}/")
+    assert response.status_code == http_no_content
+
+    assert not UserInvite.objects.filter(id=invite_id)
+
+
+@pytest.mark.django_db
+def test_accepted_user_invite_receives_400_when_removal_attempted(client, accepted_user_invite):
+    """Test that DELETE invite returns a 400 if status is accepted."""
+    invite_id = accepted_user_invite.id
+    response = client.delete(f"/api/users/pending-invites/{invite_id}/")
+    assert response.status_code == http_bad_request
+
+
+@pytest.mark.django_db
+def test_pending_user_invite_receives_400_when_removal_attempted(client, user_invites):
+    """Test that DELETE invite returns a 400 if status is pending."""
+    invite_id = user_invites[0].id
+    response = client.delete(f"/api/users/pending-invites/{invite_id}/")
+    assert response.status_code == http_bad_request
+
+
+@pytest.mark.django_db
+def test_user_invite_returns_404_if_not_found(client):
+    """Test that DELETE invite returns a 404 if invite ID not found."""
+    response = client.delete(f"/api/users/pending-invites/{uuid4()}/")
+    assert response.status_code == http_not_found
+
+
+@pytest.mark.django_db
+def test_user_invite_returns_403_for_general_user(client, monkeypatch, user_invites):
+    """Test that DELETE invite returns a 403 if not admin."""
+    monkeypatch.setattr("api.views.users.Administrator", Administrator)
+    response = client.delete(f"/api/users/pending-invites/{user_invites[0].id}/")
     assert response.status_code == http_forbidden

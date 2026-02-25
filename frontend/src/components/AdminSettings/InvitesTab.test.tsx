@@ -14,6 +14,7 @@ vi.mock('@/api/invites', () => ({
     fetchAllInvites: vi.fn(),
     cancelInvite: vi.fn(),
     resendInvite: vi.fn(),
+    removeExpiredInvite: vi.fn(),
 }));
 
 const mockNavigate = vi.fn();
@@ -87,9 +88,10 @@ describe('InvitesTab', () => {
     });
 
     it('handles re-invite and remove actions with toasts', async () => {
-        const { cancelInvite, resendInvite } = await import('@/api/invites');
+        const { cancelInvite, resendInvite, removeExpiredInvite } = await import('@/api/invites');
         vi.mocked(cancelInvite).mockResolvedValue(undefined as any);
         vi.mocked(resendInvite).mockResolvedValue(undefined as any);
+        vi.mocked(removeExpiredInvite).mockResolvedValue(undefined as any);
 
         render(<InvitesTab />, { wrapper });
 
@@ -108,5 +110,9 @@ describe('InvitesTab', () => {
         fireEvent.click(actionButtons[1]);
         fireEvent.click(screen.getByRole('menuitem', { name: /re-invite user/i }));
         expect(resendInvite).toHaveBeenCalled();
+
+        fireEvent.click(actionButtons[1]);
+        fireEvent.click(screen.getByRole('menuitem', { name: /remove invite/i }));
+        expect(removeExpiredInvite).toHaveBeenCalled();
     });
 });

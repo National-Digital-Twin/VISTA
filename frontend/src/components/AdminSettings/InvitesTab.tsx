@@ -17,7 +17,7 @@ import {
     ListItemText,
 } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
-import { fetchAllInvites, Invite, cancelInvite, resendInvite } from '@/api/invites';
+import { fetchAllInvites, Invite, cancelInvite, resendInvite, removeExpiredInvite } from '@/api/invites';
 import { TableRowMenu, TableRowMenuButton } from '@/components/TableRowMenu';
 import { SortableTableHeader } from '@/components/SortableTableHeader';
 
@@ -57,6 +57,21 @@ const InvitesTab = () => {
         handleCloseMenu();
         try {
             await cancelInvite(invite.userId);
+            refetch();
+            setSuccess('Invite removed successfully');
+        } catch {
+            setError('Failed to remove invite. Please try again.');
+        }
+    };
+
+    const handleRemoveExpiredInvite = async () => {
+        if (!menuAnchor) {
+            return;
+        }
+        const { invite } = menuAnchor;
+        handleCloseMenu();
+        try {
+            await removeExpiredInvite(invite.id);
             refetch();
             setSuccess('Invite removed successfully');
         } catch {
@@ -227,9 +242,14 @@ const InvitesTab = () => {
                     </>
                 )}
                 {menuAnchor?.invite.status === 'Expired' && (
-                    <MenuItem onClick={handleReinvite}>
-                        <ListItemText>Re-invite user</ListItemText>
-                    </MenuItem>
+                    <>
+                        <MenuItem onClick={handleReinvite}>
+                            <ListItemText>Re-invite user</ListItemText>
+                        </MenuItem>
+                        <MenuItem onClick={handleRemoveExpiredInvite}>
+                            <ListItemText>Remove invite</ListItemText>
+                        </MenuItem>
+                    </>
                 )}
             </TableRowMenu>
 

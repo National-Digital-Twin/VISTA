@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { sendInvite, fetchAllInvites, cancelInvite, resendInvite, type InviteData } from './invites';
+import { sendInvite, fetchAllInvites, cancelInvite, resendInvite, removeExpiredInvite, type InviteData } from './invites';
 
 vi.mock('@/config/app-config', () => ({
     default: {
@@ -307,6 +307,35 @@ describe('invites API', () => {
             const result = await promise;
 
             expect(result.userId).toBe(inviteId);
+        });
+    });
+
+    describe('removeExpiredInvite', () => {
+        beforeEach(() => {
+            fetchMock.mockResolvedValue({ ok: true });
+        });
+
+        it('successfully removes an expired invite', async () => {
+            await removeExpiredInvite('invite-uuid-123');
+
+            expect(fetchMock).toHaveBeenCalledWith('/ndtp-python/api/users/pending-invites/invite-uuid-123/', {
+                method: 'DELETE',
+                credentials: 'include',
+            });
+        });
+
+        it('throws when response is not ok', async () => {
+            fetchMock.mockResolvedValue({ ok: false, statusText: 'Forbidden' });
+
+            await expect(removeExpiredInvite('invite-uuid-456')).rejects.toThrow();
+        });
+
+        it('handles different invite IDs', async () => {
+            await removeExpiredInvite('invite-1');
+            await removeExpiredInvite('invite-2');
+
+            expect(fetchMock).toHaveBeenCalledWith('/ndtp-python/api/users/pending-invites/invite-1/', expect.any(Object));
+            expect(fetchMock).toHaveBeenCalledWith('/ndtp-python/api/users/pending-invites/invite-2/', expect.any(Object));
         });
     });
 });
