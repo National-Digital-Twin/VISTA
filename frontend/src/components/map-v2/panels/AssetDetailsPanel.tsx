@@ -96,7 +96,7 @@ const ConnectedAssetLink = ({ label, isVisible, onToggleVisibility, onNavigate }
             </Typography>
             <ArrowForwardIcon sx={{ fontSize: '16px' }} />
         </Link>
-        <IconButton size="small" onClick={onToggleVisibility}>
+        <IconButton size="small" color={isVisible ? 'primary' : 'default'} onClick={onToggleVisibility}>
             {isVisible ? <VisibilityIcon /> : <VisibilityOffIcon />}
         </IconButton>
     </Box>
