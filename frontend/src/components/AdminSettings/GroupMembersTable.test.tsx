@@ -131,4 +131,18 @@ describe('GroupMembersTable', () => {
         fireEvent.click(screen.getByLabelText('Sort by member since'));
         expect(onMemberSinceMenuOpen).toHaveBeenCalled();
     });
+
+    it('displays formatted date when user has memberSince', () => {
+        const usersWithDates: GroupMembersTableUser[] = [
+            { id: 'u1', name: 'Alice', organisation: 'org-a', userType: 'Admin', memberSince: '2026-01-15T00:00:00Z' },
+        ];
+        renderWithTheme({ ...defaultProps, users: usersWithDates, showMemberSinceColumn: true });
+        expect(screen.getByText('15 Jan 2026')).toBeInTheDocument();
+    });
+
+    it('displays dash when user has no memberSince', () => {
+        renderWithTheme({ ...defaultProps, showMemberSinceColumn: true });
+        const dashes = screen.getAllByText('-');
+        expect(dashes).toHaveLength(2);
+    });
 });
