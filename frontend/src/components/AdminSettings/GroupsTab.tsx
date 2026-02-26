@@ -45,6 +45,7 @@ type User = {
     organisation: string;
     userSince: string;
     userType: 'General' | 'Admin';
+    memberSince?: string;
 };
 
 type UserSortField = 'name' | 'organisation' | 'userType' | 'memberSince';
@@ -84,7 +85,7 @@ const userMatchesSearch = (user: User, searchLower: string): boolean =>
     user.organisation.toLowerCase().includes(searchLower) ||
     user.userType.toLowerCase().includes(searchLower);
 
-const getFieldValue = (user: User & { memberSince?: string }, field: UserSortField): string => {
+const getFieldValue = (user: User, field: UserSortField): string => {
     switch (field) {
         case 'name':
             return user.name;
@@ -101,7 +102,7 @@ const getFieldValue = (user: User & { memberSince?: string }, field: UserSortFie
 
 const compareUsers =
     (field: UserSortField, direction: SortDirection) =>
-    (a: User & { memberSince?: string }, b: User & { memberSince?: string }): number => {
+    (a: User, b: User): number => {
         const aValue = getFieldValue(a, field);
         const bValue = getFieldValue(b, field);
         const comparison = aValue.localeCompare(bValue);
@@ -336,9 +337,13 @@ const GroupsTab: React.FC = () => {
 
     const sortMembersFirst = isCreatingNewGroup || (isEditMode && !!selectedGroup);
     const filteredAndSortedUsers = useMemo(() => {
+        const usersWithMemberSince = filteredUsers.map((user) => ({
+            ...user,
+            memberSince: selectedGroup?.members.find((m) => m.userId === user.id)?.createdAt,
+        }));
         const compare = compareUsers(userSortField, userSortDirection);
         if (sortMembersFirst) {
-            return [...filteredUsers].sort((a, b) => {
+            return usersWithMemberSince.toSorted((a, b) => {
                 const aSelected = effectiveSelectedIds.has(a.id) ? 1 : 0;
                 const bSelected = effectiveSelectedIds.has(b.id) ? 1 : 0;
                 if (aSelected !== bSelected) {
@@ -347,8 +352,8 @@ const GroupsTab: React.FC = () => {
                 return compare(a, b);
             });
         }
-        return [...filteredUsers].sort(compare);
-    }, [filteredUsers, userSortField, userSortDirection, sortMembersFirst, effectiveSelectedIds]);
+        return usersWithMemberSince.toSorted(compare);
+    }, [filteredUsers, selectedGroup, userSortField, userSortDirection, sortMembersFirst, effectiveSelectedIds]);
 
     const hasCreateChanges = isCreatingNewGroup && (newGroupName.trim() !== '' || createSelectedUserIds.size > adminUserIds.size);
 

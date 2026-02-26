@@ -1,4 +1,5 @@
 import { type MouseEvent } from 'react';
+import { format } from 'date-fns';
 import { Box, Checkbox, IconButton, Link, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
 import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
 
@@ -7,6 +8,7 @@ export type GroupMembersTableUser = {
     name: string;
     organisation: string;
     userType: string;
+    memberSince?: string;
 };
 
 type GroupMembersTableProps = {
@@ -135,7 +137,9 @@ export function GroupMembersTable({
                                     </TableCell>
                                     <TableCell>@{user.organisation}</TableCell>
                                     <TableCell>{user.userType}</TableCell>
-                                    {showMemberSinceColumn && <TableCell>-</TableCell>}
+                                    {showMemberSinceColumn && (
+                                        <TableCell>{user.memberSince ? format(new Date(user.memberSince), 'd MMM yyyy') : '-'}</TableCell>
+                                    )}
                                 </TableRow>
                             );
                         })

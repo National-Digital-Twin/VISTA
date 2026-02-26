@@ -3,6 +3,7 @@ import config from '@/config/app-config';
 export type GroupMember = {
     name: string | null;
     userId: string;
+    createdAt: string;
     createdBy?: string;
     organisation?: string | null;
     userType?: string | null;
@@ -31,6 +32,7 @@ export const fetchAllGroups = async (): Promise<Group[]> => {
         members: (group.members || []).map((member: any) => ({
             name: member.name,
             userId: member.userId,
+            createdAt: member.createdAt,
             createdBy: member.createdBy,
         })),
     }));
