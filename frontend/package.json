@@ -110,7 +110,7 @@
         "eslint-plugin-jsx-a11y": "6.10.2",
         "eslint-plugin-react": "7.37.5",
         "eslint-plugin-react-hooks": "7.0.1",
-        "eslint-plugin-react-refresh": "0.4.26",
+        "eslint-plugin-react-refresh": "0.5.2",
         "eslint-plugin-sonarjs": "^3.0.7",
         "eslint-plugin-testing-library": "7.16.0",
         "flat-cache": "6.1.20",
