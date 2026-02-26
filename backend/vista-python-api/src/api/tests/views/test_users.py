@@ -8,7 +8,9 @@ from uuid import uuid4
 import pytest
 
 from api.domain.cognito_user import IdpUser
-from api.models.group import Group, GroupMembership
+from api.models import FocusArea, Scenario, VisibleAsset
+from api.models.asset_type import AssetCategory, AssetSubCategory, AssetType, DataSource
+from api.models.group import Group, GroupDataSourceAccess, GroupMembership
 from api.models.user_invite import UserInvite
 
 new_user_uuid = uuid4()
@@ -513,6 +515,29 @@ def test_delete_user_returns_403_for_general_user(client, monkeypatch):
     monkeypatch.setattr("api.views.users.Administrator", Administrator)
     response = client.delete(f"/api/users/{new_user_uuid}/")
     assert response.status_code == http_forbidden
+
+
+@pytest.mark.django_db
+def test_delete_user_cleans_up_stale_visible_assets(client, group, members):  # noqa: ARG001
+    """Test that deleting a user cleans up their stale visible assets."""
+    scenario = Scenario.objects.create(name="Test", is_active=True)
+    focus_area = FocusArea.objects.create(
+        scenario=scenario, user_id=new_user_uuid, name="Map-wide", is_system=True
+    )
+    data_source = DataSource.objects.create(name="DS", owner="T", description_md="")
+    category = AssetCategory.objects.create(name="Infra")
+    sub_cat = AssetSubCategory.objects.create(name="Transport", category=category)
+    asset_type = AssetType.objects.create(
+        name="Rail", sub_category=sub_cat, data_source=data_source
+    )
+    GroupDataSourceAccess.objects.create(data_source=data_source, group=group, created_by=uuid4())
+    visible_asset = VisibleAsset.objects.create(focus_area=focus_area, asset_type=asset_type)
+
+    with patch("api.views.users.IdpRepository"):
+        response = client.delete(f"/api/users/{new_user_uuid}/")
+
+    assert response.status_code == http_no_content
+    assert not VisibleAsset.objects.filter(id=visible_asset.id).exists()
 
 
 # --- DELETE expired user invite tests ---

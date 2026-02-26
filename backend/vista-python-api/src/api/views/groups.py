@@ -8,6 +8,7 @@ from api.models import Group
 from api.permissions import Administrator
 from api.repository.external.idp_repository import IdpRepository
 from api.serializers import GroupSerializer
+from api.services.data_source_access_service import cleanup_stale_visible_assets
 from api.utils.auth import get_user_id_from_request
 
 
@@ -39,3 +40,9 @@ class GroupViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         """Doctor create request with authenticated user for created field."""
         serializer.save(created_by=get_user_id_from_request(self.request))
+
+    def perform_destroy(self, instance):
+        """Delete the group and clean up stale visible assets for all former members."""
+        affected_user_ids = list(instance.members.values_list("user_id", flat=True))
+        super().perform_destroy(instance)
+        cleanup_stale_visible_assets(affected_user_ids)

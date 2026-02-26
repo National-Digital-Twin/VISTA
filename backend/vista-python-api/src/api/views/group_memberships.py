@@ -8,6 +8,7 @@ from api.models import GroupMembership
 from api.permissions import Administrator
 from api.repository.external.idp_repository import IdpRepository
 from api.serializers import GroupMembershipSerializer
+from api.services.data_source_access_service import cleanup_stale_visible_assets
 from api.utils.auth import get_user_id_from_request
 
 
@@ -45,3 +46,9 @@ class GroupMembershipViewSet(viewsets.ModelViewSet):
         serializer.save(
             created_by=get_user_id_from_request(self.request), group_id=self.kwargs["group_id"]
         )
+
+    def perform_destroy(self, instance):
+        """Delete the membership and clean up stale visible assets."""
+        user_id = instance.user_id
+        super().perform_destroy(instance)
+        cleanup_stale_visible_assets([user_id])

@@ -6,7 +6,9 @@ from uuid import uuid4
 import pytest
 
 from api.domain.cognito_user import IdpUser
-from api.models.group import Group, GroupMembership
+from api.models import FocusArea, Scenario, VisibleAsset
+from api.models.asset_type import AssetCategory, AssetSubCategory, AssetType, DataSource
+from api.models.group import Group, GroupDataSourceAccess, GroupMembership
 
 http_ok = 200
 http_created = 201
@@ -369,6 +371,85 @@ def test_delete_group_returns_403_for_general_user(group, client, monkeypatch):
     )
     assert response.status_code == http_forbidden
     assert Group.objects.filter(id=group.id).exists()
+
+
+@pytest.mark.django_db
+def test_delete_group_cleans_up_stale_visible_assets(group, members, client):
+    """Test that deleting a group cleans up VisibleAsset for all former members."""
+    scenario = Scenario.objects.create(name="Test", is_active=True)
+    data_source = DataSource.objects.create(name="Restricted", owner="T", description_md="")
+    category = AssetCategory.objects.create(name="Infra")
+    sub_cat = AssetSubCategory.objects.create(name="Transport", category=category)
+    asset_type = AssetType.objects.create(
+        name="Rail", sub_category=sub_cat, data_source=data_source
+    )
+    # Two groups have access — deleting one keeps data source restricted
+    other_group = Group.objects.create(name="Other", created_by=uuid4())
+    GroupDataSourceAccess.objects.create(data_source=data_source, group=group, created_by=uuid4())
+    GroupDataSourceAccess.objects.create(
+        data_source=data_source, group=other_group, created_by=uuid4()
+    )
+
+    visible_assets = []
+    for member in members:
+        fa = FocusArea.objects.create(
+            scenario=scenario, user_id=member.user_id, name="Map-wide", is_system=True
+        )
+        va = VisibleAsset.objects.create(focus_area=fa, asset_type=asset_type)
+        visible_assets.append(va)
+
+    response = client.delete(
+        f"/api/groups/{group.id}/",
+        content_type="application/json",
+    )
+
+    assert response.status_code == http_no_content
+    for va in visible_assets:
+        assert not VisibleAsset.objects.filter(id=va.id).exists()
+
+
+@pytest.mark.django_db
+def test_delete_group_preserves_visible_assets_when_member_in_another_group(group, members, client):
+    """Test deleting a group preserves VisibleAsset when member has access via another group."""
+    scenario = Scenario.objects.create(name="Test", is_active=True)
+    data_source = DataSource.objects.create(name="Restricted", owner="T", description_md="")
+    category = AssetCategory.objects.create(name="Infra")
+    sub_cat = AssetSubCategory.objects.create(name="Transport", category=category)
+    asset_type = AssetType.objects.create(
+        name="Rail", sub_category=sub_cat, data_source=data_source
+    )
+    other_group = Group.objects.create(name="Other", created_by=uuid4())
+    GroupDataSourceAccess.objects.create(data_source=data_source, group=group, created_by=uuid4())
+    GroupDataSourceAccess.objects.create(
+        data_source=data_source, group=other_group, created_by=uuid4()
+    )
+
+    # Add first member to other_group so they retain access
+    member_with_access = members[0]
+    member_without_access = members[1]
+    GroupMembership.objects.create(
+        group=other_group, user_id=member_with_access.user_id, created_by=uuid4()
+    )
+
+    fa_with = FocusArea.objects.create(
+        scenario=scenario, user_id=member_with_access.user_id, name="FA With", is_system=True
+    )
+    fa_without = FocusArea.objects.create(
+        scenario=scenario, user_id=member_without_access.user_id, name="FA Without", is_system=True
+    )
+    va_with = VisibleAsset.objects.create(focus_area=fa_with, asset_type=asset_type)
+    va_without = VisibleAsset.objects.create(focus_area=fa_without, asset_type=asset_type)
+
+    response = client.delete(
+        f"/api/groups/{group.id}/",
+        content_type="application/json",
+    )
+
+    assert response.status_code == http_no_content
+    # Member with access via other_group should be preserved
+    assert VisibleAsset.objects.filter(id=va_with.id).exists()
+    # Member without access via other_group should be cleaned up
+    assert not VisibleAsset.objects.filter(id=va_without.id).exists()
 
 
 def _get_member_id_list(members):
