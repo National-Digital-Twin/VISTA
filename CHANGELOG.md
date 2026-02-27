@@ -17,6 +17,13 @@ This project follows **Semantic Versioning (SemVer)** ([semver.org](https://semv
 
 ---
 
+## [0.96.0]
+
+- Allows administrators to invite other users.
+- Allows administrators to manage permissions to access data via user groups.
+- Allows users to publish exposure layers which can be shared with other users, contingent on administrator approval.
+- Allows administrators to update criticality scores for assets.
+
 ## [0.95.0]
 
 - Allows users to withdraw and restock resources at given locations.
