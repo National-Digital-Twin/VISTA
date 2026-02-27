@@ -47,7 +47,7 @@ class TestRefreshScheduler:
     def test_rebuild_called_when_data_changes(self):
         """Scheduler should call rebuild_fn when has_changed_fn returns True."""
         rebuilt = threading.Event()
-        rebuild_fn = Mock(side_effect=lambda: rebuilt.set())
+        rebuild_fn = Mock(side_effect=rebuilt.set)
 
         scheduler = RefreshScheduler(
             has_changed_fn=Mock(return_value=True),
