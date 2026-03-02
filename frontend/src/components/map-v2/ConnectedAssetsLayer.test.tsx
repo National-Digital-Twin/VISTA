@@ -1,5 +1,5 @@
-import React from 'react';
 import { render } from '@testing-library/react';
+import React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import ConnectedAssetsLayer from './ConnectedAssetsLayer';
 import { parseGeometry, getLocationFromGeometry } from '@/api/geometry-parser';

@@ -1,5 +1,4 @@
 import { describe, it, expect } from 'vitest';
-
 import { getStockLevel, getStockColor, STOCK_LEVEL_COLORS } from './stockLevels';
 
 describe('stockLevels', () => {

@@ -1,21 +1,21 @@
-import { useState, useCallback, useEffect, useMemo } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { Box, CircularProgress, Alert, IconButton, Typography, Link } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import CloseIcon from '@mui/icons-material/Close';
+import StreetviewIcon from '@mui/icons-material/Streetview';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
-import StreetviewIcon from '@mui/icons-material/Streetview';
-import CloseIcon from '@mui/icons-material/Close';
+import { Box, CircularProgress, Alert, IconButton, Typography, Link } from '@mui/material';
+import { useQuery } from '@tanstack/react-query';
 import { noCase } from 'change-case';
-import ConnectedAssetsSection from './ConnectedAssetsSection';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import AssetScore from './AssetScore';
+import ConnectedAssetsSection from './ConnectedAssetsSection';
 import { fetchAssetDetails } from '@/api/asset-details';
 import { fetchAssetScore } from '@/api/asset-scores';
-import { isAsset } from '@/utils';
-import { isEmpty } from '@/utils/isEmpty';
-import { formatAssetDetails } from '@/utils/assetUtils';
 import type { Asset } from '@/api/assets-by-type';
+import { isAsset } from '@/utils';
+import { formatAssetDetails } from '@/utils/assetUtils';
+import { isEmpty } from '@/utils/isEmpty';
 
 type AssetDetailsPanelProps = {
     selectedElement: Asset | null;
@@ -62,11 +62,63 @@ const renderWarningState = () => (
     </Box>
 );
 
+type AssetDetailsQueryState = {
+    isLoading: boolean;
+    isFetching: boolean;
+    isError: boolean;
+    error: unknown;
+};
+
+const renderAssetDetailsQueryState = (queryState: AssetDetailsQueryState, assetId: string | null) => {
+    if (queryState.isLoading || queryState.isFetching) {
+        return renderLoadingState();
+    }
+
+    if (queryState.isError) {
+        const message = queryState.error instanceof Error ? queryState.error.message : null;
+        return renderErrorState(assetId, message);
+    }
+
+    return null;
+};
+
 type ConnectedAssetLinkProps = {
     label: string;
     isVisible: boolean;
     onToggleVisibility: () => void;
     onNavigate: () => void;
+};
+
+type CopyStatus = 'idle' | 'copied' | 'failed';
+
+const useCopyAssetId = (resolvedAssetId: string | null, assetId: string | null) => {
+    const [copyStatus, setCopyStatus] = useState<CopyStatus>('idle');
+
+    const handleCopyAssetId = useCallback(() => {
+        if (!resolvedAssetId || !navigator.clipboard?.writeText) {
+            setCopyStatus('failed');
+            return;
+        }
+
+        navigator.clipboard
+            .writeText(resolvedAssetId)
+            .then(() => setCopyStatus('copied'))
+            .catch(() => setCopyStatus('failed'));
+    }, [resolvedAssetId]);
+
+    useEffect(() => {
+        if (copyStatus === 'idle') {
+            return;
+        }
+        const timeoutId = globalThis.setTimeout(() => setCopyStatus('idle'), 1800);
+        return () => globalThis.clearTimeout(timeoutId);
+    }, [copyStatus]);
+
+    useEffect(() => {
+        setCopyStatus('idle');
+    }, [assetId]);
+
+    return { copyStatus, handleCopyAssetId };
 };
 
 const ConnectedAssetLink = ({ label, isVisible, onToggleVisibility, onNavigate }: ConnectedAssetLinkProps) => (
@@ -102,12 +154,10 @@ const ConnectedAssetLink = ({ label, isVisible, onToggleVisibility, onNavigate }
     </Box>
 );
 
-// eslint-disable-next-line sonarjs/cognitive-complexity
 const AssetDetailsPanel = ({ selectedElement, onBack, onClose, scenarioId, onConnectedAssetsVisibilityChange }: AssetDetailsPanelProps) => {
     const [view, setView] = useState<'scores' | 'connected'>('scores');
     const [dependentsVisible, setDependentsVisible] = useState(false);
     const [providersVisible, setProvidersVisible] = useState(false);
-    const [copyStatus, setCopyStatus] = useState<'idle' | 'copied' | 'failed'>('idle');
 
     const elemIsAsset = isAsset(selectedElement ?? undefined);
     const assetId = elemIsAsset ? (selectedElement as Asset)?.id : null;
@@ -141,33 +191,14 @@ const AssetDetailsPanel = ({ selectedElement, onBack, onClose, scenarioId, onCon
     const filteredDependents = useMemo(() => assetDetails.data?.dependents?.map(transformConnectedAsset) || [], [assetDetails.data?.dependents]);
     const filteredProviders = useMemo(() => assetDetails.data?.providers?.map(transformConnectedAsset) || [], [assetDetails.data?.providers]);
 
+    const resolvedAssetId = assetDetails.data?.externalId || selectedElement?.id || null;
+
+    const { copyStatus, handleCopyAssetId } = useCopyAssetId(resolvedAssetId, assetId);
+
     useEffect(() => {
         setDependentsVisible(false);
         setProvidersVisible(false);
-        setCopyStatus('idle');
     }, [assetId]);
-
-    useEffect(() => {
-        if (copyStatus === 'idle') {
-            return;
-        }
-        const timeoutId = globalThis.setTimeout(() => setCopyStatus('idle'), 1800);
-        return () => globalThis.clearTimeout(timeoutId);
-    }, [copyStatus]);
-
-    const resolvedAssetId = assetDetails.data?.externalId || selectedElement?.id || null;
-
-    const handleCopyAssetId = useCallback(() => {
-        if (!resolvedAssetId || !navigator.clipboard?.writeText) {
-            setCopyStatus('failed');
-            return;
-        }
-
-        navigator.clipboard
-            .writeText(resolvedAssetId)
-            .then(() => setCopyStatus('copied'))
-            .catch(() => setCopyStatus('failed'));
-    }, [resolvedAssetId]);
 
     useEffect(() => {
         if (assetDetails.data && onConnectedAssetsVisibilityChange) {
@@ -184,13 +215,9 @@ const AssetDetailsPanel = ({ selectedElement, onBack, onClose, scenarioId, onCon
         return null;
     }
 
-    if (assetDetails.isLoading || assetDetails.isFetching) {
-        return renderLoadingState();
-    }
-
-    if (assetDetails.isError) {
-        const message = assetDetails.error instanceof Error ? assetDetails.error.message : null;
-        return renderErrorState(assetId, message);
+    const queryState = renderAssetDetailsQueryState(assetDetails, assetId);
+    if (queryState) {
+        return queryState;
     }
 
     const assetInfoData = assetDetails.data

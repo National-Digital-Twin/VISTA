@@ -1,6 +1,6 @@
 import MapboxDraw from '@mapbox/mapbox-gl-draw';
-import { distance, circle } from '@turf/turf';
 import { point } from '@turf/helpers';
+import { distance, circle } from '@turf/turf';
 import createSupplementaryPointsForCircle from '@/vendor/mapbox-gl-draw-circle/lib/utils/create_supplementary_points_circle';
 
 const DirectModeOverride = MapboxDraw.modes.direct_select;

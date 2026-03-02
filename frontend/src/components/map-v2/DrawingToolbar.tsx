@@ -1,6 +1,6 @@
-import { useCallback } from 'react';
-import { Box, Divider, FormControlLabel, styled } from '@mui/material';
 import type MapboxDraw from '@mapbox/mapbox-gl-draw';
+import { Box, Divider, FormControlLabel, styled } from '@mui/material';
+import { useCallback } from 'react';
 import type { RefObject } from 'react';
 import ControlButton from './ControlButton';
 import ToggleSwitch from '@/components/ToggleSwitch';

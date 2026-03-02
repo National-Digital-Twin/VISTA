@@ -1,6 +1,6 @@
-import { type MouseEvent, type ReactNode } from 'react';
-import { IconButton, Menu } from '@mui/material';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import { IconButton, Menu } from '@mui/material';
+import { type MouseEvent, type ReactNode } from 'react';
 
 const tableRowMenuButtonSx = {
     'backgroundColor': 'rgba(0, 0, 0, 0.04)',

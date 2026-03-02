@@ -1,7 +1,6 @@
+import type { Feature, Geometry } from 'geojson';
 import { useMemo } from 'react';
 import { Layer, Source } from 'react-map-gl/maplibre';
-import type { Feature, Geometry } from 'geojson';
-
 import { ASSET_SYMBOL_LAYER_ID } from './AssetLayers';
 import { parseGeometry, getLocationFromGeometry } from '@/api/geometry-parser';
 

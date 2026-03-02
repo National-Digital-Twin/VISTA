@@ -1,12 +1,11 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { renderHook, act, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { renderHook, act, waitFor } from '@testing-library/react';
 import type { ReactNode } from 'react';
-
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import useAssetFilterMutations from './useAssetFilterMutations';
-import { toggleAssetTypeVisibility, clearAllAssetTypeVisibility, bulkToggleAssetTypeVisibility } from '@/api/scenario-asset-types';
-import { updateFocusArea } from '@/api/focus-areas';
 import { putAssetScoreFilter, deleteAssetScoreFilter } from '@/api/asset-score-filters';
+import { updateFocusArea } from '@/api/focus-areas';
+import { toggleAssetTypeVisibility, clearAllAssetTypeVisibility, bulkToggleAssetTypeVisibility } from '@/api/scenario-asset-types';
 
 vi.mock('@/api/scenario-asset-types', () => ({
     toggleAssetTypeVisibility: vi.fn(),

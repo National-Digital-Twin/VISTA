@@ -1,5 +1,5 @@
-import { forwardRef } from 'react';
 import { IconButton, Tooltip, tooltipClasses, type IconButtonProps, styled } from '@mui/material';
+import { forwardRef } from 'react';
 
 const StyledIconButton = styled(IconButton, {
     shouldForwardProp: (prop) => prop !== 'isActive',

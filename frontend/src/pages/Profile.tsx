@@ -1,13 +1,13 @@
 import { ArrowBack, Edit } from '@mui/icons-material';
-import { Alert, Box, Button, Divider, IconButton, Snackbar, Typography, Dialog, DialogTitle, DialogContent, DialogActions, TextField } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { Alert, Box, Button, Divider, IconButton, Snackbar, Typography, Dialog, DialogTitle, DialogContent, DialogActions, TextField } from '@mui/material';
 import { useQueryClient } from '@tanstack/react-query';
+import { useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { signout } from '@/api/auth';
-import { useProfileData } from '@/hooks/useProfileData';
 import PageContainer from '@/components/PageContainer';
 import config from '@/config/app-config';
+import { useProfileData } from '@/hooks/useProfileData';
 
 export default function Profile() {
     const { userId } = useParams<{ userId?: string }>();

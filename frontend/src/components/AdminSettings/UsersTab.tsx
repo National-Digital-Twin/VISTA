@@ -1,10 +1,10 @@
+import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Link, Stack } from '@mui/material';
+import { format } from 'date-fns';
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { format } from 'date-fns';
-import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Link, Stack } from '@mui/material';
 import { fetchAllUsers, UserData } from '@/api/users';
-import { SortableTableHeader } from '@/components/SortableTableHeader';
 import { SearchTextField } from '@/components/SearchTextField';
+import { SortableTableHeader } from '@/components/SortableTableHeader';
 
 type User = {
     id: string;

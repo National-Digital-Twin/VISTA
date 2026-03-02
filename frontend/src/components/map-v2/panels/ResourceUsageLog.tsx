@@ -1,6 +1,4 @@
-import type React from 'react';
-import { useState, useCallback } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import CloseIcon from '@mui/icons-material/Close';
 import {
     Dialog,
     DialogTitle,
@@ -20,8 +18,10 @@ import {
     Stack,
     IconButton,
 } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
+import { useQuery } from '@tanstack/react-query';
 import { format } from 'date-fns';
+import type React from 'react';
+import { useState, useCallback } from 'react';
 import { fetchResourceInterventionActions, getResourceInterventionActionsExportUrl } from '@/api/resources';
 import { singularize } from '@/utils';
 

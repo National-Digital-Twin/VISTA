@@ -1,6 +1,6 @@
+import { Box, Tabs, Tab, Typography } from '@mui/material';
 import { useState } from 'react';
 import type { SyntheticEvent, ReactNode } from 'react';
-import { Box, Tabs, Tab, Typography } from '@mui/material';
 import ConnectedAssetsList from './ConnectedAssetsList';
 
 type ConnectedAssetsSectionProps = {

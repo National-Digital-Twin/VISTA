@@ -1,17 +1,17 @@
-import type { ReactElement } from 'react';
 import { Box, Divider, Paper } from '@mui/material';
+import type { ReactElement } from 'react';
 import MapPanelButton from './MapPanelButton';
 import AssetsView from './panels/AssetsView';
 import ConstraintsView from './panels/ConstraintsView';
 import ExposureView from './panels/ExposureView';
 import FocusAreaView from './panels/FocusAreaView';
-import UtilitiesView from './panels/UtilitiesView';
 import InspectorView from './panels/InspectorView';
 import ResourcesView from './panels/ResourcesView';
+import UtilitiesView from './panels/UtilitiesView';
 import type { Asset } from '@/api/assets-by-type';
 import type { ConstraintInterventionType } from '@/api/constraint-interventions';
-import type { FocusArea } from '@/api/focus-areas';
 import type { ExposureLayersResponse } from '@/api/exposure-layers';
+import type { FocusArea } from '@/api/focus-areas';
 import type { ResourceType } from '@/api/resources';
 
 const RAIL_WIDTH = 80;

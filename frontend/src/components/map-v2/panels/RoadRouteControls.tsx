@@ -1,10 +1,9 @@
-import React, { useMemo } from 'react';
-import { Box, Typography, Button, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
 import { DeleteOutlined } from '@mui/icons-material';
-
-import { useRouteContext } from '../context/RouteContext';
+import SearchIcon from '@mui/icons-material/Search';
+import { Box, Typography, Button, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
+import React, { useMemo } from 'react';
 import { ROUTE_START_COLOR, ROUTE_END_COLOR } from '../constants';
+import { useRouteContext } from '../context/RouteContext';
 import type { RoadRouteInputParams, RouteEndpoint } from '@/api/utilities';
 import IconToggle from '@/components/IconToggle';
 

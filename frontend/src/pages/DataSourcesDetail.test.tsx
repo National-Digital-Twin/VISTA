@@ -1,8 +1,8 @@
 import { screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { renderWithAppProviders } from '@/tests/renderWithAppProviders';
 import { fetchDataSource, fetchDataSources, grantDataSourceGroupAccess, revokeDataSourceGroupAccess } from '@/api/datasources';
 import { fetchAllGroups } from '@/api/groups';
+import { renderWithAppProviders } from '@/tests/renderWithAppProviders';
 
 const mockUseUserData = vi.fn();
 vi.mock('@/hooks/useUserData', () => ({

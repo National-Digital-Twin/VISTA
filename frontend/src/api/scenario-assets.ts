@@ -1,5 +1,4 @@
 import type { Geometry } from 'geojson';
-
 import type { Asset, AssetIcon } from './assets-by-type';
 import { getLocationFromGeometry } from './geometry-parser';
 import config from '@/config/app-config';

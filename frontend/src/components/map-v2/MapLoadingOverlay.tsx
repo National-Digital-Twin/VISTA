@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from 'react';
 import { Box, CircularProgress } from '@mui/material';
+import { useState, useEffect, useRef } from 'react';
 import { useDrawingContext } from './context/DrawingContext';
 
 type MapLoadingOverlayProps = {

@@ -1,6 +1,6 @@
+import type { Feature, FeatureCollection } from 'geojson';
 import { useMemo } from 'react';
 import { Layer, Source } from 'react-map-gl/maplibre';
-import type { Feature, FeatureCollection } from 'geojson';
 import { BELOW_ASSET_LAYER_ID } from './constants';
 import type { ConstraintInterventionType } from '@/api/constraint-interventions';
 

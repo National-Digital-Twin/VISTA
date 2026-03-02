@@ -1,4 +1,8 @@
-import React, { useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } from 'react';
+import { LayersClearOutlined } from '@mui/icons-material';
+import CloseIcon from '@mui/icons-material/Close';
+import FilterListIcon from '@mui/icons-material/FilterList';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import {
     Alert,
     Box,
@@ -15,25 +19,21 @@ import {
     Typography,
 } from '@mui/material';
 import type { SelectChangeEvent } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import FilterListIcon from '@mui/icons-material/FilterList';
 import { useQuery } from '@tanstack/react-query';
-import { LayersClearOutlined } from '@mui/icons-material';
+import React, { useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } from 'react';
 import useAssetFilterMutations from '../hooks/useAssetFilterMutations';
 import { isDefaultFilter } from '../hooks/useScoreFilterState';
+import FocusAreaSelector from './FocusAreaSelector';
 import { GlobalScoreFilter } from './GlobalScoreFilter';
 import { ScoreFilterPopup } from './ScoreFilterPopup';
-import FocusAreaSelector from './FocusAreaSelector';
-import { SearchTextField } from '@/components/SearchTextField';
-import IconToggle, { type VisibilityState } from '@/components/IconToggle';
-import StatusPill from '@/components/StatusPill';
-import { useDataSources } from '@/hooks/useDataSources';
-import { fetchFocusAreas, type FocusArea } from '@/api/focus-areas';
 import { fetchAssetScoreFilters, type AssetScoreFilter, type ScoreFilterValues } from '@/api/asset-score-filters';
 import type { DataSource } from '@/api/datasources';
+import { fetchFocusAreas, type FocusArea } from '@/api/focus-areas';
 import { fetchScenarioAssetTypes, type ScenarioAssetCategory, type ScenarioSubCategory, type ScenarioAssetType } from '@/api/scenario-asset-types';
+import IconToggle, { type VisibilityState } from '@/components/IconToggle';
+import { SearchTextField } from '@/components/SearchTextField';
+import StatusPill from '@/components/StatusPill';
+import { useDataSources } from '@/hooks/useDataSources';
 
 type AssetsViewProps = {
     readonly onClose: () => void;

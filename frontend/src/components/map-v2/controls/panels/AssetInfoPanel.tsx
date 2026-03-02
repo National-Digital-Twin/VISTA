@@ -1,8 +1,8 @@
 import { Paper, Stack, Typography, Table, TableContainer, TableHead, TableBody, TableRow, TableCell, TablePagination, Box } from '@mui/material';
 import { forwardRef, useState, useMemo, useCallback } from 'react';
 import { getAssetTypeName } from '../../utils/getAssetTypeName';
-import type { Asset } from '@/api/assets-by-type';
 import type { AssetCategory } from '@/api/asset-categories';
+import type { Asset } from '@/api/assets-by-type';
 
 type AssetInfoPanelProps = {
     open: boolean;

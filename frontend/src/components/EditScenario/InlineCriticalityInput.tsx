@@ -1,6 +1,6 @@
+import { TextField } from '@mui/material';
 import type { KeyboardEvent } from 'react';
 import { useState } from 'react';
-import { TextField } from '@mui/material';
 import { MAX_CRITICALITY_SCORE } from '@/api/dataroom-assets';
 
 type InlineCriticalityInputProps = {

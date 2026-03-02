@@ -1,9 +1,8 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { renderHook, act, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import type { ReactNode } from 'react';
+import { renderHook, act, waitFor } from '@testing-library/react';
 import type { Geometry } from 'geojson';
-
+import type { ReactNode } from 'react';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import useConstraintInterventionMutations from './useConstraintInterventionMutations';
 import {
     createConstraintIntervention,

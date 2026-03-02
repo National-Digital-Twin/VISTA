@@ -1,11 +1,10 @@
-import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import { Box } from '@mui/material';
+import type { Geometry } from 'geojson';
+import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import Map, { Layer } from 'react-map-gl/maplibre';
 import type { MapRef, ViewStateChangeEvent } from 'react-map-gl/maplibre';
-import type { Geometry } from 'geojson';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import '@/components/map-v2/mapbox-draw-maplibre.css';
-
 import DataroomMapControls from './DataroomMapControls';
 import useMapDrawing from './useMapDrawing';
 import LoadingOverlay from '@/components/LoadingOverlay';

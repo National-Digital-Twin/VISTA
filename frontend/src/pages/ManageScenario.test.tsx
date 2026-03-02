@@ -1,8 +1,8 @@
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { renderWithAppProviders } from '@/tests/renderWithAppProviders';
 import { fetchScenarios } from '@/api/scenarios';
+import { renderWithAppProviders } from '@/tests/renderWithAppProviders';
 
 const mockUseUserData = vi.fn();
 vi.mock('@/hooks/useUserData', () => ({

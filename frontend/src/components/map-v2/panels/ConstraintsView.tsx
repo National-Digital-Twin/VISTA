@@ -1,4 +1,8 @@
-import { useState, useCallback, useEffect, useLayoutEffect, useMemo, useRef, type ChangeEvent, type KeyboardEvent, type MouseEvent } from 'react';
+import { DeleteOutline, EditNoteOutlined } from '@mui/icons-material';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import CloseIcon from '@mui/icons-material/Close';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import {
     Alert,
     Box,
@@ -16,16 +20,12 @@ import {
     TextField,
     Typography,
 } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
-import AddCircleIcon from '@mui/icons-material/AddCircle';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ExpandLessIcon from '@mui/icons-material/ExpandLess';
-import { DeleteOutline, EditNoteOutlined } from '@mui/icons-material';
-import useConstraintInterventionMutations from '../hooks/useConstraintInterventionMutations';
-import { useDrawingContext } from '../context/DrawingContext';
+import { useState, useCallback, useEffect, useLayoutEffect, useMemo, useRef, type ChangeEvent, type KeyboardEvent, type MouseEvent } from 'react';
 import { FEATURE_TYPES } from '../constants';
-import IconToggle from '@/components/IconToggle';
+import { useDrawingContext } from '../context/DrawingContext';
+import useConstraintInterventionMutations from '../hooks/useConstraintInterventionMutations';
 import type { ConstraintIntervention, ConstraintInterventionType, UpdateConstraintInterventionRequest } from '@/api/constraint-interventions';
+import IconToggle from '@/components/IconToggle';
 import { singularize } from '@/utils';
 
 type UpdateConstraintParams = { interventionId: string; data: UpdateConstraintInterventionRequest };

@@ -1,5 +1,4 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-
 import { fetchAssetDetails, type AssetDetailsResponse } from './asset-details';
 
 vi.mock('@/config/app-config', () => ({

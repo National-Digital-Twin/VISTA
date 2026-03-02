@@ -1,5 +1,5 @@
-import React from 'react';
 import { Container, ContainerProps } from '@mui/material';
+import React from 'react';
 
 type PageContainerProps = Omit<ContainerProps, 'maxWidth'> & {
     children: React.ReactNode;

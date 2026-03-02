@@ -1,6 +1,8 @@
-import { useEffect, useMemo, useState } from 'react';
-import { Link as RouterLink, Navigate, useNavigate, useParams } from 'react-router-dom';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import CloseIcon from '@mui/icons-material/Close';
+import EditIcon from '@mui/icons-material/Edit';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import {
     Alert,
     Box,
@@ -21,17 +23,15 @@ import {
     TableRow,
     Typography,
 } from '@mui/material';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import CloseIcon from '@mui/icons-material/Close';
-import EditIcon from '@mui/icons-material/Edit';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { format, isToday } from 'date-fns';
-import { TableRowMenu, TableRowMenuButton } from '@/components/TableRowMenu';
+import { useEffect, useMemo, useState } from 'react';
+import { Link as RouterLink, Navigate, useNavigate, useParams } from 'react-router-dom';
 import { approveExposureLayer, fetchDataroomExposureLayers, rejectExposureLayer, removeExposureLayer, type DataroomExposureLayer } from '@/api/exposure-layers';
 import { fetchScenarios, type Scenario } from '@/api/scenarios';
 import DataroomMap from '@/components/DataroomMap';
 import PendingExposureOutlines from '@/components/DataroomMap/PendingExposureOutlines';
+import { TableRowMenu, TableRowMenuButton } from '@/components/TableRowMenu';
 import { useUserData } from '@/hooks/useUserData';
 
 const TABLE_ROW_HEIGHT = 52;

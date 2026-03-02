@@ -1,6 +1,6 @@
+import { ThemeProvider } from '@mui/material/styles';
 import { render, screen, fireEvent, within } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
-import { ThemeProvider } from '@mui/material/styles';
 import AssetTable from './AssetTable';
 import type { DataroomAsset } from '@/api/dataroom-assets';
 import theme from '@/theme';

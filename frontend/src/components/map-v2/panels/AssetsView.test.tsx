@@ -1,14 +1,14 @@
-import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from '@mui/material/styles';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import React from 'react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import AssetsView from './AssetsView';
-import theme from '@/theme';
-import { fetchScenarioAssetTypes, toggleAssetTypeVisibility, clearAllAssetTypeVisibility } from '@/api/scenario-asset-types';
-import { fetchFocusAreas, updateFocusArea } from '@/api/focus-areas';
-import { fetchDataSources } from '@/api/datasources';
 import { fetchAssetScoreFilters, putAssetScoreFilter } from '@/api/asset-score-filters';
+import { fetchDataSources } from '@/api/datasources';
+import { fetchFocusAreas, updateFocusArea } from '@/api/focus-areas';
+import { fetchScenarioAssetTypes, toggleAssetTypeVisibility, clearAllAssetTypeVisibility } from '@/api/scenario-asset-types';
+import theme from '@/theme';
 
 vi.mock('@/api/scenario-asset-types', () => ({
     fetchScenarioAssetTypes: vi.fn(),

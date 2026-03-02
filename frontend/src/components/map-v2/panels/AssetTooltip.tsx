@@ -1,10 +1,10 @@
-import { noCase } from 'change-case';
 import { Box, Typography } from '@mui/material';
+import { noCase } from 'change-case';
 import { getAssetTypeName } from '../utils/getAssetTypeName';
+import type { AssetCategory } from '@/api/asset-categories';
+import type { Asset } from '@/api/assets-by-type';
 import { isAsset } from '@/utils';
 import { formatAssetDetails } from '@/utils/assetUtils';
-import type { Asset } from '@/api/assets-by-type';
-import type { AssetCategory } from '@/api/asset-categories';
 
 type AssetTooltipProps = {
     element: Asset;

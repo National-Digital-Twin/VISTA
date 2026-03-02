@@ -1,6 +1,5 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import type { Geometry } from 'geojson';
-
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { fetchFocusAreas, createFocusArea, updateFocusArea, deleteFocusArea, type FocusArea } from './focus-areas';
 
 vi.mock('@/config/app-config', () => ({

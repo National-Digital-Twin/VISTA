@@ -1,5 +1,5 @@
-import { useEffect, useRef, useMemo } from 'react';
 import { icon } from '@fortawesome/fontawesome-svg-core';
+import { useEffect, useRef, useMemo } from 'react';
 import type { Asset } from '@/api/assets-by-type';
 
 type PreloadedIcon = {

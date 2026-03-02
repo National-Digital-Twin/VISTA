@@ -1,5 +1,5 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { ApolloClient, InMemoryCache } from '@apollo/client';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import apolloClient from './apollo-client';
 import { signout } from './auth';
 

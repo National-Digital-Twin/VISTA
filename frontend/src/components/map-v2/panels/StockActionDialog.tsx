@@ -1,4 +1,3 @@
-import { useState, useEffect, useRef } from 'react';
 import {
     Box,
     Typography,
@@ -14,11 +13,12 @@ import {
     CircularProgress,
 } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
+import { useState, useEffect, useRef } from 'react';
 import useResourceMutations from '../hooks/useResourceMutations';
 import { fetchResourceInterventionLocation } from '@/api/resources';
 import type { ResourceLocation } from '@/api/resources';
-import { getStockColor } from '@/utils/stockLevels';
 import { percentage } from '@/utils';
+import { getStockColor } from '@/utils/stockLevels';
 
 const TAB = { WITHDRAW: 0, RESTOCK: 1 } as const;
 

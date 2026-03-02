@@ -1,21 +1,20 @@
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-
-import Layout from '@/components/Layout';
 import DataRoom from '@/components/DataRoom';
+import Layout from '@/components/Layout';
 import config from '@/config/app-config';
 import AdminSettings from '@/pages/AdminSettings';
-import DataSource from '@/pages/DataSources';
 import DataSourceDetail from '@/pages/DataSourceDetail';
+import DataSource from '@/pages/DataSources';
 import EditScenario from '@/pages/EditScenario';
 import InviteNewUser from '@/pages/InviteNewUser';
 import ManageScenario from '@/pages/ManageScenario';
 import ManageScenarios from '@/pages/ManageScenarios';
-import ScenarioMap from '@/pages/ScenarioMap';
 import Notifications from '@/pages/Notifications';
 import PrivacyNotice from '@/pages/PrivacyNotice';
 import Profile from '@/pages/Profile';
+import ScenarioMap from '@/pages/ScenarioMap';
 
 library.add(fas);
 

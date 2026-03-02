@@ -1,6 +1,6 @@
+import { ThemeProvider } from '@mui/material/styles';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
-import { ThemeProvider } from '@mui/material/styles';
 import EditCriticalityDialog from './EditCriticalityDialog';
 import theme from '@/theme';
 

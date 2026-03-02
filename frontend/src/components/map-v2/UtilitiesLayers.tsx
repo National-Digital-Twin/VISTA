@@ -1,11 +1,10 @@
-import { useMemo } from 'react';
-import { Box } from '@mui/material';
-import { Layer, Marker, Source } from 'react-map-gl/maplibre';
-import type { FeatureCollection } from 'geojson';
 import { findIconDefinition } from '@fortawesome/fontawesome-svg-core';
-
-import { useRouteContext } from './context/RouteContext';
+import { Box } from '@mui/material';
+import type { FeatureCollection } from 'geojson';
+import { useMemo } from 'react';
+import { Layer, Marker, Source } from 'react-map-gl/maplibre';
 import { ROUTE_START_COLOR, ROUTE_END_COLOR, BELOW_ASSET_LAYER_ID } from './constants';
+import { useRouteContext } from './context/RouteContext';
 import type { SuccessRouteProperties } from '@/api/utilities';
 
 const SOURCE_ID = 'map-v2-utilities-source';

@@ -1,7 +1,7 @@
+import { ThemeProvider } from '@mui/material/styles';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ThemeProvider } from '@mui/material/styles';
 import AssetFilterBar, { type AssetFilters } from './AssetFilterBar';
 import { fetchAssetCategories } from '@/api/asset-categories';
 import theme from '@/theme';

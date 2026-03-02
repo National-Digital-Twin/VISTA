@@ -1,5 +1,5 @@
-import { Box, Typography, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import { Box, Typography, IconButton } from '@mui/material';
 import AssetDetailsPanel from './AssetDetailsPanel';
 import type { Asset } from '@/api/assets-by-type';
 

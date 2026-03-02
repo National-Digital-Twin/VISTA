@@ -1,7 +1,7 @@
-import React from 'react';
-import { render, screen } from '@testing-library/react';
-import { describe, it, expect } from 'vitest';
 import { ThemeProvider } from '@mui/material/styles';
+import { render, screen } from '@testing-library/react';
+import React from 'react';
+import { describe, it, expect } from 'vitest';
 import ConnectedAssetsList from './ConnectedAssetsList';
 import theme from '@/theme';
 

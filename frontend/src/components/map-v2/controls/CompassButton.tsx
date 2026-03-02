@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
-import type { MapRef } from 'react-map-gl/maplibre';
 import type { RefObject } from 'react';
+import type { MapRef } from 'react-map-gl/maplibre';
 import ControlButton from '../ControlButton';
 
 type CompassButtonProps = {

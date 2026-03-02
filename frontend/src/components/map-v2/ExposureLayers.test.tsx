@@ -1,13 +1,12 @@
-import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from '@mui/material/styles';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { render, screen, waitFor } from '@testing-library/react';
 import type { FeatureCollection, Geometry } from 'geojson';
-
+import React from 'react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import ExposureLayers from './ExposureLayers';
-import theme from '@/theme';
 import { fetchExposureLayers, type ExposureLayersResponse } from '@/api/exposure-layers';
+import theme from '@/theme';
 
 vi.mock('react-map-gl/maplibre', () => ({
     useMap: () => ({}),

@@ -1,7 +1,7 @@
 import { ApolloClient, InMemoryCache, HttpLink } from '@apollo/client';
-import { RetryLink } from '@apollo/client/link/retry';
-import { ErrorLink } from '@apollo/client/link/error';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
+import { ErrorLink } from '@apollo/client/link/error';
+import { RetryLink } from '@apollo/client/link/retry';
 import { signout } from './auth';
 import config from '@/config/app-config';
 export { default as GET_ROAD_ROUTE } from './graphql-queries/roadRoute.graphql';

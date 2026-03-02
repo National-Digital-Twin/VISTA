@@ -1,5 +1,5 @@
-import React from 'react';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import React from 'react';
 
 export type DevToolsContainerProps = {
     /** Children */

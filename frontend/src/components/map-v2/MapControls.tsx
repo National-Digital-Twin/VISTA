@@ -1,20 +1,20 @@
 import { Box, styled } from '@mui/material';
 import { useEffect, useRef } from 'react';
-import type { MapRef } from 'react-map-gl/maplibre';
-import type { ViewState } from 'react-map-gl';
 import type { RefObject } from 'react';
-import CompassButton from './controls/CompassButton';
-import ZoomInButton from './controls/ZoomInButton';
-import ZoomOutButton from './controls/ZoomOutButton';
-import SearchControl from './controls/SearchControl';
+import type { ViewState } from 'react-map-gl';
+import type { MapRef } from 'react-map-gl/maplibre';
+import type { MapStyleKey } from './constants';
 import AssetInfoButton from './controls/AssetInfoButton';
+import CompassButton from './controls/CompassButton';
 import MapStyleButton from './controls/MapStyleButton';
 import AssetInfoPanel from './controls/panels/AssetInfoPanel';
 import MapStylePanel from './controls/panels/MapStylePanel';
+import SearchControl from './controls/SearchControl';
 import type { SearchSelection } from './controls/SearchControl';
-import type { MapStyleKey } from './constants';
-import type { Asset } from '@/api/assets-by-type';
+import ZoomInButton from './controls/ZoomInButton';
+import ZoomOutButton from './controls/ZoomOutButton';
 import type { AssetCategory } from '@/api/asset-categories';
+import type { Asset } from '@/api/assets-by-type';
 
 const ControlsContainer = styled(Box)({
     display: 'flex',

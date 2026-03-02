@@ -49,7 +49,7 @@ const SessionMonitorProvider = ({ children, enabled = true }: SessionMonitorProv
         };
     }, [enabled]);
 
-    return <>{children}</>;
+    return children;
 };
 
 export default SessionMonitorProvider;

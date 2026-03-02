@@ -1,7 +1,7 @@
-import { describe, it, expect, vi, afterEach } from 'vitest';
-import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { renderHook, waitFor } from '@testing-library/react';
 import { createElement, type ReactNode } from 'react';
+import { describe, it, expect, vi, afterEach } from 'vitest';
 import { useDataSources } from './useDataSources';
 import { fetchDataSources, type DataSource } from '@/api/datasources';
 

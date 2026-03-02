@@ -1,4 +1,6 @@
-import { useState, useCallback, useEffect, useLayoutEffect, useRef, type ChangeEvent, type KeyboardEvent, type MouseEvent } from 'react';
+import { DeleteOutline, EditNoteOutlined } from '@mui/icons-material';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import CloseIcon from '@mui/icons-material/Close';
 import {
     Alert,
     Box,
@@ -16,14 +18,12 @@ import {
     TextField,
     Typography,
 } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
-import AddCircleIcon from '@mui/icons-material/AddCircle';
-import { DeleteOutline, EditNoteOutlined } from '@mui/icons-material';
-import useFocusAreaMutations from '../hooks/useFocusAreaMutations';
-import { useDrawingContext } from '../context/DrawingContext';
+import { useState, useCallback, useEffect, useLayoutEffect, useRef, type ChangeEvent, type KeyboardEvent, type MouseEvent } from 'react';
 import { FEATURE_TYPES } from '../constants';
-import IconToggle from '@/components/IconToggle';
+import { useDrawingContext } from '../context/DrawingContext';
+import useFocusAreaMutations from '../hooks/useFocusAreaMutations';
 import type { FocusArea } from '@/api/focus-areas';
+import IconToggle from '@/components/IconToggle';
 
 type FocusAreaViewProps = {
     readonly onClose: () => void;
