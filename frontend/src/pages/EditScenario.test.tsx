@@ -371,7 +371,10 @@ describe('EditScenario', () => {
             return;
         }
         fireEvent.click(schoolRow);
-        fireEvent.click(await screen.findByRole('button', { name: /edit 1 selected/i }));
+        await waitFor(() => {
+            expect(screen.getByRole('button', { name: /edit 1 selected/i })).toBeInTheDocument();
+        });
+        fireEvent.click(screen.getByRole('button', { name: /edit 1 selected/i }));
         fireEvent.change(screen.getByLabelText('Criticality score'), { target: { value: '2' } });
         fireEvent.click(screen.getByRole('button', { name: 'CONFIRM' }));
         await waitForEditDialogToClose();
