@@ -1,9 +1,9 @@
-import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from '@mui/material/styles';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { render, screen, fireEvent } from '@testing-library/react';
+import React from 'react';
 import type { MapRef } from 'react-map-gl/maplibre';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { MapStyleKey } from './constants';
 import MapControls from './MapControls';
 import theme from '@/theme';

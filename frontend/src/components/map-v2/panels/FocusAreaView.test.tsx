@@ -1,14 +1,13 @@
-import React from 'react';
+import { ThemeProvider } from '@mui/material/styles';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ThemeProvider } from '@mui/material/styles';
 import type { Geometry } from 'geojson';
-
+import React from 'react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import FocusAreaView from './FocusAreaView';
-import theme from '@/theme';
 import { updateFocusArea, deleteFocusArea, type FocusArea } from '@/api/focus-areas';
+import theme from '@/theme';
 
 vi.mock('@/api/focus-areas', () => ({
     updateFocusArea: vi.fn(),

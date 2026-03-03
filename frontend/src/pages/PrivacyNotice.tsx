@@ -1,6 +1,6 @@
-import { useNavigate } from 'react-router-dom';
-import { Box, IconButton, GlobalStyles } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { Box, IconButton, GlobalStyles } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import PageContainer from '@/components/PageContainer';
 
 export default function PrivacyNotice() {

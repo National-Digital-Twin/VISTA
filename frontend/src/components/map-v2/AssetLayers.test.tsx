@@ -1,11 +1,11 @@
-import React from 'react';
-import { render, screen } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach, beforeAll, afterAll } from 'vitest';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from '@mui/material/styles';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { render, screen } from '@testing-library/react';
+import React from 'react';
+import { describe, it, expect, vi, beforeEach, beforeAll, afterAll } from 'vitest';
 import AssetLayers from './AssetLayers';
-import theme from '@/theme';
 import type { Asset } from '@/api/assets-by-type';
+import theme from '@/theme';
 
 const mockUseMap = vi.fn();
 vi.mock('react-map-gl/maplibre', () => ({

@@ -1,7 +1,7 @@
-import { useCallback } from 'react';
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 import type { SelectChangeEvent } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
+import { useCallback } from 'react';
 import { fetchFocusAreas, type FocusArea } from '@/api/focus-areas';
 
 type FocusAreaSelectorProps = {

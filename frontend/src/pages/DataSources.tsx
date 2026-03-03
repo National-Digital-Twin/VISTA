@@ -1,10 +1,10 @@
+import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Link, Stack, Button } from '@mui/material';
 import { useState, useMemo } from 'react';
 import { Link as RouterLink, useOutletContext } from 'react-router-dom';
-import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Link, Stack, Button } from '@mui/material';
-import { SortableTableHeader } from '@/components/SortableTableHeader';
-import { SearchTextField } from '@/components/SearchTextField';
 import { DataSource } from '@/api/datasources';
 import { DataRoomOutletContext } from '@/components/DataRoom';
+import { SearchTextField } from '@/components/SearchTextField';
+import { SortableTableHeader } from '@/components/SortableTableHeader';
 
 type SortField = 'name' | 'owner' | 'assetCount' | 'lastUpdated';
 type SortDirection = 'asc' | 'desc';

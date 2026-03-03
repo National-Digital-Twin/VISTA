@@ -1,6 +1,7 @@
-import React, { useMemo, useState, useEffect, type ChangeEvent, type KeyboardEvent, type MouseEvent } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
-import { format } from 'date-fns';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import ArrowRightIcon from '@mui/icons-material/ArrowRight';
+import CloseIcon from '@mui/icons-material/Close';
+import EditIcon from '@mui/icons-material/Edit';
 import {
     Box,
     Typography,
@@ -19,11 +20,10 @@ import {
     Radio,
     RadioGroup,
 } from '@mui/material';
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import EditIcon from '@mui/icons-material/Edit';
-import ArrowRightIcon from '@mui/icons-material/ArrowRight';
-import CloseIcon from '@mui/icons-material/Close';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { format } from 'date-fns';
+import React, { useMemo, useState, useEffect, type ChangeEvent, type KeyboardEvent, type MouseEvent } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
     addGroupMember,
     createGroup as createGroupApi,
@@ -33,10 +33,10 @@ import {
     updateGroup as updateGroupApi,
     type Group,
 } from '@/api/groups';
-import DeleteDialog from '@/components/DeleteDialog';
-import { GroupMembersTable } from '@/components/AdminSettings/GroupMembersTable';
-import { SearchTextField } from '@/components/SearchTextField';
 import { fetchAllUsers, type UserData } from '@/api/users';
+import { GroupMembersTable } from '@/components/AdminSettings/GroupMembersTable';
+import DeleteDialog from '@/components/DeleteDialog';
+import { SearchTextField } from '@/components/SearchTextField';
 
 type User = {
     id: string;

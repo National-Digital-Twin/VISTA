@@ -1,4 +1,8 @@
-import React, { useCallback, useMemo, useState, useEffect, useLayoutEffect, useRef, type ChangeEvent, type KeyboardEvent, type MouseEvent } from 'react';
+import { CheckCircleOutlineOutlined, DeleteOutline, EditNoteOutlined } from '@mui/icons-material';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import CloseIcon from '@mui/icons-material/Close';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import {
     Box,
     IconButton,
@@ -18,16 +22,11 @@ import {
     DialogContent,
     DialogTitle,
 } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ExpandLessIcon from '@mui/icons-material/ExpandLess';
-import AddCircleIcon from '@mui/icons-material/AddCircle';
-import { CheckCircleOutlineOutlined, DeleteOutline, EditNoteOutlined } from '@mui/icons-material';
 import { useIsFetching, useMutation, useQueryClient } from '@tanstack/react-query';
 import type { Feature } from 'geojson';
-
-import { useDrawingContext } from '../context/DrawingContext';
+import React, { useCallback, useMemo, useState, useEffect, useLayoutEffect, useRef, type ChangeEvent, type KeyboardEvent, type MouseEvent } from 'react';
 import { FEATURE_TYPES } from '../constants';
+import { useDrawingContext } from '../context/DrawingContext';
 import useExposureLayerMutations from '../hooks/useExposureLayerMutations';
 import FocusAreaSelector from './FocusAreaSelector';
 import {

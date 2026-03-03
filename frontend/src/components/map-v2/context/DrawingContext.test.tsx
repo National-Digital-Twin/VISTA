@@ -1,8 +1,7 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, act } from '@testing-library/react';
-import type { ReactNode } from 'react';
 import type { Geometry } from 'geojson';
-
+import type { ReactNode } from 'react';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { DrawingProvider, useDrawingContext } from './DrawingContext';
 
 type MockMapboxDraw = {

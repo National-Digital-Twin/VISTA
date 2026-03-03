@@ -1,11 +1,11 @@
-import React from 'react';
-import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { ThemeProvider } from '@mui/material/styles';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import React from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import SearchControl from './SearchControl';
-import theme from '@/theme';
-import { searchOsNamesLocations } from '@/api/os-names';
 import { fetchAssetByExternalId, fetchAssetById } from '@/api/asset-search';
+import { searchOsNamesLocations } from '@/api/os-names';
+import theme from '@/theme';
 
 vi.mock('@/api/os-names', () => ({
     searchOsNamesLocations: vi.fn(),

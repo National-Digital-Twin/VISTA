@@ -1,7 +1,7 @@
-import { useMemo } from 'react';
-import { Layer, Source } from 'react-map-gl/maplibre';
 import type { Feature, FeatureCollection, Geometry } from 'geojson';
 import type { FilterSpecification } from 'maplibre-gl';
+import { useMemo } from 'react';
+import { Layer, Source } from 'react-map-gl/maplibre';
 import { BELOW_ASSET_LAYER_ID } from '@/components/map-v2/constants';
 
 const SOURCE_ID = 'dataroom-pending-exposure-source';

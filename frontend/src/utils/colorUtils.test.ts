@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
 import ColorScale from 'color-scales';
+import { describe, it, expect } from 'vitest';
 import { getColorScale, getHexColor } from './colorUtils';
 
 describe('colorUtils', () => {

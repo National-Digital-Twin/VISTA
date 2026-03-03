@@ -1,6 +1,6 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import type { MapRef } from 'react-map-gl/maplibre';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import useMapboxDraw from './useMapboxDraw';
 
 const mockAddControl = vi.fn();

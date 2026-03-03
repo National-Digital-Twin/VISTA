@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { ExpandMore, Close, InventoryOutlined } from '@mui/icons-material';
 import {
     Box,
     Typography,
@@ -17,14 +17,14 @@ import {
     CircularProgress,
     Portal,
 } from '@mui/material';
-import { ExpandMore, Close, InventoryOutlined } from '@mui/icons-material';
+import { useState, useEffect } from 'react';
 import useResourceMutations from '../hooks/useResourceMutations';
-import StockActionDialog from './StockActionDialog';
 import ResourceUsageLog from './ResourceUsageLog';
-import IconToggle from '@/components/IconToggle';
+import StockActionDialog from './StockActionDialog';
 import type { ResourceType } from '@/api/resources';
-import { getStockColor } from '@/utils/stockLevels';
+import IconToggle from '@/components/IconToggle';
 import { percentage } from '@/utils';
+import { getStockColor } from '@/utils/stockLevels';
 
 interface ResourcesViewProps {
     onClose: () => void;

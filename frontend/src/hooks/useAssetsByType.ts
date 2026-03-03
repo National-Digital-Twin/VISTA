@@ -1,5 +1,5 @@
-import { useMemo } from 'react';
 import { useQueries } from '@tanstack/react-query';
+import { useMemo } from 'react';
 import { fetchAssetsByType, type Asset } from '@/api/assets-by-type';
 
 export type UseAssetsByTypeOptions = {

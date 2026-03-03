@@ -1,10 +1,10 @@
+import { Alert, Badge, Box, Snackbar, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, Chip } from '@mui/material';
+import { useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-import { Alert, Badge, Box, Snackbar, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, Chip } from '@mui/material';
 import { fetchScenarios, type Scenario } from '@/api/scenarios';
-import { SortableTableHeader } from '@/components/SortableTableHeader';
 import { SearchTextField } from '@/components/SearchTextField';
+import { SortableTableHeader } from '@/components/SortableTableHeader';
 import { useUserData } from '@/hooks/useUserData';
 
 type SortField = 'code' | 'name' | 'isActive';

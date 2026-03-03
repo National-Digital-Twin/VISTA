@@ -1,6 +1,7 @@
-import { type ReactNode, useState, useEffect, useRef } from 'react';
-import { Link, Outlet, useLocation, useSearchParams } from 'react-router-dom';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import AccountTreeIcon from '@mui/icons-material/AccountTree';
+import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
+import EditNoteIcon from '@mui/icons-material/EditNote';
+import InputIcon from '@mui/icons-material/Input';
 import {
     Badge,
     Box,
@@ -18,11 +19,10 @@ import {
     FormControlLabel,
     Radio,
 } from '@mui/material';
-import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
-import EditNoteIcon from '@mui/icons-material/EditNote';
-import InputIcon from '@mui/icons-material/Input';
-import AccountTreeIcon from '@mui/icons-material/AccountTree';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { format } from 'date-fns';
+import { type ReactNode, useState, useEffect, useRef } from 'react';
+import { Link, Outlet, useLocation, useSearchParams } from 'react-router-dom';
 import { fetchDataSources, DataSource } from '@/api/datasources';
 import { fetchScenarios, Scenario, setActiveScenario } from '@/api/scenarios';
 import { useUserData } from '@/hooks/useUserData';

@@ -1,10 +1,10 @@
-import React from 'react';
-import { render, screen } from '@testing-library/react';
-import { describe, it, expect } from 'vitest';
 import { ThemeProvider } from '@mui/material/styles';
+import { render, screen } from '@testing-library/react';
+import React from 'react';
+import { describe, it, expect } from 'vitest';
 import AssetScore from './AssetScore';
-import theme from '@/theme';
 import type { AssetScore as AssetScoreType } from '@/api/asset-scores';
+import theme from '@/theme';
 
 const renderWithTheme = (component: React.ReactElement) => {
     return render(<ThemeProvider theme={theme}>{component}</ThemeProvider>);

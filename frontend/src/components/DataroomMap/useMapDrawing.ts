@@ -1,7 +1,7 @@
+import type { Geometry, Feature } from 'geojson';
 import { useCallback, useEffect, useState } from 'react';
 import type { RefObject } from 'react';
 import type { MapRef } from 'react-map-gl/maplibre';
-import type { Geometry, Feature } from 'geojson';
 import useMapboxDraw from '@/components/map-v2/hooks/useMapboxDraw';
 
 type UseMapDrawingOptions = {

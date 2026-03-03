@@ -1,6 +1,6 @@
+import { Typography } from '@mui/material';
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
-import { Typography } from '@mui/material';
 import StatusPill from './index';
 
 describe('StatusPill', () => {

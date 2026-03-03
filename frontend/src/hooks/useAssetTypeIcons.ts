@@ -1,5 +1,5 @@
-import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useMemo } from 'react';
 import { fetchAssetCategories } from '@/api/asset-categories';
 
 export const useAssetTypeIcons = () => {

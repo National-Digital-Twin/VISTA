@@ -2,13 +2,13 @@ import { ThemeProvider } from '@mui/material/styles';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render } from '@testing-library/react';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
-import Layout from '@/components/Layout';
 import DataRoom from '@/components/DataRoom';
-import DataSource from '@/pages/DataSources';
+import Layout from '@/components/Layout';
 import DataSourceDetail from '@/pages/DataSourceDetail';
-import ManageScenarios from '@/pages/ManageScenarios';
-import ManageScenario from '@/pages/ManageScenario';
+import DataSource from '@/pages/DataSources';
 import EditScenario from '@/pages/EditScenario';
+import ManageScenario from '@/pages/ManageScenario';
+import ManageScenarios from '@/pages/ManageScenarios';
 import theme from '@/theme';
 
 export const renderWithAppProviders = (initialEntries = ['/data-room']) => {

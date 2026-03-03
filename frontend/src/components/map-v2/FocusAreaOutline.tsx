@@ -1,6 +1,6 @@
+import type { Geometry, Feature, Position } from 'geojson';
 import { useMemo } from 'react';
 import { Layer, Source } from 'react-map-gl/maplibre';
-import type { Geometry, Feature, Position } from 'geojson';
 import { BELOW_ASSET_LAYER_ID } from './constants';
 
 const SOURCE_ID = 'focus-area-outline-source';

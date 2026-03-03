@@ -1,6 +1,6 @@
+import { render, screen } from '@testing-library/react';
 import React from 'react';
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
 import ScenarioMap from './ScenarioMap';
 
 vi.mock('@/components/map-v2/MapView', () => ({
@@ -8,7 +8,7 @@ vi.mock('@/components/map-v2/MapView', () => ({
 }));
 
 vi.mock('@/components/map-v2/context/RouteContext', () => ({
-    RouteProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+    RouteProvider: ({ children }: { children: React.ReactNode }) => children,
 }));
 
 vi.mock('@/hooks/useActiveScenario', () => ({

@@ -1,6 +1,6 @@
-import { TextField, InputAdornment, IconButton } from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
 import CloseIcon from '@mui/icons-material/Close';
+import SearchIcon from '@mui/icons-material/Search';
+import { TextField, InputAdornment, IconButton } from '@mui/material';
 
 type SearchTextFieldProps = {
     readonly placeholder: string;

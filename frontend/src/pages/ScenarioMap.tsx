@@ -1,6 +1,6 @@
 import { Box } from '@mui/material';
-import MapView from '@/components/map-v2/MapView';
 import { RouteProvider } from '@/components/map-v2/context/RouteContext';
+import MapView from '@/components/map-v2/MapView';
 import { useActiveScenario } from '@/hooks/useActiveScenario';
 
 const ScenarioMap = () => {

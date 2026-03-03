@@ -1,6 +1,6 @@
-import { Box, Alert, Typography } from '@mui/material';
-import StreetviewIcon from '@mui/icons-material/Streetview';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import StreetviewIcon from '@mui/icons-material/Streetview';
+import { Box, Alert, Typography } from '@mui/material';
 
 type StreetViewSectionProps = {
     hasCoordinates: boolean;

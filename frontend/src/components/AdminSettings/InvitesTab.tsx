@@ -1,5 +1,3 @@
-import { useState, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
 import {
     Box,
     Button,
@@ -17,9 +15,11 @@ import {
     ListItemText,
 } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
+import { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { fetchAllInvites, Invite, cancelInvite, resendInvite, removeExpiredInvite } from '@/api/invites';
-import { TableRowMenu, TableRowMenuButton } from '@/components/TableRowMenu';
 import { SortableTableHeader } from '@/components/SortableTableHeader';
+import { TableRowMenu, TableRowMenuButton } from '@/components/TableRowMenu';
 
 type SortField = 'email' | 'userType' | 'groups' | 'status' | 'daysAgo';
 type SortDirection = 'asc' | 'desc';

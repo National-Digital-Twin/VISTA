@@ -1,12 +1,12 @@
-import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from '@mui/material/styles';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { render, screen, fireEvent } from '@testing-library/react';
+import React from 'react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import AssetInfoPanel from './AssetInfoPanel';
+import type { AssetCategory } from '@/api/asset-categories';
 import type { Asset } from '@/api/assets-by-type';
 import theme from '@/theme';
-import type { AssetCategory } from '@/api/asset-categories';
 
 const createTestQueryClient = () => {
     return new QueryClient({

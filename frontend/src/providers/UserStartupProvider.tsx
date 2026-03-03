@@ -25,7 +25,7 @@ const UserStartupProvider = ({ children }: UserStartupProviderProps) => {
         void resolveInvites();
     }, []);
 
-    return <>{children}</>;
+    return children;
 };
 
 export default UserStartupProvider;

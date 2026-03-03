@@ -21,13 +21,13 @@ import {
     Divider,
     CircularProgress,
 } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
+import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { fetchAllGroups, type Group } from '@/api/groups';
+import { sendInvite, InviteData } from '@/api/invites';
 import PageContainer from '@/components/PageContainer';
 import { SortableTableHeader } from '@/components/SortableTableHeader';
-import { sendInvite, InviteData } from '@/api/invites';
-import { fetchAllGroups, type Group } from '@/api/groups';
 
 type GroupSortDirection = 'asc' | 'desc';
 
@@ -131,7 +131,7 @@ export default function InviteNewUser() {
                     </Typography>
                 </Box>
 
-                <Box></Box>
+                <Box />
 
                 <Box sx={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', gap: 6, width: '100%' }}>
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
@@ -204,7 +204,7 @@ export default function InviteNewUser() {
                                                 sortDirection={groupSortDirection}
                                                 onSort={handleGroupSort}
                                             />
-                                            <TableCell align="right"></TableCell>
+                                            <TableCell align="right" />
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
@@ -239,7 +239,7 @@ export default function InviteNewUser() {
                     </Box>
                 </Box>
 
-                <Box></Box>
+                <Box />
 
                 <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
                     <Button variant="outlined" onClick={handleBackClick} disabled={isLoading}>

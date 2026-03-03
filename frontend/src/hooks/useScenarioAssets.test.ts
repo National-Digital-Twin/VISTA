@@ -1,10 +1,10 @@
-import { describe, it, expect, vi, afterEach } from 'vitest';
-import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { renderHook, waitFor } from '@testing-library/react';
 import { createElement, type ReactNode } from 'react';
+import { describe, it, expect, vi, afterEach } from 'vitest';
 import { useScenarioAssets } from './useScenarioAssets';
-import { fetchScenarioAssets } from '@/api/scenario-assets';
 import type { Asset } from '@/api/assets-by-type';
+import { fetchScenarioAssets } from '@/api/scenario-assets';
 
 vi.mock('@/api/scenario-assets');
 

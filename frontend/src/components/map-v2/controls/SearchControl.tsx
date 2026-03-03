@@ -1,11 +1,11 @@
-import SearchIcon from '@mui/icons-material/Search';
-import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
 import LayersOutlinedIcon from '@mui/icons-material/LayersOutlined';
+import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
+import SearchIcon from '@mui/icons-material/Search';
 import { Box, InputBase, alpha, styled } from '@mui/material';
 import { useCallback, useEffect, useRef, useState, type FocusEventHandler, type KeyboardEvent } from 'react';
-import { searchOsNamesLocations, type OsNamesLocation } from '@/api/os-names';
-import { fetchAssetByExternalId, fetchAssetById } from '@/api/asset-search';
 import type { AssetDetailsResponse } from '@/api/asset-details';
+import { fetchAssetByExternalId, fetchAssetById } from '@/api/asset-search';
+import { searchOsNamesLocations, type OsNamesLocation } from '@/api/os-names';
 
 const EXPANDED_WIDTH = '28rem';
 const COLLAPSED_WIDTH = '14rem';

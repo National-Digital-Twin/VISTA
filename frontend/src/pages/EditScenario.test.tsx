@@ -1,9 +1,9 @@
-import type { ReactNode } from 'react';
 import { screen, waitFor, fireEvent } from '@testing-library/react';
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { renderWithAppProviders } from '@/tests/renderWithAppProviders';
-import { fetchScenarios } from '@/api/scenarios';
 import { fetchDataroomAssets, updateBulkCriticality } from '@/api/dataroom-assets';
+import { fetchScenarios } from '@/api/scenarios';
+import { renderWithAppProviders } from '@/tests/renderWithAppProviders';
 
 const mockUseUserData = vi.fn();
 vi.mock('@/hooks/useUserData', () => ({

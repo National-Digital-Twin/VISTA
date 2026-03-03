@@ -1,6 +1,6 @@
-import { useCallback } from 'react';
-import { Box, Button, IconButton } from '@mui/material';
 import { LayersClearOutlined } from '@mui/icons-material';
+import { Box, Button, IconButton } from '@mui/material';
+import { useCallback } from 'react';
 import { useScoreFilterState } from '../hooks/useScoreFilterState';
 import { ScoreFilterCheckboxGroup, DependencyRangeFields } from './ScoreFilterFields';
 import type { ScoreFilterValues } from '@/api/asset-score-filters';

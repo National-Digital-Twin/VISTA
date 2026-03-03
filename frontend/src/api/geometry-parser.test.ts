@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
 import type { Geometry } from 'geojson';
+import { describe, it, expect } from 'vitest';
 import {
     parseCoordinatePair,
     parseCoordinates,

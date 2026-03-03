@@ -1,6 +1,6 @@
 import MapboxDraw from '@mapbox/mapbox-gl-draw';
-import { circle, distance } from '@turf/turf';
 import { point } from '@turf/helpers';
+import { circle, distance } from '@turf/turf';
 import dragPan from '@/vendor/mapbox-gl-draw-circle/lib/utils/drag_pan';
 
 const DragCircleMode = { ...MapboxDraw.modes.draw_polygon };

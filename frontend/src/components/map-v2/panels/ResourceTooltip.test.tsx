@@ -1,7 +1,7 @@
-import type { ReactElement } from 'react';
-import { render, screen } from '@testing-library/react';
-import { describe, it, expect } from 'vitest';
 import { ThemeProvider } from '@mui/material/styles';
+import { render, screen } from '@testing-library/react';
+import type { ReactElement } from 'react';
+import { describe, it, expect } from 'vitest';
 import ResourceTooltip from './ResourceTooltip';
 import theme from '@/theme';
 

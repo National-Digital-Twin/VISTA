@@ -1,11 +1,11 @@
-import React from 'react';
-import { render, screen, waitFor, act, fireEvent } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ApolloProvider } from '@apollo/client/react';
-import { ThemeProvider } from '@mui/material/styles';
 import { ApolloClient, InMemoryCache, HttpLink } from '@apollo/client';
 import type { ApolloClient as ApolloClientType } from '@apollo/client';
+import { ApolloProvider } from '@apollo/client/react';
+import { ThemeProvider } from '@mui/material/styles';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { render, screen, waitFor, act, fireEvent } from '@testing-library/react';
+import React from 'react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import MapView from './MapView';
 import theme from '@/theme';
 
@@ -100,7 +100,7 @@ vi.mock('react-map-gl/maplibre', () => {
                 </div>
             );
         }),
-        Source: ({ children }: any) => <>{children}</>,
+        Source: ({ children }: any) => children,
         Layer: () => null,
         Marker: ({ children, longitude, latitude }: any) => <div data-testid={`marker-${latitude}-${longitude}`}>{children}</div>,
         useMap: vi.fn(() => ({

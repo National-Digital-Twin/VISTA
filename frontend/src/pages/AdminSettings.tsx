@@ -1,11 +1,11 @@
 import { Box, Tab, Tabs, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import PageContainer from '@/components/PageContainer';
 import AccessRequestsTab from '@/components/AdminSettings/AccessRequestsTab';
 import GroupsTab from '@/components/AdminSettings/GroupsTab';
 import InvitesTab from '@/components/AdminSettings/InvitesTab';
 import UsersTab from '@/components/AdminSettings/UsersTab';
+import PageContainer from '@/components/PageContainer';
 
 type TabPanelProps = {
     readonly children?: React.ReactNode;

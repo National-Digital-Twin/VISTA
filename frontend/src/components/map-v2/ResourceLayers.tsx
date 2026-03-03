@@ -2,11 +2,11 @@ import type { Feature, FeatureCollection, Point } from 'geojson';
 import type { MapLayerMouseEvent } from 'maplibre-gl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Layer, Source, useMap } from 'react-map-gl/maplibre';
-import ResourceTooltip from './panels/ResourceTooltip';
 import useSpriteRegistration from './hooks/useSpriteRegistration';
+import ResourceTooltip from './panels/ResourceTooltip';
+import type { ResourceLocation, ResourceType } from '@/api/resources';
 import { STOCK_LEVEL_COLORS, getStockLevel } from '@/utils/stockLevels';
 import type { StockLevel } from '@/utils/stockLevels';
-import type { ResourceLocation, ResourceType } from '@/api/resources';
 
 const SOURCE_ID = 'resource-locations-source';
 const SYMBOL_LAYER_ID = 'resource-locations-symbol-layer';

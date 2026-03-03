@@ -1,8 +1,7 @@
-import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
 import type { FeatureCollection } from 'geojson';
-
+import React from 'react';
+import { describe, it, expect, vi } from 'vitest';
 import ConstraintLayers from './ConstraintLayers';
 import type { ConstraintInterventionType } from '@/api/constraint-interventions';
 

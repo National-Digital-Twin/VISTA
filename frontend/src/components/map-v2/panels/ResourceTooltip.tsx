@@ -1,6 +1,6 @@
 import { Box, LinearProgress, Typography } from '@mui/material';
-import { getStockColor } from '@/utils/stockLevels';
 import { percentage } from '@/utils';
+import { getStockColor } from '@/utils/stockLevels';
 
 type ResourceTooltipProps = {
     name: string;

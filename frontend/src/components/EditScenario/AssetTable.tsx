@@ -1,11 +1,11 @@
-import type { MouseEvent } from 'react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Box, Checkbox, Skeleton, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Typography } from '@mui/material';
 import { alpha } from '@mui/material/styles';
+import type { MouseEvent } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import InlineCriticalityInput from './InlineCriticalityInput';
+import type { DataroomAsset } from '@/api/dataroom-assets';
 import LoadingOverlay from '@/components/LoadingOverlay';
 import { SortableTableHeader } from '@/components/SortableTableHeader';
-import type { DataroomAsset } from '@/api/dataroom-assets';
 
 type SortField = 'id' | 'name' | 'assetTypeName' | 'subCategoryName' | 'categoryName' | 'criticalityScore';
 type SortDirection = 'asc' | 'desc';

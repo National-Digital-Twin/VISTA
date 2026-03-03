@@ -1,6 +1,6 @@
+import { Box, Checkbox, FormControlLabel, FormGroup, FormLabel, TextField, Typography } from '@mui/material';
 import type { ChangeEvent, Dispatch, SetStateAction } from 'react';
 import { useCallback } from 'react';
-import { Box, Checkbox, FormControlLabel, FormGroup, FormLabel, TextField, Typography } from '@mui/material';
 import { SCORE_VALUES } from '../hooks/useScoreFilterState';
 
 const MIN_DEPENDENCY = 0;

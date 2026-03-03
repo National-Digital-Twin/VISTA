@@ -1,7 +1,6 @@
-import { useEffect, useMemo, useState } from 'react';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import SearchIcon from '@mui/icons-material/Search';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import SearchIcon from '@mui/icons-material/Search';
 import {
     Box,
     IconButton,
@@ -18,11 +17,12 @@ import {
     Collapse,
 } from '@mui/material';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useNavigate, useOutletContext, useParams } from 'react-router-dom';
+import { useEffect, useMemo, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
+import { useNavigate, useOutletContext, useParams } from 'react-router-dom';
+import { DataSource, fetchDataSource, grantDataSourceGroupAccess, revokeDataSourceGroupAccess } from '@/api/datasources';
 import { fetchAllGroups, type Group } from '@/api/groups';
 import { DataRoomOutletContext } from '@/components/DataRoom';
-import { DataSource, fetchDataSource, grantDataSourceGroupAccess, revokeDataSourceGroupAccess } from '@/api/datasources';
 import { useUserData } from '@/hooks/useUserData';
 
 const MarkdownRenderer = ({ content }: { content: string }) => {

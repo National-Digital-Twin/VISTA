@@ -1,5 +1,4 @@
 import type { FeatureCollection } from 'geojson';
-
 import config from '@/config/app-config';
 
 export type UtilityGroup = {

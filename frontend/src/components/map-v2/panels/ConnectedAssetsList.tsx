@@ -1,5 +1,5 @@
-import { capitalCase } from 'change-case';
 import { List, ListItem, ListItemText, Typography, Alert, Divider } from '@mui/material';
+import { capitalCase } from 'change-case';
 import { getURIFragment } from '@/utils';
 
 export type ConnectedAssetsListProps = {

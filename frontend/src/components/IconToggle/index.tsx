@@ -1,8 +1,8 @@
-import React from 'react';
-import { IconButton, useTheme } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import VisibilityOutlined from '@mui/icons-material/VisibilityOutlined';
+import { IconButton, useTheme } from '@mui/material';
+import React from 'react';
 
 export type VisibilityState = 'visible' | 'hidden' | 'partial';
 

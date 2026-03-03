@@ -1,8 +1,7 @@
-import { type ReactNode } from 'react';
 import { render, screen } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
 import type { Geometry } from 'geojson';
-
+import { type ReactNode } from 'react';
+import { describe, it, expect, vi } from 'vitest';
 import InactiveFocusAreas from './InactiveFocusAreas';
 import type { FocusArea } from '@/api/focus-areas';
 

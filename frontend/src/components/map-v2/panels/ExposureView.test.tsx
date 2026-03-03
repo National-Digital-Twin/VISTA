@@ -1,12 +1,10 @@
-import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from '@mui/material/styles';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import type { Geometry } from 'geojson';
-
+import React from 'react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import ExposureView from './ExposureView';
-import theme from '@/theme';
 import {
     toggleExposureLayerVisibility,
     bulkToggleExposureLayerVisibility,
@@ -18,6 +16,7 @@ import {
     type FocusAreaRelation,
 } from '@/api/exposure-layers';
 import { fetchFocusAreas, type FocusArea } from '@/api/focus-areas';
+import theme from '@/theme';
 
 vi.mock('@/api/exposure-layers', () => ({
     toggleExposureLayerVisibility: vi.fn(),

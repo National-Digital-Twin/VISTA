@@ -1,7 +1,7 @@
-import { type MouseEvent } from 'react';
-import { format } from 'date-fns';
-import { Box, Checkbox, IconButton, Link, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
 import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
+import { Box, Checkbox, IconButton, Link, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
+import { format } from 'date-fns';
+import { type MouseEvent } from 'react';
 
 export type GroupMembersTableUser = {
     id: string;

@@ -11,7 +11,7 @@ const DevToolsContainer = lazy(() => import('./DevToolsContainer'));
 
 function DevTools({ enabled, children }: DevToolsProps) {
     if (!enabled) {
-        return <>{children}</>;
+        return children;
     }
 
     return (

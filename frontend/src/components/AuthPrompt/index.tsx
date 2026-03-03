@@ -1,6 +1,6 @@
+import classNames from 'classnames';
 import { useCallback, useId } from 'react';
 import type { SyntheticEvent } from 'react';
-import classNames from 'classnames';
 import styles from './style.module.css';
 
 export type AuthPromptProps = {

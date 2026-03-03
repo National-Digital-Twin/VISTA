@@ -1,8 +1,8 @@
 import { AppBar, Box, Toolbar, useMediaQuery, Typography, Link } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
+import { useQuery } from '@tanstack/react-query';
 import { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
 import Logo from './Logo';
 import MobileMenu from './MobileMenu';
 import Navigation from './Navigation';

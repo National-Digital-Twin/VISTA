@@ -1,15 +1,14 @@
-import { useCallback, useMemo, useEffect, useState } from 'react';
-import { Layer, Source, useMap } from 'react-map-gl/maplibre';
+import { findIconDefinition as faIconLookup, type IconName } from '@fortawesome/fontawesome-svg-core';
 import type { Feature } from 'geojson';
 import type { MapLayerMouseEvent } from 'maplibre-gl';
-import { findIconDefinition as faIconLookup, type IconName } from '@fortawesome/fontawesome-svg-core';
-
-import AssetTooltip from './panels/AssetTooltip';
+import { useCallback, useMemo, useEffect, useState } from 'react';
+import { Layer, Source, useMap } from 'react-map-gl/maplibre';
 import useSpriteRegistration from './hooks/useSpriteRegistration';
+import AssetTooltip from './panels/AssetTooltip';
+import type { AssetCategory } from '@/api/asset-categories';
+import type { Asset } from '@/api/assets-by-type';
 import { findElement } from '@/utils';
 import { createPointFeature, createLinearFeature } from '@/utils/assetUtils';
-import type { Asset } from '@/api/assets-by-type';
-import type { AssetCategory } from '@/api/asset-categories';
 
 const SOURCE_ID = 'map-v2-asset-source';
 const LINE_SOURCE_ID = 'map-v2-asset-line-source';

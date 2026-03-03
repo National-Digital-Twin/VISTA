@@ -1,6 +1,6 @@
-import { useMemo } from 'react';
-import { Box, Typography, Chip, Tooltip } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
+import { Box, Typography, Chip, Tooltip } from '@mui/material';
+import { useMemo } from 'react';
 import type { AssetScore as AssetScoreType } from '@/api/asset-scores';
 
 type AssetScoreProps = {

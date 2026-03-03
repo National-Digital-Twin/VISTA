@@ -1,12 +1,11 @@
-import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from '@mui/material/styles';
-
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import React from 'react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import UtilitiesView from './UtilitiesView';
-import theme from '@/theme';
 import { fetchUtilities, type UtilitiesResponse, type RoadRouteResponse } from '@/api/utilities';
+import theme from '@/theme';
 
 vi.mock('@/api/utilities', () => ({
     fetchUtilities: vi.fn(),
