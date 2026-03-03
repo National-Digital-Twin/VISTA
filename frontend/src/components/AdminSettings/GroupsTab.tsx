@@ -54,7 +54,7 @@ type GroupCreationErrorMessage = {
     name: string[];
 };
 
-const mapUserDataToUser = (userData: UserData): User => {
+export const mapUserDataToUser = (userData: UserData): User => {
     const organisation = getUserOrganisation(userData);
     return {
         id: userData.id || '',
@@ -66,7 +66,7 @@ const mapUserDataToUser = (userData: UserData): User => {
     };
 };
 
-const getUserOrganisation = (userData: UserData): string => {
+export const getUserOrganisation = (userData: UserData): string => {
     if (userData?.organisation) {
         return userData.organisation.replace('@', '');
     }
@@ -79,13 +79,13 @@ const getUserOrganisation = (userData: UserData): string => {
     return '';
 };
 
-const userMatchesSearch = (user: User, searchLower: string): boolean =>
+export const userMatchesSearch = (user: User, searchLower: string): boolean =>
     user.name.toLowerCase().includes(searchLower) ||
     user.email.toLowerCase().includes(searchLower) ||
     user.organisation.toLowerCase().includes(searchLower) ||
     user.userType.toLowerCase().includes(searchLower);
 
-const getFieldValue = (user: User, field: UserSortField): string => {
+export const getFieldValue = (user: User, field: UserSortField): string => {
     switch (field) {
         case 'name':
             return user.name;
@@ -100,7 +100,7 @@ const getFieldValue = (user: User, field: UserSortField): string => {
     }
 };
 
-const compareUsers =
+export const compareUsers =
     (field: UserSortField, direction: SortDirection) =>
     (a: User, b: User): number => {
         const aValue = getFieldValue(a, field);
@@ -109,7 +109,7 @@ const compareUsers =
         return direction === 'asc' ? comparison : -comparison;
     };
 
-const formatGroupCreated = (group: Group): string => {
+export const formatGroupCreated = (group: Group): string => {
     if (!group.createdAt || !group.createdBy) {
         return group.createdBy ? `Created by ${group.createdBy}` : '';
     }
@@ -126,7 +126,7 @@ const formatGroupCreated = (group: Group): string => {
     }
 };
 
-const getCurrentMemberIds = (group: Group | null, _users: User[], adminUserIds: Set<string>): Set<string> => {
+export const getCurrentMemberIds = (group: Group | null, _users: User[], adminUserIds: Set<string>): Set<string> => {
     if (!group) {
         return new Set(adminUserIds);
     }
@@ -134,7 +134,7 @@ const getCurrentMemberIds = (group: Group | null, _users: User[], adminUserIds: 
     return new Set([...memberIds, ...adminUserIds]);
 };
 
-const getEmptyMessage = (hasActiveFilters: boolean, isSearchOnlyNoResults: boolean, fallbackMessage: string): string => {
+export const getEmptyMessage = (hasActiveFilters: boolean, isSearchOnlyNoResults: boolean, fallbackMessage: string): string => {
     if (!hasActiveFilters) {
         return fallbackMessage;
     }
@@ -144,7 +144,7 @@ const getEmptyMessage = (hasActiveFilters: boolean, isSearchOnlyNoResults: boole
     return 'No results found. Try adjusting your filters';
 };
 
-const getRadioGroupValue = (currentField: UserSortField, targetField: UserSortField, currentDirection: SortDirection): string => {
+export const getRadioGroupValue = (currentField: UserSortField, targetField: UserSortField, currentDirection: SortDirection): string => {
     if (currentField !== targetField) {
         return '';
     }

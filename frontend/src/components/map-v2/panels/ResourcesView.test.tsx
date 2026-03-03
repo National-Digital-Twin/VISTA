@@ -1,23 +1,41 @@
 import { ThemeProvider } from '@mui/material/styles';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import type { ReactElement } from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { ResourcesView } from './ResourcesView';
 import type { ResourceType } from '@/api/resources';
 import theme from '@/theme';
 
+const mockWithdrawStock = vi.fn();
+const mockRestockLocation = vi.fn();
+const mockToggleVisibility = vi.fn();
+let capturedMutationOptions: { onError?: (message: string) => void } | undefined;
+
 vi.mock('../hooks/useResourceMutations', () => ({
-    default: vi.fn(() => ({
-        withdrawStock: vi.fn(),
-        restockLocation: vi.fn(),
-        toggleVisibility: vi.fn(),
-        isMutating: false,
-    })),
+    default: vi.fn((options: { onError?: (message: string) => void }) => {
+        capturedMutationOptions = options;
+        return {
+            withdrawStock: mockWithdrawStock,
+            restockLocation: mockRestockLocation,
+            toggleVisibility: mockToggleVisibility,
+            isMutating: false,
+        };
+    }),
 }));
 
 vi.mock('./ResourceUsageLog', () => ({
-    default: () => null,
+    default: ({ open, typeName }: { open: boolean; typeName?: string }) => (open ? <div data-testid="usage-log">{typeName}</div> : null),
+}));
+
+vi.mock('./StockActionDialog', () => ({
+    default: ({ open, onClose, onSuccess }: { open: boolean; onClose: () => void; onSuccess: (message: string, severity?: 'success' | 'error') => void }) =>
+        open ? (
+            <div data-testid="stock-action-dialog">
+                <button onClick={onClose}>Close stock dialog</button>
+                <button onClick={() => onSuccess('Stock updated')}>Trigger success</button>
+            </div>
+        ) : null,
 }));
 
 vi.mock('@/api/resources', () => ({
@@ -67,6 +85,7 @@ describe('ResourcesView', () => {
 
     beforeEach(() => {
         vi.clearAllMocks();
+        capturedMutationOptions = undefined;
     });
 
     it('renders loading state', () => {
@@ -154,5 +173,117 @@ describe('ResourcesView', () => {
         await waitFor(() => {
             expect(screen.getByText('Depot A')).toBeInTheDocument();
         });
+    });
+
+    it('opens stock action dialog from manage stock action button', () => {
+        const resourceTypes = [createMockResourceType()];
+        const onLocationSelect = vi.fn();
+
+        renderWithProviders(<ResourcesView {...defaultProps} resourceTypes={resourceTypes} onLocationSelect={onLocationSelect} />);
+
+        fireEvent.click(screen.getByLabelText('Manage stock for Depot A'));
+
+        expect(onLocationSelect).toHaveBeenCalledWith('loc-1');
+        expect(screen.getByTestId('stock-action-dialog')).toBeInTheDocument();
+    });
+
+    it('opens stock action dialog on row double click and closes with callback', () => {
+        const resourceTypes = [createMockResourceType()];
+        const onStockActionClose = vi.fn();
+
+        renderWithProviders(<ResourcesView {...defaultProps} resourceTypes={resourceTypes} onStockActionClose={onStockActionClose} />);
+
+        fireEvent.doubleClick(screen.getByText('Depot A'));
+        expect(screen.getByTestId('stock-action-dialog')).toBeInTheDocument();
+
+        fireEvent.click(screen.getByRole('button', { name: 'Close stock dialog' }));
+        expect(onStockActionClose).toHaveBeenCalled();
+    });
+
+    it('shows success snackbar when stock dialog reports success', () => {
+        const resourceTypes = [createMockResourceType()];
+
+        renderWithProviders(<ResourcesView {...defaultProps} resourceTypes={resourceTypes} />);
+
+        fireEvent.click(screen.getByLabelText('Manage stock for Depot A'));
+        fireEvent.click(screen.getByRole('button', { name: 'Trigger success' }));
+
+        expect(screen.getByText('Stock updated')).toBeInTheDocument();
+    });
+
+    it('opens usage log dialog from inventory log button', () => {
+        const resourceTypes = [createMockResourceType()];
+
+        renderWithProviders(<ResourcesView {...defaultProps} resourceTypes={resourceTypes} />);
+
+        fireEvent.click(screen.getByRole('button', { name: 'View inventory log →' }));
+
+        expect(screen.getByTestId('usage-log')).toHaveTextContent('Sandbags');
+    });
+
+    it('toggles resource visibility using IconToggle', () => {
+        const resourceTypes = [createMockResourceType({ isActive: true })];
+
+        renderWithProviders(<ResourcesView {...defaultProps} resourceTypes={resourceTypes} />);
+
+        fireEvent.click(screen.getByLabelText('Hide Sandbags'));
+
+        expect(mockToggleVisibility).toHaveBeenCalledWith(
+            { resourceTypeId: 'type-1', isActive: false },
+            expect.objectContaining({ onSuccess: expect.any(Function) }),
+        );
+    });
+
+    it('expands accordion for externally selected location', () => {
+        const resourceTypes = [createMockResourceType({ isActive: false })];
+        const { rerender } = renderWithProviders(<ResourcesView {...defaultProps} resourceTypes={resourceTypes} selectedLocationId={null} />);
+        const summary = screen.getByRole('button', { name: 'Sandbags (1)' });
+
+        expect(summary).toHaveAttribute('aria-expanded', 'false');
+
+        rerender(
+            <QueryClientProvider client={createTestQueryClient()}>
+                <ThemeProvider theme={theme}>
+                    <ResourcesView {...defaultProps} resourceTypes={resourceTypes} selectedLocationId="loc-1" />
+                </ThemeProvider>
+            </QueryClientProvider>,
+        );
+
+        expect(screen.getByRole('button', { name: 'Sandbags (1)' })).toHaveAttribute('aria-expanded', 'true');
+    });
+
+    it('opens stock action dialog from controlled prop', () => {
+        const resourceTypes = [createMockResourceType()];
+
+        renderWithProviders(<ResourcesView {...defaultProps} resourceTypes={resourceTypes} stockActionOpen={true} />);
+
+        expect(screen.getByTestId('stock-action-dialog')).toBeInTheDocument();
+    });
+
+    it('shows snackbar when resource mutation error callback is invoked', () => {
+        renderWithProviders(<ResourcesView {...defaultProps} resourceTypes={[createMockResourceType()]} />);
+
+        act(() => {
+            capturedMutationOptions?.onError?.('Mutation failed');
+        });
+
+        expect(screen.getByText('Mutation failed')).toBeInTheDocument();
+    });
+
+    it('expands an inactive type after successful visibility toggle', () => {
+        const resourceTypes = [createMockResourceType({ isActive: false })];
+        renderWithProviders(<ResourcesView {...defaultProps} resourceTypes={resourceTypes} />);
+        const summary = screen.getByRole('button', { name: 'Sandbags (1)' });
+
+        expect(summary).toHaveAttribute('aria-expanded', 'false');
+        fireEvent.click(screen.getByLabelText('Show Sandbags'));
+
+        const call = mockToggleVisibility.mock.calls[0];
+        const options = call?.[1] as { onSuccess?: () => void } | undefined;
+        act(() => {
+            options?.onSuccess?.();
+        });
+
+        expect(screen.getByRole('button', { name: 'Sandbags (1)' })).toHaveAttribute('aria-expanded', 'true');
     });
 });
