@@ -105,7 +105,7 @@ type AssetSearchResult = {
 type SearchResultItem = LocationSearchResult | AssetSearchResult;
 
 export type SearchSelection =
-    | { kind: 'location'; lng: number; lat: number; bounds?: [[number, number], [number, number]] }
+    | { kind: 'location'; lng: number; lat: number; bounds?: [[number, number], [number, number]]; localType?: string }
     | { kind: 'asset'; asset: AssetDetailsResponse };
 
 const SearchControl = ({ onResultSelect }: SearchControlProps) => {
@@ -238,6 +238,7 @@ const SearchControl = ({ onResultSelect }: SearchControlProps) => {
                 lng: result.data.lng,
                 lat: result.data.lat,
                 bounds: result.data.bounds,
+                localType: result.data.localType,
             });
         },
         [onResultSelect],

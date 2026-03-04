@@ -83,4 +83,34 @@ describe('searchOsNamesLocations', () => {
         expect(results[0].name).toBe('Newport');
         expect(results[0].label).toBe('Newport (Town)');
     });
+
+    it('includes populated place in labels for disambiguation when available', async () => {
+        const mockResponse = {
+            results: [
+                {
+                    GAZETTEER_ENTRY: {
+                        NAME1: 'High Street',
+                        LOCAL_TYPE: 'Named Road',
+                        POPULATED_PLACE: 'Newport',
+                        GEOMETRY_X: 449979,
+                        GEOMETRY_Y: 89192,
+                    },
+                },
+            ],
+        };
+
+        vi.stubGlobal(
+            'fetch',
+            vi.fn().mockResolvedValue({
+                ok: true,
+                json: async () => mockResponse,
+            }),
+        );
+
+        const results = await searchOsNamesLocations('High Street');
+
+        expect(results).toHaveLength(1);
+        expect(results[0].label).toBe('High Street, Newport (Named Road)');
+        expect(results[0].populatedPlace).toBe('Newport');
+    });
 });

@@ -16,6 +16,8 @@ type OsNamesGazetteerEntry = {
     NAME1?: string;
     NAME2?: string;
     LOCAL_TYPE?: string;
+    POPULATED_PLACE?: string;
+    POSTCODE_DISTRICT?: string;
     GEOMETRY_X?: number | string;
     GEOMETRY_Y?: number | string;
     MBR_XMIN?: number | string;
@@ -35,6 +37,7 @@ type OsNamesResponse = {
 export type OsNamesLocation = {
     name: string;
     localType?: string;
+    populatedPlace?: string;
     label: string;
     lng: number;
     lat: number;
@@ -117,15 +120,18 @@ export const searchOsNamesLocations = async (query: string): Promise<OsNamesLoca
                           ] as [[number, number], [number, number]])
                         : undefined;
                 const resolvedName = entry.NAME1 ?? entry.NAME2 ?? query;
+                const resolvedPlace = entry.POPULATED_PLACE?.trim() || undefined;
                 const localTypeSuffix = entry.LOCAL_TYPE ? ` (${entry.LOCAL_TYPE})` : '';
+                const placeSuffix = resolvedPlace && resolvedPlace !== resolvedName ? `, ${resolvedPlace}` : '';
                 return {
                     name: resolvedName,
-                    label: `${resolvedName}${localTypeSuffix}`,
+                    label: `${resolvedName}${placeSuffix}${localTypeSuffix}`,
                     lng,
                     lat,
                     _index: index,
                     _score: scoreNameMatch(resolvedName, query) + scoreLocalType(entry.LOCAL_TYPE),
                     ...(entry.LOCAL_TYPE ? { localType: entry.LOCAL_TYPE } : {}),
+                    ...(resolvedPlace ? { populatedPlace: resolvedPlace } : {}),
                     ...(bounds ? { bounds } : {}),
                 };
             })
