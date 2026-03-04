@@ -41,6 +41,7 @@ import { useScenarioAssets } from '@/hooks/useScenarioAssets';
 import { transformMapRequest } from '@/utils/mapRequest';
 
 const ASSET_LAYER_IDS = [ASSET_SYMBOL_LAYER_ID, `${ASSET_SYMBOL_LAYER_ID}-selected`, 'map-v2-asset-line-layer'] as const;
+const ROAD_LOCAL_TYPES = new Set(['named road', 'numbered road', 'section of named road', 'section of numbered road']);
 
 type DrawingAwareAssetLayersProps = Omit<ComponentProps<typeof AssetLayers>, 'interactionDisabled'>;
 
@@ -162,6 +163,9 @@ const MapView = () => {
     const handleFocusAreaSelect = useCallback(
         (focusAreaId: string | null) => {
             setSelectedFocusAreaId(focusAreaId);
+            if (focusAreaId === selectedFocusAreaId) {
+                return;
+            }
 
             if (!mapReady) {
                 return;
@@ -189,7 +193,7 @@ const MapView = () => {
                 });
             }
         },
-        [focusAreas, mapReady],
+        [focusAreas, mapReady, selectedFocusAreaId],
     );
 
     useEffect(() => {
@@ -609,17 +613,21 @@ const MapView = () => {
             }
 
             if (result.bounds) {
+                const normalizedLocalType = result.localType?.toLowerCase().replaceAll('_', ' ');
+                const isRoadResult = normalizedLocalType ? ROAD_LOCAL_TYPES.has(normalizedLocalType) : false;
                 map.fitBounds(result.bounds, {
                     padding: 80,
                     duration: 1000,
-                    maxZoom: 15,
+                    maxZoom: isRoadResult ? 17 : 15,
                 });
                 return;
             }
 
+            const normalizedLocalType = result.localType?.toLowerCase().replaceAll('_', ' ');
+            const isRoadResult = normalizedLocalType ? ROAD_LOCAL_TYPES.has(normalizedLocalType) : false;
             map.flyTo({
                 center: [result.lng, result.lat],
-                zoom: Math.max(viewState.zoom, 12),
+                zoom: Math.max(viewState.zoom, isRoadResult ? 16 : 13),
                 duration: 1000,
             });
         },

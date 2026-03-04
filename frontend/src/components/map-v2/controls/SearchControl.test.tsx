@@ -162,6 +162,7 @@ describe('SearchControl', () => {
             {
                 name: 'Newport',
                 label: 'Newport (Town)',
+                localType: 'Town',
                 lng: -1.3,
                 lat: 50.7,
                 bounds: [
@@ -188,6 +189,7 @@ describe('SearchControl', () => {
                 [-1.32, 50.69],
                 [-1.28, 50.71],
             ],
+            localType: 'Town',
         });
     });
 
