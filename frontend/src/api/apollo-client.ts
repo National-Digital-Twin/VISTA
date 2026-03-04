@@ -13,30 +13,33 @@ const httpLink = new HttpLink({
     credentials: 'same-origin',
 });
 
-const errorLink = new ErrorLink(({ error }) => {
-    let shouldLogout = false;
-
+export const shouldLogoutFromApolloError = (error: unknown): boolean => {
     if (CombinedGraphQLErrors.is(error)) {
         for (const err of error.errors) {
             const status =
                 (err.extensions as { statusCode?: number; http?: { status?: number } })?.statusCode ||
                 (err.extensions as { http?: { status?: number } })?.http?.status;
             if (status === 401 || status === 403) {
-                shouldLogout = true;
+                return true;
             }
         }
-    } else {
-        const networkErr = error as { statusCode?: number; result?: { statusCode?: number }; response?: { status?: number } };
-        const status = networkErr.statusCode || networkErr.result?.statusCode || networkErr.response?.status;
-        if (status === 401 || status === 403) {
-            shouldLogout = true;
-        }
+        return false;
     }
 
-    if (shouldLogout) {
+    const networkErr = error as { statusCode?: number; result?: { statusCode?: number }; response?: { status?: number } };
+    const status = networkErr.statusCode || networkErr.result?.statusCode || networkErr.response?.status;
+    return status === 401 || status === 403;
+};
+
+const errorLink = new ErrorLink(({ error }) => {
+    if (shouldLogoutFromApolloError(error)) {
         signout();
     }
 });
+
+export const shouldRetryApolloError = (error: unknown): boolean => {
+    return !!error && !(error as { graphQLErrors?: unknown }).graphQLErrors;
+};
 
 const retryLink = new RetryLink({
     delay: {
@@ -47,7 +50,7 @@ const retryLink = new RetryLink({
     attempts: {
         max: 3,
         retryIf: (error) => {
-            return !!error && !(error as { graphQLErrors?: unknown }).graphQLErrors;
+            return shouldRetryApolloError(error);
         },
     },
 });

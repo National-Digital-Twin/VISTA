@@ -14,12 +14,4 @@ const config = {
     configErrors: [] as string[],
 };
 
-if (!config.services.ontology) {
-    config.configErrors.push(
-        "No VITE_ONTOLOGY_SERVICE_URL is specified in .env - please check it's present. " +
-            'For local dev this is probably http://localhost:3030. ' +
-            'Note that these environment variables now all need a VITE_ prefix (see PR #95).',
-    );
-}
-
 export default config;

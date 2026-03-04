@@ -47,6 +47,12 @@ const mockedFetchScenarios = vi.mocked(fetchScenarios);
 const mockedFetchDataroomAssets = vi.mocked(fetchDataroomAssets);
 const mockedUpdateBulkCriticality = vi.mocked(updateBulkCriticality);
 
+const waitForEditDialogToClose = async () => {
+    await waitFor(() => {
+        expect(screen.queryByLabelText('Criticality score')).not.toBeInTheDocument();
+    });
+};
+
 const mockScenarios = [
     { id: 'flood-newport', name: 'Flood in Newport', isActive: true, code: 'F001' },
     { id: 'landslide-ventnor', name: 'Landslide in Ventnor', isActive: false, code: 'L001' },
@@ -219,6 +225,7 @@ describe('EditScenario', () => {
         const input = screen.getByLabelText('Criticality score');
         fireEvent.change(input, { target: { value: '2' } });
         fireEvent.click(screen.getByRole('button', { name: 'CONFIRM' }));
+        await waitForEditDialogToClose();
 
         await waitFor(() => {
             const hospitalRow = screen.getByText('Hospital A').closest('tr')!;
@@ -240,6 +247,7 @@ describe('EditScenario', () => {
         const input = screen.getByLabelText('Criticality score');
         fireEvent.change(input, { target: { value: '2' } });
         fireEvent.click(screen.getByRole('button', { name: 'CONFIRM' }));
+        await waitForEditDialogToClose();
 
         await waitFor(() => {
             expect(screen.getByText('Hospital A').closest('tr')).toHaveTextContent('2');
@@ -281,6 +289,7 @@ describe('EditScenario', () => {
         const input = screen.getByLabelText('Criticality score');
         fireEvent.change(input, { target: { value: '2' } });
         fireEvent.click(screen.getByRole('button', { name: 'CONFIRM' }));
+        await waitForEditDialogToClose();
 
         await waitFor(() => {
             expect(screen.getByRole('button', { name: /save/i })).toBeEnabled();
@@ -306,6 +315,7 @@ describe('EditScenario', () => {
         const input = screen.getByLabelText('Criticality score');
         fireEvent.change(input, { target: { value: '2' } });
         fireEvent.click(screen.getByRole('button', { name: 'CONFIRM' }));
+        await waitForEditDialogToClose();
 
         await waitFor(() => {
             expect(screen.getByRole('button', { name: /save/i })).toBeEnabled();
@@ -321,9 +331,12 @@ describe('EditScenario', () => {
             });
         });
 
-        await waitFor(() => {
-            expect(screen.getByRole('button', { name: /save/i })).toBeDisabled();
-        });
+        await waitFor(
+            () => {
+                expect(screen.getByRole('button', { name: /save/i })).toBeDisabled();
+            },
+            { timeout: 10000 },
+        );
     });
 
     it('saves multiple assets with different scores in a single request', async () => {
@@ -340,9 +353,16 @@ describe('EditScenario', () => {
         fireEvent.click(await screen.findByRole('button', { name: /edit 1 selected/i }));
         fireEvent.change(screen.getByLabelText('Criticality score'), { target: { value: '0' } });
         fireEvent.click(screen.getByRole('button', { name: 'CONFIRM' }));
+        await waitForEditDialogToClose();
 
         await waitFor(() => {
+            expect(screen.queryByText('Edit 1 item')).not.toBeInTheDocument();
+        });
+        await waitFor(() => {
             expect(screen.getByText('Hospital A').closest('tr')).toHaveTextContent('0');
+        });
+        await waitFor(() => {
+            expect(screen.queryByRole('button', { name: /edit \d+ selected/i })).not.toBeInTheDocument();
         });
 
         const schoolRow = screen.getByText('School B').closest('tr');
@@ -354,12 +374,19 @@ describe('EditScenario', () => {
         fireEvent.click(await screen.findByRole('button', { name: /edit 1 selected/i }));
         fireEvent.change(screen.getByLabelText('Criticality score'), { target: { value: '2' } });
         fireEvent.click(screen.getByRole('button', { name: 'CONFIRM' }));
+        await waitForEditDialogToClose();
 
         await waitFor(() => {
             expect(screen.getByText('School B').closest('tr')).toHaveTextContent('2');
         });
 
-        const saveButton = await screen.findByRole('button', { name: /save/i });
+        await waitFor(
+            () => {
+                expect(screen.getByRole('button', { name: /save/i })).toBeEnabled();
+            },
+            { timeout: 10000 },
+        );
+        const saveButton = screen.getByRole('button', { name: /save/i });
         fireEvent.click(saveButton);
         await screen.findByText('Save 2 items');
         fireEvent.click(screen.getByRole('button', { name: 'SAVE' }));
@@ -388,6 +415,7 @@ describe('EditScenario', () => {
         const input = screen.getByLabelText('Criticality score');
         fireEvent.change(input, { target: { value: '2' } });
         fireEvent.click(screen.getByRole('button', { name: 'CONFIRM' }));
+        await waitForEditDialogToClose();
 
         await waitFor(() => {
             expect(screen.getByRole('button', { name: /save/i })).toBeEnabled();

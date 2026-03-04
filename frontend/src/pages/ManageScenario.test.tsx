@@ -14,11 +14,17 @@ vi.mock('@/api/scenarios', () => ({
 }));
 
 const mockFetchDataroomExposureLayers = vi.fn();
+const mockApproveExposureLayer = vi.fn();
+const mockRejectExposureLayer = vi.fn();
+const mockRemoveExposureLayer = vi.fn();
 vi.mock('@/api/exposure-layers', async (importOriginal) => {
     const actual = await importOriginal<typeof import('@/api/exposure-layers')>();
     return {
         ...actual,
         fetchDataroomExposureLayers: (...args: unknown[]) => mockFetchDataroomExposureLayers(...args),
+        approveExposureLayer: (...args: unknown[]) => mockApproveExposureLayer(...args),
+        rejectExposureLayer: (...args: unknown[]) => mockRejectExposureLayer(...args),
+        removeExposureLayer: (...args: unknown[]) => mockRemoveExposureLayer(...args),
     };
 });
 
@@ -54,10 +60,21 @@ const mockScenarios = [
     { id: 'landslide-ventnor', name: 'Landslide in Ventnor', isActive: false, code: 'L001' },
 ];
 
+const getLastButtonByName = (name: RegExp): HTMLElement => {
+    const button = screen.getAllByRole('button', { name }).at(-1);
+    if (!button) {
+        throw new Error(`Expected button matching ${name.toString()} to exist`);
+    }
+    return button;
+};
+
 beforeEach(() => {
     vi.clearAllMocks();
     mockedFetchScenarios.mockResolvedValue(mockScenarios);
     mockFetchDataroomExposureLayers.mockResolvedValue([]);
+    mockApproveExposureLayer.mockResolvedValue({});
+    mockRejectExposureLayer.mockResolvedValue({});
+    mockRemoveExposureLayer.mockResolvedValue({});
     mockUseUserData.mockReturnValue({
         getUserDisplayName: () => 'Name',
         getUserEmailDomain: () => 'Email',
@@ -365,5 +382,76 @@ describe('ManageScenario', () => {
         await userEvent.click(screen.getByRole('button', { name: /show available layers on map/i }));
 
         expect(getExposureLayersChildProps()?.layers).toEqual([{ id: 'layer-av-1', geometry: approvedLayer.geometry }]);
+    });
+
+    it('approves a pending layer and shows success feedback', async () => {
+        const pendingLayer = {
+            id: 'layer-pending-approve',
+            name: 'Pending Approve Layer',
+            status: 'pending' as const,
+            isUserDefined: true,
+            geometry: null,
+            createdAt: new Date().toISOString(),
+        };
+        mockFetchDataroomExposureLayers.mockResolvedValue([pendingLayer]);
+
+        renderWithAppProviders(['/data-room/scenarios/flood-newport']);
+        await screen.findByText('Pending Approve Layer');
+
+        await userEvent.click(screen.getByRole('button', { name: /^approve$/i }));
+        await userEvent.click(getLastButtonByName(/^approve$/i));
+
+        await waitFor(() => {
+            expect(mockApproveExposureLayer).toHaveBeenCalledWith('flood-newport', 'layer-pending-approve');
+        });
+        expect(await screen.findByText(/Exposure layer approved/)).toBeInTheDocument();
+    });
+
+    it('rejects a pending layer and shows success feedback', async () => {
+        const pendingLayer = {
+            id: 'layer-pending-reject',
+            name: 'Pending Reject Layer',
+            status: 'pending' as const,
+            isUserDefined: true,
+            geometry: null,
+            createdAt: new Date().toISOString(),
+        };
+        mockFetchDataroomExposureLayers.mockResolvedValue([pendingLayer]);
+
+        renderWithAppProviders(['/data-room/scenarios/flood-newport']);
+        await screen.findByText('Pending Reject Layer');
+
+        await userEvent.click(screen.getByRole('button', { name: /^reject$/i }));
+        await userEvent.click(getLastButtonByName(/^reject$/i));
+
+        await waitFor(() => {
+            expect(mockRejectExposureLayer).toHaveBeenCalledWith('flood-newport', 'layer-pending-reject');
+        });
+        expect(await screen.findByText(/Exposure layer rejected/)).toBeInTheDocument();
+    });
+
+    it('removes an approved user-defined layer via row menu', async () => {
+        const approvedLayer = {
+            id: 'layer-approved-remove',
+            name: 'Approved Layer',
+            status: 'approved' as const,
+            isUserDefined: true,
+            geometry: null,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+        };
+        mockFetchDataroomExposureLayers.mockResolvedValue([approvedLayer]);
+
+        renderWithAppProviders(['/data-room/scenarios/flood-newport']);
+        await screen.findByText('Approved Layer');
+
+        await userEvent.click(screen.getByRole('button', { name: 'More actions' }));
+        await userEvent.click(screen.getByRole('menuitem', { name: 'Remove' }));
+        await userEvent.click(getLastButtonByName(/^remove$/i));
+
+        await waitFor(() => {
+            expect(mockRemoveExposureLayer).toHaveBeenCalledWith('flood-newport', 'layer-approved-remove');
+        });
+        expect(await screen.findByText(/Exposure layer removed/)).toBeInTheDocument();
     });
 });
