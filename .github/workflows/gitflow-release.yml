@@ -8,16 +8,15 @@ on:
     branches:
       - "release/*"
 
-permissions:
-  id-token: write
-  contents: write
-  packages: read
-  statuses: write
-
 jobs:
   versioning:
     name: Extract Version
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: write
+      packages: read
+      statuses: write
     outputs:
       version: ${{ steps.extract_version.outputs.VERSION }}
     steps:
@@ -55,20 +54,40 @@ jobs:
 
   backend-ci:
     needs: [versioning]
+    permissions:
+      id-token: write
+      contents: write
+      packages: read
+      statuses: write
     uses: ./.github/workflows/backend-ci-pr.yml
 
   frontend-ci:
     needs: [versioning]
+    permissions:
+      id-token: write
+      contents: write
+      packages: read
+      statuses: write
     uses: ./.github/workflows/frontend-ci-pr.yml
     secrets:
       VITE_MAP_TILER_TOKEN: ${{ secrets.VITE_MAP_TILER_TOKEN }}
 
   proxy-ci:
     needs: [versioning]
+    permissions:
+      id-token: write
+      contents: write
+      packages: read
+      statuses: write
     uses: ./.github/workflows/transparent-proxy-ci-pr.yml
 
   backend-push-to-ECR:
     needs: [backend-ci, versioning]
+    permissions:
+      id-token: write
+      contents: write
+      packages: read
+      statuses: write
     uses: ./.github/workflows/backend-cd-push-to-ECR.yml
     with:
       aws_account_number: "${{ vars.STAGING_AWS_ACCOUNT_ID }}"
@@ -78,6 +97,11 @@ jobs:
 
   frontend-push-to-ECR:
     needs: [frontend-ci, versioning]
+    permissions:
+      id-token: write
+      contents: write
+      packages: read
+      statuses: write
     uses: ./.github/workflows/frontend-cd-push-to-ECR.yml
     secrets:
       VITE_MAP_TILER_TOKEN: ${{ secrets.VITE_MAP_TILER_TOKEN }}
@@ -90,6 +114,11 @@ jobs:
 
   proxy-push-to-ECR:
     needs: [proxy-ci, versioning]
+    permissions:
+      id-token: write
+      contents: write
+      packages: read
+      statuses: write
     uses: ./.github/workflows/transparent-proxy-cd-push-to-ECR.yml
     with:
       aws_account_number: "${{ vars.STAGING_AWS_ACCOUNT_ID }}"
