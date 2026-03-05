@@ -25,3 +25,6 @@ So, because src depends on both blue (^1.4) and green (^0.8), version solving fa
 ```
 
 In this situation, do the following: - Comment out `blue` - Re-run `poetryup --latest` - Handle any other new package conflicts the same way until poetryup resolves - Uncomment out `blue` with package version that works with `green`, e.g. `blue = "^1.2"` - Run `poetry-regenerate` onwards
+
+© Crown Copyright 2026. This work has been developed by the National Digital Twin Programme and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+Licensed under the Open Government Licence v3.0.

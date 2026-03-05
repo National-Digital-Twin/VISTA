@@ -1,4 +1,7 @@
 #!/bin/bash
+# SPDX-License-Identifier: Apache-2.0
+# © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+
 echo "Setup user permissions to run migrate."
 # Ensure the necessary environment variables are set
 if [[ -z "$DB_HOSTNAME" || -z "$POSTGRES_PASSWORD" ]]; then

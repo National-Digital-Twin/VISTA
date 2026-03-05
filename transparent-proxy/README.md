@@ -26,3 +26,6 @@ docker run -ti -p 5013:80 --env ADMIRALTY_API_KEY=... --env REALTIME_TRAINS_API_
 ```
 
 Note that for this application specifically, [maptiler](https://api.maptiler.com/) cannot be passed via the transparent proxy, as the host header must match api.maptiler.com else a 403 error will be returned by CloudFlare. To secure API keys used by maptiler, you must follow the guidance available at [maptiler](https://docs.maptiler.com/cloud/api/authentication-key/) to scope its use to specific domains.
+
+© Crown Copyright 2026. This work has been developed by the National Digital Twin Programme and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+Licensed under the Open Government Licence v3.0.
