@@ -95,3 +95,6 @@ first before updating and auditing the `.secrets.baseline` file.
 
 Credit: This document has been adapted from the
 [govukcookiecutter](https://github.com/best-practice-and-impact/govcookiecutter/).
+
+© Crown Copyright 2026. This work has been developed by the National Digital Twin Programme and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+Licensed under the Open Government Licence v3.0.

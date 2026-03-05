@@ -61,3 +61,6 @@ See [RUN_SERVICES.md](./dev/RUN_SERVICES.md) for instructions.
   the Ontology Service is used to provide the ontology iconography to Paralog.
 - [Secure Agent Graph (SAG) API](https://github.com/National-Digital-Twin/secure-agent-graph)
   is used as a datastore for RDF Libraries.
+
+© Crown Copyright 2026. This work has been developed by the National Digital Twin Programme and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+Licensed under the Open Government Licence v3.0.

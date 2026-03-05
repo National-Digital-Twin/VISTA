@@ -8,10 +8,9 @@
 
 ## Overview
 
-Vista is a tool which can be used to get a better understanding of high value
-assets within regions in the UK. It allows analysts to better understand the
-impact of high value assets which in turn allows them to make better decisions
-quickly.
+VISTA is a digital mapping tool designed to assess, visualise, and simulate cascading asset failures during emergencies. It enables real-time monitoring of infrastructure dependencies, illustrating how disruptions to key assets—such as roads, energy grids, and healthcare facilities—affect interconnected services and communities.
+
+In addition to assessing failures, VISTA provides predictive capabilities, allowing users to simulate a range of emergency scenarios. By integrating real-world and simulated data, VISTA enables proactive planning, helping emergency responders, infrastructure managers and policy officials anticipate how disruptions propagate and optimise response efforts before incidents occur.
 
 ## Components
 
@@ -48,6 +47,11 @@ See [RUNNING_CODE_DEV_TOOLS.md](./developer_docs/RUNNING_CODE_DEV_TOOLS.md) for 
 The development of these works has been made possible with thanks to our [contributors](https://github.com/National-Digital-Twin/vista/graphs/contributors).
 ## Public Funding Acknowledgment
 This repository has been developed with public funding as part of the National Digital Twin Programme (NDTP), a UK Government initiative. NDTP, alongside its partners, has invested in this work to advance open, secure, and reusable digital twin technologies for any organisation, whether from the public or private sector, irrespective of size.
+
+## License
+This repository contains **both source code and documentation**, covered by different licenses:
+- **Code**: Apache License 2.0 ([LICENSE.md](LICENSE.md))
+- **Documentation**: Open Government Licence v3.0 ([OGL_LICENSE.md](OGL_LICENSE.md))
 
 ## Security and Responsible Disclosure
 We take security seriously. If you believe you have found a security vulnerability in this repository, please follow our responsible disclosure process outlined in `SECURITY.md`.
