@@ -68,7 +68,7 @@
     "devDependencies": {
         "@eslint/compat": "2.0.2",
         "@eslint/eslintrc": "3.3.4",
-        "@eslint/js": "9.39.2",
+        "@eslint/js": "10.0.1",
         "@mapbox/mapbox-gl-draw": "1.5.1",
         "@mui/icons-material": "7.3.8",
         "@mui/material": "7.3.8",
