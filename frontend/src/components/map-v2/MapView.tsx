@@ -167,7 +167,7 @@ const MapView = () => {
                 return;
             }
 
-            if (!mapReady) {
+            if (!mapReady || !focusAreaId) {
                 return;
             }
             const map = mapRef.current?.getMap();
@@ -176,22 +176,18 @@ const MapView = () => {
             }
 
             const focusArea = focusAreas?.find((fa) => fa.id === focusAreaId);
-            if (focusArea?.geometry) {
-                const bounds = bbox({ type: 'Feature', geometry: focusArea.geometry, properties: {} });
-                map.fitBounds(
-                    [
-                        [bounds[0], bounds[1]],
-                        [bounds[2], bounds[3]],
-                    ],
-                    { padding: 50, duration: 1000 },
-                );
-            } else {
-                map.flyTo({
-                    center: [DEFAULT_VIEW_STATE.longitude, DEFAULT_VIEW_STATE.latitude],
-                    zoom: DEFAULT_VIEW_STATE.zoom,
-                    duration: 1000,
-                });
+            if (!focusArea?.geometry) {
+                return;
             }
+
+            const bounds = bbox({ type: 'Feature', geometry: focusArea.geometry, properties: {} });
+            map.fitBounds(
+                [
+                    [bounds[0], bounds[1]],
+                    [bounds[2], bounds[3]],
+                ],
+                { padding: 50, duration: 1000 },
+            );
         },
         [focusAreas, mapReady, selectedFocusAreaId],
     );

@@ -65,7 +65,7 @@ export const DrawingProvider = ({ children, mapRef, mapReady, scenarioId }: Draw
 
     const updateDrawingConfig = useCallback(
         <T,>(config: DrawingConfig<T> | null) => {
-            if (drawRef.current && drawingMode !== null) {
+            if (drawRef.current) {
                 try {
                     drawRef.current.changeMode('simple_select', { featureIds: [] });
                 } catch {
@@ -83,7 +83,7 @@ export const DrawingProvider = ({ children, mapRef, mapReady, scenarioId }: Draw
             }
             setDrawingConfig(config as DrawingConfig | null);
         },
-        [drawRef, drawingMode],
+        [drawRef],
     );
 
     useEffect(() => {
