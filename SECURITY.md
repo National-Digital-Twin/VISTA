@@ -62,14 +62,12 @@ To help maintain security across NDTP repositories, we follow these principles:
 - Sensitive credentials **must not be included** in public repositories.
 - Security patches are applied in a timely manner, with priority given to critical vulnerabilities.
 
-For more details, refer to our **Secure Development Guidelines** [Link to internal security policy, if available].
+For internal secure development guidance, NDTP suppliers should refer to programme security policies through their contracted governance channels.
 
 ---
 
 **Maintained by the National Digital Twin Programme (NDTP).**
 
-© Crown Copyright 2026. This work has been developed by the National Digital Twin Programme and is legally attributed to the Department for Business and Trade (UK) as the
- governing entity.
+© Crown Copyright 2026. This work has been developed by the National Digital Twin Programme and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
 Licensed under the Open Government Licence v3.0.
 For full licensing terms, see [OGL_LICENSE.md](OGL_LICENSE.md).
-

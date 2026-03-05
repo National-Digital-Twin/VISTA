@@ -19,7 +19,7 @@ Vista comprises four main components:
 
 1. **Frontend**: A React application found in [`frontend`](frontend).
 2. **Backend**: A Python API used to provide or proxy various APIs outside the security perimeter, found in [`backend`](backend).
-3. **Deploy**: Deployment configurations and scripts, located in [`deploy`](deploy).
+3. **Kubernetes Manifests**: Deployment and runtime manifests for services, located in [`k8s`](k8s).
 4. **Transparent Proxy**: A proxy component for handling API requests, found in [`transparent-proxy`](transparent-proxy).
 
 ## Setup Overview
@@ -32,15 +32,13 @@ For detailed setup instructions, please refer to the [SETUP.md](SETUP.md) file. 
 
 3. **Backend Setup**: Set up AWS credentials, login to AWS ECR, and follow the instructions in `backend/vista-python-api/README.md`.
 
-4. **Deployment Nodes**: Follow the instructions in [deploy/README.md](deploy/README.md) for environment-specific setup and deployment procedures.
-
-5. **Transparent Proxy Setup**: Build the Docker image and run the container with required environment variables.
+4. **Transparent Proxy Setup**: Build the Docker image (located in `transparent-proxy/Dockerfile`) and run the container with required environment variables.
 
 For more detailed information on each component, please refer to their respective README files in their directories.
 
 ## Additional Notes
 
-- For updating Python requirements, refer to `docs/updating_requirements.md`.
+- For updating Python requirements, refer to `backend/vista-python-api/docs/updating_requirements.md`.
 - To create a towncrier entry: `towncrier create 123.added --edit`.
 
 ## Running local code development tools
@@ -59,7 +57,7 @@ We take security seriously. If you believe you have found a security vulnerabili
 This project provides a Software Bill of Materials (SBOM) to help users and integrators understand its dependencies.
 
 ### Current SBOM
-Download the [latest SBOM for this codebase](../../dependency-graph/sbom) to view the current list of components used in this repository.
+Download the [latest SBOM for this codebase](https://github.com/National-Digital-Twin/vista/dependency-graph/sbom) to view the current list of components used in this repository.
 
 ## Contributing
 We welcome contributions that align with the Programme’s objectives. Please read our `CONTRIBUTING.md` guidelines before submitting pull requests.
