@@ -18,98 +18,23 @@ This project follows **Semantic Versioning (SemVer)** ([semver.org](https://semv
 
 ---
 
-## [0.96.0]
-
-- Allows administrators to invite other users.
-- Allows administrators to manage permissions to access data via user groups.
-- Allows users to publish exposure layers which can be shared with other users, contingent on administrator approval.
-- Allows administrators to update criticality scores for assets.
-
-## [0.95.0]
-
-- Allows users to withdraw and restock resources at given locations.
-- Allows users to place constraints on the map.
-- Rebuilds the road routing functionality to use A Star algorithm and local data (road links and speed constraints). Also modifies the approach to build a routing graph on start up, rather than at run-time per request.
-
-## [0.94.0]
-
-- Allows users to draw their own exposure layers, unique to that scenario and user.
-- Adds status pills to asset types and exposure layers indicating whether a focus area includes them.
-- Some additional minor cosmetic updates e.g. displaying focus area outlines when asset panel is active.
-
-## [0.93.0]
-
-A major redesign of VISTA, including:
-
-- introducing scenarios and scenario-specific criticality scores associated with individual assets
-- introducing focus areas that persist between sessions, where visible assets can be adjusted by type or by score
-- introducing an overall 4-dimensional VISTA score (criticality, dependency, exposure and redundancy)
-- introducing exposure layers
-- adding a nightly data refresh
-- re-introducing a complete asset dependency dataset
-
-## [0.92.7]
-
-- Remove loading of full asset data when enabling a flood layer.
-
-## [0.92.6]
-
-- Ensure draw polygon tool always shows a crosshair.
-
-## [0.92.5]
-
-- Prevent default form submission behaviour when pressing Enter in search bar
-- Hide problematic layers from the layer panel.
-- Add an extra guard to dependency rendering.
-
-## [0.92.4]
-
-- Removed transmission line datasets
-- Re-restored visual dependency lines between assets
-
-## [0.92.3]
-
-- Added Privacy notice
-
-## [0.92.2]
-
-- Fixed styling issues between asset layer panels and toolbar buttons
-- Restored visual dependency lines between assets
-
-## [0.92.1]
-
-- Backend API dependency patching
-- Progress indicator added on asset layer panel
-- Refactored the query to fetch the datasets to be more fault tolerant
-
-## [0.92.0]
-
-- Integrate OS NGD API
-- Integration of non-OS/NAPTAN data sources
-- Integrate NAPTAN API
-- Integrate OS names API
-- Integrate with NHS open data portal
-
-## [0.91.0]
-
-- Add draggable circle polygon
-
 ## [0.90.0]
 
-- Live weather station readings from the Met Office
-- Tide times and levels from the Admiralty
-- Dynamic proximity tool, showing all buildings in a given radius of a point
-- Live rail arrival and departure boards
-- "Feedback" button for providing live feedback and bug reports from inside the tool
-- Vulnerable people visualisation
-- Low bridge display (complete)
-- New layers UI replacing the dropdowns
-- New asset table (in preview)
-- Visualisation of environmentally sensitive areas
-- Map legend explaining the meanings of symbols and colours
-- Full infrastructure-as-code OpenTofu deployment for staging and production
-- Automatic database migrations in deployment
-- New favicon design
+## Features and Improvements
+
+- Introduced a major VISTA redesign with scenarios, scenario-specific criticality scores, focus areas, exposure layers, and an overall four-dimensional score (criticality, dependency, exposure, redundancy).
+- Added administrator capabilities to invite users, manage access via groups, approve shared exposure layers, and update criticality scores.
+- Added the ability to draw user-specific exposure layers and display status indicators for focus-area inclusion.
+- Added resource workflows, allowing users to withdraw and restock resources at configured locations.
+- Added map constraints and a draggable circle polygon drawing tool.
+- Rebuilt road routing using an A* approach with local road and speed data, and moved routing graph construction to startup.
+- Integrated key external and reference data sources, including OS NGD, NAPTAN, OS Names, NHS, live weather, Admiralty tide data, and live rail boards.
+- Added dynamic proximity analysis to show assets/buildings within a selected radius.
+- Added vulnerable people visualisation and completed low bridge display support.
+- Introduced new and improved UI capabilities, including a new layers interface, map legend, asset table preview, privacy notice, progress indicators, and styling/cosmetic refinements.
+- Improved dependency visualisation by restoring and hardening visual dependency rendering.
+- Improved data handling and resilience, including nightly data refresh and fault-tolerant dataset query logic.
+- Improved deployment and operations through OpenTofu infrastructure as code, automated database migrations, backend dependency patching, and updated branding (favicon).
 
 ---
 
