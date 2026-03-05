@@ -91,7 +91,7 @@ type MapPanelsProps = {
     selectedElement?: Asset | null;
     onBackFromInspector?: () => void;
     scenarioId?: string;
-    onFocusAreaSelect?: (focusAreaId: string | null) => void;
+    onFocusAreaSelect?: (focusAreaId: string | null, options?: { flyTo?: boolean }) => void;
     onConnectedAssetsVisibilityChange?: (
         visible: boolean,
         dependents: Array<{ id: string; geom: string; type: { name: string } }>,
