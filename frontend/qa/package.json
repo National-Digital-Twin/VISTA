@@ -19,14 +19,14 @@
     "license": "ISC",
     "devDependencies": {
         "@cucumber/cucumber": "^9.0.1",
-        "@playwright/test": "1.56.0",
+        "@playwright/test": "1.58.2",
         "cross-env": "^7.0.3",
         "dotenv": "^16.4.7",
-        "fs-extra": "^11.3.2",
+        "fs-extra": "^11.3.4",
         "lighthouse": "^12.3.0",
-        "multiple-cucumber-html-reporter": "^3.9.3",
+        "multiple-cucumber-html-reporter": "^3.10.0",
         "playwright-lighthouse": "^4.0.0",
         "ts-node": "^10.9.2",
-        "winston": "^3.18.3"
+        "winston": "^3.19.0"
     }
 }
