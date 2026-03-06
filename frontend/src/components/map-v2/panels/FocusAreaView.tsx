@@ -29,7 +29,7 @@ type FocusAreaViewProps = {
     readonly onClose: () => void;
     readonly scenarioId?: string;
     readonly selectedFocusAreaId?: string | null;
-    readonly onFocusAreaSelect?: (focusAreaId: string | null) => void;
+    readonly onFocusAreaSelect?: (focusAreaId: string | null, options?: { flyTo?: boolean }) => void;
     readonly focusAreas?: FocusArea[];
     readonly isLoading?: boolean;
     readonly isError?: boolean;
@@ -240,11 +240,11 @@ const FocusAreaView = ({ onClose, scenarioId, selectedFocusAreaId, onFocusAreaSe
             onSelect: onFocusAreaSelectRef.current
                 ? (id) => {
                       if (id && onFocusAreaSelectRef.current) {
-                          onFocusAreaSelectRef.current(id);
+                          onFocusAreaSelectRef.current(id, { flyTo: false });
                       } else if (onFocusAreaSelectRef.current) {
                           const mapWide = focusAreasRef.current?.find((fa) => fa.isSystem);
                           if (mapWide) {
-                              onFocusAreaSelectRef.current(mapWide.id);
+                              onFocusAreaSelectRef.current(mapWide.id, { flyTo: false });
                           }
                       }
                   }

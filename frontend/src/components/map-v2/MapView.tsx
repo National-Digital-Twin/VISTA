@@ -161,13 +161,13 @@ const MapView = () => {
     });
 
     const handleFocusAreaSelect = useCallback(
-        (focusAreaId: string | null) => {
+        (focusAreaId: string | null, options?: { flyTo?: boolean }) => {
             setSelectedFocusAreaId(focusAreaId);
             if (focusAreaId === selectedFocusAreaId) {
                 return;
             }
 
-            if (!mapReady || !focusAreaId) {
+            if (options?.flyTo === false || !mapReady || !focusAreaId) {
                 return;
             }
             const map = mapRef.current?.getMap();
