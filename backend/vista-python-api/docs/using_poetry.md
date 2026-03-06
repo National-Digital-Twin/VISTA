@@ -51,5 +51,6 @@ Check out the Poetry docs page for [specifying version constraints](https://pyth
 Environment markers are great, e.g. this means "for Python 2.7.\* OR Windows, install pathlib2 >=2.2, <3.0"
 `pathlib2 = { version = "^2.2", markers = "python_version ~= '2.7' or sys_platform == 'win32'" }`
 
-© Crown Copyright 2026. This work has been developed by the National Digital Twin Programme and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+© Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
+and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
 Licensed under the Open Government Licence v3.0.
