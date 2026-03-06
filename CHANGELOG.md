@@ -17,6 +17,11 @@ This project follows **Semantic Versioning (SemVer)** ([semver.org](https://semv
 
 ---
 
+## [0.97.0]
+
+- Improvements to search including post-search zoom level and greater detail in results.
+- Improvements to focus area editing to prevent auto-panning changes while making edits.
+
 ## [0.96.0]
 
 - Allows administrators to invite other users.
