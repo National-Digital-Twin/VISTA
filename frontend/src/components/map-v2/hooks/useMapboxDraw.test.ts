@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
-// © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+// © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
+// and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
 
 import { renderHook, waitFor } from '@testing-library/react';
 import type { MapRef } from 'react-map-gl/maplibre';
@@ -38,8 +39,7 @@ vi.mock('@mapbox/mapbox-gl-draw', () => {
         set = mockDrawSet;
         add = mockDrawAdd;
         getAll = mockDrawGetAll;
-        static modes = {};
-        constructor() {}
+        static readonly modes = {};
     }
     return {
         default: MockMapboxDraw,

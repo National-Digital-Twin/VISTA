@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
-// © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+// © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
+// and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
 
 import { ThemeProvider } from '@mui/material/styles';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -541,7 +542,7 @@ describe('AssetsView', () => {
             await waitFor(() => {
                 const hospitalElement = screen.queryByText('Hospital');
                 const pillElement = screen.queryByText('42 / 42');
-                const isHidden = !hospitalElement || hospitalElement.closest('.MuiCollapse-hidden') !== null;
+                const isHidden = hospitalElement?.closest('.MuiCollapse-hidden') !== null;
                 expect(isHidden).toBe(true);
                 if (pillElement) {
                     expect(pillElement.closest('.MuiCollapse-hidden')).not.toBeNull();

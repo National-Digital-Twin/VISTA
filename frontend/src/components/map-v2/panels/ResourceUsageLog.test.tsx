@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
-// © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+// © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
+// and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
 
 import { ThemeProvider } from '@mui/material/styles';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -162,7 +163,7 @@ describe('ResourceUsageLog', () => {
         renderWithProviders(<ResourceUsageLog {...defaultProps} />);
 
         const appendSpy = vi.spyOn(document.body, 'appendChild');
-        const removeSpy = vi.spyOn(document.body, 'removeChild');
+        const removeSpy = vi.spyOn(HTMLAnchorElement.prototype, 'remove');
 
         screen.getByText('Export CSV').click();
 
