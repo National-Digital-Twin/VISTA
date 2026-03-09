@@ -41,7 +41,7 @@ updates:
           - "patch"
 
   - package-ecosystem: "npm"
-    directory: "/frontend/qa"
+    directory: "/qa"
     target-branch: "develop"
     schedule:
       interval: "weekly"
