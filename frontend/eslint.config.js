@@ -103,7 +103,7 @@ export default [
 
     // Ignore coverage output
     {
-        ignores: ['coverage/**', 'dist/**', 'qa/**', 'vite.config.js', 'src/vendor/**'],
+        ignores: ['coverage/**', 'dist/**', 'vite.config.js', 'src/vendor/**'],
     },
 
     // Turn off conflicting style rules and enforce Prettier formatting

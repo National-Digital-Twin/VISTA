@@ -29,7 +29,6 @@ export default defineConfig({
                 'node_modules/',
                 '**/node_modules/**',
                 'dist/',
-                'qa/',
                 'src/setupTests.ts',
                 '**/*.test.{ts,tsx}',
                 '**/*.spec.{ts,tsx}',
