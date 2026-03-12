@@ -45,7 +45,6 @@ declare module 'mapbox-gl-draw-rectangle-mode' {
 }
 
 declare module '*.graphql' {
-    import type { DocumentNode } from 'graphql';
-    const value: DocumentNode;
+    const value: unknown;
     export default value;
 }
