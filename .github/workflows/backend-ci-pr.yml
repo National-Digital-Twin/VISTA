@@ -34,7 +34,7 @@ jobs:
 
       - name: Set up Virtual Environment
         id: venv-cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: venv
           key: venv-${{ matrix.python-version }}-${{ hashFiles('backend/poetry.lock', '.github/workflows/constraints.txt') }}
@@ -102,7 +102,7 @@ jobs:
 
       - name: Restore virtualenv from cache
         id: restore-venv
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: venv
           key: venv-${{ matrix.python-version }}-${{ hashFiles('backend/poetry.lock', '.github/workflows/constraints.txt') }} #Consistent key
@@ -174,7 +174,7 @@ jobs:
 
       - name: Set up Virtual Environment
         id: venv-cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: venv
           key: venv-${{ matrix.python-version }}-${{ hashFiles('backend/poetry.lock', '.github/workflows/constraints.txt') }}
