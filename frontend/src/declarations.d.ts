@@ -37,13 +37,6 @@ interface ImportMeta {
     readonly env: ImportMetaEnv;
 }
 
-declare module 'mapbox-gl-draw-rectangle-mode' {
-    import { DrawCustomMode } from '@mapbox/mapbox-gl-draw';
-
-    const RectangleMode: DrawCustomMode;
-    export default RectangleMode;
-}
-
 declare module '*.graphql' {
     const value: unknown;
     export default value;
