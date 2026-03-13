@@ -13,6 +13,8 @@ assets within regions in the UK. It allows analysts to better understand the
 impact of high value assets which in turn allows them to make better decisions
 quickly.
 
+For guidance using VISTA, refer to the **[user guides directory](docs/user-guide)**.
+
 ## Components
 
 Vista comprises four main components:
