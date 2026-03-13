@@ -43,7 +43,7 @@ jobs:
       - name: Install dependencies
         working-directory: frontend
         run: |
-          npm ci
+          npm ci --legacy-peer-deps
 
       - name: Run Dependency Checks
         working-directory: frontend
@@ -62,7 +62,7 @@ jobs:
 
       - name: Verify Lockfile Integrity
         working-directory: frontend
-        run: npm ci --dry-run
+        run: npm ci --dry-run --legacy-peer-deps
 
   linting:
     name: Code Linting
@@ -84,7 +84,7 @@ jobs:
 
       - name: Install dependencies
         working-directory: frontend
-        run: npm ci
+        run: npm ci --legacy-peer-deps
 
       - name: Run Linting
         working-directory: frontend
@@ -130,7 +130,7 @@ jobs:
 
       - name: Install dependencies
         working-directory: frontend
-        run: npm ci
+        run: npm ci --legacy-peer-deps
 
       - name: Run Unit Tests
         working-directory: frontend
@@ -177,7 +177,7 @@ jobs:
 
       - name: Install dependencies
         working-directory: frontend
-        run: npm ci
+        run: npm ci --legacy-peer-deps
 
       - name: Build Frontend
         working-directory: frontend

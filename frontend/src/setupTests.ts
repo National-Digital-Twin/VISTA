@@ -1,11 +1,6 @@
 import '@testing-library/jest-dom/vitest';
 import { vi } from 'vitest';
 
-vi.mock('mapbox-gl-draw-geodesic', () => ({
-    isCircle: vi.fn(),
-    getCircleCenter: vi.fn(),
-}));
-
 vi.mock('./config/app-config', () => ({
     default: {
         map: {
