@@ -2,14 +2,12 @@
 // © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
 // and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
 
-import { ApolloProvider } from '@apollo/client/react';
 import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider } from '@mui/material/styles';
 import { QueryClient, QueryClientProvider, QueryCache, MutationCache } from '@tanstack/react-query';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { MapProvider } from 'react-map-gl/maplibre';
-import apolloClient from '@/api/apollo-client';
 import App from '@/App';
 import DevTools from '@/components/DevTools';
 import SessionMonitorProvider from '@/providers/SessionMonitorProvider';
@@ -46,19 +44,17 @@ root.render(
     <StrictMode>
         <ThemeProvider theme={theme}>
             <CssBaseline />
-            <ApolloProvider client={apolloClient}>
-                <QueryClientProvider client={queryClient}>
-                    <SessionMonitorProvider>
-                        <UserStartupProvider>
-                            <DevTools enabled={!import.meta.env.PROD}>
-                                <MapProvider>
-                                    <App />
-                                </MapProvider>
-                            </DevTools>
-                        </UserStartupProvider>
-                    </SessionMonitorProvider>
-                </QueryClientProvider>
-            </ApolloProvider>
+            <QueryClientProvider client={queryClient}>
+                <SessionMonitorProvider>
+                    <UserStartupProvider>
+                        <DevTools enabled={!import.meta.env.PROD}>
+                            <MapProvider>
+                                <App />
+                            </MapProvider>
+                        </DevTools>
+                    </UserStartupProvider>
+                </SessionMonitorProvider>
+            </QueryClientProvider>
         </ThemeProvider>
     </StrictMode>,
 );

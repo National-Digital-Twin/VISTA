@@ -2,9 +2,6 @@
 // © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
 // and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
 
-import { ApolloClient, InMemoryCache, HttpLink } from '@apollo/client';
-import type { ApolloClient as ApolloClientType } from '@apollo/client';
-import { ApolloProvider } from '@apollo/client/react';
 import { ThemeProvider } from '@mui/material/styles';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor, act, fireEvent } from '@testing-library/react';
@@ -23,25 +20,12 @@ const createTestQueryClient = () => {
     });
 };
 
-const createTestApolloClient = () => {
-    return new ApolloClient({
-        link: new HttpLink({
-            uri: '/test-graphql',
-            fetch: vi.fn(),
-        }),
-        cache: new InMemoryCache(),
-    });
-};
-
-const renderWithProviders = (component: React.ReactElement, queryClient?: QueryClient, apolloClient?: ApolloClientType) => {
+const renderWithProviders = (component: React.ReactElement, queryClient?: QueryClient) => {
     const qClient = queryClient || createTestQueryClient();
-    const aClient = apolloClient || createTestApolloClient();
     return render(
-        <ApolloProvider client={aClient}>
-            <QueryClientProvider client={qClient}>
-                <ThemeProvider theme={theme}>{component}</ThemeProvider>
-            </QueryClientProvider>
-        </ApolloProvider>,
+        <QueryClientProvider client={qClient}>
+            <ThemeProvider theme={theme}>{component}</ThemeProvider>
+        </QueryClientProvider>,
     );
 };
 

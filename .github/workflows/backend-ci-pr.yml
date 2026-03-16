@@ -29,13 +29,13 @@ jobs:
         uses: actions/checkout@v5
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
 
       - name: Set up Virtual Environment
         id: venv-cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: venv
           key: venv-${{ matrix.python-version }}-${{ hashFiles('backend/poetry.lock', '.github/workflows/constraints.txt') }}
@@ -104,7 +104,7 @@ jobs:
 
       - name: Restore virtualenv from cache
         id: restore-venv
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: venv
           key: venv-${{ matrix.python-version }}-${{ hashFiles('backend/poetry.lock', '.github/workflows/constraints.txt') }} #Consistent key
@@ -165,7 +165,7 @@ jobs:
         uses: actions/checkout@v5
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -176,7 +176,7 @@ jobs:
 
       - name: Set up Virtual Environment
         id: venv-cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: venv
           key: venv-${{ matrix.python-version }}-${{ hashFiles('backend/poetry.lock', '.github/workflows/constraints.txt') }}

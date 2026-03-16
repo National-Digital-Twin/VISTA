@@ -137,4 +137,3 @@ jobs:
           prerelease: false
           files: |
             sbom.spdx.json
-

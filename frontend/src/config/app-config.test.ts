@@ -14,7 +14,6 @@ describe('app-config', () => {
 
         expect(config.services.ontology).toBeTruthy();
         expect(config.services.apiBaseUrl).toBeTruthy();
-        expect(config.services.graphqlApi).toBe('/ndtp-python/api/graphql/');
         expect(config.services.user).toBe('/ndtp-python/api/user/');
         expect(config.services.users).toBe('/ndtp-python/api/users/');
         expect(config.services.signout).toBe('/ndtp-python/api/auth/signout/');

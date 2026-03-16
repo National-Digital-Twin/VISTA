@@ -12,6 +12,8 @@ VISTA is a digital mapping tool designed to assess, visualise, and simulate casc
 
 In addition to assessing failures, VISTA provides predictive capabilities, allowing users to simulate a range of emergency scenarios. By integrating real-world and simulated data, VISTA enables proactive planning, helping emergency responders, infrastructure managers and policy officials anticipate how disruptions propagate and optimise response efforts before incidents occur.
 
+For guidance using VISTA, refer to the **[user guides directory](docs/user-guide)**.
+
 ## Components
 
 Vista comprises four main components:
