@@ -4,6 +4,7 @@
 
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
+import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
@@ -18,9 +19,10 @@ type UserMenuProps = {
     readonly onMyProfileClick?: () => void;
     readonly onAdminSettingsClick?: () => void;
     readonly onPrivacyClick?: () => void;
+    readonly onRequestsClick?: () => void;
 };
 
-export default function UserMenu({ onMyProfileClick, onAdminSettingsClick, onPrivacyClick }: UserMenuProps) {
+export default function UserMenu({ onMyProfileClick, onAdminSettingsClick, onPrivacyClick, onRequestsClick }: UserMenuProps) {
     const theme = useTheme();
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const { getUserDisplayName, getUserEmailDomain, getUserType, loading } = useUserData();
@@ -52,6 +54,11 @@ export default function UserMenu({ onMyProfileClick, onAdminSettingsClick, onPri
 
     const handleAdminSettings = () => {
         onAdminSettingsClick?.();
+        handleClose();
+    };
+
+    const handleRequests = () => {
+        onRequestsClick?.();
         handleClose();
     };
 
@@ -112,6 +119,19 @@ export default function UserMenu({ onMyProfileClick, onAdminSettingsClick, onPri
                     >
                         <PersonOutlineIcon fontSize="small" />
                         <Typography variant="body2">My Profile</Typography>
+                    </Box>
+                </MenuItem>
+                <MenuItem onClick={handleRequests}>
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 1,
+                            color: 'text.primary',
+                        }}
+                    >
+                        <HelpOutlineOutlinedIcon fontSize="small" />
+                        <Typography variant="body2">User guide</Typography>
                     </Box>
                 </MenuItem>
                 {getUserType() === 'Admin' && (

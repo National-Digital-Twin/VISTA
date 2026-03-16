@@ -64,11 +64,12 @@ vi.mock('./Notifications', () => ({
 }));
 
 vi.mock('./UserMenu', () => ({
-    default: ({ onMyProfileClick, onAdminSettingsClick, onPrivacyClick }: any) => (
+    default: ({ onMyProfileClick, onAdminSettingsClick, onPrivacyClick, onRequestsClick }: any) => (
         <div data-testid="user-menu">
             <button onClick={onMyProfileClick}>My Profile</button>
             <button onClick={onAdminSettingsClick}>Admin Settings</button>
             <button onClick={onPrivacyClick}>Privacy</button>
+            <button onClick={onRequestsClick}>User guide</button>
         </div>
     ),
 }));
@@ -153,6 +154,16 @@ describe('PageHeader', () => {
         renderWithProviders(<PageHeader appName="VISTA" />);
 
         expect(screen.getByTestId('user-menu')).toBeInTheDocument();
+    });
+
+    it('opens user guide dialog when User guide is clicked', () => {
+        renderWithProviders(<PageHeader appName="VISTA" />);
+
+        const userGuideButton = screen.getByText('User guide');
+        fireEvent.click(userGuideButton);
+
+        expect(screen.getByText('Download the VISTA user guides')).toBeInTheDocument();
+        expect(screen.getByText('Download User Guides')).toBeInTheDocument();
     });
 
     it('navigates to /data-room when Data room is clicked', () => {
