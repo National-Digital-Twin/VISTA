@@ -1,2 +1,3 @@
 # libpng
 CVE-2026-25646  # libpng heap buffer overflow
+CVE-2026-22184  # zlib: Arbitrary code execution via buffer overflow
