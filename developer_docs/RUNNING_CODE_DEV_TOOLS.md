@@ -49,3 +49,7 @@ To generate a new token navigate to Administration > Security > Users. Then clic
 The current quality gate is set to the Sonarqube default which is the "clean code as you go" approach more information about it can be found [here](https://docs.sonarsource.com/sonarqube-community-build/core-concepts/clean-as-you-code/introduction/).
 
 :warning: Please be aware that with this approach the scan will pass if your new code itself does not introduce issues. For the purpose of the project a code coverage and quality of 80% is to be followed.
+
+© Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
+and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+Licensed under the Open Government Licence v3.0.

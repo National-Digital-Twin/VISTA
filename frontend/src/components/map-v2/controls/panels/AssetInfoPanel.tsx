@@ -1,3 +1,7 @@
+// SPDX-License-Identifier: Apache-2.0
+// © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
+// and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+
 import { Paper, Stack, Typography, Table, TableContainer, TableHead, TableBody, TableRow, TableCell, TablePagination, Box } from '@mui/material';
 import { forwardRef, useState, useMemo, useCallback } from 'react';
 import { getAssetTypeName } from '../../utils/getAssetTypeName';

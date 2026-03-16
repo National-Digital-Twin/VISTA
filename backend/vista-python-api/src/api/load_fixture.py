@@ -1,3 +1,7 @@
+# SPDX-License-Identifier: Apache-2.0
+# © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
+# and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+
 """Custom migration for loading fixtures.
 
 Previously we used `call_command` to run `loaddata`; this is a bad idea, however, because

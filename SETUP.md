@@ -1,13 +1,13 @@
 # Vista Setup Guide
 
-This guide provides instructions for setting up the Vista project, which consists of frontend, backend, deploy, and transparent-proxy components.
+This guide provides instructions for setting up the Vista project, which consists of frontend, backend, Kubernetes manifests, and transparent-proxy components.
 
 ## Table of Contents
 
 1. [Prerequisites](#prerequisites)
 2. [Frontend Setup](#frontend-setup)
 3. [Backend Setup](#backend-setup)
-4. [Deploy Setup](#deploy-setup)
+4. [Infrastructure Setup](#infrastructure-setup)
 5. [Transparent Proxy Setup](#transparent-proxy-setup)
 
 ## Prerequisites
@@ -69,7 +69,7 @@ Full instructions can be found [here](./frontend/README.md)
 
 ## Backend Setup
 
-Full instructions can be found [here](./backend/README.md)
+Full instructions can be found [here](./backend/vista-python-api/README.md)
 
 1. Navigate to the `backend` directory.
 
@@ -89,13 +89,13 @@ Full instructions can be found [here](./backend/README.md)
 
 4. Follow the instructions in the `backend/vista-python-api/README.md` file for setting up the Python API.
 
-## Deploy Setup
+## Infrastructure Setup
 
-Full instructions can be found [here](./deploy/README.md)
+Repository configuration instructions can be found [here](./repository-configuration/README.md)
 
-1. Navigate to the `deploy` directory.
+1. Kubernetes deployment manifests are located in the `k8s` directory, organised by service and environment overlays.
 
-2. Follow the instructions in the `deploy/README.md` file for environment-specific setup and deployment procedures.
+2. Repository branch protection and workflow policy configuration is managed in `repository-configuration`.
 
 ## Transparent Proxy Setup
 
@@ -116,6 +116,15 @@ Full instructions can be found [here](./transparent-proxy/README.md)
 
 ## Additional Notes
 
-- For updating Python requirements, refer to `docs/updating_requirements.md`.
+- For updating Python requirements, refer to `backend/vista-python-api/docs/updating_requirements.md`.
 - To create a towncrier entry: `towncrier create 123.added --edit`.
 - For more detailed setup information, refer to their respective README files in their directories.
+
+---
+
+**Maintained by the National Digital Twin Programme (NDTP).**
+
+© Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
+and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+Licensed under the Open Government Licence v3.0.
+For full licensing terms, see [OGL_LICENSE.md](OGL_LICENSE.md).

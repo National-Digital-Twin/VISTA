@@ -1,3 +1,7 @@
+// SPDX-License-Identifier: Apache-2.0
+// © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
+// and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+
 import { useQuery } from '@tanstack/react-query';
 import { createContext, useContext, useState, useCallback, useMemo, type ReactNode } from 'react';
 import { calculateRoute, type Coordinate, type RoadRouteInputParams, type RoadRouteResponse } from '@/api/utilities';
