@@ -6,7 +6,11 @@
 
 import os
 
-from core.settings import *  # noqa: F403
+from core import settings as core_settings
+
+for _name in dir(core_settings):
+    if _name.isupper():
+        globals()[_name] = getattr(core_settings, _name)
 
 DATABASES = {
     "default": {

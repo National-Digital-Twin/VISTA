@@ -189,3 +189,4 @@ venv/
 **/.vscode/
 .env.docker
 .django-secret-key
+.vscode/settings.json
