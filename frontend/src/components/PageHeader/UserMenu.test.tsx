@@ -196,6 +196,24 @@ describe('UserMenu', () => {
         expect(onPrivacyClick).toHaveBeenCalledTimes(1);
     });
 
+    it('calls onRequestsClick when User guide is clicked', async () => {
+        const onRequestsClick = vi.fn();
+        renderWithProviders(<UserMenu onRequestsClick={onRequestsClick} />);
+
+        const icon = screen.getByTestId('AccountCircleOutlinedIcon');
+        const button = icon.closest('button');
+        if (button) {
+            fireEvent.click(button);
+        }
+
+        await waitFor(() => {
+            const userGuideItem = screen.getByText('User guide');
+            fireEvent.click(userGuideItem);
+        });
+
+        expect(onRequestsClick).toHaveBeenCalledTimes(1);
+    });
+
     it('calls signout when Sign Out is clicked', async () => {
         const { signout } = await vi.importMock<typeof import('@/api/auth')>('@/api/auth');
         renderWithProviders(<UserMenu />);
@@ -245,6 +263,7 @@ describe('UserMenu', () => {
 
         await waitFor(() => {
             expect(screen.getByText('My Profile')).toBeInTheDocument();
+            expect(screen.getByText('User guide')).toBeInTheDocument();
             expect(screen.getByText('Admin Settings')).toBeInTheDocument();
             expect(screen.getByText('Privacy notice')).toBeInTheDocument();
             expect(screen.getByText('Sign Out')).toBeInTheDocument();

@@ -11,6 +11,7 @@ import Logo from './Logo';
 import MobileMenu from './MobileMenu';
 import Navigation from './Navigation';
 import Notifications from './Notifications';
+import UserGuideDialog from './UserGuideDialog';
 import UserMenu from './UserMenu';
 import { fetchScenarios } from '@/api/scenarios';
 import { useActiveScenario } from '@/hooks/useActiveScenario';
@@ -26,6 +27,7 @@ const PageHeader = ({ appName }: Readonly<PageHeaderProps>) => {
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
     const [unseenNotifications] = useState(0);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [isRequestsDialogOpen, setIsRequestsDialogOpen] = useState(false);
     const { data: activeScenario } = useActiveScenario();
     const { getUserType } = useUserData();
     const isAdmin = getUserType() === 'Admin';
@@ -77,6 +79,14 @@ const PageHeader = ({ appName }: Readonly<PageHeaderProps>) => {
             navigate('/data-room?openScenarioModal=true');
         }
     }, [isAdmin, navigate]);
+
+    const handleRequestsClick = () => {
+        setIsRequestsDialogOpen(true);
+    };
+
+    const handleRequestsDialogClose = () => {
+        setIsRequestsDialogOpen(false);
+    };
 
     const scenarioName = useMemo(() => {
         if (activeScenario) {
@@ -156,7 +166,12 @@ const PageHeader = ({ appName }: Readonly<PageHeaderProps>) => {
 
                 <Box display="flex" gap={1} alignItems="center">
                     <Notifications unseenCount={unseenNotifications} onClick={handleNotificationClick} />
-                    <UserMenu onMyProfileClick={handleMyProfileClick} onAdminSettingsClick={handleAdminSettingsClick} onPrivacyClick={handlePrivacyNotice} />
+                    <UserMenu
+                        onMyProfileClick={handleMyProfileClick}
+                        onAdminSettingsClick={handleAdminSettingsClick}
+                        onPrivacyClick={handlePrivacyNotice}
+                        onRequestsClick={handleRequestsClick}
+                    />
                 </Box>
             </Toolbar>
 
@@ -169,6 +184,7 @@ const PageHeader = ({ appName }: Readonly<PageHeaderProps>) => {
                     dataRoomPendingCount={isAdmin ? dataRoomPendingCount : 0}
                 />
             )}
+            <UserGuideDialog open={isRequestsDialogOpen} onClose={handleRequestsDialogClose} />
         </AppBar>
     );
 };
