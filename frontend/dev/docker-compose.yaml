@@ -1,0 +1,42 @@
+services:
+    transparent-proxy:
+        container_name: vista-transparent-proxy
+        image: vista-transparent-proxy
+        build:
+            context: ../../transparent-proxy
+            dockerfile: Dockerfile
+        ports:
+            - 5013:8080
+        env_file:
+            - '../.env'
+    postgres:
+        image: postgis/postgis:16-3.4
+        container_name: postgis
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres #pragma: allowlist secret
+            POSTGRES_DB: vista
+        ports:
+            - '5432:5432'
+    vista-python-api:
+        container_name: vista-python-api
+        image: vista-python-api
+        pull_policy: build
+        env_file:
+            - '../../backend/.env.docker'
+        build:
+            context: ../../backend
+            dockerfile: ../backend/Dockerfile
+        ports:
+            - 8000:8000
+    migrate-and-seed:
+        image: vista-python-api
+        pull_policy: build
+        command: ['/vista-python-api/src/api/db_setup.sh']
+        env_file:
+            - '../../backend/.env.docker'
+        build:
+            context: ../../backend
+            dockerfile: ../backend/Dockerfile
+        depends_on:
+            - postgres

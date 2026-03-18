@@ -1,0 +1,15 @@
+resources:
+  - vault/vaultStaticSecret.yaml
+  - vault/vaultAuth.yaml
+  - ../base/istio/authorizationpolicy/allow-ingress-authorization-policy.yaml
+  - ../base/istio/destination-rule.yaml
+  - ../base/istio/service-entry.yaml
+  - service-account.yaml
+  - deployment.yaml
+  - service.yaml
+
+labels:
+  - pairs:
+      app: vista-transparent-proxy
+      env: ENV_PLACEHOLDER
+      app.kubernetes.io/name: vista-transparent-proxy

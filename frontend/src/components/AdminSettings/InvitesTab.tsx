@@ -1,0 +1,275 @@
+// SPDX-License-Identifier: Apache-2.0
+// © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
+// and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+
+import {
+    Box,
+    Button,
+    Typography,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    CircularProgress,
+    Snackbar,
+    Alert,
+    MenuItem,
+    ListItemText,
+} from '@mui/material';
+import { useQuery } from '@tanstack/react-query';
+import { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { fetchAllInvites, Invite, cancelInvite, resendInvite, removeExpiredInvite } from '@/api/invites';
+import { SortableTableHeader } from '@/components/SortableTableHeader';
+import { TableRowMenu, TableRowMenuButton } from '@/components/TableRowMenu';
+
+type SortField = 'email' | 'userType' | 'groups' | 'status' | 'daysAgo';
+type SortDirection = 'asc' | 'desc';
+
+const InvitesTab = () => {
+    const navigate = useNavigate();
+    const [sortField, setSortField] = useState<SortField>('email');
+    const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
+    const [error, setError] = useState<string | null>(null);
+    const [success, setSuccess] = useState<string | null>(null);
+    const [menuAnchor, setMenuAnchor] = useState<{ el: HTMLElement; invite: Invite } | null>(null);
+
+    const {
+        data: invites = [],
+        isLoading,
+        refetch,
+    } = useQuery<Invite[], Error>({
+        queryKey: ['invites'],
+        queryFn: fetchAllInvites,
+    });
+
+    const handleInviteNewUser = () => {
+        navigate('/admin/invite');
+    };
+
+    const handleCloseMenu = () => {
+        setMenuAnchor(null);
+    };
+
+    const handleCancelInvite = async () => {
+        if (!menuAnchor) {
+            return;
+        }
+        const { invite } = menuAnchor;
+        handleCloseMenu();
+        try {
+            await cancelInvite(invite.userId);
+            refetch();
+            setSuccess('Invite removed successfully');
+        } catch {
+            setError('Failed to remove invite. Please try again.');
+        }
+    };
+
+    const handleRemoveExpiredInvite = async () => {
+        if (!menuAnchor) {
+            return;
+        }
+        const { invite } = menuAnchor;
+        handleCloseMenu();
+        try {
+            await removeExpiredInvite(invite.id);
+            refetch();
+            setSuccess('Invite removed successfully');
+        } catch {
+            setError('Failed to remove invite. Please try again.');
+        }
+    };
+
+    const handleReinvite = async () => {
+        if (!menuAnchor) {
+            return;
+        }
+        const { invite } = menuAnchor;
+        handleCloseMenu();
+        try {
+            await resendInvite(invite.userId);
+            refetch();
+            setSuccess('User re-invited successfully');
+        } catch {
+            setError('Failed to re-invite user. Please try again.');
+        }
+    };
+
+    const handleSort = (field: SortField) => {
+        if (sortField === field) {
+            setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+        } else {
+            setSortField(field);
+            setSortDirection('asc');
+        }
+    };
+
+    const sortedInvites = useMemo(() => {
+        const getField = (invite: Invite): string | number => {
+            switch (sortField) {
+                case 'email':
+                    return invite.email;
+                case 'userType':
+                    return invite.userType;
+                case 'groups':
+                    return invite.groups.join(', ');
+                case 'status':
+                    return invite.status;
+                case 'daysAgo':
+                    return invite.daysAgo;
+                default:
+                    return '';
+            }
+        };
+        return [...invites].sort((a, b) => {
+            const aValue = getField(a);
+            const bValue = getField(b);
+            if (typeof aValue === 'string' && typeof bValue === 'string') {
+                return sortDirection === 'asc' ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
+            }
+            if (typeof aValue === 'number' && typeof bValue === 'number') {
+                return sortDirection === 'asc' ? aValue - bValue : bValue - aValue;
+            }
+            return 0;
+        });
+    }, [invites, sortField, sortDirection]);
+
+    const formatGroupAccess = (invite: Invite): string => {
+        if (invite.groups.length === 0) {
+            return '(no groups)';
+        }
+        return invite.groups.join(', ');
+    };
+
+    const formatInviteSent = (daysAgo: number): string => {
+        if (daysAgo === 0) {
+            return 'Today';
+        }
+        if (daysAgo === 1) {
+            return '1 day ago';
+        }
+        return `${daysAgo} days ago`;
+    };
+
+    if (isLoading) {
+        return (
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', py: 8 }}>
+                <CircularProgress />
+            </Box>
+        );
+    }
+
+    return (
+        <Box>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+                <Typography variant="h5" component="h2">
+                    Manage user invites
+                </Typography>
+                <Button variant="contained" onClick={handleInviteNewUser}>
+                    INVITE NEW USER
+                </Button>
+            </Box>
+
+            <TableContainer>
+                <Table>
+                    <TableHead>
+                        <TableRow>
+                            <SortableTableHeader field="email" label="Email address" sortField={sortField} sortDirection={sortDirection} onSort={handleSort} />
+                            <SortableTableHeader field="userType" label="User type" sortField={sortField} sortDirection={sortDirection} onSort={handleSort} />
+                            <SortableTableHeader field="groups" label="Group access" sortField={sortField} sortDirection={sortDirection} onSort={handleSort} />
+                            <SortableTableHeader field="status" label="Invite status" sortField={sortField} sortDirection={sortDirection} onSort={handleSort} />
+                            <SortableTableHeader field="daysAgo" label="Invite sent" sortField={sortField} sortDirection={sortDirection} onSort={handleSort} />
+                            <TableCell padding="none" width={48} align="right" />
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {sortedInvites.length === 0 ? (
+                            <TableRow>
+                                <TableCell colSpan={6} align="center" sx={{ py: 4 }}>
+                                    <Typography variant="body2" color="text.secondary">
+                                        No pending invites
+                                    </Typography>
+                                </TableCell>
+                            </TableRow>
+                        ) : (
+                            sortedInvites.map((invite) => {
+                                const isMenuOpen = Boolean(menuAnchor) && menuAnchor?.invite.userId === invite.userId;
+                                return (
+                                    <TableRow key={invite.userId}>
+                                        <TableCell>
+                                            <Typography variant="body2" fontWeight="medium">
+                                                {invite.email}
+                                            </Typography>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Typography variant="body2">{invite.userType}</Typography>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Typography variant="body2">{formatGroupAccess(invite)}</Typography>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Typography variant="body2">{invite.status}</Typography>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Typography variant="body2">{formatInviteSent(invite.daysAgo)}</Typography>
+                                        </TableCell>
+                                        <TableCell padding="none" align="right">
+                                            <TableRowMenuButton
+                                                aria-label="Invite actions"
+                                                open={isMenuOpen}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setMenuAnchor({ el: e.currentTarget, invite });
+                                                }}
+                                            />
+                                        </TableCell>
+                                    </TableRow>
+                                );
+                            })
+                        )}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+
+            <TableRowMenu anchorEl={menuAnchor?.el ?? null} open={Boolean(menuAnchor)} onClose={handleCloseMenu}>
+                {menuAnchor?.invite.status === 'Pending' && (
+                    <>
+                        <MenuItem onClick={handleReinvite}>
+                            <ListItemText>Re-invite user</ListItemText>
+                        </MenuItem>
+                        <MenuItem onClick={handleCancelInvite} sx={{ color: 'error.main' }}>
+                            <ListItemText>Remove invite</ListItemText>
+                        </MenuItem>
+                    </>
+                )}
+                {menuAnchor?.invite.status === 'Expired' && (
+                    <>
+                        <MenuItem onClick={handleReinvite}>
+                            <ListItemText>Re-invite user</ListItemText>
+                        </MenuItem>
+                        <MenuItem onClick={handleRemoveExpiredInvite}>
+                            <ListItemText>Remove invite</ListItemText>
+                        </MenuItem>
+                    </>
+                )}
+            </TableRowMenu>
+
+            <Snackbar open={!!success} autoHideDuration={3000} onClose={() => setSuccess(null)} anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
+                <Alert severity="success" onClose={() => setSuccess(null)}>
+                    {success}
+                </Alert>
+            </Snackbar>
+
+            <Snackbar open={!!error} autoHideDuration={5000} onClose={() => setError(null)} anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
+                <Alert severity="error" onClose={() => setError(null)}>
+                    {error}
+                </Alert>
+            </Snackbar>
+        </Box>
+    );
+};
+
+export default InvitesTab;

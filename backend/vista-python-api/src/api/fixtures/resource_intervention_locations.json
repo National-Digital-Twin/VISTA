@@ -1,0 +1,198 @@
+[
+    {
+        "model": "api.resourceinterventionlocation",
+        "pk": "bc3eeea7-2dce-451a-ba36-4f360b1d305a",
+        "fields": {
+            "scenario_id": "e933f21e-ebd9-4a6d-bf60-ef94bced3227",
+            "name": "Well Road, East Cowes",
+            "geometry": "SRID=4326;POINT(-1.2881 50.7581)",
+            "type_id": "e379cd7e-f3ed-4337-bdb2-b47b13814fc1",
+            "current_stock": 300,
+            "max_capacity": 300,
+            "created_at": "2026-01-01T00:00:00Z",
+            "updated_at": "2026-01-01T00:00:00Z"
+        }
+    },
+    {
+        "model": "api.resourceinterventionlocation",
+        "pk": "b95737cc-76aa-426e-8499-ec04b1e2e969",
+        "fields": {
+            "scenario_id": "e933f21e-ebd9-4a6d-bf60-ef94bced3227",
+            "name": "Simeon Street Rec, Ryde",
+            "geometry": "SRID=4326;POINT(-1.1517 50.7296)",
+            "type_id": "e379cd7e-f3ed-4337-bdb2-b47b13814fc1",
+            "current_stock": 300,
+            "max_capacity": 300,
+            "created_at": "2026-01-01T00:00:00Z",
+            "updated_at": "2026-01-01T00:00:00Z"
+        }
+    },
+    {
+        "model": "api.resourceinterventionlocation",
+        "pk": "0900facc-e03c-4f22-ae5f-4ae09e190c51",
+        "fields": {
+            "scenario_id": "e933f21e-ebd9-4a6d-bf60-ef94bced3227",
+            "name": "St Mary's car park, Cowes",
+            "geometry": "SRID=4326;POINT(-1.2985 50.7592)",
+            "type_id": "e379cd7e-f3ed-4337-bdb2-b47b13814fc1",
+            "current_stock": 300,
+            "max_capacity": 300,
+            "created_at": "2026-01-01T00:00:00Z",
+            "updated_at": "2026-01-01T00:00:00Z"
+        }
+    },
+    {
+        "model": "api.resourceinterventionlocation",
+        "pk": "03294d51-e1fe-40e1-9018-5f08f28dfd62",
+        "fields": {
+            "scenario_id": "e933f21e-ebd9-4a6d-bf60-ef94bced3227",
+            "name": "River Road, Yarmouth",
+            "geometry": "SRID=4326;POINT(-1.4982 50.7045)",
+            "type_id": "e379cd7e-f3ed-4337-bdb2-b47b13814fc1",
+            "current_stock": 300,
+            "max_capacity": 300,
+            "created_at": "2026-01-01T00:00:00Z",
+            "updated_at": "2026-01-01T00:00:00Z"
+        }
+    },
+    {
+        "model": "api.resourceinterventionlocation",
+        "pk": "232de90e-c17b-4c65-8868-39dc7d483f9b",
+        "fields": {
+            "scenario_id": "e933f21e-ebd9-4a6d-bf60-ef94bced3227",
+            "name": "Moa Place, Freshwater",
+            "geometry": "SRID=4326;POINT(-1.5255 50.6840)",
+            "type_id": "e379cd7e-f3ed-4337-bdb2-b47b13814fc1",
+            "current_stock": 300,
+            "max_capacity": 300,
+            "created_at": "2026-01-01T00:00:00Z",
+            "updated_at": "2026-01-01T00:00:00Z"
+        }
+    },
+    {
+        "model": "api.resourceinterventionlocation",
+        "pk": "6850cfb8-e834-4da9-8346-cb24ab1e1e6c",
+        "fields": {
+            "scenario_id": "e933f21e-ebd9-4a6d-bf60-ef94bced3227",
+            "name": "Marsh Road, Gurnard",
+            "geometry": "SRID=4326;POINT(-1.3170 50.7585)",
+            "type_id": "e379cd7e-f3ed-4337-bdb2-b47b13814fc1",
+            "current_stock": 300,
+            "max_capacity": 300,
+            "created_at": "2026-01-01T00:00:00Z",
+            "updated_at": "2026-01-01T00:00:00Z"
+        }
+    },
+    {
+        "model": "api.resourceinterventionlocation",
+        "pk": "497ac229-fe6f-4acc-989d-b6b042ea0dbd",
+        "fields": {
+            "scenario_id": "e933f21e-ebd9-4a6d-bf60-ef94bced3227",
+            "name": "Lugley Street, Newport",
+            "geometry": "SRID=4326;POINT(-1.2972 50.7004)",
+            "type_id": "e379cd7e-f3ed-4337-bdb2-b47b13814fc1",
+            "current_stock": 300,
+            "max_capacity": 300,
+            "created_at": "2026-01-01T00:00:00Z",
+            "updated_at": "2026-01-01T00:00:00Z"
+        }
+    },
+    {
+        "model": "api.resourceinterventionlocation",
+        "pk": "f0e4221d-5f08-4867-a8a6-fad2bb6085cf",
+        "fields": {
+            "scenario_id": "1efb2fc4-b300-4496-8342-932f3a9fc982",
+            "name": "Well Road, East Cowes",
+            "geometry": "SRID=4326;POINT(-1.2881 50.7581)",
+            "type_id": "e379cd7e-f3ed-4337-bdb2-b47b13814fc1",
+            "current_stock": 300,
+            "max_capacity": 300,
+            "created_at": "2026-01-01T00:00:00Z",
+            "updated_at": "2026-01-01T00:00:00Z"
+        }
+    },
+    {
+        "model": "api.resourceinterventionlocation",
+        "pk": "2693d941-aba0-4c53-bb5a-1ce1187495ca",
+        "fields": {
+            "scenario_id": "1efb2fc4-b300-4496-8342-932f3a9fc982",
+            "name": "Simeon Street Rec, Ryde",
+            "geometry": "SRID=4326;POINT(-1.1517 50.7296)",
+            "type_id": "e379cd7e-f3ed-4337-bdb2-b47b13814fc1",
+            "current_stock": 300,
+            "max_capacity": 300,
+            "created_at": "2026-01-01T00:00:00Z",
+            "updated_at": "2026-01-01T00:00:00Z"
+        }
+    },
+    {
+        "model": "api.resourceinterventionlocation",
+        "pk": "9bbfefa6-5ff9-41b5-8f45-e926c0a7f834",
+        "fields": {
+            "scenario_id": "1efb2fc4-b300-4496-8342-932f3a9fc982",
+            "name": "St Mary's car park, Cowes",
+            "geometry": "SRID=4326;POINT(-1.2985 50.7592)",
+            "type_id": "e379cd7e-f3ed-4337-bdb2-b47b13814fc1",
+            "current_stock": 300,
+            "max_capacity": 300,
+            "created_at": "2026-01-01T00:00:00Z",
+            "updated_at": "2026-01-01T00:00:00Z"
+        }
+    },
+    {
+        "model": "api.resourceinterventionlocation",
+        "pk": "d7ee6348-91b0-4383-b9c8-994f95d1bc66",
+        "fields": {
+            "scenario_id": "1efb2fc4-b300-4496-8342-932f3a9fc982",
+            "name": "River Road, Yarmouth",
+            "geometry": "SRID=4326;POINT(-1.4982 50.7045)",
+            "type_id": "e379cd7e-f3ed-4337-bdb2-b47b13814fc1",
+            "current_stock": 300,
+            "max_capacity": 300,
+            "created_at": "2026-01-01T00:00:00Z",
+            "updated_at": "2026-01-01T00:00:00Z"
+        }
+    },
+    {
+        "model": "api.resourceinterventionlocation",
+        "pk": "ae28221e-d72b-4eec-b57e-740907bc73ed",
+        "fields": {
+            "scenario_id": "1efb2fc4-b300-4496-8342-932f3a9fc982",
+            "name": "Moa Place, Freshwater",
+            "geometry": "SRID=4326;POINT(-1.5255 50.6840)",
+            "type_id": "e379cd7e-f3ed-4337-bdb2-b47b13814fc1",
+            "current_stock": 300,
+            "max_capacity": 300,
+            "created_at": "2026-01-01T00:00:00Z",
+            "updated_at": "2026-01-01T00:00:00Z"
+        }
+    },
+    {
+        "model": "api.resourceinterventionlocation",
+        "pk": "89c4141e-dbcb-49e1-bd43-eac65f857631",
+        "fields": {
+            "scenario_id": "1efb2fc4-b300-4496-8342-932f3a9fc982",
+            "name": "Marsh Road, Gurnard",
+            "geometry": "SRID=4326;POINT(-1.3170 50.7585)",
+            "type_id": "e379cd7e-f3ed-4337-bdb2-b47b13814fc1",
+            "current_stock": 300,
+            "max_capacity": 300,
+            "created_at": "2026-01-01T00:00:00Z",
+            "updated_at": "2026-01-01T00:00:00Z"
+        }
+    },
+    {
+        "model": "api.resourceinterventionlocation",
+        "pk": "b684427b-e311-4a6a-9b7b-3af7aa14be92",
+        "fields": {
+            "scenario_id": "1efb2fc4-b300-4496-8342-932f3a9fc982",
+            "name": "Lugley Street, Newport",
+            "geometry": "SRID=4326;POINT(-1.2972 50.7004)",
+            "type_id": "e379cd7e-f3ed-4337-bdb2-b47b13814fc1",
+            "current_stock": 300,
+            "max_capacity": 300,
+            "created_at": "2026-01-01T00:00:00Z",
+            "updated_at": "2026-01-01T00:00:00Z"
+        }
+    }
+]

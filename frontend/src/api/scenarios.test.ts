@@ -1,0 +1,115 @@
+// SPDX-License-Identifier: Apache-2.0
+// © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
+// and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { fetchScenarios, setActiveScenario, type Scenario } from './scenarios';
+
+vi.mock('@/config/app-config', () => ({
+    default: {
+        services: {
+            apiBaseUrl: '/ndtp-python/api',
+        },
+    },
+}));
+
+describe('scenarios API', () => {
+    let fetchMock: ReturnType<typeof vi.fn>;
+
+    beforeEach(() => {
+        fetchMock = vi.fn();
+        globalThis.fetch = fetchMock as any;
+    });
+
+    afterEach(() => {
+        vi.restoreAllMocks();
+    });
+
+    describe('fetchScenarios', () => {
+        it('successfully fetches scenarios from API', async () => {
+            const mockScenarios: Scenario[] = [
+                { id: 'scenario1', name: 'Flood in Newport', isActive: true, code: 'S001' },
+                { id: 'scenario2', name: 'Landslide in Ventnor', isActive: false, code: 'S001' },
+            ];
+
+            fetchMock.mockResolvedValueOnce({
+                ok: true,
+                json: vi.fn().mockResolvedValue(mockScenarios),
+            });
+
+            const result = await fetchScenarios();
+
+            expect(fetchMock).toHaveBeenCalledWith('/ndtp-python/api/scenarios/');
+            expect(result).toEqual(mockScenarios);
+            expect(result).toHaveLength(2);
+            expect(result[0].id).toBe('scenario1');
+            expect(result[0].name).toBe('Flood in Newport');
+            expect(result[0].isActive).toBe(true);
+        });
+
+        it('returns scenarios with optional pendingExposureCount', async () => {
+            const mockScenarios = [
+                { id: 's1', name: 'Scenario 1', isActive: true, code: 'S1', pendingExposureCount: 2 },
+                { id: 's2', name: 'Scenario 2', isActive: false, code: 'S2', pendingExposureCount: 0 },
+            ];
+
+            fetchMock.mockResolvedValueOnce({
+                ok: true,
+                json: vi.fn().mockResolvedValue(mockScenarios),
+            });
+
+            const result = await fetchScenarios();
+
+            expect(result[0].pendingExposureCount).toBe(2);
+            expect(result[1].pendingExposureCount).toBe(0);
+        });
+
+        it('throws error when API call fails', async () => {
+            fetchMock.mockResolvedValueOnce({
+                ok: false,
+                statusText: 'Not Found',
+            });
+
+            await expect(fetchScenarios()).rejects.toThrow('Failed to fetch scenarios: Not Found');
+        });
+
+        it('handles empty scenarios array', async () => {
+            fetchMock.mockResolvedValueOnce({
+                ok: true,
+                json: vi.fn().mockResolvedValue([]),
+            });
+
+            const result = await fetchScenarios();
+
+            expect(result).toEqual([]);
+        });
+    });
+
+    describe('updateScenario', () => {
+        it('successfully updates scenario', async () => {
+            const scenario_id = 'scenario1';
+
+            fetchMock.mockResolvedValueOnce({
+                ok: true,
+                statusText: 'No Content',
+            });
+
+            await setActiveScenario(scenario_id);
+
+            const [url, options] = fetchMock.mock.calls[0];
+
+            expect(url).toContain('/api/scenarios/scenario1/activate/');
+            expect(options.method).toBe('POST');
+            expect(options.headers['Content-Type']).toBe('application/json');
+        });
+
+        it('throws error when API call fails', async () => {
+            fetchMock.mockResolvedValueOnce({
+                ok: false,
+                statusText: 'Not Found',
+            });
+
+            await expect(setActiveScenario('scenario1')).rejects.toThrow('Failed to activate scenario: Not Found');
+        });
+    });
+});

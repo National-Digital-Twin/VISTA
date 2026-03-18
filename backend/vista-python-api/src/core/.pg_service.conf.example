@@ -1,0 +1,5 @@
+[vista_service]
+host=localhost
+user=postgres
+dbname=vista
+port=5432

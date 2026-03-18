@@ -1,0 +1,48 @@
+// SPDX-License-Identifier: Apache-2.0
+// © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
+// and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+
+import config from '@/config/app-config';
+
+export type AssetDetailsResponse = {
+    id: string;
+    externalId?: string;
+    name: string;
+    geom: string;
+    type: {
+        id: string;
+        name: string;
+    };
+    providers: Array<{
+        id: string;
+        name: string;
+        geom: string;
+        type: {
+            id: string;
+            name: string;
+        };
+    }>;
+    dependents: Array<{
+        id: string;
+        name: string;
+        geom: string;
+        type: {
+            id: string;
+            name: string;
+        };
+    }>;
+};
+
+export const fetchAssetDetails = async (assetId: string): Promise<AssetDetailsResponse> => {
+    const response = await fetch(`${config.services.apiBaseUrl}/assets/${assetId}/`, {
+        headers: { 'Content-Type': 'application/json' },
+    });
+    if (response.status === 403) {
+        const data = (await response.json().catch(() => ({}))) as { detail?: string };
+        throw new Error(data.detail ?? 'You do not have permission to view this asset.');
+    }
+    if (!response.ok) {
+        throw new Error(`Failed to retrieve asset details for ${assetId}`);
+    }
+    return (await response.json()) as AssetDetailsResponse;
+};

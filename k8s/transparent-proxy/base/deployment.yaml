@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    reloader.stakater.com/auto: "true"
+  labels:
+    io.kompose.service: vista-transparent-proxy
+  name: vista-transparent-proxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: vista-transparent-proxy
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/logLevel: trace
+        traffic.sidecar.istio.io/excludeOutboundPorts: "8200"
+      labels:
+        io.kompose.service: vista-transparent-proxy
+    spec:
+      serviceAccountName: vista-transparent-proxy-sa
+      containers:
+        - name: vista-transparent-proxy-image
+          image: vista-transparent-proxy-image:template
+          resources:
+            limits:
+              memory: "2Gi"
+            requests:
+              cpu: "0.25"
+              memory: "256Mi"
+              ephemeral-storage: "2Gi"
+          imagePullPolicy: Always
+          envFrom:
+            - secretRef:
+                name: vista-transparent-proxy-secrets
+            - configMapRef:
+                name: vista-transparent-proxy-configs
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+      restartPolicy: Always

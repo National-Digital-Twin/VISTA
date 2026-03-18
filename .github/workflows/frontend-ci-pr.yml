@@ -1,0 +1,245 @@
+# SPDX-License-Identifier: Apache-2.0
+# © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
+# and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+
+name: Frontend CI on PR
+
+on:
+  workflow_call:
+    secrets:
+      VITE_MAP_TILER_TOKEN:
+        required: true
+  pull_request:
+    branches-ignore:
+      - "main"
+    paths:
+      - "frontend/**"
+      - ".github/workflows/frontend-ci-pr.yml"
+      - ".github/workflows/frontend-ci-pr-merge.yml"
+  workflow_dispatch:
+
+jobs:
+  dependencies:
+    name: Dependency Checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      packages: read
+      statuses: write # To report GitHub Actions status checks
+    env:
+      GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.x"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: |
+          npm ci --legacy-peer-deps
+
+      - name: Run Dependency Checks
+        working-directory: frontend
+        run: npm audit --audit-level=moderate -omit=dev
+
+      - name: Check for Outdated Dependencies
+        working-directory: frontend
+        run: |
+          if [ ! -f package-lock.json ]; then
+            echo "Error: package-lock.json file is missing!"
+            exit 1
+          fi
+          echo "Checking for outdated dependencies"
+          npm install -g npm-check-updates
+          ncu --target minor
+
+      - name: Verify Lockfile Integrity
+        working-directory: frontend
+        run: npm ci --dry-run --legacy-peer-deps
+
+  linting:
+    name: Code Linting
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: dependencies
+    permissions:
+      contents: read
+      packages: read
+      statuses: write # To report GitHub Actions status checks
+    env:
+      GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.x"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci --legacy-peer-deps
+
+      - name: Run Linting
+        working-directory: frontend
+        run: npm run lint
+
+      - name: Run Prettier
+        working-directory: frontend
+        run: npx prettier --check "src/**/*.{js,ts,tsx}"
+
+      - name: TypeScript Check
+        working-directory: frontend
+        run: npx tsc --noEmit
+
+      - name: Run Sort-Package-Json (Import Sorting)
+        working-directory: frontend
+        run: |
+          echo "Running sort-package-json"
+          npx sort-package-json --check
+
+      - name: Run Audit-CI (Security Check)
+        working-directory: frontend
+        run: |
+          echo "Running audit-ci"
+          npx audit-ci --high --config audit-ci.jsonc
+
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: linting
+    permissions:
+      contents: read
+      packages: read
+      statuses: write # To report GitHub Actions status checks
+    env:
+      GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.x"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci --legacy-peer-deps
+
+      - name: Run Unit Tests
+        working-directory: frontend
+        run: npm run test:coverage
+
+  security-scanning:
+    name: Security Scanning
+    runs-on: ubuntu-latest
+    needs: linting
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      packages: read
+      statuses: write # To report GitHub Actions status checks
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1 # v0.35.0
+        with:
+          scan-type: "fs"
+          scan-ref: frontend
+          format: "table"
+          exit-code: "1"
+          ignore-unfixed: true
+          severity: "CRITICAL,HIGH"
+
+  docker-build-test-scan:
+    name: NPM Build, Docker Build, Test & Scan
+    runs-on: ubuntu-latest
+    needs: security-scanning
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      packages: read
+      statuses: write # To report GitHub Actions status checks
+    env:
+      GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      VITE_MAP_TILER_TOKEN: ${{ secrets.VITE_MAP_TILER_TOKEN }}
+    environment: development
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.x"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci --legacy-peer-deps
+
+      - name: Build Frontend
+        working-directory: frontend
+        run: npm run build
+
+      - name: list files in dist dir
+        working-directory: frontend
+        if: success()
+        run: |
+          ls -l dist/
+
+      - name: Build Docker Image
+        working-directory: frontend
+        run: |
+          docker build -t vista/frontend:latest -f CI_Dockerfile .
+
+      - name: Run Docker Image
+        run: |
+          docker images
+          docker run --rm -d -p 80:8080 --name frontend vista/frontend:latest
+          docker ps
+          sleep 10
+          docker logs frontend
+          docker exec frontend ls -l /usr/share/nginx/html
+
+      - name: Ping App
+        run: |
+          status_code=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:80/)
+          if [[ "$status_code" == "200" ]]; then
+            echo "Ping successful (200 OK)"  >> $GITHUB_STEP_SUMMARY
+          else
+            echo "Ping failed with status code: $status_code"  >> $GITHUB_STEP_SUMMARY
+            exit 1  # Indicate an error
+          fi
+
+      - name: Run Trivy Scan on Docker Image
+        uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1 # v0.35.0
+        with:
+          image-ref: "vista/frontend:latest"
+          format: "table"
+          exit-code: "1"
+          ignore-unfixed: true
+          vuln-type: "os,library"
+          severity: "CRITICAL,HIGH"
+          trivyignores: "frontend/.trivyignore"
+
+      - name: Cleanup
+        if: always()
+        run: docker stop frontend
