@@ -1,0 +1,106 @@
+[
+  {
+    "model": "api.assetsubcategory",
+    "pk": "bfc5b5a8-5a8b-4a6e-9e7b-0a9df10a89e1",
+    "fields": {
+      "category": "1de4b219-ded8-4c7c-97f0-cd22b247c2a2",
+      "name": "Agricultural and Natural Assets"
+    }
+  },
+  {
+    "model": "api.assetsubcategory",
+    "pk": "4f3fdc14-3b7a-4ef4-a864-d55b4296d1ad",
+    "fields": {
+      "category": "c967a16f-d080-42b1-83e0-60f37f5f83d7",
+      "name": "Commercial, Business and Service"
+    }
+  },
+  {
+    "model": "api.assetsubcategory",
+    "pk": "c0560b0a-cc7b-4d09-95b5-b31f2513142c",
+    "fields": {
+      "category": "7f4a99e2-8156-4e1a-b6cb-cb621372dbf7",
+      "name": "Emergency Services"
+    }
+  },
+  {
+    "model": "api.assetsubcategory",
+    "pk": "314b2572-7755-4cb4-ae9c-60d12b27df60",
+    "fields": {
+      "category": "4b1c52b6-8d6f-4b7a-b63e-2a10f94e4b41",
+      "name": "Energy"
+    }
+  },
+  {
+    "model": "api.assetsubcategory",
+    "pk": "aa6b8a3b-2394-4e02-bc8a-b36c4b20e875",
+    "fields": {
+      "category": "7f4a99e2-8156-4e1a-b6cb-cb621372dbf7",
+      "name": "Health and social care"
+    }
+  },
+  {
+    "model": "api.assetsubcategory",
+    "pk": "9f2c52b7-7d0a-4b10-8d83-5e2e8da3f621",
+    "fields": {
+      "category": "c967a16f-d080-42b1-83e0-60f37f5f83d7",
+      "name": "Industrial and Commercial"
+    }
+  },
+  {
+    "model": "api.assetsubcategory",
+    "pk": "cd7cf4a8-22dc-4f9b-9b8b-f2e6eb9a4ef1",
+    "fields": {
+      "category": "c967a16f-d080-42b1-83e0-60f37f5f83d7",
+      "name": "Learning and Non Residential Institutions"
+    }
+  },
+  {
+    "model": "api.assetsubcategory",
+    "pk": "a7a17c9a-8e65-4c78-8b5c-4227de9de8e5",
+    "fields": {
+      "category": "4b1c52b6-8d6f-4b7a-b63e-2a10f94e4b41",
+      "name": "Maritime Infrastructure"
+    }
+  },
+  {
+    "model": "api.assetsubcategory",
+    "pk": "a4a13cc2-1b60-4b38-b7d7-d81c69c60d26",
+    "fields": {
+      "category": "c967a16f-d080-42b1-83e0-60f37f5f83d7",
+      "name": "Public Assembly Points"
+    }
+  },
+  {
+    "model": "api.assetsubcategory",
+    "pk": "e0a82c52-7f31-414c-b86b-83c18a2fdb29",
+    "fields": {
+      "category": "c967a16f-d080-42b1-83e0-60f37f5f83d7",
+      "name": "Residential"
+    }
+  },
+  {
+    "model": "api.assetsubcategory",
+    "pk": "e3a5cebb-6bc1-44ef-ae33-029f3731d7ad",
+    "fields": {
+      "category": "4b1c52b6-8d6f-4b7a-b63e-2a10f94e4b41",
+      "name": "Transport Infrastructure"
+    }
+  },
+  {
+    "model": "api.assetsubcategory",
+    "pk": "faed503a-bc59-4e63-bcc2-0f7e020d2063",
+    "fields": {
+      "category": "4b1c52b6-8d6f-4b7a-b63e-2a10f94e4b41",
+      "name": "Utility infrastructure"
+    }
+  },
+  {
+    "model": "api.assetsubcategory",
+    "pk": "a22c10fd-c0cd-4722-a391-9df2a09db6ef",
+    "fields": {
+      "category": "4b1c52b6-8d6f-4b7a-b63e-2a10f94e4b41",
+      "name": "Wastewater Infrastructure"
+    }
+  }
+]

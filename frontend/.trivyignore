@@ -1,0 +1,3 @@
+# We can mark any CVE codes here to ignore should we need to, ideally anything in here should
+# be reviewed frequently to check if they have been addressed, exmaple entry below:
+# CVE-2025-32415  # libxml2: Out-of-bounds Read in xmlSchemaIDCFillNodeTables

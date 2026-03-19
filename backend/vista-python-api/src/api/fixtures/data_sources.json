@@ -1,0 +1,56 @@
+[
+  {
+    "model": "api.datasource",
+    "pk": "3b9b39b7-ff9a-4945-afb1-71672c89f43e",
+    "fields": {
+      "name": "CQC API",
+      "owner": "Care Quality Commission",
+      "description_md": "The Care Quality Commission (CQC) API provides access to data about health and social care services in England. \n \n This includes: \n  - hospitals \n  - care homes \n - GPs \n - dentists \n \n The data is updated once a week. Data is made available under the [Open Government License](https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/). \n \n Find out more about CQC API [here](https://www.cqc.org.uk/about-us/transparency/using-cqc-data)."
+    }
+  },
+  {
+    "model": "api.datasource",
+    "pk": "32468a38-6ec5-403f-931e-a777ac84b115",
+    "fields": {
+      "name": "Network route maps",
+      "owner": "National Grid",
+      "description_md": "National Grid's Network route maps provide transmission network shapefiles that describe the approximate location of electricity transmission network. These datasets are for indicative purposes only. \n \n The data is supplied on best-effort basis only, using available information as documented at the time by the transmission network operators. Data is owned by National Grid and can only be used for emergency and land use planning. \n \n Find out more about National Grid's Network route maps [here](https://www.nationalgrid.com/electricity-transmission/network-and-infrastructure/network-route-maps). \n \n © National Grid UK"
+    }
+  },
+  {
+    "model": "api.datasource",
+    "pk": "741ad91d-d889-45f0-9d13-feaf7b134e56",
+    "fields": {
+      "name": "National Public Transport Access Node (NaPTAN)",
+      "owner": "Department for Transport",
+      "description_md": "The national public transport access nodes (NaPTAN) is a national dataset of all public transport access points in England, Scotland and Wales. \n \n This includes: \n \n - bus stops and railway stations \n - tram, metro and underground stops \n - airports and ferry terminals \n \n The NaPTAN dataset is updated when information is provided by staff based throughout local authorities around the UK. Information may also be provided by staff using the National Public Transport Gazetteer (NPTG) - a national dataset of places throughout cities, towns and villages in the UK. Data is made available under the [Open Government License](https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/). \n \n Find out more about NaPTAN [here](https://beta-naptan.dft.gov.uk/)."
+    }
+  },
+  {
+    "model": "api.datasource",
+    "pk": "d71f0a80-fc1b-4206-a9f3-4d495dcd09e6",
+    "fields": {
+      "name": "NHS Open Data Portal",
+      "owner": "NHS",
+      "description_md": "The Open Data Portal (ODP) is the home of open datasets published by the NHS Business Services Authority (NHSBSA). \n \n This includes: \n \n - Pharmaceutical dispensaries \n - Community prescribing services \n \n The data is updated monthly. Data is made available under the [Open Government License](https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/). \n \n Find out more about NHSBSA ODP [here](https://opendata.nhsbsa.net/)."
+    }
+  },
+  {
+    "model": "api.datasource",
+    "pk": "d09b1db6-821b-400f-9297-e72529d5e9e3",
+    "fields": {
+      "name": "OS Names",
+      "owner": "Ordnance Survey",
+      "description_md": "The OS Names API is a geographic directory containing basic information about identifiable places. \n \n This includes: \n - areas, cities and roads \n - schools and colleges \n - named woodlands and forests \n \n The underlying data is sourced from OS Open Names, updated quarterly. Data is made available under the [Open Government License](https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/). \n \n Find out more about OS Names [here](https://docs.os.uk/os-apis/accessing-os-apis/os-names-api)."
+    }
+  },
+  {
+    "model": "api.datasource",
+    "pk": "84e986cd-73dc-4324-8639-1b97d491ce25",
+    "fields": {
+      "name": "OS National Geographic Database (NGD)",
+      "owner": "Ordnance Survey",
+      "description_md": "The OS National Geographic Database (OS NGD) is a structured database containing authoritative geospatial data for Great Britain. \n \n This includes: \n \n - buildings \n - geographic names \n - land \n - land use \n - structures \n - transport \n - water \n \n The data is updated up-to-daily. Data is made available under the [Open Government License](https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/). \n \n Find out more about OS NGD [here](https://docs.os.uk/osngd/introduction-to-os-ngd/os-ngd-explained)."
+    }
+  }
+]

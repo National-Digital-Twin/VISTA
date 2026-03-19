@@ -1,0 +1,10 @@
+[
+  {
+    "model": "api.constraintinterventiontype",
+    "pk": "cc413844-4577-4926-9478-2855785d506d",
+    "fields": {
+      "name": "Road blocks",
+      "impacts_routing": true
+    }
+  }
+]

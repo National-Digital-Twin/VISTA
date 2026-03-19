@@ -1,0 +1,27 @@
+resources:
+  - ../../base
+
+namespace: vista
+patches:
+  - path: patches/allow-ingress.yaml
+    target:
+      kind: AuthorizationPolicy
+
+  - path: patches/service-account.yaml
+    target:
+      kind: ServiceAccount
+      name: vista-transparent-proxy-sa
+
+labels:
+  - pairs:
+      env: staging
+
+images:
+  - name: vista-transparent-proxy-image:template
+    newName: 503561419905.dkr.ecr.eu-west-2.amazonaws.com/vista/transparent-proxy
+    newTag: "latest"
+
+configMapGenerator:
+  - name: vista-transparent-proxy-configs
+    envs:
+      - params.env

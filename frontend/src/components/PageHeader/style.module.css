@@ -1,0 +1,25 @@
+.pageHeader {
+    block-size: 50px;
+
+    align-content: center;
+}
+
+.title {
+    margin-inline: auto;
+
+    color: rgb(var(--teli-app-color) 1);
+    text-align: center;
+    text-transform: uppercase;
+    font-size: 1.8rem;
+    font-family: 'Space Grotesk', system-ui, sans-serif;
+}
+
+.noLinkStyle:where(a):visited {
+    text-decoration: none;
+    color: inherit;
+}
+
+.noLinkStyle:visited {
+    text-decoration: none;
+    color: inherit;
+}

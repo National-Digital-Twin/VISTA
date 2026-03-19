@@ -1,0 +1,61 @@
+FROM python:3.12-slim AS base
+
+# Create a non-root user and group
+RUN groupadd -r appuser && useradd -r -g appuser appuser
+
+# build and load all requirements
+FROM base AS builder
+WORKDIR /vista-python-api/core
+
+# upgrade pip to the latest version
+RUN apt-get update && apt-get upgrade -y \
+    && apt-get install -y build-essential \
+    libstdc++6 \
+    gdal-bin \
+    libgdal-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install poetry globally
+RUN pip3 install poetry poetry-plugin-export
+
+# Create a virtualenv from Poetry
+RUN python3 -m venv /venv
+COPY pyproject.toml poetry.lock ./
+RUN poetry export -f requirements.txt > /requirements.txt
+RUN /venv/bin/pip install -r /requirements.txt
+
+# build a clean environment
+FROM base
+WORKDIR /vista-python-api/src
+
+
+# Install GDAL system libraries in final image
+RUN apt-get update && apt-get --no-install-recommends install -y \
+    gdal-bin \
+    libgdal-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# virtual environment is copied
+COPY --from=builder /venv /venv
+
+# bash is installed for more convenient debugging.
+RUN apt-get update && \
+    apt-get upgrade -y --allow-downgrades \
+    && apt-get install -y --allow-downgrades bash \
+    && rm -rf /var/lib/apt/lists/*
+
+# copy payload code only
+COPY /vista-python-api/src .
+
+COPY ./entrypoint.sh .
+
+RUN chmod 600 /vista-python-api/src/core/.docker_vista_pgpass \
+&& chmod +x /vista-python-api/src/api/db_setup.sh \
+&& chmod +x /vista-python-api/src/api/update_db.sh \
+&& chown -R appuser:appuser /vista-python-api/src /venv ./entrypoint.sh
+
+# Switch to the non-root user
+USER appuser
+
+EXPOSE 8000
+CMD  ["/venv/bin/gunicorn", "--config=python:core.gunicorn"]
