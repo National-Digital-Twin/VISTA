@@ -1,0 +1,13 @@
+resources:
+  - vault/vaultStaticSecret.yaml
+  - vault/vaultAuth.yaml
+  - ../base/istio/authorizationpolicy/allow-ingress-authorization-policy.yaml
+  - service-account.yaml
+  - deployment.yaml
+  - service.yaml
+
+labels:
+  - pairs:
+      app: vista-frontend
+      env: ENV_PLACEHOLDER
+      app.kubernetes.io/name: vista-frontend

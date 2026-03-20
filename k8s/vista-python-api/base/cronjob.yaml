@@ -1,0 +1,39 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: vista-python-api-refresh-data
+spec:
+  schedule: "0 2 * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      ttlSecondsAfterFinished: 86400
+      template:
+        metadata:
+          annotations:
+            sidecar.istio.io/inject: "false"
+        spec:
+          serviceAccountName: vista-python-api-sa
+          restartPolicy: OnFailure
+          containers:
+            - name: vista-python-api-refresh-data
+              image: vista-python-api-image:template
+              imagePullPolicy: Always
+              command: ["/vista-python-api/src/api/update_db.sh"]
+              envFrom:
+                - configMapRef:
+                    name: vista-python-api-configs
+                - secretRef:
+                    name: vista-python-api-secret
+              resources:
+                requests:
+                  cpu: "0.5"
+                  memory: "2Gi"
+                  ephemeral-storage: "1Gi"
+                limits:
+                  cpu: "3"
+                  memory: "6Gi"
+                  ephemeral-storage: "5Gi"

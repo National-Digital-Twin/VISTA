@@ -1,0 +1,28 @@
+[
+  {
+    "model": "api.exposurelayertype",
+    "pk": "2d373dca-1337-4e60-ba08-c8326d27042d",
+    "fields": {
+      "name": "Floods",
+      "is_user_editable": false
+    }
+  },
+  {
+    "model": "api.exposurelayertype",
+    "pk": "60a0280e-bd04-4150-8a9a-f414d21cd031",
+    "fields": {
+      "name": "Environmentally sensitive areas",
+      "impacts_exposure_score": false,
+      "is_user_editable": false
+    }
+  },
+  {
+    "model": "api.exposurelayertype",
+    "pk": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "fields": {
+      "name": "User drawn",
+      "impacts_exposure_score": true,
+      "is_user_editable": true
+    }
+  }
+]

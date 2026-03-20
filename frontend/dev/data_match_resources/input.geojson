@@ -1,0 +1,947 @@
+{
+    "type": "FeatureCollection",
+    "name": "polygon1",
+    "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+    "features": [
+        {
+            "type": "Feature",
+            "properties": {
+                "fid": 1,
+                "uri": "https://www.iow.gov.uk/DigitalTwin#E005",
+                "type": "http://ies.data.gov.uk/ontology/ies4#BiomassPowerGenerationComplex",
+                "geometry": null,
+                "dependent.count": 1,
+                "dependent.criticalitySum": 3,
+                "styles": "[Record]",
+                "primaryCategory": "Essential Services",
+                "secondaryCategory": "Energy",
+                "id": "b98346e9-686f-4ca3-84bc-b3319b1ed628",
+                "description": "Biogas Power Station",
+                "layer": "Bio",
+                "path": "C:/Users/Administrator/Documents/VISTA/Joins/Bio.geojson",
+                "NaptanCode": null
+            },
+            "geometry": { "type": "Point", "coordinates": [-1.2532336, 50.675059] }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "fid": 1,
+                "uri": "https://www.iow.gov.uk/DigitalTwin#E001",
+                "type": "http://ies.data.gov.uk/ontology/ies4#OilFiredPowerGenerationComplex",
+                "geometry": null,
+                "dependent.count": 1,
+                "dependent.criticalitySum": 3,
+                "styles": "[Record]",
+                "primaryCategory": "Essential Services",
+                "secondaryCategory": "Energy",
+                "id": "850c6c49-bd1b-4c6f-9795-0d8eda4dd1bb",
+                "description": "Power Station",
+                "layer": "Oil",
+                "path": "C:/Users/Administrator/Documents/VISTA/Joins/Oil.geojson",
+                "NaptanCode": null
+            },
+            "geometry": { "type": "Point", "coordinates": [-1.2862509, 50.746912] }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "fid": 1,
+                "uri": "https://www.iow.gov.uk/DigitalTwin#E030",
+                "type": "http://ies.data.gov.uk/ontology/ies4#PhotovoltaicPowerGenerationComplex",
+                "geometry": null,
+                "dependent.count": 0,
+                "dependent.criticalitySum": 0,
+                "styles": "[Record]",
+                "primaryCategory": "Essential Services",
+                "secondaryCategory": "Energy",
+                "id": "7e36b821-5094-4421-8784-4c97a03e8a06",
+                "description": "Solar Power Site",
+                "layer": "solar",
+                "path": "C:/Users/Administrator/Documents/VISTA/Joins/solar.geojson",
+                "NaptanCode": null
+            },
+            "geometry": { "type": "Point", "coordinates": [-1.2742513, 50.715808] }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "fid": 2,
+                "uri": "https://www.iow.gov.uk/DigitalTwin#E021",
+                "type": "http://ies.data.gov.uk/ontology/ies4#PhotovoltaicPowerGenerationComplex",
+                "geometry": null,
+                "dependent.count": 0,
+                "dependent.criticalitySum": 0,
+                "styles": "[Record]",
+                "primaryCategory": "Essential Services",
+                "secondaryCategory": "Energy",
+                "id": "7f99f365-d495-4f0e-8066-d7c9f79ebb78",
+                "description": "Solar Power Site",
+                "layer": "solar",
+                "path": "C:/Users/Administrator/Documents/VISTA/Joins/solar.geojson",
+                "NaptanCode": null
+            },
+            "geometry": { "type": "Point", "coordinates": [-1.4221386, 50.697224] }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "fid": 6,
+                "uri": "https://www.iow.gov.uk/DigitalTwin#E020",
+                "type": "http://ies.data.gov.uk/ontology/ies4#PhotovoltaicPowerGenerationComplex",
+                "geometry": null,
+                "dependent.count": 0,
+                "dependent.criticalitySum": 0,
+                "styles": "[Record]",
+                "primaryCategory": "Essential Services",
+                "secondaryCategory": "Energy",
+                "id": "0f88d435-56b7-44bb-909c-af44cd9559c9",
+                "description": "Solar Power Site",
+                "layer": "solar",
+                "path": "C:/Users/Administrator/Documents/VISTA/Joins/solar.geojson",
+                "NaptanCode": null
+            },
+            "geometry": { "type": "Point", "coordinates": [-1.3668022, 50.710075] }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "fid": 9,
+                "uri": "https://www.iow.gov.uk/DigitalTwin#E032",
+                "type": "http://ies.data.gov.uk/ontology/ies4#PhotovoltaicPowerGenerationComplex",
+                "geometry": null,
+                "dependent.count": 0,
+                "dependent.criticalitySum": 0,
+                "styles": "[Record]",
+                "primaryCategory": "Essential Services",
+                "secondaryCategory": "Energy",
+                "id": "f5814caf-42ea-4ba9-a3fd-acdd1895cde0",
+                "description": "Solar Power Site",
+                "layer": "solar",
+                "path": "C:/Users/Administrator/Documents/VISTA/Joins/solar.geojson",
+                "NaptanCode": null
+            },
+            "geometry": { "type": "Point", "coordinates": [-1.2000072, 50.641568] }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "fid": 10,
+                "uri": "https://www.iow.gov.uk/DigitalTwin#E028",
+                "type": "http://ies.data.gov.uk/ontology/ies4#PhotovoltaicPowerGenerationComplex",
+                "geometry": null,
+                "dependent.count": 0,
+                "dependent.criticalitySum": 0,
+                "styles": "[Record]",
+                "primaryCategory": "Essential Services",
+                "secondaryCategory": "Energy",
+                "id": "db010aeb-3f99-4a88-8db4-9df72e29efd0",
+                "description": "Solar Power Site",
+                "layer": "solar",
+                "path": "C:/Users/Administrator/Documents/VISTA/Joins/solar.geojson",
+                "NaptanCode": null
+            },
+            "geometry": { "type": "Point", "coordinates": [-1.2987017, 50.737023] }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "fid": null,
+                "uri": "https://www.iow.gov.uk/DigitalTwin#C023",
+                "type": "http://ies.data.gov.uk/ontology/ies4#TelecommunicationsExchange",
+                "geometry": null,
+                "dependent.count": 7,
+                "dependent.criticalitySum": 14,
+                "styles": "[Record]",
+                "primaryCategory": "Essential Services",
+                "secondaryCategory": "Utility Infrastructure",
+                "id": "54a935ca-da81-4cb0-8bca-606f87b84ded",
+                "description": "Telephone Exchange",
+                "layer": null,
+                "path": null,
+                "NaptanCode": null
+            },
+            "geometry": { "type": "Point", "coordinates": [-1.2305441, 50.72546] }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "fid": null,
+                "uri": "https://www.iow.gov.uk/DigitalTwin#C027",
+                "type": "http://ies.data.gov.uk/ontology/ies4#TelecommunicationsExchange",
+                "geometry": null,
+                "dependent.count": 5,
+                "dependent.criticalitySum": 10,
+                "styles": "[Record]",
+                "primaryCategory": "Essential Services",
+                "secondaryCategory": "Utility Infrastructure",
+                "id": "61677448-e733-4a46-b1bc-ff07f42fcbda",
+                "description": "Telephone Exchange",
+                "layer": null,
+                "path": null,
+                "NaptanCode": null
+            },
+            "geometry": { "type": "Point", "coordinates": [-1.5285991, 50.683143] }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "fid": null,
+                "uri": "https://www.iow.gov.uk/DigitalTwin#C016",
+                "type": "http://ies.data.gov.uk/ontology/ies4#TelecommunicationsExchange",
+                "geometry": null,
+                "dependent.count": 8,
+                "dependent.criticalitySum": 17,
+                "styles": "[Record]",
+                "primaryCategory": "Essential Services",
+                "secondaryCategory": "Utility Infrastructure",
+                "id": "6774180a-8e65-4fc1-bae6-05b070f60421",
+                "description": "Telephone Exchange",
+                "layer": null,
+                "path": null,
+                "NaptanCode": null
+            },
+            "geometry": { "type": "Point", "coordinates": [-1.1568756, 50.655769] }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "fid": null,
+                "uri": "https://www.iow.gov.uk/DigitalTwin#C028",
+                "type": "http://ies.data.gov.uk/ontology/ies4#TelecommunicationsExchange",
+                "geometry": null,
+                "dependent.count": 4,
+                "dependent.criticalitySum": 8,
+                "styles": "[Record]",
+                "primaryCategory": "Essential Services",
+                "secondaryCategory": "Utility Infrastructure",
+                "id": "76ec5861-d37b-4390-a57b-c84812a13a4c",
+                "description": "Telephone Exchange",
+                "layer": null,
+                "path": null,
+                "NaptanCode": null
+            },
+            "geometry": { "type": "Point", "coordinates": [-1.4936826, 50.705218] }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "fid": null,
+                "uri": "https://www.iow.gov.uk/DigitalTwin#C024",
+                "type": "http://ies.data.gov.uk/ontology/ies4#TelecommunicationsExchange",
+                "geometry": null,
+                "dependent.count": 14,
+                "dependent.criticalitySum": 28,
+                "styles": "[Record]",
+                "primaryCategory": "Essential Services",
+                "secondaryCategory": "Utility Infrastructure",
+                "id": "7bca0241-4d52-4bd0-8004-c0549c1b79d3",
+                "description": "Telephone Exchange",
+                "layer": null,
+                "path": null,
+                "NaptanCode": null
+            },
+            "geometry": { "type": "Point", "coordinates": [-1.297173, 50.758687] }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "fid": null,
+                "uri": "https://www.iow.gov.uk/DigitalTwin#C013",
+                "type": "http://ies.data.gov.uk/ontology/ies4#TelecommunicationsExchange",
+                "geometry": null,
+                "dependent.count": 5,
+                "dependent.criticalitySum": 10,
+                "styles": "[Record]",
+                "primaryCategory": "Essential Services",
+                "secondaryCategory": "Utility Infrastructure",
+                "id": "7fe30554-480d-4b67-b5e8-1514cfe36afe",
+                "description": "Telephone Exchange",
+                "layer": null,
+                "path": null,
+                "NaptanCode": null
+            },
+            "geometry": { "type": "Point", "coordinates": [-1.2980425, 50.700517] }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "fid": null,
+                "uri": "https://www.iow.gov.uk/DigitalTwin#C017",
+                "type": "http://ies.data.gov.uk/ontology/ies4#TelecommunicationsExchange",
+                "geometry": null,
+                "dependent.count": 1,
+                "dependent.criticalitySum": 2,
+                "styles": "[Record]",
+                "primaryCategory": "Essential Services",
+                "secondaryCategory": "Utility Infrastructure",
+                "id": "99c359d3-9c15-4e22-b7ec-4c939d5897e9",
+                "description": "Telephone Exchange",
+                "layer": null,
+                "path": null,
+                "NaptanCode": null
+            },
+            "geometry": { "type": "Point", "coordinates": [-1.180378, 50.631089] }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "fid": null,
+                "uri": "https://www.iow.gov.uk/DigitalTwin#C018",
+                "type": "http://ies.data.gov.uk/ontology/ies4#TelecommunicationsExchange",
+                "geometry": null,
+                "dependent.count": 1,
+                "dependent.criticalitySum": 2,
+                "styles": "[Record]",
+                "primaryCategory": "Essential Services",
+                "secondaryCategory": "Utility Infrastructure",
+                "id": "a61f1f40-fabd-4688-a733-98cbe775cf46",
+                "description": "Telephone Exchange",
+                "layer": null,
+                "path": null,
+                "NaptanCode": null
+            },
+            "geometry": { "type": "Point", "coordinates": [-1.2018238, 50.596201] }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "fid": null,
+                "uri": "https://www.iow.gov.uk/DigitalTwin#C015",
+                "type": "http://ies.data.gov.uk/ontology/ies4#TelecommunicationsExchange",
+                "geometry": null,
+                "dependent.count": 3,
+                "dependent.criticalitySum": 7,
+                "styles": "[Record]",
+                "primaryCategory": "Essential Services",
+                "secondaryCategory": "Utility Infrastructure",
+                "id": "c2a11dcb-3fa8-4223-8c36-d8d15e723dc5",
+                "description": "Telephone Exchange",
+                "layer": null,
+                "path": null,
+                "NaptanCode": null
+            },
+            "geometry": { "type": "Point", "coordinates": [-1.0900601, 50.69095] }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "fid": null,
+                "uri": "https://www.iow.gov.uk/DigitalTwin#C020",
+                "type": "http://ies.data.gov.uk/ontology/ies4#TelecommunicationsExchange",
+                "geometry": null,
+                "dependent.count": 0,
+                "dependent.criticalitySum": 0,
+                "styles": "[Record]",
+                "primaryCategory": "Essential Services",
+                "secondaryCategory": "Utility Infrastructure",
+                "id": "cb5b6165-74e7-4851-9779-5517ea7cc0d2",
+                "description": "Telephone Exchange",
+                "layer": null,
+                "path": null,
+                "NaptanCode": null
+            },
+            "geometry": { "type": "Point", "coordinates": [-1.3205398, 50.62029] }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "fid": null,
+                "uri": "https://www.iow.gov.uk/DigitalTwin#C014",
+                "type": "http://ies.data.gov.uk/ontology/ies4#TelecommunicationsExchange",
+                "geometry": null,
+                "dependent.count": 51,
+                "dependent.criticalitySum": 109,
+                "styles": "[Record]",
+                "primaryCategory": "Essential Services",
+                "secondaryCategory": "Utility Infrastructure",
+                "id": "cd9da11e-7a21-40d0-b323-1eb0630d2b50",
+                "description": "Telephone Exchange",
+                "layer": null,
+                "path": null,
+                "NaptanCode": null
+            },
+            "geometry": { "type": "Point", "coordinates": [-1.1644315, 50.730608] }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "fid": null,
+                "uri": "https://www.iow.gov.uk/DigitalTwin#W001",
+                "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterTreatmentComplex",
+                "geometry": null,
+                "dependent.count": 1,
+                "dependent.criticalitySum": 3,
+                "styles": "[Record]",
+                "primaryCategory": "Wastewater Management",
+                "secondaryCategory": "Wastewater Infrastructure",
+                "id": "5ace9379-7091-4df7-90d0-56d6d0507eb3",
+                "description": "Waste Water Treatment Works",
+                "layer": null,
+                "path": null,
+                "NaptanCode": null
+            },
+            "geometry": { "type": "Point", "coordinates": [-1.3082117, 50.623293] }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "fid": null,
+                "uri": "https://www.iow.gov.uk/DigitalTwin#W021",
+                "type": "http://ies.data.gov.uk/ontology/ies4#WastewaterCollectionNetwork",
+                "geometry": null,
+                "dependent.count": 1,
+                "dependent.criticalitySum": 3,
+                "styles": "[Record]",
+                "primaryCategory": "Wastewater Management",
+                "secondaryCategory": "Wastewater Infrastructure",
+                "id": "fe2fb6ef-c327-43e8-b3df-8dce9e7c4483",
+                "description": "Waste Water Treatment Works",
+                "layer": null,
+                "path": null,
+                "NaptanCode": null
+            },
+            "geometry": { "type": "Point", "coordinates": [-1.2831072, 50.717936] }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "fid": null,
+                "uri": "https://www.iow.gov.uk/DigitalTwin#Gov734",
+                "type": "http://ies.data.gov.uk/ontology/ies4#Crematorium",
+                "geometry": null,
+                "dependent.count": 0,
+                "dependent.criticalitySum": 0,
+                "styles": "[Record]",
+                "primaryCategory": "Miscellaneous",
+                "secondaryCategory": "Commercial, Business and Service",
+                "id": "9baa5ab7-ceae-4208-8fbb-b5c6cabaf4be",
+                "description": "Crematorium",
+                "layer": null,
+                "path": null,
+                "NaptanCode": null
+            },
+            "geometry": { "type": "Point", "coordinates": [-1.2575341, 50.721822] }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "fid": null,
+                "uri": "https://www.iow.gov.uk/DigitalTwin#Gov424",
+                "type": "http://ies.data.gov.uk/ontology/ies4#OutdoorStadium",
+                "geometry": null,
+                "dependent.count": 0,
+                "dependent.criticalitySum": 0,
+                "styles": "[Record]",
+                "primaryCategory": "Public Safety and Shelter",
+                "secondaryCategory": "Public Assembly Points",
+                "id": "a6b5475e-111f-40ea-9378-58ae09113dbf",
+                "description": "Sports Or Exercise Facility",
+                "layer": null,
+                "path": null,
+                "NaptanCode": null
+            },
+            "geometry": { "type": "Point", "coordinates": [-1.1636892, 50.709425] }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "fid": null,
+                "uri": "https://www.iow.gov.uk/DigitalTwin#Gov493",
+                "type": "http://ies.data.gov.uk/ontology/ies4#SportsGround",
+                "geometry": null,
+                "dependent.count": 0,
+                "dependent.criticalitySum": 0,
+                "styles": "[Record]",
+                "primaryCategory": "Public Safety and Shelter",
+                "secondaryCategory": "Public Assembly Points",
+                "id": "8b32c1c8-0b52-41be-8970-42204b42e41f",
+                "description": "Sports Pavilion",
+                "layer": null,
+                "path": null,
+                "NaptanCode": null
+            },
+            "geometry": { "type": "Point", "coordinates": [-1.1652296, 50.656144] }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "fid": null,
+                "uri": "https://www.iow.gov.uk/DigitalTwin#Gov747",
+                "type": "http://ies.data.gov.uk/ontology/ies4#CommunityCentre",
+                "geometry": null,
+                "dependent.count": 0,
+                "dependent.criticalitySum": 0,
+                "styles": "[Record]",
+                "primaryCategory": "Public Safety and Shelter",
+                "secondaryCategory": "Shelters and Relief Centers",
+                "id": "1c2dd9d5-2692-4b49-bb02-7365bfa400e9",
+                "description": "Community Meeting Place",
+                "layer": null,
+                "path": null,
+                "NaptanCode": null
+            },
+            "geometry": { "type": "Point", "coordinates": [-1.2311995, 50.724368] }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "fid": null,
+                "uri": "https://www.iow.gov.uk/DigitalTwin#M016",
+                "type": "http://ies.data.gov.uk/ontology/ies4#LifeboatStation",
+                "geometry": null,
+                "dependent.count": 0,
+                "dependent.criticalitySum": 0,
+                "styles": "[Record]",
+                "primaryCategory": "Essential Services",
+                "secondaryCategory": "Third Sector",
+                "id": "9fe3c8b3-e03e-4b12-8f92-9d16c47ee797",
+                "description": "Lifeboat Station",
+                "layer": null,
+                "path": null,
+                "NaptanCode": null
+            },
+            "geometry": { "type": "Point", "coordinates": [-1.500456, 50.706146] }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "fid": null,
+                "uri": "https://www.iow.gov.uk/DigitalTwin#M010",
+                "type": "http://ies.data.gov.uk/ontology/ies4#FireBrigadeComplex",
+                "geometry": null,
+                "dependent.count": 0,
+                "dependent.criticalitySum": 0,
+                "styles": "[Record]",
+                "primaryCategory": "Essential Services",
+                "secondaryCategory": "Emergency Services",
+                "id": "358f5d48-3420-4790-9557-a2761090b8a8",
+                "description": "Fire Station",
+                "layer": null,
+                "path": null,
+                "NaptanCode": null
+            },
+            "geometry": { "type": "Point", "coordinates": [-1.3014415, 50.758613] }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "fid": null,
+                "uri": "https://www.iow.gov.uk/DigitalTwin#W094",
+                "type": "http://ies.data.gov.uk/ontology/ies4#WaterReservoir",
+                "geometry": null,
+                "dependent.count": 0,
+                "dependent.criticalitySum": 0,
+                "styles": "[Record]",
+                "primaryCategory": "Transport and Infrastructure",
+                "secondaryCategory": "Utility Infrastructure",
+                "id": "8ee6d1f3-f6fa-464f-b4b2-97922237746d",
+                "description": "Open Reservoir",
+                "layer": null,
+                "path": null,
+                "NaptanCode": null
+            },
+            "geometry": { "type": "Point", "coordinates": [-1.361774, 50.623437] }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "fid": null,
+                "uri": "https://www.iow.gov.uk/DigitalTwin#TS065",
+                "type": "http://ies.data.gov.uk/ontology/ies4#Bridge",
+                "geometry": null,
+                "dependent.count": 1,
+                "dependent.criticalitySum": 3,
+                "styles": "[Record]",
+                "primaryCategory": "Transport and Infrastructure",
+                "secondaryCategory": "Transport Infrastructure",
+                "id": "18aa1600-4bde-475a-9dbd-4a64cee09c74",
+                "description": "Bridge",
+                "layer": null,
+                "path": null,
+                "NaptanCode": null
+            },
+            "geometry": { "type": "Point", "coordinates": [-1.2321188, 50.666073] }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "fid": null,
+                "uri": "https://www.iow.gov.uk/DigitalTwin#TS059",
+                "type": "http://ies.data.gov.uk/ontology/ies4#Bridge",
+                "geometry": null,
+                "dependent.count": 1,
+                "dependent.criticalitySum": 3,
+                "styles": "[Record]",
+                "primaryCategory": "Transport and Infrastructure",
+                "secondaryCategory": "Transport Infrastructure",
+                "id": "1929d494-544c-49b7-b815-5a52e61794ce",
+                "description": "Bridge",
+                "layer": null,
+                "path": null,
+                "NaptanCode": null
+            },
+            "geometry": { "type": "Point", "coordinates": [-1.2914367, 50.702244] }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "fid": null,
+                "uri": "https://www.iow.gov.uk/DigitalTwin#TS048",
+                "type": "http://ies.data.gov.uk/ontology/ies4#Bridge",
+                "geometry": null,
+                "dependent.count": 1,
+                "dependent.criticalitySum": 3,
+                "styles": "[Record]",
+                "primaryCategory": "Transport and Infrastructure",
+                "secondaryCategory": "Transport Infrastructure",
+                "id": "2a764639-fa8c-459a-b96a-8e8a09e5a154",
+                "description": "Bridge",
+                "layer": null,
+                "path": null,
+                "NaptanCode": null
+            },
+            "geometry": { "type": "Point", "coordinates": [-1.4145464, 50.701532] }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "fid": null,
+                "uri": "https://www.iow.gov.uk/DigitalTwin#TS020",
+                "type": "http://ies.data.gov.uk/ontology/ies4#Bridge",
+                "geometry": null,
+                "dependent.count": 1,
+                "dependent.criticalitySum": 3,
+                "styles": "[Record]",
+                "primaryCategory": "Transport and Infrastructure",
+                "secondaryCategory": "Transport Infrastructure",
+                "id": "2ef7e32f-2f31-4d37-9844-0ad6c730bcb1",
+                "description": "Bridge",
+                "layer": null,
+                "path": null,
+                "NaptanCode": null
+            },
+            "geometry": { "type": "Point", "coordinates": [-1.1520254, 50.66438] }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "fid": null,
+                "uri": "https://www.iow.gov.uk/DigitalTwin#TS019",
+                "type": "http://ies.data.gov.uk/ontology/ies4#Bridge",
+                "geometry": null,
+                "dependent.count": 1,
+                "dependent.criticalitySum": 3,
+                "styles": "[Record]",
+                "primaryCategory": "Transport and Infrastructure",
+                "secondaryCategory": "Transport Infrastructure",
+                "id": "304c9361-290a-4162-a5e1-658cee58dff0",
+                "description": "Bridge",
+                "layer": null,
+                "path": null,
+                "NaptanCode": null
+            },
+            "geometry": { "type": "Point", "coordinates": [-1.1523098, 50.664446] }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "fid": null,
+                "uri": "https://www.iow.gov.uk/DigitalTwin#TS069",
+                "type": "http://ies.data.gov.uk/ontology/ies4#Bridge",
+                "geometry": null,
+                "dependent.count": 1,
+                "dependent.criticalitySum": 3,
+                "styles": "[Record]",
+                "primaryCategory": "Transport and Infrastructure",
+                "secondaryCategory": "Transport Infrastructure",
+                "id": "46b632b4-5bbb-46dd-a405-ee8a268a2106",
+                "description": "Bridge",
+                "layer": null,
+                "path": null,
+                "NaptanCode": null
+            },
+            "geometry": { "type": "Point", "coordinates": [-1.2606763, 50.641409] }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "fid": null,
+                "uri": "https://www.iow.gov.uk/DigitalTwin#TS012",
+                "type": "http://ies.data.gov.uk/ontology/ies4#Bridge",
+                "geometry": null,
+                "dependent.count": 2,
+                "dependent.criticalitySum": 6,
+                "styles": "[Record]",
+                "primaryCategory": "Transport and Infrastructure",
+                "secondaryCategory": "Transport Infrastructure",
+                "id": "58b78c2e-8930-4ee3-9c81-00586834f45e",
+                "description": "Bridge",
+                "layer": null,
+                "path": null,
+                "NaptanCode": null
+            },
+            "geometry": { "type": "Point", "coordinates": [-1.1441295, 50.690599] }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "fid": null,
+                "uri": "https://www.iow.gov.uk/DigitalTwin#TS062",
+                "type": "http://ies.data.gov.uk/ontology/ies4#Bridge",
+                "geometry": null,
+                "dependent.count": 1,
+                "dependent.criticalitySum": 3,
+                "styles": "[Record]",
+                "primaryCategory": "Transport and Infrastructure",
+                "secondaryCategory": "Transport Infrastructure",
+                "id": "5e735817-001b-4d79-94ea-995c35bd0fef",
+                "description": "Bridge",
+                "layer": null,
+                "path": null,
+                "NaptanCode": null
+            },
+            "geometry": { "type": "Point", "coordinates": [-1.2894087, 50.699838] }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "fid": null,
+                "uri": "https://www.iow.gov.uk/DigitalTwin#TS021",
+                "type": "http://ies.data.gov.uk/ontology/ies4#Bridge",
+                "geometry": null,
+                "dependent.count": 2,
+                "dependent.criticalitySum": 6,
+                "styles": "[Record]",
+                "primaryCategory": "Transport and Infrastructure",
+                "secondaryCategory": "Transport Infrastructure",
+                "id": "6e4d2633-9ed9-4837-96b4-f0d39d71411f",
+                "description": "Bridge",
+                "layer": null,
+                "path": null,
+                "NaptanCode": null
+            },
+            "geometry": { "type": "Point", "coordinates": [-1.1527872, 50.6636] }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "fid": null,
+                "uri": "https://www.iow.gov.uk/DigitalTwin#TS047",
+                "type": "http://ies.data.gov.uk/ontology/ies4#Culvert",
+                "geometry": null,
+                "dependent.count": 1,
+                "dependent.criticalitySum": 3,
+                "styles": "[Record]",
+                "primaryCategory": "Transport and Infrastructure",
+                "secondaryCategory": "Transport Infrastructure",
+                "id": "763e125b-cc15-4134-b49d-011202859116",
+                "description": "Bridge",
+                "layer": null,
+                "path": null,
+                "NaptanCode": null
+            },
+            "geometry": { "type": "Point", "coordinates": [-1.4680968, 50.704199] }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "fid": null,
+                "uri": "https://www.iow.gov.uk/DigitalTwin#TS025",
+                "type": "http://ies.data.gov.uk/ontology/ies4#Bridge",
+                "geometry": null,
+                "dependent.count": 2,
+                "dependent.criticalitySum": 6,
+                "styles": "[Record]",
+                "primaryCategory": "Transport and Infrastructure",
+                "secondaryCategory": "Transport Infrastructure",
+                "id": "7febe7e8-c7c0-43fb-8a8a-45ef5dd09338",
+                "description": "Bridge",
+                "layer": null,
+                "path": null,
+                "NaptanCode": null
+            },
+            "geometry": { "type": "Point", "coordinates": [-1.165702, 50.650256] }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "fid": null,
+                "uri": "https://www.iow.gov.uk/DigitalTwin#TS082",
+                "type": "http://ies.data.gov.uk/ontology/ies4#Bridge",
+                "geometry": null,
+                "dependent.count": 1,
+                "dependent.criticalitySum": 3,
+                "styles": "[Record]",
+                "primaryCategory": "Transport and Infrastructure",
+                "secondaryCategory": "Transport Infrastructure",
+                "id": "8f3b8e86-33d4-4c5d-8f64-4ba0be6ad80a",
+                "description": "Bridge",
+                "layer": null,
+                "path": null,
+                "NaptanCode": null
+            },
+            "geometry": { "type": "Point", "coordinates": [-1.2136091, 50.705018] }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "fid": null,
+                "uri": "https://www.iow.gov.uk/DigitalTwin#TS081",
+                "type": "http://ies.data.gov.uk/ontology/ies4#Bridge",
+                "geometry": null,
+                "dependent.count": 1,
+                "dependent.criticalitySum": 2,
+                "styles": "[Record]",
+                "primaryCategory": "Transport and Infrastructure",
+                "secondaryCategory": "Transport Infrastructure",
+                "id": "9b36d852-2bd7-4aa9-a075-d1ac2b1a84a4",
+                "description": "Bridge",
+                "layer": null,
+                "path": null,
+                "NaptanCode": null
+            },
+            "geometry": { "type": "Point", "coordinates": [-1.2013841, 50.701561] }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "fid": null,
+                "uri": "https://www.iow.gov.uk/DigitalTwin#TS018",
+                "type": "http://ies.data.gov.uk/ontology/ies4#Bridge",
+                "geometry": null,
+                "dependent.count": 1,
+                "dependent.criticalitySum": 3,
+                "styles": "[Record]",
+                "primaryCategory": "Transport and Infrastructure",
+                "secondaryCategory": "Transport Infrastructure",
+                "id": "bc8fb8ff-0985-4c45-b4d8-b652101ff393",
+                "description": "Bridge",
+                "layer": null,
+                "path": null,
+                "NaptanCode": null
+            },
+            "geometry": { "type": "Point", "coordinates": [-1.1483138, 50.668127] }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "fid": null,
+                "uri": "https://www.iow.gov.uk/DigitalTwin#TS071",
+                "type": "http://ies.data.gov.uk/ontology/ies4#Bridge",
+                "geometry": null,
+                "dependent.count": 1,
+                "dependent.criticalitySum": 3,
+                "styles": "[Record]",
+                "primaryCategory": "Transport and Infrastructure",
+                "secondaryCategory": "Transport Infrastructure",
+                "id": "c276941e-341a-413c-8141-a6fa19bc7c1d",
+                "description": "Bridge",
+                "layer": null,
+                "path": null,
+                "NaptanCode": null
+            },
+            "geometry": { "type": "Point", "coordinates": [-1.2243619, 50.632461] }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "fid": null,
+                "uri": "https://www.iow.gov.uk/DigitalTwin#TS029",
+                "type": "http://ies.data.gov.uk/ontology/ies4#Bridge",
+                "geometry": null,
+                "dependent.count": 2,
+                "dependent.criticalitySum": 6,
+                "styles": "[Record]",
+                "primaryCategory": "Transport and Infrastructure",
+                "secondaryCategory": "Transport Infrastructure",
+                "id": "c3f9c1f2-4ec2-4422-92e2-bad58367b82f",
+                "description": "Bridge",
+                "layer": null,
+                "path": null,
+                "NaptanCode": null
+            },
+            "geometry": { "type": "Point", "coordinates": [-1.169374, 50.6418] }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "fid": null,
+                "uri": "https://www.iow.gov.uk/DigitalTwin#TS015",
+                "type": "http://ies.data.gov.uk/ontology/ies4#Bridge",
+                "geometry": null,
+                "dependent.count": 1,
+                "dependent.criticalitySum": 3,
+                "styles": "[Record]",
+                "primaryCategory": "Transport and Infrastructure",
+                "secondaryCategory": "Transport Infrastructure",
+                "id": "d7cf1c79-3974-446a-b1fc-10fbc3e57c03",
+                "description": "Bridge",
+                "layer": null,
+                "path": null,
+                "NaptanCode": null
+            },
+            "geometry": { "type": "Point", "coordinates": [-1.1427348, 50.67357] }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "fid": null,
+                "uri": "https://www.iow.gov.uk/DigitalTwin#TS078",
+                "type": "http://ies.data.gov.uk/ontology/ies4#Bridge",
+                "geometry": null,
+                "dependent.count": 1,
+                "dependent.criticalitySum": 3,
+                "styles": "[Record]",
+                "primaryCategory": "Transport and Infrastructure",
+                "secondaryCategory": "Transport Infrastructure",
+                "id": "d8e74be9-b29e-48cb-97fa-955a994f4305",
+                "description": "Bridge",
+                "layer": null,
+                "path": null,
+                "NaptanCode": null
+            },
+            "geometry": { "type": "Point", "coordinates": [-1.1726092, 50.69909] }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "fid": null,
+                "uri": "https://www.iow.gov.uk/DigitalTwin#TS061",
+                "type": "http://ies.data.gov.uk/ontology/ies4#Bridge",
+                "geometry": null,
+                "dependent.count": 1,
+                "dependent.criticalitySum": 3,
+                "styles": "[Record]",
+                "primaryCategory": "Transport and Infrastructure",
+                "secondaryCategory": "Transport Infrastructure",
+                "id": "f75bfa4d-277f-4c86-8233-bd489ae83b3a",
+                "description": "Bridge",
+                "layer": null,
+                "path": null,
+                "NaptanCode": null
+            },
+            "geometry": { "type": "Point", "coordinates": [-1.2896469, 50.701048] }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "fid": null,
+                "uri": "https://www.iow.gov.uk/DigitalTwin#F002",
+                "type": "http://ies.data.gov.uk/ontology/ies4#MotorVehicleFuellingOrChargingStation",
+                "geometry": null,
+                "dependent.count": 4,
+                "dependent.criticalitySum": 4,
+                "styles": "[Record]",
+                "primaryCategory": "Transport and Infrastructure",
+                "secondaryCategory": "Miscellaneous",
+                "id": "e4ea2bae-64ca-43a6-97ad-5c364238a382",
+                "description": "Filling Station",
+                "layer": null,
+                "path": null,
+                "NaptanCode": null
+            },
+            "geometry": { "type": "Point", "coordinates": [-1.276194, 50.749242] }
+        }
+    ]
+}

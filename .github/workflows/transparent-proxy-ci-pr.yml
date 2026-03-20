@@ -1,0 +1,89 @@
+# SPDX-License-Identifier: Apache-2.0
+# © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
+# and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+
+name: Transparent Proxy CI on PR
+
+on:
+  workflow_call:
+  pull_request:
+    branches-ignore:
+      - "main"
+    paths:
+      - "transparent-proxy/**"
+      - ".github/workflows/transparent-proxy-ci-pr.yml"
+      - ".github/workflows/transparent-proxy-ci-pr-merge.yml"
+  workflow_dispatch:
+jobs:
+  linting:
+    name: Linting
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+      statuses: write # To report GitHub Actions status checks
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+
+      - name: Run Hadolint (Dockerfile Linter)
+        uses: hadolint/hadolint-action@2332a7b74a6de0dda2e2221d575162eba76ba5e5 # v3.3.0
+        with:
+          dockerfile: transparent-proxy/Dockerfile
+          verbose: true
+          failure-threshold: warning
+          ignore: DL3006
+
+  security-scanning:
+    name: Security Scanning
+    runs-on: ubuntu-latest
+    needs: linting
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      packages: read
+      statuses: write # To report GitHub Actions status checks
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1 # v0.35.0
+        with:
+          scan-type: "fs"
+          scan-ref: transparent-proxy
+          format: "table"
+          exit-code: "1"
+          ignore-unfixed: true
+          severity: "CRITICAL,HIGH"
+
+  docker-build-test-scan:
+    name: Docker Build, Test & Scan
+    runs-on: ubuntu-latest
+    needs: security-scanning
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      packages: read
+      statuses: write # To report GitHub Actions status checks
+    env:
+      GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+
+      - name: Build Docker Image
+        working-directory: transparent-proxy
+        run: |
+          docker build -t vista/transparent-proxy:latest .
+
+      - name: Run Trivy Scan on Docker Image
+        uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1 # v0.35.0
+        with:
+          image-ref: "vista/transparent-proxy:latest"
+          format: "table"
+          exit-code: "1"
+          ignore-unfixed: true
+          vuln-type: "os,library"
+          severity: "CRITICAL,HIGH"
+          trivyignores: "transparent-proxy/.trivyignore"

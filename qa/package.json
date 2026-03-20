@@ -1,0 +1,28 @@
+{
+    "name": "ndtp-qa-test-automation",
+    "version": "1.0.0",
+    "description": "test automation for the National Digital Twin Project",
+    "main": "index.js",
+    "scripts": {
+        "test": "cross-env ENV=local cucumber-js --config=config/cucumber.js",
+        "test:parallel": "cross-env ENV=local PARALLEL=4 cucumber-js --config=config/cucumber.js",
+        "test:ci": "cross-env CI=true ENV=local cucumber-js --config=config/cucumber.js",
+        "test:e2e": "cross-env ENV=dev cucumber-js --config=config/cucumber.js",
+        "debug": "cross-env ENV=local PWDEBUG=1 cucumber-js --config=config/cucumber.js"
+    },
+    "keywords": [
+        "cucumber",
+        "cucumber - TS",
+        "playwright-cucumber"
+    ],
+    "author": "NDTP",
+    "license": "ISC",
+    "devDependencies": {
+        "@cucumber/cucumber": "12.7.0",
+        "@playwright/test": "1.58.2",
+        "@types/node": "25.5.0",
+        "cross-env": "10.1.0",
+        "dotenv": "17.3.1",
+        "ts-node": "10.9.2"
+    }
+}
