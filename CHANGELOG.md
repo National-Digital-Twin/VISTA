@@ -20,7 +20,7 @@ This project follows **Semantic Versioning (SemVer)** ([semver.org](https://semv
 
 ## [0.90.0]
 
-## Features and Improvements
+### Features and Improvements
 
 - Introduced a major VISTA redesign with scenarios, scenario-specific criticality scores, focus areas, exposure layers, and an overall four-dimensional score (criticality, dependency, exposure, redundancy).
 - Added administrator capabilities to invite users, manage access via groups, approve shared exposure layers, and update criticality scores.

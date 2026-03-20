@@ -6,22 +6,17 @@
 
 ## Copyright Notice
 
-© Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
-and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+© Crown Copyright 2026. This work has been developed by the National Digital Twin Programme and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
 
 This work is licensed under the Apache License, Version 2.0.
+
 **Note:** All documentation in this repository is licensed under the Open Government Licence v3.0 (OGL-3.0). See [OGL_LICENSE.md](OGL_LICENSE.md) for full terms.
 
 ---
 
-# Apache License
-
-Version 2.0, January 2004
-http://www.apache.org/licenses/
-
-Apache License
-Version 2.0, January 2004
-http://www.apache.org/licenses/
+                                 Apache License
+                           Version 2.0, January 2004
+                        http://www.apache.org/licenses/
 
 TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
 
@@ -221,5 +216,3 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-
-Licensed under the Open Government Licence v3.0.
