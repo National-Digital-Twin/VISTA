@@ -35,7 +35,7 @@ jobs:
           echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
 
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
         with:
           fetch-depth: 0 # Ensure full history for tagging
 
@@ -83,7 +83,7 @@ jobs:
     steps:
       # Set up AWS credentials for the source account
       - name: Set up AWS Credentials for Source Account
-        uses: aws-actions/configure-aws-credentials@v6
+        uses: aws-actions/configure-aws-credentials@8df5847569e6427dd6c4fb1cf565c83acfa8afa7 # v6.0.0
         with:
           role-to-assume: arn:aws:iam::${{ env.SOURCE_AWS_ACCOUNT_ID }}:role/ecr-access-for-github
           aws-region: eu-west-2
@@ -92,7 +92,7 @@ jobs:
       # Log in to Amazon ECR (source account)
       - name: Login to Amazon ECR - Source Account
         id: login-ecr-source
-        uses: aws-actions/amazon-ecr-login@v2
+        uses: aws-actions/amazon-ecr-login@261fc3d4806db1fa66a15cc11113c456db8870a7 # v2.1.0
 
       # Pull all tags for the image from the source ECR
       - name: Pull All Tags for the Image
@@ -117,7 +117,7 @@ jobs:
 
       # Set up AWS credentials for the destination account
       - name: Set up AWS Credentials for Destination Account
-        uses: aws-actions/configure-aws-credentials@v6
+        uses: aws-actions/configure-aws-credentials@8df5847569e6427dd6c4fb1cf565c83acfa8afa7 # v6.0.0
         with:
           role-to-assume: arn:aws:iam::${{ env.DESTINATION_AWS_ACCOUNT_ID }}:role/ecr-access-for-github
           aws-region: eu-west-2
@@ -126,7 +126,7 @@ jobs:
       # Log in to Amazon ECR (destination account)
       - name: Login to Amazon ECR - Destination Account
         id: login-ecr-destination
-        uses: aws-actions/amazon-ecr-login@v2
+        uses: aws-actions/amazon-ecr-login@261fc3d4806db1fa66a15cc11113c456db8870a7 # v2.1.0
 
       # Tag and push all locally available tags to the destination ECR
       - name: Tag and Push All Tags to Destination ECR
