@@ -8,7 +8,7 @@
 
 ## Overview
 
-VISTA is a digital mapping tool designed to assess, visualise, and simulate cascading asset failures during emergencies. It enables real-time monitoring of infrastructure dependencies, illustrating how disruptions to key assets—such as roads, energy grids, and healthcare facilities—affect interconnected services and communities.
+VISTA is a digital mapping tool designed to assess, visualise, and simulate cascading asset failures during emergencies. It enables real-time monitoring of infrastructure dependencies, illustrating how disruptions to key assets - such as roads, energy grids, and healthcare facilities - affect interconnected services and communities.
 
 In addition to assessing failures, VISTA provides predictive capabilities, allowing users to simulate a range of emergency scenarios. By integrating real-world and simulated data, VISTA enables proactive planning, helping emergency responders, infrastructure managers and policy officials anticipate how disruptions propagate and optimise response efforts before incidents occur.
 
