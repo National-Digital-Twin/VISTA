@@ -1,0 +1,44 @@
+type Query {
+  hello: String!
+  roadRoute(routeInput: RoadRouteInput!): RoadRoute
+  roadSegment(roadSegmentInput: RoadSegmentInput!): RoadSegment
+}
+
+enum Vehicle {
+  Car
+  EmergencyVehicle
+  HGV
+}
+
+input RoadRouteInput {
+  startLat: Float!
+  startLon: Float!
+  endLat: Float!
+  endLon: Float!
+  floodExtent: GeoJSON
+  vehicle: Vehicle
+}
+
+input RoadSegmentInput {
+  coordinates: String!
+  direction: String!
+  dayOfWeek: String!
+  time: String!
+}
+
+type RoadRoute {
+  routeGeojson: GeoJSON!
+}
+
+type ValidationError {
+  field: String
+  messages: [String!]!
+}
+
+type RoadSegment {
+  volume: Int
+  averageSpeed: Int
+  busyness: Int
+}
+
+scalar GeoJSON

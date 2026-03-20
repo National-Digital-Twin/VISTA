@@ -1,0 +1,21 @@
+resources:
+  - ../../base
+
+namespace: vista
+
+patches:
+  - path: patches/deployment.yaml
+    target:
+      kind: Deployment
+      name: vista-frontend
+  - path: patches/service-account.yaml
+    target:
+      kind: ServiceAccount
+      name: vista-frontend-sa
+labels:
+  - pairs:
+      env: dev
+images:
+  - name: vista-frontend-image:template
+    newName: 537124944113.dkr.ecr.eu-west-2.amazonaws.com/vista/frontend
+    newTag: "remove-auth-2"

@@ -1,0 +1,46 @@
+/**
+ * Mapbox GL Draw styles for MapLibre GL
+ *
+ * This is a copy of the cursor styles from @mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css
+ * with class names updated from .mapboxgl-* to .maplibregl-* for MapLibre compatibility.
+ *
+ * The control button styles (icons, positioning) are not included since we use
+ * displayControlsDefault: false and provide our own UI for drawing tools.
+ */
+
+.maplibregl-map.mouse-pointer .maplibregl-canvas-container.maplibregl-interactive {
+    cursor: pointer !important;
+}
+.maplibregl-map.mouse-move .maplibregl-canvas-container.maplibregl-interactive {
+    cursor: move !important;
+}
+.maplibregl-map.mouse-add .maplibregl-canvas-container.maplibregl-interactive {
+    cursor: crosshair !important;
+}
+.maplibregl-map.mouse-move.mode-direct_select .maplibregl-canvas-container.maplibregl-interactive {
+    cursor: grab !important;
+}
+.maplibregl-map.mode-direct_select.feature-vertex.mouse-move .maplibregl-canvas-container.maplibregl-interactive {
+    cursor: move !important;
+}
+.maplibregl-map.mode-direct_select.feature-midpoint.mouse-pointer .maplibregl-canvas-container.maplibregl-interactive {
+    cursor: cell !important;
+}
+.maplibregl-map.mode-direct_select.feature-feature.mouse-move .maplibregl-canvas-container.maplibregl-interactive {
+    cursor: move !important;
+}
+.maplibregl-map.mode-static.mouse-pointer .maplibregl-canvas-container.maplibregl-interactive {
+    cursor: grab !important;
+}
+
+.mapbox-gl-draw_boxselect {
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    background: rgba(0, 0, 0, 0.1);
+    border: 2px dotted #fff;
+    opacity: 0.5;
+}

@@ -1,0 +1,77 @@
+# SPDX-License-Identifier: Apache-2.0
+# © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
+# and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+
+"""Example test."""
+
+from __future__ import annotations
+
+import json
+
+import pytest
+from django.urls import reverse
+from model_bakery import baker
+
+from api.arch_models import TrafficData
+
+
+@pytest.mark.django_db
+def test_traffic_data_query_blank(client):
+    """Test blank traffic data query."""
+    query = """
+    {
+        roadSegment(
+            roadSegmentInput: {
+                coordinates: "xyz"
+                direction: "up"
+                dayOfWeek: "Friday"
+                time: "01:00:00"
+            }
+        ){
+            volume
+            averageSpeed
+            busyness
+        }
+    }
+    """
+    assert client.post(
+        reverse("graphql"),
+        json.dumps({"query": query}),
+        content_type="application/json",
+    ).json() == {"data": {"roadSegment": None}}
+
+
+@pytest.mark.django_db
+def test_traffic_data_query(client):
+    """Test traffic data query."""
+    baker.make(
+        TrafficData,
+        coordinates="xyz",
+        direction="up",
+        day_of_week="Friday",
+        hour="01:00:00",
+        volume=1,
+        average_speed=2,
+        busyness=3,
+    )
+    query = """
+    {
+        roadSegment(
+            roadSegmentInput: {
+                coordinates: "xyz"
+                direction: "up"
+                dayOfWeek: "Friday"
+                time: "01:00:00"
+            }
+        ){
+            volume
+            averageSpeed
+            busyness
+        }
+    }
+    """
+    assert client.post(
+        reverse("graphql"),
+        json.dumps({"query": query}),
+        content_type="application/json",
+    ).json() == {"data": {"roadSegment": {"averageSpeed": 2, "busyness": 3, "volume": 1}}}

@@ -1,0 +1,74 @@
+# SPDX-License-Identifier: Apache-2.0
+# © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
+# and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+
+"""Model representations.
+
+Import all models into the 'models' package.
+This makes them available to Django as if they were in a single models.py file.
+"""
+
+from .asset import Asset
+from .asset_criticality_override import AssetCriticalityOverride
+from .asset_score import AssetScore, VisibleExposureAssetScore
+from .asset_score_filter import AssetScoreFilter
+from .asset_type import AssetCategory, AssetSubCategory, AssetType
+from .constraint_intervention import ConstraintIntervention, ConstraintInterventionType
+from .data_source import DataSource
+from .dependency import Dependency
+from .exposure_layer import ExposureLayer, ExposureLayerType
+from .focus_area import FocusArea
+from .group import Group, GroupDataSourceAccess, GroupMembership
+from .resource_intervention import (
+    ResourceInterventionAction,
+    ResourceInterventionLocation,
+    ResourceInterventionType,
+)
+from .road_link import (
+    Directionality,
+    FormOfWay,
+    OperationalState,
+    RoadClassification,
+    RoadLink,
+    RouteHierarchy,
+)
+from .scenario import Scenario
+from .scenario_asset import ScenarioAsset
+from .visible_asset import VisibleAsset
+from .visible_exposure_layer import VisibleExposureLayer
+from .visible_resource_intervention_type import VisibleResourceInterventionType
+
+__all__ = [
+    "Asset",
+    "AssetCategory",
+    "AssetCriticalityOverride",
+    "AssetScore",
+    "AssetScoreFilter",
+    "AssetSubCategory",
+    "AssetType",
+    "ConstraintIntervention",
+    "ConstraintInterventionType",
+    "DataSource",
+    "Dependency",
+    "Directionality",
+    "ExposureLayer",
+    "ExposureLayerType",
+    "FocusArea",
+    "FormOfWay",
+    "Group",
+    "GroupDataSourceAccess",
+    "GroupMembership",
+    "OperationalState",
+    "ResourceInterventionAction",
+    "ResourceInterventionLocation",
+    "ResourceInterventionType",
+    "RoadClassification",
+    "RoadLink",
+    "RouteHierarchy",
+    "Scenario",
+    "ScenarioAsset",
+    "VisibleAsset",
+    "VisibleExposureAssetScore",
+    "VisibleExposureLayer",
+    "VisibleResourceInterventionType",
+]

@@ -1,0 +1,31 @@
+# SPDX-License-Identifier: Apache-2.0
+# © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
+# and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+
+"""Test-specific settings."""
+
+import os
+
+from core import settings as core_settings
+
+for _name in dir(core_settings):
+    if _name.isupper():
+        globals()[_name] = getattr(core_settings, _name)
+
+DATABASES = {
+    "default": {
+        "ENGINE": "django.contrib.gis.db.backends.postgis",
+        "NAME": os.getenv("TEST_DB_NAME", "test_db"),
+        "USER": os.getenv("TEST_DB_USER", "postgres"),
+        "PASSWORD": os.getenv("TEST_DB_PASSWORD", "postgres"),
+        "HOST": os.getenv("TEST_DB_HOST", "localhost"),
+        "PORT": os.getenv("TEST_DB_PORT", "5432"),
+    }
+}
+COGNITO_USER_POOL_ID = "test-pool-id"
+VISTA_INVITE_EMAIL = "vista-invite-email@vista.com"
+COGNITO_MAIN_USER_GROUP_NAME = "users"
+COGNITO_ADMIN_USER_GROUP_NAME = "admins"
+REGION = "eu-west-2"
+OS_NAMES_API_KEY = "987654321"
+OS_NGD_API_KEY = "abc"

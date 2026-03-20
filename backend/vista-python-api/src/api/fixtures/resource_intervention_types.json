@@ -1,0 +1,10 @@
+[
+    {
+        "model": "api.resourceinterventiontype",
+        "pk": "e379cd7e-f3ed-4337-bdb2-b47b13814fc1",
+        "fields": {
+            "name": "Sandbags",
+            "unit": "bags"
+        }
+    }
+]
