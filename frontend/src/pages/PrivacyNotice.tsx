@@ -86,7 +86,7 @@ export default function PrivacyNotice() {
 
                     <Box
                         component="img"
-                        src="/DBT_logo_black.svg"
+                        src="/bist-logo-black.png"
                         alt="Department for Business & Trade"
                         sx={{
                             display: 'block',
@@ -95,6 +95,7 @@ export default function PrivacyNotice() {
                             height: 'auto !important',
                             transform: 'translateX(var(--pn-logo-shift))',
                             mb: 1,
+                            ml: 4
                         }}
                     />
                 </Box>

@@ -55,7 +55,7 @@ describe('PrivacyNotice', () => {
             renderWithRouter(<PrivacyNotice />);
             const logo = screen.getByAltText('Department for Business & Trade');
             expect(logo).toBeInTheDocument();
-            expect(logo).toHaveAttribute('src', '/DBT_logo_black.svg');
+            expect(logo).toHaveAttribute('src', '/bist-logo-black.png');
         });
     });
 
