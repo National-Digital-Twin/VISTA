@@ -18,6 +18,13 @@ This project follows **Semantic Versioning (SemVer)** ([semver.org](https://semv
 
 ---
 
+## [0.90.1]
+
+### Bugfix 
+
+- Update privacy notice.
+
+
 ## [0.90.0]
 
 ### Features and Improvements
