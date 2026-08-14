@@ -20,7 +20,7 @@ This project follows **Semantic Versioning (SemVer)** ([semver.org](https://semv
 
 ## [0.90.1]
 
-### Bugfix 
+### Changes 
 
 - Update privacy notice.
 
