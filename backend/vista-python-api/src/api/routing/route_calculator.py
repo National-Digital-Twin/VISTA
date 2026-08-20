@@ -444,7 +444,7 @@ class RouteCalculator:
         raise ValueError(f"Snap edge {snap.edge_key} doesn't match {edge}")
 
     @staticmethod
-    def _make_segment_feature(  # noqa: PLR0913
+    def _make_segment_feature(  # noqa: PLR0913, PLR0917
         coords: list,
         osid: str,
         name: str,
@@ -691,7 +691,7 @@ class RouteCalculator:
             speed_mph=speed_mps * MPS_TO_MPH,
         )
 
-    def _path_to_geojson(  # noqa: PLR0913
+    def _path_to_geojson(  # noqa: PLR0913, PLR0917
         self,
         G: DiGraph,
         path: list[str],
