@@ -140,7 +140,7 @@ class ApplicationUserViewSet(ModelViewSet):
                 user_invite.accepted_at = datetime.now(UTC)
                 user_invite.save()
         except UserInvite.DoesNotExist:
-            self.logger.info("User with ID % not found.", user_id)
+            self.logger.info("User with ID {} not found.".format(user_id))
 
     def _check_all_pending_invites_for_expiry(self):
         pending_invites = UserInvite.objects.filter(status="pending")
