@@ -55,7 +55,7 @@ class Properties:
     """Properties."""
 
     osmid: int | list[int]
-    lanes: str | None | list[str] = attrs.field(converter=_maybe_sort)
+    lanes: str | list[str] | None = attrs.field(converter=_maybe_sort)
     name: str | list[str] = attrs.field(converter=_maybe_sort)
     highway: str | list[str] = attrs.field(converter=_maybe_sort)
     maxspeed: str | None = attrs.field(converter=_fix_maxspeed)
