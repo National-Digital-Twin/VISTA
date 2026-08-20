@@ -110,7 +110,7 @@ def other_group_access(other_group, data_source):
 
 
 @pytest.mark.django_db
-def test_revoke_data_source_access_cleans_up_visible_assets(  # noqa: PLR0913
+def test_revoke_data_source_access_cleans_up_visible_assets(  # noqa: PLR0913, PLR0917
     scenario,
     data_source,
     asset_type,
@@ -141,7 +141,7 @@ def test_revoke_data_source_access_cleans_up_visible_assets(  # noqa: PLR0913
 
 
 @pytest.mark.django_db
-def test_revoke_data_source_access_cleans_up_for_all_group_members(  # noqa: PLR0913
+def test_revoke_data_source_access_cleans_up_for_all_group_members(  # noqa: PLR0913, PLR0917
     scenario,
     data_source,
     asset_type,
@@ -178,7 +178,7 @@ def test_revoke_data_source_access_cleans_up_for_all_group_members(  # noqa: PLR
 
 
 @pytest.mark.django_db
-def test_revoke_data_source_access_preserves_assets_when_member_in_another_group(  # noqa: PLR0913
+def test_revoke_data_source_access_preserves_assets_when_member_in_another_group(  # noqa: PLR0913, PLR0917
     scenario,
     data_source,
     asset_type,
@@ -214,7 +214,7 @@ def test_revoke_data_source_access_preserves_assets_when_member_in_another_group
 
 
 @pytest.mark.django_db
-def test_revoke_last_group_access_preserves_assets_as_ds_becomes_global(  # noqa: PLR0913
+def test_revoke_last_group_access_preserves_assets_as_ds_becomes_global(  # noqa: PLR0913, PLR0917
     scenario,
     data_source,
     asset_type,
@@ -249,7 +249,7 @@ def test_revoke_last_group_access_preserves_assets_as_ds_becomes_global(  # noqa
 
 
 @pytest.mark.django_db
-def test_grant_data_source_access_cleans_up_for_non_members(  # noqa: PLR0913
+def test_grant_data_source_access_cleans_up_for_non_members(  # noqa: PLR0913, PLR0917
     scenario, data_source, asset_type, group, membership_a, client, monkeypatch
 ):
     """Test granting group access cleans up VisibleAsset for non-members."""

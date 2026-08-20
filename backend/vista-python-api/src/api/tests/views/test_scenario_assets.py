@@ -238,7 +238,7 @@ def test_scenario_assets_with_focus_area_id_returns_only_that_area(
 
 
 @pytest.mark.django_db
-def test_scenario_assets_with_focus_area_id_ignores_other_focus_areas(  # noqa: PLR0913
+def test_scenario_assets_with_focus_area_id_ignores_other_focus_areas(  # noqa: PLR0913, PLR0917
     scenario,
     asset_types_for_scenario,
     assets_for_scenario,
@@ -490,7 +490,7 @@ def test_scenario_assets_focus_area_visibility(
 
 
 @pytest.mark.django_db
-def test_scenario_assets_combined_visibility(  # noqa: PLR0913
+def test_scenario_assets_combined_visibility(  # noqa: PLR0913, PLR0917
     scenario,
     asset_types_for_scenario,
     assets_for_scenario,  # noqa: ARG001
@@ -598,7 +598,7 @@ def test_scenario_assets_user_isolation(
 
 
 @pytest.mark.django_db
-def test_scenario_assets_map_wide_inactive(  # noqa: PLR0913
+def test_scenario_assets_map_wide_inactive(  # noqa: PLR0913, PLR0917
     scenario,
     asset_types_for_scenario,
     assets_for_scenario,  # noqa: ARG001
@@ -677,7 +677,7 @@ def test_asset_types_map_wide_returns_all(
 
 
 @pytest.mark.django_db
-def test_asset_types_map_wide_does_not_include_data_source_user_cannot_access(  # noqa: PLR0913
+def test_asset_types_map_wide_does_not_include_data_source_user_cannot_access(  # noqa: PLR0913, PLR0917
     scenario,
     limited_rail_data_source,  # noqa: ARG001
     asset_types_for_scenario,  # noqa: ARG001
@@ -696,7 +696,7 @@ def test_asset_types_map_wide_does_not_include_data_source_user_cannot_access(  
 
 
 @pytest.mark.django_db
-def test_asset_types_map_wide_includes_data_source_user_can_access_via_group(  # noqa: PLR0913
+def test_asset_types_map_wide_includes_data_source_user_can_access_via_group(  # noqa: PLR0913, PLR0917
     scenario,
     limited_rail_data_source,  # noqa: ARG001
     asset_types_for_scenario,  # noqa: ARG001
@@ -1001,7 +1001,7 @@ def test_by_score_only_mode_returns_all_scored_assets(
 
 
 @pytest.mark.django_db
-def test_by_score_only_mode_excludes_assets_without_permission_to_view(  # noqa: PLR0913
+def test_by_score_only_mode_excludes_assets_without_permission_to_view(  # noqa: PLR0913, PLR0917
     scenario,
     limited_rail_data_source,  # noqa: ARG001
     score_test_types,
@@ -1035,7 +1035,7 @@ def test_by_score_only_mode_excludes_assets_without_permission_to_view(  # noqa:
 
 
 @pytest.mark.django_db
-def test_by_score_only_mode_includes_assets_with_permission_to_view(  # noqa: PLR0913
+def test_by_score_only_mode_includes_assets_with_permission_to_view(  # noqa: PLR0913, PLR0917
     scenario,
     limited_rail_data_source,  # noqa: ARG001
     score_test_types,

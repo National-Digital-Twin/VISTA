@@ -147,7 +147,7 @@ def test_cleanup_deletes_visible_assets_for_inaccessible_types(
 
 
 @pytest.mark.django_db
-def test_cleanup_preserves_visible_assets_for_accessible_types(  # noqa: PLR0913
+def test_cleanup_preserves_visible_assets_for_accessible_types(  # noqa: PLR0913, PLR0917
     user_id,
     focus_area,
     restricted_asset_type,
@@ -171,7 +171,7 @@ def test_cleanup_preserves_visible_assets_for_accessible_types(  # noqa: PLR0913
 
 
 @pytest.mark.django_db
-def test_cleanup_preserves_other_users_visible_assets(  # noqa: PLR0913
+def test_cleanup_preserves_other_users_visible_assets(  # noqa: PLR0913, PLR0917
     user_id,
     other_user_id,
     focus_area,
@@ -202,7 +202,7 @@ def test_cleanup_preserves_other_users_visible_assets(  # noqa: PLR0913
 
 
 @pytest.mark.django_db
-def test_cleanup_preserves_visible_assets_when_user_has_access_through_another_group(  # noqa: PLR0913
+def test_cleanup_preserves_visible_assets_when_user_has_access_through_another_group(  # noqa: PLR0913, PLR0917
     user_id,
     focus_area,
     restricted_asset_type,
