@@ -57,7 +57,7 @@ jobs:
             exit 1
           fi
           echo "Checking for outdated dependencies"
-          npm install -g npm-check-updates
+          npm install -g npm-check-updates@23.1.0 --ignore-scripts
           ncu --target minor
 
       - name: Verify Lockfile Integrity
@@ -96,23 +96,23 @@ jobs:
 
       - name: Run Prettier
         working-directory: frontend
-        run: npx prettier --check "src/**/*.{js,ts,tsx}"
+        run: npx --no-install prettier --check "src/**/*.{js,ts,tsx}"
 
       - name: TypeScript Check
         working-directory: frontend
-        run: npx tsc --noEmit
+        run: npx --no-install tsc --noEmit
 
       - name: Run Sort-Package-Json (Import Sorting)
         working-directory: frontend
         run: |
           echo "Running sort-package-json"
-          npx sort-package-json --check
+          npx --no-install sort-package-json --check
 
       - name: Run Audit-CI (Security Check)
         working-directory: frontend
         run: |
           echo "Running audit-ci"
-          npx audit-ci --high --config audit-ci.jsonc
+          npx --no-install audit-ci --high --config audit-ci.jsonc
 
   unit-tests:
     name: Unit Tests

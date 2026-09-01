@@ -75,6 +75,7 @@
         "@vitejs/plugin-react": "6.0.1",
         "@vitest/coverage-v8": "^4.1.10",
         "@vitest/ui": "^4.1.10",
+        "audit-ci": "7.1.0",
         "eslint": "^9.39.5",
         "eslint-config-prettier": "10.1.8",
         "eslint-plugin-import": "2.32.0",
@@ -89,6 +90,7 @@
         "prettier": "3.8.1",
         "proj4": "2.20.4",
         "react-router-dom": "^7.18.2",
+        "sort-package-json": "4.0.0",
         "vite": "^8.2.1",
         "vitest": "^4.1.10"
     },
