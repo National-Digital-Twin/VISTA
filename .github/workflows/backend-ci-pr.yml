@@ -240,7 +240,7 @@ jobs:
 
       - name: Install Trivy
         run: |
-          wget -q --https-only https://github.com/aquasecurity/trivy/releases/download/v0.18.3/trivy_0.18.3_Linux-64bit.deb # Update Trivy Version if needed
+          wget -q --https-only --max-redirect=1 https://github.com/aquasecurity/trivy/releases/download/v0.18.3/trivy_0.18.3_Linux-64bit.deb # Update Trivy Version if needed
           sudo dpkg -i trivy_0.18.3_Linux-64bit.deb
 
       - name: Run Trivy Scan
