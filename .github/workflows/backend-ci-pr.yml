@@ -64,6 +64,8 @@ jobs:
           poetry config warnings.export false
 
       - name: Install Python Dependencies
+        env:
+          POETRY_INSTALLER_ONLY_BINARY: ":all:"
         run: |
           source venv/bin/activate
           cd backend
@@ -204,6 +206,8 @@ jobs:
           poetry config warnings.export false
 
       - name: Install Python Dependencies
+        env:
+          POETRY_INSTALLER_ONLY_BINARY: ":all:"
         run: |
           source venv/bin/activate
           cd backend
