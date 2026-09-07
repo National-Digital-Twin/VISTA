@@ -48,14 +48,14 @@ describe('PrivacyNotice', () => {
         });
 
         it('renders the main privacy notice paragraph', () => {
-            renderAndExpectText(<PrivacyNotice />, /This privacy notice explains how the Department for Business and Trade/i);
+            renderAndExpectText(<PrivacyNotice />, /This privacy notice explains how the Department for Business, Innovation, Science and Trade/i);
         });
 
         it('renders DBT logo', () => {
             renderWithRouter(<PrivacyNotice />);
-            const logo = screen.getByAltText('Department for Business & Trade');
+            const logo = screen.getByAltText('Department for Business, Innovation, Science & Trade');
             expect(logo).toBeInTheDocument();
-            expect(logo).toHaveAttribute('src', '/DBT_logo_black.svg');
+            expect(logo).toHaveAttribute('src', '/bist-logo-black.png');
         });
     });
 
@@ -80,13 +80,13 @@ describe('PrivacyNotice', () => {
     describe('Content Sections', () => {
         it('renders all content sections', () => {
             renderAndExpectTexts(<PrivacyNotice />, [
-                'Personal data DBT will collect as part of the Pilot',
-                'Why DBT asks for this information',
+                'Personal data BIST will collect as part of the Pilot',
+                'Why BIST asks for this information',
                 'The legal basis for processing your personal data',
-                'How DBT processes personal data it receives',
+                'How BIST processes personal data it receives',
                 'Third Party Processors',
                 'Information sharing',
-                'How long will DBT hold your data for',
+                'How long will BIST hold your data for',
                 'Your rights',
             ]);
         });

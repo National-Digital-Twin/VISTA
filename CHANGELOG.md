@@ -18,6 +18,19 @@ This project follows **Semantic Versioning (SemVer)** ([semver.org](https://semv
 
 ---
 
+## [0.90.2] - 2026-09-01
+
+### Changed
+
+- Pinned GitHub Actions to full commit SHAs via pinact.
+
+## [0.90.1]
+
+### Changes 
+
+- Update privacy notice.
+
+
 ## [0.90.0]
 
 ### Features and Improvements
