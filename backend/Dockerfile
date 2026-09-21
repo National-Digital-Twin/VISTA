@@ -29,10 +29,11 @@ FROM base
 WORKDIR /vista-python-api/src
 
 
-# Install GDAL system libraries in final image
+# Install GDAL system libraries and PostgreSQL client in final image
 RUN apt-get update && apt-get --no-install-recommends install -y \
     gdal-bin \
     libgdal-dev \
+    postgresql-client \
     && rm -rf /var/lib/apt/lists/*
 
 # virtual environment is copied
