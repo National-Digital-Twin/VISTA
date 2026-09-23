@@ -253,14 +253,20 @@ export const DrawingProvider = ({ children, mapRef, mapReady, scenarioId }: Draw
             }
         };
 
-        map.on('draw.create', handleDrawCreate);
-        map.on('draw.update', handleDrawUpdate);
-        map.on('draw.selectionchange', handleSelectionChange);
+        // mapbox-gl-draw fires custom "draw.*" events not present in MapLibre's typed MapEventType
+        const drawEvents = map as unknown as {
+            on: (type: string, listener: (event: never) => void) => void;
+            off: (type: string, listener: (event: never) => void) => void;
+        };
+
+        drawEvents.on('draw.create', handleDrawCreate);
+        drawEvents.on('draw.update', handleDrawUpdate);
+        drawEvents.on('draw.selectionchange', handleSelectionChange);
 
         return () => {
-            map.off('draw.create', handleDrawCreate);
-            map.off('draw.update', handleDrawUpdate);
-            map.off('draw.selectionchange', handleSelectionChange);
+            drawEvents.off('draw.create', handleDrawCreate);
+            drawEvents.off('draw.update', handleDrawUpdate);
+            drawEvents.off('draw.selectionchange', handleSelectionChange);
         };
     }, [drawReady, mapRef, drawRef, scenarioId, drawingConfig]);
 
@@ -289,7 +295,10 @@ export const DrawingProvider = ({ children, mapRef, mapReady, scenarioId }: Draw
             }
             const map = mapRef.current?.getMap();
             if (map) {
-                map.fire('draw.create', { features: [circleFeature] });
+                // mapbox-gl-draw fires custom "draw.*" events not present in MapLibre's typed MapEventType
+                (map as unknown as { fire: (type: string, event: unknown) => void }).fire('draw.create', {
+                    features: [circleFeature],
+                });
             }
             setDrawingMode(null);
         },
@@ -349,10 +358,16 @@ export const DrawingProvider = ({ children, mapRef, mapReady, scenarioId }: Draw
             }
         };
 
-        map.on('draw.modechange', handleModeChange);
+        // mapbox-gl-draw fires custom "draw.*" events not present in MapLibre's typed MapEventType
+        const drawEvents = map as unknown as {
+            on: (type: string, listener: (event: never) => void) => void;
+            off: (type: string, listener: (event: never) => void) => void;
+        };
+
+        drawEvents.on('draw.modechange', handleModeChange);
 
         return () => {
-            map.off('draw.modechange', handleModeChange);
+            drawEvents.off('draw.modechange', handleModeChange);
         };
     }, [mapReady, drawingMode, mapRef]);
 

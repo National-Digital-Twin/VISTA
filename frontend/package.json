@@ -86,7 +86,7 @@
         "eslint-plugin-react-hooks": "7.0.1",
         "globals": "^17.4.0",
         "jsdom": "29.0.0",
-        "maplibre-gl": "5.20.1",
+        "maplibre-gl": "^6.9.1",
         "prettier": "3.8.1",
         "proj4": "2.20.4",
         "react-router-dom": "^7.18.2",
