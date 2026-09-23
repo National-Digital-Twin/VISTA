@@ -10,11 +10,6 @@ if [[ -z "$DB_HOSTNAME" || -z "$POSTGRES_PASSWORD" ]]; then
   exit 1
 fi
 
-# Install the PostgreSQL client
-echo "Installing PostgreSQL client..."
-apt-get update
-apt-get install -y postgresql-client
-
 # Run the query
 echo "Running the query..."
 PGPASSWORD="$POSTGRES_PASSWORD" psql -h "$DB_HOSTNAME" -U vista -c "GRANT rds_iam TO vista;" >> /dev/null 2>&1
