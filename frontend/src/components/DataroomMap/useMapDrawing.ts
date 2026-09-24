@@ -66,14 +66,20 @@ const useMapDrawing = ({ mapRef, mapReady, onDrawComplete }: UseMapDrawingOption
             }
         };
 
-        map.on('draw.create', handleDrawCreate);
-        map.on('draw.update', handleDrawUpdate);
-        map.on('draw.modechange', handleModeChange);
+        // mapbox-gl-draw fires custom "draw.*" events not present in MapLibre's typed MapEventType
+        const drawEvents = map as unknown as {
+            on: (type: string, listener: (event: never) => void) => void;
+            off: (type: string, listener: (event: never) => void) => void;
+        };
+
+        drawEvents.on('draw.create', handleDrawCreate);
+        drawEvents.on('draw.update', handleDrawUpdate);
+        drawEvents.on('draw.modechange', handleModeChange);
 
         return () => {
-            map.off('draw.create', handleDrawCreate);
-            map.off('draw.update', handleDrawUpdate);
-            map.off('draw.modechange', handleModeChange);
+            drawEvents.off('draw.create', handleDrawCreate);
+            drawEvents.off('draw.update', handleDrawUpdate);
+            drawEvents.off('draw.modechange', handleModeChange);
         };
     }, [drawReady, mapRef, onDrawComplete]);
 

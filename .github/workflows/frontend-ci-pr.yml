@@ -31,10 +31,10 @@ jobs:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Set up Node.js
-        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: "22.x"
           cache: npm
@@ -43,7 +43,7 @@ jobs:
       - name: Install dependencies
         working-directory: frontend
         run: |
-          npm ci --legacy-peer-deps
+          npm ci --legacy-peer-deps --ignore-scripts
 
       - name: Run Dependency Checks
         working-directory: frontend
@@ -57,12 +57,12 @@ jobs:
             exit 1
           fi
           echo "Checking for outdated dependencies"
-          npm install -g npm-check-updates
+          npm install -g npm-check-updates@23.1.0 --ignore-scripts
           ncu --target minor
 
       - name: Verify Lockfile Integrity
         working-directory: frontend
-        run: npm ci --dry-run --legacy-peer-deps
+        run: npm ci --dry-run --legacy-peer-deps --ignore-scripts
 
   linting:
     name: Code Linting
@@ -77,10 +77,10 @@ jobs:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Set up Node.js
-        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: "22.x"
           cache: npm
@@ -88,7 +88,7 @@ jobs:
 
       - name: Install dependencies
         working-directory: frontend
-        run: npm ci --legacy-peer-deps
+        run: npm ci --legacy-peer-deps --ignore-scripts
 
       - name: Run Linting
         working-directory: frontend
@@ -96,23 +96,23 @@ jobs:
 
       - name: Run Prettier
         working-directory: frontend
-        run: npx prettier --check "src/**/*.{js,ts,tsx}"
+        run: npx --no-install prettier --check "src/**/*.{js,ts,tsx}"
 
       - name: TypeScript Check
         working-directory: frontend
-        run: npx tsc --noEmit
+        run: npx --no-install tsc --noEmit
 
       - name: Run Sort-Package-Json (Import Sorting)
         working-directory: frontend
         run: |
           echo "Running sort-package-json"
-          npx sort-package-json --check
+          npx --no-install sort-package-json --check
 
       - name: Run Audit-CI (Security Check)
         working-directory: frontend
         run: |
           echo "Running audit-ci"
-          npx audit-ci --high --config audit-ci.jsonc
+          npx --no-install audit-ci --high --config audit-ci.jsonc
 
   unit-tests:
     name: Unit Tests
@@ -127,10 +127,10 @@ jobs:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Set up Node.js
-        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: "22.x"
           cache: npm
@@ -138,7 +138,7 @@ jobs:
 
       - name: Install dependencies
         working-directory: frontend
-        run: npm ci --legacy-peer-deps
+        run: npm ci --legacy-peer-deps --ignore-scripts
 
       - name: Run Unit Tests
         working-directory: frontend
@@ -155,10 +155,10 @@ jobs:
       statuses: write # To report GitHub Actions status checks
     steps:
       - name: Checkout repository
-        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1 # v0.35.0
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
           scan-type: "fs"
           scan-ref: frontend
@@ -182,10 +182,10 @@ jobs:
     environment: development
     steps:
       - name: Checkout repository
-        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Set up Node.js
-        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: "22.x"
           cache: npm
@@ -193,7 +193,7 @@ jobs:
 
       - name: Install dependencies
         working-directory: frontend
-        run: npm ci --legacy-peer-deps
+        run: npm ci --legacy-peer-deps --ignore-scripts
 
       - name: Build Frontend
         working-directory: frontend
@@ -230,7 +230,7 @@ jobs:
           fi
 
       - name: Run Trivy Scan on Docker Image
-        uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1 # v0.35.0
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
           image-ref: "vista/frontend:latest"
           format: "table"
