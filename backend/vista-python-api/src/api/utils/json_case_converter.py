@@ -24,7 +24,7 @@ def to_snake_case(s):
 def camelize(data):
     """Convert dictionary keys or list items to camel case."""
     if isinstance(data, dict):
-        return {to_camel_case(k): camelize(v) for k, v in data.items()}
+        return {to_camel_case(k) if isinstance(k, str) else k: camelize(v) for k, v in data.items()}
     if isinstance(data, list):
         return [camelize(i) for i in data]
     return data
