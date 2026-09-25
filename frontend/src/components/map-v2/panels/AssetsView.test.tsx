@@ -186,14 +186,7 @@ describe('AssetsView', () => {
             await waitForComponentReady();
         });
 
-        it('renders close button', async () => {
-            setupMocks();
-            renderWithProviders(<AssetsView {...defaultProps} />);
-            await waitFor(() => {
-                expect(screen.getByLabelText('Close panel')).toBeInTheDocument();
-            });
-        });
-
+        
         it('renders search input', async () => {
             setupMocks();
             renderWithProviders(<AssetsView {...defaultProps} />);
@@ -201,28 +194,18 @@ describe('AssetsView', () => {
                 expect(screen.getByPlaceholderText('Search for an asset')).toBeInTheDocument();
             });
         });
-
-        it('renders focus area dropdown', async () => {
+        
+        it.each([
+            ['close button', 'Close panel'],
+            ['focus area dropdown', 'Select focus area'],
+            ['filter mode dropdown', 'Select filter mode'],
+            ['clear all button', 'Clear all visible assets'],
+        ])('renders %s', async (_, label) => {
             setupMocks();
             renderWithProviders(<AssetsView {...defaultProps} />);
-            await waitFor(() => {
-                expect(screen.getByLabelText('Select focus area')).toBeInTheDocument();
-            });
-        });
 
-        it('renders filter mode dropdown as disabled', async () => {
-            setupMocks();
-            renderWithProviders(<AssetsView {...defaultProps} />);
             await waitFor(() => {
-                expect(screen.getByLabelText('Select filter mode')).toBeInTheDocument();
-            });
-        });
-
-        it('renders clear all button', async () => {
-            setupMocks();
-            renderWithProviders(<AssetsView {...defaultProps} />);
-            await waitFor(() => {
-                expect(screen.getByLabelText('Clear all visible assets')).toBeInTheDocument();
+                expect(screen.getByLabelText(label)).toBeInTheDocument();
             });
         });
 

@@ -20,22 +20,14 @@ describe('ResourceTooltip', () => {
         unit: 'bags',
     };
 
-    it('renders location name', () => {
+    it.each([
+        ['location name', 'Depot Alpha'],
+        ['type name', 'Sandbags'],
+        ['stock info with unit', '50 / 100 bags'],
+    ])('renders %s', (_, text) => {
         renderWithTheme(<ResourceTooltip {...defaultProps} />);
 
-        expect(screen.getByText('Depot Alpha')).toBeInTheDocument();
-    });
-
-    it('renders type name', () => {
-        renderWithTheme(<ResourceTooltip {...defaultProps} />);
-
-        expect(screen.getByText('Sandbags')).toBeInTheDocument();
-    });
-
-    it('renders stock info with unit', () => {
-        renderWithTheme(<ResourceTooltip {...defaultProps} />);
-
-        expect(screen.getByText('50 / 100 bags')).toBeInTheDocument();
+        expect(screen.getByText(text)).toBeInTheDocument();
     });
 
     it('renders progress bar', () => {

@@ -350,19 +350,13 @@ describe('MapView', () => {
     });
 
     describe('Rendering', () => {
-        it('renders map component', async () => {
+        it.each([
+            ['map component', 'map'],
+            ['MapPanels component', 'map-panels'],
+            ['MapControls component', 'map-controls'],
+        ])('renders %s', async (_, testId) => {
             renderWithProviders(<MapView />);
-            await waitForElement('map');
-        });
-
-        it('renders MapPanels component', async () => {
-            renderWithProviders(<MapView />);
-            await waitForElement('map-panels');
-        });
-
-        it('renders MapControls component', async () => {
-            renderWithProviders(<MapView />);
-            await waitForElement('map-controls');
+            await waitForElement(testId);
         });
     });
 
@@ -492,9 +486,7 @@ describe('MapView', () => {
             await waitForElement('asset-layers');
 
             const selectAssetButton = screen.getByTestId('select-asset');
-            await act(async () => {
-                selectAssetButton.click();
-            });
+            selectAssetButton.click();
 
             await waitFor(() => {
                 expect(screen.getByTestId('active-view')).toHaveTextContent('inspector');
@@ -514,9 +506,7 @@ describe('MapView', () => {
             }
 
             const map = screen.getByTestId('map');
-            await act(async () => {
-                fireEvent.click(map);
-            });
+            fireEvent.click(map);
 
             await waitFor(() => {
                 expect(screen.getByTestId('active-view')).toHaveTextContent('inspector');

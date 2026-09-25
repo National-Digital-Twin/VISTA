@@ -65,41 +65,22 @@ describe('colorUtils', () => {
             expect(result).toBeUndefined();
         });
 
-        it('handles value at minimum', () => {
+        it.each([
+            ['value at minimum', 0],
+            ['value at maximum', 100],
+            ['value outside range', 150],
+            ['decimal value', 50.5],
+        ])('handles %s', (_, value) => {
             const colorScale = getColorScale(0, 100);
-            const result = getHexColor(colorScale, 0);
+            const result = getHexColor(colorScale, value);
 
             expect(result).toBeDefined();
             expect(result).toMatch(/^#[0-9a-fA-F]{6}$/);
         });
-
-        it('handles value at maximum', () => {
-            const colorScale = getColorScale(0, 100);
-            const result = getHexColor(colorScale, 100);
-
-            expect(result).toBeDefined();
-            expect(result).toMatch(/^#[0-9a-fA-F]{6}$/);
-        });
-
-        it('handles value outside range', () => {
-            const colorScale = getColorScale(0, 100);
-            const result = getHexColor(colorScale, 150);
-
-            expect(result).toBeDefined();
-            expect(result).toMatch(/^#[0-9a-fA-F]{6}$/);
-        });
-
+        
         it('handles negative value', () => {
             const colorScale = getColorScale(-10, 10);
             const result = getHexColor(colorScale, -5);
-
-            expect(result).toBeDefined();
-            expect(result).toMatch(/^#[0-9a-fA-F]{6}$/);
-        });
-
-        it('handles decimal value', () => {
-            const colorScale = getColorScale(0, 100);
-            const result = getHexColor(colorScale, 50.5);
 
             expect(result).toBeDefined();
             expect(result).toMatch(/^#[0-9a-fA-F]{6}$/);

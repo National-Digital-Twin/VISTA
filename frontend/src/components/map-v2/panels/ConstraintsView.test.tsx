@@ -103,14 +103,6 @@ describe('ConstraintsView', () => {
     };
 
     describe('Rendering', () => {
-        it('renders title', async () => {
-            setupMutationMocks();
-            renderWithProviders(<ConstraintsView {...defaultProps} />);
-            await waitFor(() => {
-                expect(screen.getByText('Constraints')).toBeInTheDocument();
-            });
-        });
-
         it('renders close button', async () => {
             setupMutationMocks();
             renderWithProviders(<ConstraintsView {...defaultProps} />);
@@ -119,27 +111,17 @@ describe('ConstraintsView', () => {
             });
         });
 
-        it('renders constraint type group', async () => {
+        it.each([
+            ['title', 'Constraints'],
+            ['constraint type group', 'Road blocks'],
+            ['draw button', 'Draw new road block'],
+            ['constraint intervention names', 'Road block 1'],
+        ])('renders %s', async (_, text) => {
             setupMutationMocks();
             renderWithProviders(<ConstraintsView {...defaultProps} />);
-            await waitFor(() => {
-                expect(screen.getByText('Road blocks')).toBeInTheDocument();
-            });
-        });
 
-        it('renders draw button', async () => {
-            setupMutationMocks();
-            renderWithProviders(<ConstraintsView {...defaultProps} />);
             await waitFor(() => {
-                expect(screen.getByText('Draw new road block')).toBeInTheDocument();
-            });
-        });
-
-        it('renders constraint intervention names', async () => {
-            setupMutationMocks();
-            renderWithProviders(<ConstraintsView {...defaultProps} />);
-            await waitFor(() => {
-                expect(screen.getByText('Road block 1')).toBeInTheDocument();
+                expect(screen.getByText(text)).toBeInTheDocument();
             });
         });
     });

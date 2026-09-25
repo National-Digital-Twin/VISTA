@@ -132,28 +132,15 @@ describe('PageHeader', () => {
         expect(screen.getByTestId('logo')).toHaveTextContent('Logo: VISTA');
     });
 
-    it('renders Logo component', () => {
+    it.each([
+        ['Logo', 'logo'],
+        ['Navigation', 'navigation'],
+        ['Notifications', 'notifications'],
+        ['UserMenu', 'user-menu'],
+    ])('renders %s component', (_, testId) => {
         renderWithProviders(<PageHeader appName="VISTA" />);
 
-        expect(screen.getByTestId('logo')).toBeInTheDocument();
-    });
-
-    it('renders Navigation component', () => {
-        renderWithProviders(<PageHeader appName="VISTA" />);
-
-        expect(screen.getByTestId('navigation')).toBeInTheDocument();
-    });
-
-    it('renders Notifications component', () => {
-        renderWithProviders(<PageHeader appName="VISTA" />);
-
-        expect(screen.getByTestId('notifications')).toBeInTheDocument();
-    });
-
-    it('renders UserMenu component', () => {
-        renderWithProviders(<PageHeader appName="VISTA" />);
-
-        expect(screen.getByTestId('user-menu')).toBeInTheDocument();
+        expect(screen.getByTestId(testId)).toBeInTheDocument();
     });
 
     it('opens user guide dialog when User guide is clicked', () => {

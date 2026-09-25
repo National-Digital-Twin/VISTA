@@ -318,33 +318,42 @@ describe('geometry-parser', () => {
     });
 
     describe('parseGeometryWithLocation', () => {
-        it('parses multipoint and returns first point location', () => {
-            const result = parseGeometryWithLocation('SRID=4326;MULTIPOINT ((-1.4 50.67), (-1.5 50.77))');
-            expect(result.geometry.type).toBe('MultiPoint');
-            expect(result.lat).toBe(50.67);
-            expect(result.lng).toBe(-1.4);
-        });
+        it.each([
+        {
+            name: 'multipoint',
+            input: 'SRID=4326;MULTIPOINT ((-1.4 50.67), (-1.5 50.77))',
+            type: 'MultiPoint',
+            lat: 50.67,
+            lng: -1.4,
+        },
+        {
+            name: 'point',
+            input: 'SRID=4326;POINT (-1.4 50.67)',
+            type: 'Point',
+            lat: 50.67,
+            lng: -1.4,
+        },
+        {
+            name: 'multilinestring',
+            input: 'SRID=4326;MULTILINESTRING ((-1.4 50.67, -1.4 50.68), (-1.5 50.77, -1.5 50.78))',
+            type: 'MultiLineString',
+            lat: 50.67,
+            lng: -1.4,
+        },
+        {
+            name: 'linestring',
+            input: 'SRID=4326;LINESTRING (-1.4 50.67, -1.4 50.68)',
+            type: 'LineString',
+            lat: 50.67,
+            lng: -1.4,
+        },
+    ])('parses $name and returns the first point location', ({ input, type, lat, lng }) => {
+        const result = parseGeometryWithLocation(input);
 
-        it('parses point and returns point location', () => {
-            const result = parseGeometryWithLocation('SRID=4326;POINT (-1.4 50.67)');
-            expect(result.geometry.type).toBe('Point');
-            expect(result.lat).toBe(50.67);
-            expect(result.lng).toBe(-1.4);
-        });
-
-        it('parses multilinestring and returns first point location', () => {
-            const result = parseGeometryWithLocation('SRID=4326;MULTILINESTRING ((-1.4 50.67, -1.4 50.68), (-1.5 50.77, -1.5 50.78))');
-            expect(result.geometry.type).toBe('MultiLineString');
-            expect(result.lat).toBe(50.67);
-            expect(result.lng).toBe(-1.4);
-        });
-
-        it('parses linestring and returns first point location', () => {
-            const result = parseGeometryWithLocation('SRID=4326;LINESTRING (-1.4 50.67, -1.4 50.68)');
-            expect(result.geometry.type).toBe('LineString');
-            expect(result.lat).toBe(50.67);
-            expect(result.lng).toBe(-1.4);
-        });
+        expect(result.geometry.type).toBe(type);
+        expect(result.lat).toBe(lat);
+        expect(result.lng).toBe(lng);
+    });
 
         it('parses multipolygon and returns centroid location', () => {
             const result = parseGeometryWithLocation('SRID=4326;MULTIPOLYGON (((-1.4 50.67, -1.4 50.68, -1.39 50.68, -1.39 50.67, -1.4 50.67)))');
@@ -389,12 +398,15 @@ describe('geometry-parser', () => {
             expect(result).toEqual({ lat: 50.67, lng: -1.4 });
         });
 
-        it('returns null for empty MultiPoint geometry', () => {
-            const geometry: Geometry = {
-                type: 'MultiPoint',
-                coordinates: [],
-            };
-            const result = getLocationFromGeometry(geometry);
+        it.each([
+            ['MultiPoint', { type: 'MultiPoint', coordinates: [] }],
+            ['LineString', { type: 'LineString', coordinates: [] }],
+            ['MultiLineString', { type: 'MultiLineString', coordinates: [] }],
+            ['Polygon', { type: 'Polygon', coordinates: [] }],
+            ['MultiPolygon', { type: 'MultiPolygon', coordinates: [] }],
+        ])('returns null for empty %s geometry', (_, geometry) => {
+            const result = getLocationFromGeometry(geometry as Geometry);
+
             expect(result).toBeNull();
         });
 
@@ -411,14 +423,6 @@ describe('geometry-parser', () => {
             expect(result).toEqual({ lat: 50.67, lng: -1.4 });
         });
 
-        it('returns null for empty LineString geometry', () => {
-            const geometry: Geometry = {
-                type: 'LineString',
-                coordinates: [],
-            };
-            const result = getLocationFromGeometry(geometry);
-            expect(result).toBeNull();
-        });
 
         it('extracts first point from MultiLineString geometry', () => {
             const geometry: Geometry = {
@@ -436,15 +440,6 @@ describe('geometry-parser', () => {
             };
             const result = getLocationFromGeometry(geometry);
             expect(result).toEqual({ lat: 50.67, lng: -1.4 });
-        });
-
-        it('returns null for empty MultiLineString geometry', () => {
-            const geometry: Geometry = {
-                type: 'MultiLineString',
-                coordinates: [],
-            };
-            const result = getLocationFromGeometry(geometry);
-            expect(result).toBeNull();
         });
 
         it('returns null for MultiLineString with empty first line', () => {
@@ -475,15 +470,6 @@ describe('geometry-parser', () => {
             expect(result!.lng).toBeCloseTo(-1.395);
         });
 
-        it('returns null for empty Polygon geometry', () => {
-            const geometry: Geometry = {
-                type: 'Polygon',
-                coordinates: [],
-            };
-            const result = getLocationFromGeometry(geometry);
-            expect(result).toBeNull();
-        });
-
         it('returns null for Polygon with empty ring', () => {
             const geometry: Geometry = {
                 type: 'Polygon',
@@ -512,15 +498,6 @@ describe('geometry-parser', () => {
             expect(result).not.toBeNull();
             expect(result!.lat).toBeCloseTo(50.675);
             expect(result!.lng).toBeCloseTo(-1.395);
-        });
-
-        it('returns null for empty MultiPolygon geometry', () => {
-            const geometry: Geometry = {
-                type: 'MultiPolygon',
-                coordinates: [],
-            };
-            const result = getLocationFromGeometry(geometry);
-            expect(result).toBeNull();
         });
 
         it('returns null for unsupported geometry type', () => {
