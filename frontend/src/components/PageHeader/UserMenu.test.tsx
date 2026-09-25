@@ -153,9 +153,11 @@ describe('UserMenu', () => {
         }
 
         await waitFor(() => {
-            const profileItem = screen.getByText('My Profile');
-            fireEvent.click(profileItem);
+            expect(screen.getByText('My Profile')).toBeInTheDocument();
         });
+
+        const profileItem = screen.getByText('My Profile');
+        fireEvent.click(profileItem);
 
         expect(onMyProfileClick).toHaveBeenCalledTimes(1);
     });
@@ -171,9 +173,11 @@ describe('UserMenu', () => {
         }
 
         await waitFor(() => {
-            const adminItem = screen.getByText('Admin Settings');
-            fireEvent.click(adminItem);
+            expect(screen.getByText('Admin Settings')).toBeInTheDocument();
         });
+
+        const adminItem = screen.getByText('Admin Settings');
+        fireEvent.click(adminItem);
 
         expect(onAdminSettingsClick).toHaveBeenCalledTimes(1);
     });
@@ -189,9 +193,11 @@ describe('UserMenu', () => {
         }
 
         await waitFor(() => {
-            const privacyItem = screen.getByText('Privacy notice');
-            fireEvent.click(privacyItem);
+            expect(screen.getByText('Privacy notice')).toBeInTheDocument();
         });
+
+        const privacyItem = screen.getByText('Privacy notice');
+        fireEvent.click(privacyItem);
 
         expect(onPrivacyClick).toHaveBeenCalledTimes(1);
     });
@@ -207,9 +213,11 @@ describe('UserMenu', () => {
         }
 
         await waitFor(() => {
-            const userGuideItem = screen.getByText('User guide');
-            fireEvent.click(userGuideItem);
+            expect(screen.getByText('User guide')).toBeInTheDocument();
         });
+
+        const userGuideItem = screen.getByText('User guide');
+        fireEvent.click(userGuideItem);
 
         expect(onRequestsClick).toHaveBeenCalledTimes(1);
     });
@@ -225,9 +233,11 @@ describe('UserMenu', () => {
         }
 
         await waitFor(() => {
-            const signOutItem = screen.getByText('Sign Out');
-            fireEvent.click(signOutItem);
+            expect(screen.getByText('Sign Out')).toBeInTheDocument();
         });
+
+        const signOutItem = screen.getByText('Sign Out');
+        fireEvent.click(signOutItem);
 
         expect(signout).toHaveBeenCalledTimes(1);
     });
@@ -243,9 +253,11 @@ describe('UserMenu', () => {
         }
 
         await waitFor(() => {
-            const profileItem = screen.getByText('My Profile');
-            fireEvent.click(profileItem);
+            expect(screen.getByText('My Profile')).toBeInTheDocument();
         });
+
+        const profileItem = screen.getByText('My Profile');
+        fireEvent.click(profileItem);
 
         await waitFor(() => {
             expect(screen.queryByRole('menu')).not.toBeInTheDocument();
