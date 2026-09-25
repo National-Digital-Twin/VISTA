@@ -186,6 +186,11 @@ describe('auth API', () => {
             });
 
             await signout();
+
+            expect(fetchMock).toHaveBeenCalledTimes(1);
+            expect(fetchMock).toHaveBeenCalledWith('/api/signout', {
+                headers: { 'Content-Type': 'application/json' },
+            });
         });
 
         it('still redirects even if OAuth logout call fails', async () => {
@@ -227,6 +232,9 @@ describe('auth API', () => {
                 });
 
             await signout();
+
+            expect(fetchMock).toHaveBeenCalledTimes(1);
+
         });
 
         it('handles all operations in correct order', async () => {

@@ -71,6 +71,8 @@ describe('invites API', () => {
             };
 
             await sendInvite(inviteData);
+            
+            expect(fetchMock).toHaveBeenCalledTimes(1);
         });
 
         it('throws when response is not ok', async () => {
