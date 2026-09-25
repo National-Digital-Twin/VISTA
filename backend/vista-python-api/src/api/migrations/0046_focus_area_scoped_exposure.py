@@ -3,7 +3,6 @@
 # and is legally attributed to the UK's Department for Business, Innovation, Science and Trade (BIST) as the governing entity.
 
 """Add focus_area_id to exposure score calculation and simplify asset_scores view."""
-# ruff: noqa: E501
 
 from typing import ClassVar
 

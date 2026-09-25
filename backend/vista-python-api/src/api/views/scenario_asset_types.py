@@ -62,10 +62,7 @@ def _build_categories_response(asset_types, visible_type_ids, builder, focus_are
         if sub_cat.id not in sub_cats:
             sub_cats[sub_cat.id] = {"id": str(sub_cat.id), "name": sub_cat.name, "assetTypes": []}
 
-        if at.id in type_ids_with_filters:
-            filtered_count = filtered_counts.get(at.id, 0)
-        else:
-            filtered_count = at.asset_count_in_focus_area
+        filtered_count = filtered_counts.get(at.id, 0) if at.id in type_ids_with_filters else at.asset_count_in_focus_area
 
         sub_cats[sub_cat.id]["assetTypes"].append(
             {

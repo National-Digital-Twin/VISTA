@@ -87,10 +87,7 @@ class AssetScoreFiltersView(APIView):
 
         query = AssetScoreFilter.objects.filter(focus_area=focus_area)
 
-        if asset_type_id:
-            query = query.filter(asset_type_id=asset_type_id)
-        else:
-            query = query.filter(asset_type__isnull=True)
+        query = query.filter(asset_type_id=asset_type_id) if asset_type_id else query.filter(asset_type__isnull=True)
 
         query.delete()
 
