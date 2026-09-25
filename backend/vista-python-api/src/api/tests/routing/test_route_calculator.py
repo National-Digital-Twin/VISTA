@@ -341,11 +341,11 @@ class TestCalculateRouteIntegration:
     @pytest.mark.usefixtures("db")
     def test_no_route_raises_error_when_no_roads(self, calculator):
         """Should raise RuntimeError when no roads exist in database."""
+        start = RoutePoint(lon=-1.0, lat=50.0)
+        end = RoutePoint(lon=-1.5, lat=50.5)
+
         with pytest.raises(RuntimeError, match="Edge spatial index not available"):
-            calculator.calculate_route(
-                start=RoutePoint(lon=-1.0, lat=50.0),
-                end=RoutePoint(lon=-1.5, lat=50.5),
-            )
+            calculator.calculate_route(start=start, end=end)
 
     @pytest.mark.usefixtures("simple_road_network")
     def test_route_includes_total_metrics(self, calculator):
@@ -724,11 +724,11 @@ class TestEmptyRoadNetwork:
         RoadLink.objects.all().delete()
         routing_cache.invalidate()
 
+        start = RoutePoint(lon=-1.0, lat=50.0)
+        end = RoutePoint(lon=-1.2, lat=50.0)
+
         with pytest.raises(RuntimeError, match="Edge spatial index not available"):
-            calculator.calculate_route(
-                start=RoutePoint(lon=-1.0, lat=50.0),
-                end=RoutePoint(lon=-1.2, lat=50.0),
-            )
+            calculator.calculate_route(start=start, end=end)
 
 
 @pytest.mark.django_db
