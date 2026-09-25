@@ -10,9 +10,9 @@ WORKDIR /vista-python-api/core
 # upgrade pip to the latest version
 RUN apt-get install -y --no-install-recommends \
     build-essential \
-    libstdc++6 \
     gdal-bin \
     libgdal-dev \
+    libstdc++6 \
     && rm -rf /var/lib/apt/lists/*
 
 # Install poetry globally
