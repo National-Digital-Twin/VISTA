@@ -319,41 +319,41 @@ describe('geometry-parser', () => {
 
     describe('parseGeometryWithLocation', () => {
         it.each([
-        {
-            name: 'multipoint',
-            input: 'SRID=4326;MULTIPOINT ((-1.4 50.67), (-1.5 50.77))',
-            type: 'MultiPoint',
-            lat: 50.67,
-            lng: -1.4,
-        },
-        {
-            name: 'point',
-            input: 'SRID=4326;POINT (-1.4 50.67)',
-            type: 'Point',
-            lat: 50.67,
-            lng: -1.4,
-        },
-        {
-            name: 'multilinestring',
-            input: 'SRID=4326;MULTILINESTRING ((-1.4 50.67, -1.4 50.68), (-1.5 50.77, -1.5 50.78))',
-            type: 'MultiLineString',
-            lat: 50.67,
-            lng: -1.4,
-        },
-        {
-            name: 'linestring',
-            input: 'SRID=4326;LINESTRING (-1.4 50.67, -1.4 50.68)',
-            type: 'LineString',
-            lat: 50.67,
-            lng: -1.4,
-        },
-    ])('parses $name and returns the first point location', ({ input, type, lat, lng }) => {
-        const result = parseGeometryWithLocation(input);
+            {
+                name: 'multipoint',
+                input: 'SRID=4326;MULTIPOINT ((-1.4 50.67), (-1.5 50.77))',
+                type: 'MultiPoint',
+                lat: 50.67,
+                lng: -1.4,
+            },
+            {
+                name: 'point',
+                input: 'SRID=4326;POINT (-1.4 50.67)',
+                type: 'Point',
+                lat: 50.67,
+                lng: -1.4,
+            },
+            {
+                name: 'multilinestring',
+                input: 'SRID=4326;MULTILINESTRING ((-1.4 50.67, -1.4 50.68), (-1.5 50.77, -1.5 50.78))',
+                type: 'MultiLineString',
+                lat: 50.67,
+                lng: -1.4,
+            },
+            {
+                name: 'linestring',
+                input: 'SRID=4326;LINESTRING (-1.4 50.67, -1.4 50.68)',
+                type: 'LineString',
+                lat: 50.67,
+                lng: -1.4,
+            },
+        ])('parses $name and returns the first point location', ({ input, type, lat, lng }) => {
+            const result = parseGeometryWithLocation(input);
 
-        expect(result.geometry.type).toBe(type);
-        expect(result.lat).toBe(lat);
-        expect(result.lng).toBe(lng);
-    });
+            expect(result.geometry.type).toBe(type);
+            expect(result.lat).toBe(lat);
+            expect(result.lng).toBe(lng);
+        });
 
         it('parses multipolygon and returns centroid location', () => {
             const result = parseGeometryWithLocation('SRID=4326;MULTIPOLYGON (((-1.4 50.67, -1.4 50.68, -1.39 50.68, -1.39 50.67, -1.4 50.67)))');
@@ -422,7 +422,6 @@ describe('geometry-parser', () => {
             const result = getLocationFromGeometry(geometry);
             expect(result).toEqual({ lat: 50.67, lng: -1.4 });
         });
-
 
         it('extracts first point from MultiLineString geometry', () => {
             const geometry: Geometry = {

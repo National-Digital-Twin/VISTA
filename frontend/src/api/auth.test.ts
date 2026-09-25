@@ -234,7 +234,6 @@ describe('auth API', () => {
             await signout();
 
             expect(fetchMock).toHaveBeenCalledTimes(1);
-
         });
 
         it('handles all operations in correct order', async () => {

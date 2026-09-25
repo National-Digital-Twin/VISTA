@@ -186,7 +186,6 @@ describe('AssetsView', () => {
             await waitForComponentReady();
         });
 
-        
         it('renders search input', async () => {
             setupMocks();
             renderWithProviders(<AssetsView {...defaultProps} />);
@@ -194,7 +193,7 @@ describe('AssetsView', () => {
                 expect(screen.getByPlaceholderText('Search for an asset')).toBeInTheDocument();
             });
         });
-        
+
         it.each([
             ['close button', 'Close panel'],
             ['focus area dropdown', 'Select focus area'],

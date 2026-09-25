@@ -71,7 +71,7 @@ describe('invites API', () => {
             };
 
             await sendInvite(inviteData);
-            
+
             expect(fetchMock).toHaveBeenCalledTimes(1);
         });
 

@@ -77,7 +77,7 @@ describe('colorUtils', () => {
             expect(result).toBeDefined();
             expect(result).toMatch(/^#[0-9a-fA-F]{6}$/);
         });
-        
+
         it('handles negative value', () => {
             const colorScale = getColorScale(-10, 10);
             const result = getHexColor(colorScale, -5);

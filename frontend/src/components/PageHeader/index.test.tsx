@@ -297,7 +297,7 @@ describe('PageHeader', () => {
             renderWithProviders(<PageHeader appName="VISTA" />);
 
             const scenarioElements = screen.queryAllByText(/Flood|Newport|Scenario|undefined/);
-            expect(scenarioElements).toHaveLength(0)
+            expect(scenarioElements).toHaveLength(0);
             expect(screen.getByText('S001')).toBeInTheDocument();
         });
 

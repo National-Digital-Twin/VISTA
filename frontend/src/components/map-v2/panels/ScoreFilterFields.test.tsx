@@ -239,12 +239,7 @@ describe('DependencyRangeFields', () => {
             ['allows empty string value', '', ''],
         ])('%s', (_, inputValue, expectedValue) => {
             const onMinChange = vi.fn();
-            renderWithTheme(
-                <DependencyRangeFields
-                    {...defaultProps}
-                    onMinChange={onMinChange}
-                />,
-            );
+            renderWithTheme(<DependencyRangeFields {...defaultProps} onMinChange={onMinChange} />);
 
             const inputs = screen.getAllByRole('spinbutton');
             fireEvent.change(inputs[0], { target: { value: inputValue } });
