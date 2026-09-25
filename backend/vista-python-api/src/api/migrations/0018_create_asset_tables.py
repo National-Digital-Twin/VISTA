@@ -33,9 +33,7 @@ class Migration(migrations.Migration):
                 ("name", models.CharField(max_length=256)),
                 (
                     "category_id",
-                    models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE, to="api.assetcategory"
-                    ),
+                    models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to="api.assetcategory"),
                 ),
             ],
         ),
@@ -46,9 +44,7 @@ class Migration(migrations.Migration):
                 ("name", models.CharField(max_length=256)),
                 (
                     "sub_category_id",
-                    models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE, to="api.assetsubcategory"
-                    ),
+                    models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to="api.assetsubcategory"),
                 ),
             ],
         ),
@@ -60,9 +56,7 @@ class Migration(migrations.Migration):
                 ("geom", django.contrib.gis.db.models.fields.GeometryField(srid=4326)),
                 (
                     "type",
-                    models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE, to="api.assettype"
-                    ),
+                    models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to="api.assettype"),
                 ),
             ],
         ),

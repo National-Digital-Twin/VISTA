@@ -46,17 +46,11 @@ class TestFetchDataForAssetSpecification:
         client = await monkeypatch_client(
             monkeypatch,
             {
-                f"{handler.root_url}{search_url}": MockResponse(
-                    200, {"locations": [{"locationId": location_id}]}
-                ),
-                f"{handler.root_url}{get_details_url(location_id)}": MockResponse(
-                    200, {"registrationStatus": "Active"}
-                ),
+                f"{handler.root_url}{search_url}": MockResponse(200, {"locations": [{"locationId": location_id}]}),
+                f"{handler.root_url}{get_details_url(location_id)}": MockResponse(200, {"registrationStatus": "Active"}),
             },
         )
-        result = await handler.fetch_data_for_asset_specification(
-            {}, f"{handler.root_url}{search_url}"
-        )
+        result = await handler.fetch_data_for_asset_specification({}, f"{handler.root_url}{search_url}")
         assert len(result) == 1
         assert result[0].id == self.asset.id
 
@@ -72,17 +66,11 @@ class TestFetchDataForAssetSpecification:
                 f"{handler.root_url}{search_url}": MockResponse(
                     200, {"locations": [{"locationId": location_id}, {"locationId": "456"}]}
                 ),
-                f"{handler.root_url}{get_details_url(location_id)}": MockResponse(
-                    200, {"registrationStatus": "Active"}
-                ),
-                f"{handler.root_url}{get_details_url('456')}": MockResponse(
-                    200, {"registrationStatus": "Deregistered"}
-                ),
+                f"{handler.root_url}{get_details_url(location_id)}": MockResponse(200, {"registrationStatus": "Active"}),
+                f"{handler.root_url}{get_details_url('456')}": MockResponse(200, {"registrationStatus": "Deregistered"}),
             },
         )
-        result = await handler.fetch_data_for_asset_specification(
-            {}, f"{handler.root_url}{search_url}"
-        )
+        result = await handler.fetch_data_for_asset_specification({}, f"{handler.root_url}{search_url}")
         assert len(result) == 1
         assert result[0].id == self.asset.id
 
@@ -100,20 +88,12 @@ class TestFetchDataForAssetSpecification:
                 f"{handler.root_url}{search_url}": MockResponse(
                     200, {"locations": [{"locationId": location_id}], "nextPageUri": page_2_url}
                 ),
-                f"{handler.root_url}{get_details_url(location_id)}": MockResponse(
-                    200, {"registrationStatus": "Active"}
-                ),
-                f"{handler.root_url}{get_details_url('456')}": MockResponse(
-                    200, {"registrationStatus": "Active"}
-                ),
-                f"{handler.root_url}/{page_2_url}": MockResponse(
-                    200, {"locations": [{"locationId": "456"}]}
-                ),
+                f"{handler.root_url}{get_details_url(location_id)}": MockResponse(200, {"registrationStatus": "Active"}),
+                f"{handler.root_url}{get_details_url('456')}": MockResponse(200, {"registrationStatus": "Active"}),
+                f"{handler.root_url}/{page_2_url}": MockResponse(200, {"locations": [{"locationId": "456"}]}),
             },
         )
-        result = await handler.fetch_data_for_asset_specification(
-            {}, f"{handler.root_url}{search_url}"
-        )
+        result = await handler.fetch_data_for_asset_specification({}, f"{handler.root_url}{search_url}")
         assert len(result) == 2
         assert result[0].id == self.asset.id
         assert result[1].id == self.asset.id

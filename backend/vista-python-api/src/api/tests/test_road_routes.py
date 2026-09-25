@@ -22,8 +22,7 @@ from model_bakery import baker
 from api import models
 
 pytestmark = pytest.mark.skip(
-    reason="These need to be refactored as they are making live calls"
-    "to Open Street Map which will vary in response."
+    reason="These need to be refactored as they are making live callsto Open Street Map which will vary in response."
 )
 
 converter = make_converter()
@@ -247,9 +246,7 @@ def test_road_route_query_no_shortest_route(client):
             }
         ),
         content_type="application/json",
-    ).json() == {
-        "data": {"roadRoute": {"routeGeojson": {"type": "FeatureCollection", "features": []}}}
-    }
+    ).json() == {"data": {"roadRoute": {"routeGeojson": {"type": "FeatureCollection", "features": []}}}}
 
 
 def test_road_route_same_start_end(client):

@@ -25,9 +25,7 @@ class VisibleExposureLayer(models.Model):
         on_delete=models.CASCADE,
         related_name="visible_exposure_layers",
     )
-    exposure_layer = models.ForeignKey(
-        ExposureLayer, on_delete=models.CASCADE, related_name="visible_in"
-    )
+    exposure_layer = models.ForeignKey(ExposureLayer, on_delete=models.CASCADE, related_name="visible_in")
 
     class Meta:
         """Meta configuration."""

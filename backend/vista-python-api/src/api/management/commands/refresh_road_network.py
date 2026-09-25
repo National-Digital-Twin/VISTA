@@ -36,10 +36,7 @@ class RoadNetworkHandler(DataSourceHandler):
 
     async def fetch_all_from_collection(self, collection: str) -> list[dict]:
         """Fetch all features from a collection with concurrent workers."""
-        url = (
-            f"{OS_NGD_BASE_URL}/{collection}/items"
-            f"?key={settings.OS_NGD_API_KEY}&bbox={self.locator}"
-        )
+        url = f"{OS_NGD_BASE_URL}/{collection}/items?key={settings.OS_NGD_API_KEY}&bbox={self.locator}"
         return await self._fetch_paginated(url, collection)
 
     async def _fetch_paginated(self, base_url: str, collection: str) -> list[dict]:
@@ -74,16 +71,12 @@ class RoadNetworkHandler(DataSourceHandler):
 
         return all_features
 
-    async def _fetch_page_range(
-        self, base_url: str, start_page: int, num_pages: int
-    ) -> tuple[list[dict], bool]:
+    async def _fetch_page_range(self, base_url: str, start_page: int, num_pages: int) -> tuple[list[dict], bool]:
         """Fetch a range of pages sequentially. Returns (features, hit_end)."""
         features = []
         for page in range(start_page, start_page + num_pages):
             offset = page * PAGE_SIZE
-            response = await self.fetch_from_url_with_retry(
-                f"{base_url}&offset={offset}&limit={PAGE_SIZE}"
-            )
+            response = await self.fetch_from_url_with_retry(f"{base_url}&offset={offset}&limit={PAGE_SIZE}")
             if not response:
                 return features, True
 
@@ -140,9 +133,7 @@ class Command(BaseCommand):
         speed_lookup = self._build_speed_lookup(speed_features)
         self.logger.info("Built speed lookup with %s entries", len(speed_lookup))
 
-        return [
-            RoadLinkMapper.map_from_os_ngd(feature, speed_lookup) for feature in road_link_features
-        ]
+        return [RoadLinkMapper.map_from_os_ngd(feature, speed_lookup) for feature in road_link_features]
 
     def _build_speed_lookup(self, speed_features: list[dict]) -> dict[str, float]:
         """Build lookup from road link OSID to speed limit in mph."""

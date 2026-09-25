@@ -70,12 +70,8 @@ def members(db, group):  # noqa: ARG001
 def user_invites(db):  # noqa: ARG001
     """Create a user invite for testing."""
     user_invites = []
-    user_invites.append(
-        UserInvite.objects.create(user_id=new_user_uuid, status="pending", created_by=admin_uuid)
-    )
-    user_invites.append(
-        UserInvite.objects.create(user_id=admin_uuid, status="accepted", created_by=admin_uuid)
-    )
+    user_invites.append(UserInvite.objects.create(user_id=new_user_uuid, status="pending", created_by=admin_uuid))
+    user_invites.append(UserInvite.objects.create(user_id=admin_uuid, status="accepted", created_by=admin_uuid))
     return user_invites
 
 
@@ -83,9 +79,7 @@ def user_invites(db):  # noqa: ARG001
 def pending_expired_user_invite(db):  # noqa: ARG001
     """Create a pending expired user invite for testing."""
     ten_days_ago = datetime.now(UTC) - timedelta(days=10)
-    user_invite = UserInvite.objects.create(
-        user_id=new_user_uuid, status="pending", created_by=admin_uuid
-    )
+    user_invite = UserInvite.objects.create(user_id=new_user_uuid, status="pending", created_by=admin_uuid)
     user_invite.created_at = ten_days_ago
     user_invite.save()
     return user_invite
@@ -289,9 +283,7 @@ def test_invite_user_with_groups_creates_group_memberships(client, group, monkey
 
     response = client.post(
         "/api/users/",
-        data=json.dumps(
-            {"email": "bob@test.com", "userType": "general", "groupIds": [str(group.id)]}
-        ),
+        data=json.dumps({"email": "bob@test.com", "userType": "general", "groupIds": [str(group.id)]}),
         content_type="application/json",
     )
 
@@ -412,9 +404,7 @@ def test_resolve_invites_does_not_change_invite_already_accepted(client, user_in
 
 
 @pytest.mark.django_db
-def test_resolve_invites_does_not_change_invite_already_expired(
-    client, expired_user_invite, monkeypatch
-):
+def test_resolve_invites_does_not_change_invite_already_expired(client, expired_user_invite, monkeypatch):
     """Check an expired invite for active user is not changed."""
     monkeypatch.setattr("api.views.users.get_user_id_from_request", get_user_id_from_request)
     response = client.post("/api/users/resolve-invites/")
@@ -525,15 +515,11 @@ def test_delete_user_returns_403_for_general_user(client, monkeypatch):
 def test_delete_user_cleans_up_stale_visible_assets(client, group, members):  # noqa: ARG001
     """Test that deleting a user cleans up their stale visible assets."""
     scenario = Scenario.objects.create(name="Test", is_active=True)
-    focus_area = FocusArea.objects.create(
-        scenario=scenario, user_id=new_user_uuid, name="Map-wide", is_system=True
-    )
+    focus_area = FocusArea.objects.create(scenario=scenario, user_id=new_user_uuid, name="Map-wide", is_system=True)
     data_source = DataSource.objects.create(name="DS", owner="T", description_md="")
     category = AssetCategory.objects.create(name="Infra")
     sub_cat = AssetSubCategory.objects.create(name="Transport", category=category)
-    asset_type = AssetType.objects.create(
-        name="Rail", sub_category=sub_cat, data_source=data_source
-    )
+    asset_type = AssetType.objects.create(name="Rail", sub_category=sub_cat, data_source=data_source)
     GroupDataSourceAccess.objects.create(data_source=data_source, group=group, created_by=uuid4())
     visible_asset = VisibleAsset.objects.create(focus_area=focus_area, asset_type=asset_type)
 

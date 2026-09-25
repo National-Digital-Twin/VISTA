@@ -16,9 +16,7 @@ class NaptanDataSourceHandler(DataSourceHandler):
 
     def build_urls_for_data_source(self, _asset_specification):
         """Build the URLs for fetching the data per the specification given."""
-        return [
-            f"https://naptan.api.dft.gov.uk/v1/access-nodes?dataFormat=csv&atcoAreaCodes={self.locator}"
-        ]
+        return [f"https://naptan.api.dft.gov.uk/v1/access-nodes?dataFormat=csv&atcoAreaCodes={self.locator}"]
 
     async def fetch_data_for_asset_specification(self, asset_specification, url):
         """Fetch the OS NGD data per the specification given."""
@@ -27,9 +25,7 @@ class NaptanDataSourceHandler(DataSourceHandler):
         return [
             ExternalAssetMapper.map_from_naptan(stop, asset_specification)
             for stop in unique_stops
-            if self._is_stop_match_for_asset_specification_filters(
-                stop, asset_specification["filters"]
-            )
+            if self._is_stop_match_for_asset_specification_filters(stop, asset_specification["filters"])
         ]
 
     def _merge_stops_with_same_name_at_same_location(self, seen):
@@ -52,14 +48,9 @@ class NaptanDataSourceHandler(DataSourceHandler):
             for data_filter in data_filters:
                 if isinstance(data_filter["filterValue"], list):
                     conditions.append(
-                        any(
-                            stop[f"{data_filter['filterName']}"] == filter_value
-                            for filter_value in data_filter["filterValue"]
-                        )
+                        any(stop[f"{data_filter['filterName']}"] == filter_value for filter_value in data_filter["filterValue"])
                     )
                 else:
-                    conditions.append(
-                        stop[f"{data_filter['filterName']}"] == data_filter["filterValue"]
-                    )
+                    conditions.append(stop[f"{data_filter['filterName']}"] == data_filter["filterValue"])
             return all(conditions)
         return True

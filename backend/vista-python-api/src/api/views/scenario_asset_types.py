@@ -26,9 +26,7 @@ def _get_focus_area_score_filters(focus_area_id) -> dict[UUID, AssetScoreFilter]
     return {sf.asset_type_id: sf for sf in filters}
 
 
-def _compute_filtered_counts(
-    builder, type_ids_with_filters: set[UUID], geometry
-) -> dict[UUID, int]:
+def _compute_filtered_counts(builder, type_ids_with_filters: set[UUID], geometry) -> dict[UUID, int]:
     """Compute filtered asset counts for types with score filters."""
     if not type_ids_with_filters:
         return {}
@@ -45,9 +43,7 @@ def _build_categories_response(asset_types, visible_type_ids, builder, focus_are
     """Build hierarchical category/subcategory/asset-type response."""
     geometry = focus_area.geometry if focus_area else None
 
-    type_ids_with_filters = {
-        at.id for at in asset_types if has_criteria(builder.ctx.type_filters.get(at.id))
-    }
+    type_ids_with_filters = {at.id for at in asset_types if has_criteria(builder.ctx.type_filters.get(at.id))}
     filtered_counts = _compute_filtered_counts(builder, type_ids_with_filters, geometry)
 
     categories = {}
@@ -76,10 +72,7 @@ def _build_categories_response(asset_types, visible_type_ids, builder, focus_are
             }
         )
 
-    return [
-        {"id": c["id"], "name": c["name"], "subCategories": list(c["subCategories"].values())}
-        for c in categories.values()
-    ]
+    return [{"id": c["id"], "name": c["name"], "subCategories": list(c["subCategories"].values())} for c in categories.values()]
 
 
 class ScenarioAssetTypesView(APIView):
@@ -96,31 +89,23 @@ class ScenarioAssetTypesView(APIView):
         disallowed_type_ids = get_asset_types_user_cannot_access(user_id)
 
         type_filters = _get_focus_area_score_filters(focus_area_id)
-        ctx = FilterContext(
-            scenario_id, user_id, focus_area_id, type_filters, None, disallowed_type_ids
-        )
+        ctx = FilterContext(scenario_id, user_id, focus_area_id, type_filters, None, disallowed_type_ids)
         builder = AssetFilterBuilder(ctx)
 
         focus_area = None
         if focus_area_id:
-            focus_area = get_object_or_404(
-                FocusArea, id=focus_area_id, scenario_id=scenario_id, user_id=user_id
-            )
+            focus_area = get_object_or_404(FocusArea, id=focus_area_id, scenario_id=scenario_id, user_id=user_id)
 
         asset_types_q = self._get_initial_asset_type_query(user_id)
         asset_types_q = self._update_asset_type_query_with_counts(focus_area, asset_types_q)
-        asset_types = asset_types_q.order_by(
-            "sub_category__category__name", "sub_category__name", "name"
-        )
+        asset_types = asset_types_q.order_by("sub_category__category__name", "sub_category__name", "name")
 
         result = _build_categories_response(asset_types, visible_type_ids, builder, focus_area)
         return Response(result)
 
     def _get_initial_asset_type_query(self, user_id):
         """Fetch asset type query filtering based on group access."""
-        data_source_has_any_group_access = GroupDataSourceAccess.objects.filter(
-            data_source=OuterRef("data_source")
-        )
+        data_source_has_any_group_access = GroupDataSourceAccess.objects.filter(data_source=OuterRef("data_source"))
 
         data_source_has_user_membership = GroupDataSourceAccess.objects.filter(
             data_source=OuterRef("data_source"),
@@ -140,9 +125,7 @@ class ScenarioAssetTypesView(APIView):
         """Update asset type query with annotations for counts of assets."""
         if focus_area and focus_area.geometry:
             return asset_types_q.annotate(
-                asset_count_in_focus_area=Count(
-                    "assets", filter=Q(assets__geom__within=focus_area.geometry), distinct=True
-                ),
+                asset_count_in_focus_area=Count("assets", filter=Q(assets__geom__within=focus_area.geometry), distinct=True),
                 asset_count_total=Count("assets", distinct=True),
             )
         return asset_types_q.annotate(

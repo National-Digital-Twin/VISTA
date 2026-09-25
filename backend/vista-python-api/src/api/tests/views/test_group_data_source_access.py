@@ -93,17 +93,13 @@ def membership_b(group, user_b_id):
 @pytest.fixture
 def group_access(group, data_source):
     """Grant the group access to the data source."""
-    return GroupDataSourceAccess.objects.create(
-        data_source=data_source, group=group, created_by=uuid4()
-    )
+    return GroupDataSourceAccess.objects.create(data_source=data_source, group=group, created_by=uuid4())
 
 
 @pytest.fixture
 def other_group_access(other_group, data_source):
     """Grant the other group access to the data source so it stays restricted."""
-    return GroupDataSourceAccess.objects.create(
-        data_source=data_source, group=other_group, created_by=uuid4()
-    )
+    return GroupDataSourceAccess.objects.create(data_source=data_source, group=other_group, created_by=uuid4())
 
 
 # --- DELETE (Revoke access) Tests ---
@@ -126,9 +122,7 @@ def test_revoke_data_source_access_cleans_up_visible_assets(  # noqa: PLR0913
         "api.views.group_data_source_access.get_user_id_from_request",
         get_user_id_from_request,
     )
-    focus_area = FocusArea.objects.create(
-        scenario=scenario, user_id=membership_a.user_id, name="Map-wide", is_system=True
-    )
+    focus_area = FocusArea.objects.create(scenario=scenario, user_id=membership_a.user_id, name="Map-wide", is_system=True)
     VisibleAsset.objects.create(focus_area=focus_area, asset_type=asset_type)
 
     response = client.delete(
@@ -158,12 +152,8 @@ def test_revoke_data_source_access_cleans_up_for_all_group_members(  # noqa: PLR
         "api.views.group_data_source_access.get_user_id_from_request",
         get_user_id_from_request,
     )
-    fa_a = FocusArea.objects.create(
-        scenario=scenario, user_id=membership_a.user_id, name="FA A", is_system=True
-    )
-    fa_b = FocusArea.objects.create(
-        scenario=scenario, user_id=membership_b.user_id, name="FA B", is_system=True
-    )
+    fa_a = FocusArea.objects.create(scenario=scenario, user_id=membership_a.user_id, name="FA A", is_system=True)
+    fa_b = FocusArea.objects.create(scenario=scenario, user_id=membership_b.user_id, name="FA B", is_system=True)
     va_a = VisibleAsset.objects.create(focus_area=fa_a, asset_type=asset_type)
     va_b = VisibleAsset.objects.create(focus_area=fa_b, asset_type=asset_type)
 
@@ -196,12 +186,8 @@ def test_revoke_data_source_access_preserves_assets_when_member_in_another_group
         get_user_id_from_request,
     )
     # User A is also in other_group which retains access
-    GroupMembership.objects.create(
-        group=other_group, user_id=membership_a.user_id, created_by=uuid4()
-    )
-    focus_area = FocusArea.objects.create(
-        scenario=scenario, user_id=membership_a.user_id, name="Map-wide", is_system=True
-    )
+    GroupMembership.objects.create(group=other_group, user_id=membership_a.user_id, created_by=uuid4())
+    focus_area = FocusArea.objects.create(scenario=scenario, user_id=membership_a.user_id, name="Map-wide", is_system=True)
     va = VisibleAsset.objects.create(focus_area=focus_area, asset_type=asset_type)
 
     response = client.delete(
@@ -229,9 +215,7 @@ def test_revoke_last_group_access_preserves_assets_as_ds_becomes_global(  # noqa
         "api.views.group_data_source_access.get_user_id_from_request",
         get_user_id_from_request,
     )
-    focus_area = FocusArea.objects.create(
-        scenario=scenario, user_id=membership_a.user_id, name="Map-wide", is_system=True
-    )
+    focus_area = FocusArea.objects.create(scenario=scenario, user_id=membership_a.user_id, name="Map-wide", is_system=True)
     va = VisibleAsset.objects.create(focus_area=focus_area, asset_type=asset_type)
 
     # No other_group_access — this is the only group with access
@@ -258,12 +242,8 @@ def test_grant_data_source_access_cleans_up_for_non_members(  # noqa: PLR0913
         get_user_id_from_request,
     )
     non_member_id = uuid4()
-    fa_non_member = FocusArea.objects.create(
-        scenario=scenario, user_id=non_member_id, name="FA Non-member", is_system=True
-    )
-    fa_member = FocusArea.objects.create(
-        scenario=scenario, user_id=membership_a.user_id, name="FA Member", is_system=True
-    )
+    fa_non_member = FocusArea.objects.create(scenario=scenario, user_id=non_member_id, name="FA Non-member", is_system=True)
+    fa_member = FocusArea.objects.create(scenario=scenario, user_id=membership_a.user_id, name="FA Member", is_system=True)
     va_non_member = VisibleAsset.objects.create(focus_area=fa_non_member, asset_type=asset_type)
     va_member = VisibleAsset.objects.create(focus_area=fa_member, asset_type=asset_type)
 

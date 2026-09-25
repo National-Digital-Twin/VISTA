@@ -16,16 +16,10 @@ class ScenarioAsset(models.Model):
     """ScenarioAsset model."""
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    scenario = models.ForeignKey(
-        Scenario, on_delete=models.CASCADE, related_name="asset_type_scores"
-    )
-    asset_type = models.ForeignKey(
-        AssetType, on_delete=models.CASCADE, related_name="scenario_scores"
-    )
+    scenario = models.ForeignKey(Scenario, on_delete=models.CASCADE, related_name="asset_type_scores")
+    asset_type = models.ForeignKey(AssetType, on_delete=models.CASCADE, related_name="scenario_scores")
     criticality_score = models.IntegerField()
 
     def __str__(self):
         """Return string representation."""
-        return (
-            f"{self.asset_type} in {self.scenario} has criticality score {self.criticality_score}"
-        )
+        return f"{self.asset_type} in {self.scenario} has criticality score {self.criticality_score}"

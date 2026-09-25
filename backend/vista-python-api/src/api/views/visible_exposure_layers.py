@@ -42,9 +42,7 @@ class VisibleExposureLayerView(APIView):
         is_active = serializer.validated_data["is_active"]
 
         exposure_layer = get_object_or_404(ExposureLayer, id=exposure_layer_id)
-        focus_area = get_object_or_404(
-            FocusArea, id=focus_area_id, scenario=scenario, user_id=user_id
-        )
+        focus_area = get_object_or_404(FocusArea, id=focus_area_id, scenario=scenario, user_id=user_id)
 
         if is_active:
             VisibleExposureLayer.objects.get_or_create(
@@ -91,9 +89,7 @@ class BulkVisibleExposureLayerView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        focus_area = get_object_or_404(
-            FocusArea, id=focus_area_id, scenario=scenario, user_id=user_id
-        )
+        focus_area = get_object_or_404(FocusArea, id=focus_area_id, scenario=scenario, user_id=user_id)
 
         exposure_layer_ids = request.data.get("exposure_layer_ids")
         type_id = request.data.get("type_id")
@@ -111,14 +107,10 @@ class BulkVisibleExposureLayerView(APIView):
 
         if type_id:
             exposure_layer_type = get_object_or_404(ExposureLayerType, id=type_id)
-            exposure_layers = ExposureLayer.objects.filter(
-                accessible_layers_filter, type=exposure_layer_type
-            )
+            exposure_layers = ExposureLayer.objects.filter(accessible_layers_filter, type=exposure_layer_type)
             exposure_layer_ids = list(exposure_layers.values_list("id", flat=True))
         else:
-            exposure_layers = ExposureLayer.objects.filter(
-                accessible_layers_filter, id__in=exposure_layer_ids
-            )
+            exposure_layers = ExposureLayer.objects.filter(accessible_layers_filter, id__in=exposure_layer_ids)
             if exposure_layers.count() != len(exposure_layer_ids):
                 return Response(
                     {"error": "One or more exposure layer IDs are invalid"},

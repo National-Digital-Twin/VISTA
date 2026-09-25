@@ -77,9 +77,7 @@ class ApplicationUserViewSet(ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        user_invite = UserInvite.objects.create(
-            user_id=user_id, status="pending", created_by=req_user_id
-        )
+        user_invite = UserInvite.objects.create(user_id=user_id, status="pending", created_by=req_user_id)
         self._create_group_memberships(group_ids, user_id, req_user_id)
 
         serializer = self.get_serializer(user_invite)
@@ -110,9 +108,9 @@ class ApplicationUserViewSet(ModelViewSet):
     @action(detail=False, methods=["get"], url_path="pending-invites")
     def list_invites(self, request):  # noqa: ARG002
         """Fetch any pending or expired user invites."""
-        user_invites = UserInvite.objects.filter(
-            status__in=[UserInvite.PENDING, UserInvite.EXPIRED]
-        ).order_by("-status", "-created_at")
+        user_invites = UserInvite.objects.filter(status__in=[UserInvite.PENDING, UserInvite.EXPIRED]).order_by(
+            "-status", "-created_at"
+        )
         serializer = self.get_serializer(user_invites, many=True)
         return Response(serializer.data)
 
@@ -172,8 +170,4 @@ class ApplicationUserViewSet(ModelViewSet):
                 accepted_user_ids.append(str(invite.user_id))
             all_invited_user_ids.append(str(invite.user_id))
 
-        return [
-            user
-            for user in users
-            if user.id in accepted_user_ids or user.id not in all_invited_user_ids
-        ]
+        return [user for user in users if user.id in accepted_user_ids or user.id not in all_invited_user_ids]

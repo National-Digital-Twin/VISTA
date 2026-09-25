@@ -89,8 +89,4 @@ class ExposureLayer(models.Model):
     @property
     def published_id(self) -> str | None:
         """Return the formatted published ID, or None if not published."""
-        return (
-            f"UD.{self.published_id_int}"
-            if self.published_id_int and self.is_ready_for_admin_removal
-            else None
-        )
+        return f"UD.{self.published_id_int}" if self.published_id_int and self.is_ready_for_admin_removal else None

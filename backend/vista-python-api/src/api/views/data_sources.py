@@ -19,6 +19,4 @@ class DataSourceViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         """Get queryset in deference to request query parameters."""
-        return DataSource.objects.annotate(
-            asset_count=Count("types__assets"), last_updated=Max("types__assets__last_updated")
-        )
+        return DataSource.objects.annotate(asset_count=Count("types__assets"), last_updated=Max("types__assets__last_updated"))

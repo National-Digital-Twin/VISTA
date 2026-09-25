@@ -44,9 +44,7 @@ class TestFetchDataForAssetSpecification:
             monkeypatch,
             {
                 url: MockResponse(200, {"result": {"result": {"records": [{"id": uuid4()}]}}}),
-                self.package_url: MockResponse(
-                    200, {"result": {"resources": [{"name": "pharmacies"}]}}
-                ),
+                self.package_url: MockResponse(200, {"result": {"resources": [{"name": "pharmacies"}]}}),
                 self.geocode_url: MockResponse(200, [{"lat": 0, "lon": 1}]),
             },
         )

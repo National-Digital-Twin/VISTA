@@ -48,9 +48,7 @@ class ScenarioResourceInterventionsView(APIView):
         resource_types = ResourceInterventionType.objects.prefetch_related(
             Prefetch(
                 "locations",
-                queryset=ResourceInterventionLocation.objects.filter(
-                    scenario_id=scenario_id
-                ).order_by("name"),
+                queryset=ResourceInterventionLocation.objects.filter(scenario_id=scenario_id).order_by("name"),
             ),
         )
 
@@ -117,10 +115,7 @@ class ScenarioResourceInterventionLocationView(APIView):
         if action_type == "withdraw":
             if quantity > location.current_stock:
                 return Response(
-                    {
-                        "error": f"Insufficient stock. Available: {location.current_stock}, "
-                        f"requested: {quantity}"
-                    },
+                    {"error": f"Insufficient stock. Available: {location.current_stock}, requested: {quantity}"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
             location.current_stock -= quantity
@@ -192,16 +187,12 @@ class ScenarioResourceInterventionActionsView(APIView):
         actions = actions[:limit]
 
         user_name_map = IdpRepository().get_user_name_map()
-        serializer = ResourceInterventionActionLogSerializer(
-            actions, many=True, context={"user_name_map": user_name_map}
-        )
+        serializer = ResourceInterventionActionLogSerializer(actions, many=True, context={"user_name_map": user_name_map})
 
         response_data = {
             "total_count": total_count,
             "results": serializer.data,
-            "next_cursor": actions[-1].created_at.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
-            if has_next
-            else None,
+            "next_cursor": actions[-1].created_at.strftime("%Y-%m-%dT%H:%M:%S.%fZ") if has_next else None,
         }
         return Response(response_data)
 

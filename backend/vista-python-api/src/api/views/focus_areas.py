@@ -22,9 +22,7 @@ class FocusAreaViewSet(viewsets.ViewSet):
 
     def _get_next_area_name(self, scenario, user_id):
         """Generate the next sequential area name (Area 1, Area 2, etc.)."""
-        existing_count = FocusArea.objects.filter(
-            scenario=scenario, user_id=user_id, is_system=False
-        ).count()
+        existing_count = FocusArea.objects.filter(scenario=scenario, user_id=user_id, is_system=False).count()
         return f"Area {existing_count + 1}"
 
     def list(self, request, scenario_id=None):

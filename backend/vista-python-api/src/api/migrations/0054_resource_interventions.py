@@ -27,16 +27,12 @@ class Migration(migrations.Migration):
             fields=[
                 (
                     "id",
-                    models.UUIDField(
-                        default=uuid.uuid4, editable=False, primary_key=True, serialize=False
-                    ),
+                    models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False),
                 ),
                 ("user_id", models.UUIDField(db_index=True)),
                 (
                     "action_type",
-                    models.CharField(
-                        choices=[("withdraw", "Withdraw"), ("restock", "Restock")], max_length=10
-                    ),
+                    models.CharField(choices=[("withdraw", "Withdraw"), ("restock", "Restock")], max_length=10),
                 ),
                 ("quantity", models.IntegerField()),
                 ("created_at", models.DateTimeField(auto_now_add=True)),
@@ -50,9 +46,7 @@ class Migration(migrations.Migration):
             fields=[
                 (
                     "id",
-                    models.UUIDField(
-                        default=uuid.uuid4, editable=False, primary_key=True, serialize=False
-                    ),
+                    models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False),
                 ),
                 ("name", models.CharField(max_length=255)),
                 ("geometry", django.contrib.gis.db.models.fields.PointField(srid=4326)),
@@ -70,9 +64,7 @@ class Migration(migrations.Migration):
             fields=[
                 (
                     "id",
-                    models.UUIDField(
-                        default=uuid.uuid4, editable=False, primary_key=True, serialize=False
-                    ),
+                    models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False),
                 ),
                 ("name", models.CharField(max_length=255, unique=True)),
                 ("unit", models.CharField(max_length=50)),
@@ -86,9 +78,7 @@ class Migration(migrations.Migration):
             fields=[
                 (
                     "id",
-                    models.UUIDField(
-                        default=uuid.uuid4, editable=False, primary_key=True, serialize=False
-                    ),
+                    models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False),
                 ),
                 ("user_id", models.UUIDField(db_index=True)),
             ],
@@ -140,9 +130,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AddIndex(
             model_name="resourceinterventionaction",
-            index=models.Index(
-                fields=["location", "-created_at"], name="resource_action_location_idx"
-            ),
+            index=models.Index(fields=["location", "-created_at"], name="resource_action_location_idx"),
         ),
         migrations.AddIndex(
             model_name="resourceinterventionaction",

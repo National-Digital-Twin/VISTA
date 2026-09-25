@@ -40,12 +40,8 @@ def flood_layer_type():
 def low_bridge_asset_type():
     """Create low bridge asset type."""
     category = AssetCategory.objects.create(id=uuid.uuid4(), name="Transport")
-    sub_category = AssetSubCategory.objects.create(
-        id=uuid.uuid4(), name="Road infrastructure", category=category
-    )
-    data_source = DataSource.objects.create(
-        id=uuid.uuid4(), name="Test Source", owner="Test", description_md="Test"
-    )
+    sub_category = AssetSubCategory.objects.create(id=uuid.uuid4(), name="Road infrastructure", category=category)
+    data_source = DataSource.objects.create(id=uuid.uuid4(), name="Test Source", owner="Test", description_md="Test")
     return AssetType.objects.create(
         id=uuid.uuid4(),
         name="Low bridge",
@@ -79,9 +75,7 @@ class TestConstraintProviderUnit:
 
         assert len(geometries) == 1
 
-    def test_line_string_constraint_is_buffered(
-        self, road_blocks_type, mock_user_id, create_mapwide_focus_area
-    ):
+    def test_line_string_constraint_is_buffered(self, road_blocks_type, mock_user_id, create_mapwide_focus_area):
         """LineString constraints should be buffered into polygons."""
         scenario = Scenario.objects.create(name="Test", is_active=False)
         create_mapwide_focus_area(scenario)
@@ -99,13 +93,9 @@ class TestConstraintProviderUnit:
 
         assert len(geometries) == 1
         geom = geometries[0]
-        assert geom.geom_type == "Polygon", (
-            f"LineString should be buffered to Polygon, got {geom.geom_type}"
-        )
+        assert geom.geom_type == "Polygon", f"LineString should be buffered to Polygon, got {geom.geom_type}"
 
-    def test_polygon_constraint_not_buffered(
-        self, road_blocks_type, mock_user_id, create_mapwide_focus_area
-    ):
+    def test_polygon_constraint_not_buffered(self, road_blocks_type, mock_user_id, create_mapwide_focus_area):
         """Polygon constraints should be returned without additional buffering."""
         scenario = Scenario.objects.create(name="Test", is_active=False)
         create_mapwide_focus_area(scenario)
@@ -137,9 +127,7 @@ class TestConstraintProviderUnit:
         # Area should be approximately the same (not buffered)
         assert abs(geom.area - original_polygon.area) < original_polygon.area * 0.01
 
-    def test_flood_geometry_from_mapwide_focus_area(
-        self, flood_layer_type, mock_user_id, create_mapwide_focus_area
-    ):
+    def test_flood_geometry_from_mapwide_focus_area(self, flood_layer_type, mock_user_id, create_mapwide_focus_area):
         """Multiple flood layers visible on the map-wide focus area should all be returned."""
         scenario = Scenario.objects.create(name="Test", is_active=False)
 

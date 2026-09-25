@@ -24,9 +24,7 @@ class Migration(migrations.Migration):
             fields=[
                 (
                     "id",
-                    models.UUIDField(
-                        default=uuid.uuid4, editable=False, primary_key=True, serialize=False
-                    ),
+                    models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False),
                 ),
                 ("osid", models.CharField(db_index=True, max_length=100, unique=True)),
                 ("geometry", django.contrib.gis.db.models.fields.LineStringField(srid=4326)),

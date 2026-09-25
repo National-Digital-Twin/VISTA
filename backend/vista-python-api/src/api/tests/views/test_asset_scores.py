@@ -49,8 +49,7 @@ def _get_criticality_score_for_asset(fixture, asset_id, scenario_id):
             [
                 scenario_asset.criticality_score
                 for scenario_asset in fixture["asset_scores"]
-                if scenario_asset.asset_type.id == asset_type_id
-                and scenario_asset.scenario_id == scenario_id
+                if scenario_asset.asset_type.id == asset_type_id and scenario_asset.scenario_id == scenario_id
             ]
         )
     )
@@ -75,10 +74,7 @@ def _get_exposure_score_for_asset(fixture, asset_id, scenario_id):
     in_count = 0
     near_count = 0
     for exposure_layer in fixture["exposure_layers"]:
-        if (
-            scenario_id != exposure_layer.focus_area.scenario.id
-            or not exposure_layer.exposure_layer.type.impacts_exposure_score
-        ):
+        if scenario_id != exposure_layer.focus_area.scenario.id or not exposure_layer.exposure_layer.type.impacts_exposure_score:
             continue
         poly_m = exposure_layer.exposure_layer.geometry.transform(3857, clone=True)
         pt_m = asset.geom.transform(3857, clone=True)
@@ -155,9 +151,7 @@ def fixture(db):  # noqa: ARG001
         type=type_wastewater_collection,
     )
 
-    type_stadium = AssetType.objects.create(
-        id=uuid.uuid4(), name="Stadiums", sub_category=sub_cat, data_source=data_source_ngd
-    )
+    type_stadium = AssetType.objects.create(id=uuid.uuid4(), name="Stadiums", sub_category=sub_cat, data_source=data_source_ngd)
     asset3 = Asset.objects.create(
         external_id=uuid.uuid4(),
         id=uuid.uuid4(),
@@ -168,18 +162,12 @@ def fixture(db):  # noqa: ARG001
 
     dep1 = Dependency.objects.create(provider_asset=asset1, dependent_asset=asset2)
     dep2 = Dependency.objects.create(provider_asset=asset1, dependent_asset=asset3)
-    poly = Polygon(
-        ((-0.001, -0.001), (0.001, -0.001), (0.001, 0.001), (-0.001, 0.001), (-0.001, -0.001))
-    )
+    poly = Polygon(((-0.001, -0.001), (0.001, -0.001), (0.001, 0.001), (-0.001, 0.001), (-0.001, -0.001)))
 
     exposure_layer_type = ExposureLayerType.objects.create(name="Flood")
     poly_buffered = buffer_geometry(poly)
-    ExposureLayer.objects.create(
-        geometry=poly, geometry_buffered=poly_buffered, type=exposure_layer_type
-    )
-    exposure_layer = ExposureLayer.objects.create(
-        geometry=poly, geometry_buffered=poly_buffered, type=exposure_layer_type
-    )
+    ExposureLayer.objects.create(geometry=poly, geometry_buffered=poly_buffered, type=exposure_layer_type)
+    exposure_layer = ExposureLayer.objects.create(geometry=poly, geometry_buffered=poly_buffered, type=exposure_layer_type)
     focus_area = FocusArea.objects.create(
         scenario=scenario1,
         user_id=user_id,
@@ -188,42 +176,24 @@ def fixture(db):  # noqa: ARG001
         is_system=True,
         is_active=True,
     )
-    vis_exposure_layer = VisibleExposureLayer.objects.create(
-        focus_area=focus_area, exposure_layer=exposure_layer
-    )
+    vis_exposure_layer = VisibleExposureLayer.objects.create(focus_area=focus_area, exposure_layer=exposure_layer)
 
-    exposure_layer_type2 = ExposureLayerType.objects.create(
-        name="Wildfire", impacts_exposure_score=False
-    )
-    ExposureLayer.objects.create(
-        geometry=poly, geometry_buffered=poly_buffered, type=exposure_layer_type2
-    )
-    exposure_layer2 = ExposureLayer.objects.create(
-        geometry=poly, geometry_buffered=poly_buffered, type=exposure_layer_type2
-    )
-    vis_exposure_layer2 = VisibleExposureLayer.objects.create(
-        focus_area=focus_area, exposure_layer=exposure_layer2
-    )
+    exposure_layer_type2 = ExposureLayerType.objects.create(name="Wildfire", impacts_exposure_score=False)
+    ExposureLayer.objects.create(geometry=poly, geometry_buffered=poly_buffered, type=exposure_layer_type2)
+    exposure_layer2 = ExposureLayer.objects.create(geometry=poly, geometry_buffered=poly_buffered, type=exposure_layer_type2)
+    vis_exposure_layer2 = VisibleExposureLayer.objects.create(focus_area=focus_area, exposure_layer=exposure_layer2)
 
-    scenario_asset_1 = ScenarioAsset.objects.create(
-        scenario=scenario1, asset_type=type_substation, criticality_score=3
-    )
+    scenario_asset_1 = ScenarioAsset.objects.create(scenario=scenario1, asset_type=type_substation, criticality_score=3)
     scenario_asset_2 = ScenarioAsset.objects.create(
         scenario=scenario1, asset_type=type_wastewater_collection, criticality_score=2
     )
-    scenario_asset_3 = ScenarioAsset.objects.create(
-        scenario=scenario1, asset_type=type_stadium, criticality_score=1
-    )
+    scenario_asset_3 = ScenarioAsset.objects.create(scenario=scenario1, asset_type=type_stadium, criticality_score=1)
 
-    scenario_asset_4 = ScenarioAsset.objects.create(
-        scenario=scenario2, asset_type=type_substation, criticality_score=2
-    )
+    scenario_asset_4 = ScenarioAsset.objects.create(scenario=scenario2, asset_type=type_substation, criticality_score=2)
     scenario_asset_5 = ScenarioAsset.objects.create(
         scenario=scenario2, asset_type=type_wastewater_collection, criticality_score=3
     )
-    scenario_asset_6 = ScenarioAsset.objects.create(
-        scenario=scenario2, asset_type=type_stadium, criticality_score=2
-    )
+    scenario_asset_6 = ScenarioAsset.objects.create(scenario=scenario2, asset_type=type_stadium, criticality_score=2)
 
     return {
         "assets": [asset1, asset2, asset3],
@@ -243,9 +213,7 @@ def fixture(db):  # noqa: ARG001
 
 
 @pytest.mark.django_db
-@pytest.mark.parametrize(
-    ("asset_num", "scenario_num"), [(0, 0), (1, 0), (2, 0), (0, 1), (1, 1), (2, 1)]
-)
+@pytest.mark.parametrize(("asset_num", "scenario_num"), [(0, 0), (1, 0), (2, 0), (0, 1), (1, 1), (2, 1)])
 def test_retrieve_asset_score(fixture, client, asset_num, scenario_num, mock_user_id):
     """Test retrieving a single asset score with dependents."""
     asset = fixture["assets"][asset_num]
@@ -255,18 +223,9 @@ def test_retrieve_asset_score(fixture, client, asset_num, scenario_num, mock_use
 
     mock_user_id.assert_called_once()
     assert response.status_code == http_ok
-    assert (
-        data["criticalityScore"]
-        == f"{_get_criticality_score_for_asset(fixture, asset.id, scenario.id):.2f}"
-    )
-    assert (
-        data["dependencyScore"]
-        == f"{_get_dependency_score_for_asset(fixture, asset.id, scenario.id):.2f}"
-    )
-    assert (
-        data["exposureScore"]
-        == f"{_get_exposure_score_for_asset(fixture, asset.id, scenario.id):.2f}"
-    )
+    assert data["criticalityScore"] == f"{_get_criticality_score_for_asset(fixture, asset.id, scenario.id):.2f}"
+    assert data["dependencyScore"] == f"{_get_dependency_score_for_asset(fixture, asset.id, scenario.id):.2f}"
+    assert data["exposureScore"] == f"{_get_exposure_score_for_asset(fixture, asset.id, scenario.id):.2f}"
     assert data["redundancyScore"] == f"{3:.2f}"
 
 
@@ -281,14 +240,8 @@ def test_retrieve_asset_score_for_alternate_user(fixture, client, asset_num, moc
 
     mock_other_user_id.assert_called_once()
     assert response.status_code == http_ok
-    assert (
-        data["criticalityScore"]
-        == f"{_get_criticality_score_for_asset(fixture, asset.id, scenario.id):.2f}"
-    )
-    assert (
-        data["dependencyScore"]
-        == f"{_get_dependency_score_for_asset(fixture, asset.id, scenario.id):.2f}"
-    )
+    assert data["criticalityScore"] == f"{_get_criticality_score_for_asset(fixture, asset.id, scenario.id):.2f}"
+    assert data["dependencyScore"] == f"{_get_dependency_score_for_asset(fixture, asset.id, scenario.id):.2f}"
     assert data["exposureScore"] == f"{0:.2f}"
     assert data["redundancyScore"] == f"{3:.2f}"
 
@@ -314,9 +267,7 @@ def test_retrieve_asset_score_with_focus_area_id(fixture, client, mock_user_id):
     # Get the focus area from fixture (has exposure layer enabled)
     focus_area = FocusArea.objects.filter(scenario=scenario, user_id=user_id).first()
 
-    response = client.get(
-        f"/api/scenarios/{scenario.id}/assetscores/{asset.id}/?focus_area_id={focus_area.id}"
-    )
+    response = client.get(f"/api/scenarios/{scenario.id}/assetscores/{asset.id}/?focus_area_id={focus_area.id}")
     data = response.json()
 
     mock_user_id.assert_called_once()
@@ -341,9 +292,7 @@ def test_retrieve_asset_score_focus_area_no_exposure_layers(fixture, client, moc
         is_active=True,
     )
 
-    response = client.get(
-        f"/api/scenarios/{scenario.id}/assetscores/{asset.id}/?focus_area_id={fa_no_layers.id}"
-    )
+    response = client.get(f"/api/scenarios/{scenario.id}/assetscores/{asset.id}/?focus_area_id={fa_no_layers.id}")
     data = response.json()
 
     mock_user_id.assert_called_once()
@@ -367,9 +316,7 @@ def test_retrieve_asset_score_focus_area_wrong_user_returns_404(fixture, client,
         is_active=True,
     )
 
-    response = client.get(
-        f"/api/scenarios/{scenario.id}/assetscores/{asset.id}/?focus_area_id={fa_other_user.id}"
-    )
+    response = client.get(f"/api/scenarios/{scenario.id}/assetscores/{asset.id}/?focus_area_id={fa_other_user.id}")
 
     mock_user_id.assert_called_once()
     assert response.status_code == http_not_found

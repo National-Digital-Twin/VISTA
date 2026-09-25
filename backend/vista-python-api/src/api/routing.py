@@ -81,10 +81,7 @@ def flood_graph(graph: MultiDiGraph, flood_extent: GeoJSON, points: Sequence[Cen
         restrictions = gpd.GeoDataFrame(
             None,
             geometry=[
-                shapely.Polygon(
-                    shell=circle_to_polygon(point, radius=Meters(100), options=Options(5))
-                )
-                for point in points
+                shapely.Polygon(shell=circle_to_polygon(point, radius=Meters(100), options=Options(5))) for point in points
             ],
             crs="EPSG:4326",
         )
@@ -120,9 +117,7 @@ class Point:
     Y: float  # latitude in degrees North.
 
 
-def generate_route(
-    graph: MultiDiGraph, origin: Point | None, destination: Point | None
-) -> gpd.GeoDataFrame:
+def generate_route(graph: MultiDiGraph, origin: Point | None, destination: Point | None) -> gpd.GeoDataFrame:
     """
     Plot route between two Points on our osmnx Graph.
 

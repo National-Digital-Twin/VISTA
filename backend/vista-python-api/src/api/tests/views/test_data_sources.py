@@ -32,14 +32,8 @@ def asset_data(db, data_source):  # noqa: ARG001
     """Create asset data associated with data source."""
     asset_category = AssetCategory.objects.create(name="Utility")
     asset_subcategory = AssetSubCategory.objects.create(name="Utility", category=asset_category)
-    asset_type = AssetType.objects.create(
-        name="Pylon", data_source=data_source, sub_category=asset_subcategory
-    )
-    return [
-        Asset.objects.create(
-            name="Pylon_One", external_id=uuid.uuid4(), geom=Point(0.5, 0.5), type=asset_type
-        )
-    ]
+    asset_type = AssetType.objects.create(name="Pylon", data_source=data_source, sub_category=asset_subcategory)
+    return [Asset.objects.create(name="Pylon_One", external_id=uuid.uuid4(), geom=Point(0.5, 0.5), type=asset_type)]
 
 
 @pytest.fixture
@@ -66,9 +60,7 @@ def group_no_access(db):  # noqa: ARG001
 def group_and_member(db, data_source):  # noqa: ARG001
     """Create a group for testing."""
     group = Group.objects.create(name="Volunteers", created_by=admin_id)
-    member = GroupMembership.objects.create(
-        group=group, user_id=group_member_id, created_by=admin_id
-    )
+    member = GroupMembership.objects.create(group=group, user_id=group_member_id, created_by=admin_id)
     GroupDataSourceAccess.objects.create(data_source=data_source, group=group)
     return (group, member)
 
@@ -223,13 +215,9 @@ def test_retrieve_data_sources_returns_groups_with_access_without_members(
 
 
 @pytest.mark.django_db
-def test_add_group_access_to_data_source_is_successful(
-    data_source, group_no_access, client, monkeypatch
-):
+def test_add_group_access_to_data_source_is_successful(data_source, group_no_access, client, monkeypatch):
     """Test that the create function works as expected."""
-    monkeypatch.setattr(
-        "api.views.group_data_source_access.get_user_id_from_request", get_user_id_from_request
-    )
+    monkeypatch.setattr("api.views.group_data_source_access.get_user_id_from_request", get_user_id_from_request)
     add_access_response = client.post(
         f"/api/datasources/{data_source.id}/access/",
         data=json.dumps({"group": str(group_no_access.id)}),
@@ -237,27 +225,19 @@ def test_add_group_access_to_data_source_is_successful(
     )
     assert add_access_response.status_code == http_created
 
-    data_source_response = client.get(
-        f"/api/datasources/{data_source.id}/", content_type="application/json"
-    )
+    data_source_response = client.get(f"/api/datasources/{data_source.id}/", content_type="application/json")
     data = data_source_response.json()
     assert len(data["groupsWithAccess"]) == 1
     assert data["groupsWithAccess"][0]["id"] == str(group_no_access.id)
 
-    group_data_source_access = GroupDataSourceAccess.objects.filter(
-        group_id=group_no_access.id, data_source_id=data_source.id
-    )
+    group_data_source_access = GroupDataSourceAccess.objects.filter(group_id=group_no_access.id, data_source_id=data_source.id)
     assert group_data_source_access[0].created_by == admin_id
 
 
 @pytest.mark.django_db
-def test_add_group_access_to_data_source_returns_404_for_unknown_data_source(
-    client, group_no_access, monkeypatch
-):
+def test_add_group_access_to_data_source_returns_404_for_unknown_data_source(client, group_no_access, monkeypatch):
     """Test that the create function returns 404 for unknown data source."""
-    monkeypatch.setattr(
-        "api.views.group_data_source_access.get_user_id_from_request", get_user_id_from_request
-    )
+    monkeypatch.setattr("api.views.group_data_source_access.get_user_id_from_request", get_user_id_from_request)
     response = client.post(
         f"/api/datasources/{uuid.uuid4()}/access/",
         data=json.dumps({"group": str(group_no_access.id)}),
@@ -267,13 +247,9 @@ def test_add_group_access_to_data_source_returns_404_for_unknown_data_source(
 
 
 @pytest.mark.django_db
-def test_add_group_access_to_data_source_returns_400_for_unknown_group(
-    data_source, client, monkeypatch
-):
+def test_add_group_access_to_data_source_returns_400_for_unknown_group(data_source, client, monkeypatch):
     """Test that the create function returns 400 for unknown group."""
-    monkeypatch.setattr(
-        "api.views.group_data_source_access.get_user_id_from_request", get_user_id_from_request
-    )
+    monkeypatch.setattr("api.views.group_data_source_access.get_user_id_from_request", get_user_id_from_request)
     response = client.post(
         f"/api/datasources/{data_source.id}/access/",
         data=json.dumps({"group": str(uuid.uuid4())}),
@@ -283,9 +259,7 @@ def test_add_group_access_to_data_source_returns_400_for_unknown_group(
 
 
 @pytest.mark.django_db
-def test_add_group_access_to_data_source_returns_returns_403_for_general_user(
-    data_source, group_no_access, client, monkeypatch
-):
+def test_add_group_access_to_data_source_returns_returns_403_for_general_user(data_source, group_no_access, client, monkeypatch):
     """Test that GET returns a 403 if not admin."""
     monkeypatch.setattr("api.views.group_data_source_access.Administrator", Administrator)
 
@@ -301,50 +275,32 @@ def test_add_group_access_to_data_source_returns_returns_403_for_general_user(
 
 
 @pytest.mark.django_db
-def test_delete_group_access_to_data_source_is_successful(
-    data_source, group_no_member, client, monkeypatch
-):
+def test_delete_group_access_to_data_source_is_successful(data_source, group_no_member, client, monkeypatch):
     """Test that the delete function works as expected."""
-    monkeypatch.setattr(
-        "api.views.group_data_source_access.get_user_id_from_request", get_user_id_from_request
-    )
-    remove_access_response = client.delete(
-        f"/api/datasources/{data_source.id}/access/{group_no_member.id}/"
-    )
+    monkeypatch.setattr("api.views.group_data_source_access.get_user_id_from_request", get_user_id_from_request)
+    remove_access_response = client.delete(f"/api/datasources/{data_source.id}/access/{group_no_member.id}/")
     assert remove_access_response.status_code == http_no_content
 
-    data_source_response = client.get(
-        f"/api/datasources/{data_source.id}/", content_type="application/json"
-    )
+    data_source_response = client.get(f"/api/datasources/{data_source.id}/", content_type="application/json")
     data = data_source_response.json()
     assert not data["groupsWithAccess"]
 
-    group_data_source_access = GroupDataSourceAccess.objects.filter(
-        group_id=group_no_member.id, data_source_id=data_source.id
-    )
+    group_data_source_access = GroupDataSourceAccess.objects.filter(group_id=group_no_member.id, data_source_id=data_source.id)
     assert not group_data_source_access
 
 
 @pytest.mark.django_db
-def test_delete_group_access_to_data_source_returns_404_for_unknown_data_source(
-    client, group_no_access, monkeypatch
-):
+def test_delete_group_access_to_data_source_returns_404_for_unknown_data_source(client, group_no_access, monkeypatch):
     """Test that the delete function returns 404 for unknown data source."""
-    monkeypatch.setattr(
-        "api.views.group_data_source_access.get_user_id_from_request", get_user_id_from_request
-    )
+    monkeypatch.setattr("api.views.group_data_source_access.get_user_id_from_request", get_user_id_from_request)
     response = client.delete(f"/api/datasources/{uuid.uuid4()}/access/{group_no_access.id}/")
     assert response.status_code == http_not_found
 
 
 @pytest.mark.django_db
-def test_delete_group_access_to_data_source_returns_400_for_unknown_group(
-    data_source, client, monkeypatch
-):
+def test_delete_group_access_to_data_source_returns_400_for_unknown_group(data_source, client, monkeypatch):
     """Test that the delete function returns 400 for unknown group."""
-    monkeypatch.setattr(
-        "api.views.group_data_source_access.get_user_id_from_request", get_user_id_from_request
-    )
+    monkeypatch.setattr("api.views.group_data_source_access.get_user_id_from_request", get_user_id_from_request)
     response = client.delete(f"/api/datasources/{data_source.id}/access/{uuid.uuid4()}/")
     assert response.status_code == http_not_found
 

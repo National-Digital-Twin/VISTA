@@ -45,9 +45,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="groupdatasourceaccess",
             name="data_source",
-            field=models.ForeignKey(
-                on_delete=django.db.models.deletion.CASCADE, to="api.datasource"
-            ),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to="api.datasource"),
         ),
         migrations.AddField(
             model_name="groupdatasourceaccess",
@@ -57,8 +55,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="groupmembership",
             name="group",
-            field=models.ForeignKey(
-                on_delete=django.db.models.deletion.CASCADE, related_name="members", to="api.group"
-            ),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name="members", to="api.group"),
         ),
     ]

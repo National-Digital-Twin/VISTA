@@ -93,6 +93,4 @@ class Command(BaseCommand):
         # Bulk Insert to Database
         ExposureLayer.objects.bulk_create(objects_to_create, batch_size=1000)
 
-        self.stdout.write(
-            self.style.SUCCESS(f"Successfully loaded {len(objects_to_create)} water bodies.")
-        )
+        self.stdout.write(self.style.SUCCESS(f"Successfully loaded {len(objects_to_create)} water bodies."))

@@ -74,9 +74,7 @@ urlpatterns = [
     ),
     path(
         "scenarios/<uuid:scenario_id>/focus-areas/<uuid:pk>/",
-        views.FocusAreaViewSet.as_view(
-            {"get": "retrieve", "patch": "partial_update", "delete": "destroy"}
-        ),
+        views.FocusAreaViewSet.as_view({"get": "retrieve", "patch": "partial_update", "delete": "destroy"}),
         name="focus-area-detail",
     ),
     path(

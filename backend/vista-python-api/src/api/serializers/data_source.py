@@ -61,12 +61,8 @@ class DataSourceSerializer(serializers.ModelSerializer):
 
     def get_groups_with_access(self, obj):
         """Get a list of groups with access to the data source."""
-        group_members = obj.group_accesses.select_related("group").prefetch_related(
-            "group__members"
-        )
-        return GroupDataSourceSerializer(
-            [group_member.group for group_member in group_members], many=True
-        ).data
+        group_members = obj.group_accesses.select_related("group").prefetch_related("group__members")
+        return GroupDataSourceSerializer([group_member.group for group_member in group_members], many=True).data
 
     def get_globally_available(self, obj):
         """Get whether the data source is globally available."""

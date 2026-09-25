@@ -29,9 +29,7 @@ class ScenarioConstraintInterventionsView(APIView):
         get_object_or_404(Scenario, id=scenario_id)
         user_id = get_user_id_from_request(request)
 
-        interventions_qs = ConstraintIntervention.objects.filter(
-            user_id=user_id, scenario_id=scenario_id
-        ).order_by("created_at")
+        interventions_qs = ConstraintIntervention.objects.filter(user_id=user_id, scenario_id=scenario_id).order_by("created_at")
 
         intervention_types = ConstraintInterventionType.objects.prefetch_related(
             Prefetch("constraint_interventions", queryset=interventions_qs)

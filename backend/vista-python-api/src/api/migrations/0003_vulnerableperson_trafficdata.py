@@ -22,9 +22,7 @@ class Migration(migrations.Migration):
             fields=[
                 (
                     "id",
-                    models.BigAutoField(
-                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
-                    ),
+                    models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID"),
                 ),
                 ("mock_individual_index", models.CharField(max_length=255)),
                 ("mock_property_index", models.CharField(max_length=255)),
@@ -48,9 +46,7 @@ class Migration(migrations.Migration):
             fields=[
                 (
                     "id",
-                    models.BigAutoField(
-                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
-                    ),
+                    models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID"),
                 ),
                 ("site_name", models.CharField(max_length=255)),
                 ("day_of_week", models.CharField(max_length=10)),
@@ -62,9 +58,7 @@ class Migration(migrations.Migration):
                 ("coordinates", models.CharField(blank=True, max_length=255, null=True)),
             ],
             options={
-                "unique_together": {
-                    ("site_name", "day_of_week", "hour", "direction", "coordinates")
-                },
+                "unique_together": {("site_name", "day_of_week", "hour", "direction", "coordinates")},
             },
         ),
     ]

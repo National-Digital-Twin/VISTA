@@ -57,15 +57,11 @@ class Center:
     lat: float
 
 
-def _offset(
-    c1: Center, distance: Meters, earth_radius: Meters, bearing: float
-) -> tuple[float, float]:
+def _offset(c1: Center, distance: Meters, earth_radius: Meters, bearing: float) -> tuple[float, float]:
     lat1 = _to_radians(c1.lat)
     lon1 = _to_radians(c1.lon)
     d_by_r = distance / earth_radius
-    lat = math.asin(
-        math.sin(lat1) * math.cos(d_by_r) + math.cos(lat1) * math.sin(d_by_r) * math.cos(bearing)
-    )
+    lat = math.asin(math.sin(lat1) * math.cos(d_by_r) + math.cos(lat1) * math.sin(d_by_r) * math.cos(bearing))
     lon = lon1 + math.atan2(
         math.sin(bearing) * math.sin(d_by_r) * math.cos(lat1),
         math.cos(d_by_r) - math.sin(lat1) * math.sin(lat),
@@ -86,9 +82,7 @@ class Options:
 _OPTIONS = Options()
 
 
-def circle_to_polygon(
-    center: Center, radius: Meters, options: Options = _OPTIONS
-) -> list[tuple[float, float]]:
+def circle_to_polygon(center: Center, radius: Meters, options: Options = _OPTIONS) -> list[tuple[float, float]]:
     """Convert a circle to a polygon."""
     edges = options.n_edges
     earth_radius = options.earth_radius
@@ -96,9 +90,6 @@ def circle_to_polygon(
     direction = -1 if options.right_hand_rule else 1
 
     start = _to_radians(bearing)
-    coordinates = [
-        _offset(center, radius, earth_radius, start + (direction * 2 * math.pi * -i) / edges)
-        for i in range(edges)
-    ]
+    coordinates = [_offset(center, radius, earth_radius, start + (direction * 2 * math.pi * -i) / edges) for i in range(edges)]
     coordinates.append(coordinates[0])
     return coordinates

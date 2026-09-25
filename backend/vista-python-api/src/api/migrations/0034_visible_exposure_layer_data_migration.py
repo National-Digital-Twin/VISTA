@@ -15,11 +15,7 @@ def create_mapwide_focus_areas_for_exposure_layers(apps, _schema_editor):
     VisibleExposureLayer = apps.get_model("api", "VisibleExposureLayer")
 
     # Find all unique (scenario_id, user_id) combinations with null focus_area
-    mapwide_combos = (
-        VisibleExposureLayer.objects.filter(focus_area__isnull=True)
-        .values("scenario_id", "user_id")
-        .distinct()
-    )
+    mapwide_combos = VisibleExposureLayer.objects.filter(focus_area__isnull=True).values("scenario_id", "user_id").distinct()
 
     for combo in mapwide_combos:
         scenario_id = combo["scenario_id"]
@@ -49,9 +45,9 @@ def create_mapwide_focus_areas_for_exposure_layers(apps, _schema_editor):
             fa_id = fa.id
 
         # Update VisibleExposureLayers to point to the map-wide FocusArea
-        VisibleExposureLayer.objects.filter(
-            scenario_id=scenario_id, user_id=user_id, focus_area__isnull=True
-        ).update(focus_area_id=fa_id)
+        VisibleExposureLayer.objects.filter(scenario_id=scenario_id, user_id=user_id, focus_area__isnull=True).update(
+            focus_area_id=fa_id
+        )
 
 
 class Migration(migrations.Migration):
@@ -62,7 +58,5 @@ class Migration(migrations.Migration):
     ]
 
     operations: ClassVar = [
-        migrations.RunPython(
-            create_mapwide_focus_areas_for_exposure_layers, migrations.RunPython.noop
-        ),
+        migrations.RunPython(create_mapwide_focus_areas_for_exposure_layers, migrations.RunPython.noop),
     ]

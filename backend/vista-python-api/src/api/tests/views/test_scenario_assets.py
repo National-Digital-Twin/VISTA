@@ -55,9 +55,7 @@ def print_sql(test_name: str, queries: list[dict]) -> None:
 def asset_type_setup(db):  # noqa: ARG001
     """Create test asset types."""
     category = AssetCategory.objects.create(id=uuid.uuid4(), name="Infrastructure")
-    sub_category = AssetSubCategory.objects.create(
-        id=uuid.uuid4(), name="Energy", category=category
-    )
+    sub_category = AssetSubCategory.objects.create(id=uuid.uuid4(), name="Energy", category=category)
     data_source = DataSource.objects.create(id=uuid.uuid4(), name="Test Source")
 
     station_type = AssetType.objects.create(
@@ -112,9 +110,7 @@ def limited_rail_data_source(db):  # noqa: ARG001
 def data_source_access(db, limited_rail_data_source):  # noqa: ARG001
     """Create access to data source."""
     group = Group.objects.create(name="Limited Access", created_by=uuid.uuid4())
-    GroupMembership.objects.create(
-        group=group, user_id=user_id_limited_access, created_by=uuid.uuid4()
-    )
+    GroupMembership.objects.create(group=group, user_id=user_id_limited_access, created_by=uuid.uuid4())
     return GroupDataSourceAccess.objects.create(data_source=limited_rail_data_source, group=group)
 
 
@@ -122,9 +118,7 @@ def data_source_access(db, limited_rail_data_source):  # noqa: ARG001
 def asset_types_for_scenario(db, limited_rail_data_source):  # noqa: ARG001
     """Create asset types for testing."""
     category = AssetCategory.objects.create(id=uuid.uuid4(), name="Test Category")
-    sub_category = AssetSubCategory.objects.create(
-        id=uuid.uuid4(), name="Test SubCategory", category=category
-    )
+    sub_category = AssetSubCategory.objects.create(id=uuid.uuid4(), name="Test SubCategory", category=category)
     rail_type = AssetType.objects.create(
         id=uuid.uuid4(),
         name="Rail Stations",
@@ -706,9 +700,7 @@ def test_asset_types_map_wide_includes_data_source_user_can_access_via_group(  #
     monkeypatch,
 ):
     """Test only asset types user has access to are returned."""
-    monkeypatch.setattr(
-        "api.views.scenario_asset_types.get_user_id_from_request", get_user_id_from_request
-    )
+    monkeypatch.setattr("api.views.scenario_asset_types.get_user_id_from_request", get_user_id_from_request)
     response = client.get(f"/api/scenarios/{scenario.id}/asset-types/")
     data = response.json()
 
@@ -763,9 +755,7 @@ def test_asset_types_focus_area_does_not_filter_by_geometry(
         geom=Point(5.0, 5.0),  # Outside focus area
     )
 
-    response = client.get(
-        f"/api/scenarios/{scenario.id}/asset-types/?focus_area_id={focus_area.id}"
-    )
+    response = client.get(f"/api/scenarios/{scenario.id}/asset-types/?focus_area_id={focus_area.id}")
     data = response.json()
 
     assert response.status_code == http_success_code
@@ -783,9 +773,7 @@ def test_asset_types_focus_area_returns_both_when_assets_in_area(
     client,
 ):
     """Test focus area returns both types when both have assets inside."""
-    response = client.get(
-        f"/api/scenarios/{scenario.id}/asset-types/?focus_area_id={focus_area.id}"
-    )
+    response = client.get(f"/api/scenarios/{scenario.id}/asset-types/?focus_area_id={focus_area.id}")
     data = response.json()
 
     assert response.status_code == http_success_code
@@ -799,9 +787,7 @@ def test_asset_types_focus_area_returns_both_when_assets_in_area(
 def test_asset_types_focus_area_invalid_returns_404(scenario, client):
     """Test that invalid focus_area_id returns 404."""
     fake_focus_area_id = uuid.uuid4()
-    response = client.get(
-        f"/api/scenarios/{scenario.id}/asset-types/?focus_area_id={fake_focus_area_id}"
-    )
+    response = client.get(f"/api/scenarios/{scenario.id}/asset-types/?focus_area_id={fake_focus_area_id}")
     assert response.status_code == http_not_found
 
 
@@ -841,9 +827,7 @@ def test_asset_types_includes_asset_count_focus_area(
     client,
 ):
     """Test that focus area asset types include only assets within geometry."""
-    response = client.get(
-        f"/api/scenarios/{scenario.id}/asset-types/?focus_area_id={focus_area.id}"
-    )
+    response = client.get(f"/api/scenarios/{scenario.id}/asset-types/?focus_area_id={focus_area.id}")
     data = response.json()
 
     assert response.status_code == http_success_code
@@ -868,9 +852,7 @@ def test_asset_types_includes_total_asset_count_focus_area(
     client,
 ):
     """Test that focus area asset types include only assets within geometry."""
-    response = client.get(
-        f"/api/scenarios/{scenario.id}/asset-types/?focus_area_id={focus_area.id}"
-    )
+    response = client.get(f"/api/scenarios/{scenario.id}/asset-types/?focus_area_id={focus_area.id}")
     data = response.json()
 
     assert response.status_code == http_success_code
@@ -895,9 +877,7 @@ def test_asset_types_includes_total_asset_count_focus_area(
 def score_test_types(db, limited_rail_data_source):  # noqa: ARG001
     """Create asset types for score filtering tests."""
     category = AssetCategory.objects.create(id=uuid.uuid4(), name="Score Test Category")
-    sub_category = AssetSubCategory.objects.create(
-        id=uuid.uuid4(), name="Score Test SubCategory", category=category
-    )
+    sub_category = AssetSubCategory.objects.create(id=uuid.uuid4(), name="Score Test SubCategory", category=category)
     data_source = DataSource.objects.create(id=uuid.uuid4(), name="Score Test Source")
 
     station_type = AssetType.objects.create(
@@ -1046,9 +1026,7 @@ def test_by_score_only_mode_includes_assets_with_permission_to_view(  # noqa: PL
     monkeypatch,
 ):
     """Test that by_score_only mode includes assets user does have permission to view."""
-    monkeypatch.setattr(
-        "api.views.scenario_assets.get_user_id_from_request", get_user_id_from_request
-    )
+    monkeypatch.setattr("api.views.scenario_assets.get_user_id_from_request", get_user_id_from_request)
     station_type = score_test_types["station"]
     pylon_type = score_test_types["pylon"]
 
@@ -1346,9 +1324,7 @@ def test_complex_multi_focus_area_with_overlaps_and_filters(
     """
     # Create asset types
     category = AssetCategory.objects.create(id=uuid.uuid4(), name="Complex Test Category")
-    sub_category = AssetSubCategory.objects.create(
-        id=uuid.uuid4(), name="Complex Test SubCategory", category=category
-    )
+    sub_category = AssetSubCategory.objects.create(id=uuid.uuid4(), name="Complex Test SubCategory", category=category)
     data_source = DataSource.objects.create(id=uuid.uuid4(), name="Complex Test Source")
 
     station_type = AssetType.objects.create(
@@ -1560,9 +1536,7 @@ def test_asset_types_filtered_count_equals_total_without_filter(
     ScenarioAsset.objects.create(scenario=scenario, asset_type=pylon_type, criticality_score=1)
 
     with CaptureQueriesContext(connection) as ctx:
-        response = client.get(
-            f"/api/scenarios/{scenario.id}/asset-types/?focus_area_id={mapwide_focus_area.id}"
-        )
+        response = client.get(f"/api/scenarios/{scenario.id}/asset-types/?focus_area_id={mapwide_focus_area.id}")
     data = response.json()
     print_sql("asset_types_filtered_count_equals_total_without_filter", ctx.captured_queries)
 
@@ -1611,9 +1585,7 @@ def test_asset_types_filtered_count_with_score_filter(
     )
 
     with CaptureQueriesContext(connection) as ctx:
-        response = client.get(
-            f"/api/scenarios/{scenario.id}/asset-types/?focus_area_id={mapwide_focus_area.id}"
-        )
+        response = client.get(f"/api/scenarios/{scenario.id}/asset-types/?focus_area_id={mapwide_focus_area.id}")
     data = response.json()
     print_sql("asset_types_filtered_count_with_score_filter", ctx.captured_queries)
 
@@ -1645,9 +1617,7 @@ def test_exposure_filter_uses_user_specific_scores(scenario, mock_user_id, clien
     """
     # Create asset type and scenario asset
     category = AssetCategory.objects.create(id=uuid.uuid4(), name="Exposure Test Category")
-    sub_category = AssetSubCategory.objects.create(
-        id=uuid.uuid4(), name="Exposure Test SubCat", category=category
-    )
+    sub_category = AssetSubCategory.objects.create(id=uuid.uuid4(), name="Exposure Test SubCat", category=category)
     data_source = DataSource.objects.create(id=uuid.uuid4(), name="Exposure Test Source")
     asset_type = AssetType.objects.create(
         id=uuid.uuid4(),
@@ -1658,9 +1628,7 @@ def test_exposure_filter_uses_user_specific_scores(scenario, mock_user_id, clien
     ScenarioAsset.objects.create(scenario=scenario, asset_type=asset_type, criticality_score=3)
 
     # Create exposure layer polygon centered at origin
-    exposure_poly = Polygon(
-        ((-0.001, -0.001), (0.001, -0.001), (0.001, 0.001), (-0.001, 0.001), (-0.001, -0.001))
-    )
+    exposure_poly = Polygon(((-0.001, -0.001), (0.001, -0.001), (0.001, 0.001), (-0.001, 0.001), (-0.001, -0.001)))
     exposure_layer_type = ExposureLayerType.objects.create(name="Test Flood")
     exposure_layer = ExposureLayer.objects.create(
         geometry=exposure_poly,
@@ -1726,9 +1694,7 @@ def test_exposure_score_scoped_to_focus_area(scenario, mock_user_id, client):
     """
     # Create asset type and scenario asset
     category = AssetCategory.objects.create(id=uuid.uuid4(), name="Scoped Exposure Cat")
-    sub_category = AssetSubCategory.objects.create(
-        id=uuid.uuid4(), name="Scoped Exposure SubCat", category=category
-    )
+    sub_category = AssetSubCategory.objects.create(id=uuid.uuid4(), name="Scoped Exposure SubCat", category=category)
     data_source = DataSource.objects.create(id=uuid.uuid4(), name="Scoped Exposure Source")
     asset_type = AssetType.objects.create(
         id=uuid.uuid4(),
@@ -1739,9 +1705,7 @@ def test_exposure_score_scoped_to_focus_area(scenario, mock_user_id, client):
     ScenarioAsset.objects.create(scenario=scenario, asset_type=asset_type, criticality_score=3)
 
     # Create exposure layer polygon
-    exposure_poly = Polygon(
-        ((-0.001, -0.001), (0.001, -0.001), (0.001, 0.001), (-0.001, 0.001), (-0.001, -0.001))
-    )
+    exposure_poly = Polygon(((-0.001, -0.001), (0.001, -0.001), (0.001, 0.001), (-0.001, 0.001), (-0.001, -0.001)))
     exposure_layer_type = ExposureLayerType.objects.create(name="Scoped Flood")
     exposure_layer = ExposureLayer.objects.create(
         geometry=exposure_poly,
@@ -1795,9 +1759,7 @@ def test_exposure_score_scoped_to_focus_area(scenario, mock_user_id, client):
     data = response.json()
 
     assert response.status_code == http_success_code
-    assert len(data) == 0, (
-        f"Map-wide should return no assets when filtering exposure=3, got: {data}"
-    )
+    assert len(data) == 0, f"Map-wide should return no assets when filtering exposure=3, got: {data}"
 
 
 @pytest.mark.django_db
@@ -1805,9 +1767,7 @@ def test_same_asset_different_exposure_per_focus_area(scenario, mock_user_id, cl
     """Same asset should have different exposure scores depending on which focus area is queried."""
     # Create asset type and scenario asset
     category = AssetCategory.objects.create(id=uuid.uuid4(), name="Multi FA Cat")
-    sub_category = AssetSubCategory.objects.create(
-        id=uuid.uuid4(), name="Multi FA SubCat", category=category
-    )
+    sub_category = AssetSubCategory.objects.create(id=uuid.uuid4(), name="Multi FA SubCat", category=category)
     data_source = DataSource.objects.create(id=uuid.uuid4(), name="Multi FA Source")
     asset_type = AssetType.objects.create(
         id=uuid.uuid4(),
@@ -1818,12 +1778,8 @@ def test_same_asset_different_exposure_per_focus_area(scenario, mock_user_id, cl
     ScenarioAsset.objects.create(scenario=scenario, asset_type=asset_type, criticality_score=3)
 
     # Create two exposure layer polygons that both contain the asset
-    exposure_poly_1 = Polygon(
-        ((-0.002, -0.002), (0.002, -0.002), (0.002, 0.002), (-0.002, 0.002), (-0.002, -0.002))
-    )
-    exposure_poly_2 = Polygon(
-        ((-0.003, -0.003), (0.003, -0.003), (0.003, 0.003), (-0.003, 0.003), (-0.003, -0.003))
-    )
+    exposure_poly_1 = Polygon(((-0.002, -0.002), (0.002, -0.002), (0.002, 0.002), (-0.002, 0.002), (-0.002, -0.002)))
+    exposure_poly_2 = Polygon(((-0.003, -0.003), (0.003, -0.003), (0.003, 0.003), (-0.003, 0.003), (-0.003, -0.003)))
     exposure_layer_type = ExposureLayerType.objects.create(name="Multi FA Flood")
     exposure_layer_1 = ExposureLayer.objects.create(
         geometry=exposure_poly_1,
@@ -1894,9 +1850,7 @@ def test_exposure_filter_with_multiple_values_including_zero(scenario, mock_user
     """
     # Create asset type and scenario asset
     category = AssetCategory.objects.create(id=uuid.uuid4(), name="Multi Exposure Cat")
-    sub_category = AssetSubCategory.objects.create(
-        id=uuid.uuid4(), name="Multi Exposure SubCat", category=category
-    )
+    sub_category = AssetSubCategory.objects.create(id=uuid.uuid4(), name="Multi Exposure SubCat", category=category)
     data_source = DataSource.objects.create(id=uuid.uuid4(), name="Multi Exposure Source")
     asset_type = AssetType.objects.create(
         id=uuid.uuid4(),
@@ -1907,9 +1861,7 @@ def test_exposure_filter_with_multiple_values_including_zero(scenario, mock_user
     ScenarioAsset.objects.create(scenario=scenario, asset_type=asset_type, criticality_score=3)
 
     # Create exposure layer polygon centered at origin
-    exposure_poly = Polygon(
-        ((-0.001, -0.001), (0.001, -0.001), (0.001, 0.001), (-0.001, 0.001), (-0.001, -0.001))
-    )
+    exposure_poly = Polygon(((-0.001, -0.001), (0.001, -0.001), (0.001, 0.001), (-0.001, 0.001), (-0.001, -0.001)))
     exposure_layer_type = ExposureLayerType.objects.create(name="Multi Exposure Flood")
     exposure_layer = ExposureLayer.objects.create(
         geometry=exposure_poly,

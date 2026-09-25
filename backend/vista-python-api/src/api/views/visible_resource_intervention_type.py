@@ -32,9 +32,7 @@ class VisibleResourceInterventionTypeView(APIView):
         resource_intervention_type_id = serializer.validated_data["resource_intervention_type_id"]
         is_active = serializer.validated_data["is_active"]
 
-        resource_intervention_type = get_object_or_404(
-            ResourceInterventionType, id=resource_intervention_type_id
-        )
+        resource_intervention_type = get_object_or_404(ResourceInterventionType, id=resource_intervention_type_id)
 
         if is_active:
             VisibleResourceInterventionType.objects.get_or_create(

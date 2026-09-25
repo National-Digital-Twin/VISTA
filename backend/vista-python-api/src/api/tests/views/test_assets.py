@@ -116,9 +116,7 @@ def restricted_asset_with_group_access(db):  # noqa: ARG001
 
     category = AssetCategory.objects.create(name="Cat")
     sub_category = AssetSubCategory.objects.create(name="Sub", category=category)
-    asset_type = AssetType.objects.create(
-        name="Restricted Type", data_source=data_source, sub_category=sub_category
-    )
+    asset_type = AssetType.objects.create(name="Restricted Type", data_source=data_source, sub_category=sub_category)
     asset = Asset.objects.create(
         name="Restricted Asset",
         external_id=uuid.uuid4(),
@@ -133,9 +131,7 @@ def restricted_asset_with_group_access(db):  # noqa: ARG001
 
 
 @pytest.mark.django_db
-def test_retrieve_returns_403_when_user_lacks_data_source_access(
-    restricted_asset_with_group_access, client, monkeypatch
-):
+def test_retrieve_returns_403_when_user_lacks_data_source_access(restricted_asset_with_group_access, client, monkeypatch):
     """Asset detail returns 403 when data source is restricted and user not in allowed group."""
     asset = restricted_asset_with_group_access["asset"]
     disallowed_user_id = restricted_asset_with_group_access["disallowed_user_id"]

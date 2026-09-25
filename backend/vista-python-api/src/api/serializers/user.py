@@ -80,6 +80,4 @@ class UserInviteSerializer(serializers.ModelSerializer):
 
     def get_groups(self, obj):
         """Get list of group names for user."""
-        return GroupMembership.objects.filter(user_id=obj.user_id).values_list(
-            "group__name", flat=True
-        )
+        return GroupMembership.objects.filter(user_id=obj.user_id).values_list("group__name", flat=True)

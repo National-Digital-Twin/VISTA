@@ -27,8 +27,6 @@ class Migration(migrations.Migration):
         ),
         migrations.AddConstraint(
             model_name="groupmembership",
-            constraint=models.UniqueConstraint(
-                fields=("group", "user_id"), name="unique_membership_per_user"
-            ),
+            constraint=models.UniqueConstraint(fields=("group", "user_id"), name="unique_membership_per_user"),
         ),
     ]

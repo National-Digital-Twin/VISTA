@@ -26,13 +26,8 @@ class OsNamesDataSourceHandler(DataSourceHandler):
     async def fetch_data_for_asset_specification(self, asset_specification, url):
         """Fetch the OS Names data per the specification given."""
         data = await self.fetch_from_url_with_retry(url)
-        simplified_data = reduce(
-            self._merge_entries_with_same_name_at_same_location(set()), data["results"], []
-        )
-        return [
-            ExternalAssetMapper.map_from_os_names(result, asset_specification)
-            for result in simplified_data
-        ]
+        simplified_data = reduce(self._merge_entries_with_same_name_at_same_location(set()), data["results"], [])
+        return [ExternalAssetMapper.map_from_os_names(result, asset_specification) for result in simplified_data]
 
     def _merge_entries_with_same_name_at_same_location(self, seen):
         def reduce(entries, next_entry):

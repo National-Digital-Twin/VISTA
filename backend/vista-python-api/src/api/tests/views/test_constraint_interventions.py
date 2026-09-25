@@ -468,9 +468,7 @@ def test_delete_intervention(scenario, mock_user_id, road_blocks_type, client):
     )
     intervention_id = intervention.id
 
-    response = client.delete(
-        f"/api/scenarios/{scenario.id}/constraint-interventions/{intervention.id}/"
-    )
+    response = client.delete(f"/api/scenarios/{scenario.id}/constraint-interventions/{intervention.id}/")
 
     assert response.status_code == http_no_content
     assert not ConstraintIntervention.objects.filter(id=intervention_id).exists()
@@ -489,9 +487,7 @@ def test_cannot_delete_other_users_intervention(scenario, road_blocks_type, clie
         scenario=scenario,
     )
 
-    response = client.delete(
-        f"/api/scenarios/{scenario.id}/constraint-interventions/{intervention.id}/"
-    )
+    response = client.delete(f"/api/scenarios/{scenario.id}/constraint-interventions/{intervention.id}/")
 
     assert response.status_code == http_not_found
     assert ConstraintIntervention.objects.filter(id=intervention.id).exists()
@@ -500,8 +496,6 @@ def test_cannot_delete_other_users_intervention(scenario, road_blocks_type, clie
 @pytest.mark.django_db
 def test_delete_intervention_invalid_id_404(scenario, client):
     """Test that invalid intervention ID returns 404."""
-    response = client.delete(
-        f"/api/scenarios/{scenario.id}/constraint-interventions/{uuid.uuid4()}/"
-    )
+    response = client.delete(f"/api/scenarios/{scenario.id}/constraint-interventions/{uuid.uuid4()}/")
 
     assert response.status_code == http_not_found

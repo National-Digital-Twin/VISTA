@@ -82,8 +82,6 @@ class NationalGridDataSourceHandler(DataSourceHandler):
         self.logger.info("Found %s features.", len(filtered))
         self.logger.info(filtered.head())
         return [
-            ExternalAssetMapper.map_from_national_grid(
-                row.drop("geometry").to_dict(), asset_specification
-            )
+            ExternalAssetMapper.map_from_national_grid(row.drop("geometry").to_dict(), asset_specification)
             for _, row in filtered.iterrows()
         ]

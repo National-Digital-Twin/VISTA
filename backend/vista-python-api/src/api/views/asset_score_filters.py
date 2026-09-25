@@ -40,9 +40,7 @@ class AssetScoreFiltersView(APIView):
         focus_area_id = serializer.validated_data["focus_area_id"]
         asset_type_id = serializer.validated_data.get("asset_type_id")
 
-        focus_area = get_object_or_404(
-            FocusArea, id=focus_area_id, scenario=scenario, user_id=user_id
-        )
+        focus_area = get_object_or_404(FocusArea, id=focus_area_id, scenario=scenario, user_id=user_id)
 
         asset_type = None
         if asset_type_id:
@@ -81,9 +79,7 @@ class AssetScoreFiltersView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        focus_area = get_object_or_404(
-            FocusArea, id=focus_area_id, scenario=scenario, user_id=user_id
-        )
+        focus_area = get_object_or_404(FocusArea, id=focus_area_id, scenario=scenario, user_id=user_id)
 
         query = AssetScoreFilter.objects.filter(focus_area=focus_area)
 

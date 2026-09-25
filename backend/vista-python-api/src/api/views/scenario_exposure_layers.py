@@ -59,14 +59,10 @@ class ScenarioExposureLayersView(viewsets.ViewSet):
         Returns all layers with focusAreaRelation indicating spatial relationship.
         isActive is set based on whether the layer is enabled for this focus area.
         """
-        focus_area = get_object_or_404(
-            FocusArea, id=focus_area_id, scenario=scenario, user_id=user_id
-        )
+        focus_area = get_object_or_404(FocusArea, id=focus_area_id, scenario=scenario, user_id=user_id)
 
         visible_exposure_layer_ids = set(
-            VisibleExposureLayer.objects.filter(focus_area=focus_area).values_list(
-                "exposure_layer_id", flat=True
-            )
+            VisibleExposureLayer.objects.filter(focus_area=focus_area).values_list("exposure_layer_id", flat=True)
         )
 
         return self._build_response(
@@ -94,9 +90,7 @@ class ScenarioExposureLayersView(viewsets.ViewSet):
             return self._build_response(set(), user_id, scenario)
 
         all_visible_ids = set(
-            VisibleExposureLayer.objects.filter(focus_area_id__in=focus_area_ids).values_list(
-                "exposure_layer_id", flat=True
-            )
+            VisibleExposureLayer.objects.filter(focus_area_id__in=focus_area_ids).values_list("exposure_layer_id", flat=True)
         )
 
         return self._build_response(all_visible_ids, user_id, scenario)
@@ -135,9 +129,7 @@ class ScenarioExposureLayersView(viewsets.ViewSet):
                 )
             )
         elif focus_area and focus_area.geometry is None:
-            exposure_layers_qs = exposure_layers_qs.annotate(
-                focus_area_relation=Value("contained", output_field=CharField())
-            )
+            exposure_layers_qs = exposure_layers_qs.annotate(focus_area_relation=Value("contained", output_field=CharField()))
 
         exposure_layer_types = ExposureLayerType.objects.prefetch_related(
             Prefetch("exposure_layers", queryset=exposure_layers_qs)
@@ -147,9 +139,7 @@ class ScenarioExposureLayersView(viewsets.ViewSet):
         for exposure_layer_type in exposure_layer_types:
             layers_data = []
             for exposure_layer in exposure_layer_type.exposure_layers.all():
-                layer_data = self._build_layer_data_response(
-                    exposure_layer, visible_exposure_layer_ids, exposure_layer_type
-                )
+                layer_data = self._build_layer_data_response(exposure_layer, visible_exposure_layer_ids, exposure_layer_type)
                 layers_data.append(layer_data)
 
             result.append(
@@ -163,22 +153,16 @@ class ScenarioExposureLayersView(viewsets.ViewSet):
 
         return Response(result)
 
-    def _build_layer_data_response(
-        self, exposure_layer, visible_exposure_layer_ids, exposure_layer_type
-    ):
+    def _build_layer_data_response(self, exposure_layer, visible_exposure_layer_ids, exposure_layer_type):
         return {
             "id": str(exposure_layer.id),
             "name": exposure_layer.name,
             "isActive": exposure_layer.id in visible_exposure_layer_ids,
             "isUserDefined": exposure_layer.is_user_defined,
             "focusAreaRelation": getattr(exposure_layer, "focus_area_relation", None),
-            "geometry": (
-                json.loads(exposure_layer.geometry.json) if exposure_layer.geometry else None
-            ),
+            "geometry": (json.loads(exposure_layer.geometry.json) if exposure_layer.geometry else None),
             "status": exposure_layer.status if exposure_layer_type.is_user_editable else None,
-            "createdAt": (
-                exposure_layer.created_at.isoformat() if exposure_layer.created_at else None
-            ),
+            "createdAt": (exposure_layer.created_at.isoformat() if exposure_layer.created_at else None),
             "publishedId": exposure_layer.published_id,
         }
 
@@ -214,9 +198,7 @@ class ScenarioExposureLayersView(viewsets.ViewSet):
         geom = serializer.validated_data["geometry"]
         name = serializer.validated_data.get("name")
         if not name:
-            existing_count = ExposureLayer.objects.filter(
-                user_id=user_id, scenario_id=scenario_id
-            ).count()
+            existing_count = ExposureLayer.objects.filter(user_id=user_id, scenario_id=scenario_id).count()
             name = f"Exposure {existing_count + 1}"
 
         exposure_layer = ExposureLayer.objects.create(
@@ -230,9 +212,7 @@ class ScenarioExposureLayersView(viewsets.ViewSet):
 
         focus_area_id = serializer.validated_data.get("focus_area_id")
         if focus_area_id:
-            focus_area = FocusArea.objects.filter(
-                id=focus_area_id, scenario=scenario, user_id=user_id
-            ).first()
+            focus_area = FocusArea.objects.filter(id=focus_area_id, scenario=scenario, user_id=user_id).first()
             if focus_area:
                 VisibleExposureLayer.objects.get_or_create(
                     focus_area=focus_area,
@@ -294,9 +274,7 @@ class ScenarioExposureLayersView(viewsets.ViewSet):
                 "name": exposure_layer.name,
                 "geometry": json.loads(exposure_layer.geometry.json),
                 "isUserDefined": True,
-                "createdAt": (
-                    exposure_layer.created_at.isoformat() if exposure_layer.created_at else None
-                ),
+                "createdAt": (exposure_layer.created_at.isoformat() if exposure_layer.created_at else None),
             }
         )
 

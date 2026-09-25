@@ -44,7 +44,4 @@ class VisibleResourceInterventionType(models.Model):
 
     def __str__(self):
         """Return the string representation of the model."""
-        return (
-            f"{self.resource_intervention_type.name} visible for user"
-            f" {self.user_id} in scenario {self.scenario.id}"
-        )
+        return f"{self.resource_intervention_type.name} visible for user {self.user_id} in scenario {self.scenario.id}"

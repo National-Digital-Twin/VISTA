@@ -51,9 +51,7 @@ class GroupSerializer(serializers.ModelSerializer):
 
     members = GroupMembershipSerializer(many=True, read_only=True)
 
-    member_ids = serializers.ListField(
-        child=serializers.CharField(), write_only=True, required=False
-    )
+    member_ids = serializers.ListField(child=serializers.CharField(), write_only=True, required=False)
     created_by = serializers.SerializerMethodField()
 
     class Meta:
@@ -82,9 +80,7 @@ class GroupSerializer(serializers.ModelSerializer):
         request = self.context.get("request")
 
         if request and request.method == "POST" and "member_ids" not in attrs:
-            raise serializers.ValidationError(
-                {"member_ids": "This field is required when creating a group."}
-            )
+            raise serializers.ValidationError({"member_ids": "This field is required when creating a group."})
 
         return attrs
 
@@ -95,8 +91,7 @@ class GroupSerializer(serializers.ModelSerializer):
         group = super().create(validated_data)
 
         group_memberships = [
-            GroupMembership(group=group, user_id=member_id, created_by=self.context["current_user"])
-            for member_id in member_ids
+            GroupMembership(group=group, user_id=member_id, created_by=self.context["current_user"]) for member_id in member_ids
         ]
         GroupMembership.objects.bulk_create(group_memberships)
 

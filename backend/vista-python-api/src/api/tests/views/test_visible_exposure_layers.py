@@ -87,9 +87,7 @@ def test_enable_exposure_layer_for_focus_area(scenario, exposure_layer, focus_ar
 
 
 @pytest.mark.django_db
-def test_enable_exposure_layer_for_mapwide_focus_area(
-    scenario, exposure_layer, mapwide_focus_area, client
-):
+def test_enable_exposure_layer_for_mapwide_focus_area(scenario, exposure_layer, mapwide_focus_area, client):
     """Test enabling an exposure layer for the map-wide focus area."""
     response = client.put(
         f"/api/scenarios/{scenario.id}/visible-exposure-layers/",
@@ -218,9 +216,7 @@ def test_scenario_exposure_layers_without_focus_area_id_returns_all_active(
 @pytest.mark.django_db
 def test_scenario_exposure_layers_with_visibility(scenario, exposure_layer, focus_area, client):
     """Test scenario exposure layers endpoint returns nested structure with isActive."""
-    response = client.get(
-        f"/api/scenarios/{scenario.id}/exposure-layers/?focus_area_id={focus_area.id}"
-    )
+    response = client.get(f"/api/scenarios/{scenario.id}/exposure-layers/?focus_area_id={focus_area.id}")
     data = response.json()
 
     assert response.status_code == http_success_code
@@ -252,9 +248,7 @@ def test_scenario_exposure_layers_after_enable(scenario, exposure_layer, focus_a
         content_type="application/json",
     )
 
-    response = client.get(
-        f"/api/scenarios/{scenario.id}/exposure-layers/?focus_area_id={focus_area.id}"
-    )
+    response = client.get(f"/api/scenarios/{scenario.id}/exposure-layers/?focus_area_id={focus_area.id}")
     data = response.json()
 
     exposure_layer_data = find_exposure_layer_in_tree(data, exposure_layer.id)
@@ -262,9 +256,7 @@ def test_scenario_exposure_layers_after_enable(scenario, exposure_layer, focus_a
 
 
 @pytest.mark.django_db
-def test_scenario_exposure_layers_visibility_is_per_focus_area(
-    scenario, exposure_layer, focus_area, mapwide_focus_area, client
-):
+def test_scenario_exposure_layers_visibility_is_per_focus_area(scenario, exposure_layer, focus_area, mapwide_focus_area, client):
     """Test that visibility is scoped to focus area."""
     # Enable for specific focus area
     client.put(
@@ -280,17 +272,13 @@ def test_scenario_exposure_layers_visibility_is_per_focus_area(
     )
 
     # Should be visible in focus area
-    response = client.get(
-        f"/api/scenarios/{scenario.id}/exposure-layers/?focus_area_id={focus_area.id}"
-    )
+    response = client.get(f"/api/scenarios/{scenario.id}/exposure-layers/?focus_area_id={focus_area.id}")
     data = response.json()
     exposure_layer_data = find_exposure_layer_in_tree(data, exposure_layer.id)
     assert exposure_layer_data["isActive"] is True
 
     # Should NOT be visible in map-wide
-    response_map_wide = client.get(
-        f"/api/scenarios/{scenario.id}/exposure-layers/?focus_area_id={mapwide_focus_area.id}"
-    )
+    response_map_wide = client.get(f"/api/scenarios/{scenario.id}/exposure-layers/?focus_area_id={mapwide_focus_area.id}")
     data_map_wide = response_map_wide.json()
     exposure_layer_data_map = find_exposure_layer_in_tree(data_map_wide, exposure_layer.id)
     assert exposure_layer_data_map["isActive"] is False
@@ -305,9 +293,7 @@ def test_scenario_exposure_layers_invalid_scenario(client):
 
 
 @pytest.mark.django_db
-def test_disable_focus_area_does_not_affect_other_focus_areas(
-    scenario, exposure_layer, focus_area, mapwide_focus_area, client
-):
+def test_disable_focus_area_does_not_affect_other_focus_areas(scenario, exposure_layer, focus_area, mapwide_focus_area, client):
     """Test that disabling visibility for one focus area doesn't affect others."""
     # Enable for both focus areas
     VisibleExposureLayer.objects.create(
@@ -387,9 +373,7 @@ def test_exposure_layers_have_focus_area_relation(scenario, client):
         is_system=False,
     )
 
-    response = client.get(
-        f"/api/scenarios/{scenario.id}/exposure-layers/?focus_area_id={focus_area.id}"
-    )
+    response = client.get(f"/api/scenarios/{scenario.id}/exposure-layers/?focus_area_id={focus_area.id}")
     data = response.json()
 
     assert response.status_code == http_success_code
@@ -445,9 +429,7 @@ def test_empty_exposure_layer_types_have_empty_arrays(scenario, client):
         is_system=False,
     )
 
-    response = client.get(
-        f"/api/scenarios/{scenario.id}/exposure-layers/?focus_area_id={focus_area.id}"
-    )
+    response = client.get(f"/api/scenarios/{scenario.id}/exposure-layers/?focus_area_id={focus_area.id}")
     data = response.json()
 
     assert response.status_code == http_success_code
@@ -491,9 +473,7 @@ def test_mapwide_focus_area_returns_all_exposure_layers(scenario, mapwide_focus_
         type=exposure_layer_type,
     )
 
-    response = client.get(
-        f"/api/scenarios/{scenario.id}/exposure-layers/?focus_area_id={mapwide_focus_area.id}"
-    )
+    response = client.get(f"/api/scenarios/{scenario.id}/exposure-layers/?focus_area_id={mapwide_focus_area.id}")
     data = response.json()
 
     assert response.status_code == http_success_code
@@ -529,9 +509,7 @@ def alternate_scenario(db):  # noqa: ARG001
 def user_defined_exposure_layer(db, scenario):  # noqa: ARG001
     """Create a user-defined exposure layer for testing."""
     mock_user_id = uuid.UUID("00000000-0000-0000-0000-000000000001")
-    user_drawn_type = ExposureLayerType.objects.create(
-        id=uuid.uuid4(), name="User drawn Test", is_user_editable=True
-    )
+    user_drawn_type = ExposureLayerType.objects.create(id=uuid.uuid4(), name="User drawn Test", is_user_editable=True)
     geom = GEOSGeometry("POLYGON((0 0, 0 0.5, 0.5 0.5, 0.5 0, 0 0))")
     return ExposureLayer.objects.create(
         id=uuid.uuid4(),
@@ -547,9 +525,7 @@ def user_defined_exposure_layer(db, scenario):  # noqa: ARG001
 @pytest.fixture
 def other_user_exposure_layer(db, scenario, alternate_user_id):  # noqa: ARG001
     """Create a user-defined exposure layer owned by another user."""
-    other_user_type = ExposureLayerType.objects.create(
-        id=uuid.uuid4(), name="Other User Type", is_user_editable=True
-    )
+    other_user_type = ExposureLayerType.objects.create(id=uuid.uuid4(), name="Other User Type", is_user_editable=True)
     geom = GEOSGeometry("POLYGON((0 0, 0 0.5, 0.5 0.5, 0.5 0, 0 0))")
     return ExposureLayer.objects.create(
         id=uuid.uuid4(),
@@ -566,9 +542,7 @@ def other_user_exposure_layer(db, scenario, alternate_user_id):  # noqa: ARG001
 def other_scenario_exposure_layer(db, alternate_scenario):  # noqa: ARG001
     """Create a user-defined exposure layer in another scenario."""
     mock_user_id = uuid.UUID("00000000-0000-0000-0000-000000000001")
-    other_scenario_type = ExposureLayerType.objects.create(
-        id=uuid.uuid4(), name="Other Scenario Type", is_user_editable=True
-    )
+    other_scenario_type = ExposureLayerType.objects.create(id=uuid.uuid4(), name="Other Scenario Type", is_user_editable=True)
     geom = GEOSGeometry("POLYGON((0 0, 0 0.5, 0.5 0.5, 0.5 0, 0 0))")
     return ExposureLayer.objects.create(
         id=uuid.uuid4(),
@@ -582,9 +556,7 @@ def other_scenario_exposure_layer(db, alternate_scenario):  # noqa: ARG001
 
 
 @pytest.mark.django_db
-def test_bulk_toggle_rejects_other_users_layer(
-    scenario, focus_area, other_user_exposure_layer, client
-):
+def test_bulk_toggle_rejects_other_users_layer(scenario, focus_area, other_user_exposure_layer, client):
     """Test that bulk toggle rejects exposure layers owned by another user."""
     response = client.put(
         f"/api/scenarios/{scenario.id}/visible-exposure-layers/bulk/",
@@ -610,9 +582,7 @@ def test_bulk_toggle_rejects_other_users_layer(
 
 
 @pytest.mark.django_db
-def test_bulk_toggle_rejects_other_scenarios_layer(
-    scenario, focus_area, other_scenario_exposure_layer, client
-):
+def test_bulk_toggle_rejects_other_scenarios_layer(scenario, focus_area, other_scenario_exposure_layer, client):
     """Test that bulk toggle rejects exposure layers from another scenario."""
     response = client.put(
         f"/api/scenarios/{scenario.id}/visible-exposure-layers/bulk/",
@@ -662,9 +632,7 @@ def test_bulk_toggle_allows_system_layers(scenario, exposure_layer, focus_area, 
 
 
 @pytest.mark.django_db
-def test_bulk_toggle_allows_own_user_defined_layer(
-    scenario, focus_area, user_defined_exposure_layer, client
-):
+def test_bulk_toggle_allows_own_user_defined_layer(scenario, focus_area, user_defined_exposure_layer, client):
     """Test that bulk toggle allows the user's own user-defined layers."""
     response = client.put(
         f"/api/scenarios/{scenario.id}/visible-exposure-layers/bulk/",

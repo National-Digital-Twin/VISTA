@@ -47,9 +47,7 @@ class GroupMembershipViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         """Doctor create request with authenticated user for created field."""
-        serializer.save(
-            created_by=get_user_id_from_request(self.request), group_id=self.kwargs["group_id"]
-        )
+        serializer.save(created_by=get_user_id_from_request(self.request), group_id=self.kwargs["group_id"])
 
     def perform_destroy(self, instance):
         """Delete the membership and clean up stale visible assets."""

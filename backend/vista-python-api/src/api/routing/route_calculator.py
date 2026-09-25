@@ -170,9 +170,7 @@ class RouteCalculator:
         """
         blocked_edges: set[tuple[str, str]] = set()
         if self._constraint_provider:
-            blocked_geometries = self._constraint_provider.get_blocked_geometries(
-                scenario_id, user_id, vehicle
-            )
+            blocked_geometries = self._constraint_provider.get_blocked_geometries(scenario_id, user_id, vehicle)
             blocked_edges = self._compute_blocked_edges(blocked_geometries)
 
         if blocked_edges:
@@ -316,9 +314,7 @@ class RouteCalculator:
         coords = list(geom.coords)
         total = 0.0
         for i in range(len(coords) - 1):
-            total += RouteCalculator._haversine_distance(
-                coords[i][0], coords[i][1], coords[i + 1][0], coords[i + 1][1]
-            )
+            total += RouteCalculator._haversine_distance(coords[i][0], coords[i][1], coords[i + 1][0], coords[i + 1][1])
         return total
 
     @staticmethod
@@ -728,9 +724,7 @@ class RouteCalculator:
 
         # Add lead-in if first edge wasn't trimmed
         if not trim_first:
-            lead_in = self._add_lead_segment(
-                G, start_snap, is_start=True, connect_coord=path_start_coord
-            )
+            lead_in = self._add_lead_segment(G, start_snap, is_start=True, connect_coord=path_start_coord)
             if lead_in:
                 acc.add_feature(lead_in)
 
@@ -739,9 +733,7 @@ class RouteCalculator:
 
         # Add lead-out if last edge wasn't trimmed
         if not trim_last:
-            lead_out = self._add_lead_segment(
-                G, end_snap, is_start=False, connect_coord=path_end_coord
-            )
+            lead_out = self._add_lead_segment(G, end_snap, is_start=False, connect_coord=path_end_coord)
             if lead_out:
                 acc.add_feature(lead_out)
 
@@ -873,9 +865,7 @@ class RouteCalculator:
         """Build the final GeoJSON FeatureCollection response."""
         distance_miles = acc.total_meters * METERS_TO_MILES
         duration_minutes = acc.total_seconds / 60
-        avg_speed_mph = (
-            (distance_miles / (acc.total_seconds / 3600)) if acc.total_seconds > 0 else 0
-        )
+        avg_speed_mph = (distance_miles / (acc.total_seconds / 3600)) if acc.total_seconds > 0 else 0
 
         return {
             "type": "FeatureCollection",

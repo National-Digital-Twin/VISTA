@@ -46,7 +46,5 @@ class FocusAreaUpdateSerializer(GeometryValidationMixin, serializers.Serializer)
 
     name = serializers.CharField(required=False, max_length=255)
     geometry = serializers.JSONField(required=False, allow_null=True)
-    filter_mode = serializers.ChoiceField(
-        choices=["by_asset_type", "by_score_only"], required=False
-    )
+    filter_mode = serializers.ChoiceField(choices=["by_asset_type", "by_score_only"], required=False)
     is_active = serializers.BooleanField(required=False)

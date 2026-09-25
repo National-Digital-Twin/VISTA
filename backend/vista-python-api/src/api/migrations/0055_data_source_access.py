@@ -26,29 +26,21 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="assetcategory",
             name="id",
-            field=models.UUIDField(
-                default=uuid.uuid4, primary_key=True, serialize=False, unique=True
-            ),
+            field=models.UUIDField(default=uuid.uuid4, primary_key=True, serialize=False, unique=True),
         ),
         migrations.AlterField(
             model_name="assetsubcategory",
             name="id",
-            field=models.UUIDField(
-                default=uuid.uuid4, primary_key=True, serialize=False, unique=True
-            ),
+            field=models.UUIDField(default=uuid.uuid4, primary_key=True, serialize=False, unique=True),
         ),
         migrations.AlterField(
             model_name="assettype",
             name="id",
-            field=models.UUIDField(
-                default=uuid.uuid4, primary_key=True, serialize=False, unique=True
-            ),
+            field=models.UUIDField(default=uuid.uuid4, primary_key=True, serialize=False, unique=True),
         ),
         migrations.AlterField(
             model_name="datasource",
             name="id",
-            field=models.UUIDField(
-                default=uuid.uuid4, primary_key=True, serialize=False, unique=True
-            ),
+            field=models.UUIDField(default=uuid.uuid4, primary_key=True, serialize=False, unique=True),
         ),
     ]

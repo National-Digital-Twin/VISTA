@@ -30,9 +30,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="group",
             name="id",
-            field=models.UUIDField(
-                default=uuid.uuid4, primary_key=True, serialize=False, unique=True
-            ),
+            field=models.UUIDField(default=uuid.uuid4, primary_key=True, serialize=False, unique=True),
         ),
         migrations.AlterField(
             model_name="group",
@@ -42,16 +40,12 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="groupdatasourceaccess",
             name="id",
-            field=models.UUIDField(
-                default=uuid.uuid4, primary_key=True, serialize=False, unique=True
-            ),
+            field=models.UUIDField(default=uuid.uuid4, primary_key=True, serialize=False, unique=True),
         ),
         migrations.AlterField(
             model_name="groupmembership",
             name="id",
-            field=models.UUIDField(
-                default=uuid.uuid4, primary_key=True, serialize=False, unique=True
-            ),
+            field=models.UUIDField(default=uuid.uuid4, primary_key=True, serialize=False, unique=True),
         ),
         migrations.RunPython(set_created_at),
         migrations.AlterField(

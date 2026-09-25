@@ -141,9 +141,7 @@ def test_cleanup_deletes_visible_assets_for_inaccessible_types(
     deleted_count = cleanup_stale_visible_assets([user_id])
 
     assert deleted_count == 1
-    assert not VisibleAsset.objects.filter(
-        focus_area=focus_area, asset_type=restricted_asset_type
-    ).exists()
+    assert not VisibleAsset.objects.filter(focus_area=focus_area, asset_type=restricted_asset_type).exists()
 
 
 @pytest.mark.django_db
@@ -164,9 +162,7 @@ def test_cleanup_preserves_visible_assets_for_accessible_types(  # noqa: PLR0913
 
     cleanup_stale_visible_assets([user_id])
 
-    assert not VisibleAsset.objects.filter(
-        focus_area=focus_area, asset_type=restricted_asset_type
-    ).exists()
+    assert not VisibleAsset.objects.filter(focus_area=focus_area, asset_type=restricted_asset_type).exists()
     assert VisibleAsset.objects.filter(focus_area=focus_area, asset_type=global_asset_type).exists()
 
 
@@ -193,12 +189,8 @@ def test_cleanup_preserves_other_users_visible_assets(  # noqa: PLR0913
 
     cleanup_stale_visible_assets([user_id])
 
-    assert not VisibleAsset.objects.filter(
-        focus_area=focus_area, asset_type=restricted_asset_type
-    ).exists()
-    assert VisibleAsset.objects.filter(
-        focus_area=other_focus_area, asset_type=restricted_asset_type
-    ).exists()
+    assert not VisibleAsset.objects.filter(focus_area=focus_area, asset_type=restricted_asset_type).exists()
+    assert VisibleAsset.objects.filter(focus_area=other_focus_area, asset_type=restricted_asset_type).exists()
 
 
 @pytest.mark.django_db
@@ -225,9 +217,7 @@ def test_cleanup_preserves_visible_assets_when_user_has_access_through_another_g
     deleted_count = cleanup_stale_visible_assets([user_id])
 
     assert deleted_count == 0
-    assert VisibleAsset.objects.filter(
-        focus_area=focus_area, asset_type=restricted_asset_type
-    ).exists()
+    assert VisibleAsset.objects.filter(focus_area=focus_area, asset_type=restricted_asset_type).exists()
 
 
 @pytest.mark.django_db

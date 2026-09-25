@@ -26,14 +26,11 @@ class OsNgdDataSourceHandler(DataSourceHandler):
         """Build the URLs for fetching the data per the specification given."""
         query_strings = self._build_query_strings(asset_specification)
         return [
-            f"https://api.os.uk/features/ngd/ofa/v1/collections/"
-            f"{asset_specification['collection']}/items{query_string}"
+            f"https://api.os.uk/features/ngd/ofa/v1/collections/{asset_specification['collection']}/items{query_string}"
             for query_string in query_strings
         ]
 
-    async def fetch_data_for_asset_specification(
-        self, asset_specification, url: str
-    ) -> list[Asset]:
+    async def fetch_data_for_asset_specification(self, asset_specification, url: str) -> list[Asset]:
         """Fetch the OS NGD data per the specification given."""
         fetch_next_page = True
         offset = 0
@@ -42,35 +39,27 @@ class OsNgdDataSourceHandler(DataSourceHandler):
             offset_url = url + f"&offset={offset}"
             response = await self.fetch_from_url_with_retry(offset_url)
             fetch_next_page = (
-                response["numberReturned"] == self.os_ngd_response_page_size
-                if "numberReturned" in response
-                else False
+                response["numberReturned"] == self.os_ngd_response_page_size if "numberReturned" in response else False
             )
             offset += self.os_ngd_response_page_size
             filtered_assets = []
             for feature in response["features"]:
                 mapped_asset = ExternalAssetMapper.map_from_os_ngd(feature, asset_specification)
                 if "filters" in asset_specification:
-                    if self._is_feature_match_for_asset_specification_filter(
-                        asset_specification["filters"], feature
-                    ):
+                    if self._is_feature_match_for_asset_specification_filter(asset_specification["filters"], feature):
                         filtered_assets.append(mapped_asset)
                 else:
                     filtered_assets.append(mapped_asset)
             assets.extend(filtered_assets)
         return assets
 
-    def _build_query_string(
-        self, all_filters: dict[str, str], filters: list[tuple[str, str]] | None = None
-    ) -> str:
+    def _build_query_string(self, all_filters: dict[str, str], filters: list[tuple[str, str]] | None = None) -> str:
         filters = [] if filters is None else filters
         for key, value in all_filters.items():
             if isinstance(value, str) and key in self.filterable_fields:
                 filters.append((key, value))
 
-        filter_parts = [
-            f"filter={urllib.parse.quote(key)}='{urllib.parse.quote(val)}'" for key, val in filters
-        ]
+        filter_parts = [f"filter={urllib.parse.quote(key)}='{urllib.parse.quote(val)}'" for key, val in filters]
         filter_str = "&".join(filter_parts)
 
         if all_filters.get("cqlFilter"):
@@ -110,8 +99,7 @@ class OsNgdDataSourceHandler(DataSourceHandler):
                 else:
                     matches_all_filters = (
                         "properties" in feature
-                        and feature["properties"].get(data_filter["filterName"])
-                        == data_filter["filterValue"]
+                        and feature["properties"].get(data_filter["filterName"]) == data_filter["filterValue"]
                     )
             return matches_all_filters
         return True
