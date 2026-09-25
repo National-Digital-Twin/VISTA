@@ -692,8 +692,8 @@ describe('MapView', () => {
             const activeCalls = mockActiveFocusAreasProps.mock.calls.filter((call) => call[0]?.focusAreas?.length > 0);
             const inactiveCalls = mockInactiveFocusAreasProps.mock.calls.filter((call) => call[0]?.focusAreas?.length > 0);
 
-            expect(activeCalls.length).toBe(0);
-            expect(inactiveCalls.length).toBe(0);
+            expect(activeCalls).toHaveLength(0);
+            expect(inactiveCalls).toHaveLength(0);
         });
 
         it('fetches assets only from active focus areas when in Assets panel', async () => {

@@ -274,7 +274,7 @@ describe('PageHeader', () => {
             renderWithProviders(<PageHeader appName="VISTA" />);
 
             const scenarioElements = screen.queryAllByText(/Flood|Newport|Scenario|undefined/);
-            expect(scenarioElements.length).toBe(0);
+            expect(scenarioElements).toHaveLength(0);
             expect(screen.queryByText('Flood in Newport')).not.toBeInTheDocument();
         });
 
@@ -286,7 +286,7 @@ describe('PageHeader', () => {
             renderWithProviders(<PageHeader appName="VISTA" />);
 
             const scenarioElements = screen.queryAllByText(/Flood|Newport|Scenario|undefined/);
-            expect(scenarioElements.length).toBe(0);
+            expect(scenarioElements).toHaveLength(0);
         });
 
         it('does not display scenario name when active scenario has only code', () => {
@@ -297,7 +297,7 @@ describe('PageHeader', () => {
             renderWithProviders(<PageHeader appName="VISTA" />);
 
             const scenarioElements = screen.queryAllByText(/Flood|Newport|Scenario|undefined/);
-            expect(scenarioElements.length).toBe(0);
+            expect(scenarioElements).toHaveLength(0)
             expect(screen.getByText('S001')).toBeInTheDocument();
         });
 
@@ -309,7 +309,7 @@ describe('PageHeader', () => {
             renderWithProviders(<PageHeader appName="VISTA" />);
 
             const scenarioElements = screen.queryAllByText(/undefined/);
-            expect(scenarioElements.length).toBe(0);
+            expect(scenarioElements).toHaveLength(0);
             expect(screen.getByText('Flood in Newport')).toBeInTheDocument();
         });
 
