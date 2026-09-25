@@ -16,7 +16,7 @@ RUN apt-get update && apt-get upgrade -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Install poetry globally
-RUN pip3 install poetry poetry-plugin-export
+RUN pip3 install --only-binary :all: poetry==1.8.3 poetry-plugin-export==1.8.0
 
 # Create a virtualenv from Poetry
 RUN python3 -m venv /venv

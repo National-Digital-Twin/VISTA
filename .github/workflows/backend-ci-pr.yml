@@ -46,7 +46,7 @@ jobs:
         run: |
           python -m venv venv
           source venv/bin/activate
-          python -m pip install --upgrade "pip==26.2.1"
+          python -m pip install --upgrade --only-binary :all: "pip==26.2.1"
 
       - name: Install Poetry
         if: steps.venv-cache.outcome!= 'restored'
@@ -118,7 +118,7 @@ jobs:
         run: |
           python -m venv venv
           source venv/bin/activate
-          python -m pip install --upgrade "pip==26.2.1"
+          python -m pip install --upgrade --only-binary :all: "pip==26.2.1"
 
       - name: Install linting tools
         run: |
@@ -189,7 +189,7 @@ jobs:
         run: |
           python -m venv venv
           source venv/bin/activate
-          python -m pip install --upgrade "pip==26.2.1"
+          python -m pip install --upgrade --only-binary :all: "pip==26.2.1"
 
       - name: Install Poetry
         if: steps.venv-cache.outcome!= 'restored'
