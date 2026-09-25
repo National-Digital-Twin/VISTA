@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
-# and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+# and is legally attributed to the UK's Department for Business, Innovation, Science and Trade (BIST) as the governing entity.
 
 """An identity provider repository."""
 
@@ -122,10 +122,7 @@ class IdpRepository:
     def list_users_in_group(self) -> list[IdpUser]:
         """Get a list of users known to the identity provider for the application group."""
         if not settings.IS_PROD:
-            return [
-                IdpUser.from_cognito(user, bool(int(user["Username"][0]) % 2))
-                for user in self._stub_users()
-            ]
+            return [IdpUser.from_cognito(user, bool(int(user["Username"][0]) % 2)) for user in self._stub_users()]
         all_users = self.get_all_users_in_group(self.user_group_name)
         admins = self.get_admin_user_list()
         return [IdpUser.from_cognito(user, user.get("Username") in admins) for user in all_users]
@@ -133,10 +130,7 @@ class IdpRepository:
     def list_all_users(self) -> list[IdpUser]:
         """Get a list of all users known to the identity provider."""
         if not settings.IS_PROD:
-            return [
-                IdpUser.from_cognito(user, bool(int(user["Username"][0]) % 2))
-                for user in self._stub_users()
-            ]
+            return [IdpUser.from_cognito(user, bool(int(user["Username"][0]) % 2)) for user in self._stub_users()]
         all_users = self.get_all_users()
         admins = self.get_admin_user_list()
         return [IdpUser.from_cognito(user, user.get("Username") in admins) for user in all_users]
@@ -182,19 +176,13 @@ class IdpRepository:
 
     def remove_user_from_vista(self, user_id: str) -> None:
         """Remove user access to VISTA."""
-        self.client.admin_remove_user_from_group(
-            UserPoolId=self.user_pool_id, Username=user_id, GroupName=self.user_group_name
-        )
+        self.client.admin_remove_user_from_group(UserPoolId=self.user_pool_id, Username=user_id, GroupName=self.user_group_name)
         self.client.admin_remove_user_from_group(
             UserPoolId=self.user_pool_id, Username=user_id, GroupName=self.admin_user_group_name
         )
 
     def _add_user_to_user_group(self, username):
-        self.client.admin_add_user_to_group(
-            UserPoolId=self.user_pool_id, Username=username, GroupName=self.user_group_name
-        )
+        self.client.admin_add_user_to_group(UserPoolId=self.user_pool_id, Username=username, GroupName=self.user_group_name)
 
     def _add_user_to_admin_group(self, username):
-        self.client.admin_add_user_to_group(
-            UserPoolId=self.user_pool_id, Username=username, GroupName=self.admin_user_group_name
-        )
+        self.client.admin_add_user_to_group(UserPoolId=self.user_pool_id, Username=username, GroupName=self.admin_user_group_name)

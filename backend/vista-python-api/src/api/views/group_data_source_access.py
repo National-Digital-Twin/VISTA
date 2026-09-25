@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
-# and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+# and is legally attributed to the UK's Department for Business, Innovation, Science and Trade (BIST) as the governing entity.
 
 """Views for Group data source access."""
 
@@ -41,17 +41,13 @@ class GroupDataSourceAccessViewSet(viewsets.ModelViewSet):
 
     def perform_destroy(self, instance):
         """Delete the access record and clean up stale visible assets for affected users."""
-        affected_user_ids = list(
-            GroupMembership.objects.filter(group=instance.group).values_list("user_id", flat=True)
-        )
+        affected_user_ids = list(GroupMembership.objects.filter(group=instance.group).values_list("user_id", flat=True))
         super().perform_destroy(instance)
         cleanup_stale_visible_assets(affected_user_ids)
 
     def _cleanup_affected_users(self, data_source):
         """Clean up visible assets for users who lost access to a data source's asset types."""
-        asset_type_ids = AssetType.objects.filter(data_source=data_source).values_list(
-            "id", flat=True
-        )
+        asset_type_ids = AssetType.objects.filter(data_source=data_source).values_list("id", flat=True)
         affected_user_ids = list(
             FocusArea.objects.filter(visible_assets__asset_type_id__in=asset_type_ids)
             .values_list("user_id", flat=True)

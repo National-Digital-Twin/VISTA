@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 // © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
-// and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+// and is legally attributed to the UK's Department for Business, Innovation, Science and Trade (BIST) as the governing entity.
 
 import { ThemeProvider } from '@mui/material/styles';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -132,28 +132,15 @@ describe('PageHeader', () => {
         expect(screen.getByTestId('logo')).toHaveTextContent('Logo: VISTA');
     });
 
-    it('renders Logo component', () => {
+    it.each([
+        ['Logo', 'logo'],
+        ['Navigation', 'navigation'],
+        ['Notifications', 'notifications'],
+        ['UserMenu', 'user-menu'],
+    ])('renders %s component', (_, testId) => {
         renderWithProviders(<PageHeader appName="VISTA" />);
 
-        expect(screen.getByTestId('logo')).toBeInTheDocument();
-    });
-
-    it('renders Navigation component', () => {
-        renderWithProviders(<PageHeader appName="VISTA" />);
-
-        expect(screen.getByTestId('navigation')).toBeInTheDocument();
-    });
-
-    it('renders Notifications component', () => {
-        renderWithProviders(<PageHeader appName="VISTA" />);
-
-        expect(screen.getByTestId('notifications')).toBeInTheDocument();
-    });
-
-    it('renders UserMenu component', () => {
-        renderWithProviders(<PageHeader appName="VISTA" />);
-
-        expect(screen.getByTestId('user-menu')).toBeInTheDocument();
+        expect(screen.getByTestId(testId)).toBeInTheDocument();
     });
 
     it('opens user guide dialog when User guide is clicked', () => {
@@ -287,7 +274,7 @@ describe('PageHeader', () => {
             renderWithProviders(<PageHeader appName="VISTA" />);
 
             const scenarioElements = screen.queryAllByText(/Flood|Newport|Scenario|undefined/);
-            expect(scenarioElements.length).toBe(0);
+            expect(scenarioElements).toHaveLength(0);
             expect(screen.queryByText('Flood in Newport')).not.toBeInTheDocument();
         });
 
@@ -299,7 +286,7 @@ describe('PageHeader', () => {
             renderWithProviders(<PageHeader appName="VISTA" />);
 
             const scenarioElements = screen.queryAllByText(/Flood|Newport|Scenario|undefined/);
-            expect(scenarioElements.length).toBe(0);
+            expect(scenarioElements).toHaveLength(0);
         });
 
         it('does not display scenario name when active scenario has only code', () => {
@@ -310,7 +297,7 @@ describe('PageHeader', () => {
             renderWithProviders(<PageHeader appName="VISTA" />);
 
             const scenarioElements = screen.queryAllByText(/Flood|Newport|Scenario|undefined/);
-            expect(scenarioElements.length).toBe(0);
+            expect(scenarioElements).toHaveLength(0);
             expect(screen.getByText('S001')).toBeInTheDocument();
         });
 
@@ -322,7 +309,7 @@ describe('PageHeader', () => {
             renderWithProviders(<PageHeader appName="VISTA" />);
 
             const scenarioElements = screen.queryAllByText(/undefined/);
-            expect(scenarioElements.length).toBe(0);
+            expect(scenarioElements).toHaveLength(0);
             expect(screen.getByText('Flood in Newport')).toBeInTheDocument();
         });
 

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 // © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
-// and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+// and is legally attributed to the UK's Department for Business, Innovation, Science and Trade (BIST) as the governing entity.
 
 import { ThemeProvider } from '@mui/material/styles';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -186,14 +186,6 @@ describe('AssetsView', () => {
             await waitForComponentReady();
         });
 
-        it('renders close button', async () => {
-            setupMocks();
-            renderWithProviders(<AssetsView {...defaultProps} />);
-            await waitFor(() => {
-                expect(screen.getByLabelText('Close panel')).toBeInTheDocument();
-            });
-        });
-
         it('renders search input', async () => {
             setupMocks();
             renderWithProviders(<AssetsView {...defaultProps} />);
@@ -202,27 +194,17 @@ describe('AssetsView', () => {
             });
         });
 
-        it('renders focus area dropdown', async () => {
+        it.each([
+            ['close button', 'Close panel'],
+            ['focus area dropdown', 'Select focus area'],
+            ['filter mode dropdown', 'Select filter mode'],
+            ['clear all button', 'Clear all visible assets'],
+        ])('renders %s', async (_, label) => {
             setupMocks();
             renderWithProviders(<AssetsView {...defaultProps} />);
-            await waitFor(() => {
-                expect(screen.getByLabelText('Select focus area')).toBeInTheDocument();
-            });
-        });
 
-        it('renders filter mode dropdown as disabled', async () => {
-            setupMocks();
-            renderWithProviders(<AssetsView {...defaultProps} />);
             await waitFor(() => {
-                expect(screen.getByLabelText('Select filter mode')).toBeInTheDocument();
-            });
-        });
-
-        it('renders clear all button', async () => {
-            setupMocks();
-            renderWithProviders(<AssetsView {...defaultProps} />);
-            await waitFor(() => {
-                expect(screen.getByLabelText('Clear all visible assets')).toBeInTheDocument();
+                expect(screen.getByLabelText(label)).toBeInTheDocument();
             });
         });
 

@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
-# and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+# and is legally attributed to the UK's Department for Business, Innovation, Science and Trade (BIST) as the governing entity.
 
 """Views for dataroom exposure layer listing."""
 
@@ -33,8 +33,7 @@ class DataroomExposureLayersView(APIView):
 
         queryset = (
             ExposureLayer.objects.filter(
-                Q(user_id__isnull=True)
-                | Q(scenario=scenario, status__in=[ExposureLayer.PENDING, ExposureLayer.APPROVED])
+                Q(user_id__isnull=True) | Q(scenario=scenario, status__in=[ExposureLayer.PENDING, ExposureLayer.APPROVED])
             )
             .select_related("type")
             .defer("geometry_buffered")
@@ -44,7 +43,5 @@ class DataroomExposureLayersView(APIView):
         has_user_layers = queryset.filter(user_id__isnull=False).exists()
         user_name_map = IdpRepository().get_user_name_map() if has_user_layers else {}
 
-        serializer = DataroomExposureLayerSerializer(
-            queryset, many=True, context={"user_name_map": user_name_map}
-        )
+        serializer = DataroomExposureLayerSerializer(queryset, many=True, context={"user_name_map": user_name_map})
         return Response(serializer.data)

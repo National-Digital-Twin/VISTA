@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
-# and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+# and is legally attributed to the UK's Department for Business, Innovation, Science and Trade (BIST) as the governing entity.
 
 """Tests for the dataroom exposure layers endpoint."""
 
@@ -37,9 +37,7 @@ def system_type(db):  # noqa: ARG001
 @pytest.fixture
 def user_drawn_type(db):  # noqa: ARG001
     """Create a user-editable exposure layer type."""
-    return ExposureLayerType.objects.create(
-        id=uuid.uuid4(), name="User drawn", is_user_editable=True
-    )
+    return ExposureLayerType.objects.create(id=uuid.uuid4(), name="User drawn", is_user_editable=True)
 
 
 @pytest.fixture
@@ -127,9 +125,7 @@ def test_get_excludes_layers_from_other_scenarios(
     client,
 ):
     """Test GET excludes user-drawn layers from other scenarios."""
-    other_scenario = Scenario.objects.create(
-        id=uuid.uuid4(), name="Other Scenario", is_active=False
-    )
+    other_scenario = Scenario.objects.create(id=uuid.uuid4(), name="Other Scenario", is_active=False)
     ExposureLayer.objects.create(
         name="Other Scenario Layer",
         geometry=SAMPLE_GEOM,
@@ -151,9 +147,7 @@ def test_get_excludes_layers_from_other_scenarios(
 
 
 @pytest.mark.django_db
-def test_get_excludes_unpublished_user_drawn_layers(
-    scenario, user_drawn_type, mock_user_id, client
-):
+def test_get_excludes_unpublished_user_drawn_layers(scenario, user_drawn_type, mock_user_id, client):
     """Test GET excludes unpublished user-drawn layers (still drafts)."""
     for layer_status in [ExposureLayer.UNPUBLISHED, ExposureLayer.PENDING, ExposureLayer.APPROVED]:
         ExposureLayer.objects.create(

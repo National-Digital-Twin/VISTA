@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
-# and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+# and is legally attributed to the UK's Department for Business, Innovation, Science and Trade (BIST) as the governing entity.
 
 """Views relating to Assets."""
 
@@ -19,6 +19,4 @@ class DataSourceViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         """Get queryset in deference to request query parameters."""
-        return DataSource.objects.annotate(
-            asset_count=Count("types__assets"), last_updated=Max("types__assets__last_updated")
-        )
+        return DataSource.objects.annotate(asset_count=Count("types__assets"), last_updated=Max("types__assets__last_updated"))

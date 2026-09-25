@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
-# and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+# and is legally attributed to the UK's Department for Business, Innovation, Science and Trade (BIST) as the governing entity.
 
 """Handler for the CQC data source."""
 
@@ -31,14 +31,9 @@ class CqcDataSourceHandler(DataSourceHandler):
         while current_url:
             response = await self.fetch_from_url_with_retry(current_url, headers=self.headers)
             all_locations.extend(response["locations"])
-            current_url = (
-                f"{self.root_url}/{response['nextPageUri']}" if "nextPageUri" in response else None
-            )
+            current_url = f"{self.root_url}/{response['nextPageUri']}" if "nextPageUri" in response else None
 
-        tasks = {
-            create_task(self._fetch_location_details(location["locationId"])): location
-            for location in all_locations
-        }
+        tasks = {create_task(self._fetch_location_details(location["locationId"])): location for location in all_locations}
 
         locations = []
 
@@ -56,6 +51,4 @@ class CqcDataSourceHandler(DataSourceHandler):
         ]
 
     async def _fetch_location_details(self, location_id):
-        return await self.fetch_from_url_with_retry(
-            f"{self.root_url}/locations/{location_id}", headers=self.headers
-        )
+        return await self.fetch_from_url_with_retry(f"{self.root_url}/locations/{location_id}", headers=self.headers)

@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
-# and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+# and is legally attributed to the UK's Department for Business, Innovation, Science and Trade (BIST) as the governing entity.
 
 """REST views for user details and sign-out functionality."""
 
@@ -44,9 +44,7 @@ def user_details_view(request):
     forward_url = f"{settings.IDENTITY_API_URL}/api/v1/user-details"
 
     try:
-        response = requests.get(
-            url=forward_url, headers={"X-Auth-Request-Access-Token": token}, params=request.GET
-        )
+        response = requests.get(url=forward_url, headers={"X-Auth-Request-Access-Token": token}, params=request.GET)
         if "application/json" in response.headers.get("Content-Type", ""):
             data = response.json()
 
@@ -54,11 +52,7 @@ def user_details_view(request):
             content = data.get("content", data)
 
             if "groups" in content:
-                content["userType"] = (
-                    "Admin"
-                    if settings.COGNITO_ADMIN_USER_GROUP_NAME in content["groups"]
-                    else "General"
-                )
+                content["userType"] = "Admin" if settings.COGNITO_ADMIN_USER_GROUP_NAME in content["groups"] else "General"
 
             return JsonResponse(
                 data,
@@ -92,21 +86,12 @@ def signout_view(_request):
 
         if not response.ok:
             return JsonResponse(
-                {
-                    "error": (
-                        f"Error: {response.status_code} ({response.reason}) "
-                        "received when fetching sign-out links."
-                    )
-                },
+                {"error": (f"Error: {response.status_code} ({response.reason}) received when fetching sign-out links.")},
                 status=response.status_code,
             )
 
         logout_redirect = response.json()
-        return JsonResponse(
-            {"oAuthLogoutUrl": oauth_logout_url, "redirect": logout_redirect.get("href", "/")}
-        )
+        return JsonResponse({"oAuthLogoutUrl": oauth_logout_url, "redirect": logout_redirect.get("href", "/")})
 
     except requests.RequestException as e:
-        return JsonResponse(
-            {"error": "Failed to fetch sign-out link", "details": str(e)}, status=500
-        )
+        return JsonResponse({"error": "Failed to fetch sign-out link", "details": str(e)}, status=500)

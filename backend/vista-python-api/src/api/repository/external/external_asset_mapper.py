@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
-# and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+# and is legally attributed to the UK's Department for Business, Innovation, Science and Trade (BIST) as the governing entity.
 
 """Contains static methods to create :class:api.models.assets.Asset from various data sources."""
 
@@ -34,9 +34,7 @@ class ExternalAssetMapper:
     @staticmethod
     def map_from_naptan(naptan_stop, asset_specification):
         """Create an instance of :class:api.models.assets.Asset from a NAPTAN stop."""
-        ExternalAssetMapper.validate_fields(
-            naptan_stop, ["CommonName", "Longitude", "Latitude", "ATCOCode"], "naptan"
-        )
+        ExternalAssetMapper.validate_fields(naptan_stop, ["CommonName", "Longitude", "Latitude", "ATCOCode"], "naptan")
         external_id = naptan_stop["ATCOCode"]
         name = naptan_stop["CommonName"]
         asset_type = AssetType(id=asset_specification["type"])
@@ -47,9 +45,7 @@ class ExternalAssetMapper:
     @staticmethod
     def map_from_os_names(entry, asset_specification):
         """Create an instance of :class:api.models.assets.Asset from an OS names data record."""
-        ExternalAssetMapper.validate_fields(
-            entry, ["NAME1", "GEOMETRY_X", "GEOMETRY_Y", "ID"], "os_names"
-        )
+        ExternalAssetMapper.validate_fields(entry, ["NAME1", "GEOMETRY_X", "GEOMETRY_Y", "ID"], "os_names")
         external_id = entry["ID"]
         name = entry["NAME1"] if "NAME2" not in entry else entry["NAME2"]
         asset_type = AssetType(id=asset_specification["type"])
@@ -62,24 +58,18 @@ class ExternalAssetMapper:
     @staticmethod
     def map_from_cqc(location_details, asset_specification):
         """Create an instance of :class:api.models.assets.Asset from location details from CQC."""
-        ExternalAssetMapper.validate_fields(
-            location_details, ["name", "onspdLongitude", "onspdLatitude", "locationId"], "cqc"
-        )
+        ExternalAssetMapper.validate_fields(location_details, ["name", "onspdLongitude", "onspdLatitude", "locationId"], "cqc")
         external_id = location_details["locationId"]
         name = location_details["name"]
         asset_type = AssetType(id=asset_specification["type"])
-        geom = Point(
-            float(location_details["onspdLongitude"]), float(location_details["onspdLatitude"])
-        )
+        geom = Point(float(location_details["onspdLongitude"]), float(location_details["onspdLatitude"]))
 
         return Asset.create(external_id, name, asset_type, geom)
 
     @staticmethod
     def map_from_national_grid(record, asset_specification):
         """Create an instance of :class:api.models.assets.Asset from a National Grid data record."""
-        ExternalAssetMapper.validate_fields(
-            record, ["SUBSTATION", "Substation", "centroid"], "national_grid"
-        )
+        ExternalAssetMapper.validate_fields(record, ["SUBSTATION", "Substation", "centroid"], "national_grid")
         external_id = record["SUBSTATION"]
         name = record["Substation"]
         asset_type = AssetType(id=asset_specification["type"])
@@ -91,9 +81,7 @@ class ExternalAssetMapper:
     @staticmethod
     def map_from_nhs(record, coords, asset_specification):
         """Create an instance of :class:api.models.assets.Asset from an NHS data record."""
-        ExternalAssetMapper.validate_fields(
-            record, ["PHARMACY_ODS_CODE_F_CODE", "PHARMACY_TRADING_NAME"], "nhs"
-        )
+        ExternalAssetMapper.validate_fields(record, ["PHARMACY_ODS_CODE_F_CODE", "PHARMACY_TRADING_NAME"], "nhs")
         external_id = record["PHARMACY_ODS_CODE_F_CODE"]
         name = record["PHARMACY_TRADING_NAME"]
         asset_type = AssetType(id=asset_specification["type"])

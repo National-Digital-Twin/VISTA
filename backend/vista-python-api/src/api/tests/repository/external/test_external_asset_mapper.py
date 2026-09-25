@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
-# and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+# and is legally attributed to the UK's Department for Business, Innovation, Science and Trade (BIST) as the governing entity.
 
 """Tests for mapping external asset data to asset model."""
 
@@ -82,9 +82,7 @@ class TestOsNgd:
         with pytest.raises(ValidationError):
             ExternalAssetMapper.map_from_os_ngd({}, asset_specification)
 
-    def test_map_from_os_ngd_creates_correct_asset_with_name_unknown_with_no_name_field(
-        self, ngd_feature, asset_specification
-    ):
+    def test_map_from_os_ngd_creates_correct_asset_with_name_unknown_with_no_name_field(self, ngd_feature, asset_specification):
         """Test standard asset creation for OS NGD."""
         asset = ExternalAssetMapper.map_from_os_ngd(ngd_feature, asset_specification)
         assert asset.external_id == ngd_feature["id"]
@@ -92,18 +90,14 @@ class TestOsNgd:
         assert asset.geom.wkt == Point(1, 0).wkt
         assert asset.type.id == asset_specification["type"]
 
-    def test_map_from_os_ngd_creates_asset_with_given_name_for_standard_name_field(
-        self, ngd_feature, asset_specification
-    ):
+    def test_map_from_os_ngd_creates_asset_with_given_name_for_standard_name_field(self, ngd_feature, asset_specification):
         """Test standard asset creation for OS NGD."""
         expected_name = "123"
         ngd_feature["properties"]["name1_text"] = expected_name
         asset = ExternalAssetMapper.map_from_os_ngd(ngd_feature, asset_specification)
         assert asset.name == expected_name
 
-    def test_map_from_os_ngd_creates_asset_with_given_name_for_specified_name_field(
-        self, ngd_feature, asset_specification
-    ):
+    def test_map_from_os_ngd_creates_asset_with_given_name_for_specified_name_field(self, ngd_feature, asset_specification):
         """Test standard asset creation for OS NGD."""
         expected_name = "123"
         ngd_feature["properties"]["custom_name_field"] = expected_name
@@ -132,9 +126,7 @@ class TestNaptan:
 class TestOsNames:
     """Tests for the OS Names asset mapper."""
 
-    def test_map_from_os_names_raises_exception_without_feature_properties(
-        self, asset_specification
-    ):
+    def test_map_from_os_names_raises_exception_without_feature_properties(self, asset_specification):
         """Test feature attribute validation for OS Names."""
         with pytest.raises(ValidationError):
             ExternalAssetMapper.map_from_os_names({}, asset_specification)
@@ -175,18 +167,14 @@ class TestCqc:
 class TestNationalGrid:
     """Tests for the National Grid asset mapper."""
 
-    def test_map_from_national_grid_raises_exception_without_feature_properties(
-        self, asset_specification
-    ):
+    def test_map_from_national_grid_raises_exception_without_feature_properties(self, asset_specification):
         """Test feature attribute validation for National Grid."""
         with pytest.raises(ValidationError):
             ExternalAssetMapper.map_from_national_grid({}, asset_specification)
 
     def test_map_from_national_grid_creates_asset(self, national_grid_record, asset_specification):
         """Test standard asset creation for National Grid."""
-        asset = ExternalAssetMapper.map_from_national_grid(
-            national_grid_record, asset_specification
-        )
+        asset = ExternalAssetMapper.map_from_national_grid(national_grid_record, asset_specification)
         assert asset.external_id == national_grid_record["SUBSTATION"]
         assert asset.name == national_grid_record["Substation"]
         assert asset.geom.wkt == Point(1, 0).wkt

@@ -8,15 +8,15 @@ FROM base AS builder
 WORKDIR /vista-python-api/core
 
 # upgrade pip to the latest version
-RUN apt-get update && apt-get upgrade -y \
-    && apt-get install -y build-essential \
-    libstdc++6 \
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
     gdal-bin \
     libgdal-dev \
+    libstdc++6 \
     && rm -rf /var/lib/apt/lists/*
 
 # Install poetry globally
-RUN pip3 install poetry poetry-plugin-export
+RUN pip3 install --only-binary :all: poetry==1.8.3 poetry-plugin-export==1.8.0
 
 # Create a virtualenv from Poetry
 RUN python3 -m venv /venv
@@ -29,10 +29,11 @@ FROM base
 WORKDIR /vista-python-api/src
 
 
-# Install GDAL system libraries in final image
+# Install GDAL system libraries and PostgreSQL client in final image
 RUN apt-get update && apt-get --no-install-recommends install -y \
     gdal-bin \
     libgdal-dev \
+    postgresql-client \
     && rm -rf /var/lib/apt/lists/*
 
 # virtual environment is copied
@@ -41,7 +42,7 @@ COPY --from=builder /venv /venv
 # bash is installed for more convenient debugging.
 RUN apt-get update && \
     apt-get upgrade -y --allow-downgrades \
-    && apt-get install -y --allow-downgrades bash \
+    && apt-get install -y --no-install-recommends --allow-downgrades bash \
     && rm -rf /var/lib/apt/lists/*
 
 # copy payload code only

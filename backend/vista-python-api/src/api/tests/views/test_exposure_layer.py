@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
-# and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+# and is legally attributed to the UK's Department for Business, Innovation, Science and Trade (BIST) as the governing entity.
 
 """Tests for the ExposureLayer API endpoint."""
 
@@ -57,9 +57,7 @@ def test_list_exposure_layers(exposure_layers, client):
 
     for actual_type in data:
         actual_layers = actual_type["exposureLayers"]
-        expected_layer_names = {
-            layer.name for layer in exposure_layers if layer.type.name == actual_type["name"]
-        }
+        expected_layer_names = {layer.name for layer in exposure_layers if layer.type.name == actual_type["name"]}
         actual_layer_names = [layer["name"] for layer in actual_layers]
         assert set(actual_layer_names) == expected_layer_names
 
@@ -81,9 +79,7 @@ def test_exposure_layer_type_is_user_editable_field(db, client):  # noqa: ARG001
     # Create a user-editable type
     editable_type = ExposureLayerType.objects.create(name="User drawn", is_user_editable=True)
     # Create a non-editable type
-    non_editable_type = ExposureLayerType.objects.create(
-        name="System Floods", is_user_editable=False
-    )
+    non_editable_type = ExposureLayerType.objects.create(name="System Floods", is_user_editable=False)
 
     # Create layers for both types
     geom = GEOSGeometry("POLYGON((0 0, 0 1, 1 1, 1 0, 0 0))")

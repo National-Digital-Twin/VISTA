@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
-# and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+# and is legally attributed to the UK's Department for Business, Innovation, Science and Trade (BIST) as the governing entity.
 
 """Tests for route calculator with constraints."""
 
@@ -288,12 +288,8 @@ def flood_layer_type():
 def low_bridge_asset_type():
     """Create low bridge asset type."""
     category = AssetCategory.objects.create(id=uuid.uuid4(), name="Transport")
-    sub_category = AssetSubCategory.objects.create(
-        id=uuid.uuid4(), name="Road infrastructure", category=category
-    )
-    data_source = DataSource.objects.create(
-        id=uuid.uuid4(), name="Test Source", owner="Test", description_md="Test"
-    )
+    sub_category = AssetSubCategory.objects.create(id=uuid.uuid4(), name="Road infrastructure", category=category)
+    data_source = DataSource.objects.create(id=uuid.uuid4(), name="Test Source", owner="Test", description_md="Test")
     return AssetType.objects.create(
         id=uuid.uuid4(),
         name="Low bridge",
@@ -345,11 +341,11 @@ class TestCalculateRouteIntegration:
     @pytest.mark.usefixtures("db")
     def test_no_route_raises_error_when_no_roads(self, calculator):
         """Should raise RuntimeError when no roads exist in database."""
+        start = RoutePoint(lon=-1.0, lat=50.0)
+        end = RoutePoint(lon=-1.5, lat=50.5)
+
         with pytest.raises(RuntimeError, match="Edge spatial index not available"):
-            calculator.calculate_route(
-                start=RoutePoint(lon=-1.0, lat=50.0),
-                end=RoutePoint(lon=-1.5, lat=50.5),
-            )
+            calculator.calculate_route(start=start, end=end)
 
     @pytest.mark.usefixtures("simple_road_network")
     def test_route_includes_total_metrics(self, calculator):
@@ -438,9 +434,7 @@ class TestEdgeSnappingEdgeCases:
         last_point = last_coords[-1]
         end_lat = last_point[1]
 
-        assert abs(end_lat - 49.92) < 0.02, (
-            f"Route does not end at snap point. Last coordinate lat={end_lat}, expected ~49.92"
-        )
+        assert abs(end_lat - 49.92) < 0.02, f"Route does not end at snap point. Last coordinate lat={end_lat}, expected ~49.92"
 
     def test_route_with_start_closer_to_far_node(self, calculator):
         """Route should handle start point closer to the far end of an edge."""
@@ -566,9 +560,7 @@ class TestEdgeSnappingEdgeCases:
                 f"Gap between segment {i} and {i + 1}: end={current_end}, start={next_start}"
             )
 
-    def test_blocked_edge_snaps_to_alternative(
-        self, calculator, road_blocks_type, mock_user_id, create_mapwide_focus_area
-    ):
+    def test_blocked_edge_snaps_to_alternative(self, calculator, road_blocks_type, mock_user_id, create_mapwide_focus_area):
         """When snapped edge is blocked, should find route via alternative."""
         scenario = Scenario.objects.create(name="Test Block", is_active=False)
         create_mapwide_focus_area(scenario)
@@ -732,11 +724,11 @@ class TestEmptyRoadNetwork:
         RoadLink.objects.all().delete()
         routing_cache.invalidate()
 
+        start = RoutePoint(lon=-1.0, lat=50.0)
+        end = RoutePoint(lon=-1.2, lat=50.0)
+
         with pytest.raises(RuntimeError, match="Edge spatial index not available"):
-            calculator.calculate_route(
-                start=RoutePoint(lon=-1.0, lat=50.0),
-                end=RoutePoint(lon=-1.2, lat=50.0),
-            )
+            calculator.calculate_route(start=start, end=end)
 
 
 @pytest.mark.django_db
@@ -744,9 +736,7 @@ class TestEmptyRoadNetwork:
 class TestConstraintIntegration:
     """Tests for constraint intervention integration."""
 
-    def test_polygon_constraint_blocks_route(
-        self, calculator, road_blocks_type, mock_user_id, create_mapwide_focus_area
-    ):
+    def test_polygon_constraint_blocks_route(self, calculator, road_blocks_type, mock_user_id, create_mapwide_focus_area):
         """Route should avoid edges blocked by polygon constraint."""
         scenario = Scenario.objects.create(name="Test", is_active=False)
         create_mapwide_focus_area(scenario)
@@ -781,9 +771,7 @@ class TestConstraintIntegration:
             osids = [f["properties"]["osid"] for f in result["features"]]
             assert not any(osid == "bc" for osid in osids)
 
-    def test_inactive_constraint_still_blocks(
-        self, calculator, road_blocks_type, mock_user_id, create_mapwide_focus_area
-    ):
+    def test_inactive_constraint_still_blocks(self, calculator, road_blocks_type, mock_user_id, create_mapwide_focus_area):
         """Inactive (hidden) constraints should still affect routing."""
         scenario = Scenario.objects.create(name="Test", is_active=False)
         create_mapwide_focus_area(scenario)
@@ -818,9 +806,7 @@ class TestConstraintIntegration:
             osids = [f["properties"]["osid"] for f in result["features"]]
             assert not any(osid == "bc" for osid in osids)
 
-    def test_constraint_only_affects_owner(
-        self, calculator, road_blocks_type, mock_user_id, create_mapwide_focus_area
-    ):
+    def test_constraint_only_affects_owner(self, calculator, road_blocks_type, mock_user_id, create_mapwide_focus_area):
         """Constraints should only affect the user who created them."""
         scenario = Scenario.objects.create(name="Test", is_active=False)
         other_user_id = uuid.UUID("00000000-0000-0000-0000-000000000002")
@@ -857,9 +843,7 @@ class TestConstraintIntegration:
         assert any(osid == "ab" for osid in osids)
         assert any(osid == "bc" for osid in osids)
 
-    def test_inactive_mapwide_skips_constraints(
-        self, calculator, road_blocks_type, mock_user_id, create_mapwide_focus_area
-    ):
+    def test_inactive_mapwide_skips_constraints(self, calculator, road_blocks_type, mock_user_id, create_mapwide_focus_area):
         """Constraints should be ignored when map-wide focus area is inactive."""
         scenario = Scenario.objects.create(name="Test", is_active=False)
         create_mapwide_focus_area(scenario, is_active=False)
@@ -901,9 +885,7 @@ class TestConstraintIntegration:
 class TestFloodZones:
     """Tests for flood zone handling via exposure layers."""
 
-    def test_visible_flood_layer_blocks_edges(
-        self, calculator, flood_layer_type, mock_user_id, create_mapwide_focus_area
-    ):
+    def test_visible_flood_layer_blocks_edges(self, calculator, flood_layer_type, mock_user_id, create_mapwide_focus_area):
         """Visible flood layers on the map-wide focus area should block intersecting edges."""
         scenario = Scenario.objects.create(name="Test", is_active=False)
         focus_area = create_mapwide_focus_area(scenario)
@@ -1003,9 +985,7 @@ class TestFloodZones:
         assert any(osid == "ab" for osid in osids)
         assert any(osid == "bc" for osid in osids)
 
-    def test_non_flood_layer_type_ignored(
-        self, calculator, mock_user_id, create_mapwide_focus_area
-    ):
+    def test_non_flood_layer_type_ignored(self, calculator, mock_user_id, create_mapwide_focus_area):
         """Non-Floods layer types should not affect routing."""
         scenario = Scenario.objects.create(name="Test", is_active=False)
 
@@ -1129,9 +1109,7 @@ class TestLowBridgeRestrictions:
 class TestConstraintProviderIntegration:
     """Integration tests for ConstraintProvider with real DB."""
 
-    def test_constraint_intervention_returns_geometries(
-        self, road_blocks_type, mock_user_id, create_mapwide_focus_area
-    ):
+    def test_constraint_intervention_returns_geometries(self, road_blocks_type, mock_user_id, create_mapwide_focus_area):
         """Constraint interventions should return blocking geometries."""
         scenario = Scenario.objects.create(name="Test", is_active=False)
         create_mapwide_focus_area(scenario)
@@ -1158,9 +1136,7 @@ class TestConstraintProviderIntegration:
 
         assert len(geometries) > 0
 
-    def test_inactive_constraint_still_returns_geometries(
-        self, road_blocks_type, mock_user_id, create_mapwide_focus_area
-    ):
+    def test_inactive_constraint_still_returns_geometries(self, road_blocks_type, mock_user_id, create_mapwide_focus_area):
         """Inactive (hidden) constraints should still return geometries for routing."""
         scenario = Scenario.objects.create(name="Test", is_active=False)
         create_mapwide_focus_area(scenario)

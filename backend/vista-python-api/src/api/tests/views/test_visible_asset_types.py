@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
-# and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+# and is legally attributed to the UK's Department for Business, Innovation, Science and Trade (BIST) as the governing entity.
 
 """Tests for the visible asset types endpoint."""
 
@@ -33,9 +33,7 @@ def find_asset_type_in_tree(data, asset_type_id):
 def sub_category_with_types(db):  # noqa: ARG001
     """Create a subcategory with multiple asset types for bulk toggle tests."""
     category = AssetCategory.objects.create(id=uuid.uuid4(), name="Bulk Test Category")
-    sub_category = AssetSubCategory.objects.create(
-        id=uuid.uuid4(), name="Bulk Test SubCategory", category=category
-    )
+    sub_category = AssetSubCategory.objects.create(id=uuid.uuid4(), name="Bulk Test SubCategory", category=category)
     data_source = DataSource.objects.create(id=uuid.uuid4(), name="Bulk Test Source")
     asset_type_1 = AssetType.objects.create(
         id=uuid.uuid4(),
@@ -65,9 +63,7 @@ def sub_category_with_types(db):  # noqa: ARG001
 def asset_type(db):  # noqa: ARG001
     """Create a sample asset type."""
     category = AssetCategory.objects.create(id=uuid.uuid4(), name="Test Category")
-    sub_category = AssetSubCategory.objects.create(
-        id=uuid.uuid4(), name="Test SubCategory", category=category
-    )
+    sub_category = AssetSubCategory.objects.create(id=uuid.uuid4(), name="Test SubCategory", category=category)
     data_source = DataSource.objects.create(id=uuid.uuid4(), name="Test Source")
     return AssetType.objects.create(
         id=uuid.uuid4(),
@@ -250,9 +246,7 @@ def test_scenario_asset_types_after_enable(scenario, asset_type, mapwide_focus_a
         content_type="application/json",
     )
 
-    response = client.get(
-        f"/api/scenarios/{scenario.id}/asset-types/?focus_area_id={mapwide_focus_area.id}"
-    )
+    response = client.get(f"/api/scenarios/{scenario.id}/asset-types/?focus_area_id={mapwide_focus_area.id}")
     data = response.json()
 
     asset_type_data = find_asset_type_in_tree(data, asset_type.id)
@@ -260,9 +254,7 @@ def test_scenario_asset_types_after_enable(scenario, asset_type, mapwide_focus_a
 
 
 @pytest.mark.django_db
-def test_scenario_asset_types_with_focus_area(
-    scenario, asset_type, focus_area, mapwide_focus_area, client
-):
+def test_scenario_asset_types_with_focus_area(scenario, asset_type, focus_area, mapwide_focus_area, client):
     """Test getting visibility for specific focus area."""
     # Create an asset inside the focus area bounds
     Asset.objects.create(
@@ -285,17 +277,13 @@ def test_scenario_asset_types_with_focus_area(
         content_type="application/json",
     )
 
-    response = client.get(
-        f"/api/scenarios/{scenario.id}/asset-types/?focus_area_id={focus_area.id}"
-    )
+    response = client.get(f"/api/scenarios/{scenario.id}/asset-types/?focus_area_id={focus_area.id}")
     data = response.json()
 
     asset_type_data = find_asset_type_in_tree(data, asset_type.id)
     assert asset_type_data["isActive"] is True
 
-    response_map_wide = client.get(
-        f"/api/scenarios/{scenario.id}/asset-types/?focus_area_id={mapwide_focus_area.id}"
-    )
+    response_map_wide = client.get(f"/api/scenarios/{scenario.id}/asset-types/?focus_area_id={mapwide_focus_area.id}")
     data_map_wide = response_map_wide.json()
     asset_type_data_map = find_asset_type_in_tree(data_map_wide, asset_type.id)
     assert asset_type_data_map["isActive"] is False
@@ -310,9 +298,7 @@ def test_scenario_asset_types_invalid_scenario(client):
 
 
 @pytest.mark.django_db
-def test_disable_map_wide_does_not_affect_focus_area(
-    scenario, asset_type, focus_area, mapwide_focus_area, client
-):
+def test_disable_map_wide_does_not_affect_focus_area(scenario, asset_type, focus_area, mapwide_focus_area, client):
     """Test that disabling map-wide visibility doesn't delete focus-area-specific visibility."""
     # Enable both map-wide and focus-area-specific
     VisibleAsset.objects.create(
@@ -353,9 +339,7 @@ def test_disable_map_wide_does_not_affect_focus_area(
 
 
 @pytest.mark.django_db
-def test_disable_focus_area_does_not_affect_map_wide(
-    scenario, asset_type, focus_area, mapwide_focus_area, client
-):
+def test_disable_focus_area_does_not_affect_map_wide(scenario, asset_type, focus_area, mapwide_focus_area, client):
     """Test that disabling focus-area visibility doesn't delete map-wide visibility."""
     # Enable both map-wide and focus-area-specific
     VisibleAsset.objects.create(
@@ -403,9 +387,7 @@ def test_delete_clears_all_map_wide_visibility(scenario, asset_type, mapwide_foc
         asset_type=asset_type,
     )
 
-    response = client.delete(
-        f"/api/scenarios/{scenario.id}/visible-asset-types/?focus_area_id={mapwide_focus_area.id}"
-    )
+    response = client.delete(f"/api/scenarios/{scenario.id}/visible-asset-types/?focus_area_id={mapwide_focus_area.id}")
 
     assert response.status_code == http_success_code, f"Response: {response.content}"
     data = response.json()
@@ -417,9 +399,7 @@ def test_delete_clears_all_map_wide_visibility(scenario, asset_type, mapwide_foc
 
 
 @pytest.mark.django_db
-def test_delete_clears_focus_area_visibility(
-    scenario, asset_type, focus_area, mapwide_focus_area, client
-):
+def test_delete_clears_focus_area_visibility(scenario, asset_type, focus_area, mapwide_focus_area, client):
     """Test DELETE with focus_area_id clears only that focus area's visibility."""
     # Create visibility for both map-wide and focus area
     VisibleAsset.objects.create(
@@ -431,9 +411,7 @@ def test_delete_clears_focus_area_visibility(
         asset_type=asset_type,
     )
 
-    response = client.delete(
-        f"/api/scenarios/{scenario.id}/visible-asset-types/?focus_area_id={focus_area.id}"
-    )
+    response = client.delete(f"/api/scenarios/{scenario.id}/visible-asset-types/?focus_area_id={focus_area.id}")
     data = response.json()
 
     assert response.status_code == http_success_code
@@ -453,9 +431,7 @@ def test_delete_clears_focus_area_visibility(
 @pytest.mark.django_db
 def test_delete_with_no_visible_assets(scenario, mapwide_focus_area, client):
     """Test DELETE succeeds even when nothing to delete."""
-    response = client.delete(
-        f"/api/scenarios/{scenario.id}/visible-asset-types/?focus_area_id={mapwide_focus_area.id}"
-    )
+    response = client.delete(f"/api/scenarios/{scenario.id}/visible-asset-types/?focus_area_id={mapwide_focus_area.id}")
     data = response.json()
 
     assert response.status_code == http_success_code
@@ -485,9 +461,7 @@ def test_delete_clears_per_asset_type_score_filters(scenario, asset_type, focus_
         asset_type=asset_type,
     )
 
-    response = client.delete(
-        f"/api/scenarios/{scenario.id}/visible-asset-types/?focus_area_id={focus_area.id}"
-    )
+    response = client.delete(f"/api/scenarios/{scenario.id}/visible-asset-types/?focus_area_id={focus_area.id}")
 
     assert response.status_code == http_success_code
 
@@ -502,9 +476,7 @@ def test_delete_clears_per_asset_type_score_filters(scenario, asset_type, focus_
 
 
 @pytest.mark.django_db
-def test_bulk_enable_all_asset_types_in_subcategory(
-    scenario, sub_category_with_types, focus_area, client
-):
+def test_bulk_enable_all_asset_types_in_subcategory(scenario, sub_category_with_types, focus_area, client):
     """Test bulk enabling all asset types in a subcategory."""
     sub_category = sub_category_with_types["sub_category"]
     asset_types = sub_category_with_types["asset_types"]
@@ -536,9 +508,7 @@ def test_bulk_enable_all_asset_types_in_subcategory(
 
 
 @pytest.mark.django_db
-def test_bulk_disable_all_asset_types_in_subcategory(
-    scenario, sub_category_with_types, focus_area, client
-):
+def test_bulk_disable_all_asset_types_in_subcategory(scenario, sub_category_with_types, focus_area, client):
     """Test bulk disabling all asset types in a subcategory."""
     sub_category = sub_category_with_types["sub_category"]
     asset_types = sub_category_with_types["asset_types"]
@@ -622,9 +592,7 @@ def test_bulk_toggle_invalid_subcategory(scenario, focus_area, client):
 
 
 @pytest.mark.django_db
-def test_bulk_toggle_does_not_affect_other_subcategories(
-    scenario, sub_category_with_types, asset_type, focus_area, client
-):
+def test_bulk_toggle_does_not_affect_other_subcategories(scenario, sub_category_with_types, asset_type, focus_area, client):
     """Test bulk toggle only affects asset types in the specified subcategory."""
     sub_category = sub_category_with_types["sub_category"]
 

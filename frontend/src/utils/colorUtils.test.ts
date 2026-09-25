@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 // © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
-// and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+// and is legally attributed to the UK's Department for Business, Innovation, Science and Trade (BIST) as the governing entity.
 
 import ColorScale from 'color-scales';
 import { describe, it, expect } from 'vitest';
@@ -65,25 +65,14 @@ describe('colorUtils', () => {
             expect(result).toBeUndefined();
         });
 
-        it('handles value at minimum', () => {
+        it.each([
+            ['value at minimum', 0],
+            ['value at maximum', 100],
+            ['value outside range', 150],
+            ['decimal value', 50.5],
+        ])('handles %s', (_, value) => {
             const colorScale = getColorScale(0, 100);
-            const result = getHexColor(colorScale, 0);
-
-            expect(result).toBeDefined();
-            expect(result).toMatch(/^#[0-9a-fA-F]{6}$/);
-        });
-
-        it('handles value at maximum', () => {
-            const colorScale = getColorScale(0, 100);
-            const result = getHexColor(colorScale, 100);
-
-            expect(result).toBeDefined();
-            expect(result).toMatch(/^#[0-9a-fA-F]{6}$/);
-        });
-
-        it('handles value outside range', () => {
-            const colorScale = getColorScale(0, 100);
-            const result = getHexColor(colorScale, 150);
+            const result = getHexColor(colorScale, value);
 
             expect(result).toBeDefined();
             expect(result).toMatch(/^#[0-9a-fA-F]{6}$/);
@@ -92,14 +81,6 @@ describe('colorUtils', () => {
         it('handles negative value', () => {
             const colorScale = getColorScale(-10, 10);
             const result = getHexColor(colorScale, -5);
-
-            expect(result).toBeDefined();
-            expect(result).toMatch(/^#[0-9a-fA-F]{6}$/);
-        });
-
-        it('handles decimal value', () => {
-            const colorScale = getColorScale(0, 100);
-            const result = getHexColor(colorScale, 50.5);
 
             expect(result).toBeDefined();
             expect(result).toMatch(/^#[0-9a-fA-F]{6}$/);

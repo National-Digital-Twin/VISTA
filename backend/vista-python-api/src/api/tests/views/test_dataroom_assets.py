@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
-# and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+# and is legally attributed to the UK's Department for Business, Innovation, Science and Trade (BIST) as the governing entity.
 
 """Tests for the dataroom asset endpoints."""
 
@@ -33,9 +33,7 @@ class Administrator:
 def dataroom_data(scenario, db):  # noqa: ARG001
     """Create test data for dataroom endpoints."""
     category = AssetCategory.objects.create(id=uuid.uuid4(), name="Infrastructure")
-    sub_category = AssetSubCategory.objects.create(
-        id=uuid.uuid4(), name="Transport", category=category
-    )
+    sub_category = AssetSubCategory.objects.create(id=uuid.uuid4(), name="Transport", category=category)
     data_source = DataSource.objects.create(id=uuid.uuid4(), name="Test Source")
     asset_type = AssetType.objects.create(
         id=uuid.uuid4(),
@@ -152,9 +150,7 @@ def test_get_dataroom_assets_filter_by_category(scenario, dataroom_data, client)
 def test_get_dataroom_assets_filter_by_sub_category(scenario, dataroom_data, client):
     """Test GET filters by sub_category_id."""
     sub_cat_id = dataroom_data["sub_category"].id
-    response = client.get(
-        f"/api/scenarios/{scenario.id}/dataroom/assets/?sub_category_id={sub_cat_id}"
-    )
+    response = client.get(f"/api/scenarios/{scenario.id}/dataroom/assets/?sub_category_id={sub_cat_id}")
     data = response.json()
 
     assert response.status_code == http_ok
@@ -220,12 +216,8 @@ def test_get_dataroom_assets_filter_by_geometry(scenario, dataroom_data, client)
 def test_get_dataroom_assets_excludes_unscored_types(scenario, db, client):  # noqa: ARG001
     """Test GET excludes assets whose type has no ScenarioAsset row."""
     category = AssetCategory.objects.create(id=uuid.uuid4(), name="Unscored Cat")
-    sub_cat = AssetSubCategory.objects.create(
-        id=uuid.uuid4(), name="Unscored Sub", category=category
-    )
-    unscored_type = AssetType.objects.create(
-        id=uuid.uuid4(), name="Unscored Type", sub_category=sub_cat
-    )
+    sub_cat = AssetSubCategory.objects.create(id=uuid.uuid4(), name="Unscored Sub", category=category)
+    unscored_type = AssetType.objects.create(id=uuid.uuid4(), name="Unscored Type", sub_category=sub_cat)
     Asset.objects.create(
         id=uuid.uuid4(),
         external_id=uuid.uuid4(),
@@ -276,9 +268,7 @@ def test_put_creates_criticality_overrides(scenario, dataroom_data, client):
 
     assert response.status_code == http_ok
     assert data["updatedCount"] == 2
-    assert (
-        AssetCriticalityOverride.objects.filter(scenario=scenario, criticality_score=3).count() == 2
-    )
+    assert AssetCriticalityOverride.objects.filter(scenario=scenario, criticality_score=3).count() == 2
 
 
 @pytest.mark.django_db
@@ -300,9 +290,7 @@ def test_put_updates_existing_overrides(scenario, dataroom_data, client):
     )
 
     assert response.status_code == http_ok
-    override = AssetCriticalityOverride.objects.get(
-        scenario=scenario, asset=dataroom_data["asset_1"]
-    )
+    override = AssetCriticalityOverride.objects.get(scenario=scenario, asset=dataroom_data["asset_1"])
     assert override.criticality_score == 3
 
 
@@ -360,9 +348,7 @@ def test_put_mixed_create_and_update(scenario, dataroom_data, client):
     )
 
     assert response.status_code == http_ok
-    assert (
-        AssetCriticalityOverride.objects.filter(scenario=scenario, criticality_score=0).count() == 2
-    )
+    assert AssetCriticalityOverride.objects.filter(scenario=scenario, criticality_score=0).count() == 2
 
 
 @pytest.mark.django_db
@@ -404,12 +390,8 @@ def test_put_different_scores_per_asset(scenario, dataroom_data, client):
     assert response.status_code == http_ok
     assert response.json()["updatedCount"] == 2
 
-    override_1 = AssetCriticalityOverride.objects.get(
-        scenario=scenario, asset=dataroom_data["asset_1"]
-    )
-    override_2 = AssetCriticalityOverride.objects.get(
-        scenario=scenario, asset=dataroom_data["asset_2"]
-    )
+    override_1 = AssetCriticalityOverride.objects.get(scenario=scenario, asset=dataroom_data["asset_1"])
+    override_2 = AssetCriticalityOverride.objects.get(scenario=scenario, asset=dataroom_data["asset_2"])
     assert override_1.criticality_score == 3
     assert override_2.criticality_score == 1
 

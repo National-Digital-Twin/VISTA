@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 // © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
-// and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+// and is legally attributed to the UK's Department for Business, Innovation, Science and Trade (BIST) as the governing entity.
 
 import { ThemeProvider } from '@mui/material/styles';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -142,7 +142,7 @@ describe('AssetLayers', () => {
         it('renders three layers: unselected symbols, selection ring, and selected symbols', () => {
             renderWithAsset();
             const layers = screen.getAllByTestId('layer');
-            expect(layers.length).toBe(3);
+            expect(layers).toHaveLength(3);
 
             const layerIds = layers.map((layer) => layer.dataset.layerId);
             expect(layerIds).toContain('map-v2-asset-symbol-layer');
@@ -178,8 +178,8 @@ describe('AssetLayers', () => {
 
             renderWithProviders(<AssetLayers {...defaultProps} assets={[asset1, asset2]} />);
 
-            expect(screen.getAllByTestId('source').length).toBe(1);
-            expect(screen.getAllByTestId('layer').length).toBe(3);
+            expect(screen.getAllByTestId('source')).toHaveLength(1);
+            expect(screen.getAllByTestId('layer')).toHaveLength(3);
         });
 
         it('handles assets with different styles', () => {
@@ -197,7 +197,7 @@ describe('AssetLayers', () => {
             renderWithProviders(<AssetLayers {...defaultProps} assets={[asset1, asset2]} />);
 
             expect(screen.getByTestId('source')).toBeInTheDocument();
-            expect(screen.getAllByTestId('layer').length).toBe(3);
+            expect(screen.getAllByTestId('layer')).toHaveLength(3);
         });
     });
 
@@ -222,7 +222,7 @@ describe('AssetLayers', () => {
             renderWithAsset({ selectedElements: [] });
 
             expect(screen.getByTestId('source')).toBeInTheDocument();
-            expect(screen.getAllByTestId('layer').length).toBe(3);
+            expect(screen.getAllByTestId('layer')).toHaveLength(3);
         });
 
         it('renders selected asset above unselected assets', () => {

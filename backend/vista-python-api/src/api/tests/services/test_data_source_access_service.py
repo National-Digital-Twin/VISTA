@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
-# and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+# and is legally attributed to the UK's Department for Business, Innovation, Science and Trade (BIST) as the governing entity.
 
 """Tests for the data source access service."""
 
@@ -141,9 +141,7 @@ def test_cleanup_deletes_visible_assets_for_inaccessible_types(
     deleted_count = cleanup_stale_visible_assets([user_id])
 
     assert deleted_count == 1
-    assert not VisibleAsset.objects.filter(
-        focus_area=focus_area, asset_type=restricted_asset_type
-    ).exists()
+    assert not VisibleAsset.objects.filter(focus_area=focus_area, asset_type=restricted_asset_type).exists()
 
 
 @pytest.mark.django_db
@@ -164,9 +162,7 @@ def test_cleanup_preserves_visible_assets_for_accessible_types(  # noqa: PLR0913
 
     cleanup_stale_visible_assets([user_id])
 
-    assert not VisibleAsset.objects.filter(
-        focus_area=focus_area, asset_type=restricted_asset_type
-    ).exists()
+    assert not VisibleAsset.objects.filter(focus_area=focus_area, asset_type=restricted_asset_type).exists()
     assert VisibleAsset.objects.filter(focus_area=focus_area, asset_type=global_asset_type).exists()
 
 
@@ -193,12 +189,8 @@ def test_cleanup_preserves_other_users_visible_assets(  # noqa: PLR0913
 
     cleanup_stale_visible_assets([user_id])
 
-    assert not VisibleAsset.objects.filter(
-        focus_area=focus_area, asset_type=restricted_asset_type
-    ).exists()
-    assert VisibleAsset.objects.filter(
-        focus_area=other_focus_area, asset_type=restricted_asset_type
-    ).exists()
+    assert not VisibleAsset.objects.filter(focus_area=focus_area, asset_type=restricted_asset_type).exists()
+    assert VisibleAsset.objects.filter(focus_area=other_focus_area, asset_type=restricted_asset_type).exists()
 
 
 @pytest.mark.django_db
@@ -225,9 +217,7 @@ def test_cleanup_preserves_visible_assets_when_user_has_access_through_another_g
     deleted_count = cleanup_stale_visible_assets([user_id])
 
     assert deleted_count == 0
-    assert VisibleAsset.objects.filter(
-        focus_area=focus_area, asset_type=restricted_asset_type
-    ).exists()
+    assert VisibleAsset.objects.filter(focus_area=focus_area, asset_type=restricted_asset_type).exists()
 
 
 @pytest.mark.django_db

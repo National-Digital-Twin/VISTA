@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
-# and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+# and is legally attributed to the UK's Department for Business, Innovation, Science and Trade (BIST) as the governing entity.
 
 """Tests for the group membership endpoints."""
 
@@ -63,9 +63,7 @@ class Administrator:
 @pytest.mark.django_db
 def test_add_member_to_group_is_successful(group, members, client, monkeypatch):  # noqa: ARG001
     """Test adding a member to a group is successful."""
-    monkeypatch.setattr(
-        "api.views.group_memberships.get_user_id_from_request", get_user_id_from_request
-    )
+    monkeypatch.setattr("api.views.group_memberships.get_user_id_from_request", get_user_id_from_request)
     response = client.post(
         f"/api/groups/{group.id}/members/",
         data=dumps({"userId": idp_user_b.id}),
@@ -82,9 +80,7 @@ def test_add_member_to_group_is_successful(group, members, client, monkeypatch):
 @pytest.mark.django_db
 def test_add_existing_member_to_group_is_unsuccessful(group, members, client, monkeypatch):  # noqa: ARG001
     """Test adding an existing member to a group is unsuccessful."""
-    monkeypatch.setattr(
-        "api.views.group_memberships.get_user_id_from_request", get_user_id_from_request
-    )
+    monkeypatch.setattr("api.views.group_memberships.get_user_id_from_request", get_user_id_from_request)
     response = client.post(
         f"/api/groups/{group.id}/members/",
         data=dumps({"userId": idp_user_a.id}),
@@ -98,9 +94,7 @@ def test_add_existing_member_to_group_is_unsuccessful(group, members, client, mo
 @pytest.mark.django_db
 def test_add_group_member_requires_user_id(group, client, monkeypatch):
     """Test that POST without user ID field throws a 400."""
-    monkeypatch.setattr(
-        "api.views.group_memberships.get_user_id_from_request", get_user_id_from_request
-    )
+    monkeypatch.setattr("api.views.group_memberships.get_user_id_from_request", get_user_id_from_request)
     response = client.post(
         f"/api/groups/{group.id}/members/",
         data=dumps({}),
@@ -167,15 +161,11 @@ def test_remove_member_cleans_up_stale_visible_assets(group, members, client):  
     """Test that removing a member deletes their VisibleAsset for restricted types."""
     user_id = idp_user_a.id
     scenario = Scenario.objects.create(name="Test", is_active=True)
-    focus_area = FocusArea.objects.create(
-        scenario=scenario, user_id=user_id, name="Map-wide", is_system=True
-    )
+    focus_area = FocusArea.objects.create(scenario=scenario, user_id=user_id, name="Map-wide", is_system=True)
     data_source = DataSource.objects.create(name="Restricted", owner="T", description_md="")
     category = AssetCategory.objects.create(name="Infra")
     sub_cat = AssetSubCategory.objects.create(name="Transport", category=category)
-    asset_type = AssetType.objects.create(
-        name="Rail", sub_category=sub_cat, data_source=data_source
-    )
+    asset_type = AssetType.objects.create(name="Rail", sub_category=sub_cat, data_source=data_source)
     GroupDataSourceAccess.objects.create(data_source=data_source, group=group, created_by=uuid4())
     VisibleAsset.objects.create(focus_area=focus_area, asset_type=asset_type)
 
@@ -193,9 +183,7 @@ def test_remove_member_preserves_visible_assets_for_global_types(group, members,
     """Test that removing a member keeps VisibleAsset for globally available types."""
     user_id = idp_user_a.id
     scenario = Scenario.objects.create(name="Test", is_active=True)
-    focus_area = FocusArea.objects.create(
-        scenario=scenario, user_id=user_id, name="Map-wide", is_system=True
-    )
+    focus_area = FocusArea.objects.create(scenario=scenario, user_id=user_id, name="Map-wide", is_system=True)
     global_ds = DataSource.objects.create(name="Global", owner="T", description_md="")
     category = AssetCategory.objects.create(name="Infra")
     sub_cat = AssetSubCategory.objects.create(name="Transport", category=category)
@@ -220,20 +208,14 @@ def test_remove_member_preserves_visible_assets_when_access_via_another_group(
     """Test removing a member preserves VisibleAsset if they retain access via another group."""
     user_id = idp_user_a.id
     scenario = Scenario.objects.create(name="Test", is_active=True)
-    focus_area = FocusArea.objects.create(
-        scenario=scenario, user_id=user_id, name="Map-wide", is_system=True
-    )
+    focus_area = FocusArea.objects.create(scenario=scenario, user_id=user_id, name="Map-wide", is_system=True)
     data_source = DataSource.objects.create(name="Restricted", owner="T", description_md="")
     category = AssetCategory.objects.create(name="Infra")
     sub_cat = AssetSubCategory.objects.create(name="Transport", category=category)
-    asset_type = AssetType.objects.create(
-        name="Rail", sub_category=sub_cat, data_source=data_source
-    )
+    asset_type = AssetType.objects.create(name="Rail", sub_category=sub_cat, data_source=data_source)
     GroupDataSourceAccess.objects.create(data_source=data_source, group=group, created_by=uuid4())
     other_group = Group.objects.create(name="Other", created_by=uuid4())
-    GroupDataSourceAccess.objects.create(
-        data_source=data_source, group=other_group, created_by=uuid4()
-    )
+    GroupDataSourceAccess.objects.create(data_source=data_source, group=other_group, created_by=uuid4())
     GroupMembership.objects.create(group=other_group, user_id=user_id, created_by=uuid4())
     VisibleAsset.objects.create(focus_area=focus_area, asset_type=asset_type)
 

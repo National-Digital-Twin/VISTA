@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
-# and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+# and is legally attributed to the UK's Department for Business, Innovation, Science and Trade (BIST) as the governing entity.
 
 """Tests for the groups endpoints."""
 
@@ -112,9 +112,7 @@ def test_list_groups(group, members, group_no_members, client, monkeypatch):  # 
     assert result["createdAt"] is not None
     assert result["createdBy"] == cognito_admin.name
 
-    assert [member["name"] for member in result["members"]] == _fetch_member_names(
-        _get_member_id_list(members)
-    )
+    assert [member["name"] for member in result["members"]] == _fetch_member_names(_get_member_id_list(members))
 
 
 @pytest.mark.django_db
@@ -178,9 +176,7 @@ def test_fetch_group_returns_group_and_members(group, members, client, monkeypat
 
     assert data["id"] == str(group.id)
     assert data["name"] == group.name
-    assert [member["name"] for member in data["members"]] == _fetch_member_names(
-        _get_member_id_list(members)
-    )
+    assert [member["name"] for member in data["members"]] == _fetch_member_names(_get_member_id_list(members))
 
 
 @pytest.mark.django_db
@@ -384,21 +380,15 @@ def test_delete_group_cleans_up_stale_visible_assets(group, members, client):
     data_source = DataSource.objects.create(name="Restricted", owner="T", description_md="")
     category = AssetCategory.objects.create(name="Infra")
     sub_cat = AssetSubCategory.objects.create(name="Transport", category=category)
-    asset_type = AssetType.objects.create(
-        name="Rail", sub_category=sub_cat, data_source=data_source
-    )
+    asset_type = AssetType.objects.create(name="Rail", sub_category=sub_cat, data_source=data_source)
     # Two groups have access — deleting one keeps data source restricted
     other_group = Group.objects.create(name="Other", created_by=uuid4())
     GroupDataSourceAccess.objects.create(data_source=data_source, group=group, created_by=uuid4())
-    GroupDataSourceAccess.objects.create(
-        data_source=data_source, group=other_group, created_by=uuid4()
-    )
+    GroupDataSourceAccess.objects.create(data_source=data_source, group=other_group, created_by=uuid4())
 
     visible_assets = []
     for member in members:
-        fa = FocusArea.objects.create(
-            scenario=scenario, user_id=member.user_id, name="Map-wide", is_system=True
-        )
+        fa = FocusArea.objects.create(scenario=scenario, user_id=member.user_id, name="Map-wide", is_system=True)
         va = VisibleAsset.objects.create(focus_area=fa, asset_type=asset_type)
         visible_assets.append(va)
 
@@ -419,25 +409,17 @@ def test_delete_group_preserves_visible_assets_when_member_in_another_group(grou
     data_source = DataSource.objects.create(name="Restricted", owner="T", description_md="")
     category = AssetCategory.objects.create(name="Infra")
     sub_cat = AssetSubCategory.objects.create(name="Transport", category=category)
-    asset_type = AssetType.objects.create(
-        name="Rail", sub_category=sub_cat, data_source=data_source
-    )
+    asset_type = AssetType.objects.create(name="Rail", sub_category=sub_cat, data_source=data_source)
     other_group = Group.objects.create(name="Other", created_by=uuid4())
     GroupDataSourceAccess.objects.create(data_source=data_source, group=group, created_by=uuid4())
-    GroupDataSourceAccess.objects.create(
-        data_source=data_source, group=other_group, created_by=uuid4()
-    )
+    GroupDataSourceAccess.objects.create(data_source=data_source, group=other_group, created_by=uuid4())
 
     # Add first member to other_group so they retain access
     member_with_access = members[0]
     member_without_access = members[1]
-    GroupMembership.objects.create(
-        group=other_group, user_id=member_with_access.user_id, created_by=uuid4()
-    )
+    GroupMembership.objects.create(group=other_group, user_id=member_with_access.user_id, created_by=uuid4())
 
-    fa_with = FocusArea.objects.create(
-        scenario=scenario, user_id=member_with_access.user_id, name="FA With", is_system=True
-    )
+    fa_with = FocusArea.objects.create(scenario=scenario, user_id=member_with_access.user_id, name="FA With", is_system=True)
     fa_without = FocusArea.objects.create(
         scenario=scenario, user_id=member_without_access.user_id, name="FA Without", is_system=True
     )
@@ -463,7 +445,5 @@ def _get_member_id_list(members):
 def _fetch_member_names(member_ids):
     expected_names = []
     for member_id in member_ids:
-        expected_names.extend(
-            [cognito_user.name for cognito_user in cognito_users if cognito_user.id == member_id]
-        )
+        expected_names.extend([cognito_user.name for cognito_user in cognito_users if cognito_user.id == member_id])
     return expected_names

@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
-# and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+# and is legally attributed to the UK's Department for Business, Innovation, Science and Trade (BIST) as the governing entity.
 
 """Models for resource interventions (e.g., sandbag deployments)."""
 
@@ -33,9 +33,7 @@ class ResourceInterventionLocation(models.Model):
     """Physical location where resources are stored, scoped to scenario."""
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    scenario = models.ForeignKey(
-        Scenario, on_delete=models.CASCADE, related_name="resource_intervention_locations"
-    )
+    scenario = models.ForeignKey(Scenario, on_delete=models.CASCADE, related_name="resource_intervention_locations")
     name = models.CharField(max_length=255)
     geometry = models.PointField(srid=4326)
     type = models.ForeignKey(

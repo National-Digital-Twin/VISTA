@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
-# and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+# and is legally attributed to the UK's Department for Business, Innovation, Science and Trade (BIST) as the governing entity.
 
 """Per-asset criticality score override model."""
 
@@ -17,9 +17,7 @@ class AssetCriticalityOverride(models.Model):
     """Per-asset override of the type-level criticality score within a scenario."""
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    scenario = models.ForeignKey(
-        Scenario, on_delete=models.CASCADE, related_name="criticality_overrides"
-    )
+    scenario = models.ForeignKey(Scenario, on_delete=models.CASCADE, related_name="criticality_overrides")
     asset = models.ForeignKey(Asset, on_delete=models.CASCADE, related_name="criticality_overrides")
     criticality_score = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)

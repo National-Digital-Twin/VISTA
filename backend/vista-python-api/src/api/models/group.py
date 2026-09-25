@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
-# and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+# and is legally attributed to the UK's Department for Business, Innovation, Science and Trade (BIST) as the governing entity.
 
 """Group model."""
 
@@ -46,9 +46,7 @@ class GroupDataSourceAccess(models.Model):
     """Group data source access model."""
 
     id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True)
-    data_source = models.ForeignKey(
-        DataSource, on_delete=models.CASCADE, related_name="group_accesses"
-    )
+    data_source = models.ForeignKey(DataSource, on_delete=models.CASCADE, related_name="group_accesses")
     group = models.ForeignKey(Group, on_delete=models.CASCADE)
     created_by = models.UUIDField(null=True)
 

@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
-# and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+# and is legally attributed to the UK's Department for Business, Innovation, Science and Trade (BIST) as the governing entity.
 
 """vista Backend URLs with GraphQL View constructor."""
 
@@ -74,9 +74,7 @@ urlpatterns = [
     ),
     path(
         "scenarios/<uuid:scenario_id>/focus-areas/<uuid:pk>/",
-        views.FocusAreaViewSet.as_view(
-            {"get": "retrieve", "patch": "partial_update", "delete": "destroy"}
-        ),
+        views.FocusAreaViewSet.as_view({"get": "retrieve", "patch": "partial_update", "delete": "destroy"}),
         name="focus-area-detail",
     ),
     path(

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 // © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
-// and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+// and is legally attributed to the UK's Department for Business, Innovation, Science and Trade (BIST) as the governing entity.
 
 import { ThemeProvider } from '@mui/material/styles';
 import { render, screen, fireEvent } from '@testing-library/react';
@@ -224,16 +224,6 @@ describe('DependencyRangeFields', () => {
     });
 
     describe('Value clamping', () => {
-        it('clamps min value below 0 to 0', () => {
-            const onMinChange = vi.fn();
-            renderWithTheme(<DependencyRangeFields {...defaultProps} onMinChange={onMinChange} />);
-
-            const inputs = screen.getAllByRole('spinbutton');
-            fireEvent.change(inputs[0], { target: { value: '-1' } });
-
-            expect(onMinChange).toHaveBeenCalledWith('0');
-        });
-
         it('clamps max value above 3 to 3', () => {
             const onMaxChange = vi.fn();
             renderWithTheme(<DependencyRangeFields {...defaultProps} onMaxChange={onMaxChange} />);
@@ -243,25 +233,18 @@ describe('DependencyRangeFields', () => {
 
             expect(onMaxChange).toHaveBeenCalledWith('3');
         });
-
-        it('allows values within valid range', () => {
+        it.each([
+            ['clamps min value below 0 to 0', '-1', '0'],
+            ['allows values within valid range', '1.5', '1.5'],
+            ['allows empty string value', '', ''],
+        ])('%s', (_, inputValue, expectedValue) => {
             const onMinChange = vi.fn();
             renderWithTheme(<DependencyRangeFields {...defaultProps} onMinChange={onMinChange} />);
 
             const inputs = screen.getAllByRole('spinbutton');
-            fireEvent.change(inputs[0], { target: { value: '1.5' } });
+            fireEvent.change(inputs[0], { target: { value: inputValue } });
 
-            expect(onMinChange).toHaveBeenCalledWith('1.5');
-        });
-
-        it('allows empty string value', () => {
-            const onMinChange = vi.fn();
-            renderWithTheme(<DependencyRangeFields {...defaultProps} onMinChange={onMinChange} />);
-
-            const inputs = screen.getAllByRole('spinbutton');
-            fireEvent.change(inputs[0], { target: { value: '' } });
-
-            expect(onMinChange).toHaveBeenCalledWith('');
+            expect(onMinChange).toHaveBeenCalledWith(expectedValue);
         });
     });
 });

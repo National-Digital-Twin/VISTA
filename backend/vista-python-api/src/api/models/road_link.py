@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
-# and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+# and is legally attributed to the UK's Department for Business, Innovation, Science and Trade (BIST) as the governing entity.
 
 """Road network link model for routing calculations."""
 
@@ -120,23 +120,17 @@ class RoadLink(models.Model):
     geometry = models.LineStringField(srid=4326)
     length_m = models.FloatField()
 
-    directionality = models.CharField(
-        max_length=50, choices=Directionality.choices, default=Directionality.BOTH
-    )
+    directionality = models.CharField(max_length=50, choices=Directionality.choices, default=Directionality.BOTH)
 
     road_number = models.CharField(max_length=20, null=True, blank=True)
 
-    road_classification = models.CharField(
-        max_length=50, choices=RoadClassification.choices, blank=True
-    )
+    road_classification = models.CharField(max_length=50, choices=RoadClassification.choices, blank=True)
 
     route_hierarchy = models.CharField(max_length=50, choices=RouteHierarchy.choices, blank=True)
 
     form_of_way = models.CharField(max_length=50, choices=FormOfWay.choices, blank=True)
 
-    operational_state = models.CharField(
-        max_length=50, choices=OperationalState.choices, blank=True
-    )
+    operational_state = models.CharField(max_length=50, choices=OperationalState.choices, blank=True)
 
     trunk_road = models.BooleanField(default=False)
     primary_route = models.BooleanField(default=False)

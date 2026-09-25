@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
-# and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+# and is legally attributed to the UK's Department for Business, Innovation, Science and Trade (BIST) as the governing entity.
 
 """Tests for AssetScoreFiltersView."""
 
@@ -17,9 +17,7 @@ from api.models.asset_type import AssetCategory, AssetSubCategory, AssetType, Da
 def asset_type_setup(db):  # noqa: ARG001
     """Create test asset types."""
     category = AssetCategory.objects.create(id=uuid.uuid4(), name="Infrastructure")
-    sub_category = AssetSubCategory.objects.create(
-        id=uuid.uuid4(), name="Energy", category=category
-    )
+    sub_category = AssetSubCategory.objects.create(id=uuid.uuid4(), name="Energy", category=category)
     data_source = DataSource.objects.create(id=uuid.uuid4(), name="Test Source")
 
     station_type = AssetType.objects.create(
@@ -88,9 +86,7 @@ class TestAssetScoreFiltersView:
         assert sf.criticality_values == [1, 2]
         assert sf.dependency_min == Decimal("0.50")
 
-    def test_put_creates_per_type_score_filter(
-        self, client, scenario, asset_type_setup, mapwide_focus_area
-    ):
+    def test_put_creates_per_type_score_filter(self, client, scenario, asset_type_setup, mapwide_focus_area):
         """Test PUT creates a per-asset-type score filter."""
         station_type = asset_type_setup["station_type"]
         response = client.put(

@@ -98,4 +98,4 @@ repos:
         entry: trufflehog git file://. --since-commit HEAD --results=verified,unknown --fail
         description: Detect secrets in your data.
         language: golang
-        stages: ["commit", "push"]
+        stages: ["pre-commit", "pre-push"]
