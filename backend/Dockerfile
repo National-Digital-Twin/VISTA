@@ -8,7 +8,7 @@ FROM base AS builder
 WORKDIR /vista-python-api/core
 
 # upgrade pip to the latest version
-RUN apt-get install -y --no-install-recommends \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     gdal-bin \
     libgdal-dev \
