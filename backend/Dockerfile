@@ -8,8 +8,8 @@ FROM base AS builder
 WORKDIR /vista-python-api/core
 
 # upgrade pip to the latest version
-RUN apt-get update && apt-get upgrade -y \
-    && apt-get install -y build-essential \
+RUN apt-get install -y --no-install-recommends \
+    build-essential \
     libstdc++6 \
     gdal-bin \
     libgdal-dev \
@@ -42,7 +42,7 @@ COPY --from=builder /venv /venv
 # bash is installed for more convenient debugging.
 RUN apt-get update && \
     apt-get upgrade -y --allow-downgrades \
-    && apt-get install -y --allow-downgrades bash \
+    && apt-get install -y --no-install-recommends --allow-downgrades bash \
     && rm -rf /var/lib/apt/lists/*
 
 # copy payload code only
