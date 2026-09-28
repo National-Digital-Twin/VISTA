@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
-# and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+# and is legally attributed to the UK's Department for Business, Innovation, Science and Trade (BIST) as the governing entity.
 
 """Custom migration for loading fixtures.
 
@@ -52,10 +52,7 @@ def _process_fixture[M](
 
     for entity in fixture_data:
         if entity["model"] != expected_modelname:
-            raise ValueError(
-                f"Fixture entity with incorrect model {entity['model']!r}, "
-                f"expected {expected_modelname!r}"
-            )
+            raise ValueError(f"Fixture entity with incorrect model {entity['model']!r}, expected {expected_modelname!r}")
 
         entities.append(load_entity(entity["pk"], entity["fields"]))
 

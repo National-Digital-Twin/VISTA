@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
-# and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+# and is legally attributed to the UK's Department for Business, Innovation, Science and Trade (BIST) as the governing entity.
 
 """Handler for the NHS data source."""
 
@@ -25,9 +25,7 @@ class NhsDataSourceHandler(DataSourceHandler):
     async def fetch_data_for_asset_specification(self, asset_specification, url):
         """Fetch the NHS data per the specification given."""
         table_name = await self.get_package_latest_resource()
-        sql_query = (
-            f"SELECT * from `{table_name}` WHERE HEALTH_AND_WELLBEING_BOARD = 'ISLE OF WIGHT'"
-        )
+        sql_query = f"SELECT * from `{table_name}` WHERE HEALTH_AND_WELLBEING_BOARD = 'ISLE OF WIGHT'"
 
         params = {"resource_id": table_name, "sql": sql_query}
         response = await self.fetch_from_url_with_retry(url, params=params)
@@ -40,9 +38,7 @@ class NhsDataSourceHandler(DataSourceHandler):
     async def get_package_latest_resource(self) -> str:
         """Get the ID of the latest resource in the package."""
         params = {"id": self._PACKAGE_ID}
-        response = await self.fetch_from_url_with_retry(
-            "https://opendata.nhsbsa.net/api/3/action/package_show", params=params
-        )
+        response = await self.fetch_from_url_with_retry("https://opendata.nhsbsa.net/api/3/action/package_show", params=params)
         result = response["result"]
 
         if "resources" not in result:
@@ -91,17 +87,13 @@ class NhsDataSourceHandler(DataSourceHandler):
             params = {"q": address_str, "format": "jsonv2"}
 
             self.logger.info("Geocoding address: %s", address_str)
-            response = await self.fetch_from_url(
-                "https://nominatim.openstreetmap.org/search", params=params
-            )
+            response = await self.fetch_from_url("https://nominatim.openstreetmap.org/search", params=params)
 
             if response and len(response) > 0:
                 lon = float(response[0]["lon"])
                 lat = float(response[0]["lat"])
                 return lat, lon
-            self.logger.error(
-                "Failed to geocode address: %s with request params: %s", address_str, params
-            )
+            self.logger.error("Failed to geocode address: %s with request params: %s", address_str, params)
             return None
         except Exception as e:
             self.logger.error("Error geocoding address %s: %s", address_str, e)

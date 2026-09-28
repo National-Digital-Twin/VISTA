@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 // © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
-// and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+// and is legally attributed to the UK's Department for Business, Innovation, Science and Trade (BIST) as the governing entity.
 
 import { ThemeProvider } from '@mui/material/styles';
 import { render, screen } from '@testing-library/react';
@@ -20,22 +20,14 @@ describe('ResourceTooltip', () => {
         unit: 'bags',
     };
 
-    it('renders location name', () => {
+    it.each([
+        ['location name', 'Depot Alpha'],
+        ['type name', 'Sandbags'],
+        ['stock info with unit', '50 / 100 bags'],
+    ])('renders %s', (_, text) => {
         renderWithTheme(<ResourceTooltip {...defaultProps} />);
 
-        expect(screen.getByText('Depot Alpha')).toBeInTheDocument();
-    });
-
-    it('renders type name', () => {
-        renderWithTheme(<ResourceTooltip {...defaultProps} />);
-
-        expect(screen.getByText('Sandbags')).toBeInTheDocument();
-    });
-
-    it('renders stock info with unit', () => {
-        renderWithTheme(<ResourceTooltip {...defaultProps} />);
-
-        expect(screen.getByText('50 / 100 bags')).toBeInTheDocument();
+        expect(screen.getByText(text)).toBeInTheDocument();
     });
 
     it('renders progress bar', () => {

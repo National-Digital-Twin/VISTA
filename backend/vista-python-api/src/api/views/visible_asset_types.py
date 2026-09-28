@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
-# and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+# and is legally attributed to the UK's Department for Business, Innovation, Science and Trade (BIST) as the governing entity.
 
 """Views for asset type visibility toggling."""
 
@@ -49,9 +49,7 @@ class VisibleAssetTypeView(APIView):
         is_active = serializer.validated_data["is_active"]
 
         asset_type = get_object_or_404(AssetType, id=asset_type_id)
-        focus_area = get_object_or_404(
-            FocusArea, id=focus_area_id, scenario=scenario, user_id=user_id
-        )
+        focus_area = get_object_or_404(FocusArea, id=focus_area_id, scenario=scenario, user_id=user_id)
 
         if is_active:
             VisibleAsset.objects.get_or_create(
@@ -88,9 +86,7 @@ class VisibleAssetTypeView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        focus_area = get_object_or_404(
-            FocusArea, id=focus_area_id, scenario=scenario, user_id=user_id
-        )
+        focus_area = get_object_or_404(FocusArea, id=focus_area_id, scenario=scenario, user_id=user_id)
 
         VisibleAsset.objects.filter(focus_area=focus_area).delete()
         AssetScoreFilter.objects.filter(focus_area=focus_area, asset_type__isnull=False).delete()
@@ -115,9 +111,7 @@ class BulkVisibleAssetTypeView(APIView):
 
         sub_category = get_object_or_404(AssetSubCategory, id=sub_category_id)
 
-        focus_area = get_object_or_404(
-            FocusArea, id=focus_area_id, scenario=scenario, user_id=user_id
-        )
+        focus_area = get_object_or_404(FocusArea, id=focus_area_id, scenario=scenario, user_id=user_id)
 
         asset_types = AssetType.objects.filter(sub_category=sub_category)
 

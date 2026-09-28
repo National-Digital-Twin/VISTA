@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 // © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
-// and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+// and is legally attributed to the UK's Department for Business, Innovation, Science and Trade (BIST) as the governing entity.
 
 import { ThemeProvider } from '@mui/material/styles';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -350,19 +350,13 @@ describe('MapView', () => {
     });
 
     describe('Rendering', () => {
-        it('renders map component', async () => {
+        it.each([
+            ['map component', 'map'],
+            ['MapPanels component', 'map-panels'],
+            ['MapControls component', 'map-controls'],
+        ])('renders %s', async (_, testId) => {
             renderWithProviders(<MapView />);
-            await waitForElement('map');
-        });
-
-        it('renders MapPanels component', async () => {
-            renderWithProviders(<MapView />);
-            await waitForElement('map-panels');
-        });
-
-        it('renders MapControls component', async () => {
-            renderWithProviders(<MapView />);
-            await waitForElement('map-controls');
+            await waitForElement(testId);
         });
     });
 
@@ -492,9 +486,7 @@ describe('MapView', () => {
             await waitForElement('asset-layers');
 
             const selectAssetButton = screen.getByTestId('select-asset');
-            await act(async () => {
-                selectAssetButton.click();
-            });
+            selectAssetButton.click();
 
             await waitFor(() => {
                 expect(screen.getByTestId('active-view')).toHaveTextContent('inspector');
@@ -514,9 +506,7 @@ describe('MapView', () => {
             }
 
             const map = screen.getByTestId('map');
-            await act(async () => {
-                fireEvent.click(map);
-            });
+            fireEvent.click(map);
 
             await waitFor(() => {
                 expect(screen.getByTestId('active-view')).toHaveTextContent('inspector');
@@ -702,8 +692,8 @@ describe('MapView', () => {
             const activeCalls = mockActiveFocusAreasProps.mock.calls.filter((call) => call[0]?.focusAreas?.length > 0);
             const inactiveCalls = mockInactiveFocusAreasProps.mock.calls.filter((call) => call[0]?.focusAreas?.length > 0);
 
-            expect(activeCalls.length).toBe(0);
-            expect(inactiveCalls.length).toBe(0);
+            expect(activeCalls).toHaveLength(0);
+            expect(inactiveCalls).toHaveLength(0);
         });
 
         it('fetches assets only from active focus areas when in Assets panel', async () => {

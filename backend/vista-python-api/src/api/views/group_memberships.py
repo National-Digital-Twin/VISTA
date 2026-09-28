@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
-# and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+# and is legally attributed to the UK's Department for Business, Innovation, Science and Trade (BIST) as the governing entity.
 
 """Views for Group Memberships."""
 
@@ -47,9 +47,7 @@ class GroupMembershipViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         """Doctor create request with authenticated user for created field."""
-        serializer.save(
-            created_by=get_user_id_from_request(self.request), group_id=self.kwargs["group_id"]
-        )
+        serializer.save(created_by=get_user_id_from_request(self.request), group_id=self.kwargs["group_id"])
 
     def perform_destroy(self, instance):
         """Delete the membership and clean up stale visible assets."""

@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
-# and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+# and is legally attributed to the UK's Department for Business, Innovation, Science and Trade (BIST) as the governing entity.
 
 """Management command to load exposure layers from a JSON file."""
 
@@ -36,9 +36,7 @@ class Command(BaseCommand):
     def import_environmentally_sensitive_areas(self):
         """Import environmentally sensitive area-type exposure layers."""
         self.logger.info("Beginning import of environmentally sensitive areas")
-        gdf = gpd.read_file(
-            self.get_fully_qualified_path(self.environmentally_sensitive_area_file_name)
-        )
+        gdf = gpd.read_file(self.get_fully_qualified_path(self.environmentally_sensitive_area_file_name))
 
         skipped_count = 0
 
@@ -61,11 +59,7 @@ class Command(BaseCommand):
             )
 
         if skipped_count > 0:
-            self.stdout.write(
-                self.style.WARNING(
-                    f"Skipped {skipped_count} layers that already exist in the database."
-                )
-            )
+            self.stdout.write(self.style.WARNING(f"Skipped {skipped_count} layers that already exist in the database."))
         self.logger.info("Import completed successfully.")
 
     def import_floods(self):
@@ -95,9 +89,7 @@ class Command(BaseCommand):
             try:
                 geos_geometry = GEOSGeometry(json.dumps(item["geometry"]))
             except Exception as e:
-                self.stdout.write(
-                    self.style.ERROR(f"Error parsing geometry for {item['name']}: {e}")
-                )
+                self.stdout.write(self.style.ERROR(f"Error parsing geometry for {item['name']}: {e}"))
                 continue
 
             try:
@@ -110,19 +102,11 @@ class Command(BaseCommand):
                 )
                 loaded_count += 1
             except Exception as e:
-                self.stdout.write(
-                    self.style.ERROR(f"Error saving {item['name']} (ID: {item_id}): {e}")
-                )
+                self.stdout.write(self.style.ERROR(f"Error saving {item['name']} (ID: {item_id}): {e}"))
 
-        self.stdout.write(
-            self.style.SUCCESS(f"Successfully loaded {loaded_count} new exposure layers.")
-        )
+        self.stdout.write(self.style.SUCCESS(f"Successfully loaded {loaded_count} new exposure layers."))
         if skipped_count > 0:
-            self.stdout.write(
-                self.style.WARNING(
-                    f"Skipped {skipped_count} layers that already exist in the database."
-                )
-            )
+            self.stdout.write(self.style.WARNING(f"Skipped {skipped_count} layers that already exist in the database."))
 
     def handle(self, *_args, **_kwargs):
         """Handle the command execution."""

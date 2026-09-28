@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
-# and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+# and is legally attributed to the UK's Department for Business, Innovation, Science and Trade (BIST) as the governing entity.
 
 """Tests for constraint interventions."""
 
@@ -468,9 +468,7 @@ def test_delete_intervention(scenario, mock_user_id, road_blocks_type, client):
     )
     intervention_id = intervention.id
 
-    response = client.delete(
-        f"/api/scenarios/{scenario.id}/constraint-interventions/{intervention.id}/"
-    )
+    response = client.delete(f"/api/scenarios/{scenario.id}/constraint-interventions/{intervention.id}/")
 
     assert response.status_code == http_no_content
     assert not ConstraintIntervention.objects.filter(id=intervention_id).exists()
@@ -489,9 +487,7 @@ def test_cannot_delete_other_users_intervention(scenario, road_blocks_type, clie
         scenario=scenario,
     )
 
-    response = client.delete(
-        f"/api/scenarios/{scenario.id}/constraint-interventions/{intervention.id}/"
-    )
+    response = client.delete(f"/api/scenarios/{scenario.id}/constraint-interventions/{intervention.id}/")
 
     assert response.status_code == http_not_found
     assert ConstraintIntervention.objects.filter(id=intervention.id).exists()
@@ -500,8 +496,6 @@ def test_cannot_delete_other_users_intervention(scenario, road_blocks_type, clie
 @pytest.mark.django_db
 def test_delete_intervention_invalid_id_404(scenario, client):
     """Test that invalid intervention ID returns 404."""
-    response = client.delete(
-        f"/api/scenarios/{scenario.id}/constraint-interventions/{uuid.uuid4()}/"
-    )
+    response = client.delete(f"/api/scenarios/{scenario.id}/constraint-interventions/{uuid.uuid4()}/")
 
     assert response.status_code == http_not_found

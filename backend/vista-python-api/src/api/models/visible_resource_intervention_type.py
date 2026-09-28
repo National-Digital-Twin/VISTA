@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
-# and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+# and is legally attributed to the UK's Department for Business, Innovation, Science and Trade (BIST) as the governing entity.
 
 """Visible Resource Intervention Type model."""
 
@@ -44,7 +44,4 @@ class VisibleResourceInterventionType(models.Model):
 
     def __str__(self):
         """Return the string representation of the model."""
-        return (
-            f"{self.resource_intervention_type.name} visible for user"
-            f" {self.user_id} in scenario {self.scenario.id}"
-        )
+        return f"{self.resource_intervention_type.name} visible for user {self.user_id} in scenario {self.scenario.id}"

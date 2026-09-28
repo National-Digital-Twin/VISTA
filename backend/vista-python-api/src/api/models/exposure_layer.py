@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
-# and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+# and is legally attributed to the UK's Department for Business, Innovation, Science and Trade (BIST) as the governing entity.
 
 """Models for geographic exposure layers."""
 
@@ -89,8 +89,4 @@ class ExposureLayer(models.Model):
     @property
     def published_id(self) -> str | None:
         """Return the formatted published ID, or None if not published."""
-        return (
-            f"UD.{self.published_id_int}"
-            if self.published_id_int and self.is_ready_for_admin_removal
-            else None
-        )
+        return f"UD.{self.published_id_int}" if self.published_id_int and self.is_ready_for_admin_removal else None

@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
-# and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+# and is legally attributed to the UK's Department for Business, Innovation, Science and Trade (BIST) as the governing entity.
 
 name: Backend CI on PR
 
@@ -46,7 +46,7 @@ jobs:
         run: |
           python -m venv venv
           source venv/bin/activate
-          python -m pip install --upgrade "pip==26.2.1"
+          python -m pip install --upgrade --only-binary :all: "pip==26.2.1"
 
       - name: Install Poetry
         if: steps.venv-cache.outcome!= 'restored'
@@ -118,7 +118,7 @@ jobs:
         run: |
           python -m venv venv
           source venv/bin/activate
-          python -m pip install --upgrade "pip==26.2.1"
+          python -m pip install --upgrade --only-binary :all: "pip==26.2.1"
 
       - name: Install linting tools
         run: |
@@ -189,7 +189,7 @@ jobs:
         run: |
           python -m venv venv
           source venv/bin/activate
-          python -m pip install --upgrade "pip==26.2.1"
+          python -m pip install --upgrade --only-binary :all: "pip==26.2.1"
 
       - name: Install Poetry
         if: steps.venv-cache.outcome!= 'restored'

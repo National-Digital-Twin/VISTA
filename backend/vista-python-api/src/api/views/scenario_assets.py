@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
-# and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+# and is legally attributed to the UK's Department for Business, Innovation, Science and Trade (BIST) as the governing entity.
 
 """View for listing assets filtered by scenario visibility settings."""
 
@@ -30,9 +30,7 @@ def _build_focus_area_q(focus_area: FocusArea, scenario_id, user_id, exclude_q=N
     visible_type_ids = {va.asset_type_id for va in focus_area.visible_assets.all()}
     disallowed_type_ids = get_asset_types_user_cannot_access(user_id)
 
-    ctx = FilterContext(
-        scenario_id, user_id, focus_area.id, type_filters, global_filter, disallowed_type_ids
-    )
+    ctx = FilterContext(scenario_id, user_id, focus_area.id, type_filters, global_filter, disallowed_type_ids)
     builder = AssetFilterBuilder(ctx)
 
     if focus_area.filter_mode == "by_score_only":

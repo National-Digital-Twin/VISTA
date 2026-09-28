@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
-# and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+# and is legally attributed to the UK's Department for Business, Innovation, Science and Trade (BIST) as the governing entity.
 
 """Focus Area model."""
 
@@ -30,9 +30,7 @@ class FocusArea(models.Model):
     user_id = models.UUIDField(db_index=True)
     name = models.CharField(max_length=255)
     geometry = models.GeometryField(srid=4326, null=True)
-    filter_mode = models.CharField(
-        max_length=20, choices=FILTER_MODE_CHOICES, default="by_asset_type"
-    )
+    filter_mode = models.CharField(max_length=20, choices=FILTER_MODE_CHOICES, default="by_asset_type")
     is_active = models.BooleanField(default=True)
     is_system = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)

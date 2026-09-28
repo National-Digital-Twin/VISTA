@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 // © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
-// and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+// and is legally attributed to the UK's Department for Business, Innovation, Science and Trade (BIST) as the governing entity.
 
 import { ThemeProvider } from '@mui/material/styles';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -103,14 +103,6 @@ describe('ConstraintsView', () => {
     };
 
     describe('Rendering', () => {
-        it('renders title', async () => {
-            setupMutationMocks();
-            renderWithProviders(<ConstraintsView {...defaultProps} />);
-            await waitFor(() => {
-                expect(screen.getByText('Constraints')).toBeInTheDocument();
-            });
-        });
-
         it('renders close button', async () => {
             setupMutationMocks();
             renderWithProviders(<ConstraintsView {...defaultProps} />);
@@ -119,27 +111,17 @@ describe('ConstraintsView', () => {
             });
         });
 
-        it('renders constraint type group', async () => {
+        it.each([
+            ['title', 'Constraints'],
+            ['constraint type group', 'Road blocks'],
+            ['draw button', 'Draw new road block'],
+            ['constraint intervention names', 'Road block 1'],
+        ])('renders %s', async (_, text) => {
             setupMutationMocks();
             renderWithProviders(<ConstraintsView {...defaultProps} />);
-            await waitFor(() => {
-                expect(screen.getByText('Road blocks')).toBeInTheDocument();
-            });
-        });
 
-        it('renders draw button', async () => {
-            setupMutationMocks();
-            renderWithProviders(<ConstraintsView {...defaultProps} />);
             await waitFor(() => {
-                expect(screen.getByText('Draw new road block')).toBeInTheDocument();
-            });
-        });
-
-        it('renders constraint intervention names', async () => {
-            setupMutationMocks();
-            renderWithProviders(<ConstraintsView {...defaultProps} />);
-            await waitFor(() => {
-                expect(screen.getByText('Road block 1')).toBeInTheDocument();
+                expect(screen.getByText(text)).toBeInTheDocument();
             });
         });
     });

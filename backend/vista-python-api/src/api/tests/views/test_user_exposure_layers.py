@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
-# and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+# and is legally attributed to the UK's Department for Business, Innovation, Science and Trade (BIST) as the governing entity.
 
 """Tests for user-defined exposure layers."""
 
@@ -93,9 +93,7 @@ class Administrator:
 
 
 @pytest.mark.django_db
-def test_list_exposure_layers_includes_user_drawn(
-    scenario, focus_area, mock_user_id, user_drawn_type, client
-):
+def test_list_exposure_layers_includes_user_drawn(scenario, focus_area, mock_user_id, user_drawn_type, client):
     """Test that GET returns user-drawn layers in 'User drawn' type."""
     geom = GEOSGeometry("POLYGON((0.2 0.2, 0.2 0.3, 0.3 0.3, 0.3 0.2, 0.2 0.2))")
     user_layer = ExposureLayer.objects.create(
@@ -107,9 +105,7 @@ def test_list_exposure_layers_includes_user_drawn(
         scenario=scenario,
     )
 
-    response = client.get(
-        f"/api/scenarios/{scenario.id}/exposure-layers/?focus_area_id={focus_area.id}"
-    )
+    response = client.get(f"/api/scenarios/{scenario.id}/exposure-layers/?focus_area_id={focus_area.id}")
     data = response.json()
 
     assert response.status_code == http_ok
@@ -129,9 +125,7 @@ def test_list_exposure_layers_includes_user_drawn(
 
 
 @pytest.mark.django_db
-def test_list_exposure_layers_gives_correct_status_for_non_editable_layer_type(
-    scenario, non_editable_type, client
-):
+def test_list_exposure_layers_gives_correct_status_for_non_editable_layer_type(scenario, non_editable_type, client):
     """Test that GET returns correct status (null) for non-editable layer."""
     geom = GEOSGeometry("POLYGON((0.2 0.2, 0.2 0.3, 0.3 0.3, 0.3 0.2, 0.2 0.2))")
     layer = ExposureLayer.objects.create(
@@ -152,9 +146,7 @@ def test_list_exposure_layers_gives_correct_status_for_non_editable_layer_type(
 
 
 @pytest.mark.django_db
-def test_list_exposure_layers_user_isolation(
-    scenario, focus_area, mock_user_id, user_drawn_type, client
-):
+def test_list_exposure_layers_user_isolation(scenario, focus_area, mock_user_id, user_drawn_type, client):
     """Test that users cannot see other users' unpublished or pending layers."""
     geom = GEOSGeometry("POLYGON((0.2 0.2, 0.2 0.3, 0.3 0.3, 0.3 0.2, 0.2 0.2))")
     user_layer = ExposureLayer.objects.create(
@@ -186,9 +178,7 @@ def test_list_exposure_layers_user_isolation(
         status=ExposureLayer.PENDING,
     )
 
-    response = client.get(
-        f"/api/scenarios/{scenario.id}/exposure-layers/?focus_area_id={focus_area.id}"
-    )
+    response = client.get(f"/api/scenarios/{scenario.id}/exposure-layers/?focus_area_id={focus_area.id}")
     data = response.json()
 
     assert find_exposure_layer_in_tree(data, user_layer.id) is not None
@@ -197,9 +187,7 @@ def test_list_exposure_layers_user_isolation(
 
 
 @pytest.mark.django_db
-def test_list_exposure_layers_shows_other_users_approved_layers(
-    scenario, focus_area, user_drawn_type, client
-):
+def test_list_exposure_layers_shows_other_users_approved_layers(scenario, focus_area, user_drawn_type, client):
     """Test that approved layers from other users are visible."""
     geom = GEOSGeometry("POLYGON((0.2 0.2, 0.2 0.3, 0.3 0.3, 0.3 0.2, 0.2 0.2))")
     other_user_id = uuid.uuid4()
@@ -214,9 +202,7 @@ def test_list_exposure_layers_shows_other_users_approved_layers(
         published_id_int=1,
     )
 
-    response = client.get(
-        f"/api/scenarios/{scenario.id}/exposure-layers/?focus_area_id={focus_area.id}"
-    )
+    response = client.get(f"/api/scenarios/{scenario.id}/exposure-layers/?focus_area_id={focus_area.id}")
     data = response.json()
 
     layer_data = find_exposure_layer_in_tree(data, other_approved.id)
@@ -228,9 +214,7 @@ def test_list_exposure_layers_shows_other_users_approved_layers(
 
 
 @pytest.mark.django_db
-def test_list_exposure_layers_scenario_isolation(
-    scenario, focus_area, mock_user_id, user_drawn_type, client
-):
+def test_list_exposure_layers_scenario_isolation(scenario, focus_area, mock_user_id, user_drawn_type, client):
     """Test that user-drawn layers are scoped to scenario."""
     other_scenario = Scenario.objects.create(name="Other Scenario", is_active=False)
 
@@ -244,9 +228,7 @@ def test_list_exposure_layers_scenario_isolation(
         scenario=other_scenario,
     )
 
-    response = client.get(
-        f"/api/scenarios/{scenario.id}/exposure-layers/?focus_area_id={focus_area.id}"
-    )
+    response = client.get(f"/api/scenarios/{scenario.id}/exposure-layers/?focus_area_id={focus_area.id}")
     data = response.json()
 
     user_drawn_type_data = find_type_by_name(data, "Test User Editable")
@@ -255,9 +237,7 @@ def test_list_exposure_layers_scenario_isolation(
 
 
 @pytest.mark.django_db
-def test_list_exposure_layers_ordered_by_created_at(
-    scenario, focus_area, mock_user_id, user_drawn_type, client
-):
+def test_list_exposure_layers_ordered_by_created_at(scenario, focus_area, mock_user_id, user_drawn_type, client):
     """Test that user-drawn layers are ordered by created_at."""
     geom = GEOSGeometry("POLYGON((0.2 0.2, 0.2 0.3, 0.3 0.3, 0.3 0.2, 0.2 0.2))")
 
@@ -279,9 +259,7 @@ def test_list_exposure_layers_ordered_by_created_at(
         scenario=scenario,
     )
 
-    response = client.get(
-        f"/api/scenarios/{scenario.id}/exposure-layers/?focus_area_id={focus_area.id}"
-    )
+    response = client.get(f"/api/scenarios/{scenario.id}/exposure-layers/?focus_area_id={focus_area.id}")
     data = response.json()
 
     user_drawn_type_data = find_type_by_name(data, "Test User Editable")
@@ -308,9 +286,7 @@ def test_list_exposure_layers_returns_is_user_editable(scenario, focus_area, cli
         type=system_type,
     )
 
-    response = client.get(
-        f"/api/scenarios/{scenario.id}/exposure-layers/?focus_area_id={focus_area.id}"
-    )
+    response = client.get(f"/api/scenarios/{scenario.id}/exposure-layers/?focus_area_id={focus_area.id}")
     data = response.json()
 
     assert response.status_code == http_ok
@@ -385,9 +361,7 @@ def test_exposure_layers_returns_all_layers_not_just_intersecting(scenario, mock
         type=system_type,
     )
 
-    response = client.get(
-        f"/api/scenarios/{scenario.id}/exposure-layers/?focus_area_id={focus_area.id}"
-    )
+    response = client.get(f"/api/scenarios/{scenario.id}/exposure-layers/?focus_area_id={focus_area.id}")
     data = response.json()
 
     assert response.status_code == http_ok
@@ -423,9 +397,7 @@ def test_exposure_layers_focus_area_relation_contained(scenario, mock_user_id, c
         type=system_type,
     )
 
-    response = client.get(
-        f"/api/scenarios/{scenario.id}/exposure-layers/?focus_area_id={focus_area.id}"
-    )
+    response = client.get(f"/api/scenarios/{scenario.id}/exposure-layers/?focus_area_id={focus_area.id}")
     data = response.json()
 
     layer_data = find_exposure_layer_in_tree(data, contained_layer.id)
@@ -457,9 +429,7 @@ def test_exposure_layers_focus_area_relation_overlaps(scenario, mock_user_id, cl
         type=system_type,
     )
 
-    response = client.get(
-        f"/api/scenarios/{scenario.id}/exposure-layers/?focus_area_id={focus_area.id}"
-    )
+    response = client.get(f"/api/scenarios/{scenario.id}/exposure-layers/?focus_area_id={focus_area.id}")
     data = response.json()
 
     layer_data = find_exposure_layer_in_tree(data, overlaps_layer.id)
@@ -491,9 +461,7 @@ def test_exposure_layers_focus_area_relation_elsewhere(scenario, mock_user_id, c
         type=system_type,
     )
 
-    response = client.get(
-        f"/api/scenarios/{scenario.id}/exposure-layers/?focus_area_id={focus_area.id}"
-    )
+    response = client.get(f"/api/scenarios/{scenario.id}/exposure-layers/?focus_area_id={focus_area.id}")
     data = response.json()
 
     layer_data = find_exposure_layer_in_tree(data, elsewhere_layer.id)
@@ -524,9 +492,7 @@ def test_exposure_layers_map_wide_all_contained(scenario, mock_user_id, client):
         type=system_type,
     )
 
-    response = client.get(
-        f"/api/scenarios/{scenario.id}/exposure-layers/?focus_area_id={focus_area.id}"
-    )
+    response = client.get(f"/api/scenarios/{scenario.id}/exposure-layers/?focus_area_id={focus_area.id}")
     data = response.json()
 
     layer_data = find_exposure_layer_in_tree(data, layer.id)
@@ -648,9 +614,7 @@ def test_create_user_exposure_layer_auto_generates_name(scenario, user_drawn_typ
 
 
 @pytest.mark.django_db
-def test_create_user_exposure_layer_auto_enables_visibility(
-    scenario, focus_area, user_drawn_type, client
-):
+def test_create_user_exposure_layer_auto_enables_visibility(scenario, focus_area, user_drawn_type, client):
     """Test that focus_area_id enables visibility automatically."""
     geometry = {"type": "Polygon", "coordinates": SAMPLE_POLYGON}
 
@@ -670,15 +634,11 @@ def test_create_user_exposure_layer_auto_enables_visibility(
     assert response.status_code == http_created, f"Got: {data}"
     assert data["isActive"] is True
 
-    assert VisibleExposureLayer.objects.filter(
-        focus_area=focus_area, exposure_layer_id=data["id"]
-    ).exists()
+    assert VisibleExposureLayer.objects.filter(focus_area=focus_area, exposure_layer_id=data["id"]).exists()
 
 
 @pytest.mark.django_db
-def test_create_user_exposure_layer_without_focus_area_not_visible(
-    scenario, user_drawn_type, client
-):
+def test_create_user_exposure_layer_without_focus_area_not_visible(scenario, user_drawn_type, client):
     """Test that layer is not automatically visible when focusAreaId not provided."""
     geometry = {"type": "Polygon", "coordinates": SAMPLE_POLYGON}
 
@@ -752,9 +712,7 @@ def test_create_user_exposure_layer_invalid_type_not_found(scenario, client):
 
 
 @pytest.mark.django_db
-def test_create_user_exposure_layer_non_editable_type_forbidden(
-    scenario, non_editable_type, client
-):
+def test_create_user_exposure_layer_non_editable_type_forbidden(scenario, non_editable_type, client):
     """Test that creating layer with is_user_editable=False type returns 403."""
     geometry = {"type": "Polygon", "coordinates": SAMPLE_POLYGON}
 
@@ -825,9 +783,7 @@ def test_user_cannot_publish_exposure_layer_non_editable_type(client, scenario, 
 
 
 @pytest.mark.django_db
-def test_user_cannot_publish_exposure_layer_pending(
-    client, mock_user_id, scenario, user_drawn_type
-):
+def test_user_cannot_publish_exposure_layer_pending(client, mock_user_id, scenario, user_drawn_type):
     """Test user can't publish an exposure layer which is already pending."""
     geom = GEOSGeometry("POLYGON((0.2 0.2, 0.2 0.3, 0.3 0.3, 0.3 0.2, 0.2 0.2))")
     user_layer = ExposureLayer.objects.create(
@@ -845,9 +801,7 @@ def test_user_cannot_publish_exposure_layer_pending(
 
 
 @pytest.mark.django_db
-def test_user_cannot_publish_exposure_layer_approved(
-    client, mock_user_id, scenario, user_drawn_type
-):
+def test_user_cannot_publish_exposure_layer_approved(client, mock_user_id, scenario, user_drawn_type):
     """Test that POST publish layer is successful."""
     geom = GEOSGeometry("POLYGON((0.2 0.2, 0.2 0.3, 0.3 0.3, 0.3 0.2, 0.2 0.2))")
     user_layer = ExposureLayer.objects.create(
@@ -891,9 +845,7 @@ def test_admin_user_can_approve_exposure_layer(client, mock_user_id, scenario, u
 
 
 @pytest.mark.django_db
-def test_admin_user_cannot_approve_exposure_layer_non_editable_type(
-    client, scenario, non_editable_type
-):
+def test_admin_user_cannot_approve_exposure_layer_non_editable_type(client, scenario, non_editable_type):
     """Test that an admin cannot approve a layer with a non-editable type."""
     geom = GEOSGeometry("POLYGON((0.2 0.2, 0.2 0.3, 0.3 0.3, 0.3 0.2, 0.2 0.2))")
     layer = ExposureLayer.objects.create(
@@ -991,9 +943,7 @@ def test_admin_user_can_reject_exposure_layer(client, mock_user_id, scenario, us
 
 
 @pytest.mark.django_db
-def test_admin_user_cannot_reject_exposure_layer_non_editable_type(
-    client, scenario, non_editable_type
-):
+def test_admin_user_cannot_reject_exposure_layer_non_editable_type(client, scenario, non_editable_type):
     """Test that an admin cannot reject a layer with a non-editable type."""
     geom = GEOSGeometry("POLYGON((0.2 0.2, 0.2 0.3, 0.3 0.3, 0.3 0.2, 0.2 0.2))")
     layer = ExposureLayer.objects.create(
@@ -1091,9 +1041,7 @@ def test_admin_user_can_remove_exposure_layer(client, mock_user_id, scenario, us
 
 
 @pytest.mark.django_db
-def test_admin_user_cannot_remove_exposure_layer_non_editable_type(
-    client, scenario, non_editable_type
-):
+def test_admin_user_cannot_remove_exposure_layer_non_editable_type(client, scenario, non_editable_type):
     """Test that an admin cannot remove a layer with a non-editable type."""
     geom = GEOSGeometry("POLYGON((0.2 0.2, 0.2 0.3, 0.3 0.3, 0.3 0.2, 0.2 0.2))")
     layer = ExposureLayer.objects.create(
@@ -1257,9 +1205,7 @@ def test_cannot_update_system_layer(scenario, non_editable_type, client):
 
 
 @pytest.mark.django_db
-def test_cannot_update_layer_with_non_editable_type(
-    scenario, mock_user_id, non_editable_type, client
-):
+def test_cannot_update_layer_with_non_editable_type(scenario, mock_user_id, non_editable_type, client):
     """Test that PATCH returns 403 when layer's type has is_user_editable=False."""
     geom = GEOSGeometry("POLYGON((0.2 0.2, 0.2 0.3, 0.3 0.3, 0.3 0.2, 0.2 0.2))")
     layer = ExposureLayer.objects.create(
@@ -1393,9 +1339,7 @@ def test_cannot_delete_system_layer(scenario, non_editable_type, client):
 
 
 @pytest.mark.django_db
-def test_cannot_delete_layer_with_non_editable_type(
-    scenario, mock_user_id, non_editable_type, client
-):
+def test_cannot_delete_layer_with_non_editable_type(scenario, mock_user_id, non_editable_type, client):
     """Test that DELETE returns 403 when layer's type has is_user_editable=False."""
     geom = GEOSGeometry("POLYGON((0.2 0.2, 0.2 0.3, 0.3 0.3, 0.3 0.2, 0.2 0.2))")
     layer = ExposureLayer.objects.create(
@@ -1457,9 +1401,7 @@ def test_cannot_delete_approved_layer(scenario, mock_user_id, user_drawn_type, c
 
 
 @pytest.mark.django_db
-def test_bulk_enable_exposure_layers_by_ids(
-    scenario, focus_area, mock_user_id, user_drawn_type, client
-):
+def test_bulk_enable_exposure_layers_by_ids(scenario, focus_area, mock_user_id, user_drawn_type, client):
     """Test bulk enabling visibility for specific exposure layers."""
     geom = GEOSGeometry("POLYGON((0.2 0.2, 0.2 0.3, 0.3 0.3, 0.3 0.2, 0.2 0.2))")
     layer1 = ExposureLayer.objects.create(
@@ -1496,18 +1438,12 @@ def test_bulk_enable_exposure_layers_by_ids(
     assert data["isActive"] is True
     assert len(data["exposureLayerIds"]) == 2
 
-    assert VisibleExposureLayer.objects.filter(
-        focus_area=focus_area, exposure_layer=layer1
-    ).exists()
-    assert VisibleExposureLayer.objects.filter(
-        focus_area=focus_area, exposure_layer=layer2
-    ).exists()
+    assert VisibleExposureLayer.objects.filter(focus_area=focus_area, exposure_layer=layer1).exists()
+    assert VisibleExposureLayer.objects.filter(focus_area=focus_area, exposure_layer=layer2).exists()
 
 
 @pytest.mark.django_db
-def test_bulk_disable_exposure_layers_by_type_id(
-    scenario, focus_area, mock_user_id, user_drawn_type, client
-):
+def test_bulk_disable_exposure_layers_by_type_id(scenario, focus_area, mock_user_id, user_drawn_type, client):
     """Test bulk disabling all layers of a type."""
     geom = GEOSGeometry("POLYGON((0.2 0.2, 0.2 0.3, 0.3 0.3, 0.3 0.2, 0.2 0.2))")
     layer1 = ExposureLayer.objects.create(
@@ -1546,12 +1482,8 @@ def test_bulk_disable_exposure_layers_by_type_id(
     assert response.status_code == http_ok, f"Got: {data}"
     assert data["isActive"] is False
 
-    assert not VisibleExposureLayer.objects.filter(
-        focus_area=focus_area, exposure_layer=layer1
-    ).exists()
-    assert not VisibleExposureLayer.objects.filter(
-        focus_area=focus_area, exposure_layer=layer2
-    ).exists()
+    assert not VisibleExposureLayer.objects.filter(focus_area=focus_area, exposure_layer=layer1).exists()
+    assert not VisibleExposureLayer.objects.filter(focus_area=focus_area, exposure_layer=layer2).exists()
 
 
 @pytest.mark.django_db
@@ -1608,9 +1540,7 @@ def test_bulk_toggle_with_invalid_layer_ids(scenario, focus_area, client):
 
 
 @pytest.mark.django_db
-def test_bulk_toggle_with_mixed_valid_invalid_ids(
-    scenario, focus_area, mock_user_id, user_drawn_type, client
-):
+def test_bulk_toggle_with_mixed_valid_invalid_ids(scenario, focus_area, mock_user_id, user_drawn_type, client):
     """Test that bulk toggle fails if any layer ID is invalid."""
     geom = GEOSGeometry("POLYGON((0.2 0.2, 0.2 0.3, 0.3 0.3, 0.3 0.2, 0.2 0.2))")
     valid_layer = ExposureLayer.objects.create(
@@ -1635,15 +1565,11 @@ def test_bulk_toggle_with_mixed_valid_invalid_ids(
     )
 
     assert response.status_code == http_bad_request
-    assert not VisibleExposureLayer.objects.filter(
-        focus_area=focus_area, exposure_layer=valid_layer
-    ).exists()
+    assert not VisibleExposureLayer.objects.filter(focus_area=focus_area, exposure_layer=valid_layer).exists()
 
 
 @pytest.mark.django_db
-def test_bulk_toggle_other_users_approved_layers_by_ids(
-    scenario, focus_area, user_drawn_type, client
-):
+def test_bulk_toggle_other_users_approved_layers_by_ids(scenario, focus_area, user_drawn_type, client):
     """Test bulk toggling visibility for approved layers from another user."""
     geom = GEOSGeometry("POLYGON((0.2 0.2, 0.2 0.3, 0.3 0.3, 0.3 0.2, 0.2 0.2))")
     other_user_id = uuid.uuid4()
@@ -1670,9 +1596,7 @@ def test_bulk_toggle_other_users_approved_layers_by_ids(
     )
 
     assert response.status_code == http_ok
-    assert VisibleExposureLayer.objects.filter(
-        focus_area=focus_area, exposure_layer=other_approved
-    ).exists()
+    assert VisibleExposureLayer.objects.filter(focus_area=focus_area, exposure_layer=other_approved).exists()
 
     response = client.put(
         f"/api/scenarios/{scenario.id}/visible-exposure-layers/bulk/",
@@ -1687,15 +1611,11 @@ def test_bulk_toggle_other_users_approved_layers_by_ids(
     )
 
     assert response.status_code == http_ok
-    assert not VisibleExposureLayer.objects.filter(
-        focus_area=focus_area, exposure_layer=other_approved
-    ).exists()
+    assert not VisibleExposureLayer.objects.filter(focus_area=focus_area, exposure_layer=other_approved).exists()
 
 
 @pytest.mark.django_db
-def test_bulk_toggle_other_users_approved_layers_by_type(
-    scenario, focus_area, mock_user_id, user_drawn_type, client
-):
+def test_bulk_toggle_other_users_approved_layers_by_type(scenario, focus_area, mock_user_id, user_drawn_type, client):
     """Test bulk toggling by type includes approved layers from other users."""
     geom = GEOSGeometry("POLYGON((0.2 0.2, 0.2 0.3, 0.3 0.3, 0.3 0.2, 0.2 0.2))")
     own_layer = ExposureLayer.objects.create(
@@ -1730,26 +1650,18 @@ def test_bulk_toggle_other_users_approved_layers_by_type(
     )
 
     assert response.status_code == http_ok
-    assert VisibleExposureLayer.objects.filter(
-        focus_area=focus_area, exposure_layer=own_layer
-    ).exists()
-    assert VisibleExposureLayer.objects.filter(
-        focus_area=focus_area, exposure_layer=other_approved
-    ).exists()
+    assert VisibleExposureLayer.objects.filter(focus_area=focus_area, exposure_layer=own_layer).exists()
+    assert VisibleExposureLayer.objects.filter(focus_area=focus_area, exposure_layer=other_approved).exists()
 
 
 @pytest.mark.django_db
-def test_remove_cleans_up_non_owner_visibility_records(
-    scenario, mock_user_id, user_drawn_type, client
-):
+def test_remove_cleans_up_non_owner_visibility_records(scenario, mock_user_id, user_drawn_type, client):
     """Test that removing a layer removes visibility records for non-owners."""
     owner_id = uuid.uuid4()
     layer = ExposureLayer.objects.create(
         name="Approved Layer",
         geometry=GEOSGeometry("POLYGON((0.2 0.2, 0.2 0.3, 0.3 0.3, 0.3 0.2, 0.2 0.2))"),
-        geometry_buffered=buffer_geometry(
-            GEOSGeometry("POLYGON((0.2 0.2, 0.2 0.3, 0.3 0.3, 0.3 0.2, 0.2 0.2))")
-        ),
+        geometry_buffered=buffer_geometry(GEOSGeometry("POLYGON((0.2 0.2, 0.2 0.3, 0.3 0.3, 0.3 0.2, 0.2 0.2))")),
         type=user_drawn_type,
         user_id=owner_id,
         scenario=scenario,
@@ -1781,9 +1693,5 @@ def test_remove_cleans_up_non_owner_visibility_records(
     response = client.post(f"/api/scenarios/{scenario.id}/exposure-layers/{layer.id}/remove/")
     assert response.status_code == http_ok
 
-    assert VisibleExposureLayer.objects.filter(
-        focus_area=owner_focus_area, exposure_layer=layer
-    ).exists()
-    assert not VisibleExposureLayer.objects.filter(
-        focus_area=other_focus_area, exposure_layer=layer
-    ).exists()
+    assert VisibleExposureLayer.objects.filter(focus_area=owner_focus_area, exposure_layer=layer).exists()
+    assert not VisibleExposureLayer.objects.filter(focus_area=other_focus_area, exposure_layer=layer).exists()

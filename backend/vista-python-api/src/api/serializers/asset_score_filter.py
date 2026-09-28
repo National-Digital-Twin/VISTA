@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
-# and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+# and is legally attributed to the UK's Department for Business, Innovation, Science and Trade (BIST) as the governing entity.
 
 """Serializers for asset score filter operations."""
 
@@ -69,13 +69,9 @@ class AssetScoreFilterCreateUpdateSerializer(serializers.Serializer):
         dep_max = data.get("dependency_max")
 
         if (dep_min is None) != (dep_max is None):
-            raise serializers.ValidationError(
-                {"dependency_min": "Both dependency_min and dependency_max must be provided"}
-            )
+            raise serializers.ValidationError({"dependency_min": "Both dependency_min and dependency_max must be provided"})
 
         if dep_min is not None and dep_max is not None and dep_min > dep_max:
-            raise serializers.ValidationError(
-                {"dependency_min": "dependency_min must be less than or equal to dependency_max"}
-            )
+            raise serializers.ValidationError({"dependency_min": "dependency_min must be less than or equal to dependency_max"})
 
         return data

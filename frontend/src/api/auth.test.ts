@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 // © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
-// and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+// and is legally attributed to the UK's Department for Business, Innovation, Science and Trade (BIST) as the governing entity.
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { signout } from './auth';
@@ -186,6 +186,11 @@ describe('auth API', () => {
             });
 
             await signout();
+
+            expect(fetchMock).toHaveBeenCalledTimes(1);
+            expect(fetchMock).toHaveBeenCalledWith('/api/signout', {
+                headers: { 'Content-Type': 'application/json' },
+            });
         });
 
         it('still redirects even if OAuth logout call fails', async () => {
@@ -227,6 +232,8 @@ describe('auth API', () => {
                 });
 
             await signout();
+
+            expect(fetchMock).toHaveBeenCalledTimes(1);
         });
 
         it('handles all operations in correct order', async () => {

@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
-# and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+# and is legally attributed to the UK's Department for Business, Innovation, Science and Trade (BIST) as the governing entity.
 
 """Test cases for the NaPTAN data source handler."""
 
@@ -24,10 +24,7 @@ class TestBuildUrlsForDataSource:
     def test_correct_url_returned(self):
         handler = NaptanDataSourceHandler(area_code)
         result = handler.build_urls_for_data_source({})[0]
-        assert (
-            result
-            == f"https://naptan.api.dft.gov.uk/v1/access-nodes?dataFormat=csv&atcoAreaCodes={area_code}"
-        )
+        assert result == f"https://naptan.api.dft.gov.uk/v1/access-nodes?dataFormat=csv&atcoAreaCodes={area_code}"
 
 
 class TestFetchDataForAssetSpecification:
@@ -46,9 +43,7 @@ class TestFetchDataForAssetSpecification:
         monkeypatch.setattr(ExternalAssetMapper, "map_from_naptan", self.fake_map)
         csv_text = """ATCOCode\n23000002001A"""
         client = await monkeypatch_client(monkeypatch, {self.url: MockResponse(200, text=csv_text)})
-        result = await handler.fetch_data_for_asset_specification(
-            self.asset_specification, self.url
-        )
+        result = await handler.fetch_data_for_asset_specification(self.asset_specification, self.url)
 
         assert len(result) == 1
         assert result[0].id == self.asset.id
@@ -57,9 +52,7 @@ class TestFetchDataForAssetSpecification:
     async def test_fetch_data_for_two_stops_duplicate_names_returns_one(self, monkeypatch):
         handler = NaptanDataSourceHandler(area_code)
         monkeypatch.setattr(ExternalAssetMapper, "map_from_naptan", self.fake_map)
-        csv_text = (
-            """ATCOCode,CommonName,LocalityName\n23000002001A,Apple,A\n23000002001B,Apple,A"""
-        )
+        csv_text = """ATCOCode,CommonName,LocalityName\n23000002001A,Apple,A\n23000002001B,Apple,A"""
         url = "test.com/naptan"
         client = await monkeypatch_client(monkeypatch, {url: MockResponse(200, text=csv_text)})
         result = await handler.fetch_data_for_asset_specification(self.asset_specification, url)

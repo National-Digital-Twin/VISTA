@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
-# and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+# and is legally attributed to the UK's Department for Business, Innovation, Science and Trade (BIST) as the governing entity.
 
 """
 OSMNX Utility Module for Route Generation and Written Driving Directions.
@@ -81,10 +81,7 @@ def flood_graph(graph: MultiDiGraph, flood_extent: GeoJSON, points: Sequence[Cen
         restrictions = gpd.GeoDataFrame(
             None,
             geometry=[
-                shapely.Polygon(
-                    shell=circle_to_polygon(point, radius=Meters(100), options=Options(5))
-                )
-                for point in points
+                shapely.Polygon(shell=circle_to_polygon(point, radius=Meters(100), options=Options(5))) for point in points
             ],
             crs="EPSG:4326",
         )
@@ -120,9 +117,7 @@ class Point:
     Y: float  # latitude in degrees North.
 
 
-def generate_route(
-    graph: MultiDiGraph, origin: Point | None, destination: Point | None
-) -> gpd.GeoDataFrame:
+def generate_route(graph: MultiDiGraph, origin: Point | None, destination: Point | None) -> gpd.GeoDataFrame:
     """
     Plot route between two Points on our osmnx Graph.
 

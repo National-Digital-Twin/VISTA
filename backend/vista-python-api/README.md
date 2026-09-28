@@ -40,5 +40,5 @@ The following are a list of envrironment variables required by the API
 - ALLOWED_HOSTS
 
 © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
-and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+and is legally attributed to the UK's Department for Business, Innovation, Science and Trade (BIST) as the governing entity.
 Licensed under the Open Government Licence v3.0.

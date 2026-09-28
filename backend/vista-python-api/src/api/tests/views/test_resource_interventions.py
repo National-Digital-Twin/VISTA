@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
-# and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+# and is legally attributed to the UK's Department for Business, Innovation, Science and Trade (BIST) as the governing entity.
 
 """Tests for resource intervention views."""
 
@@ -197,9 +197,7 @@ class TestScenarioResourceInterventionLocationView:
 
     def test_get_location_details(self, client, scenario, resource_location):
         """Retrieve single location details."""
-        url = (
-            f"/api/scenarios/{scenario.id}/resource-interventions/locations/{resource_location.id}/"
-        )
+        url = f"/api/scenarios/{scenario.id}/resource-interventions/locations/{resource_location.id}/"
         response = client.get(url)
 
         assert response.status_code == status.HTTP_200_OK
@@ -226,10 +224,7 @@ class TestResourceInterventionWithdraw:
 
     def test_successful_withdrawal(self, client, scenario, resource_location):
         """Successful stock withdrawal."""
-        url = (
-            f"/api/scenarios/{scenario.id}/resource-interventions/"
-            f"locations/{resource_location.id}/withdraw/"
-        )
+        url = f"/api/scenarios/{scenario.id}/resource-interventions/locations/{resource_location.id}/withdraw/"
         response = client.post(url, data={"quantity": 50}, content_type="application/json")
 
         assert response.status_code == status.HTTP_200_OK
@@ -243,10 +238,7 @@ class TestResourceInterventionWithdraw:
 
     def test_withdrawal_insufficient_stock(self, client, scenario, resource_location):
         """Withdrawal fails when insufficient stock."""
-        url = (
-            f"/api/scenarios/{scenario.id}/resource-interventions/"
-            f"locations/{resource_location.id}/withdraw/"
-        )
+        url = f"/api/scenarios/{scenario.id}/resource-interventions/locations/{resource_location.id}/withdraw/"
         response = client.post(url, data={"quantity": 200}, content_type="application/json")
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
@@ -256,19 +248,12 @@ class TestResourceInterventionWithdraw:
         resource_location.refresh_from_db()
         assert resource_location.current_stock == 150
 
-    def test_withdrawal_creates_action_record(
-        self, client, scenario, resource_location, mock_user_id
-    ):
+    def test_withdrawal_creates_action_record(self, client, scenario, resource_location, mock_user_id):
         """Withdrawal creates ResourceInterventionAction record."""
-        url = (
-            f"/api/scenarios/{scenario.id}/resource-interventions/"
-            f"locations/{resource_location.id}/withdraw/"
-        )
+        url = f"/api/scenarios/{scenario.id}/resource-interventions/locations/{resource_location.id}/withdraw/"
         client.post(url, data={"quantity": 50}, content_type="application/json")
 
-        actions = ResourceInterventionAction.objects.filter(
-            location=resource_location, user_id=mock_user_id
-        )
+        actions = ResourceInterventionAction.objects.filter(location=resource_location, user_id=mock_user_id)
         assert actions.count() == 1
         action = actions.first()
         assert action.action_type == "withdraw"
@@ -276,30 +261,21 @@ class TestResourceInterventionWithdraw:
 
     def test_withdrawal_negative_quantity(self, client, scenario, resource_location):
         """Withdrawal rejects negative quantity."""
-        url = (
-            f"/api/scenarios/{scenario.id}/resource-interventions/"
-            f"locations/{resource_location.id}/withdraw/"
-        )
+        url = f"/api/scenarios/{scenario.id}/resource-interventions/locations/{resource_location.id}/withdraw/"
         response = client.post(url, data={"quantity": -10}, content_type="application/json")
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_withdrawal_zero_quantity(self, client, scenario, resource_location):
         """Withdrawal rejects zero quantity."""
-        url = (
-            f"/api/scenarios/{scenario.id}/resource-interventions/"
-            f"locations/{resource_location.id}/withdraw/"
-        )
+        url = f"/api/scenarios/{scenario.id}/resource-interventions/locations/{resource_location.id}/withdraw/"
         response = client.post(url, data={"quantity": 0}, content_type="application/json")
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_invalid_action_type(self, client, scenario, resource_location):
         """Invalid action type returns 400."""
-        url = (
-            f"/api/scenarios/{scenario.id}/resource-interventions/"
-            f"locations/{resource_location.id}/invalid/"
-        )
+        url = f"/api/scenarios/{scenario.id}/resource-interventions/locations/{resource_location.id}/invalid/"
         response = client.post(url, data={"quantity": 50}, content_type="application/json")
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
@@ -314,10 +290,7 @@ class TestResourceInterventionRestock:
 
     def test_successful_restock(self, client, scenario, resource_location):
         """Successful stock restock."""
-        url = (
-            f"/api/scenarios/{scenario.id}/resource-interventions/"
-            f"locations/{resource_location.id}/restock/"
-        )
+        url = f"/api/scenarios/{scenario.id}/resource-interventions/locations/{resource_location.id}/restock/"
         response = client.post(url, data={"quantity": 100}, content_type="application/json")
 
         assert response.status_code == status.HTTP_200_OK
@@ -331,10 +304,7 @@ class TestResourceInterventionRestock:
 
     def test_restock_exceeds_capacity(self, client, scenario, resource_location):
         """Restock fails when exceeding capacity."""
-        url = (
-            f"/api/scenarios/{scenario.id}/resource-interventions/"
-            f"locations/{resource_location.id}/restock/"
-        )
+        url = f"/api/scenarios/{scenario.id}/resource-interventions/locations/{resource_location.id}/restock/"
         response = client.post(url, data={"quantity": 200}, content_type="application/json")
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
@@ -346,15 +316,10 @@ class TestResourceInterventionRestock:
 
     def test_restock_creates_action_record(self, client, scenario, resource_location, mock_user_id):
         """Restock creates ResourceInterventionAction record."""
-        url = (
-            f"/api/scenarios/{scenario.id}/resource-interventions/"
-            f"locations/{resource_location.id}/restock/"
-        )
+        url = f"/api/scenarios/{scenario.id}/resource-interventions/locations/{resource_location.id}/restock/"
         client.post(url, data={"quantity": 100}, content_type="application/json")
 
-        actions = ResourceInterventionAction.objects.filter(
-            location=resource_location, user_id=mock_user_id
-        )
+        actions = ResourceInterventionAction.objects.filter(location=resource_location, user_id=mock_user_id)
         assert actions.count() == 1
         action = actions.first()
         assert action.action_type == "restock"
@@ -362,20 +327,14 @@ class TestResourceInterventionRestock:
 
     def test_restock_negative_quantity(self, client, scenario, resource_location):
         """Restock rejects negative quantity."""
-        url = (
-            f"/api/scenarios/{scenario.id}/resource-interventions/"
-            f"locations/{resource_location.id}/restock/"
-        )
+        url = f"/api/scenarios/{scenario.id}/resource-interventions/locations/{resource_location.id}/restock/"
         response = client.post(url, data={"quantity": -10}, content_type="application/json")
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_restock_zero_quantity(self, client, scenario, resource_location):
         """Restock rejects zero quantity."""
-        url = (
-            f"/api/scenarios/{scenario.id}/resource-interventions/"
-            f"locations/{resource_location.id}/restock/"
-        )
+        url = f"/api/scenarios/{scenario.id}/resource-interventions/locations/{resource_location.id}/restock/"
         response = client.post(url, data={"quantity": 0}, content_type="application/json")
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
@@ -484,9 +443,7 @@ class TestScenarioResourceInterventionActionsView:
         assert response.status_code == status.HTTP_200_OK
         assert len(response.json()["results"]) == 2
 
-    def test_actions_ordered_by_created_at_desc(
-        self, client, scenario, resource_location, mock_user_id
-    ):
+    def test_actions_ordered_by_created_at_desc(self, client, scenario, resource_location, mock_user_id):
         """Actions are ordered by created_at descending (newest first)."""
         action1 = ResourceInterventionAction.objects.create(
             location=resource_location,
@@ -529,9 +486,7 @@ class TestScenarioResourceInterventionActionsView:
         assert len(data["results"]) == 50
         assert data["nextCursor"] is not None
 
-    def test_pagination_cursor_fetches_next_page(
-        self, client, scenario, resource_location, mock_user_id
-    ):
+    def test_pagination_cursor_fetches_next_page(self, client, scenario, resource_location, mock_user_id):
         """Using cursor fetches subsequent pages."""
         for _i in range(60):
             ResourceInterventionAction.objects.create(
@@ -585,9 +540,7 @@ class TestScenarioResourceInterventionActionsView:
         response = client.get(f"/api/scenarios/{uuid.uuid4()}/resource-interventions/actions/")
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
-    def test_filter_by_type_id(
-        self, client, scenario, resource_type, resource_location, mock_user_id
-    ):
+    def test_filter_by_type_id(self, client, scenario, resource_type, resource_location, mock_user_id):
         """Filter actions by resource type."""
         other_type = ResourceInterventionType.objects.create(name="Barriers", unit="units")
         other_location = ResourceInterventionLocation.objects.create(
@@ -606,10 +559,7 @@ class TestScenarioResourceInterventionActionsView:
             location=other_location, user_id=mock_user_id, action_type="withdraw", quantity=20
         )
 
-        url = (
-            f"/api/scenarios/{scenario.id}/resource-interventions/actions/"
-            f"?type_id={resource_type.id}"
-        )
+        url = f"/api/scenarios/{scenario.id}/resource-interventions/actions/?type_id={resource_type.id}"
         response = client.get(url)
 
         assert response.status_code == status.HTTP_200_OK
@@ -718,9 +668,7 @@ class TestVisibleResourceInterventionType:
 class TestScenarioResourceInterventionActionsExportView:
     """Tests for CSV export of resource intervention actions."""
 
-    def test_export_csv_returns_200_with_csv_content_type(
-        self, client, scenario, resource_type, resource_location, mock_user_id
-    ):
+    def test_export_csv_returns_200_with_csv_content_type(self, client, scenario, resource_type, resource_location, mock_user_id):
         """Export returns 200 with text/csv content type."""
         ResourceInterventionAction.objects.create(
             location=resource_location,
@@ -729,10 +677,7 @@ class TestScenarioResourceInterventionActionsExportView:
             quantity=50,
         )
 
-        url = (
-            f"/api/scenarios/{scenario.id}/resource-interventions/actions/export/"
-            f"?type_id={resource_type.id}"
-        )
+        url = f"/api/scenarios/{scenario.id}/resource-interventions/actions/export/?type_id={resource_type.id}"
         response = client.get(url)
 
         assert response.status_code == status.HTTP_200_OK
@@ -740,9 +685,7 @@ class TestScenarioResourceInterventionActionsExportView:
         assert "attachment" in response["Content-Disposition"]
         assert "Sandbags-actions-export.csv" in response["Content-Disposition"]
 
-    def test_export_csv_contains_header_and_data_rows(
-        self, client, scenario, resource_type, resource_location, mock_user_id
-    ):
+    def test_export_csv_contains_header_and_data_rows(self, client, scenario, resource_type, resource_location, mock_user_id):
         """Export CSV contains header row followed by data rows."""
         ResourceInterventionAction.objects.create(
             location=resource_location,
@@ -757,10 +700,7 @@ class TestScenarioResourceInterventionActionsExportView:
             quantity=75,
         )
 
-        url = (
-            f"/api/scenarios/{scenario.id}/resource-interventions/actions/export/"
-            f"?type_id={resource_type.id}"
-        )
+        url = f"/api/scenarios/{scenario.id}/resource-interventions/actions/export/?type_id={resource_type.id}"
         response = client.get(url)
 
         content = b"".join(response.streaming_content).decode("utf-8")
@@ -770,10 +710,7 @@ class TestScenarioResourceInterventionActionsExportView:
 
     def test_export_csv_empty_returns_header_only(self, client, scenario, resource_type):
         """Export with no actions returns only the header row."""
-        url = (
-            f"/api/scenarios/{scenario.id}/resource-interventions/actions/export/"
-            f"?type_id={resource_type.id}"
-        )
+        url = f"/api/scenarios/{scenario.id}/resource-interventions/actions/export/?type_id={resource_type.id}"
         response = client.get(url)
 
         assert response.status_code == status.HTTP_200_OK
@@ -791,17 +728,12 @@ class TestScenarioResourceInterventionActionsExportView:
 
     def test_export_csv_invalid_type_id_returns_400(self, client, scenario):
         """Invalid type_id format returns 400."""
-        url = (
-            f"/api/scenarios/{scenario.id}/resource-interventions/actions/export/"
-            f"?type_id=not-a-uuid"
-        )
+        url = f"/api/scenarios/{scenario.id}/resource-interventions/actions/export/?type_id=not-a-uuid"
         response = client.get(url)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
-    def test_export_csv_filter_by_type_id(
-        self, client, scenario, resource_type, resource_location, mock_user_id
-    ):
+    def test_export_csv_filter_by_type_id(self, client, scenario, resource_type, resource_location, mock_user_id):
         """Export only includes actions for the specified type."""
         other_type = ResourceInterventionType.objects.create(name="Barriers", unit="units")
         other_location = ResourceInterventionLocation.objects.create(
@@ -826,10 +758,7 @@ class TestScenarioResourceInterventionActionsExportView:
             quantity=20,
         )
 
-        url = (
-            f"/api/scenarios/{scenario.id}/resource-interventions/actions/export/"
-            f"?type_id={resource_type.id}"
-        )
+        url = f"/api/scenarios/{scenario.id}/resource-interventions/actions/export/?type_id={resource_type.id}"
         response = client.get(url)
 
         content = b"".join(response.streaming_content).decode("utf-8")
@@ -838,9 +767,7 @@ class TestScenarioResourceInterventionActionsExportView:
         assert "Newport" in lines[1]
         assert "Ryde" not in lines[1]
 
-    def test_export_csv_no_pagination(
-        self, client, scenario, resource_type, resource_location, mock_user_id
-    ):
+    def test_export_csv_no_pagination(self, client, scenario, resource_type, resource_location, mock_user_id):
         """Export returns all rows without pagination."""
         for _ in range(60):
             ResourceInterventionAction.objects.create(
@@ -850,19 +777,14 @@ class TestScenarioResourceInterventionActionsExportView:
                 quantity=1,
             )
 
-        url = (
-            f"/api/scenarios/{scenario.id}/resource-interventions/actions/export/"
-            f"?type_id={resource_type.id}"
-        )
+        url = f"/api/scenarios/{scenario.id}/resource-interventions/actions/export/?type_id={resource_type.id}"
         response = client.get(url)
 
         content = b"".join(response.streaming_content).decode("utf-8")
         lines = [line for line in content.strip().split("\n") if line]
         assert len(lines) == 61
 
-    def test_export_csv_data_format(
-        self, client, scenario, resource_type, resource_location, mock_user_id
-    ):
+    def test_export_csv_data_format(self, client, scenario, resource_type, resource_location, mock_user_id):
         """Verify individual CSV row data format."""
         ResourceInterventionAction.objects.create(
             location=resource_location,
@@ -871,10 +793,7 @@ class TestScenarioResourceInterventionActionsExportView:
             quantity=42,
         )
 
-        url = (
-            f"/api/scenarios/{scenario.id}/resource-interventions/actions/export/"
-            f"?type_id={resource_type.id}"
-        )
+        url = f"/api/scenarios/{scenario.id}/resource-interventions/actions/export/?type_id={resource_type.id}"
         response = client.get(url)
 
         content = b"".join(response.streaming_content).decode("utf-8")
@@ -887,10 +806,7 @@ class TestScenarioResourceInterventionActionsExportView:
 
     def test_export_invalid_scenario_404(self, client):
         """Invalid scenario returns 404."""
-        url = (
-            f"/api/scenarios/{uuid.uuid4()}/resource-interventions/actions/export/"
-            f"?type_id={uuid.uuid4()}"
-        )
+        url = f"/api/scenarios/{uuid.uuid4()}/resource-interventions/actions/export/?type_id={uuid.uuid4()}"
         response = client.get(url)
 
         assert response.status_code == status.HTTP_404_NOT_FOUND

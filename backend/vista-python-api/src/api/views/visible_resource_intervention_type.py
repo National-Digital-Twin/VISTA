@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
-# and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+# and is legally attributed to the UK's Department for Business, Innovation, Science and Trade (BIST) as the governing entity.
 
 """Views for resource intervention type visibility toggling."""
 
@@ -32,9 +32,7 @@ class VisibleResourceInterventionTypeView(APIView):
         resource_intervention_type_id = serializer.validated_data["resource_intervention_type_id"]
         is_active = serializer.validated_data["is_active"]
 
-        resource_intervention_type = get_object_or_404(
-            ResourceInterventionType, id=resource_intervention_type_id
-        )
+        resource_intervention_type = get_object_or_404(ResourceInterventionType, id=resource_intervention_type_id)
 
         if is_active:
             VisibleResourceInterventionType.objects.get_or_create(

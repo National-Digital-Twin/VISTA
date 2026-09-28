@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
-# and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+# and is legally attributed to the UK's Department for Business, Innovation, Science and Trade (BIST) as the governing entity.
 
 """Provides fixtures and utility functions for this test module."""
 
@@ -94,19 +94,11 @@ def dependencies():
 
 def _create_fixture():
     category = AssetCategory.objects.create(id=uuid.uuid4(), name="Build infrastructure")
-    transport_sub_category = AssetSubCategory.objects.create(
-        id=uuid.uuid4(), name="Transport infrastructure", category=category
-    )
-    energy_sub_category = AssetSubCategory.objects.create(
-        id=uuid.uuid4(), name="Energy", category=category
-    )
+    transport_sub_category = AssetSubCategory.objects.create(id=uuid.uuid4(), name="Transport infrastructure", category=category)
+    energy_sub_category = AssetSubCategory.objects.create(id=uuid.uuid4(), name="Energy", category=category)
 
-    data_source_one = DataSource.objects.create(
-        id=uuid.uuid4(), name="One", owner="Own1", description_md="Desc1"
-    )
-    data_source_two = DataSource.objects.create(
-        id=uuid.uuid4(), name="Two", owner="Own2", description_md="Desc2"
-    )
+    data_source_one = DataSource.objects.create(id=uuid.uuid4(), name="One", owner="Own1", description_md="Desc1")
+    data_source_two = DataSource.objects.create(id=uuid.uuid4(), name="Two", owner="Own2", description_md="Desc2")
 
     station_asset_type = AssetType.objects.create(
         id=uuid.uuid4(),
@@ -159,13 +151,7 @@ def _create_assets(types):
 
 
 def _create_dependencies(assets):
-    dependency_one = Dependency.objects.create(
-        id=uuid.uuid4(), provider_asset=assets[0], dependent_asset=assets[2]
-    )
-    dependency_two = Dependency.objects.create(
-        id=uuid.uuid4(), provider_asset=assets[1], dependent_asset=assets[3]
-    )
-    dependency_three = Dependency.objects.create(
-        id=uuid.uuid4(), provider_asset=assets[3], dependent_asset=assets[0]
-    )
+    dependency_one = Dependency.objects.create(id=uuid.uuid4(), provider_asset=assets[0], dependent_asset=assets[2])
+    dependency_two = Dependency.objects.create(id=uuid.uuid4(), provider_asset=assets[1], dependent_asset=assets[3])
+    dependency_three = Dependency.objects.create(id=uuid.uuid4(), provider_asset=assets[3], dependent_asset=assets[0])
     return [dependency_one, dependency_two, dependency_three]

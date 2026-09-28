@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
-# and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+# and is legally attributed to the UK's Department for Business, Innovation, Science and Trade (BIST) as the governing entity.
 
 """Asset filter builder for score-based filtering."""
 
@@ -56,13 +56,9 @@ class AssetFilterBuilder:
 
         if score_filter is not None:
             if score_filter.criticality_values is not None:
-                query = query.filter(
-                    criticality_score__in=[Decimal(v) for v in score_filter.criticality_values]
-                )
+                query = query.filter(criticality_score__in=[Decimal(v) for v in score_filter.criticality_values])
             if score_filter.redundancy_values is not None:
-                query = query.filter(
-                    redundancy_score__in=[Decimal(v) for v in score_filter.redundancy_values]
-                )
+                query = query.filter(redundancy_score__in=[Decimal(v) for v in score_filter.redundancy_values])
             if score_filter.dependency_min is not None:
                 query = query.filter(dependency_score__gte=score_filter.dependency_min)
             if score_filter.dependency_max is not None:
@@ -91,9 +87,7 @@ class AssetFilterBuilder:
 
         # Mixed: both zero and non-zero scores (e.g., [0, 2])
         if include_zero and non_zero_values:
-            assets_in_view = VisibleExposureAssetScore.objects.filter(
-                focus_area_id=self.ctx.focus_area_id
-            ).values("asset_id")
+            assets_in_view = VisibleExposureAssetScore.objects.filter(focus_area_id=self.ctx.focus_area_id).values("asset_id")
             assets_with_matching_scores = VisibleExposureAssetScore.objects.filter(
                 focus_area_id=self.ctx.focus_area_id,
                 score__in=non_zero_values,
@@ -110,11 +104,7 @@ class AssetFilterBuilder:
             )
 
         # Only zero - assets NOT in the view
-        return ~Q(
-            id__in=VisibleExposureAssetScore.objects.filter(
-                focus_area_id=self.ctx.focus_area_id
-            ).values("asset_id")
-        )
+        return ~Q(id__in=VisibleExposureAssetScore.objects.filter(focus_area_id=self.ctx.focus_area_id).values("asset_id"))
 
     def type_filter(self, type_id: UUID, geometry: Polygon | None = None) -> Q:
         """Build Q for a single asset type, optionally constrained by geometry and scores."""

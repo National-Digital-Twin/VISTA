@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
-# and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+# and is legally attributed to the UK's Department for Business, Innovation, Science and Trade (BIST) as the governing entity.
 
 """Tests for the IDP repository."""
 
@@ -383,9 +383,7 @@ class TestGetUserByEmail:
         ):
             return IdpRepository()
 
-    def test_get_user_by_email_returns_user_successfully(
-        self, client, mock_boto_paginator_admin, repository
-    ):
+    def test_get_user_by_email_returns_user_successfully(self, client, mock_boto_paginator_admin, repository):
         """Check user is successfully returned when queried by email."""
         # mock existence of one user in admin group
         username = uuid4()
@@ -446,9 +444,7 @@ class TestGetUserById:
         ):
             return IdpRepository()
 
-    def test_get_user_by_id_returns_user_successfully(
-        self, client, repository, mock_boto_paginator_admin
-    ):
+    def test_get_user_by_id_returns_user_successfully(self, client, repository, mock_boto_paginator_admin):
         """Check user is successfully returned when queried by id."""
         # mock existence of one user in admin group
         username = uuid4()
@@ -524,9 +520,7 @@ class TestCreateUser:
         """Ensure user creation SDK methods called correctly."""
         email = "bob@test.com"
         settings.IS_PROD = True
-        monkeypatch.setattr(
-            "api.repository.external.idp_repository.generate_temp_password", generate_temp_password
-        )
+        monkeypatch.setattr("api.repository.external.idp_repository.generate_temp_password", generate_temp_password)
 
         repository.create_user(email, False)
 
@@ -550,9 +544,7 @@ class TestCreateUser:
         """Ensure user creation SDK methods called correctly."""
         email = "bob@test.com"
         settings.IS_PROD = True
-        monkeypatch.setattr(
-            "api.repository.external.idp_repository.generate_temp_password", generate_temp_password
-        )
+        monkeypatch.setattr("api.repository.external.idp_repository.generate_temp_password", generate_temp_password)
         client.list_users.return_value = {
             "Users": [{"Username": str(uuid4()), "UserCreateDate": datetime.now()}]  # noqa: DTZ005
         }
@@ -575,9 +567,7 @@ class TestCreateUser:
         email = "bob@test.com"
         settings.IS_PROD = True
         fake_uuid = UUID("12345678-1234-5678-1234-567812345678")
-        monkeypatch.setattr(
-            "api.repository.external.idp_repository.generate_temp_password", generate_temp_password
-        )
+        monkeypatch.setattr("api.repository.external.idp_repository.generate_temp_password", generate_temp_password)
         client.list_users.return_value = {
             "Users": [{"Username": str(fake_uuid), "UserCreateDate": datetime.now()}]  # noqa: DTZ005
         }
@@ -601,9 +591,7 @@ class TestCreateUser:
         """Ensure general user creation adds user to only access group."""
         settings.IS_PROD = True
         username = str(uuid4())
-        monkeypatch.setattr(
-            "api.repository.external.idp_repository.generate_temp_password", generate_temp_password
-        )
+        monkeypatch.setattr("api.repository.external.idp_repository.generate_temp_password", generate_temp_password)
         client.admin_create_user.return_value = {"User": {"Username": username}}
 
         repository.create_user("bob@test.com", False)
@@ -625,9 +613,7 @@ class TestCreateUser:
         """Ensure admin user creation adds user to access and admin group."""
         settings.IS_PROD = True
         username = str(uuid4())
-        monkeypatch.setattr(
-            "api.repository.external.idp_repository.generate_temp_password", generate_temp_password
-        )
+        monkeypatch.setattr("api.repository.external.idp_repository.generate_temp_password", generate_temp_password)
         client.admin_create_user.return_value = {"User": {"Username": username}}
 
         repository.create_user("bob@test.com", True)
@@ -714,9 +700,7 @@ class TestRemoveUser:
         ):
             return IdpRepository()
 
-    def test_remove_user_from_vista_removes_user_from_access_and_admin_groups(
-        self, settings, client, repository
-    ):
+    def test_remove_user_from_vista_removes_user_from_access_and_admin_groups(self, settings, client, repository):
         """Ensure remove user from vista removes user from access and admin group."""
         settings.IS_PROD = True
         username = str(uuid4())

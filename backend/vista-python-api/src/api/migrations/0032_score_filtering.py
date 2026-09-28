@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
-# and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+# and is legally attributed to the UK's Department for Business, Innovation, Science and Trade (BIST) as the governing entity.
 
 """Add score filtering to FocusArea and create AssetScoreFilter model."""
 # Split into 0032/0033 to avoid PostgreSQL pending trigger events error.
@@ -20,11 +20,7 @@ def create_mapwide_focus_areas(apps, _schema_editor):
     VisibleAsset = apps.get_model("api", "VisibleAsset")
 
     # Find all unique (scenario_id, user_id) combinations that have map-wide visible assets
-    mapwide_combos = (
-        VisibleAsset.objects.filter(focus_area__isnull=True)
-        .values("scenario_id", "user_id")
-        .distinct()
-    )
+    mapwide_combos = VisibleAsset.objects.filter(focus_area__isnull=True).values("scenario_id", "user_id").distinct()
 
     mapwide_focus_areas = {}
     for combo in mapwide_combos:
@@ -41,9 +37,7 @@ def create_mapwide_focus_areas(apps, _schema_editor):
 
     # Update VisibleAssets to point to the new map-wide FocusArea
     for combo, fa_id in mapwide_focus_areas.items():
-        VisibleAsset.objects.filter(
-            scenario_id=combo[0], user_id=combo[1], focus_area__isnull=True
-        ).update(focus_area_id=fa_id)
+        VisibleAsset.objects.filter(scenario_id=combo[0], user_id=combo[1], focus_area__isnull=True).update(focus_area_id=fa_id)
 
 
 class Migration(migrations.Migration):
@@ -90,27 +84,19 @@ class Migration(migrations.Migration):
             fields=[
                 (
                     "id",
-                    models.UUIDField(
-                        default=uuid.uuid4, editable=False, primary_key=True, serialize=False
-                    ),
+                    models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False),
                 ),
                 (
                     "criticality_values",
-                    django.contrib.postgres.fields.ArrayField(
-                        base_field=models.IntegerField(), null=True, size=None
-                    ),
+                    django.contrib.postgres.fields.ArrayField(base_field=models.IntegerField(), null=True, size=None),
                 ),
                 (
                     "exposure_values",
-                    django.contrib.postgres.fields.ArrayField(
-                        base_field=models.IntegerField(), null=True, size=None
-                    ),
+                    django.contrib.postgres.fields.ArrayField(base_field=models.IntegerField(), null=True, size=None),
                 ),
                 (
                     "redundancy_values",
-                    django.contrib.postgres.fields.ArrayField(
-                        base_field=models.IntegerField(), null=True, size=None
-                    ),
+                    django.contrib.postgres.fields.ArrayField(base_field=models.IntegerField(), null=True, size=None),
                 ),
                 (
                     "dependency_min",

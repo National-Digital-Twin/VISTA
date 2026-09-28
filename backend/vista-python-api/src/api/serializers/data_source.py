@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
-# and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+# and is legally attributed to the UK's Department for Business, Innovation, Science and Trade (BIST) as the governing entity.
 
 """Serializers for DataSource model."""
 
@@ -61,12 +61,8 @@ class DataSourceSerializer(serializers.ModelSerializer):
 
     def get_groups_with_access(self, obj):
         """Get a list of groups with access to the data source."""
-        group_members = obj.group_accesses.select_related("group").prefetch_related(
-            "group__members"
-        )
-        return GroupDataSourceSerializer(
-            [group_member.group for group_member in group_members], many=True
-        ).data
+        group_members = obj.group_accesses.select_related("group").prefetch_related("group__members")
+        return GroupDataSourceSerializer([group_member.group for group_member in group_members], many=True).data
 
     def get_globally_available(self, obj):
         """Get whether the data source is globally available."""

@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
-# and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+# and is legally attributed to the UK's Department for Business, Innovation, Science and Trade (BIST) as the governing entity.
 
 """A base class for data source handlers."""
 
@@ -59,9 +59,7 @@ class DataSourceHandler:
                 raise RuntimeError from err(f"Failed to fetch {url}: {err}")
         return None
 
-    async def fetch_from_url_with_retry(
-        self, url: str, retries: int = 5, backoff: float = 0.5, **kwargs
-    ) -> dict | None:
+    async def fetch_from_url_with_retry(self, url: str, retries: int = 5, backoff: float = 0.5, **kwargs) -> dict | None:
         """
         Fetch JSON data from a URL with exponential backoff retries.
 
@@ -74,9 +72,7 @@ class DataSourceHandler:
         response = await self._fetch_from_url_with_retry(url, retries, backoff, **kwargs)
         return response.json()
 
-    async def _fetch_from_url_with_retry(
-        self, url: str, retries: int = 5, backoff: float = 0.5, **kwargs
-    ) -> dict | None:
+    async def _fetch_from_url_with_retry(self, url: str, retries: int = 5, backoff: float = 0.5, **kwargs) -> dict | None:
         http_params = kwargs.get("params")
         headers = kwargs.get("headers")
         async with httpx.AsyncClient(timeout=10.0) as client:
@@ -89,12 +85,8 @@ class DataSourceHandler:
                 except Exception as err:
                     if attempt < retries:
                         delay = backoff * (2**attempt) + random.uniform(0, 0.1)
-                        self.logger.info(
-                            "Retrying %s, attempt %s after %ss", url, attempt + 1, delay
-                        )
+                        self.logger.info("Retrying %s, attempt %s after %ss", url, attempt + 1, delay)
                         await asyncio.sleep(delay)
                     else:
-                        raise RuntimeError(
-                            f"Failed to fetch {url} after {retries + 1} attempts: {err}"
-                        ) from err
+                        raise RuntimeError(f"Failed to fetch {url} after {retries + 1} attempts: {err}") from err
         return None

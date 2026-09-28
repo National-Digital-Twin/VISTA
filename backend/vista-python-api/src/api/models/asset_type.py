@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # © Crown Copyright 2026. This work has been developed by the National Digital Twin Programme
-# and is legally attributed to the Department for Business and Trade (UK) as the governing entity.
+# and is legally attributed to the UK's Department for Business, Innovation, Science and Trade (BIST) as the governing entity.
 
 """Models concerning taxonomy of assets."""
 
@@ -26,9 +26,7 @@ class AssetSubCategory(models.Model):
     """Asset Sub-category model."""
 
     id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True)
-    category = models.ForeignKey(
-        AssetCategory, on_delete=models.CASCADE, related_name="sub_categories"
-    )
+    category = models.ForeignKey(AssetCategory, on_delete=models.CASCADE, related_name="sub_categories")
     name = models.CharField(max_length=256)
 
     def __str__(self):
@@ -40,12 +38,8 @@ class AssetType(models.Model):
     """Asset Type model."""
 
     id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True)
-    sub_category = models.ForeignKey(
-        AssetSubCategory, on_delete=models.CASCADE, related_name="asset_types"
-    )
-    data_source = models.ForeignKey(
-        DataSource, related_name="types", on_delete=models.CASCADE, null=True
-    )
+    sub_category = models.ForeignKey(AssetSubCategory, on_delete=models.CASCADE, related_name="asset_types")
+    data_source = models.ForeignKey(DataSource, related_name="types", on_delete=models.CASCADE, null=True)
     name = models.CharField(max_length=256)
     icon = models.CharField(max_length=256, default="fa-tag")
 
