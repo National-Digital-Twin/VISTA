@@ -5,11 +5,13 @@
 import { Box } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import { bbox, booleanPointInPolygon, point } from '@turf/turf';
-import type { MapMouseEvent } from 'maplibre-gl';
+import { setWorkerUrl, type MapMouseEvent } from 'maplibre-gl';
+import maplibreWorkerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?url';
 import { useCallback, useMemo, useRef, useState, useEffect, type ComponentProps } from 'react';
 import type { MapRef, ViewStateChangeEvent } from 'react-map-gl/maplibre';
 import Map, { Layer } from 'react-map-gl/maplibre';
 import 'maplibre-gl/dist/maplibre-gl.css';
+setWorkerUrl(maplibreWorkerUrl);
 import './mapbox-draw-maplibre.css';
 import ActiveFocusAreas from './ActiveFocusAreas';
 import AssetLayers, { ASSET_SYMBOL_LAYER_ID } from './AssetLayers';

@@ -47,10 +47,7 @@ export const DEFAULT_VIEW_STATE: ViewState = {
     bearing: 0,
 };
 
-export const MAP_VIEW_BOUNDS: [[number, number], [number, number]] = [
-    [-25, 42],
-    [15, 67],
-];
+export const MAP_VIEW_BOUNDS: [number, number, number, number] = [-25, 42, 15, 67];
 
 export const FEATURE_TYPES = {
     FOCUS_AREA: 'focus_area',
